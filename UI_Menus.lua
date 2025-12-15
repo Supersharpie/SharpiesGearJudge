@@ -9,8 +9,7 @@ MinimapButton.border:SetSize(54, 54); MinimapButton.border:SetPoint("TOPLEFT"); 
 
 function MSC.UpdateMinimapPosition()
     if not SGJ_Settings then return end
-    local angle = math.rad(SGJ_Settings.MinimapPos or 45)
-    local x, y = math.cos(angle), math.sin(angle)
+    local angle = math.rad(SGJ_Settings.MinimapPos or 45); local x, y = math.cos(angle), math.sin(angle)
     MinimapButton:SetPoint("CENTER", Minimap, "CENTER", x * 80, y * 80)
 end
 MinimapButton:RegisterForClicks("AnyUp"); MinimapButton:RegisterForDrag("LeftButton")
@@ -67,6 +66,9 @@ function MSC.CreateOptionsFrame()
         CreateButton(MSC.SpecNames[englishClass][3], MSC.SpecNames[englishClass][3], -240)
     end
     CreateButton("Hybrid / PvP", "Hybrid", -285)
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontTiny")
-    credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 10); credits:SetTextColor(0.6, 0.6, 0.6, 1); credits:SetText("Special Thanks: [Your Testers]")
+    
+    -- FIXED: Changed GameFontTiny to GameFontNormalSmall
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 10); credits:SetTextColor(0.6, 0.6, 0.6, 1)
+    credits:SetText("Special Thanks: [Bradenwhy (racials]")
 end
