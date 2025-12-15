@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Logo.png" width="400" height="400" alt="Sharpie's Gear Judge Logo">
+</p>
+
 # Sharpie's Gear Judge
 
 **"The Final Verdict on Your Gear."**
