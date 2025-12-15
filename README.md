@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Logo.png" width="400" height="400" alt="Sharpie's Gear Judge Logo">
+  <img src="Sharpie's Gear Judge.png" width="400" height="400" alt="Sharpie's Gear Judge Logo">
 </p>
 
 # Sharpie's Gear Judge
