@@ -1,0 +1,13 @@
+## Interface: 11505
+## Title: Sharpie's Gear Judge
+## Notes: The final verdict on your gear upgrades.
+## Author: SuperSharpie
+## Version: 1.1
+## SavedVariablesPerCharacter: SGJ_Settings
+## X-Credits: Big Thanks To My Testers: Bradenwhy (racials),
+
+Database.lua
+Utils.lua
+UI_Menus.lua
+UI_Lab.lua
+Core.lua
