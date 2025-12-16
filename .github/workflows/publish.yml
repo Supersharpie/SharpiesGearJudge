@@ -1,0 +1,14 @@
+name: Packager
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: BigWigsMods/packager@v2
+        with:
+          args: -p 1404866
+        env:
+          CF_API_KEY: ${{ secrets.CURSEFORGE_TOKEN }}
