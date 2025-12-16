@@ -1,6 +1,6 @@
 # Sharpie's Gear Judge - Changelog
 
-## [v1.1.9] - 2025-12-16
+## [v1.2.0] - 2025-12-16
 ### 🛡️ Stat Weight Overhaul (Raid, PvP & Leveling)
 * **Tanking Logic Update:**
     * **Integrated Tanking:** Warriors and Paladins now have sophisticated Threat/Survival logic built directly into their "Protection" spec profile. No need to toggle a separate mode.
@@ -95,4 +95,5 @@
 
 ## v0.5 (Alpha)
 * Initial project setup.
+
 * Basic `GetItemStats` logic.
