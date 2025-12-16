@@ -1,74 +1,131 @@
 local _, MSC = ...
 
+-- =============================================================
 -- 1. MINIMAP BUTTON
+-- =============================================================
 local MinimapButton = CreateFrame("Button", "MSC_MinimapButton", Minimap)
-MinimapButton:SetSize(32, 32); MinimapButton:SetFrameStrata("MEDIUM"); MinimapButton:SetFrameLevel(8) 
-MinimapButton.icon = MinimapButton:CreateTexture(nil, "BACKGROUND"); MinimapButton.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02"); MinimapButton.icon:SetSize(20, 20); MinimapButton.icon:SetPoint("CENTER")
-MinimapButton.border = MinimapButton:CreateTexture(nil, "OVERLAY"); MinimapButton.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-MinimapButton.border:SetSize(54, 54); MinimapButton.border:SetPoint("TOPLEFT"); MinimapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+MinimapButton:SetSize(32, 32)
+MinimapButton:SetFrameStrata("MEDIUM")
+MinimapButton:SetFrameLevel(8) 
+MinimapButton.icon = MinimapButton:CreateTexture(nil, "BACKGROUND")
+MinimapButton.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02")
+MinimapButton.icon:SetSize(20, 20)
+MinimapButton.icon:SetPoint("CENTER")
+MinimapButton.border = MinimapButton:CreateTexture(nil, "OVERLAY")
+MinimapButton.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+MinimapButton.border:SetSize(54, 54)
+MinimapButton.border:SetPoint("TOPLEFT")
+MinimapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 
 function MSC.UpdateMinimapPosition()
     if not SGJ_Settings then return end
-    local angle = math.rad(SGJ_Settings.MinimapPos or 45); local x, y = math.cos(angle), math.sin(angle)
+    if SGJ_Settings.HideMinimap then MinimapButton:Hide(); return else MinimapButton:Show() end
+    local angle = math.rad(SGJ_Settings.MinimapPos or 45)
+    local x, y = math.cos(angle), math.sin(angle)
     MinimapButton:SetPoint("CENTER", Minimap, "CENTER", x * 80, y * 80)
 end
-MinimapButton:RegisterForClicks("AnyUp"); MinimapButton:RegisterForDrag("LeftButton")
+
+MinimapButton:RegisterForClicks("AnyUp")
+MinimapButton:RegisterForDrag("LeftButton")
 MinimapButton:SetScript("OnDragStart", function(self) self:SetScript("OnUpdate", function(self) 
-    local x, y = GetCursorPosition(); local scale = Minimap:GetEffectiveScale(); local cx, cy = Minimap:GetCenter()
-    local dx, dy = (x / scale) - cx, (y / scale) - cy; SGJ_Settings.MinimapPos = math.deg(math.atan2(dy, dx)); MSC.UpdateMinimapPosition() 
+    local x, y = GetCursorPosition()
+    local scale = Minimap:GetEffectiveScale()
+    local cx, cy = Minimap:GetCenter()
+    local dx, dy = (x / scale) - cx, (y / scale) - cy
+    SGJ_Settings.MinimapPos = math.deg(math.atan2(dy, dx))
+    MSC.UpdateMinimapPosition() 
 end) end)
 MinimapButton:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
-MinimapButton:SetScript("OnClick", function(self, button) if button == "LeftButton" then MSC.CreateLabFrame() else MSC.CreateOptionsFrame() end end)
+
+MinimapButton:SetScript("OnClick", function(self, button) 
+    if button == "LeftButton" then 
+        if _G["MSCLabFrame"] and _G["MSCLabFrame"]:IsShown() then
+            _G["MSCLabFrame"]:Hide()
+        else
+            MSC.CreateLabFrame() 
+        end
+    else 
+        if _G["MyStatCompareFrame"] and _G["MyStatCompareFrame"]:IsShown() then
+            _G["MyStatCompareFrame"]:Hide()
+        else
+            MSC.CreateOptionsFrame() 
+        end
+    end 
+end)
+
 MinimapButton:SetScript("OnEnter", function(self) 
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT"); GameTooltip:SetText("Sharpie's Gear Judge")
-    GameTooltip:AddLine("|cffffffffLeft-Click:|r Open Judge's Lab", 1, 1, 1); GameTooltip:AddLine("|cffffffffRight-Click:|r Settings", 1, 1, 1); GameTooltip:AddLine("|cffaaaaaa(Drag to move)|r"); GameTooltip:Show() 
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+    GameTooltip:SetText("Sharpie's Gear Judge")
+    GameTooltip:AddLine("|cffffffffLeft-Click:|r Toggle Judge's Lab", 1, 1, 1)
+    GameTooltip:AddLine("|cffffffffRight-Click:|r Toggle Settings", 1, 1, 1)
+    GameTooltip:Show() 
 end)
 MinimapButton:SetScript("OnLeave", GameTooltip_Hide)
 
--- 2. SETTINGS GUI
+-- =============================================================
+-- 2. CONFIGURATION PANEL
+-- =============================================================
 function MSC.CreateOptionsFrame()
     if MyStatCompareFrame then MyStatCompareFrame:Show() return end
+    
     local f = CreateFrame("Frame", "MyStatCompareFrame", UIParent, "BasicFrameTemplateWithInset, BackdropTemplate")
-    f:SetSize(320, 380); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    f:SetSize(400, 500)
+    f:SetPoint("CENTER")
+    f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    f.title:SetPoint("LEFT", f.TitleBg, "LEFT", 5, 0); f.title:SetText("Sharpie's Gear Judge Options")
-    
-    local enchantCheck = CreateFrame("CheckButton", "SGJ_EnchantToggle", f, "ChatConfigCheckButtonTemplate")
-    enchantCheck:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -40); enchantCheck.Text:SetText("Compare items with actual enchants")
-    enchantCheck:SetChecked(SGJ_Settings.IncludeEnchants)
-    enchantCheck:SetScript("OnClick", function(self)
-        SGJ_Settings.IncludeEnchants = self:GetChecked()
-        if self:GetChecked() then SGJ_Settings.ProjectEnchants = false; _G["SGJ_ProjectToggle"]:SetChecked(false) end
-    end)
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.title:SetPoint("LEFT", f.TitleBg, "LEFT", 5, 0); f.title:SetText("Sharpie's Gear Judge Configuration")
 
-    local projectCheck = CreateFrame("CheckButton", "SGJ_ProjectToggle", f, "ChatConfigCheckButtonTemplate")
-    projectCheck:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -75); projectCheck.Text:SetText("Apply current enchant to new loot")
-    projectCheck:SetChecked(SGJ_Settings.ProjectEnchants)
-    projectCheck:SetScript("OnClick", function(self)
-        SGJ_Settings.ProjectEnchants = self:GetChecked()
-        if self:GetChecked() then SGJ_Settings.IncludeEnchants = false; _G["SGJ_EnchantToggle"]:SetChecked(false) end
-    end)
-
-    local label = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    label:SetPoint("TOP", f, "TOP", 0, -115); label:SetText("--- Select Spec Profile ---")
-
-    local function CreateButton(text, mode, yOffset)
-        local btn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-        btn:SetPoint("TOP", f, "TOP", 0, yOffset); btn:SetSize(150, 30); btn:SetText(text)
-        btn:SetScript("OnClick", function() SGJ_Settings.Mode = mode; print("|cff00ff00Sharpie:|r Profile set to " .. text); f:Hide() end)
+    local function CreateHeader(text, relativeTo, yOffset)
+        local h = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); h:SetPoint("TOPLEFT", relativeTo, "BOTTOMLEFT", 0, yOffset); h:SetText(text); return h
     end
-    CreateButton("Auto-Detect", "Auto", -135)
-    local _, englishClass = UnitClass("player")
-    if MSC.SpecNames[englishClass] then
-        CreateButton(MSC.SpecNames[englishClass][1], MSC.SpecNames[englishClass][1], -170)
-        CreateButton(MSC.SpecNames[englishClass][2], MSC.SpecNames[englishClass][2], -205)
-        CreateButton(MSC.SpecNames[englishClass][3], MSC.SpecNames[englishClass][3], -240)
+    local function CreateDesc(text, relativeTo)
+        local d = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); d:SetPoint("TOPLEFT", relativeTo, "BOTTOMLEFT", 20, -5); d:SetWidth(340); d:SetJustifyH("LEFT"); d:SetText(text); d:SetTextColor(0.7, 0.7, 0.7); return d
     end
-    CreateButton("Hybrid / PvP", "Hybrid", -285)
+
+    local header1 = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); header1:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -40); header1:SetText("Comparison Mode")
+
+    local strictCheck = CreateFrame("CheckButton", "SGJ_StrictCheck", f, "ChatConfigCheckButtonTemplate"); strictCheck:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -10); strictCheck.Text:SetText("Strict Mode (What you see is what you get)"); strictCheck:SetChecked(SGJ_Settings.IncludeEnchants)
+    local strictDesc = CreateDesc("Compares items exactly as they are.", strictCheck)
+
+    local potentialCheck = CreateFrame("CheckButton", "SGJ_PotentialCheck", f, "ChatConfigCheckButtonTemplate"); potentialCheck:SetPoint("TOPLEFT", strictDesc, "BOTTOMLEFT", -20, -15); potentialCheck.Text:SetText("Potential Mode (Simulate Enchants)"); potentialCheck:SetChecked(SGJ_Settings.ProjectEnchants)
+    local potentialDesc = CreateDesc("Virtually applies your current enchant to the new item.", potentialCheck)
+
+    strictCheck:SetScript("OnClick", function(self) if self:GetChecked() then SGJ_Settings.IncludeEnchants=true; SGJ_Settings.ProjectEnchants=false; potentialCheck:SetChecked(false) else self:SetChecked(true) end end)
+    potentialCheck:SetScript("OnClick", function(self) if self:GetChecked() then SGJ_Settings.ProjectEnchants=true; SGJ_Settings.IncludeEnchants=false; strictCheck:SetChecked(false) else self:SetChecked(true) end end)
+
+    local header2 = CreateHeader("Character Profile", potentialDesc, -25)
+    local dropDown = CreateFrame("Frame", "SGJ_SpecDropDown", f, "UIDropDownMenuTemplate"); dropDown:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", -15, -10)
     
-    -- FIXED: Changed GameFontTiny to GameFontNormalSmall
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 10); credits:SetTextColor(0.6, 0.6, 0.6, 1)
-    credits:SetText("Special Thanks: [Bradenwhy (racials]")
+    local function OnClick(self) UIDropDownMenu_SetSelectedID(dropDown, self:GetID()); SGJ_Settings.Mode = self.value; print("|cff00ccffSharpie:|r Profile changed to " .. self.value) end
+    local function Initialize(self, level)
+        -- 1. Auto Detect
+        local info = UIDropDownMenu_CreateInfo(); info.text = "Auto-Detect"; info.value = "Auto"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Auto"); UIDropDownMenu_AddButton(info, level)
+        
+        local _, englishClass = UnitClass("player")
+        if MSC.SpecNames and MSC.SpecNames[englishClass] then
+            for i=1, 3 do local spec = MSC.SpecNames[englishClass][i]; info = UIDropDownMenu_CreateInfo(); info.text = spec; info.value = spec; info.func = OnClick; info.checked = (SGJ_Settings.Mode == spec); UIDropDownMenu_AddButton(info, level) end
+        end
+        
+        -- 2. Leveling / PvP (Formerly Hybrid)
+        info = UIDropDownMenu_CreateInfo(); info.text = "Leveling / PvP"; info.value = "Hybrid"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Hybrid"); UIDropDownMenu_AddButton(info, level)
+        
+        -- 3. Tanking Profile (Smart Hide: Only shows if the class has a separate Tank table in Database.lua)
+        if MSC.WeightDB and MSC.WeightDB[englishClass] and MSC.WeightDB[englishClass]["Tank"] then
+            info = UIDropDownMenu_CreateInfo(); info.text = "Tanking (Threat/Surv)"; info.value = "Tank"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Tank"); UIDropDownMenu_AddButton(info, level)
+        end
+    end
+    UIDropDownMenu_Initialize(dropDown, Initialize); UIDropDownMenu_SetWidth(dropDown, 200); UIDropDownMenu_SetButtonWidth(dropDown, 124); UIDropDownMenu_SetText(dropDown, SGJ_Settings.Mode or "Auto")
+
+    local header3 = CreateHeader("Interface Settings", dropDown, -25); header3:SetPoint("TOPLEFT", potentialDesc, "BOTTOMLEFT", -20, -110) 
+    
+    local minimapCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); minimapCheck:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", 0, -10); minimapCheck.Text:SetText("Show Minimap Button"); minimapCheck:SetChecked(not SGJ_Settings.HideMinimap)
+    minimapCheck:SetScript("OnClick", function(self) SGJ_Settings.HideMinimap = not self:GetChecked(); MSC.UpdateMinimapPosition() end)
+
+    local soundCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); soundCheck:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 0, -5); soundCheck.Text:SetText("Enable Interface Sounds"); soundCheck:SetChecked(not SGJ_Settings.MuteSounds)
+    soundCheck:SetScript("OnClick", function(self) SGJ_Settings.MuteSounds = not self:GetChecked() end)
+
+    local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", soundCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
+    tooltipCheck:SetScript("OnClick", function(self) SGJ_Settings.HideTooltips = not self:GetChecked() end)
+
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Special Thanks: [Your Testers]")
 end
