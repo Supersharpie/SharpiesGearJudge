@@ -2,6 +2,7 @@ name: Publish WoW Addon
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   package:
