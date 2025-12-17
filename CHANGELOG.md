@@ -1,6 +1,21 @@
 # Sharpie's Gear Judge - Changelog
 
-## [v1.2.0] - 2025-12-16
+v1.2.0 - v1.3.0
+========================================
+NEW FEATURES:
+- Smart Leveling Logic: The Judge now detects if you are under Level 60. It automatically switches to a "Leveling Profile" (High Stamina/Efficiency) to keep you alive, then switches to "Raid Mode" (Hit Cap/Crit) automatically at max level.
+- Naxxramas & ZG Ready: Added support for "Multi-Stat" Enchants, including Sapphiron Shoulder Enchants and ZG Idols in "Project Mode."
+- RatingBuster-Style UI: Completely redesigned the tooltip. Stats are now clean, yellow-aligned text with derived stats (Health, Mana, AP) calculated automatically based on your class.
+- Smart Ring & Trinket Logic: When hovering over a Ring or Trinket, the Judge now compares it against your WEAKEST equipped slot (instead of always Slot 1).
+- Conflict Manager: Detects if RestedXP, Zygor, or Pawn are active. Offers a one-click popup to disable their conflicting "Gear Arrows" without breaking their other features.
+
+FIXES & IMPROVEMENTS:
+- Fixed a crash related to the "Smart Partner Finder" (nil value error).
+- Updated Interface version to 11508 (Phase 6).
+- Added a debug command (/sgj debug) to verify active stat weights.
+- Refined Warlock and Mage leveling weights to prioritize survival/uptime.
+
+## [v1.1.9] - 2025-12-16
 ### 🛡️ Stat Weight Overhaul (Raid, PvP & Leveling)
 * **Tanking Logic Update:**
     * **Integrated Tanking:** Warriors and Paladins now have sophisticated Threat/Survival logic built directly into their "Protection" spec profile. No need to toggle a separate mode.
@@ -95,5 +110,4 @@
 
 ## v0.5 (Alpha)
 * Initial project setup.
-
 * Basic `GetItemStats` logic.

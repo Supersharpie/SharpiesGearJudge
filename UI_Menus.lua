@@ -1,8 +1,6 @@
 local _, MSC = ...
 
--- =============================================================
 -- 1. MINIMAP BUTTON
--- =============================================================
 local MinimapButton = CreateFrame("Button", "MSC_MinimapButton", Minimap)
 MinimapButton:SetSize(32, 32)
 MinimapButton:SetFrameStrata("MEDIUM")
@@ -39,17 +37,9 @@ MinimapButton:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", 
 
 MinimapButton:SetScript("OnClick", function(self, button) 
     if button == "LeftButton" then 
-        if _G["MSCLabFrame"] and _G["MSCLabFrame"]:IsShown() then
-            _G["MSCLabFrame"]:Hide()
-        else
-            MSC.CreateLabFrame() 
-        end
+        if _G["MSCLabFrame"] and _G["MSCLabFrame"]:IsShown() then _G["MSCLabFrame"]:Hide() else MSC.CreateLabFrame() end
     else 
-        if _G["MyStatCompareFrame"] and _G["MyStatCompareFrame"]:IsShown() then
-            _G["MyStatCompareFrame"]:Hide()
-        else
-            MSC.CreateOptionsFrame() 
-        end
+        if _G["MyStatCompareFrame"] and _G["MyStatCompareFrame"]:IsShown() then _G["MyStatCompareFrame"]:Hide() else MSC.CreateOptionsFrame() end
     end 
 end)
 
@@ -62,9 +52,7 @@ MinimapButton:SetScript("OnEnter", function(self)
 end)
 MinimapButton:SetScript("OnLeave", GameTooltip_Hide)
 
--- =============================================================
 -- 2. CONFIGURATION PANEL
--- =============================================================
 function MSC.CreateOptionsFrame()
     if MyStatCompareFrame then MyStatCompareFrame:Show() return end
     
@@ -100,16 +88,13 @@ function MSC.CreateOptionsFrame()
     local function Initialize(self, level)
         -- 1. Auto Detect
         local info = UIDropDownMenu_CreateInfo(); info.text = "Auto-Detect"; info.value = "Auto"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Auto"); UIDropDownMenu_AddButton(info, level)
-        
         local _, englishClass = UnitClass("player")
         if MSC.SpecNames and MSC.SpecNames[englishClass] then
             for i=1, 3 do local spec = MSC.SpecNames[englishClass][i]; info = UIDropDownMenu_CreateInfo(); info.text = spec; info.value = spec; info.func = OnClick; info.checked = (SGJ_Settings.Mode == spec); UIDropDownMenu_AddButton(info, level) end
         end
-        
-        -- 2. Leveling / PvP (Formerly Hybrid)
+        -- 2. Leveling / PvP
         info = UIDropDownMenu_CreateInfo(); info.text = "Leveling / PvP"; info.value = "Hybrid"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Hybrid"); UIDropDownMenu_AddButton(info, level)
-        
-        -- 3. Tanking Profile (Smart Hide: Only shows if the class has a separate Tank table in Database.lua)
+        -- 3. Tanking Profile
         if MSC.WeightDB and MSC.WeightDB[englishClass] and MSC.WeightDB[englishClass]["Tank"] then
             info = UIDropDownMenu_CreateInfo(); info.text = "Tanking (Threat/Surv)"; info.value = "Tank"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Tank"); UIDropDownMenu_AddButton(info, level)
         end
@@ -126,6 +111,6 @@ function MSC.CreateOptionsFrame()
 
     local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", soundCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
     tooltipCheck:SetScript("OnClick", function(self) SGJ_Settings.HideTooltips = not self:GetChecked() end)
-
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Special Thanks: [Your Testers]")
+    
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie")
 end
