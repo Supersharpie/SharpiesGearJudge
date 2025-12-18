@@ -1,3 +1,28 @@
+## v1.4.0 - The "Smart Leveling" Update
+### 🧠 Intelligent Leveling Matrix
+* **Phase-Based Scoring:** The addon now recognizes that a Level 10 character needs different stats than a Level 58 character.
+	* **Wand Meta Support:** For Warlocks, Priests (Levels 1-40), and Mages (Levels 1-20), the Judge now highly values "Wand DPS" (`Damage Per Second`). It recognizes that wands are your primary source of damage before you unlock efficient spells.   
+    * **Lv 1-20 (Survival):** Prioritizes Stamina and raw stats (Str/Int) to help you survive early squishiness.
+    * **Lv 21-40 (Power Spike):** Shifts focus to Spec-defining stats (e.g., Agility, Spell Power) as you unlock key talents.
+    * **Lv 41-59 (Pre-Raid):** Shifts to "Endgame" weights (Hit Rating, Crit, Spell Damage) to prepare you for Level 60.
+* **Dungeon Role Protection:** The Judge now detects if you are explicitly spec'd as a Tank (Protection) or Healer (Holy/Resto). It will **bypass** the generic leveling weights and give you full Dungeon Tank/Healer scores, ensuring you don't accidentally vendor your best tanking gear.
+
+### 🛠️ UI & Polish
+* **Lab Modernization:** The Judge's Lab (`/sgj`) now uses the clean, color-coded text style from the tooltips (Yellow Names, Green/Red Numbers).
+* **"Resistance0" Fixed:** Fixed a Blizzard API quirk where Armor was sometimes displaying as "Resistance0 Name". It now correctly reads as "Armor".
+
+### 🛡️ Critical Fixes (from v1.3.3)
+* **Double-Count Fixed:** Fixed a bug where stats found in the "green text" were being added to the base stats, resulting in double values (e.g., 55 AP instead of 28).
+* **MP5 & Weapon Skill:** "Restores X Mana" and "Increased Daggers +5" are now correctly parsed and scored.
+* **Classic Weapon Skill:** "Increased [Weapon] +X" stats (Edgemaster's, Racials) are now properly valued as high-tier stats.
+
+------------------------------------------------------------------------------------------------
+
+## v1.3.2 -
+* ** Fixed file naming mix up (>.<)
+
+------------------------------------------------------------------------------------------------
+
 ## v1.3.1 - Critical Fixes & Logic Hardening
 ### 🛡️ Critical Bug Fixes
 * **"Phantom Stat" Fix (Double-Counting):** Fixed a major bug where the addon would count stats twice (once from the game database + once from reading the green text), causing items to show double their actual values (e.g., 55 AP instead of 28). The math is now verified 100% accurate.
@@ -15,7 +40,6 @@
 * **Judge's Lab Restored:** The visual Drag-and-Drop window (`/sgj`) is fully functional again with correct background art and comparison logic.
 * **ElvUI Compatibility:** Added safe skinning checks to prevent errors for users running ElvUI skins.
 
-------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------
 
 ## v1.3.0

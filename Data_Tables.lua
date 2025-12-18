@@ -52,9 +52,11 @@ MSC.ValidWeapons = {
 }
 
 -- =============================================================
--- 4. SHORT NAMES
+-- 4. SHORT NAMES (Updated to Fix "Resistance0")
 -- =============================================================
 MSC.ShortNames = {
+    ["RESISTANCE0_NAME"]                  = "Armor", -- FIX IS HERE
+    ["ITEM_MOD_ARMOR_SHORT"]              = "Armor",
     ["ITEM_MOD_SPELL_HEALING_DONE"]       = "Healing",
     ["ITEM_MOD_HEALING_POWER_SHORT"]      = "Healing",
     ["ITEM_MOD_SPELL_POWER_SHORT"]        = "Spell Power",
@@ -85,7 +87,6 @@ MSC.ShortNames = {
     ["ITEM_MOD_HOLY_DAMAGE_SHORT"]        = "Holy Dmg",
     ["ITEM_MOD_SHADOW_RESISTANCE_SHORT"]  = "Shadow Res",
     ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "Ranged AP",
-    ["ITEM_MOD_ARMOR_SHORT"]              = "Armor",
     ["ITEM_MOD_HEALTH_SHORT"]             = "Health",
     ["ITEM_MOD_MANA_SHORT"]               = "Mana",
     ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = "Weapon Skill",

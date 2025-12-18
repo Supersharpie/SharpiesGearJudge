@@ -14,14 +14,12 @@ function MSC.IsItemUsable(link)
     local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
     local _, playerClass = UnitClass("player")
 
-    -- CHECK 1: Armor Type
     if classID == 4 then 
         if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then if subclassID > 1 then return false end 
         elseif playerClass == "ROGUE" or playerClass == "DRUID" then if subclassID > 2 then return false end 
         elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then if subclassID > 3 then return false end end
     end
     
-    -- CHECK 2: Weapon Type
     if classID == 2 and MSC.ValidWeapons and MSC.ValidWeapons[playerClass] then
         if not MSC.ValidWeapons[playerClass][subclassID] then return false end
     end
@@ -34,11 +32,15 @@ function MSC.GetCurrentWeights()
     if not englishClass then return {}, "Unknown" end
     local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
     if not classData then return {}, "No Data" end
+    
+    -- MANUAL OVERRIDE (Always obeyed)
     if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
         local displayName = SGJ_Settings.Mode
-        if displayName == "Hybrid" then displayName = "Leveling / PvP" end
-        return classData[SGJ_Settings.Mode], displayName .. " (Manual)"
+        if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
+        return classData[SGJ_Settings.Mode], displayName
     end
+
+    -- DETECT SPEC
     local maxPoints, activeSpec = 0, "Default"
     local specIndex = 1
     if MSC.SpecNames and MSC.SpecNames[englishClass] then
@@ -50,39 +52,62 @@ function MSC.GetCurrentWeights()
             end
         end
     end
+    
+    -- SMART LOGIC: "Dungeon Role" vs "Solo Leveling"
     local playerLevel = UnitLevel("player")
     if playerLevel < 60 then
-        local isTankSpec = (englishClass == "PALADIN" and specIndex == 2) or (englishClass == "WARRIOR" and specIndex == 3)
-        local isFeralCat = (englishClass == "DRUID" and specIndex == 2)
-        if not isTankSpec and not isFeralCat and classData["Hybrid"] then
-            return classData["Hybrid"], activeSpec .. " (Leveling)"
+        -- 1. IDENTIFY DUNGEON ROLES (Tanks & Healers)
+        -- These players do NOT want generic leveling stats. They want their job stats.
+        local isDungeonRole = false
+        
+        if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end -- Protection
+        if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Holy or Prot
+        if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Disc or Holy
+        if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end -- Resto
+        if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end -- Resto
+        if englishClass == "DRUID" and specIndex == 2 and GetTalentInfo(2, 5) and select(5, GetTalentInfo(2, 5)) > 0 then 
+            -- Feral Tank Check (Thick Hide / Feral Instinct usually implies tanking interest, but simplified: Feral is usually DPS leveling)
+            -- For simplicity, we treat Feral as Leveling unless explicitly Manual.
+            isDungeonRole = false 
         end
+
+        -- 2. APPLY LOGIC
+        -- If NOT a Dungeon Role, use the smart Leveling Brackets we designed.
+        if not isDungeonRole then
+            if playerLevel <= 20 and classData["Leveling_1_20"] then
+                return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
+            elseif playerLevel <= 40 and classData["Leveling_21_40"] then
+                return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
+            elseif classData["Leveling_41_59"] then
+                return classData["Leveling_41_59"], activeSpec .. " (Lv 41-59)"
+            end
+        end
+        -- If they ARE a Dungeon Role (or Default fallback), they fall through to the specific spec below.
     end
+    
     return (classData[activeSpec] or classData["Default"]), activeSpec .. " (Auto)"
 end
 
 -- =============================================================
--- 2. ITEM STAT SCANNER (Double-Count Fix)
+-- 2. ITEM STAT SCANNER
 -- =============================================================
 function MSC.SafeGetItemStats(itemLink, slotId)
     if not itemLink then return {} end
     local stats = GetItemStats(itemLink) or {}
     local finalStats = {}
-    local foundByAPI = {} -- New: Track what API found
+    local foundByAPI = {} 
     
-    -- 1. Get Base Stats from API
     if MSC.ShortNames then
         for k, v in pairs(stats) do
             if MSC.ShortNames[k] then 
                 finalStats[k] = v 
-                foundByAPI[k] = true -- MARK AS FOUND
+                foundByAPI[k] = true 
             else 
                 finalStats[k] = v 
             end
         end
     end
     
-    -- 2. Scan Text for "Green Stats" (Equip Effects)
     local tooltip = CreateFrame("GameTooltip", "MSCScanTooltip", nil, "GameTooltipTemplate")
     tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
     tooltip:SetHyperlink(itemLink)
@@ -91,8 +116,6 @@ function MSC.SafeGetItemStats(itemLink, slotId)
         if line then
             local s, v = MSC.ParseTooltipLine(line)
             if s and v then 
-                -- CRITICAL FIX: Only add if API didn't already find it
-                -- This prevents "Attack Power" from being counted twice (once by API, once by text)
                 if not foundByAPI[s] then
                     finalStats[s] = (finalStats[s] or 0) + v 
                 end
@@ -100,7 +123,6 @@ function MSC.SafeGetItemStats(itemLink, slotId)
         end
     end
     
-    -- 3. Project Enchants (Double-Dip Fix)
     if SGJ_Settings.ProjectEnchants and slotId then
         local _, _, _, existingEnchantID = string.find(itemLink, "item:(%d+):(%d+)")
         local hasEnchant = (existingEnchantID and tonumber(existingEnchantID) > 0)

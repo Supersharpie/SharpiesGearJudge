@@ -18,27 +18,43 @@ function MSC.UpdateLabCalc()
 
     local scoreMHOH, statsMHOH = 0, {}
     
+    -- MH Calculation
     if LabMH.link then 
         local s = MSC.SafeGetItemStats(LabMH.link, 16)
         scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 16) 
-        for k, v in pairs(s) do if type(v) == "number" then statsMHOH[k] = (statsMHOH[k] or 0) + v end end 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then 
+                statsMHOH[k] = (statsMHOH[k] or 0) + v 
+            end
+        end 
     end
     
+    -- OH Calculation
     if LabOH.link then 
         local s = MSC.SafeGetItemStats(LabOH.link, 17)
         scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 17) 
-        for k, v in pairs(s) do if type(v) == "number" then statsMHOH[k] = (statsMHOH[k] or 0) + v end end 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then 
+                statsMHOH[k] = (statsMHOH[k] or 0) + v 
+            end
+        end 
     end
     
+    -- 2H Calculation
     local score2H, stats2H = 0, {}
     if Lab2H.link then 
         local s = MSC.SafeGetItemStats(Lab2H.link, 16)
         score2H = score2H + MSC.GetItemScore(s, weights, profileName, 16) 
-        for k, v in pairs(s) do if type(v) == "number" then stats2H[k] = (stats2H[k] or 0) + v end end 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then 
+                stats2H[k] = (stats2H[k] or 0) + v 
+            end
+        end 
     end
     
     local scoreBase, statsBase = 0, {}
 
+    -- SCENARIO 1: Comparing Dual Wield (MH/OH) vs 2-Hander
     if (LabMH.link or LabOH.link) and Lab2H.link then
         scoreBase, statsBase = scoreMHOH, statsMHOH
         LabFrame.ScoreCurrent:SetText(string.format("Dual Wield: %.1f", scoreMHOH))
@@ -49,27 +65,37 @@ function MSC.UpdateLabCalc()
         
         local diffs = MSC.GetStatDifferences(stats2H, statsBase)
         local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
-        for i=1, math.min(8, #sortedDiffs) do
-            local e = sortedDiffs[i]; local name = MSC.GetCleanStatName(e.key)
+        for i=1, math.min(10, #sortedDiffs) do
+            local e = sortedDiffs[i]
+            local name = MSC.GetCleanStatName(e.key)
             local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
-            lines = lines .. (e.val > 0 and "|cff00ff00^ +" or "|cffff0000v ") .. valStr .. " " .. name .. "|r\n"
+            
+            -- NEW STYLE: "Stat Name: +Value" (Name Yellow, Value Colored)
+            local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
+            local sign = (e.val > 0) and "+" or ""
+            lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
         end
         LabFrame.Details:SetText(lines)
         return
     end
 
+    -- SCENARIO 2: Comparing Lab Item vs Currently Equipped
     local currMH = GetInventoryItemLink("player", 16)
     local currOH = GetInventoryItemLink("player", 17)
     
     if currMH then 
         local s = MSC.SafeGetItemStats(currMH, 16)
         scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 16) 
-        for k, v in pairs(s) do if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end end 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end 
+        end 
     end
     if currOH then 
         local s = MSC.SafeGetItemStats(currOH, 17)
         scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 17) 
-        for k, v in pairs(s) do if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end end 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end 
+        end 
     end
     
     local finalScore = (LabMH.link or LabOH.link) and scoreMHOH or score2H
@@ -83,16 +109,21 @@ function MSC.UpdateLabCalc()
     
     local diffs = MSC.GetStatDifferences(finalStats, statsBase)
     local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
-    for i=1, math.min(8, #sortedDiffs) do
-        local e = sortedDiffs[i]; local name = MSC.GetCleanStatName(e.key)
+    for i=1, math.min(10, #sortedDiffs) do
+        local e = sortedDiffs[i]
+        local name = MSC.GetCleanStatName(e.key)
         local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
-        lines = lines .. (e.val > 0 and "|cff00ff00^ +" or "|cffff0000v ") .. valStr .. " " .. name .. "|r\n"
+        
+        -- NEW STYLE: "Stat Name: +Value"
+        local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
+        local sign = (e.val > 0) and "+" or ""
+        lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
     end
     LabFrame.Details:SetText(lines)
 end
 
 -- =============================================================
--- FRAME CREATION
+-- FRAME CREATION (Safe Skinning Included)
 -- =============================================================
 local function CreateItemButton(name, parent, x, y, iconType, labelText)
     local btn = CreateFrame("Button", name, parent, "ItemButtonTemplate")
@@ -138,8 +169,8 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
 end
 
 function MSC.CreateLabFrame()
-    if LabFrame then 
-        if LabFrame:IsShown() then LabFrame:Hide() else LabFrame:Show() end
+    if MSCLabFrame then 
+        if MSCLabFrame:IsShown() then MSCLabFrame:Hide() else MSCLabFrame:Show() end
         return 
     end
     
@@ -151,7 +182,7 @@ function MSC.CreateLabFrame()
     
     if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
 
-    -- Dynamic Class Background (PATH FIXED HERE)
+    -- Dynamic Class Background
     local _, class = UnitClass("player")
     if class then
         local fixed = class:sub(1,1) .. class:sub(2):lower()
