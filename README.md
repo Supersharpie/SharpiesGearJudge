@@ -1,47 +1,46 @@
-# Sharpie's Gear Judge (Classic Era)
+# Sharpie's Gear Judge (v1.3.1)
+**The Final Verdict on your Gear for WoW Classic Era (Phase 6)**
 
-**The Final Verdict on your gear.**
+Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, and your level to render a final verdict: **UPGRADE** or **DOWNGRADE**.
 
-Sharpie's Gear Judge is a lightweight, intelligent gear analyzer for World of Warcraft: Classic Era. Unlike heavy addons that require manual simulation, the Judge lives in your tooltip and provides instant, context-aware advice.
+## ✨ Key Features
 
-## 🚀 Key Features
+### 🧠 Smart Scoring Engine
+* **Context Aware:** Compares 2-Handed weapons against your Main Hand + Off Hand combo automatically.
+* **Smart Leveling:** Automatically detects if you are leveling (1-59) and prioritizes **Stamina & Efficiency**. Once you hit 60, it seamlessly switches to **Raid Weights** (Hit Cap, Crit, Spell Power).
+* **Racial Synergy:** Knows your race! Humans get points for Swords/Maces, Orcs for Axes, etc.
+* **Weapon Proficiency:** Knows your class! Won't tell a Priest to equip a Sword.
 
-### 🧠 Smart Leveling Logic
-The Judge grows with you.
-* **Under Level 60:** It prioritizes **Stamina, Spirit, and Efficiency**. It knows you are questing and need to survive.
-* **At Level 60:** It automatically switches to **Raid Weights** (Hit Rating, Crit, Spell Power) to maximize your output.
+### 🔮 Enchant Projection (Potential Mode)
+* Don't be fooled by raw stats. "Potential Mode" simulates what an item *would* look like if you enchanted it with your current enchant.
+* Supports complex Phase 6 enchants (ZG Idols, Naxx Shoulder Enchants).
 
-### 🔮 Project Mode (Enchant Simulation)
-Don't be fooled by an unenchanted drop.
-* The Judge can "Project" your current enchant onto the new item.
-* *Example:* If your current gloves have +7 Agility, the Judge calculates the score of the new gloves *as if they also had +7 Agility*.
+### ⚖️ The Judge's Lab
+* Type `/sgj` to open the visual Drag-and-Drop laboratory.
+* Test hypothetical loadouts by dragging items from the shop, dungeon journal, or other players into the slots to compare against your current gear.
 
-### ⚖️ The Verdict UI
-Clean, "RatingBuster-style" tooltips.
-* Calculates **Derived Stats** (e.g., converts Stamina to Health, Strength to AP) based on your Class.
-* Shows clear `(+20)` or `(-5)` differences.
-* Filters out useless stats (Rogues won't see Mana; Mages won't see Attack Power).
+### ⚡ Lightning Fast UI
+* **RatingBuster Style:** Clean, yellow text aligned to the right.
+* **Derived Stats:** Shows the *real* value of stats (e.g., converts "10 Intellect" into "150 Mana + 0.16% Crit").
+* **Conflict Manager:** Automatically detects other addons (RestedXP, Pawn, Zygor) and offers to disable their conflicting tooltips so you have a clean experience.
 
-### 🛡️ Conflict Manager
-Plays nice with others.
-* Detects **RestedXP**, **Zygor**, and **Pawn**.
-* If found, it politely offers to disable *only* their conflicting gear arrows, keeping your leveling guides intact.
+## 🚀 Installation
+1.  Extract the `SharpiesGearJudge` folder into your WoW AddOns directory:
+    * `_classic_era_\Interface\AddOns\`
+2.  Launch WoW Classic.
 
-### 💍 Smart Slot Comparison
-* **Dual Wield:** Automatically finds the best Offhand in your bags to compare 2H vs. 1H+OH.
-* **Rings/Trinkets:** Automatically compares new items against your *weakest* equipped slot.
+## 🎮 Commands
+* `/sgj` or `/judge` - Open "The Judge's Lab" (Visual Comparison).
+* `/sgj options` - Open the Configuration Panel.
+* **Minimap Button:**
+    * **Left-Click:** Toggle Judge's Lab.
+    * **Right-Click:** Open Settings.
 
-## 🛠️ Commands
+## ⚙️ Configuration
+* **Strict Mode:** Compare items exactly as they drop.
+* **Potential Mode:** Compare items as if they were fully enchanted.
+* **Profile:** Auto-detects your spec, or force "Leveling/PvP" or "Tank" modes manually via the settings menu.
 
-* `/sgj` - Open the Judge's Lab (Drag & Drop comparison).
-* `/sgj config` - Open the Settings Menu.
-* `/sgj debug` - View the exact stat weights currently being applied to your character.
-
-## 📦 Installation
-
-1.  Download the **SharpiesGearJudge** folder.
-2.  Place it in `\World of Warcraft\_classic_era_\Interface\AddOns\`.
-3.  Log in and check your tooltips!
-
-## ❤️ Credits
-Created by **SuperSharpie**.
+## 📝 Credits
+* Author: SuperSharpie
+* Version: 1.3.1 (Phase 6 Ready)
