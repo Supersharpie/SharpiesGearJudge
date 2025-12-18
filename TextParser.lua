@@ -1,0 +1,81 @@
+local _, MSC = ...
+
+function MSC.ParseTooltipLine(text)
+    if not text then return nil, 0 end
+    
+    -- 1. SANITIZE (Remove Color Codes)
+    text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    
+    -- 2. IGNORE TEMPORARY EFFECTS (CRITICAL FIX)
+    -- This prevents "Use: +200 Spell Power" trinkets from being counted as permanent stats.
+    if text:find("^Use:") or text:find("^Chance on hit:") or text:find("^Procs:") then 
+        return nil, 0 
+    end
+    
+    local patterns = {
+        -- WEAPON SPEED
+        { pattern = "^Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
+        
+        -- HIT / SPELL HIT
+        { pattern = "%+(%d+)%%? Hit", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        
+        -- CRIT / SPELL CRIT
+        { pattern = "%+(%d+)%%? Crit", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { pattern = "Improves your chance to get a critical strike by (%d+)%%", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { pattern = "Increases your critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { pattern = "Increases your spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+        { pattern = "Improves your chance to get a critical strike with spells by (%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+        
+        -- DEFENSIVE (Block Value Added)
+        { pattern = "%+(%d+)%%? Dodge", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "Increases your chance to dodge an attack by (%d+)%%", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Parry", stat = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Block", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { pattern = "Increases your chance to block attacks with a shield by (%d+)%%", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { pattern = "Increases the block value of your shield by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, -- New
+        { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "Increased Defense %+(%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "%+(%d+) Defense", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" }, -- New: +10 Defense
+        
+        -- MANA PER 5 (MP5) - STRICTER
+        -- Removed the lazy "Restores X mana" pattern to avoid catching Potions/Runes
+        { pattern = "Restores (%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { pattern = "%+(%d+) Mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" }, -- New
+        
+        -- ATTACK POWER (Exclude Feral AP lines if necessary, currently generic)
+        { pattern = "Attack Power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { pattern = "%+(%d+) Attack Power", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        
+        -- SPELL POWER / HEALING
+        { pattern = "damage and healing done by magical spells and effects by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "damage done by magical spells and effects by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "healing done by spells and effects by up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
+        { pattern = "%+(%d+) Healing Spells", stat = "ITEM_MOD_HEALING_POWER_SHORT" }, -- New: +55 Healing Spells
+        { pattern = "%+(%d+) Spell Damage", stat = "ITEM_MOD_SPELL_POWER_SHORT" }, -- New: +30 Spell Damage
+        
+        -- SPECIFIC MAGIC DAMAGE
+        { pattern = "Shadow damage by up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "Fire damage by up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "Frost damage by up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "Arcane damage by up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "Nature damage by up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "Holy damage by up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+        
+        -- PRIMARY STATS
+        { pattern = "Agility by (%d+)", stat = "ITEM_MOD_AGILITY_SHORT" },
+        { pattern = "Strength by (%d+)", stat = "ITEM_MOD_STRENGTH_SHORT" },
+        { pattern = "Intellect by (%d+)", stat = "ITEM_MOD_INTELLECT_SHORT" },
+        { pattern = "Spirit by (%d+)", stat = "ITEM_MOD_SPIRIT_SHORT" },
+        { pattern = "Stamina by (%d+)", stat = "ITEM_MOD_STAMINA_SHORT" }
+    }
+    
+    for _, p in ipairs(patterns) do
+        local val = text:match(p.pattern)
+        if val then return p.stat, tonumber(val) end
+    end
+    return nil, 0
+end

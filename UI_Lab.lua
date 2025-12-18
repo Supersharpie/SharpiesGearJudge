@@ -3,8 +3,12 @@ local _, MSC = ...
 local LabFrame = nil
 local LabMH, LabOH, Lab2H = nil, nil, nil
 
+-- =============================================================
+-- THE CALCULATOR ENGINE
+-- =============================================================
 function MSC.UpdateLabCalc()
     if not LabFrame or not LabFrame:IsShown() then return end
+    
     local weights, profileName = MSC.GetCurrentWeights()
     LabFrame.ProfileText:SetText("Profile: " .. profileName)
     
@@ -13,18 +17,36 @@ function MSC.UpdateLabCalc()
     end
 
     local scoreMHOH, statsMHOH = 0, {}
-    if LabMH.link then local s = MSC.SafeGetItemStats(LabMH.link, 16); scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights); for k, v in pairs(s) do statsMHOH[k] = (statsMHOH[k] or 0) + v end end
-    if LabOH.link then local s = MSC.SafeGetItemStats(LabOH.link, 17); scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights); for k, v in pairs(s) do statsMHOH[k] = (statsMHOH[k] or 0) + v end end
+    
+    if LabMH.link then 
+        local s = MSC.SafeGetItemStats(LabMH.link, 16)
+        scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 16) 
+        for k, v in pairs(s) do if type(v) == "number" then statsMHOH[k] = (statsMHOH[k] or 0) + v end end 
+    end
+    
+    if LabOH.link then 
+        local s = MSC.SafeGetItemStats(LabOH.link, 17)
+        scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 17) 
+        for k, v in pairs(s) do if type(v) == "number" then statsMHOH[k] = (statsMHOH[k] or 0) + v end end 
+    end
+    
     local score2H, stats2H = 0, {}
-    if Lab2H.link then local s = MSC.SafeGetItemStats(Lab2H.link, 16); score2H = score2H + MSC.GetItemScore(s, weights); for k, v in pairs(s) do stats2H[k] = (stats2H[k] or 0) + v end end
+    if Lab2H.link then 
+        local s = MSC.SafeGetItemStats(Lab2H.link, 16)
+        score2H = score2H + MSC.GetItemScore(s, weights, profileName, 16) 
+        for k, v in pairs(s) do if type(v) == "number" then stats2H[k] = (stats2H[k] or 0) + v end end 
+    end
+    
     local scoreBase, statsBase = 0, {}
 
     if (LabMH.link or LabOH.link) and Lab2H.link then
         scoreBase, statsBase = scoreMHOH, statsMHOH
         LabFrame.ScoreCurrent:SetText(string.format("Dual Wield: %.1f", scoreMHOH))
         LabFrame.ScoreNew:SetText(string.format("2-Hander: %.1f", score2H))
+        
         local diff = score2H - scoreBase
         LabFrame.Result:SetText(diff > 0 and string.format("|cff00ff002H WINS (+%.1f)|r", diff) or string.format("|cffff00002H LOSES (%.1f)|r", diff))
+        
         local diffs = MSC.GetStatDifferences(stats2H, statsBase)
         local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
         for i=1, math.min(8, #sortedDiffs) do
@@ -36,9 +58,19 @@ function MSC.UpdateLabCalc()
         return
     end
 
-    local currMH = GetInventoryItemLink("player", 16); local currOH = GetInventoryItemLink("player", 17)
-    if currMH then local s = MSC.SafeGetItemStats(currMH, 16); scoreBase = scoreBase + MSC.GetItemScore(s, weights); for k, v in pairs(s) do statsBase[k] = (statsBase[k] or 0) + v end end
-    if currOH then local s = MSC.SafeGetItemStats(currOH, 17); scoreBase = scoreBase + MSC.GetItemScore(s, weights); for k, v in pairs(s) do statsBase[k] = (statsBase[k] or 0) + v end end
+    local currMH = GetInventoryItemLink("player", 16)
+    local currOH = GetInventoryItemLink("player", 17)
+    
+    if currMH then 
+        local s = MSC.SafeGetItemStats(currMH, 16)
+        scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 16) 
+        for k, v in pairs(s) do if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end end 
+    end
+    if currOH then 
+        local s = MSC.SafeGetItemStats(currOH, 17)
+        scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 17) 
+        for k, v in pairs(s) do if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end end 
+    end
     
     local finalScore = (LabMH.link or LabOH.link) and scoreMHOH or score2H
     local finalStats = (LabMH.link or LabOH.link) and statsMHOH or stats2H
@@ -59,10 +91,21 @@ function MSC.UpdateLabCalc()
     LabFrame.Details:SetText(lines)
 end
 
+-- =============================================================
+-- FRAME CREATION
+-- =============================================================
 local function CreateItemButton(name, parent, x, y, iconType, labelText)
     local btn = CreateFrame("Button", name, parent, "ItemButtonTemplate")
-    btn:SetPoint("CENTER", parent, "CENTER", x, y); btn:RegisterForClicks("AnyUp"); MSC.ApplyElvUISkin(btn) 
-    btn.empty = btn:CreateTexture(nil, "BACKGROUND"); btn.empty:SetAllPoints(btn); btn.empty:SetTexture(iconType == "OH" and "Interface\\Paperdoll\\UI-PaperDoll-Slot-SecondaryHand" or "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand"); btn.empty:SetAlpha(0.5)
+    btn:SetPoint("CENTER", parent, "CENTER", x, y)
+    btn:RegisterForClicks("AnyUp")
+    
+    if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(btn) end
+    
+    btn.empty = btn:CreateTexture(nil, "BACKGROUND")
+    btn.empty:SetAllPoints(btn)
+    btn.empty:SetTexture(iconType == "OH" and "Interface\\Paperdoll\\UI-PaperDoll-Slot-SecondaryHand" or "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand")
+    btn.empty:SetAlpha(0.5)
+    
     local r, g, b, a = 0.2, 0.8, 1.0, 0.6; local thick = 2
     btn.bT = btn:CreateTexture(nil, "OVERLAY", nil, 7); btn.bT:SetColorTexture(r, g, b, a); btn.bT:SetPoint("TOPLEFT"); btn.bT:SetPoint("TOPRIGHT"); btn.bT:SetHeight(thick)
     btn.bB = btn:CreateTexture(nil, "OVERLAY", nil, 7); btn.bB:SetColorTexture(r, g, b, a); btn.bB:SetPoint("BOTTOMLEFT"); btn.bB:SetPoint("BOTTOMRIGHT"); btn.bB:SetHeight(thick)
@@ -95,31 +138,45 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
 end
 
 function MSC.CreateLabFrame()
-    if LabFrame then LabFrame:Show(); MSC.UpdateLabCalc(); return end
-    LabFrame = CreateFrame("Frame", "MSCLabFrame", UIParent)
-    LabFrame:SetSize(360, 420); LabFrame:SetPoint("CENTER"); LabFrame:SetMovable(true); LabFrame:EnableMouse(true); LabFrame:RegisterForDrag("LeftButton")
-    LabFrame:SetScript("OnDragStart", LabFrame.StartMoving); LabFrame:SetScript("OnDragStop", LabFrame.StopMovingOrSizing)
-    LabFrame.bg = LabFrame:CreateTexture(nil, "BACKGROUND"); LabFrame.bg:SetAllPoints(LabFrame); LabFrame.bg:SetColorTexture(0, 0, 0, 0.9) 
+    if LabFrame then 
+        if LabFrame:IsShown() then LabFrame:Hide() else LabFrame:Show() end
+        return 
+    end
     
-    local _, class = UnitClass("player"); local fixed = class:sub(1,1) .. class:sub(2):lower()
-    LabFrame.crest = LabFrame:CreateTexture(nil, "ARTWORK"); LabFrame.crest:SetAllPoints(LabFrame)
-    LabFrame.crest:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixed .. ".tga")
-    LabFrame.crest:SetVertexColor(0.6, 0.6, 0.6, 0.6)
+    local f = CreateFrame("Frame", "MSCLabFrame", UIParent)
+    f:SetSize(360, 420); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     
-    LabFrame.title = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); LabFrame.title:SetPoint("TOP", LabFrame, "TOP", 0, -10); LabFrame.title:SetText("Sharpie's Gear Judge")
+    f.bg = f:CreateTexture(nil, "BACKGROUND"); f.bg:SetAllPoints(f); f.bg:SetColorTexture(0, 0, 0, 0.9) 
     
-    LabMH = CreateItemButton("MSCLabMH", LabFrame, -65, 120, "MH", "Main Hand")
-    LabOH = CreateItemButton("MSCLabOH", LabFrame, 65, 120, "OH", "Off Hand")
-    Lab2H = CreateItemButton("MSCLab2H", LabFrame, 0, 50, "2H", "Two-Hand")
+    if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
 
-    LabFrame.Instruction = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); LabFrame.Instruction:SetPoint("TOP", Lab2H, "BOTTOM", 0, -5); LabFrame.Instruction:SetText("(Shift+Click to clear)"); LabFrame.Instruction:SetTextColor(0.5, 0.5, 0.5, 1)
+    -- Dynamic Class Background (PATH FIXED HERE)
+    local _, class = UnitClass("player")
+    if class then
+        local fixed = class:sub(1,1) .. class:sub(2):lower()
+        f.crest = f:CreateTexture(nil, "ARTWORK"); f.crest:SetAllPoints(f)
+        f.crest:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixed .. ".tga")
+        f.crest:SetVertexColor(0.6, 0.6, 0.6, 0.6)
+    end
     
-    LabFrame.ProfileText = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); LabFrame.ProfileText:SetPoint("TOP", LabFrame, "TOP", 0, -30)
-    LabFrame.ScoreCurrent = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal"); LabFrame.ScoreCurrent:SetPoint("CENTER", LabFrame, "CENTER", 0, -10)
-    LabFrame.ScoreNew = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal"); LabFrame.ScoreNew:SetPoint("CENTER", LabFrame, "CENTER", 0, -30)
-    LabFrame.Result = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); LabFrame.Result:SetPoint("CENTER", LabFrame, "CENTER", 0, -50)
-    LabFrame.Details = LabFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); LabFrame.Details:SetPoint("TOP", LabFrame.Result, "BOTTOM", 0, -10); LabFrame.Details:SetJustifyH("CENTER")
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.title:SetPoint("TOP", f, "TOP", 0, -10); f.title:SetText("Sharpie's Gear Judge")
     
-    CreateFrame("Button", nil, LabFrame, "UIPanelCloseButton"):SetPoint("TOPRIGHT", LabFrame, "TOPRIGHT", 0, 0)
+    LabMH = CreateItemButton("MSCLabMH", f, -65, 120, "MH", "Main Hand")
+    LabOH = CreateItemButton("MSCLabOH", f, 65, 120, "OH", "Off Hand")
+    Lab2H = CreateItemButton("MSCLab2H", f, 0, 50, "2H", "Two-Hand")
+
+    f.Instruction = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.Instruction:SetPoint("TOP", Lab2H, "BOTTOM", 0, -5); f.Instruction:SetText("(Shift+Click to clear)"); f.Instruction:SetTextColor(0.5, 0.5, 0.5, 1)
+    
+    f.ProfileText = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.ProfileText:SetPoint("TOP", f, "TOP", 0, -30)
+    f.ScoreCurrent = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.ScoreCurrent:SetPoint("CENTER", f, "CENTER", 0, -10)
+    f.ScoreNew = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.ScoreNew:SetPoint("CENTER", f, "CENTER", 0, -30)
+    f.Result = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Result:SetPoint("CENTER", f, "CENTER", 0, -50)
+    f.Details = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.Details:SetPoint("TOP", f.Result, "BOTTOM", 0, -10); f.Details:SetJustifyH("CENTER")
+    
+    local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    close:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0)
+    
+    LabFrame = f 
     MSC.UpdateLabCalc()
 end

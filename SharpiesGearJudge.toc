@@ -6,6 +6,12 @@
 ## SavedVariables: SGJ_Settings
 
 Database.lua
-Utils.lua
+Data_Tables.lua
+TextParser.lua
+Enchants.lua
+Scoring.lua
+Helpers.lua
+ConflictManager.lua
+UI_Lab.lua
 UI_Menus.lua
 Core.lua

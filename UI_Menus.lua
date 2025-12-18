@@ -37,9 +37,9 @@ MinimapButton:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", 
 
 MinimapButton:SetScript("OnClick", function(self, button) 
     if button == "LeftButton" then 
-        if _G["MSCLabFrame"] and _G["MSCLabFrame"]:IsShown() then _G["MSCLabFrame"]:Hide() else MSC.CreateLabFrame() end
+        if MSC.CreateLabFrame then MSC.CreateLabFrame() else print("Lab module not loaded.") end
     else 
-        if _G["MyStatCompareFrame"] and _G["MyStatCompareFrame"]:IsShown() then _G["MyStatCompareFrame"]:Hide() else MSC.CreateOptionsFrame() end
+        MSC.CreateOptionsFrame() 
     end 
 end)
 
@@ -52,9 +52,12 @@ MinimapButton:SetScript("OnEnter", function(self)
 end)
 MinimapButton:SetScript("OnLeave", GameTooltip_Hide)
 
--- 2. CONFIGURATION PANEL
+-- 2. CONFIGURATION PANEL (TOGGLE FIX)
 function MSC.CreateOptionsFrame()
-    if MyStatCompareFrame then MyStatCompareFrame:Show() return end
+    if MyStatCompareFrame then 
+        if MyStatCompareFrame:IsShown() then MyStatCompareFrame:Hide() else MyStatCompareFrame:Show() end
+        return 
+    end
     
     local f = CreateFrame("Frame", "MyStatCompareFrame", UIParent, "BasicFrameTemplateWithInset, BackdropTemplate")
     f:SetSize(400, 500)
@@ -86,15 +89,12 @@ function MSC.CreateOptionsFrame()
     
     local function OnClick(self) UIDropDownMenu_SetSelectedID(dropDown, self:GetID()); SGJ_Settings.Mode = self.value; print("|cff00ccffSharpie:|r Profile changed to " .. self.value) end
     local function Initialize(self, level)
-        -- 1. Auto Detect
         local info = UIDropDownMenu_CreateInfo(); info.text = "Auto-Detect"; info.value = "Auto"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Auto"); UIDropDownMenu_AddButton(info, level)
         local _, englishClass = UnitClass("player")
         if MSC.SpecNames and MSC.SpecNames[englishClass] then
             for i=1, 3 do local spec = MSC.SpecNames[englishClass][i]; info = UIDropDownMenu_CreateInfo(); info.text = spec; info.value = spec; info.func = OnClick; info.checked = (SGJ_Settings.Mode == spec); UIDropDownMenu_AddButton(info, level) end
         end
-        -- 2. Leveling / PvP
         info = UIDropDownMenu_CreateInfo(); info.text = "Leveling / PvP"; info.value = "Hybrid"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Hybrid"); UIDropDownMenu_AddButton(info, level)
-        -- 3. Tanking Profile
         if MSC.WeightDB and MSC.WeightDB[englishClass] and MSC.WeightDB[englishClass]["Tank"] then
             info = UIDropDownMenu_CreateInfo(); info.text = "Tanking (Threat/Surv)"; info.value = "Tank"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Tank"); UIDropDownMenu_AddButton(info, level)
         end
@@ -106,11 +106,8 @@ function MSC.CreateOptionsFrame()
     local minimapCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); minimapCheck:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", 0, -10); minimapCheck.Text:SetText("Show Minimap Button"); minimapCheck:SetChecked(not SGJ_Settings.HideMinimap)
     minimapCheck:SetScript("OnClick", function(self) SGJ_Settings.HideMinimap = not self:GetChecked(); MSC.UpdateMinimapPosition() end)
 
-    local soundCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); soundCheck:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 0, -5); soundCheck.Text:SetText("Enable Interface Sounds"); soundCheck:SetChecked(not SGJ_Settings.MuteSounds)
-    soundCheck:SetScript("OnClick", function(self) SGJ_Settings.MuteSounds = not self:GetChecked() end)
-
-    local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", soundCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
+    local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
     tooltipCheck:SetScript("OnClick", function(self) SGJ_Settings.HideTooltips = not self:GetChecked() end)
     
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie")
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie (v1.3.0)")
 end

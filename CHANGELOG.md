@@ -1,52 +1,43 @@
-# Sharpie's Gear Judge - Changelog
+## v1.3.1 - Critical Fixes & Logic Hardening
+### 🛡️ Critical Bug Fixes
+* **"Phantom Stat" Fix (Double-Counting):** Fixed a major bug where the addon would count stats twice (once from the game database + once from reading the green text), causing items to show double their actual values (e.g., 55 AP instead of 28). The math is now verified 100% accurate.
+* **MP5 Parsing Fix:** Fixed an issue where "Restores X mana per 5 sec" was being ignored on certain gear (like Grand Marshal weapons), causing Healer scores to be lower than they should be.
+* **Lab Crash Fix:** Fixed a Lua error ("arithmetic on boolean") that occurred when dragging items into the Judge's Lab 2-Hander slot.
+* **Minimap Toggle:** The minimap button now correctly toggles the window **Open AND Closed** (previously it would only open it).
 
-v1.2.0 - v1.3.0
-========================================
-NEW FEATURES:
+### 🧠 Logic Hardening
+* **Weapon Proficiency Enforcement:** Implemented strict class checks. The addon now knows that Mages cannot use Axes and Rogues cannot use 2H Swords, preventing invalid "Upgrades" from being suggested.
+* **"On Use" Exploit Fix:** The calculator now strictly ignores temporary stats from "Use:" and "Chance on hit:" effects, preventing trinkets from showing artificially high scores.
+* **Weapon Skill Weights:** Added "Weapon Skill" to the scoring database. Racial bonuses (+5 Skill) now correctly contribute to your item score instead of being worth zero.
+* **"Double-Dip" Prevention:** Fixed a logic error in "Potential Mode" where the addon would try to project a virtual enchant onto an item that already had a real enchant.
+
+### 🛠️ UI Restoration
+* **Judge's Lab Restored:** The visual Drag-and-Drop window (`/sgj`) is fully functional again with correct background art and comparison logic.
+* **ElvUI Compatibility:** Added safe skinning checks to prevent errors for users running ElvUI skins.
+
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+## v1.3.0
 - Smart Leveling Logic: The Judge now detects if you are under Level 60. It automatically switches to a "Leveling Profile" (High Stamina/Efficiency) to keep you alive, then switches to "Raid Mode" (Hit Cap/Crit) automatically at max level.
 - Naxxramas & ZG Ready: Added support for "Multi-Stat" Enchants, including Sapphiron Shoulder Enchants and ZG Idols in "Project Mode."
 - RatingBuster-Style UI: Completely redesigned the tooltip. Stats are now clean, yellow-aligned text with derived stats (Health, Mana, AP) calculated automatically based on your class.
 - Smart Ring & Trinket Logic: When hovering over a Ring or Trinket, the Judge now compares it against your WEAKEST equipped slot (instead of always Slot 1).
 - Conflict Manager: Detects if RestedXP, Zygor, or Pawn are active. Offers a one-click popup to disable their conflicting "Gear Arrows" without breaking their other features.
-
-FIXES & IMPROVEMENTS:
-- Fixed a crash related to the "Smart Partner Finder" (nil value error).
-- Updated Interface version to 11508 (Phase 6).
-- Added a debug command (/sgj debug) to verify active stat weights.
-- Refined Warlock and Mage leveling weights to prioritize survival/uptime.
-
-## [v1.1.9] - 2025-12-16
-### 🛡️ Stat Weight Overhaul (Raid, PvP & Leveling)
-* **Tanking Logic Update:**
-    * **Integrated Tanking:** Warriors and Paladins now have sophisticated Threat/Survival logic built directly into their "Protection" spec profile. No need to toggle a separate mode.
-    * **Feral Druids:** Added a dedicated **"Tanking"** mode to the dropdown menu, allowing Druids to manually switch between Cat (DPS) and Bear (Tank) logic.
-* **PvP / Solo Mode:** Renamed the "Hybrid" option to **"Leveling / PvP"**. This profile is now tuned to prioritize Stamina (Survival) and Burst Stats (Crit/Agility) for open-world efficiency and battlegrounds.
-* **Hit Rating Audit:** Fixed a critical issue where Enhancement Shamans, Hunters, Mages, and Warlocks were missing **Hit Rating** in their default profiles. The addon now correctly values Hit as a top-tier stat for raiding.
-* **Healer Tuning:**
-    * **Holy Paladin:** Now correctly prioritizes **Crit Rating** (Illumination talent) over MP5.
-    * **Priest/Shaman:** Added weight to Crit Rating for Armor Buff procs (Inspiration/Ancestral Healing).
-
-### 🔮 Phase 6 Enchant Support
-* **Multi-Stat Support:** Upgraded the enchant database to support complex enchants that add multiple stats at once (e.g., +24 AP and +1% Hit).
-* **New Enchants Added:**
-    * **Naxxramas (Sapphiron):** Added all Shoulder enchants (Might/Power/Fortitude/Resilience of the Scourge).
-    * **Zul'Gurub:** Added all Head/Leg Idols (Falcon's Call, etc.) and Exalted Shoulder enchants.
-    * **Dire Maul:** Added Libram enchants (Focus, Rapidity, Protection).
-
-### 🧠 Smart Leveling Logic
-* **Auto-Switching:** The addon now intelligently detects if you are leveling (Level 1-59) versus Raiding (Level 60).
-    * **Healer Protection:** If you are leveling as a Healing spec (Holy/Resto), the addon automatically forces the **"Leveling / PvP"** profile so you see Spell Damage/Stamina stats instead of useless +Healing.
-    * **DPS Survival:** Added Stamina weights to all DPS profiles for sub-60 players to ensure survivability while leveling.
-    * **Seamless Transition:** Upon reaching Level 60, the addon automatically switches to the strict "Raid Weights" for your spec.
-
-### 🛠️ UI & Fixes
-* **Minimap Button:** Fixed the button to correctly toggle the window **Open/Closed** (previously only opened it).
-* **Dropdown Menu:** Updated to reflect the new "Leveling / PvP" and "Tanking" options dynamically based on your class.
-* **Smart Partnering:** Improved the "Best Pair" detection to ensure off-hands are correctly suggested for Main Hand weapons.
-
 ------------------------------------------------------------------------------------------------
 
-## [v1.1.8] - 2025-12-15
+## v1.2.0 
+### 🛡️ Stat Weight Overhaul (Raid, PvP & Leveling)
+* **Tanking Logic Update:** Warriors and Paladins now have sophisticated Threat/Survival logic built directly into their "Protection" spec profile.
+* **PvP / Solo Mode:** Renamed "Hybrid" to "Leveling / PvP". Tuned for Stamina (Survival) and Burst.
+* **Hit Rating Audit:** Fixed missing Hit Rating weights for Casters and Hunters.
+* **Healer Tuning:** Paladins now prioritize Crit (Illumination), Priests/Shamans prioritize Crit (Armor Buffs).
+
+### 🔮 Phase 6 Enchant Support
+* **Multi-Stat Support:** Database now handles complex enchants (e.g., ZG Idols, Naxx Shoulder Enchants).
+------------------------------------------------------------------------------------------------
+
+## v1.1.8 
 ### 🧠 Smart Context & Partnering
 * **"Gap Filling" Logic:** The addon now intelligently handles comparisons when slots are empty or when cross-comparing weapon types.
     * **2-Hander vs Dual Wield:** If you wield a 2H and hover over a 1H weapon, the addon automatically finds the **Best Available Off-Hand** (Equipped or Bag) to show you the *true* difference.
@@ -62,13 +53,11 @@ FIXES & IMPROVEMENTS:
     * Uses a custom **Text Scanner** for Classic Era quirks (Green Text, "Equip:" effects, and "Reversed" stats like `Spell Damage +30`).
 * **Enchant Double-Dip Fix:** Fixed a bug where "Project Mode" would accidentally add stats to an item that already had an enchant. It now checks for existing enchants before projecting.
 * **Minimap Button:** Fixed the button behavior so it correctly toggles the window **Open/Closed** instead of just opening it.
-
 ------------------------------------------------------------------------------------------------
 
-### ✨ New Features (v1.1.7+)
+## v1.1.7 - New Features
 * **Enchant Projection 2.0:** Replaced the old API scan with a robust **Enchant ID Database** for instant, accurate projection of Classic enchants (+30 Spell Power, Crusader, etc.).
 * **New Configuration Panel:** Modern settings menu with radio buttons for "Strict" vs "Potential" modes and manual Spec selection.
-
 ------------------------------------------------------------------------------------------------
 
 ## v1.1.0 — The "Total Power" Update
@@ -79,7 +68,6 @@ FIXES & IMPROVEMENTS:
     * Widened the Lab window to 360px for better artwork aspect ratio.
     * Added high-visibility (lowered alpha) cyan borders to item slots.
 * **Refactor:** Optimized `Utils.lua` to handle complex multi-stat scanning in a single pass.
-
 ------------------------------------------------------------------------------------------------
 
 ## v1.0.0 - The "Judge" Update (Official Release)
@@ -98,14 +86,12 @@ FIXES & IMPROVEMENTS:
 * **Compatibility:**
     * Fixed a major conflict with **ElvUI** where skinning would delete custom borders.
     * Added a "Safe Skinning" method to support ElvUI users without breaking the addon's look.
-
 ------------------------------------------------------------------------------------------------
 
 ## v0.9 (Beta)
 * Added Bag Scanning logic to automatically pair 1H/OH items during comparison.
 * Added "Verdict" logic to tooltips (Green/Red text for upgrades/downgrades).
 * Implemented stat weight database for all Classic classes.
-
 ------------------------------------------------------------------------------------------------
 
 ## v0.5 (Alpha)
