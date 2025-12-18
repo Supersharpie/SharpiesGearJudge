@@ -194,15 +194,17 @@ function MSC.UpdateTooltip(tooltip)
             or entry.key == "ITEM_MOD_CRIT_RATING_SHORT" or entry.key == "ITEM_MOD_HIT_RATING_SHORT" 
             or entry.key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" or entry.key == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" 
             or entry.key == "ITEM_MOD_MANA_REGENERATION_SHORT" or entry.key == "ITEM_MOD_BLOCK_VALUE_SHORT"
-            or entry.key == "ITEM_MOD_ARMOR_SHORT" or entry.key == "ITEM_MOD_DODGE_RATING_SHORT" then isRelevant = true end
-
+            or entry.key == "ITEM_MOD_ARMOR_SHORT" or entry.key == "ITEM_MOD_DODGE_RATING_SHORT" 
+			or entry.key == "ITEM_MOD_CRIT_FROM_STATS_SHORT" or entry.key == "ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT" 
+			then isRelevant = true end
+			
             if isRelevant then
                 local cleanName = MSC.GetCleanStatName(entry.key)
                 
                 -- CASTER OVERRIDES:
                 if entry.key == "ITEM_MOD_HEALTH_SHORT" and itemHasStam then cleanName = "Health (from Stam)" end
                 if entry.key == "ITEM_MOD_MANA_SHORT" and itemHasInt then cleanName = "Mana (from Int)" end
-                if entry.key == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" and itemHasInt then cleanName = "Spell Crit (from Int)" end
+               -- if entry.key == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" and itemHasInt then cleanName = "Spell Crit (from Int)" end
                 if entry.key == "ITEM_MOD_MANA_REGENERATION_SHORT" and itemHasSpirit then cleanName = "Mana Regen (from Spt)" end
 
                 -- PHYSICAL OVERRIDES:
@@ -210,7 +212,7 @@ function MSC.UpdateTooltip(tooltip)
                 if entry.key == "ITEM_MOD_BLOCK_VALUE_SHORT" and itemHasStr then cleanName = "Block Val (from Str)" end
                 if entry.key == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" and itemHasAgi then cleanName = "Ranged AP (from Agi)" end
                 if entry.key == "ITEM_MOD_DODGE_RATING_SHORT" and itemHasAgi then cleanName = "Dodge (from Agi)" end
-                if entry.key == "ITEM_MOD_CRIT_RATING_SHORT" and itemHasAgi then cleanName = "Crit (from Agi)" end
+               -- if entry.key == "ITEM_MOD_CRIT_RATING_SHORT" and itemHasAgi then cleanName = "Crit (from Agi)" end
                 if entry.key == "ITEM_MOD_ARMOR_SHORT" and itemHasAgi then cleanName = "Armor (from Agi)" end
 
                 if cleanName and cleanName ~= "" then

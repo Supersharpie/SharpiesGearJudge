@@ -104,3 +104,29 @@ MSC.SlotMap = {
     ["INVTYPE_HOLDABLE"]=17, ["INVTYPE_RANGED"]=18, ["INVTYPE_THROWN"]=18, 
     ["INVTYPE_RANGEDRIGHT"]=18, ["INVTYPE_RELIC"]=18 
 }
+
+-- =============================================================
+-- 6. CRIT CONVERSIONS (Approximate Level 60 Values)
+-- =============================================================
+MSC.StatToCritRatios = {
+    ["WARRIOR"] = { Agi = 20 },
+    ["ROGUE"]   = { Agi = 29 },
+    ["HUNTER"]  = { Agi = 53 }, -- Note: Scales with level, approx 53 @ 60
+    ["PALADIN"] = { Agi = 20, Int = 29.5 },
+    ["SHAMAN"]  = { Agi = 20, Int = 59.5 },
+    ["DRUID"]   = { Agi = 20, Int = 60 },
+    ["MAGE"]    = { Agi = 20, Int = 59.5 },
+    ["PRIEST"]  = { Agi = 20, Int = 59.2 },
+    ["WARLOCK"] = { Agi = 20, Int = 60.6 },
+}
+
+-- [UPDATE THE ShortNames TABLE]
+MSC.ShortNames = {
+    -- ... existing entries ...
+    ["ITEM_MOD_CRIT_FROM_STATS_SHORT"]    = "Crit (from Agi)",
+    ["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] = "Spell Crit (from Int)",
+    -- ... ensure ITEM_MOD_CRIT_RATING_SHORT maps to "Equip Crit" or "Crit" ...
+    ["ITEM_MOD_CRIT_RATING_SHORT"]        = "Equip Crit", 
+    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]  = "Equip Spell Crit",
+    -- ...
+}

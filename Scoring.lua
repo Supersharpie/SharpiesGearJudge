@@ -41,7 +41,7 @@ function MSC.ExpandDerivedStats(stats, itemLink)
     for k, v in pairs(stats) do out[k] = v end
     local _, class = UnitClass("player")
     local _, race = UnitRace("player")
-    local powerType = UnitPowerType("player") 
+    local powerType = UnitPowerType("player")
     
     -- RACIAL WEAPON SKILL (Now checks numeric ID)
     if itemLink and MSC.RacialTraits and MSC.RacialTraits[race] then
@@ -63,6 +63,25 @@ function MSC.ExpandDerivedStats(stats, itemLink)
         if class == "HUNTER" or class == "ROGUE" then ap = ap + str + agi else ap = ap + (str * 2) end
         if ap > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = ap end
     end
+	
+	local ratios = MSC.StatToCritRatios[class]
+    if ratios then
+        -- Agility -> Crit
+        if ratios.Agi and out["ITEM_MOD_AGILITY_SHORT"] then
+            local critVal = out["ITEM_MOD_AGILITY_SHORT"] / ratios.Agi
+            if critVal > 0 then
+                out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] or 0) + critVal
+            end
+        end
+        -- Intellect -> Spell Crit
+        if ratios.Int and out["ITEM_MOD_INTELLECT_SHORT"] then
+             local spellCritVal = out["ITEM_MOD_INTELLECT_SHORT"] / ratios.Int
+             if spellCritVal > 0 then
+                 out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] or 0) + spellCritVal
+             end
+        end
+    end
+	
     if class == "HUNTER" then
         local rap, agi = out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0, out["ITEM_MOD_AGILITY_SHORT"] or 0
         rap = rap + (agi * 2); if rap > 0 then out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = rap end
