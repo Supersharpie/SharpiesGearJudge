@@ -41,10 +41,10 @@ MSC.WeightDB = {
         -- LEVELING
         -- 1-20: Wand DPS is primary damage. Spirit Tap is primary regen.
         ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-        -- 21-40: Wand Specialization active. Spells begin to weave in.
-        ["Leveling_21_40"] = { ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        -- 21-40: Wand Spec active. Added INTELLECT (1.2) to ensure large Mana pool items win.
+        ["Leveling_21_40"] = { ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 },
         -- 41-59: Shadowform Era. Shadow Damage becomes the #1 stat.
-        ["Leveling_41_59"] = { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
+        ["Leveling_41_59"] = { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
     },
     ["ROGUE"] = {
         ["Default"]       = { ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
@@ -84,7 +84,7 @@ MSC.WeightDB = {
         -- LEVELING
         -- 1-20: Wand DPS is primary finisher. Int for Mana Pool.
         ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-        -- 21-40: AoE Farming risks require higher Stamina.
+        -- 21-40: AoE Farming risks require Stamina, but INTELLECT (1.5) is mandatory for Blizzard uptime.
         ["Leveling_21_40"] = { ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5 },
         -- 41-59: Shatter Combos. Spell Power stacking.
         ["Leveling_41_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
@@ -99,10 +99,10 @@ MSC.WeightDB = {
         -- LEVELING
         -- 1-20: Wand DPS is Life. Stamina IS Mana (Life Tap).
         ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
-        -- 21-40: Drain Life unlocked, but Wands still used as filler.
-        ["Leveling_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2 },
+        -- 21-40: Added INTELLECT (1.0) and SPIRIT (0.5) to ensure stat sticks aren't ignored.
+        ["Leveling_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
         -- 41-59: Drain Tanking (Dark Pact). Shadow Dmg + Stamina are mostly what matters.
-        ["Leveling_41_59"] = { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 },
+        ["Leveling_41_59"] = { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
     },
     ["SHAMAN"] = {
         ["Default"]     = { ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
@@ -114,8 +114,8 @@ MSC.WeightDB = {
         -- LEVELING
         -- 1-20: Auto-attacking with Staff/Mace + Shocks. Str/Stam/Int.
         ["Leveling_1_20"]  = { ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-        -- 21-40: Windfury Weapon (Lvl 30). Strength and Agi.
-        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+        -- 21-40: Windfury Weapon (Lvl 30). Strength and Agi. Bumped INTELLECT to 1.0 for shocks/totems.
+        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
         -- 41-59: Stormstrike. Crit starts to scale well with Flurry.
         ["Leveling_41_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2 },
     },

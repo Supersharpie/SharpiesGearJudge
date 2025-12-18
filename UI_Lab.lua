@@ -13,7 +13,7 @@ function MSC.UpdateLabCalc()
     LabFrame.ProfileText:SetText("Profile: " .. profileName)
     
     if not LabMH.link and not LabOH.link and not Lab2H.link then
-        LabFrame.ScoreCurrent:SetText(""); LabFrame.ScoreNew:SetText(""); LabFrame.Result:SetText("Drag items to start"); LabFrame.Details:SetText(""); return
+        LabFrame.ScoreCurrent:SetText(""); LabFrame.ScoreNew:SetText(""); LabFrame.Result:SetText("Shift+Click items to add"); LabFrame.Details:SetText(""); return
     end
 
     local scoreMHOH, statsMHOH = 0, {}
@@ -69,8 +69,6 @@ function MSC.UpdateLabCalc()
             local e = sortedDiffs[i]
             local name = MSC.GetCleanStatName(e.key)
             local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
-            
-            -- NEW STYLE: "Stat Name: +Value" (Name Yellow, Value Colored)
             local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
             local sign = (e.val > 0) and "+" or ""
             lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
@@ -113,8 +111,6 @@ function MSC.UpdateLabCalc()
         local e = sortedDiffs[i]
         local name = MSC.GetCleanStatName(e.key)
         local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
-        
-        -- NEW STYLE: "Stat Name: +Value"
         local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
         local sign = (e.val > 0) and "+" or ""
         lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
@@ -123,7 +119,7 @@ function MSC.UpdateLabCalc()
 end
 
 -- =============================================================
--- FRAME CREATION (Safe Skinning Included)
+-- FRAME CREATION
 -- =============================================================
 local function CreateItemButton(name, parent, x, y, iconType, labelText)
     local btn = CreateFrame("Button", name, parent, "ItemButtonTemplate")
@@ -147,7 +143,7 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
 
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(labelText); GameTooltip:AddLine("|cffaaaaaaDrag item here|r") end
+        if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(labelText); GameTooltip:AddLine("|cffaaaaaaShift+Click any item to link|r") end
         GameTooltip:Show()
     end)
     btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -179,7 +175,6 @@ function MSC.CreateLabFrame()
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     
     f.bg = f:CreateTexture(nil, "BACKGROUND"); f.bg:SetAllPoints(f); f.bg:SetColorTexture(0, 0, 0, 0.9) 
-    
     if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
 
     -- Dynamic Class Background
@@ -211,3 +206,57 @@ function MSC.CreateLabFrame()
     LabFrame = f 
     MSC.UpdateLabCalc()
 end
+
+-- =============================================================
+-- ATLASLOOT / CHAT LINK SUPPORT (Shift+Click Magic)
+-- =============================================================
+local function LoadLabItem(btn, link)
+    if not btn or not link then return end
+    btn.link = link
+    btn.icon:SetTexture(select(10, GetItemInfo(link)))
+    btn.empty:Hide()
+end
+
+hooksecurefunc("ChatEdit_InsertLink", function(text)
+    -- FIX 1: Ignore if clicking the buttons themselves (avoids re-adding loop)
+    if LabMH and LabMH:IsMouseOver() then return end
+    if LabOH and LabOH:IsMouseOver() then return end
+    if Lab2H and Lab2H:IsMouseOver() then return end
+
+    if text and LabFrame and LabFrame:IsShown() and string.find(text, "item:", 1, true) then
+        local equipLoc = select(9, GetItemInfo(text))
+        
+        if equipLoc == "INVTYPE_2HWEAPON" then
+            LoadLabItem(Lab2H, text)
+            
+        elseif equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" then
+            LoadLabItem(LabOH, text)
+
+        elseif equipLoc == "INVTYPE_WEAPON" then
+             -- SMART LOGIC: If player is Rogue/Warrior/Hunter/Shaman, try to Dual Wield.
+             -- If player is Warlock/Mage/Priest/Druid, just replace MH (Correct).
+             local _, class = UnitClass("player")
+             local canDW = (class == "ROGUE" or class == "WARRIOR" or class == "HUNTER" or class == "SHAMAN")
+             
+             if canDW and LabMH.link and not LabOH.link then
+                  LoadLabItem(LabOH, text)
+             else
+                  LoadLabItem(LabMH, text)
+             end
+
+        elseif equipLoc == "INVTYPE_WEAPONMAINHAND" then
+            LoadLabItem(LabMH, text)
+            
+        else
+            return 
+        end
+
+        MSC.UpdateLabCalc()
+        
+        local editBox = ChatEdit_GetActiveWindow()
+        if editBox and editBox:GetText() == text then
+            editBox:SetText("")
+            editBox:Hide()
+        end
+    end
+end)
