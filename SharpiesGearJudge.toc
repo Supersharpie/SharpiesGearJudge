@@ -1,8 +1,8 @@
-## Interface: 11508
-## Title: |cff00ccffSharpie's Gear Judge|r
-## Notes: The Final Verdict on your gear. (Phase 6 Ready)
+## Interface: 20505
+## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
+## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 1.3.0
+## Version: 2.0.0
 ## SavedVariables: SGJ_Settings
 
 Database.lua

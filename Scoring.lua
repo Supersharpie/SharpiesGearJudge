@@ -1,32 +1,29 @@
 local _, MSC = ...
 
 -- =============================================================
--- 1. SCORE CALCULATOR
+-- 1. HELPER: LEVEL INTERPOLATION (For Crit)
 -- =============================================================
 function MSC.GetInterpolatedRatio(table, level)
     if not table then return nil end
-    
-    -- If below lowest bracket, use lowest
     if level <= table[1][1] then return table[1][2] end
-    
-    -- If above highest bracket, use highest
     local count = #table
     if level >= table[count][1] then return table[count][2] end
 
-    -- Find the two points we are between
     for i = 1, count - 1 do
         local lowNode, highNode = table[i], table[i+1]
         if level >= lowNode[1] and level <= highNode[1] then
-            -- Math: Start + (Progress * Range)
             local range = highNode[1] - lowNode[1]
             local progress = (level - lowNode[1]) / range
             local valDiff = highNode[2] - lowNode[2]
             return lowNode[2] + (progress * valDiff)
         end
     end
-    return table[count][2] -- Fallback
+    return table[count][2]
 end
 
+-- =============================================================
+-- 2. SCORE CALCULATOR
+-- =============================================================
 function MSC.GetItemScore(stats, weights, specName, slotId)
     if not stats or not weights then return 0 end
     local score = 0
@@ -34,7 +31,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         if weights[stat] then score = score + (val * weights[stat]) end
     end
     
-    -- Speed Logic
+    -- Speed Logic (TBC: Slow/Slow for Enhance, Slow for Arms/Ret)
     if stats.MSC_WEAPON_SPEED and MSC.SpeedChecks then
         local _, class = UnitClass("player")
         local cleanSpec = specName:gsub(" %(.*%)", "") 
@@ -57,7 +54,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
 end
 
 -- =============================================================
--- 2. DERIVED STATS (Racial Logic Fixed with IDs)
+-- 3. DERIVED STATS (TBC Edition)
 -- =============================================================
 function MSC.ExpandDerivedStats(stats, itemLink)
     if not stats then return {} end
@@ -65,34 +62,62 @@ function MSC.ExpandDerivedStats(stats, itemLink)
     for k, v in pairs(stats) do out[k] = v end
     local _, class = UnitClass("player")
     local _, race = UnitRace("player")
-    local powerType = UnitPowerType("player")
+    local powerType = UnitPowerType("player") 
     
-    -- RACIAL WEAPON SKILL (Now checks numeric ID)
+    -- [[ 1. RACIAL EXPERTISE ]]
+    -- TBC Racials (Human/Orc) give +5 Expertise.
+    -- 1 Expertise = 3.94 Rating. So +5 = ~19.7 Rating.
     if itemLink and MSC.RacialTraits and MSC.RacialTraits[race] then
-        -- GetItemInfo returns: name, link, quality, ilvl, minLevel, type, subType, stackCount, equipLoc, texture, sellPrice, classID, subclassID
         local _, _, _, _, _, _, _, _, _, _, _, _, subclassID = GetItemInfo(itemLink)
-        
         if subclassID and MSC.RacialTraits[race][subclassID] then
-            local bonus = MSC.RacialTraits[race][subclassID]
-            out["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = (out["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] or 0) + bonus
+            -- Add 20 Expertise Rating (invisible bonus) to score correctly against non-racial items
+            out["ITEM_MOD_EXPERTISE_RATING_SHORT"] = (out["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) + 20
         end
     end
 
-    if out["ITEM_MOD_STAMINA_SHORT"] then out["ITEM_MOD_HEALTH_SHORT"] = (out["ITEM_MOD_HEALTH_SHORT"] or 0) + (out["ITEM_MOD_STAMINA_SHORT"] * 10) end
-    if powerType == 0 and out["ITEM_MOD_INTELLECT_SHORT"] then out["ITEM_MOD_MANA_SHORT"] = (out["ITEM_MOD_MANA_SHORT"] or 0) + (out["ITEM_MOD_INTELLECT_SHORT"] * 15) end
+    -- [[ 2. HEALTH & MANA ]]
+    if out["ITEM_MOD_STAMINA_SHORT"] then 
+        out["ITEM_MOD_HEALTH_SHORT"] = (out["ITEM_MOD_HEALTH_SHORT"] or 0) + (out["ITEM_MOD_STAMINA_SHORT"] * 10) 
+    end
+    if powerType == 0 and out["ITEM_MOD_INTELLECT_SHORT"] then 
+        out["ITEM_MOD_MANA_SHORT"] = (out["ITEM_MOD_MANA_SHORT"] or 0) + (out["ITEM_MOD_INTELLECT_SHORT"] * 15) 
+    end
     
+    -- [[ 3. ATTACK POWER ]]
     local isPhysical = (class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" or class == "DRUID" or class == "HUNTER" or class == "ROGUE")
     if isPhysical then
-        local str, agi, ap = out["ITEM_MOD_STRENGTH_SHORT"] or 0, out["ITEM_MOD_AGILITY_SHORT"] or 0, out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0
-        if class == "HUNTER" or class == "ROGUE" then ap = ap + str + agi else ap = ap + (str * 2) end
+        local str = out["ITEM_MOD_STRENGTH_SHORT"] or 0
+        local agi = out["ITEM_MOD_AGILITY_SHORT"] or 0
+        local ap = out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0
+        
+        -- TBC AP Formulas:
+        if class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" then
+            ap = ap + (str * 2) -- 1 Str = 2 AP
+        elseif class == "ROGUE" or class == "HUNTER" then
+            ap = ap + str + agi -- 1 Str = 1 AP, 1 Agi = 1 AP
+        elseif class == "DRUID" then
+            ap = ap + (str * 2) + agi -- TBC Feral: 1 Str = 2 AP, 1 Agi = 1 AP
+        end
+        
         if ap > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = ap end
     end
-	
-	local ratioTable = MSC.StatToCritMatrix[class]
+    
+    -- [[ 4. RANGED ATTACK POWER (Hunter) ]]
+    if class == "HUNTER" then
+        local rap = out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0
+        local agi = out["ITEM_MOD_AGILITY_SHORT"] or 0
+        -- Hunter TBC: 1 Agi = 1 Ranged AP
+        rap = rap + agi
+        if rap > 0 then out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = rap end
+    end
+
+    -- [[ 5. DERIVED CRIT (The "True Crit" System) ]]
+    -- Calculates the % crit gained from Agi/Int for the tooltip
+    local ratioTable = MSC.StatToCritMatrix and MSC.StatToCritMatrix[class]
     local myLevel = UnitLevel("player")
     
     if ratioTable then
-        -- Agility -> Crit
+        -- Agility -> Crit %
         if ratioTable.Agi and out["ITEM_MOD_AGILITY_SHORT"] then
             local ratio = MSC.GetInterpolatedRatio(ratioTable.Agi, myLevel)
             if ratio and ratio > 0 then
@@ -103,7 +128,7 @@ function MSC.ExpandDerivedStats(stats, itemLink)
             end
         end
         
-        -- Intellect -> Spell Crit
+        -- Intellect -> Spell Crit %
         if ratioTable.Int and out["ITEM_MOD_INTELLECT_SHORT"] then
              local ratio = MSC.GetInterpolatedRatio(ratioTable.Int, myLevel)
              if ratio and ratio > 0 then
@@ -114,10 +139,6 @@ function MSC.ExpandDerivedStats(stats, itemLink)
              end
         end
     end
-	
-    if class == "HUNTER" then
-        local rap, agi = out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0, out["ITEM_MOD_AGILITY_SHORT"] or 0
-        rap = rap + (agi * 2); if rap > 0 then out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = rap end
-    end
+
     return out
 end

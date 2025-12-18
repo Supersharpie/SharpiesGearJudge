@@ -33,14 +33,14 @@ function MSC.GetCurrentWeights()
     local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
     if not classData then return {}, "No Data" end
     
-    -- MANUAL OVERRIDE (Always obeyed)
+    -- 1. MANUAL OVERRIDE (Always obeyed)
     if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
         local displayName = SGJ_Settings.Mode
         if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
         return classData[SGJ_Settings.Mode], displayName
     end
 
-    -- DETECT SPEC
+    -- 2. DETECT SPEC (TBC / Vanilla Compatible)
     local maxPoints, activeSpec = 0, "Default"
     local specIndex = 1
     if MSC.SpecNames and MSC.SpecNames[englishClass] then
@@ -53,105 +53,200 @@ function MSC.GetCurrentWeights()
         end
     end
     
-    -- SMART LOGIC: "Dungeon Role" vs "Solo Leveling"
+    -- 3. SMART LEVELING LOGIC (TBC Update: Checks up to Level 70)
     local playerLevel = UnitLevel("player")
-    if playerLevel < 60 then
-        -- 1. IDENTIFY DUNGEON ROLES (Tanks & Healers)
-        -- These players do NOT want generic leveling stats. They want their job stats.
+    if playerLevel < 70 then
+        -- A. IDENTIFY DUNGEON ROLES (Tanks & Healers)
         local isDungeonRole = false
-        
         if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end -- Protection
         if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Holy or Prot
         if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Disc or Holy
         if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end -- Resto
         if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end -- Resto
-        if englishClass == "DRUID" and specIndex == 2 and GetTalentInfo(2, 5) and select(5, GetTalentInfo(2, 5)) > 0 then 
-            -- Feral Tank Check (Thick Hide / Feral Instinct usually implies tanking interest, but simplified: Feral is usually DPS leveling)
-            -- For simplicity, we treat Feral as Leveling unless explicitly Manual.
-            isDungeonRole = false 
-        end
-
-        -- 2. APPLY LOGIC
-        -- If NOT a Dungeon Role, use the smart Leveling Brackets we designed.
+        
+        -- B. APPLY BRACKET LOGIC
         if not isDungeonRole then
             if playerLevel <= 20 and classData["Leveling_1_20"] then
                 return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
             elseif playerLevel <= 40 and classData["Leveling_21_40"] then
                 return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
-            elseif classData["Leveling_41_59"] then
-                return classData["Leveling_41_59"], activeSpec .. " (Lv 41-59)"
+            elseif playerLevel <= 57 and classData["Leveling_41_57"] then
+                return classData["Leveling_41_57"], activeSpec .. " (Lv 41-57)"
+            elseif playerLevel <= 69 and classData["Leveling_58_69"] then
+                return classData["Leveling_58_69"], activeSpec .. " (Outland)"
             end
         end
-        -- If they ARE a Dungeon Role (or Default fallback), they fall through to the specific spec below.
     end
     
+    -- 4. FALLBACK (Level 70 or Dungeon Role)
     return (classData[activeSpec] or classData["Default"]), activeSpec .. " (Auto)"
 end
 
 -- =============================================================
--- 2. ITEM STAT SCANNER
+-- 2. ITEM STAT SCANNER (TBC Updated)
 -- =============================================================
 function MSC.SafeGetItemStats(itemLink, slotId)
     if not itemLink then return {} end
     local stats = GetItemStats(itemLink) or {}
     local finalStats = {}
-    local foundByAPI = {} 
     
+    -- 1. BASE STATS
     if MSC.ShortNames then
         for k, v in pairs(stats) do
-            if MSC.ShortNames[k] then 
-                finalStats[k] = v 
-                foundByAPI[k] = true 
-            else 
-                finalStats[k] = v 
-            end
+            if MSC.ShortNames[k] or k:find("EMPTY_SOCKET") then finalStats[k] = v else finalStats[k] = v end
         end
     end
     
+    -- 2. Text Scan
     local tooltip = CreateFrame("GameTooltip", "MSCScanTooltip", nil, "GameTooltipTemplate")
     tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
     tooltip:SetHyperlink(itemLink)
+    
+    local gemMode = SGJ_Settings.GemMode or 1
+    
     for i = 2, tooltip:NumLines() do
-        local line = _G["MSCScanTooltipTextLeft"..i]:GetText()
+        local lineObj = _G["MSCScanTooltipTextLeft"..i]
+        local line = lineObj:GetText()
         if line then
+            -- A. Standard Stat Parsing
             local s, v = MSC.ParseTooltipLine(line)
             if s and v then 
                 if not foundByAPI[s] then
                     finalStats[s] = (finalStats[s] or 0) + v 
                 end
             end
+            
+            -- B. Socket Bonus Parsing (Only if Matching Colors)
+            if gemMode == 3 then -- Mode 3 = "Match Colors (Best)"
+                local bStat, bVal = MSC.ParseSocketBonus(line)
+                if bStat and bVal then
+                     finalStats[bStat] = (finalStats[bStat] or 0) + bVal
+                     finalStats.BONUS_PROJECTED = true
+                end
+            end
         end
     end
     
-    if SGJ_Settings.ProjectEnchants and slotId then
-        local _, _, _, existingEnchantID = string.find(itemLink, "item:(%d+):(%d+)")
-        local hasEnchant = (existingEnchantID and tonumber(existingEnchantID) > 0)
+    local _, specName = MSC.GetCurrentWeights()
+    local cleanSpec = specName:gsub(" %(.*%)", "") 
+
+    -- =========================================================
+    -- LOGIC: ENCHANTS (Smart Leveling Update)
+    -- =========================================================
+    local enchantMode = SGJ_Settings.EnchantMode or 1
+    local playerLevel = UnitLevel("player")
+
+    if enchantMode == 3 and slotId then
+        local bestID = 0
+        local targetEnchantTable = (playerLevel < 70) and MSC.BestEnchants_Leveling or MSC.BestEnchants
+        local slotTable = targetEnchantTable and targetEnchantTable[slotId]
+        if slotTable then
+            bestID = slotTable[cleanSpec] or slotTable["Default"] or 0
+        end
         
-        if not hasEnchant then
-            local myEnchant = MSC.GetEnchantStats(slotId)
-            for k, v in pairs(myEnchant) do
-                finalStats[k] = (finalStats[k] or 0) + v
+        if bestID > 0 then
+            local enchantStats = MSC.EnchantDB[bestID]
+            if enchantStats then
+                for k, v in pairs(enchantStats) do
+                    finalStats[k] = (finalStats[k] or 0) + v
+                end
+                finalStats.IS_PROJECTED = true
             end
-            if next(myEnchant) then finalStats.IS_PROJECTED = true end
         end
     end
+    
+    -- =========================================================
+    -- LOGIC: GEMS (Smart Leveling Update)
+    -- =========================================================
+    if gemMode == 3 or gemMode == 4 then
+        local weights = MSC.GetCurrentWeights()
+        local gemCount = 0
+        
+        -- SMART SWITCH: Use Green Gems if < 70, Blue Gems if 70
+        local targetGemTable = (playerLevel < 70) and MSC.GemOptions_Leveling or MSC.GemOptions
+        
+        -- Identify the "Best Generic Gem" (for Mode 4 - Ignore Color)
+        local bestGenericStat, bestGenericVal = nil, 0
+        if gemMode == 4 then
+            for _, list in pairs(targetGemTable or {}) do
+                for _, gem in ipairs(list) do
+                    -- SAFETY: Ignore Meta gems when finding generic best
+                    if not gem.stat:find("META") then
+                         local score = (weights[gem.stat] or 0) * gem.val
+                         if score > bestGenericVal then bestGenericVal = score; bestGenericStat = gem end
+                    end
+                end
+            end
+        end
+
+        for socketKey, gemList in pairs(targetGemTable or {}) do
+            local socketCount = finalStats[socketKey] or 0
+            
+            -- A. META SOCKET (Always Unique Logic)
+            if socketKey == "EMPTY_SOCKET_META" then
+                 if socketCount > 0 then
+                     local bestMeta, bestMetaScore = nil, 0
+                     for _, gem in ipairs(gemList) do
+                        local score = (weights[gem.stat] or 0) * gem.val
+                        if score > bestMetaScore then bestMetaScore = score; bestMeta = gem end
+                     end
+                     -- Fallback: Pick first meta if all score 0 (e.g., Tank meta for Healer)
+                     if not bestMeta and #gemList > 0 then bestMeta = gemList[1] end
+                     
+                     if bestMeta then
+                        finalStats[bestMeta.stat] = (finalStats[bestMeta.stat] or 0) + (bestMeta.val * socketCount)
+                        gemCount = gemCount + socketCount
+                     end
+                 end
+            
+            -- B. REGULAR SOCKETS (Red/Yellow/Blue)
+            elseif socketCount > 0 then
+                local bestGemForSlot = nil
+                
+                if gemMode == 3 then
+                    -- MODE 3: MATCH COLORS
+                    local bestVal = 0
+                    for _, gem in ipairs(gemList) do
+                        local score = (weights[gem.stat] or 0) * gem.val
+                        if score > bestVal then bestVal = score; bestGemForSlot = gem end
+                    end
+                    -- If no gem had a score > 0 (e.g. Healer looking at Agi socket), 
+                    -- pick the first one just to fill it visually, or skip? 
+                    -- Skip is safer for score accuracy.
+                else
+                    -- MODE 4: IGNORE COLORS (Use best generic)
+                    bestGemForSlot = bestGenericStat
+                end
+                
+                if bestGemForSlot then
+                    finalStats[bestGemForSlot.stat] = (finalStats[bestGemForSlot.stat] or 0) + (bestGemForSlot.val * socketCount)
+                    if bestGemForSlot.stat2 and bestGemForSlot.val2 then
+                        finalStats[bestGemForSlot.stat2] = (finalStats[bestGemForSlot.stat2] or 0) + (bestGemForSlot.val2 * socketCount)
+                    end
+                    gemCount = gemCount + socketCount
+                end
+            end
+        end
+        if gemCount > 0 then finalStats.GEMS_PROJECTED = gemCount end
+    end
+    
     return finalStats
 end
 
 -- =============================================================
--- 3. STAT COMPARISON TOOLS
+-- 3. STAT COMPARISON TOOLS (Unchanged)
 -- =============================================================
 function MSC.GetStatDifferences(new, old)
     local diffs = {}
     local seen = {}
     for k, v in pairs(new) do 
-        if k ~= "IS_PROJECTED" then
+        if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" then
             local d = v - (old[k] or 0)
             if d ~= 0 then table.insert(diffs, { key=k, val=d }); seen[k] = true end
         end
     end
     for k, v in pairs(old) do
-        if not seen[k] and k ~= "IS_PROJECTED" then
+        if not seen[k] and k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" then
             local d = (new[k] or 0) - v
             if d ~= 0 then table.insert(diffs, { key=k, val=d }) end
         end
@@ -165,7 +260,7 @@ function MSC.SortStatDiffs(diffs)
 end
 
 -- =============================================================
--- 4. PARTNER FINDER
+-- 4. PARTNER FINDER (Unchanged)
 -- =============================================================
 function MSC.FindBestMainHand(weights, specName)
     local bestLink, bestScore, bestStats = nil, 0, {}

@@ -186,7 +186,7 @@ function MSC.CreateLabFrame()
         f.crest:SetVertexColor(0.6, 0.6, 0.6, 0.6)
     end
     
-    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.title:SetPoint("TOP", f, "TOP", 0, -10); f.title:SetText("Sharpie's Gear Judge")
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.title:SetPoint("TOP", f, "TOP", 0, -10); f.title:SetText("Sharpie's Gear Judge (TBC)")
     
     LabMH = CreateItemButton("MSCLabMH", f, -65, 120, "MH", "Main Hand")
     LabOH = CreateItemButton("MSCLabOH", f, 65, 120, "OH", "Off Hand")

@@ -4,6 +4,7 @@ function MSC.ParseTooltipLine(text)
     if not text then return nil, 0 end
     
     -- 1. SANITIZE & CLEANUP
+    -- Removes color codes to make parsing easier
     text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
     
     -- 2. IGNORE TEMPORARY BUFFS
@@ -12,47 +13,67 @@ function MSC.ParseTooltipLine(text)
     end
     
     local patterns = {
+        -- [[ TBC NEW STATS ]] --
+        
+        -- HASTE
+        { pattern = "Increases haste rating by (%d+)", stat = "ITEM_MOD_HASTE_RATING_SHORT" },
+        { pattern = "Increases your haste rating by (%d+)", stat = "ITEM_MOD_HASTE_RATING_SHORT" },
+        { pattern = "Improves haste rating by (%d+)", stat = "ITEM_MOD_HASTE_RATING_SHORT" },
+        
+        -- SPELL HASTE
+        { pattern = "Increases spell haste rating by (%d+)", stat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
+        { pattern = "Increases your spell haste rating by (%d+)", stat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
+
+        -- EXPERTISE (Reduces Dodge/Parry)
+        { pattern = "Increases your expertise rating by (%d+)", stat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
+        { pattern = "Increases expertise rating by (%d+)", stat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
+        
+        -- ARMOR PENETRATION
+        { pattern = "Increases your armor penetration rating by (%d+)", stat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+        { pattern = "Ignores (%d+) armor", stat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" }, -- Early TBC phrasing
+
+        -- RESILIENCE (PvP)
+        { pattern = "Increases your resilience rating by (%d+)", stat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+        { pattern = "Increases resilience rating by (%d+)", stat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+
+        -- FERAL ATTACK POWER (Druid Weapons)
+        { pattern = "Increases attack power by (%d+) in Cat", stat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+
+        -- [[ STANDARD STATS (Updated for Rating Keywords) ]] --
+
+        -- HIT
+        { pattern = "Increases hit rating by (%d+)", stat = "ITEM_MOD_HIT_RATING_SHORT" }, 
+        { pattern = "Increases your hit rating by (%d+)", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Hit", stat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Legacy/Vanilla
+        { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Legacy
+
+        -- SPELL HIT
+        { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" }, -- Legacy
+        
+        -- CRIT
+        { pattern = "Increases your critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { pattern = "Increases critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Crit", stat = "ITEM_MOD_CRIT_RATING_SHORT" }, -- Legacy
+        { pattern = "Improves your chance to get a critical strike by (%d+)%%", stat = "ITEM_MOD_CRIT_RATING_SHORT" }, -- Legacy
+
+        -- SPELL CRIT
+        { pattern = "Increases your spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+        { pattern = "Improves your chance to get a critical strike with spells by (%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, -- Legacy
+
         -- WEAPON SPEED
         { pattern = "^Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
-        
-        -- HIT / SPELL HIT
-        { pattern = "%+(%d+)%%? Hit", stat = "ITEM_MOD_HIT_RATING_SHORT" },
-        { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
-        { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        
-        -- CRIT / SPELL CRIT
-        { pattern = "%+(%d+)%%? Crit", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { pattern = "Improves your chance to get a critical strike by (%d+)%%", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { pattern = "Increases your critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { pattern = "Increases your spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-        { pattern = "Improves your chance to get a critical strike with spells by (%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-        
-        -- CLASSIC WEAPON SKILLS (Edgemaster's Support)
-        { pattern = "Increased Axes %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Swords %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Daggers %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Maces %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Two%-Handed Swords %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Two%-Handed Axes %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Two%-Handed Maces %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Bows %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Guns %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Crossbows %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Staves %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Fists %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Dagger Skill %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" }, -- Aged Core Leather Gloves
-        
+
         -- DEFENSIVE
-        { pattern = "%+(%d+)%%? Dodge", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { pattern = "Increases your chance to dodge an attack by (%d+)%%", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { pattern = "%+(%d+)%%? Parry", stat = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { pattern = "%+(%d+)%%? Block", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { pattern = "Increases your chance to block attacks with a shield by (%d+)%%", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { pattern = "Increases the block value of your shield by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
         { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { pattern = "Increased Defense %+(%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
         { pattern = "%+(%d+) Defense", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "dodge rating by (%d+)", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Dodge", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "parry rating by (%d+)", stat = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Parry", stat = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { pattern = "block rating by (%d+)", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Block", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { pattern = "block value of your shield by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
         
         -- MANA PER 5 (MP5)
         { pattern = "Restores (%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
@@ -90,5 +111,31 @@ function MSC.ParseTooltipLine(text)
         local val = text:match(p.pattern)
         if val then return p.stat, tonumber(val) end
     end
+    return nil, 0
+end
+-- =============================================================
+-- SOCKET BONUS PARSER
+-- =============================================================
+function MSC.ParseSocketBonus(text)
+    if not text then return nil, 0 end
+    
+    -- Look for the standard TBC label "Socket Bonus: +4 Strength"
+    local bonusText = text:match("^Socket Bonus: (.*)")
+    
+    -- Also catch gray text (inactive) if colors are present in the raw string
+    if not bonusText then
+        -- Sometimes it looks like "|cff808080Socket Bonus: +4 Strength|r"
+        bonusText = text:match("Socket Bonus: (.*)")
+    end
+
+    if bonusText then
+        -- Clean up color codes just in case
+        bonusText = bonusText:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+        
+        -- Now feed this clean string (e.g., "+4 Strength") back into our main parser
+        -- to figure out WHICH stat it is.
+        return MSC.ParseTooltipLine(bonusText)
+    end
+    
     return nil, 0
 end
