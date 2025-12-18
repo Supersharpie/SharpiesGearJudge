@@ -1,3 +1,20 @@
+## v1.5.0 - The "True Crit" Update
+### 🧠 Intelligent Stat Derivation
+* **Separated "Equip" vs "Stat" Crit:** The Judge now mathematically distinguishes between hard-coded crit (green text) and crit derived from attributes.
+    * **Equip Crit:** Now labeled clearly as **"Equip Crit"** (e.g., from *Eye of Rend*).
+    * **Derived Crit:** Now calculated dynamically based on your class and labeled by source, e.g., **"Crit (from Agi)"** or **"Spell Crit (from Int)"**.
+* **Level-Based Interpolation:** The addon no longer uses static Level 60 conversion ratios. It now uses a "Sliding Matrix" to determine exactly how much Agility or Intellect you need for 1% Crit at your specific level (e.g., Level 20 vs Level 60).
+
+### 🛠️ UI & Polish
+* **Educational Tooltips:** The tooltip now explicitly teaches you *why* an item gives you crit. Instead of just seeing "+1% Crit", you will see:
+    * `Stat Crit (from Int) | +0.6%`
+* **Standardized Naming:** Updated `MSC.ShortNames` to centralize all stat labels.
+
+### 🛡️ Critical Fixes
+* **Crash Fix (`Scoring.lua`):** Fixed a Lua error (`attempt to index field 'StatToCritRatios'`) by adding the missing matrix to `Data_Tables.lua`.
+* **Renaming Logic:** Removed the aggressive string replacement in `Core.lua` that was incorrectly labeling all crit as "Crit (from Agi)".
+------------------------------------------------------------------------------------------------
+
 ## v1.4.0 - The "Smart Leveling" Update
 ### 🧠 Intelligent Leveling Matrix
 * **Phase-Based Scoring:** The addon now recognizes that a Level 10 character needs different stats than a Level 58 character.
@@ -15,12 +32,10 @@
 * **Double-Count Fixed:** Fixed a bug where stats found in the "green text" were being added to the base stats, resulting in double values (e.g., 55 AP instead of 28).
 * **MP5 & Weapon Skill:** "Restores X Mana" and "Increased Daggers +5" are now correctly parsed and scored.
 * **Classic Weapon Skill:** "Increased [Weapon] +X" stats (Edgemaster's, Racials) are now properly valued as high-tier stats.
-
 ------------------------------------------------------------------------------------------------
 
 ## v1.3.2 -
 * ** Fixed file naming mix up (>.<)
-
 ------------------------------------------------------------------------------------------------
 
 ## v1.3.1 - Critical Fixes & Logic Hardening

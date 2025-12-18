@@ -3,6 +3,30 @@ local _, MSC = ...
 -- =============================================================
 -- 1. SCORE CALCULATOR
 -- =============================================================
+function MSC.GetInterpolatedRatio(table, level)
+    if not table then return nil end
+    
+    -- If below lowest bracket, use lowest
+    if level <= table[1][1] then return table[1][2] end
+    
+    -- If above highest bracket, use highest
+    local count = #table
+    if level >= table[count][1] then return table[count][2] end
+
+    -- Find the two points we are between
+    for i = 1, count - 1 do
+        local lowNode, highNode = table[i], table[i+1]
+        if level >= lowNode[1] and level <= highNode[1] then
+            -- Math: Start + (Progress * Range)
+            local range = highNode[1] - lowNode[1]
+            local progress = (level - lowNode[1]) / range
+            local valDiff = highNode[2] - lowNode[2]
+            return lowNode[2] + (progress * valDiff)
+        end
+    end
+    return table[count][2] -- Fallback
+end
+
 function MSC.GetItemScore(stats, weights, specName, slotId)
     if not stats or not weights then return 0 end
     local score = 0
@@ -64,20 +88,29 @@ function MSC.ExpandDerivedStats(stats, itemLink)
         if ap > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = ap end
     end
 	
-	local ratios = MSC.StatToCritRatios[class]
-    if ratios then
+	local ratioTable = MSC.StatToCritMatrix[class]
+    local myLevel = UnitLevel("player")
+    
+    if ratioTable then
         -- Agility -> Crit
-        if ratios.Agi and out["ITEM_MOD_AGILITY_SHORT"] then
-            local critVal = out["ITEM_MOD_AGILITY_SHORT"] / ratios.Agi
-            if critVal > 0 then
-                out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] or 0) + critVal
+        if ratioTable.Agi and out["ITEM_MOD_AGILITY_SHORT"] then
+            local ratio = MSC.GetInterpolatedRatio(ratioTable.Agi, myLevel)
+            if ratio and ratio > 0 then
+                local critVal = out["ITEM_MOD_AGILITY_SHORT"] / ratio
+                if critVal > 0 then
+                    out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] or 0) + critVal
+                end
             end
         end
+        
         -- Intellect -> Spell Crit
-        if ratios.Int and out["ITEM_MOD_INTELLECT_SHORT"] then
-             local spellCritVal = out["ITEM_MOD_INTELLECT_SHORT"] / ratios.Int
-             if spellCritVal > 0 then
-                 out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] or 0) + spellCritVal
+        if ratioTable.Int and out["ITEM_MOD_INTELLECT_SHORT"] then
+             local ratio = MSC.GetInterpolatedRatio(ratioTable.Int, myLevel)
+             if ratio and ratio > 0 then
+                 local spellCritVal = out["ITEM_MOD_INTELLECT_SHORT"] / ratio
+                 if spellCritVal > 0 then
+                     out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] or 0) + spellCritVal
+                 end
              end
         end
     end

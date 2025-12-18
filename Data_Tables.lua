@@ -106,18 +106,44 @@ MSC.SlotMap = {
 }
 
 -- =============================================================
--- 6. CRIT CONVERSIONS (Approximate Level 60 Values)
+-- 6. CRIT CONVERSION MATRIX (Level Brackets)
 -- =============================================================
-MSC.StatToCritRatios = {
-    ["WARRIOR"] = { Agi = 20 },
-    ["ROGUE"]   = { Agi = 29 },
-    ["HUNTER"]  = { Agi = 53 }, -- Note: Scales with level, approx 53 @ 60
-    ["PALADIN"] = { Agi = 20, Int = 29.5 },
-    ["SHAMAN"]  = { Agi = 20, Int = 59.5 },
-    ["DRUID"]   = { Agi = 20, Int = 60 },
-    ["MAGE"]    = { Agi = 20, Int = 59.5 },
-    ["PRIEST"]  = { Agi = 20, Int = 59.2 },
-    ["WARLOCK"] = { Agi = 20, Int = 60.6 },
+-- Format: { Level, Amount_Needed_For_1_Percent }
+-- The addon will interpolate between these points.
+MSC.StatToCritMatrix = {
+    ["WARRIOR"] = { 
+        Agi = { {1, 4.0}, {20, 8.5}, {40, 13.5}, {60, 20.0} } 
+    },
+    ["ROGUE"] = { 
+        Agi = { {1, 3.5}, {20, 9.0}, {40, 18.0}, {60, 29.0} } 
+    },
+    ["HUNTER"] = { 
+        Agi = { {1, 4.5}, {20, 12.0}, {40, 26.0}, {60, 53.0} } 
+    },
+    ["PALADIN"] = { 
+        Agi = { {1, 4.0}, {60, 20.0} }, 
+        Int = { {1, 6.0}, {30, 15.0}, {60, 29.5} } 
+    },
+    ["SHAMAN"] = { 
+        Agi = { {1, 4.0}, {60, 20.0} }, 
+        Int = { {1, 6.0}, {20, 15.0}, {40, 35.0}, {60, 59.5} } 
+    },
+    ["DRUID"] = { 
+        Agi = { {1, 4.0}, {60, 20.0} }, 
+        Int = { {1, 6.5}, {20, 16.0}, {40, 38.0}, {60, 60.0} } 
+    },
+    ["MAGE"] = { 
+        Agi = { {60, 20.0} }, -- Mages don't really get Agi crit, usually ignored
+        Int = { {1, 6.0}, {20, 15.0}, {40, 35.0}, {60, 59.5} } 
+    },
+    ["PRIEST"] = { 
+        Agi = { {60, 20.0} }, 
+        Int = { {1, 6.0}, {20, 15.0}, {40, 37.0}, {60, 59.2} } 
+    },
+    ["WARLOCK"] = { 
+        Agi = { {60, 20.0} }, 
+        Int = { {1, 6.5}, {20, 16.0}, {40, 38.0}, {60, 60.6} } 
+    },
 }
 
 -- [UPDATE THE ShortNames TABLE]
