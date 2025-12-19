@@ -1,3 +1,7 @@
+##v1.5.3
+* **changed how "Racial Synergy" are displayed 
+------------------------------------------------------------------------------------------------
+
 ##v1.5.2 (Upcoming) Bug Fixes
 * **TextParser: Fixed a syntax error (stray braces) that caused the addon to crash on load.
 * **Empty Slots: Fixed an issue where comparing an item against an empty slot (Neck, Rings, Trinkets) would fail to calculate a score or show the stat breakdown.

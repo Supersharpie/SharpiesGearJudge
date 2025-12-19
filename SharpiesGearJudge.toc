@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r
 ## Notes: The Final Verdict on your gear. (Phase 6 Ready)
 ## Author: SuperSharpie
-## Version: 1.5.2
+## Version: 1.5.3
 ## SavedVariables: SGJ_Settings
 
 Database.lua
