@@ -115,48 +115,92 @@ function MSC.UpdateTooltip(tooltip)
         else newStats = ohStats; newScore = ohScore; noteText = "|cffff0000(No Mainhand found)|r" end
         oldStats = MSC.SafeGetItemStats(equippedMH, 16); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, 16)
 
-    elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" then
+elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" then
         local s1, s2 = 11, 12; if itemEquipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
         local l1, l2 = GetInventoryItemLink("player", s1), GetInventoryItemLink("player", s2)
-        local st1, st2 = MSC.SafeGetItemStats(l1, s1), MSC.SafeGetItemStats(l2, s2)
-        local sc1, sc2 = MSC.GetItemScore(st1, currentWeights, specName, s1), MSC.GetItemScore(st2, currentWeights, specName, s2)
+        
+        -- Get scores for current rings/trinkets (default to 0 if missing)
+        local st1 = l1 and MSC.SafeGetItemStats(l1, s1) or {}
+        local st2 = l2 and MSC.SafeGetItemStats(l2, s2) or {}
+        local sc1 = MSC.GetItemScore(st1, currentWeights, specName, s1)
+        local sc2 = MSC.GetItemScore(st2, currentWeights, specName, s2)
+        
         local targetSlot, targetLink, otherLink = s1, l1, l2
+        
+        -- Logic: If a slot is empty, target it. Otherwise, target the weakest item.
         if (not l1) then targetSlot = s1; targetLink = nil; otherLink = l2
         elseif (not l2) then targetSlot = s2; targetLink = nil; otherLink = l1
         elseif sc2 < sc1 then targetSlot = s2; targetLink = l2; otherLink = l1 end
+        
         if link == l1 then isEquipped = true; targetSlot = s1; targetLink = l1; otherLink = l2
         elseif link == l2 then isEquipped = true; targetSlot = s2; targetLink = l2; otherLink = l1 end
+        
         partnerItemLink = otherLink 
-        if not targetLink and not isEquipped then tooltip:AddLine(" "); tooltip:AddLine("|cff00ff00++ NEW ITEM (Slot Empty)|r"); tooltip:Show(); return end
-        oldStats = MSC.SafeGetItemStats(targetLink, targetSlot); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, targetSlot)
-        newStats = MSC.SafeGetItemStats(link, targetSlot); newScore = MSC.GetItemScore(newStats, currentWeights, specName, targetSlot)
-        if not isEquipped then noteText = "Comparing vs: " .. (targetLink or "Empty") .. " (Weakest)" end
+        
+        -- [FIX] If slot is empty, set Old Stats to empty table, don't return early
+        if not targetLink and not isEquipped then
+            oldStats = {}
+            oldScore = 0
+            noteText = "|cff00ff00++ FILLING EMPTY SLOT ++|r"
+        else
+            oldStats = MSC.SafeGetItemStats(targetLink, targetSlot)
+            oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, targetSlot)
+        end
+
+        newStats = MSC.SafeGetItemStats(link, targetSlot)
+        newScore = MSC.GetItemScore(newStats, currentWeights, specName, targetSlot)
+        
+        if not isEquipped and targetLink then noteText = "Comparing vs: " .. targetLink .. " (Weakest)" end
 
     else
+        -- GENERIC SLOTS (Neck, Chest, Legs, etc.)
         local compLink = GetInventoryItemLink("player", slotId)
         if link == compLink then isEquipped = true end
+        
         if not compLink then
+            -- Check if we can compare against a 2H/Offhand mismatch logic if needed
             if slotId == 17 then local bag = MSC.FindBestOffhand(currentWeights, specName); if bag then compLink = bag; noteText = "Comparing vs: " .. compLink; if link == bag then isBestInBag = true end end
             elseif slotId == 16 then local bag = MSC.FindBestMainHand(currentWeights, specName); if bag then compLink = bag; noteText = "Comparing vs: " .. compLink; if link == bag then isBestInBag = true end end end
         end
+        
         if slotId == 16 then partnerItemLink = GetInventoryItemLink("player", 17) elseif slotId == 17 then partnerItemLink = GetInventoryItemLink("player", 16) end
-        if not compLink then tooltip:AddLine(" "); tooltip:AddLine("|cff00ff00++ NEW ITEM (Slot Empty)|r"); tooltip:Show(); return end
-        oldStats = MSC.SafeGetItemStats(compLink, slotId); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, slotId)
-        newStats = MSC.SafeGetItemStats(link, slotId); newScore = MSC.GetItemScore(newStats, currentWeights, specName, slotId)
+        
+        -- [FIX] If still no comparison link, treat as empty slot filling
+        if not compLink then 
+            oldStats = {}
+            oldScore = 0
+            noteText = "|cff00ff00++ FILLING EMPTY SLOT ++|r"
+        else
+            oldStats = MSC.SafeGetItemStats(compLink, slotId)
+            oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, slotId)
+        end
+        
+        newStats = MSC.SafeGetItemStats(link, slotId)
+        newScore = MSC.GetItemScore(newStats, currentWeights, specName, slotId)
     end
 
-    -- [RENDER UI]
+-- [RENDER UI]
     local scoreDiff = newScore - oldScore
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
     
     if noteText and not isBestInBag then tooltip:AddLine(noteText, 0.7, 0.7, 0.7) end
-    if newStats.IS_PROJECTED then local enchantText = MSC.GetEnchantString(slotId); if enchantText and enchantText ~= "" then tooltip:AddLine("(Projecting: " .. enchantText .. ")", 0, 1, 1) end end
+    if newStats.IS_PROJECTED then 
+        local enchantText = MSC.GetEnchantString(slotId)
+        if enchantText and enchantText ~= "" then 
+            tooltip:AddLine("(Projecting: " .. enchantText .. ")", 0, 1, 1) 
+        end 
+    end
 
     if isEquipped then
-        if partnerItemLink then tooltip:AddLine("|cff00ffff*** EQUIPPED WITH: " .. partnerItemLink .. " ***|r")
-        else tooltip:AddLine("|cff00ffff*** CURRENTLY EQUIPPED ***|r") end
+        -- SUBTLE INDICATOR FOR EQUIPPED ITEMS
+        if partnerItemLink then 
+            tooltip:AddLine("|cff777777(Baseline | w/ " .. partnerItemLink .. ")|r")
+        else 
+            tooltip:AddLine("|cff777777(Baseline)|r") 
+        end
     else
+        -- COMPARISON LOGIC FOR BAG/VENDOR ITEMS
         if partnerItemLink then tooltip:AddLine("|cff00ff00*** BEST PAIR WITH: " .. partnerItemLink .. " ***|r") end
         local bestText = isBestInBag and " (Best in Bag)" or ""
         
@@ -167,64 +211,114 @@ function MSC.UpdateTooltip(tooltip)
             else
                  tooltip:AddLine("|cff00ff00*** UPGRADE (+" .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. " ***|r")
             end
-        elseif scoreDiff < 0 then tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. string.format("%.1f", scoreDiff) .. ") ***|r")
-        else tooltip:AddLine("|cffffffff*** EQUAL STATS ***|r") end
+        elseif scoreDiff < 0 then 
+            tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. string.format("%.1f", scoreDiff) .. ") ***|r")
+        else 
+            tooltip:AddLine("|cffffffff*** EQUAL STATS ***|r") 
+        end
     end
 
-    -- [STAT BREAKDOWN - EDUCATIONAL MODE]
+-- [STAT BREAKDOWN - COMBINED LINE MODE]
     local oldExpanded = MSC.ExpandDerivedStats(oldStats, (isEquipped and link or nil)) 
     local newExpanded = MSC.ExpandDerivedStats(newStats, link)
     local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded)
     local sortedDiffs = MSC.SortStatDiffs(diffs)
     
-    -- Check sources for educational labeling
-    local itemHasStam   = (newExpanded["ITEM_MOD_STAMINA_SHORT"] or 0) > 0
-    local itemHasInt    = (newExpanded["ITEM_MOD_INTELLECT_SHORT"] or 0) > 0
-    local itemHasSpirit = (newExpanded["ITEM_MOD_SPIRIT_SHORT"] or 0) > 0
-    local itemHasAgi    = (newExpanded["ITEM_MOD_AGILITY_SHORT"] or 0) > 0
-    local itemHasStr    = (newExpanded["ITEM_MOD_STRENGTH_SHORT"] or 0) > 0
+    -- Quick lookup map for diff values so we don't have to loop constantly
+    local diffMap = {}
+    for _, d in ipairs(diffs) do diffMap[d.key] = d.val end
 
-    for _, entry in ipairs(sortedDiffs) do
-        if entry.key ~= "IS_PROJECTED" then
-            local isRelevant = (currentWeights and currentWeights[entry.key] and currentWeights[entry.key] > 0)
-            
-            -- Whitelist Display
-            if entry.key == "ITEM_MOD_HEALTH_SHORT" or entry.key == "ITEM_MOD_MANA_SHORT" 
-            or entry.key == "ITEM_MOD_ATTACK_POWER_SHORT" or entry.key == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" 
-            or entry.key == "ITEM_MOD_CRIT_RATING_SHORT" or entry.key == "ITEM_MOD_HIT_RATING_SHORT" 
-            or entry.key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" or entry.key == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" 
-            or entry.key == "ITEM_MOD_MANA_REGENERATION_SHORT" or entry.key == "ITEM_MOD_BLOCK_VALUE_SHORT"
-            or entry.key == "ITEM_MOD_ARMOR_SHORT" or entry.key == "ITEM_MOD_DODGE_RATING_SHORT" 
-			or entry.key == "ITEM_MOD_CRIT_FROM_STATS_SHORT" or entry.key == "ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT" 
-			then isRelevant = true end
-			
-            if isRelevant then
-                local cleanName = MSC.GetCleanStatName(entry.key)
+    local handledStats = {}
+
+    -- Helper function to format values and get color based on diff
+    local function GetFormattedStatValue(statKey)
+        local newVal = newExpanded[statKey] or 0
+        local diffVal = diffMap[statKey] or 0
+        
+        -- If both are zero, the stat doesn't exist on this item
+        if newVal == 0 and diffVal == 0 then return nil, 1, 1, 1 end 
+
+        local newStr = (newVal % 1 == 0) and string.format("%d", newVal) or string.format("%.1f", newVal)
+        local diffStr = (diffVal % 1 == 0) and string.format("%d", diffVal) or string.format("%.1f", diffVal)
+        if diffVal > 0 then diffStr = "+" .. diffStr end
+
+        local finalStr = ""
+        local r, g, b = 1, 1, 1 -- Default white
+
+        if diffVal > 0 then 
+            -- Upgrade: White Val | Green Diff
+            finalStr = "|cffffffff" .. newStr .. "|r |cff00ff00(" .. diffStr .. ")|r"
+            r, g, b = 0, 1, 0 -- Green label for upgrade
+        elseif diffVal < 0 then 
+            -- Downgrade: White Val | Red Diff
+            finalStr = "|cffffffff" .. newStr .. "|r |cffff0000(" .. diffStr .. ")|r"
+            r, g, b = 1, 0.2, 0.2 -- Reddish label for downgrade
+        else 
+            -- Neutral
+            if isEquipped then
+                -- Active: Bright Green Val
+                 finalStr = "|cff00ff00" .. newStr .. "|r"
+                 r, g, b = 1, 0.82, 0 -- Gold label for active
+            else
+                -- Comparison: White Val | Gray (+0)
+                 finalStr = "|cffffffff" .. newStr .. "|r |cff777777(+0)|r"
+            end
+        end
+        return finalStr, r, g, b
+    end
+
+    -- Define pairings to combine onto one line
+    local statPairs = {
+        { prim = "ITEM_MOD_STAMINA_SHORT", der = "ITEM_MOD_HEALTH_SHORT", primLabel = "Stamina", derLabel = "Health (from Stam)" },
+        { prim = "ITEM_MOD_INTELLECT_SHORT", der = "ITEM_MOD_MANA_SHORT", primLabel = "Intellect", derLabel = "Mana (from Int)" },
+        { prim = "ITEM_MOD_SPIRIT_SHORT", der = "ITEM_MOD_MANA_REGENERATION_SHORT", primLabel = "Spirit", derLabel = "Mana Regen (from Spt)" },
+        { prim = "ITEM_MOD_STRENGTH_SHORT", der = "ITEM_MOD_ATTACK_POWER_SHORT", primLabel = "Strength", derLabel = "Atk Power (from Str)" },
+        { prim = "ITEM_MOD_STRENGTH_SHORT", der = "ITEM_MOD_BLOCK_VALUE_SHORT", primLabel = "Strength", derLabel = "Block Val (from Str)" },
+        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", primLabel = "Agility", derLabel = "Ranged AP (from Agi)" },
+        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_DODGE_RATING_SHORT", primLabel = "Agility", derLabel = "Dodge (from Agi)" },
+        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_CRIT_FROM_STATS_SHORT", primLabel = "Agility", derLabel = "Crit (from Agi)" },
+        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_ARMOR_SHORT", primLabel = "Agility", derLabel = "Armor (from Agi)" },
+    }
+
+    -- PASS 1: Render Combined Pairs
+    for _, pair in ipairs(statPairs) do
+        -- Only proceed if the derived stat is relevant for the current weights/class
+        -- OR if we whitelist it (like Health/Mana which everyone has)
+        local isDerRelevant = (currentWeights and currentWeights[pair.der] and currentWeights[pair.der] > 0)
+        if pair.der == "ITEM_MOD_HEALTH_SHORT" or pair.der == "ITEM_MOD_MANA_SHORT" then isDerRelevant = true end
+
+        -- Check if we haven't printed these yet
+        if isDerRelevant and not handledStats[pair.prim] and not handledStats[pair.der] then
+            local primStr, pr, pg, pb = GetFormattedStatValue(pair.prim)
+            local derStr, dr, dg, db = GetFormattedStatValue(pair.der)
+
+            -- Only print if both stats actually exist on this item/comparison
+            if primStr and derStr then
+                -- Combine format: "Stamina" -> "20 (+20)   Health (from Stam)   200 (+200)"
+                -- We use |cffcccccc (light gray) for the middle label text to separate it visually
+                local combinedRight = primStr .. "   |cffcccccc" .. pair.derLabel .. "|r " .. derStr
+                tooltip:AddDoubleLine(pair.primLabel, combinedRight, pr, pg, pb)
                 
-                -- CASTER OVERRIDES:
-                if entry.key == "ITEM_MOD_HEALTH_SHORT" and itemHasStam then cleanName = "Health (from Stam)" end
-                if entry.key == "ITEM_MOD_MANA_SHORT" and itemHasInt then cleanName = "Mana (from Int)" end
-               -- if entry.key == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" and itemHasInt then cleanName = "Spell Crit (from Int)" end
-                if entry.key == "ITEM_MOD_MANA_REGENERATION_SHORT" and itemHasSpirit then cleanName = "Mana Regen (from Spt)" end
+                -- Mark as handled so they don't appear in Pass 2
+                handledStats[pair.prim] = true
+                handledStats[pair.der] = true
+            end
+        end
+    end
 
-                -- PHYSICAL OVERRIDES:
-                if entry.key == "ITEM_MOD_ATTACK_POWER_SHORT" and itemHasStr then cleanName = "Atk Power (from Str)" end
-                if entry.key == "ITEM_MOD_BLOCK_VALUE_SHORT" and itemHasStr then cleanName = "Block Val (from Str)" end
-                if entry.key == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" and itemHasAgi then cleanName = "Ranged AP (from Agi)" end
-                if entry.key == "ITEM_MOD_DODGE_RATING_SHORT" and itemHasAgi then cleanName = "Dodge (from Agi)" end
-               -- if entry.key == "ITEM_MOD_CRIT_RATING_SHORT" and itemHasAgi then cleanName = "Crit (from Agi)" end
-                if entry.key == "ITEM_MOD_ARMOR_SHORT" and itemHasAgi then cleanName = "Armor (from Agi)" end
-
-                if cleanName and cleanName ~= "" then
-                    local newVal = newExpanded[entry.key] or 0
-                    local diffVal = entry.val
-                    local newStr = (newVal % 1 == 0) and string.format("%d", newVal) or string.format("%.1f", newVal)
-                    local diffStr = (diffVal % 1 == 0) and string.format("%d", diffVal) or string.format("%.1f", diffVal)
-                    if diffVal > 0 then diffStr = "+" .. diffStr end
-                    
-                    if diffVal > 0 then tooltip:AddDoubleLine(cleanName, "|cffffffff" .. newStr .. "|r |cff00ff00(" .. diffStr .. ")|r", 1, 0.82, 0) 
-                    elseif diffVal < 0 then tooltip:AddDoubleLine(cleanName, "|cffffffff" .. newStr .. "|r |cffff0000(" .. diffStr .. ")|r", 1, 0.82, 0)
-                    elseif newVal > 0 then tooltip:AddDoubleLine(cleanName, "|cffffffff" .. newStr .. "|r |cff777777(+0)|r", 1, 0.82, 0) end
+    -- PASS 2: Render Remaining Unhandled Stats
+    for _, entry in ipairs(sortedDiffs) do
+        if not handledStats[entry.key] and entry.key ~= "IS_PROJECTED" then
+            local isRelevant = (currentWeights and currentWeights[entry.key] and currentWeights[entry.key] > 0)
+            -- Whitelist common stats just in case weights are zero/missing
+            if entry.key == "ITEM_MOD_HEALTH_SHORT" or entry.key == "ITEM_MOD_MANA_SHORT" or entry.key == "ITEM_MOD_ATTACK_POWER_SHORT" or entry.key == "ITEM_MOD_SPELL_POWER_SHORT" or entry.key == "ITEM_MOD_HEALING_POWER_SHORT" then isRelevant = true end
+            
+            if isRelevant then
+                local valStr, r, g, b = GetFormattedStatValue(entry.key)
+                if valStr then
+                    local cleanName = MSC.GetCleanStatName(entry.key)
+                    tooltip:AddDoubleLine(cleanName, valStr, r, g, b)
+                    handledStats[entry.key] = true
                 end
             end
         end

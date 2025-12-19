@@ -12,8 +12,7 @@ function MSC.ParseTooltipLine(text)
     end
     
     local patterns = {
-	
-		-- [[ NEW FALLBACKS FOR WRAPPED TEXT ]] --
+        -- [[ NEW FALLBACKS FOR WRAPPED TEXT ]] --
         -- WEAPON SPEED
         { pattern = "^Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
         
@@ -22,7 +21,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
         { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-		{ pattern = "by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_RATING_SHORT" },
 
         -- CRIT / SPELL CRIT -- Catch "with spells by 1%" specifically
         { pattern = "%+(%d+)%%? Crit", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
@@ -30,7 +29,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Increases your critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "Increases your spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
         { pattern = "Improves your chance to get a critical strike with spells by (%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-		{ pattern = "with spells by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { pattern = "with spells by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         
         -- CLASSIC WEAPON SKILLS (Edgemaster's Support)
         { pattern = "Increased Axes %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
@@ -45,7 +44,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Increased Crossbows %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         { pattern = "Increased Staves %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         { pattern = "Increased Fists %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
-        { pattern = "Increased Dagger Skill %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" }, -- Aged Core Leather Gloves
+        { pattern = "Increased Dagger Skill %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         
         -- DEFENSIVE
         { pattern = "%+(%d+)%%? Dodge", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
@@ -57,32 +56,32 @@ function MSC.ParseTooltipLine(text)
         { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
         { pattern = "Increased Defense %+(%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
         { pattern = "%+(%d+) Defense", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-		{ pattern = "dodge an attack by (%d+)%%%.?$", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "dodge an attack by (%d+)%%%.?$", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
         
         -- MANA PER 5 (MP5)
         { pattern = "Restores (%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "Restores (%d+) mana", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "^mana per 5 sec%.?$", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-		
-		-- HEALTH PER 5 (HP5)
+        
+        -- HEALTH PER 5 (HP5)
         { pattern = "Restores (%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
         { pattern = "(%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
         { pattern = "Restores (%d+) health every 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-        { pattern = "%+(%d+) Health Regen", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" }, -- Common on Enchants
-		
+        { pattern = "%+(%d+) Health Regen", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+        
         -- ATTACK POWER
         { pattern = "Attack Power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
-		{ pattern = "Attack Power in Cat, Bear", stat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, -- FERAL AP (Place BEFORE generic Attack Power)
+        { pattern = "Attack Power in Cat, Bear", stat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, 
         { pattern = "%+(%d+) Attack Power", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
         
         -- SPELL POWER / HEALING
-        { pattern = "damage and healing done by magical spells and effects by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" }, --Spell Power (Damage and Healing) pattern listed alway list this before the pure Healing pattern
+        { pattern = "damage and healing done by magical spells and effects by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
         { pattern = "damage done by magical spells and effects by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
         { pattern = "healing done by spells and effects by up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
         { pattern = "%+(%d+) Healing Spells", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
         { pattern = "%+(%d+) Spell Damage", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
-		{ pattern = "by up to (%d+)%.?$", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "by up to (%d+)%.?$", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
         
         -- SPECIFIC MAGIC DAMAGE
         { pattern = "Shadow damage by up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
@@ -97,20 +96,20 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Strength by (%d+)", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "Intellect by (%d+)", stat = "ITEM_MOD_INTELLECT_SHORT" },
         { pattern = "Spirit by (%d+)", stat = "ITEM_MOD_SPIRIT_SHORT" },
-        { pattern = "Stamina by (%d+)", stat = "ITEM_MOD_STAMINA_SHORT" }
-		
-		-- PRIMARY STATS (Standard Format)
-		{ pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
-		{ pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
-		{ pattern = "%+(%d+) Intellect", stat = "ITEM_MOD_INTELLECT_SHORT" },
-		{ pattern = "%+(%d+) Spirit", stat = "ITEM_MOD_SPIRIT_SHORT" },
-		{ pattern = "%+(%d+) Stamina", stat = "ITEM_MOD_STAMINA_SHORT" },
-		
-		-- FLAT RESOURCES
-		{ pattern = "%+(%d+) Health", stat = "ITEM_MOD_HEALTH_SHORT" },
-		{ pattern = "%+(%d+) Mana", stat = "ITEM_MOD_MANA_SHORT" },
+        { pattern = "Stamina by (%d+)", stat = "ITEM_MOD_STAMINA_SHORT" }, -- Added comma here
+        
+        -- PRIMARY STATS (Standard Format)
+        { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
+        { pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
+        { pattern = "%+(%d+) Intellect", stat = "ITEM_MOD_INTELLECT_SHORT" },
+        { pattern = "%+(%d+) Spirit", stat = "ITEM_MOD_SPIRIT_SHORT" },
+        { pattern = "%+(%d+) Stamina", stat = "ITEM_MOD_STAMINA_SHORT" },
+        
+        -- FLAT RESOURCES
+        { pattern = "%+(%d+) Health", stat = "ITEM_MOD_HEALTH_SHORT" },
+        { pattern = "%+(%d+) Mana", stat = "ITEM_MOD_MANA_SHORT" },
     }
-    
+
     for _, p in ipairs(patterns) do
         local val = text:match(p.pattern)
         if val then return p.stat, tonumber(val) end
