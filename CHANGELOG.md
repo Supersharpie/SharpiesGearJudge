@@ -1,3 +1,9 @@
+## v1.5.1 - Bug Fix
+* **Short Names fix for addons that wrap text in tooltips
+* **Added fix for FeralAP
+* **Updated Toc file
+------------------------------------------------------------------------------------------------
+
 ## v1.5.0 - The "True Crit" Update
 ### 🧠 Intelligent Stat Derivation
 * **Separated "Equip" vs "Stat" Crit:** The Judge now mathematically distinguishes between hard-coded crit (green text) and crit derived from attributes.

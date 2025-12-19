@@ -83,8 +83,23 @@ function MSC.ExpandDerivedStats(stats, itemLink)
     
     local isPhysical = (class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" or class == "DRUID" or class == "HUNTER" or class == "ROGUE")
     if isPhysical then
-        local str, agi, ap = out["ITEM_MOD_STRENGTH_SHORT"] or 0, out["ITEM_MOD_AGILITY_SHORT"] or 0, out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0
-        if class == "HUNTER" or class == "ROGUE" then ap = ap + str + agi else ap = ap + (str * 2) end
+        local str = out["ITEM_MOD_STRENGTH_SHORT"] or 0
+        local agi = out["ITEM_MOD_AGILITY_SHORT"] or 0
+        local ap  = out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0
+
+        -- ROGUE / HUNTER: 1 Str = 1 AP, 1 Agi = 1 AP
+        if class == "ROGUE" or class == "HUNTER" then
+            ap = ap + str + agi
+
+        -- DRUID: 1 Str = 2 AP, 1 Agi = 1 AP (Cat Form only, but safe to add for Feral weightings)
+        elseif class == "DRUID" then
+            ap = ap + (str * 2) + agi
+            
+        -- WARRIOR / PALADIN / SHAMAN: 1 Str = 2 AP, Agi = 0 AP
+        else
+            ap = ap + (str * 2)
+        end
+
         if ap > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = ap end
     end
 	

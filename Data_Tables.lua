@@ -63,6 +63,7 @@ MSC.ShortNames = {
     ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]  = "DPS",
     ["ITEM_MOD_POWER_REGEN0_SHORT"]       = "Mp5",
     ["ITEM_MOD_MANA_REGENERATION_SHORT"]  = "Mp5",
+	["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = "Hp5",
     ["ITEM_MOD_AGILITY_SHORT"]            = "Agility",
     ["ITEM_MOD_STRENGTH_SHORT"]           = "Strength",
     ["ITEM_MOD_INTELLECT_SHORT"]          = "Intellect",

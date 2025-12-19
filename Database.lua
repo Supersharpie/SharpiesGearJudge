@@ -12,9 +12,9 @@ MSC.WeightDB = {
         
         -- LEVELING
         -- 1-20: Prioritize hitting harder (Str) and not dying (Stam).
-        ["Leveling_1_20"]  = { ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=0.8 },
+        ["Leveling_1_20"]  = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=0.8 },
         -- 21-40: "Whirlwind Axe" Era. Big slow hits matter most.
-        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.6, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
         -- 41-59: Pre-Raid prep. Crit and Hit start becoming vital for rage generation.
         ["Leveling_41_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 },
     },
@@ -26,7 +26,7 @@ MSC.WeightDB = {
         
         -- LEVELING
         -- 1-20: Seal of Righteousness. Needs Mana (Int) and HP (Stam). Strength to kill.
-        ["Leveling_1_20"]  = { ["ITEM_MOD_STRENGTH_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        ["Leveling_1_20"]  = { ["ITEM_MOD_STRENGTH_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=2.0 },
         -- 21-40: Seal of Command. Slow 2H weapons + Strength.
         ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
         -- 41-59: Vengeance Spec. Crit becomes massive for proc uptime.
@@ -122,7 +122,7 @@ MSC.WeightDB = {
     ["DRUID"] = {
         ["Default"]     = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
         ["Balance"]     = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
-        ["FeralCombat"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+        ["FeralCombat"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
         ["Restoration"] = { ["ITEM_MOD_HEALING_POWER_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
         ["Tank"]        = { ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=2.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
         
