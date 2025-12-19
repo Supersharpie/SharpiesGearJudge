@@ -306,7 +306,7 @@ elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" the
         end
     end
 
-    -- PASS 2: Render Remaining Unhandled Stats
+-- PASS 2: Render Remaining Unhandled Stats
     for _, entry in ipairs(sortedDiffs) do
         if not handledStats[entry.key] and entry.key ~= "IS_PROJECTED" then
             local isRelevant = (currentWeights and currentWeights[entry.key] and currentWeights[entry.key] > 0)
@@ -317,6 +317,17 @@ elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" the
                 local valStr, r, g, b = GetFormattedStatValue(entry.key)
                 if valStr then
                     local cleanName = MSC.GetCleanStatName(entry.key)
+                    
+                    -- [[ RACIAL CHECK START ]] --
+                    -- If we are displaying Weapon Skill, but the raw item has 0, it's a Racial.
+                    if entry.key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then
+                        local rawVal = newStats["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] or 0
+                        if rawVal == 0 then
+                            cleanName = "Wpn Skill (Racial)"
+                        end
+                    end
+                    -- [[ RACIAL CHECK END ]] --
+
                     tooltip:AddDoubleLine(cleanName, valStr, r, g, b)
                     handledStats[entry.key] = true
                 end
