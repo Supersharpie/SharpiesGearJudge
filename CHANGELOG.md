@@ -1,3 +1,13 @@
+##v1.5.2 (Upcoming) Bug Fixes
+* **TextParser: Fixed a syntax error (stray braces) that caused the addon to crash on load.
+* **Empty Slots: Fixed an issue where comparing an item against an empty slot (Neck, Rings, Trinkets) would fail to calculate a score or show the stat breakdown.
+* **Visual Improvements:
+* **Compact Stat Lines: Primary stats and their derived bonuses are now combined onto a single line (e.g., Stamina ... Health (from Stam)) to reduce tooltip height and clutter.
+* **Stat Grouping: "Gains" and "Losses" are now visually separated, making it easier to see trade-offs at a glance.
+* **Cleaner Character Sheet: Replaced the large "CURRENTLY EQUIPPED" header on the character sheet with a subtle "(Baseline)" indicator.
+* **Active Stat Colors: Stats on equipped items are now highlighted in Green/Gold to show they are active, rather than displaying as a gray (+0) comparison.
+------------------------------------------------------------------------------------------------
+
 ## v1.5.1 - Bug Fix
 * **Short Names fix for addons that wrap text in tooltips
 * **Added fix for FeralAP
