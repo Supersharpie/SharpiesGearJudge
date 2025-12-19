@@ -1,324 +1,257 @@
 local _, MSC = ...
 
 -- =============================================================
--- 1. GENERAL HELPERS
+-- 1. INITIALIZATION & SLASH COMMANDS
 -- =============================================================
-function MSC.GetCleanStatName(key)
-    if MSC.ShortNames and MSC.ShortNames[key] then return MSC.ShortNames[key] end
-    local clean = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower()
-    return clean:gsub("^%l", string.upper)
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("PLAYER_LOGIN")
+eventFrame:SetScript("OnEvent", function(self, event, ...)
+    if not SGJ_Settings then SGJ_Settings = {} end
+    if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
+    if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
+    if SGJ_Settings.Mode == nil then SGJ_Settings.Mode = "Auto" end
+    if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
+    print("|cff00ccffSharpie's Gear Judge|r (TBC) loaded. Type /sgj for the Lab.")
+end)
+
+SLASH_SHARPIESGEARJUDGE1 = "/sgj"
+SLASH_SHARPIESGEARJUDGE2 = "/judge"
+SlashCmdList["SHARPIESGEARJUDGE"] = function(msg) 
+    if msg == "options" or msg == "config" then 
+        if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end 
+    else 
+        if MSC.CreateLabFrame then MSC.CreateLabFrame() end 
+    end 
 end
 
-function MSC.IsItemUsable(link)
-    if not link then return false end
-    local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
-    local _, playerClass = UnitClass("player")
+-- =============================================================
+-- 2. HELPER: DERIVED STATS
+-- =============================================================
+local function ExpandDerivedStats(stats, class)
+    local out = {}
+    if not stats then return out end
+    for k, v in pairs(stats) do out[k] = v end
+    if (out["ITEM_MOD_STAMINA_SHORT"] or 0) > 0 then out["ITEM_MOD_HEALTH_SHORT"] = (out["ITEM_MOD_HEALTH_SHORT"] or 0) + (out["ITEM_MOD_STAMINA_SHORT"] * 10) end
+    if (out["ITEM_MOD_INTELLECT_SHORT"] or 0) > 0 then out["ITEM_MOD_MANA_SHORT"] = (out["ITEM_MOD_MANA_SHORT"] or 0) + (out["ITEM_MOD_INTELLECT_SHORT"] * 15) end
+    if class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
+        if (out["ITEM_MOD_STRENGTH_SHORT"] or 0) > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + (out["ITEM_MOD_STRENGTH_SHORT"] * 2) end
+    end
+    if class == "ROGUE" or class == "HUNTER" or class == "DRUID" then
+        if (out["ITEM_MOD_AGILITY_SHORT"] or 0) > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + out["ITEM_MOD_AGILITY_SHORT"] end
+    end
+    if class == "HUNTER" then
+        if (out["ITEM_MOD_AGILITY_SHORT"] or 0) > 0 then out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0) + out["ITEM_MOD_AGILITY_SHORT"] end
+    end
+    return out
+end
 
-    if classID == 4 then 
-        if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then if subclassID > 1 then return false end 
-        elseif playerClass == "ROGUE" or playerClass == "DRUID" then if subclassID > 2 then return false end 
-        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then if subclassID > 3 then return false end end
+local function GetCleanStatName(key, expandedStats)
+    local name = MSC.GetCleanStatName and MSC.GetCleanStatName(key) or key
+    if key == "ITEM_MOD_HEALTH_SHORT" and (expandedStats["ITEM_MOD_STAMINA_SHORT"] or 0) > 0 then name = "Health (w/ Stam)" end
+    if key == "ITEM_MOD_MANA_SHORT" and (expandedStats["ITEM_MOD_INTELLECT_SHORT"] or 0) > 0 then name = "Mana (w/ Int)" end
+    if key == "ITEM_MOD_ATTACK_POWER_SHORT" and ((expandedStats["ITEM_MOD_STRENGTH_SHORT"] or 0) > 0 or (expandedStats["ITEM_MOD_AGILITY_SHORT"] or 0) > 0) then name = "Atk Power (Total)" end
+    return name
+end
+
+local function MergeStats(t1, t2)
+    local out = {}
+    if t1 then for k,v in pairs(t1) do out[k] = v end end
+    if t2 then for k,v in pairs(t2) do if type(v) == "number" then out[k] = (tonumber(out[k]) or 0) + v else out[k] = v end end end
+    return out
+end
+
+-- =============================================================
+-- 3. TOOLTIP ENGINE
+-- =============================================================
+function MSC.UpdateTooltip(tooltip)
+    if SGJ_Settings.HideTooltips then return end
+    
+    local _, link = nil, nil
+    if tooltip.GetItem then _, link = tooltip:GetItem() end
+    if not link then return end
+
+    -- [[ 1. THE JUNK FILTER ]]
+    if not IsEquippableItem(link) then return end
+    local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+    if equipLoc == "INVTYPE_BAG" or equipLoc == "INVTYPE_TABARD" or equipLoc == "INVTYPE_BODY" or equipLoc == "INVTYPE_AMMO" or equipLoc == "INVTYPE_QUIVER" then return end
+
+    if MSC.IsItemUsable and not MSC.IsItemUsable(link) then 
+        tooltip:AddLine(" ")
+        tooltip:AddLine("|cffff0000Sharpie's Verdict: CLASS UNUSABLE|r")
+        tooltip:Show()
+        return 
+    end
+
+    local _, _, _, _, dbMinLevel = GetItemInfo(link)
+    local myLevel = UnitLevel("player")
+    local isFutureItem = false
+    if dbMinLevel and dbMinLevel > myLevel then isFutureItem = true end
+
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights then return end
+
+    local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc] or nil
+    local oldScore, newScore = 0, 0
+    local oldStats, newStats = {}, {}
+    local partnerItemLink = nil
+    local isEquipped = false
+    local noteText = nil
+
+    local equippedMH = GetInventoryItemLink("player", 16)
+    local equippedOH = GetInventoryItemLink("player", 17)
+    local equippedMHLoc = equippedMH and select(9, GetItemInfo(equippedMH))
+
+    -- LOGIC: WEAPON PAIRING
+    if equipLoc == "INVTYPE_2HWEAPON" then
+        newStats = MSC.SafeGetItemStats(link, 16)
+        newScore = MSC.GetItemScore(newStats, weights, specName, 16)
+        local mhLink, ohLink = equippedMH, equippedOH
+        local filledFromBag = false
+        if equippedMHLoc ~= "INVTYPE_2HWEAPON" then
+             if not mhLink then mhLink = MSC.FindBestMainHand(weights, specName); filledFromBag = true end
+             if not ohLink then ohLink = MSC.FindBestOffhand(weights, specName); filledFromBag = true end
+        end
+        local mhStats = MSC.SafeGetItemStats(mhLink, 16)
+        local ohStats = MSC.SafeGetItemStats(ohLink, 17)
+        oldStats = MergeStats(mhStats, ohStats)
+        oldScore = MSC.GetItemScore(mhStats, weights, specName, 16) + MSC.GetItemScore(ohStats, weights, specName, 17)
+        if filledFromBag or (equippedMHLoc ~= "INVTYPE_2HWEAPON" and equippedOH) then noteText = "Comparing vs: " .. (mhLink or "Empty") .. " + " .. (ohLink or "Empty") end
+        if link == equippedMH then isEquipped = true end
+
+    elseif (equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND") and equippedMHLoc == "INVTYPE_2HWEAPON" then
+        local bestOHLink, bestOHScore, bestOHStats = MSC.FindBestOffhand(weights, specName)
+        local mhStats = MSC.SafeGetItemStats(link, 16)
+        local mhScore = MSC.GetItemScore(mhStats, weights, specName, 16)
+        if bestOHLink then newStats = MergeStats(mhStats, bestOHStats); newScore = mhScore + bestOHScore; partnerItemLink = bestOHLink
+        else newStats = mhStats; newScore = mhScore; noteText = "|cffff0000(No Offhand found)|r" end
+        oldStats = MSC.SafeGetItemStats(equippedMH, 16)
+        oldScore = MSC.GetItemScore(oldStats, weights, specName, 16)
+
+    elseif (equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND") and equippedMHLoc == "INVTYPE_2HWEAPON" then
+        local bestMHLink, bestMHScore, bestMHStats = MSC.FindBestMainHand(weights, specName)
+        local ohStats = MSC.SafeGetItemStats(link, 17)
+        local ohScore = MSC.GetItemScore(ohStats, weights, specName, 17)
+        if bestMHLink then newStats = MergeStats(bestMHStats, ohStats); newScore = bestMHScore + ohScore; partnerItemLink = bestMHLink
+        else newStats = ohStats; newScore = ohScore; noteText = "|cffff0000(No Mainhand found)|r" end
+        oldStats = MSC.SafeGetItemStats(equippedMH, 16)
+        oldScore = MSC.GetItemScore(oldStats, weights, specName, 16)
+
+    elseif slotId == 11 or slotId == 13 then
+        local s1, s2 = slotId, slotId + 1
+        local l1, l2 = GetInventoryItemLink("player", s1), GetInventoryItemLink("player", s2)
+        local st1, st2 = MSC.SafeGetItemStats(l1, s1), MSC.SafeGetItemStats(l2, s2)
+        local sc1, sc2 = MSC.GetItemScore(st1, weights, specName, s1), MSC.GetItemScore(st2, weights, specName, s2)
+        local targetSlot, targetLink, otherLink = s1, l1, l2
+        
+        if (not l1) then targetSlot = s1; targetLink = nil; otherLink = l2
+        elseif (not l2) then targetSlot = s2; targetLink = nil; otherLink = l1
+        elseif sc2 < sc1 then targetSlot = s2; targetLink = l2; otherLink = l1 end
+        
+        if link == l1 then isEquipped = true; targetSlot = s1; targetLink = l1; otherLink = l2
+        elseif link == l2 then isEquipped = true; targetSlot = s2; targetLink = l2; otherLink = l1 end
+        
+        partnerItemLink = otherLink 
+        oldStats = MSC.SafeGetItemStats(targetLink, targetSlot)
+        oldScore = MSC.GetItemScore(oldStats, weights, specName, targetSlot)
+        newStats = MSC.SafeGetItemStats(link, targetSlot)
+        newScore = MSC.GetItemScore(newStats, weights, specName, targetSlot)
+
+        if not isEquipped then noteText = "Comparing vs: " .. (targetLink or "Empty") .. " (Weakest)" end
+
+    elseif slotId then
+        local compLink = GetInventoryItemLink("player", slotId)
+        local isBagItem = false
+        if not compLink then
+            if slotId == 16 then compLink = MSC.FindBestMainHand(weights, specName); if compLink then isBagItem = true end end
+            if slotId == 17 then compLink = MSC.FindBestOffhand(weights, specName); if compLink then isBagItem = true end end
+        end
+        if link == compLink then isEquipped = true end
+        if isBagItem then noteText = "Comparing vs: " .. (compLink or "Unknown") .. " (Best in Bag)" end
+        
+        if slotId == 17 then partnerItemLink = GetInventoryItemLink("player", 16) end
+        if slotId == 16 then partnerItemLink = GetInventoryItemLink("player", 17) end
+        
+        oldStats = MSC.SafeGetItemStats(compLink, slotId)
+        oldScore = MSC.GetItemScore(oldStats, weights, specName, slotId)
+        newStats = MSC.SafeGetItemStats(link, slotId)
+        newScore = MSC.GetItemScore(newStats, weights, specName, slotId)
     end
     
-    if classID == 2 and MSC.ValidWeapons and MSC.ValidWeapons[playerClass] then
-        if not MSC.ValidWeapons[playerClass][subclassID] then return false end
+    -- RENDER UI
+    tooltip:AddLine(" ")
+    tooltip:AddDoubleLine("Judge's Score:", string.format("%.1f", newScore), 1, 0.82, 0, 1, 1, 1)
+    tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
+    
+    if noteText then tooltip:AddLine(noteText, 0.7, 0.7, 0.7) end
+    
+    if isEquipped then
+        if partnerItemLink then tooltip:AddLine("|cff00ffff*** EQUIPPED WITH: " .. partnerItemLink .. " ***|r")
+        else tooltip:AddLine("|cff00ffff*** CURRENTLY EQUIPPED ***|r") end
+    else
+        local delta = newScore - oldScore
+        if partnerItemLink and delta >= 0 then 
+            tooltip:AddLine("|cff00ff00*** BEST PAIR WITH: " .. partnerItemLink .. " ***|r") 
+        end
+        
+        if isFutureItem then
+             tooltip:AddLine("|cffFF55FF*** FUTURE UPGRADE (+" .. string.format("%.1f", delta) .. ") ***|r")
+             if dbMinLevel then tooltip:AddLine("|cffFF55FF(Requires Level " .. dbMinLevel .. ")|r") end
+        else
+            if delta > 0.1 then tooltip:AddLine("|cff00ff00*** UPGRADE (+" .. string.format("%.1f", delta) .. ") ***|r")
+            elseif delta < -0.1 then tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. string.format("%.1f", delta) .. ") ***|r")
+            else tooltip:AddLine("|cffffffff*** EQUAL STATS ***|r") end
+        end
     end
 
-    return true
-end
+    -- [[ NEW CLEAN PROJECTION DISPLAY ]]
+    if newStats.IS_PROJECTED or newStats.GEMS_PROJECTED then 
+        tooltip:AddLine(" ") -- Spacer
+        -- Enchant Row
+        if newStats.ENCHANT_TEXT then
+             tooltip:AddDoubleLine("Projected Enchant:", "|cffffffff" .. newStats.ENCHANT_TEXT .. "|r", 0, 1, 1)
+        elseif newStats.IS_PROJECTED then
+             tooltip:AddDoubleLine("Projected Enchant:", "|cffffffffBest Available|r", 0, 1, 1)
+        end
+        
+        -- Gem Row
+        if newStats.GEM_TEXT then
+             tooltip:AddDoubleLine("Projected Gems:", "|cffffffff" .. newStats.GEM_TEXT .. "|r", 0, 1, 1)
+        elseif newStats.GEMS_PROJECTED then 
+             local gemTier = (UnitLevel("player") < 70) and "Green" or "Rare"
+             tooltip:AddDoubleLine("Projected Gems:", "|cffffffff" .. newStats.GEMS_PROJECTED .. " " .. gemTier .. "|r", 0, 1, 1)
+        end
+        
+        -- Bonus Row (Only if active)
+        if newStats.BONUS_PROJECTED then
+             tooltip:AddLine("   + Socket Bonus Activated", 0, 1, 0)
+        end
+    end
 
-function MSC.GetCurrentWeights()
     local _, englishClass = UnitClass("player")
-    if not englishClass then return {}, "Unknown" end
-    local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
-    if not classData then return {}, "No Data" end
+    local newExpanded = ExpandDerivedStats(newStats, englishClass)
+    local sortedKeys = {}
+    for k, v in pairs(newExpanded) do table.insert(sortedKeys, k) end
+    table.sort(sortedKeys, function(a,b) return (weights[a] or 0) > (weights[b] or 0) end)
     
-    -- 1. MANUAL OVERRIDE (Always obeyed)
-    if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
-        local displayName = SGJ_Settings.Mode
-        if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
-        return classData[SGJ_Settings.Mode], displayName
-    end
-
-    -- 2. DETECT SPEC (TBC / Vanilla Compatible)
-    local maxPoints, activeSpec = 0, "Default"
-    local specIndex = 1
-    if MSC.SpecNames and MSC.SpecNames[englishClass] then
-        for i=1, 3 do
-            local _, _, pointsSpent, _, previewPoints = GetTalentTabInfo(i)
-            local totalPoints = (tonumber(pointsSpent) or 0) + (tonumber(previewPoints) or 0)
-            if totalPoints > maxPoints then 
-                maxPoints = totalPoints; activeSpec = MSC.SpecNames[englishClass][i]; specIndex = i
-            end
+    for _, stat in ipairs(sortedKeys) do
+        local isRelevant = (weights[stat] and weights[stat] > 0) or 
+                           (stat == "ITEM_MOD_HEALTH_SHORT") or 
+                           (stat == "ITEM_MOD_MANA_SHORT") or 
+                           (stat == "ITEM_MOD_ATTACK_POWER_SHORT")
+        -- Filter out internal text keys
+        if isRelevant and not string.find(stat, "PROJECTED") and not string.find(stat, "COUNT") and stat ~= "GEM_TEXT" and stat ~= "ENCHANT_TEXT" then
+             local newVal = newExpanded[stat] or 0
+             if newVal > 0 then
+                 local name = GetCleanStatName(stat, newExpanded)
+                 local valStr = (newVal % 1 == 0) and string.format("%d", newVal) or string.format("%.1f", newVal)
+                 tooltip:AddDoubleLine(name, valStr, 1, 0.82, 0, 1, 1, 1)
+             end
         end
     end
-    
-    -- 3. SMART LEVELING LOGIC (TBC Update: Checks up to Level 70)
-    local playerLevel = UnitLevel("player")
-    if playerLevel < 70 then
-        -- A. IDENTIFY DUNGEON ROLES (Tanks & Healers)
-        local isDungeonRole = false
-        if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end -- Protection
-        if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Holy or Prot
-        if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Disc or Holy
-        if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end -- Resto
-        if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end -- Resto
-        
-        -- B. APPLY BRACKET LOGIC
-        if not isDungeonRole then
-            if playerLevel <= 20 and classData["Leveling_1_20"] then
-                return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
-            elseif playerLevel <= 40 and classData["Leveling_21_40"] then
-                return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
-            elseif playerLevel <= 57 and classData["Leveling_41_57"] then
-                return classData["Leveling_41_57"], activeSpec .. " (Lv 41-57)"
-            elseif playerLevel <= 69 and classData["Leveling_58_69"] then
-                return classData["Leveling_58_69"], activeSpec .. " (Outland)"
-            end
-        end
-    end
-    
-    -- 4. FALLBACK (Level 70 or Dungeon Role)
-    return (classData[activeSpec] or classData["Default"]), activeSpec .. " (Auto)"
+    tooltip:Show()
 end
 
--- =============================================================
--- 2. ITEM STAT SCANNER (TBC Updated)
--- =============================================================
-function MSC.SafeGetItemStats(itemLink, slotId)
-    if not itemLink then return {} end
-    local stats = GetItemStats(itemLink) or {}
-    local finalStats = {}
-    
-    -- 1. BASE STATS
-    if MSC.ShortNames then
-        for k, v in pairs(stats) do
-            if MSC.ShortNames[k] or k:find("EMPTY_SOCKET") then finalStats[k] = v else finalStats[k] = v end
-        end
-    end
-    
-    -- 2. Text Scan
-    local tooltip = CreateFrame("GameTooltip", "MSCScanTooltip", nil, "GameTooltipTemplate")
-    tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-    tooltip:SetHyperlink(itemLink)
-    
-    local gemMode = SGJ_Settings.GemMode or 1
-    
-    for i = 2, tooltip:NumLines() do
-        local lineObj = _G["MSCScanTooltipTextLeft"..i]
-        local line = lineObj:GetText()
-        if line then
-            -- A. Standard Stat Parsing
-            local s, v = MSC.ParseTooltipLine(line)
-            if s and v then 
-                if not foundByAPI[s] then
-                    finalStats[s] = (finalStats[s] or 0) + v 
-                end
-            end
-            
-            -- B. Socket Bonus Parsing (Only if Matching Colors)
-            if gemMode == 3 then -- Mode 3 = "Match Colors (Best)"
-                local bStat, bVal = MSC.ParseSocketBonus(line)
-                if bStat and bVal then
-                     finalStats[bStat] = (finalStats[bStat] or 0) + bVal
-                     finalStats.BONUS_PROJECTED = true
-                end
-            end
-        end
-    end
-    
-    local _, specName = MSC.GetCurrentWeights()
-    local cleanSpec = specName:gsub(" %(.*%)", "") 
-
-    -- =========================================================
-    -- LOGIC: ENCHANTS (Smart Leveling Update)
-    -- =========================================================
-    local enchantMode = SGJ_Settings.EnchantMode or 1
-    local playerLevel = UnitLevel("player")
-
-    if enchantMode == 3 and slotId then
-        local bestID = 0
-        local targetEnchantTable = (playerLevel < 70) and MSC.BestEnchants_Leveling or MSC.BestEnchants
-        local slotTable = targetEnchantTable and targetEnchantTable[slotId]
-        if slotTable then
-            bestID = slotTable[cleanSpec] or slotTable["Default"] or 0
-        end
-        
-        if bestID > 0 then
-            local enchantStats = MSC.EnchantDB[bestID]
-            if enchantStats then
-                for k, v in pairs(enchantStats) do
-                    finalStats[k] = (finalStats[k] or 0) + v
-                end
-                finalStats.IS_PROJECTED = true
-            end
-        end
-    end
-    
-    -- =========================================================
-    -- LOGIC: GEMS (Smart Leveling Update)
-    -- =========================================================
-    -- gemMode was defined above (line 120)
-
-    if gemMode == 2 then
-        -- Mode 2: CURRENT ONLY (Already in GetItemStats)
-        
-    elseif gemMode == 3 or gemMode == 4 then
-        -- Mode 3 (Match) & 4 (Ignore): FILL EMPTY SOCKETS
-        local weights = MSC.GetCurrentWeights()
-        local gemCount = 0
-        
-        -- SMART SWITCH: Use Green Gems if < 70, Blue Gems if 70
-        local targetGemTable = (playerLevel < 70) and MSC.GemOptions_Leveling or MSC.GemOptions
-        
-        -- Identify the "Best Generic Gem" (for Mode 4 - Ignore Color)
-        local bestGenericStat, bestGenericVal = nil, 0
-        if gemMode == 4 then
-            for _, list in pairs(targetGemTable or {}) do
-                for _, gem in ipairs(list) do
-                    -- SAFETY: Ignore Meta gems when finding generic best
-                    if not gem.stat:find("META") then
-                         local score = (weights[gem.stat] or 0) * gem.val
-                         if score > bestGenericVal then bestGenericVal = score; bestGenericStat = gem end
-                    end
-                end
-            end
-        end
-
-        for socketKey, gemList in pairs(targetGemTable or {}) do
-            local socketCount = finalStats[socketKey] or 0
-            
-            -- A. META SOCKET (Always Unique Logic)
-            if socketKey == "EMPTY_SOCKET_META" then
-                 if socketCount > 0 then
-                     local bestMeta, bestMetaScore = nil, 0
-                     for _, gem in ipairs(gemList) do
-                        local score = (weights[gem.stat] or 0) * gem.val
-                        if score > bestMetaScore then bestMetaScore = score; bestMeta = gem end
-                     end
-                     -- Fallback: Pick first meta if all score 0 (e.g., Tank meta for Healer)
-                     if not bestMeta and #gemList > 0 then bestMeta = gemList[1] end
-                     
-                     if bestMeta then
-                        finalStats[bestMeta.stat] = (finalStats[bestMeta.stat] or 0) + (bestMeta.val * socketCount)
-                        gemCount = gemCount + socketCount
-                     end
-                 end
-            
-            -- B. REGULAR SOCKETS (Red/Yellow/Blue)
-            elseif socketCount > 0 then
-                local bestGemForSlot = nil
-                
-                if gemMode == 3 then
-                    -- MODE 3: MATCH COLORS
-                    local bestVal = 0
-                    for _, gem in ipairs(gemList) do
-                        local score = (weights[gem.stat] or 0) * gem.val
-                        if score > bestVal then bestVal = score; bestGemForSlot = gem end
-                    end
-                else
-                    -- MODE 4: IGNORE COLORS (Use best generic)
-                    bestGemForSlot = bestGenericStat
-                end
-                
-                if bestGemForSlot then
-                    finalStats[bestGemForSlot.stat] = (finalStats[bestGemForSlot.stat] or 0) + (bestGemForSlot.val * socketCount)
-                    if bestGemForSlot.stat2 and bestGemForSlot.val2 then
-                        finalStats[bestGemForSlot.stat2] = (finalStats[bestGemForSlot.stat2] or 0) + (bestGemForSlot.val2 * socketCount)
-                    end
-                    gemCount = gemCount + socketCount
-                end
-            end
-        end
-        if gemCount > 0 then finalStats.GEMS_PROJECTED = gemCount end
-    end
-    
-    return finalStats
-end
-
--- =============================================================
--- 3. STAT COMPARISON TOOLS
--- =============================================================
-function MSC.GetStatDifferences(new, old)
-    local diffs = {}
-    local seen = {}
-    for k, v in pairs(new) do 
-        if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" then
-            local d = v - (old[k] or 0)
-            if d ~= 0 then table.insert(diffs, { key=k, val=d }); seen[k] = true end
-        end
-    end
-    for k, v in pairs(old) do
-        if not seen[k] and k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" then
-            local d = (new[k] or 0) - v
-            if d ~= 0 then table.insert(diffs, { key=k, val=d }) end
-        end
-    end
-    return diffs
-end
-
-function MSC.SortStatDiffs(diffs)
-    table.sort(diffs, function(a,b) return a.val > b.val end)
-    return diffs
-end
-
--- =============================================================
--- 4. PARTNER FINDER
--- =============================================================
-function MSC.FindBestMainHand(weights, specName)
-    local bestLink, bestScore, bestStats = nil, 0, {}
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link then
-                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                if equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND" then
-                    if MSC.IsItemUsable(link) then
-                        local stats = MSC.SafeGetItemStats(link, 16)
-                        if stats then 
-                            local score = MSC.GetItemScore(stats, weights, specName, 16)
-                            if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end 
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return bestLink, bestScore, bestStats
-end
-
-function MSC.FindBestOffhand(weights, specName)
-    local bestLink, bestScore, bestStats = nil, 0, {}
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link then
-                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                if equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" or equipLoc == "INVTYPE_WEAPON" then
-                    if MSC.IsItemUsable(link) then
-                        local stats = MSC.SafeGetItemStats(link, 17)
-                        if stats then 
-                            local score = MSC.GetItemScore(stats, weights, specName, 17)
-                            if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end 
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return bestLink, bestScore, bestStats
-end
-
--- =============================================================
--- 5. ELVUI SKINNING
--- =============================================================
-function MSC.ApplyElvUISkin(frame)
-    if not frame then return end
-    if C_AddOns.IsAddOnLoaded("ElvUI") then
-        local E = unpack(ElvUI)
-        if E and E.GetModule then
-            local S = E:GetModule("Skins")
-            if S and S.HandleFrame then S:HandleFrame(frame, true) end
-        end
-    end
-end
+GameTooltip:HookScript("OnTooltipSetItem", MSC.UpdateTooltip)
+if ItemRefTooltip then ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
+if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
+if ShoppingTooltip2 then ShoppingTooltip2:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end

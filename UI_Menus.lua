@@ -1,7 +1,7 @@
 local _, MSC = ...
 
 -- =============================================================
--- 1. MINIMAP BUTTON (unchanged logic, cleaner formatting)
+-- 1. MINIMAP BUTTON
 -- =============================================================
 local MinimapButton = CreateFrame("Button", "MSC_MinimapButton", Minimap)
 MinimapButton:SetSize(32, 32); MinimapButton:SetFrameStrata("MEDIUM"); MinimapButton:SetFrameLevel(8) 
@@ -38,7 +38,7 @@ MinimapButton:SetScript("OnLeave", GameTooltip_Hide)
 
 
 -- =============================================================
--- 2. OPTIONS MENU (The Refactored Layout)
+-- 2. OPTIONS MENU (Unified "Lab Style" Look)
 -- =============================================================
 function MSC.CreateOptionsFrame()
     if MyStatCompareFrame then 
@@ -53,13 +53,32 @@ function MSC.CreateOptionsFrame()
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.title:SetPoint("LEFT", f.TitleBg, "LEFT", 5, 0); f.title:SetText("Sharpie's Gear Judge Configuration")
 
+    -- [[ VISUAL MATCH: Darken Background like Lab ]]
+    f.bg = f:CreateTexture(nil, "BACKGROUND", nil, 1) 
+    f.bg:SetAllPoints(f)
+    f.bg:SetColorTexture(0, 0, 0, 0.85) -- Dark black tint
+
+    -- [[ VISUAL MATCH: Custom Class Crest from Lab ]]
+    local _, class = UnitClass("player")
+    if class then
+        -- Convert "PALADIN" to "Paladin"
+        local fixed = class:sub(1,1) .. class:sub(2):lower()
+        
+        f.crest = f:CreateTexture(nil, "ARTWORK")
+        f.crest:SetAllPoints(f)
+        f.crest:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixed .. ".tga")
+        f.crest:SetVertexColor(0.6, 0.6, 0.6, 0.6) 
+    end
+
     -- [[ LAYOUT HELPER ]]
-    -- This tracks the last element placed so we can just stack the next one below it.
     local lastObj = nil
-    local function AddElement(obj, yOffset, customX)
+    
+    local function AddElement(obj, yOffset, customX, customParent)
         local x = customX or 20
+        local p = customParent or f 
+        
         if not lastObj then
-            obj:SetPoint("TOPLEFT", f, "TOPLEFT", x, yOffset or -40)
+            obj:SetPoint("TOPLEFT", p, "TOPLEFT", x, yOffset or -40)
         else
             obj:SetPoint("TOPLEFT", lastObj, "BOTTOMLEFT", 0, yOffset or -10)
         end
@@ -68,18 +87,20 @@ function MSC.CreateOptionsFrame()
     end
 
     -- [[ WIDGET CREATORS ]]
-    local function CreateHeader(text)
+    local function CreateHeader(text, parentFrame, yOverride)
         local h = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         h:SetText(text)
+        if parentFrame and yOverride then
+             h:SetPoint("TOPLEFT", parentFrame, "TOPLEFT", 15, yOverride)
+             lastObj = h
+             return h
+        end
         return AddElement(h, -20)
     end
     
     local function CreateCheck(label, key, tooltip)
         local cb = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate")
         cb.Text:SetText(label)
-        cb:SetChecked(not SGJ_Settings[key]) -- Note: Logic inverted for Hide vars or standard for others
-        
-        -- Logic to handle "Hide" variables vs "Show" variables
         if key:find("Hide") then cb:SetChecked(not SGJ_Settings[key]) else cb:SetChecked(SGJ_Settings[key]) end
         
         cb:SetScript("OnClick", function(self) 
@@ -97,10 +118,10 @@ function MSC.CreateOptionsFrame()
     local function CreateDropdown(label, key, options)
         local title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         title:SetText(label)
-        AddElement(title, -15) -- Add title first
+        AddElement(title, -15) 
         
         local dd = CreateFrame("Frame", nil, f, "UIDropDownMenuTemplate")
-        dd:SetPoint("TOPLEFT", title, "BOTTOMLEFT", -15, -2) -- Offset slightly for alignment
+        dd:SetPoint("TOPLEFT", title, "BOTTOMLEFT", -15, -2) 
         
         local function OnClick(self) 
             UIDropDownMenu_SetSelectedID(dd, self:GetID())
@@ -119,31 +140,40 @@ function MSC.CreateOptionsFrame()
         UIDropDownMenu_Initialize(dd, Init)
         UIDropDownMenu_SetWidth(dd, 200)
         
-        -- Set current text safely
         local currentText = ""
         for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
         UIDropDownMenu_SetText(dd, currentText)
         
-        lastObj = dd -- Update lastObj to the dropdown so next item goes below it
+        lastObj = dd 
         return dd
     end
 
 
     -- =========================================================
-    -- MENU CONTENT (The Easy Part)
+    -- MENU CONTENT
     -- =========================================================
     
-    -- SECTION 1: PROJECTION LOGIC
-    CreateHeader("Projection Logic (TBC Features)")
+    -- [[ VISUAL: The Group Box ]]
+    local box = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    box:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -35)
+    box:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -35)
+    box:SetHeight(140)
+    box:SetBackdrop({
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, edgeSize = 16,
+        insets = { left = 5, right = 5, top = 5, bottom = 5 }
+    })
+    box:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.8)
+
+    -- SECTION 1: PROJECTION LOGIC (Inside Box)
+    CreateHeader("Projection Logic (TBC Features)", box, -15)
     
-    -- Enchant Dropdown
     CreateDropdown("Enchant Comparisons:", "EnchantMode", {
         { text = "Off (Raw Stats Only)", val = 1 },
         { text = "Compare Current Enchants", val = 2 },
         { text = "Project Best Enchants (Sim)", val = 3 },
     })
     
-    -- Gem Dropdown
     CreateDropdown("Gem Socket Logic:", "GemMode", {
         { text = "Off (Empty Sockets = 0)", val = 1 },
         { text = "Compare Current Gems Only", val = 2 },
@@ -151,10 +181,11 @@ function MSC.CreateOptionsFrame()
         { text = "Project Best (Ignore Colors)", val = 4 },
     })
 
+    lastObj = box
+
     -- SECTION 2: PROFILE
     CreateHeader("Character Spec")
     
-    -- Spec Dropdown (Dynamic based on class)
     local _, englishClass = UnitClass("player")
     local specOptions = { { text = "Auto-Detect", val = "Auto" } }
     

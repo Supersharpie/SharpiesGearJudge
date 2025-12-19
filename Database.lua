@@ -823,6 +823,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=0 
         },
     },
+}
 
 -- =============================================================
 -- 2. SPEC NAMES (Unchanged)
@@ -1216,4 +1217,118 @@ MSC.BestEnchants_Leveling = {
         ["Default"] = 1900, -- Crusader
         ["Rogue"] = 2564, 
     },
+}
+-- =============================================================
+-- 7. RACIAL BONUSES (TBC EDITION)
+-- =============================================================
+-- TBC Mechanics: 
+-- Humans/Orcs: +5 Expertise (~19.7 Rating).
+-- Dwarves/Trolls: +1% Crit (~22.1 Rating).
+-- Draenei: +1% Hit (Global, handled via weights usually).
+
+MSC.RacialTraits = {
+    ["Human"] = {
+        ["Swords"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+        ["Two-Handed Swords"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+        ["Maces"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+        ["Two-Handed Maces"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+    },
+    ["Orc"] = {
+        ["Axes"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+        ["Two-Handed Axes"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+        ["Fist Weapons"] = { stat = "ITEM_MOD_EXPERTISE_RATING_SHORT", val = 20 },
+    },
+    ["Dwarf"] = {
+        ["Guns"] = { stat = "ITEM_MOD_CRIT_RATING_SHORT", val = 22 },
+    },
+    ["Troll"] = {
+        ["Bows"] = { stat = "ITEM_MOD_CRIT_RATING_SHORT", val = 22 },
+        ["Thrown"] = { stat = "ITEM_MOD_CRIT_RATING_SHORT", val = 22 },
+    },
+}
+
+-- =============================================================
+-- 8. SHORT NAMES (TBC Updated)
+-- =============================================================
+MSC.ShortNames = {
+    -- FIXES
+    ["RESISTANCE0_NAME"]                      = "Armor",
+    ["ITEM_MOD_ARMOR_SHORT"]                  = "Armor",
+    
+    -- TBC NEW STATS
+    ["ITEM_MOD_HASTE_RATING_SHORT"]           = "Haste",
+    ["ITEM_MOD_EXPERTISE_RATING_SHORT"]       = "Expertise",
+    ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = "Armor Pen",
+    ["ITEM_MOD_SPELL_PENETRATION_SHORT"]      = "Spell Pen",
+    
+    -- STANDARD STATS
+    ["ITEM_MOD_SPELL_HEALING_DONE"]           = "Healing",
+    ["ITEM_MOD_HEALING_POWER_SHORT"]          = "Healing",
+    ["ITEM_MOD_SPELL_POWER_SHORT"]            = "Spell Power",
+    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]      = "DPS",
+    ["ITEM_MOD_POWER_REGEN0_SHORT"]           = "Mp5",
+    ["ITEM_MOD_MANA_REGENERATION_SHORT"]      = "Mp5",
+    ["ITEM_MOD_AGILITY_SHORT"]                = "Agility",
+    ["ITEM_MOD_STRENGTH_SHORT"]               = "Strength",
+    ["ITEM_MOD_INTELLECT_SHORT"]              = "Intellect",
+    ["ITEM_MOD_SPIRIT_SHORT"]                 = "Spirit",
+    ["ITEM_MOD_STAMINA_SHORT"]                = "Stamina",
+    ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]   = "Defense",
+    ["ITEM_MOD_DODGE_RATING_SHORT"]           = "Dodge",
+    ["ITEM_MOD_PARRY_RATING_SHORT"]           = "Parry",
+    ["ITEM_MOD_BLOCK_RATING_SHORT"]           = "Block Chance",
+    ["ITEM_MOD_HIT_RATING_SHORT"]             = "Hit",
+    ["ITEM_MOD_CRIT_RATING_SHORT"]            = "Crit",
+    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]      = "Spell Crit",
+    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]       = "Spell Hit",
+    ["ITEM_MOD_ATTACK_POWER_SHORT"]           = "Attack Power",
+    ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]     = "Feral AP",
+    ["ITEM_MOD_BLOCK_VALUE_SHORT"]            = "Block Value",
+    ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]    = "Ranged AP",
+    ["ITEM_MOD_HEALTH_SHORT"]                 = "Health",
+    ["ITEM_MOD_MANA_SHORT"]                   = "Mana",
+    ["ITEM_MOD_RESILIENCE_RATING_SHORT"]      = "Resilience",
+    
+    -- RESISTANCES
+    ["ITEM_MOD_SHADOW_RESISTANCE_SHORT"]      = "Shadow Res",
+    ["ITEM_MOD_FIRE_RESISTANCE_SHORT"]        = "Fire Res",
+    ["ITEM_MOD_FROST_RESISTANCE_SHORT"]       = "Frost Res",
+    ["ITEM_MOD_NATURE_RESISTANCE_SHORT"]      = "Nature Res",
+    ["ITEM_MOD_ARCANE_RESISTANCE_SHORT"]      = "Arcane Res",
+}
+
+-- =============================================================
+-- 9. WEAPON SPEED & PROFICIENCIES (TBC Compatible)
+-- =============================================================
+MSC.SpeedChecks = {
+    ["WARRIOR"] = { ["Fury"]={ MH_Slow=true, OH_Fast=true }, ["Protection"]={ MH_Fast=true }, ["Default"]={ MH_Slow=true } },
+    ["ROGUE"]   = { ["Combat"]={ MH_Slow=true, OH_Fast=true }, ["Default"]={ MH_Slow=true, OH_Fast=true } },
+    ["PALADIN"] = { ["Protection"]={ MH_Fast=true }, ["Default"]={ MH_Slow=true } },
+    ["HUNTER"]  = { ["Default"]={ Ranged_Slow=true } },
+    ["SHAMAN"]  = { ["Enhancement"]={ MH_Slow=true }, ["Default"]={ MH_Slow=true } }
+}
+
+MSC.ValidWeapons = {
+    ["WARRIOR"] = { [0]=true, [1]=true, [2]=true, [3]=true, [4]=true, [5]=true, [6]=true, [7]=true, [8]=true, [10]=true, [13]=true, [15]=true, [18]=true, [19]=false },
+    ["PALADIN"] = { [0]=true, [1]=true, [4]=true, [5]=true, [6]=true, [7]=true, [8]=true },
+    ["HUNTER"]  = { [0]=true, [1]=true, [2]=true, [3]=true, [6]=true, [7]=true, [8]=true, [10]=true, [13]=true, [15]=true, [18]=true },
+    ["ROGUE"]   = { [0]=false, [1]=false, [2]=true, [3]=true, [4]=true, [5]=false, [7]=true, [8]=false, [13]=true, [15]=true, [18]=true },
+    ["PRIEST"]  = { [4]=true, [10]=true, [15]=true, [19]=true },
+    ["SHAMAN"]  = { [0]=true, [1]=true, [4]=true, [5]=true, [10]=true, [13]=true, [15]=true, [19]=false },
+    ["MAGE"]    = { [7]=true, [10]=true, [15]=true, [19]=true },
+    ["WARLOCK"] = { [7]=true, [10]=true, [15]=true, [19]=true },
+    ["DRUID"]   = { [4]=true, [5]=true, [10]=true, [13]=true, [15]=true } 
+}
+
+-- =============================================================
+-- 10. SLOT MAPPING
+-- =============================================================
+MSC.SlotMap = { 
+    ["INVTYPE_HEAD"]=1, ["INVTYPE_NECK"]=2, ["INVTYPE_SHOULDER"]=3, ["INVTYPE_BODY"]=4, 
+    ["INVTYPE_CHEST"]=5, ["INVTYPE_ROBE"]=5, ["INVTYPE_WAIST"]=6, ["INVTYPE_LEGS"]=7, 
+    ["INVTYPE_FEET"]=8, ["INVTYPE_WRIST"]=9, ["INVTYPE_HAND"]=10, ["INVTYPE_FINGER"]=11, 
+    ["INVTYPE_TRINKET"]=13, ["INVTYPE_CLOAK"]=15, ["INVTYPE_WEAPON"]=16, ["INVTYPE_SHIELD"]=17, 
+    ["INVTYPE_2HWEAPON"]=16, ["INVTYPE_WEAPONMAINHAND"]=16, ["INVTYPE_WEAPONOFFHAND"]=17, 
+    ["INVTYPE_HOLDABLE"]=17, ["INVTYPE_RANGED"]=18, ["INVTYPE_THROWN"]=18, 
+    ["INVTYPE_RANGEDRIGHT"]=18, ["INVTYPE_RELIC"]=18 
 }
