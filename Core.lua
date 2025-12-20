@@ -344,3 +344,51 @@ GameTooltip:HookScript("OnTooltipSetItem", MSC.UpdateTooltip)
 if ItemRefTooltip then ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
 if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
 if ShoppingTooltip2 then ShoppingTooltip2:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
+
+-- =============================================================
+-- DEBUGGER TOOL
+-- Usage: /sgjdebug [Shift-Click Item]
+-- =============================================================
+SLASH_SGJDEBUG1 = "/sgjdebug"
+SlashCmdList["SGJDEBUG"] = function(msg)
+    local itemLink = msg:match("(|c.+|r)")
+    if not itemLink then 
+        print("|cffff0000SGJ Debug:|r Please link an item. Example: /sgjdebug [Item Link]")
+        return 
+    end
+
+    print(" ")
+    print("|cff00ff00=== DEBUGGING: " .. itemLink .. " ===|r")
+
+    -- Create a hidden tooltip to scan the item
+    local tip = CreateFrame("GameTooltip", "MSC_DebugTooltip", nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    tip:SetHyperlink(itemLink)
+
+    -- Loop through every line of text on the item
+    for i = 1, tip:NumLines() do
+        local line = _G["MSC_DebugTooltipTextLeft" .. i]
+        if line then
+            local text = line:GetText()
+            if text then
+                -- Run the parser on this specific line
+                local statKey, statVal = MSC.ParseTooltipLine(text)
+                
+                -- Print the result
+                if statKey then
+                    -- SUCCESS: Found a stat
+                    print("|cff00ffff[Line " .. i .. "]|r '" .. text .. "'")
+                    print("   -> |cff00ff00MATCH:|r " .. (MSC.ShortNames[statKey] or statKey) .. " = " .. statVal)
+                else
+                    -- FAIL: No stat found (normal for flavor text, Name, etc.)
+                    print("|cffaaaaaa[Line " .. i .. "]|r '" .. text .. "'")
+                    print("   -> |cffff0000No Match|r")
+                end
+            end
+        end
+    end
+    print("|cff00ff00================================|r")
+end
+
+
+

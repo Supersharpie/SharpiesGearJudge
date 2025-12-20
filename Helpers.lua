@@ -33,14 +33,12 @@ function MSC.GetCurrentWeights()
     local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
     if not classData then return {}, "No Data" end
     
-    -- MANUAL OVERRIDE (Always obeyed)
     if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
         local displayName = SGJ_Settings.Mode
         if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
         return classData[SGJ_Settings.Mode], displayName
     end
 
-    -- DETECT SPEC
     local maxPoints, activeSpec = 0, "Default"
     local specIndex = 1
     if MSC.SpecNames and MSC.SpecNames[englishClass] then
@@ -53,43 +51,28 @@ function MSC.GetCurrentWeights()
         end
     end
     
-    -- SMART LOGIC: "Dungeon Role" vs "Solo Leveling"
     local playerLevel = UnitLevel("player")
     if playerLevel < 60 then
-        -- 1. IDENTIFY DUNGEON ROLES (Tanks & Healers)
-        -- These players do NOT want generic leveling stats. They want their job stats.
         local isDungeonRole = false
-        
-        if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end -- Protection
-        if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Holy or Prot
-        if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end -- Disc or Holy
-        if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end -- Resto
-        if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end -- Resto
-        if englishClass == "DRUID" and specIndex == 2 and GetTalentInfo(2, 5) and select(5, GetTalentInfo(2, 5)) > 0 then 
-            -- Feral Tank Check (Thick Hide / Feral Instinct usually implies tanking interest, but simplified: Feral is usually DPS leveling)
-            -- For simplicity, we treat Feral as Leveling unless explicitly Manual.
-            isDungeonRole = false 
-        end
+        if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end 
+        if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end 
+        if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end 
+        if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end 
+        if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end 
+        if englishClass == "DRUID" and specIndex == 2 and GetTalentInfo(2, 5) and select(5, GetTalentInfo(2, 5)) > 0 then isDungeonRole = false end
 
-        -- 2. APPLY LOGIC
-        -- If NOT a Dungeon Role, use the smart Leveling Brackets we designed.
         if not isDungeonRole then
-            if playerLevel <= 20 and classData["Leveling_1_20"] then
-                return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
-            elseif playerLevel <= 40 and classData["Leveling_21_40"] then
-                return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
-            elseif classData["Leveling_41_59"] then
-                return classData["Leveling_41_59"], activeSpec .. " (Lv 41-59)"
-            end
+            if playerLevel <= 20 and classData["Leveling_1_20"] then return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
+            elseif playerLevel <= 40 and classData["Leveling_21_40"] then return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
+            elseif classData["Leveling_41_59"] then return classData["Leveling_41_59"], activeSpec .. " (Lv 41-59)" end
         end
-        -- If they ARE a Dungeon Role (or Default fallback), they fall through to the specific spec below.
     end
     
     return (classData[activeSpec] or classData["Default"]), activeSpec .. " (Auto)"
 end
 
 -- =============================================================
--- 2. ITEM STAT SCANNER
+-- 2. ITEM STAT SCANNER (FORCE FEED MODE)
 -- =============================================================
 function MSC.SafeGetItemStats(itemLink, slotId)
     if not itemLink then return {} end
@@ -97,45 +80,57 @@ function MSC.SafeGetItemStats(itemLink, slotId)
     local finalStats = {}
     local foundByAPI = {} 
     
+    -- 1. Trust the API (but only if > 0)
     if MSC.ShortNames then
         for k, v in pairs(stats) do
-            -- Add to final stats
-            finalStats[k] = v 
-            
-            -- Mark as found so the Text Scanner doesn't add it again
-            foundByAPI[k] = true 
+            if v > 0 then
+                finalStats[k] = v 
+                foundByAPI[k] = true 
+                if type(k) == "string" then
+                    if k:find("_SHORT") then
+                        local base = k:gsub("_SHORT", "")
+                        foundByAPI[base] = true
+                    else
+                        local short = k .. "_SHORT"
+                        foundByAPI[short] = true
+                    end
+                end
+            end
+        end
+    end
+    
+    -- 2. CREATE A FRESH SCANNER
+    local tipName = "MSC_Scanner_" .. math.random(100000)
+    local tip = CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    tip:SetHyperlink(itemLink)
+    
+    -- 3. READ THE TEXT
+    local numLines = tip:NumLines()
+    if numLines > 0 then
+        for i = 2, numLines do
+            local lineObj = _G[tipName .. "TextLeft"..i]
+            if lineObj then
+                local lineText = lineObj:GetText()
+                if lineText then
+                    local s, v = MSC.ParseTooltipLine(lineText)
+                    if s and v then 
+                        -- [[ THE FIX: FORCE THESE STATS ALWAYS ]]
+                        -- We do NOT check foundByAPI for these specific Classic stats because the API is unreliable.
+                        local isForceStat = (s == "ITEM_MOD_SPELL_POWER_SHORT") or 
+                                            (s == "ITEM_MOD_HEALING_POWER_SHORT") or 
+                                            (s == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT")
 
-            -- [[ DOUBLE COUNT PROTECTION ]] --
-            -- The API might return "ITEM_MOD_STAMINA" but the Scanner looks for "ITEM_MOD_STAMINA_SHORT".
-            -- We automatically flag both versions as found to prevent duplicates.
-            if type(k) == "string" then
-                if k:find("_SHORT") then
-                    local base = k:gsub("_SHORT", "")
-                    foundByAPI[base] = true
-                else
-                    local short = k .. "_SHORT"
-                    foundByAPI[short] = true
+                        if isForceStat or not foundByAPI[s] then
+                            finalStats[s] = (finalStats[s] or 0) + v 
+                        end
+                    end
                 end
             end
         end
     end
     
-    local tooltip = CreateFrame("GameTooltip", "MSCScanTooltip", nil, "GameTooltipTemplate")
-    tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-    tooltip:SetHyperlink(itemLink)
-    for i = 2, tooltip:NumLines() do
-        local line = _G["MSCScanTooltipTextLeft"..i]:GetText()
-        if line then
-            local s, v = MSC.ParseTooltipLine(line)
-            if s and v then 
-                -- Only add if the API didn't already find it (checked against aliases now)
-                if not foundByAPI[s] then
-                    finalStats[s] = (finalStats[s] or 0) + v 
-                end
-            end
-        end
-    end
-    
+    -- 4. Add Project Enchant
     if SGJ_Settings.ProjectEnchants and slotId then
         local _, _, _, existingEnchantID = string.find(itemLink, "item:(%d+):(%d+)")
         local hasEnchant = (existingEnchantID and tonumber(existingEnchantID) > 0)
