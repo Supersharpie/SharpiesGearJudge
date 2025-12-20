@@ -1,3 +1,17 @@
+## v1.5.5 - The "Ghostbuster" Update
+### 🛡️ Critical Logic Fixes
+* **The "Ghost Stat" Fix:** Solved a critical issue where the Blizzard API would report a stat as "found" (with a value of 0) and block the Text Scanner from reading the *actual* value. The addon now ignores the API for specific Classic stats (Spell Power, Healing, Ranged AP) and trusts the text scanner 100%.
+* **Scanner Reboot:** Reverted the experimental "Single Tooltip" memory optimization. The scanner now generates a fresh, unique tooltip frame for every scan to prevent data caching/stuttering on Classic Era servers.
+* **API Force-Feed:** Implemented a "Force-Feed" system that guarantees Spell Power and Healing are counted, even if the game client tries to hide them.
+
+### 🏹 Class Tuning
+* **Warlock Fix:** Fixed a database error where **Spell Power** was weighted as 0 for Leveling Warlocks (Levels 21-40). The *Mageblade* is now correctly identified as a massive upgrade.
+* **Hunter Love:** Added specific support for **"Ranged Attack Power"**. Hunters will now see correct values for items like *Blackhand's Breadth* and Tier sets.
+
+### 🛠️ Polish
+* **Debug Command:** Added `/sgjweight` command to verify active database weights in real-time.
+------------------------------------------------------------------------------------------------
+
 ## v1.5.4 - The "Precision & Polish" Update
 ### 🛡️ Critical Logic Fixes
 * **Double-Count Bug Squashed:** Fixed a major issue where stats were being counted twice (once by the game API and once by the text scanner), which was artificially inflating stats like Stamina and Intellect on certain items.
