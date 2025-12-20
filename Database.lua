@@ -1332,3 +1332,39 @@ MSC.SlotMap = {
     ["INVTYPE_HOLDABLE"]=17, ["INVTYPE_RANGED"]=18, ["INVTYPE_THROWN"]=18, 
     ["INVTYPE_RANGEDRIGHT"]=18, ["INVTYPE_RELIC"]=18 
 }
+-- =============================================================
+-- 11. CRIT CONVERSION MATRIX (TBC LEVEL 70 SCALING)
+-- =============================================================
+-- Format: { Level, Amount_Needed_For_1_Percent }
+MSC.StatToCritMatrix = {
+    ["WARRIOR"] = { 
+        Agi = { {60, 20.0}, {70, 33.0} } 
+    },
+    ["ROGUE"] = { 
+        Agi = { {60, 29.0}, {70, 40.0} } 
+    },
+    ["HUNTER"] = { 
+        Agi = { {60, 53.0}, {70, 40.0} } -- TBC changed Hunter formula heavily
+    },
+    ["PALADIN"] = { 
+        Agi = { {60, 20.0}, {70, 25.0} }, 
+        Int = { {60, 29.5}, {70, 80.0} } -- Paladin Spell Crit is expensive in TBC
+    },
+    ["SHAMAN"] = { 
+        Agi = { {60, 20.0}, {70, 25.0} }, 
+        Int = { {60, 59.5}, {70, 80.0} } 
+    },
+    ["DRUID"] = { 
+        Agi = { {60, 20.0}, {70, 25.0} }, 
+        Int = { {60, 60.0}, {70, 80.0} } 
+    },
+    ["MAGE"] = { 
+        Int = { {60, 59.5}, {70, 80.0} } 
+    },
+    ["PRIEST"] = { 
+        Int = { {60, 59.2}, {70, 80.0} } 
+    },
+    ["WARLOCK"] = { 
+        Int = { {60, 60.6}, {70, 80.0} } 
+    },
+}

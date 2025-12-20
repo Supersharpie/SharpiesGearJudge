@@ -25,28 +25,11 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
 end
 
 -- =============================================================
--- 2. HELPER: DERIVED STATS
+-- 2. HELPER: DERIVED STATS & SORTING
 -- =============================================================
-local function ExpandDerivedStats(stats, class)
-    local out = {}
-    if not stats then return out end
-    for k, v in pairs(stats) do out[k] = v end
-    if (out["ITEM_MOD_STAMINA_SHORT"] or 0) > 0 then out["ITEM_MOD_HEALTH_SHORT"] = (out["ITEM_MOD_HEALTH_SHORT"] or 0) + (out["ITEM_MOD_STAMINA_SHORT"] * 10) end
-    if (out["ITEM_MOD_INTELLECT_SHORT"] or 0) > 0 then out["ITEM_MOD_MANA_SHORT"] = (out["ITEM_MOD_MANA_SHORT"] or 0) + (out["ITEM_MOD_INTELLECT_SHORT"] * 15) end
-    if class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
-        if (out["ITEM_MOD_STRENGTH_SHORT"] or 0) > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + (out["ITEM_MOD_STRENGTH_SHORT"] * 2) end
-    end
-    if class == "ROGUE" or class == "HUNTER" or class == "DRUID" then
-        if (out["ITEM_MOD_AGILITY_SHORT"] or 0) > 0 then out["ITEM_MOD_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + out["ITEM_MOD_AGILITY_SHORT"] end
-    end
-    if class == "HUNTER" then
-        if (out["ITEM_MOD_AGILITY_SHORT"] or 0) > 0 then out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0) + out["ITEM_MOD_AGILITY_SHORT"] end
-    end
-    return out
-end
-
 local function GetCleanStatName(key, expandedStats)
     local name = MSC.GetCleanStatName and MSC.GetCleanStatName(key) or key
+    -- Compact Stat Lines (v1.5.2 Feature)
     if key == "ITEM_MOD_HEALTH_SHORT" and (expandedStats["ITEM_MOD_STAMINA_SHORT"] or 0) > 0 then name = "Health (w/ Stam)" end
     if key == "ITEM_MOD_MANA_SHORT" and (expandedStats["ITEM_MOD_INTELLECT_SHORT"] or 0) > 0 then name = "Mana (w/ Int)" end
     if key == "ITEM_MOD_ATTACK_POWER_SHORT" and ((expandedStats["ITEM_MOD_STRENGTH_SHORT"] or 0) > 0 or (expandedStats["ITEM_MOD_AGILITY_SHORT"] or 0) > 0) then name = "Atk Power (Total)" end
@@ -84,8 +67,7 @@ function MSC.UpdateTooltip(tooltip)
 
     local _, _, _, _, dbMinLevel = GetItemInfo(link)
     local myLevel = UnitLevel("player")
-    local isFutureItem = false
-    if dbMinLevel and dbMinLevel > myLevel then isFutureItem = true end
+    local isFutureItem = (dbMinLevel and dbMinLevel > myLevel)
 
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then return end
@@ -101,7 +83,7 @@ function MSC.UpdateTooltip(tooltip)
     local equippedOH = GetInventoryItemLink("player", 17)
     local equippedMHLoc = equippedMH and select(9, GetItemInfo(equippedMH))
 
-    -- LOGIC: WEAPON PAIRING
+    -- [[ 2. SLOT LOGIC (2H vs DW Handling) ]]
     if equipLoc == "INVTYPE_2HWEAPON" then
         newStats = MSC.SafeGetItemStats(link, 16)
         newScore = MSC.GetItemScore(newStats, weights, specName, 16)
@@ -177,7 +159,7 @@ function MSC.UpdateTooltip(tooltip)
         newScore = MSC.GetItemScore(newStats, weights, specName, slotId)
     end
     
-    -- RENDER UI
+    -- [[ 3. DISPLAY HEADER ]]
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine("Judge's Score:", string.format("%.1f", newScore), 1, 0.82, 0, 1, 1, 1)
     tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
@@ -186,7 +168,7 @@ function MSC.UpdateTooltip(tooltip)
     
     if isEquipped then
         if partnerItemLink then tooltip:AddLine("|cff00ffff*** EQUIPPED WITH: " .. partnerItemLink .. " ***|r")
-        else tooltip:AddLine("|cff00ffff*** CURRENTLY EQUIPPED ***|r") end
+        else tooltip:AddLine("|cff00ffff*** (Baseline) ***|r") end 
     else
         local delta = newScore - oldScore
         if partnerItemLink and delta >= 0 then 
@@ -203,51 +185,100 @@ function MSC.UpdateTooltip(tooltip)
         end
     end
 
-    -- [[ NEW CLEAN PROJECTION DISPLAY ]]
+    -- [[ 4. PROJECTION DISPLAY ]]
     if newStats.IS_PROJECTED or newStats.GEMS_PROJECTED then 
         tooltip:AddLine(" ") -- Spacer
-        -- Enchant Row
         if newStats.ENCHANT_TEXT then
              tooltip:AddDoubleLine("Projected Enchant:", "|cffffffff" .. newStats.ENCHANT_TEXT .. "|r", 0, 1, 1)
         elseif newStats.IS_PROJECTED then
              tooltip:AddDoubleLine("Projected Enchant:", "|cffffffffBest Available|r", 0, 1, 1)
         end
-        
-        -- Gem Row
         if newStats.GEM_TEXT then
              tooltip:AddDoubleLine("Projected Gems:", "|cffffffff" .. newStats.GEM_TEXT .. "|r", 0, 1, 1)
         elseif newStats.GEMS_PROJECTED then 
              local gemTier = (UnitLevel("player") < 70) and "Green" or "Rare"
              tooltip:AddDoubleLine("Projected Gems:", "|cffffffff" .. newStats.GEMS_PROJECTED .. " " .. gemTier .. "|r", 0, 1, 1)
         end
-        
-        -- Bonus Row (Only if active)
         if newStats.BONUS_PROJECTED then
              tooltip:AddLine("   + Socket Bonus Activated", 0, 1, 0)
         end
     end
 
-    local _, englishClass = UnitClass("player")
-    local newExpanded = ExpandDerivedStats(newStats, englishClass)
-    local sortedKeys = {}
-    for k, v in pairs(newExpanded) do table.insert(sortedKeys, k) end
-    table.sort(sortedKeys, function(a,b) return (weights[a] or 0) > (weights[b] or 0) end)
-    
-    for _, stat in ipairs(sortedKeys) do
-        local isRelevant = (weights[stat] and weights[stat] > 0) or 
-                           (stat == "ITEM_MOD_HEALTH_SHORT") or 
-                           (stat == "ITEM_MOD_MANA_SHORT") or 
-                           (stat == "ITEM_MOD_ATTACK_POWER_SHORT")
-        -- Filter out internal text keys
-        if isRelevant and not string.find(stat, "PROJECTED") and not string.find(stat, "COUNT") and stat ~= "GEM_TEXT" and stat ~= "ENCHANT_TEXT" then
-             local newVal = newExpanded[stat] or 0
-             if newVal > 0 then
-                 local name = GetCleanStatName(stat, newExpanded)
-                 local valStr = (newVal % 1 == 0) and string.format("%d", newVal) or string.format("%.1f", newVal)
-                 tooltip:AddDoubleLine(name, valStr, 1, 0.82, 0, 1, 1, 1)
-             end
+    -- [[ 5. RACIAL SYNERGY (Visual v1.5.3) ]]
+    local _, playerRace = UnitRace("player")
+    if MSC.RacialTraits and MSC.RacialTraits[playerRace] then
+        local _, _, _, _, _, _, itemSubType = GetItemInfo(link)
+        if itemSubType and MSC.RacialTraits[playerRace][itemSubType] then
+             local r = MSC.RacialTraits[playerRace][itemSubType]
+             local rName = MSC.StatShortNames[r.stat] or "Bonus"
+             tooltip:AddDoubleLine("Matches Racial:", "|cff00ff00+" .. r.val .. " " .. rName .. "|r", 1, 1, 1)
         end
     end
+
+    -- [[ 6. GAINS & LOSSES (Visual v1.5.2) ]]
+    local _, englishClass = UnitClass("player")
+    local newExpanded = MSC.ExpandDerivedStats(newStats, link) -- Note: Passed Link to Scoring too
+    
+    if isEquipped then
+        -- SCENARIO A: Inspecting Equipped Gear (Show Absolute Values in Gold/Green)
+        local sortedKeys = {}
+        for k, v in pairs(newExpanded) do table.insert(sortedKeys, k) end
+        table.sort(sortedKeys, function(a,b) return (weights[a] or 0) > (weights[b] or 0) end)
+
+        for _, stat in ipairs(sortedKeys) do
+            local isRelevant = (weights[stat] and weights[stat] > 0) or 
+                               (stat == "ITEM_MOD_HEALTH_SHORT") or 
+                               (stat == "ITEM_MOD_MANA_SHORT") or 
+                               (stat == "ITEM_MOD_ATTACK_POWER_SHORT")
+            if isRelevant and not string.find(stat, "PROJECTED") and not string.find(stat, "COUNT") and stat ~= "GEM_TEXT" and stat ~= "ENCHANT_TEXT" then
+                 local val = newExpanded[stat] or 0
+                 if val > 0 then
+                     local name = GetCleanStatName(stat, newExpanded)
+                     local valStr = (val % 1 == 0) and string.format("%d", val) or string.format("%.1f", val)
+                     tooltip:AddDoubleLine(name, valStr, 1, 0.82, 0, 1, 0.82, 0)
+                 end
+            end
+        end
+    else
+        -- SCENARIO B: Comparison (Show Gains in Green, Losses in Red)
+        local oldExpanded = MSC.ExpandDerivedStats(oldStats, partnerItemLink or (isEquipped and link))
+        local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded)
+        local gains, losses = {}, {}
+        
+        for _, d in ipairs(diffs) do
+            local isRelevant = (weights[d.key] and weights[d.key] > 0) or 
+                               (d.key == "ITEM_MOD_HEALTH_SHORT") or 
+                               (d.key == "ITEM_MOD_MANA_SHORT") or 
+                               (d.key == "ITEM_MOD_ATTACK_POWER_SHORT")
+            if isRelevant then
+                if d.val > 0 then table.insert(gains, d)
+                elseif d.val < 0 then table.insert(losses, d) end
+            end
+        end
+        
+        -- Sort by magnitude
+        table.sort(gains, function(a,b) return (weights[a.key] or 0) > (weights[b.key] or 0) end)
+        table.sort(losses, function(a,b) return (weights[a.key] or 0) > (weights[b.key] or 0) end)
+        
+        if #gains > 0 then
+            tooltip:AddLine("Gains:", 0, 1, 0)
+            for _, g in ipairs(gains) do
+                local name = GetCleanStatName(g.key, newExpanded)
+                local valStr = (g.val % 1 == 0) and string.format("+%d", g.val) or string.format("+%.1f", g.val)
+                tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, 0, 1, 0)
+            end
+        end
+        
+        if #losses > 0 then
+            tooltip:AddLine("Losses:", 1, 0, 0)
+            for _, l in ipairs(losses) do
+                local name = GetCleanStatName(l.key, oldExpanded)
+                local valStr = (l.val % 1 == 0) and string.format("%d", l.val) or string.format("%.1f", l.val)
+                tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, 1, 0, 0)
+            end
+        end
+    end
+
     tooltip:Show()
 end
 

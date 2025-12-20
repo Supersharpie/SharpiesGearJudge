@@ -3,11 +3,17 @@ local _, MSC = ...
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0 end
     
-    -- 1. SANITIZE & CLEANUP
-    -- Removes color codes to make parsing easier
+    -- 1. GRAY TEXT CHECK (Inactive Set Bonuses)
+    -- We must check this BEFORE stripping color codes.
+    if text:find("|cff808080") then 
+        return nil, 0 
+    end
+    
+    -- 2. SANITIZE & CLEANUP
+    -- Removes color codes to make regex matching easier
     text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
     
-    -- 2. IGNORE TEMPORARY BUFFS
+    -- 3. IGNORE TEMPORARY BUFFS
     if text:find("^Use:") or text:find("^Chance on hit:") or text:find("^Procs:") then 
         return nil, 0 
     end
@@ -113,6 +119,7 @@ function MSC.ParseTooltipLine(text)
     end
     return nil, 0
 end
+
 -- =============================================================
 -- SOCKET BONUS PARSER
 -- =============================================================
