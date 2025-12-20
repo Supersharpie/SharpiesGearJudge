@@ -24,17 +24,10 @@ function MSC.ParseTooltipLine(text)
         return nil, 0 
     end
     
-    local patterns = {
-        -- [[ NEW FALLBACKS FOR WRAPPED TEXT ]] --
+  local patterns = {
+        -- [[ 1. SPECIFIC STATS (Priority) ]]
         -- WEAPON SPEED
         { pattern = "^Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
-        
-        -- HIT / SPELL HIT
-        { pattern = "%+(%d+)%%? Hit", stat = "ITEM_MOD_HIT_RATING_SHORT" },
-        { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
-        { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { pattern = "by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_RATING_SHORT" },
 
         -- CRIT / SPELL CRIT
         { pattern = "%+(%d+)%%? Crit", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
@@ -42,8 +35,21 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Increases your critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "Increases your spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
         { pattern = "Improves your chance to get a critical strike with spells by (%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-        { pattern = "with spells by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         
+        -- DEFENSIVE (Dodge/Parry/Block)
+        -- We moved these UP so they are checked before the generic "by X%" Hit pattern.
+        { pattern = "%+(%d+)%%? Dodge", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "Increases your chance to dodge an attack by (%d+)%%", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { pattern = "%+(%d+)%%? Parry", stat = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { pattern = "Increases your chance to parry an attack by (%d+)%%", stat = "ITEM_MOD_PARRY_RATING_SHORT" }, -- Added missing long-form Parry
+        { pattern = "%+(%d+)%%? Block", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { pattern = "Increases your chance to block attacks with a shield by (%d+)%%", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { pattern = "Increases the block value of your shield by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+        { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "Increased Defense %+(%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "%+(%d+) Defense", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "dodge an attack by (%d+)%%%.?$", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
+
         -- CLASSIC WEAPON SKILLS
         { pattern = "Increased Axes %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         { pattern = "Increased Swords %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
@@ -59,25 +65,11 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Increased Fists %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         { pattern = "Increased Dagger Skill %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         
-        -- DEFENSIVE
-        { pattern = "%+(%d+)%%? Dodge", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { pattern = "Increases your chance to dodge an attack by (%d+)%%", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { pattern = "%+(%d+)%%? Parry", stat = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { pattern = "%+(%d+)%%? Block", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { pattern = "Increases your chance to block attacks with a shield by (%d+)%%", stat = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { pattern = "Increases the block value of your shield by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
-        { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { pattern = "Increased Defense %+(%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { pattern = "%+(%d+) Defense", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { pattern = "dodge an attack by (%d+)%%%.?$", stat = "ITEM_MOD_DODGE_RATING_SHORT" },
-        
-        -- MANA PER 5 (MP5)
+        -- MANA/HEALTH PER 5
         { pattern = "Restores (%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "Restores (%d+) mana", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "^mana per 5 sec%.?$", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-        
-        -- HEALTH PER 5 (HP5)
         { pattern = "Restores (%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
         { pattern = "(%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
         { pattern = "Restores (%d+) health every 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
@@ -104,23 +96,30 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Nature damage by up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
         { pattern = "Holy damage by up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
         
-        -- PRIMARY STATS
+        -- PRIMARY STATS & RESOURCES
         { pattern = "Agility by (%d+)", stat = "ITEM_MOD_AGILITY_SHORT" },
         { pattern = "Strength by (%d+)", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "Intellect by (%d+)", stat = "ITEM_MOD_INTELLECT_SHORT" },
         { pattern = "Spirit by (%d+)", stat = "ITEM_MOD_SPIRIT_SHORT" },
         { pattern = "Stamina by (%d+)", stat = "ITEM_MOD_STAMINA_SHORT" }, 
-        
-        -- PRIMARY STATS (Standard Format)
         { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
         { pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "%+(%d+) Intellect", stat = "ITEM_MOD_INTELLECT_SHORT" },
         { pattern = "%+(%d+) Spirit", stat = "ITEM_MOD_SPIRIT_SHORT" },
         { pattern = "%+(%d+) Stamina", stat = "ITEM_MOD_STAMINA_SHORT" },
-        
-        -- FLAT RESOURCES
         { pattern = "%+(%d+) Health", stat = "ITEM_MOD_HEALTH_SHORT" },
         { pattern = "%+(%d+) Mana", stat = "ITEM_MOD_MANA_SHORT" },
+
+        -- [[ 2. FALLBACK MATCHING (Last Resort) ]]
+        -- HIT / SPELL HIT
+        -- We check these LAST. If "by 1%" wasn't Crit/Dodge/Parry/Block, THEN it is Hit.
+        { pattern = "%+(%d+)%%? Hit", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        -- The "Greedy" Fallbacks:
+        { pattern = "with spells by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { pattern = "by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_RATING_SHORT" },
     }
 
     for _, p in ipairs(patterns) do

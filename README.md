@@ -29,9 +29,10 @@ The addon evolves with you as you grow:
 
 ### 🧪 The Judge's Lab (`/sgj`)
 A custom visual interface for advanced theorycrafting.
-
-* **Drag & Drop:** Simulate gear sets by dragging items from your bags or loot windows directly into the Lab slots.
-* **3-Way Comparison:** Compare a Main Hand + Off Hand pair directly against a Two-Hander.
+* **⚔️ 2H vs. Dual Wield Logic: The Lab automatically handles complex comparisons. If you drag a 2-Handed Staff into the slot, it compares it against the combined score of your currently equipped Main Hand + Off Hand.
+* **🔎 Smart Gap Filling: If you only drag in a Main Hand weapon (e.g., a Sword) but you are currently dual-wielding, the Judge automatically assumes you will keep your current Off-Hand to give you a fair comparison.
+* **📊 Stat Breakdown: Just like the tooltip, the Lab provides a detailed breakdown of exactly which stats you gain or lose in this hypothetical scenario (e.g., +14 Strength, -0.5% Crit).
+* **🎨 Class-Themed UI: The window dynamically loads your class crest (Warrior, Paladin, etc.) for a customized look.
 
 
 ### ⚙️ Configuration
