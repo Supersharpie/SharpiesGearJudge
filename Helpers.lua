@@ -99,11 +99,23 @@ function MSC.SafeGetItemStats(itemLink, slotId)
     
     if MSC.ShortNames then
         for k, v in pairs(stats) do
-            if MSC.ShortNames[k] then 
-                finalStats[k] = v 
-                foundByAPI[k] = true 
-            else 
-                finalStats[k] = v 
+            -- Add to final stats
+            finalStats[k] = v 
+            
+            -- Mark as found so the Text Scanner doesn't add it again
+            foundByAPI[k] = true 
+
+            -- [[ DOUBLE COUNT PROTECTION ]] --
+            -- The API might return "ITEM_MOD_STAMINA" but the Scanner looks for "ITEM_MOD_STAMINA_SHORT".
+            -- We automatically flag both versions as found to prevent duplicates.
+            if type(k) == "string" then
+                if k:find("_SHORT") then
+                    local base = k:gsub("_SHORT", "")
+                    foundByAPI[base] = true
+                else
+                    local short = k .. "_SHORT"
+                    foundByAPI[short] = true
+                end
             end
         end
     end
@@ -116,6 +128,7 @@ function MSC.SafeGetItemStats(itemLink, slotId)
         if line then
             local s, v = MSC.ParseTooltipLine(line)
             if s and v then 
+                -- Only add if the API didn't already find it (checked against aliases now)
                 if not foundByAPI[s] then
                     finalStats[s] = (finalStats[s] or 0) + v 
                 end

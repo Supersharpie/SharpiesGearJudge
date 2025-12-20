@@ -1,3 +1,11 @@
+## v1.5.4 - The "Precision & Polish" Update
+### 🛡️ Critical Logic Fixes
+* **Double-Count Bug Squashed:** Fixed a major issue where stats were being counted twice (once by the game API and once by the text scanner), which was artificially inflating stats like Stamina and Intellect on certain items.
+* **Set Bonus Intelligence:** The Text Parser is now color-aware! It strictly ignores **Gray** (inactive) set bonuses to prevent false upgrades, while correctly counting **Green** (active) set bonuses on your character sheet.
+* **Empty Slot Fix:** Comparing an item against an empty slot (Neck, Rings, Trinkets) no longer fails; it now correctly calculates the gains against zero.
+* **Syntax Crash Fix:** Resolved a startup crash caused by a stray brace in `TextParser.lua`.
+------------------------------------------------------------------------------------------------
+
 ##v1.5.3
 * **changed how "Racial Synergy" are displayed 
 ------------------------------------------------------------------------------------------------

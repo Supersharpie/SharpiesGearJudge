@@ -1,13 +1,24 @@
-local _, MSC = ...
-
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0 end
     
-    -- 1. SANITIZE & CLEANUP
+    -- 1. SMART SET BONUS LOGIC (Color Check)
+    -- We strictly only want to read Set Bonuses if they are ACTIVE (Green).
+    -- If a line contains "Set:" but does NOT have the Green color code (|cff00ff00), it is inactive/gray.
+    if text:find("Set:") then
+        if not text:find("ff00ff00") then 
+            return nil, 0 
+        end
+    end
+    
+    -- 2. SANITIZE & CLEANUP
+    -- Now we strip colors to read the numbers
     text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
     
-    -- 2. IGNORE TEMPORARY BUFFS
-    if text:find("^Use:") or text:find("^Chance on hit:") or text:find("^Procs:") then 
+    -- 3. IGNORE TEMPORARY BUFFS
+    -- Note: We removed "Set:" from here so the Green ones above can pass through!
+    if text:find("^Use:") or 
+       text:find("^Chance on hit:") or 
+       text:find("^Procs:") then 
         return nil, 0 
     end
     
@@ -16,14 +27,14 @@ function MSC.ParseTooltipLine(text)
         -- WEAPON SPEED
         { pattern = "^Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
         
-        -- HIT / SPELL HIT-- Catch generic "by 1%" 
+        -- HIT / SPELL HIT
         { pattern = "%+(%d+)%%? Hit", stat = "ITEM_MOD_HIT_RATING_SHORT" },
         { pattern = "Improves your chance to hit by (%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
         { pattern = "Increases your spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "Improves your chance to hit with spells by (%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_RATING_SHORT" },
 
-        -- CRIT / SPELL CRIT -- Catch "with spells by 1%" specifically
+        -- CRIT / SPELL CRIT
         { pattern = "%+(%d+)%%? Crit", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "Improves your chance to get a critical strike by (%d+)%%", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "Increases your critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
@@ -31,7 +42,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Improves your chance to get a critical strike with spells by (%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
         { pattern = "with spells by (%d+)%%%.?$", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         
-        -- CLASSIC WEAPON SKILLS (Edgemaster's Support)
+        -- CLASSIC WEAPON SKILLS
         { pattern = "Increased Axes %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         { pattern = "Increased Swords %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
         { pattern = "Increased Daggers %+(%d+)", stat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
@@ -96,7 +107,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Strength by (%d+)", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "Intellect by (%d+)", stat = "ITEM_MOD_INTELLECT_SHORT" },
         { pattern = "Spirit by (%d+)", stat = "ITEM_MOD_SPIRIT_SHORT" },
-        { pattern = "Stamina by (%d+)", stat = "ITEM_MOD_STAMINA_SHORT" }, -- Added comma here
+        { pattern = "Stamina by (%d+)", stat = "ITEM_MOD_STAMINA_SHORT" }, 
         
         -- PRIMARY STATS (Standard Format)
         { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
