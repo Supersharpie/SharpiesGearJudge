@@ -1,3 +1,5 @@
+local _, MSC = ...
+
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0 end
     
