@@ -1,4 +1,4 @@
-# Sharpie's Gear Judge (v1.5.3)
+# Sharpie's Gear Judge (v1.5.4)
 **The Final Verdict on your Gear for WoW Classic Era**
 
 Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
