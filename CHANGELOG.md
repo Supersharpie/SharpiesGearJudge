@@ -1,3 +1,11 @@
+## v1.6.2 - The "Dynamic Engine" Update
+### 🧠 Real-Time Stat Engine
+* **Hit Cap Awareness:** The addon now monitors your Hit % in real-time. If you reach the hard cap (e.g., 9% for Melee, 16% for Spell), the addon instantly devalues Hit Rating to 0 on tooltips, ensuring you never waste stats.
+* **Talent Scaling:** The Judge now reads your specific Talent Tree.
+    * **Multipliers:** If you have talents like *Divine Strength* (+10% Str) or *Heart of the Wild* (+20% Int), the score of items with those stats is automatically increased to reflect their true value to *you*.
+    * **Talent Hit:** Recognizes talents like *Precision* and *Elemental Precision* when calculating your distance from the Hit Cap.
+* **Universal Scaling:** This engine works for **Leveling Profiles** too! A Level 14 Paladin with *Divine Strength* will see accurate, scaled weights just like a Level 60 raider.
+
 ## v1.6.1
 * **Added: "Smart Capping" logic.
 * **The addon now checks your character's current Hit % and Spell Hit % in real-time.

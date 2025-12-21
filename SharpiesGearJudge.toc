@@ -8,6 +8,7 @@
 Database.lua
 TextParser.lua
 Enchants.lua
+Dynamic_Engine.lua
 Scoring.lua
 Helpers.lua
 ConflictManager.lua

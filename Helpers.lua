@@ -24,26 +24,53 @@ function MSC.IsItemUsable(link)
     return true
 end
 
+-- [[ FIXED SPEC DETECTION LOGIC ]] --
 function MSC.GetCurrentWeights()
     local _, englishClass = UnitClass("player")
     if not englishClass then return {}, "Unknown" end
+    
     local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
     if not classData then return {}, "No Data" end
-    local activeProfile, displayName = nil, "Default"
+    
+    local activeProfile = nil
+    local displayName = "Default"
+    local playerLevel = UnitLevel("player")
+    
+    -- 1. DETERMINE BASE PROFILE
     if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
-        activeProfile = classData[SGJ_Settings.Mode]; displayName = SGJ_Settings.Mode
+        -- MANUAL MODE
+        activeProfile = classData[SGJ_Settings.Mode]
+        displayName = SGJ_Settings.Mode
         if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
     else
-        local maxPoints, activeSpec = 0, "Default"; local specIndex = 1
+        -- AUTO-DETECT SPEC (Manual Counting Fix)
+        local maxPoints = 0
+        local activeSpec = "Default"
+        local specIndex = 1
+        
         if MSC.SpecNames and MSC.SpecNames[englishClass] then
-            for i=1, 3 do
-                local _, _, pointsSpent, _, previewPoints = GetTalentTabInfo(i)
-                local totalPoints = (tonumber(pointsSpent) or 0) + (tonumber(previewPoints) or 0)
-                if totalPoints > maxPoints then maxPoints = totalPoints; activeSpec = MSC.SpecNames[englishClass][i]; specIndex = i end
+            for tabIndex = 1, 3 do
+                -- MANUAL COUNT: Loop through talents to get the real score
+                local tabPoints = 0
+                local numTalents = GetNumTalents(tabIndex) or 0
+                for t = 1, numTalents do
+                    local _, _, _, _, rank = GetTalentInfo(tabIndex, t)
+                    tabPoints = tabPoints + (rank or 0)
+                end
+                
+                -- Check if this tree is the winner
+                if tabPoints > maxPoints then 
+                    maxPoints = tabPoints
+                    activeSpec = MSC.SpecNames[englishClass][tabIndex] 
+                    specIndex = tabIndex
+                end
             end
         end
-        activeProfile = classData[activeSpec] or classData["Default"]; displayName = activeSpec .. " (Auto)"
-        local playerLevel = UnitLevel("player")
+        
+        activeProfile = classData[activeSpec] or classData["Default"]
+        displayName = activeSpec .. " (Auto)"
+
+        -- 2. LEVELING LOGIC
         if playerLevel < 60 then
             local isDungeonRole = false
             if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end 
@@ -51,36 +78,40 @@ function MSC.GetCurrentWeights()
             if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end 
             if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end 
             if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end 
+
             if not isDungeonRole then
-                if playerLevel <= 20 and classData["Leveling_1_20"] then return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
-                elseif playerLevel <= 40 and classData["Leveling_21_40"] then return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
-                elseif classData["Leveling_41_59"] then return classData["Leveling_41_59"], activeSpec .. " (Lv 41-59)" end
+                if playerLevel <= 20 and classData["Leveling_1_20"] then 
+                    activeProfile = classData["Leveling_1_20"]
+                    displayName = activeSpec .. " (Lv 1-20)"
+                elseif playerLevel <= 40 and classData["Leveling_21_40"] then 
+                    activeProfile = classData["Leveling_21_40"]
+                    displayName = activeSpec .. " (Lv 21-40)"
+                elseif classData["Leveling_41_59"] then 
+                    activeProfile = classData["Leveling_41_59"]
+                    displayName = activeSpec .. " (Lv 41-59)"
+                end
             end
         end
     end
-    if UnitLevel("player") == 60 and activeProfile then
-        local isCapped = false; local newWeights = nil
-        local currentSpellHit = 0; if GetSpellHitModifier then currentSpellHit = GetSpellHitModifier() or 0 end
-        local currentHit = 0; if GetHitModifier then currentHit = GetHitModifier() or 0 end
-        if (activeProfile["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) > 0.5 or (activeProfile["ITEM_MOD_SPELL_HIT_RATING_SHORT"] or 0) > 0.5 then
-            if currentSpellHit >= 16 then
-                if not newWeights then newWeights = {}; for k,v in pairs(activeProfile) do newWeights[k]=v end end
-                newWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.1; newWeights["ITEM_MOD_SPELL_HIT_RATING_SHORT"] = 0.1; isCapped = true
-            end
+
+    -- 3. APPLY DYNAMIC ENGINE
+    if activeProfile and MSC.ApplyDynamicAdjustments then
+        local dynamicWeights = MSC:ApplyDynamicAdjustments(activeProfile)
+        
+        if dynamicWeights["ITEM_MOD_HIT_RATING_SHORT"] and dynamicWeights["ITEM_MOD_HIT_RATING_SHORT"] < 0.1 then
+            displayName = displayName .. " |cff00ff00(Hit Capped)|r"
+        elseif dynamicWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and dynamicWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] < 0.1 then
+            displayName = displayName .. " |cff00ff00(Hit Capped)|r"
         end
-        if (activeProfile["ITEM_MOD_HIT_RATING_SHORT"] or 0) > 0.5 then
-            if currentHit >= 9 then
-                if not newWeights then newWeights = {}; for k,v in pairs(activeProfile) do newWeights[k]=v end end
-                newWeights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1; isCapped = true
-            end
-        end
-        if isCapped then return newWeights, displayName .. " |cff00ff00(Hit Capped)|r" end
+        
+        return dynamicWeights, displayName
     end
+
     return activeProfile, displayName
 end
 
 -- =============================================================
--- 2. STAT COMPARISON TOOLS (RESTORED!)
+-- 2. STAT COMPARISON TOOLS
 -- =============================================================
 function MSC.GetStatDifferences(new, old)
     local diffs = {}
@@ -178,7 +209,7 @@ function MSC.ApplyElvUISkin(frame)
 end
 
 -- =============================================================
--- 5. ITEM STAT SCANNER (FIXED)
+-- 5. ITEM STAT SCANNER
 -- =============================================================
 function MSC.SafeGetItemStats(itemLink, slotId, skipProjection)
     if not itemLink then return {} end

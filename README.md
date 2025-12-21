@@ -1,9 +1,13 @@
-# Sharpie's Gear Judge (v1.6.1)
+# Sharpie's Gear Judge (v1.6.2)
 **The Final Verdict on your Gear for WoW Classic Era**
 
-Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
+Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, **your talents**, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
 
-⚠️ Note on Stat Caps This addon uses Linear Scoring. It prioritizes stat accumulation based on their general value to your spec. It does not currently dynamically adjust values if you reach hard caps (e.g., Hit Cap), so keep an eye on your total stats! 
+# 🧠 The Dynamic Engine
+The Judge now thinks like a player. It calculates stat weights in **Real-Time** every time you hover over an item:
+* **🚫 Hit Cap Awareness:** If you reach the Hit Cap (e.g., 9% for Melee), the addon instantly detects it and devalues Hit Rating on the next tooltip. No more wasted stats.
+* **⚡ Talent Scaling:** The addon reads your Talent Tree. If you have **Divine Strength** (+10% Str) or **Heart of the Wild** (+20% Int), the addon automatically increases the score of items with those stats.
+* **📉 Diminishing Returns:** Automatically adjusts weights as you approach caps, ensuring you never "overpay" for a stat you don't need.
 
 # ⚖️ Key Features
 
@@ -15,7 +19,7 @@ Hover over any item to see an instant, intelligent comparison against your equip
 * **Smart Pairing:** If you compare a 2-Hander while dual-wielding, it automatically finds the best combination in your bags to calculate the *net* gain/loss.
 * **Weapon Proficiency:** Knows your class! Won't tell a Priest to equip a Sword.
 
-### 🧠 Dynamic Leveling Matrix
+### 📈 Dynamic Leveling Matrix
 The addon evolves with you as you grow:
 * **Levels 1-20:** Scores items based on **Survival & Regeneration**.
 * **Levels 21-40:** Shifts focus to **Raw Power & Talents**.
@@ -23,7 +27,7 @@ The addon evolves with you as you grow:
 * **Dungeon Smart:** If you are spec'd as a Tank or Healer, the addon automatically switches to "Dungeon Mode" weights so you can gear for your role, not just for solo questing.
 * **Auto-Spec Detection:** Detects your talent build to apply accurate stat weights (Holy, Protection, Retribution, etc.).
 
-### 🧾The Gear Receipt (Experimental)
+### 🧾The Gear Receipt - feedback or ideas msg me on discord >>links on page<<
 Type `/sgjreceipt` (or click the button in options) to open your **Character Audit**.
 * **Full Loadout Scan:** See a clean, zebra-striped list of every equipped item and its contribution to your power.
 * **Combined Stats:** A dynamic summary box that adds up *all* your gear's stats.
@@ -31,11 +35,10 @@ Type `/sgjreceipt` (or click the button in options) to open your **Character Aud
 
 ### 🧪 The Judge's Lab (`/sgj`)
 A custom visual interface for advanced theorycrafting.
-* **⚔️ 2H vs. Dual Wield Logic: The Lab automatically handles complex comparisons. If you drag a 2-Handed Staff into the slot, it compares it against the combined score of your currently equipped Main Hand + Off Hand.
-* **🔎 Smart Gap Filling: If you only drag in a Main Hand weapon (e.g., a Sword) but you are currently dual-wielding, the Judge automatically assumes you will keep your current Off-Hand to give you a fair comparison.
-* **📊 Stat Breakdown: Just like the tooltip, the Lab provides a detailed breakdown of exactly which stats you gain or lose in this hypothetical scenario (e.g., +14 Strength, -0.5% Crit).
-* **🎨 Class-Themed UI: The window dynamically loads your class crest (Warrior, Paladin, etc.) for a customized look.
-
+* **⚔️ 2H vs. Dual Wield Logic:** The Lab automatically handles complex comparisons. If you drag a 2-Handed Staff into the slot, it compares it against the combined score of your currently equipped Main Hand + Off Hand.
+* **🔎 Smart Gap Filling:** If you only drag in a Main Hand weapon (e.g., a Sword) but you are currently dual-wielding, the Judge automatically assumes you will keep your current Off-Hand to give you a fair comparison.
+* **📊 Stat Breakdown:** Just like the tooltip, the Lab provides a detailed breakdown of exactly which stats you gain or lose in this hypothetical scenario (e.g., +14 Strength, -0.5% Crit).
+* **🎨 Class-Themed UI:** The window dynamically loads your class crest (Warrior, Paladin, etc.) for a customized look.
 
 ### ⚙️ Configuration
 * **Strict Mode:** Compare items exactly as they drop.
@@ -44,7 +47,7 @@ A custom visual interface for advanced theorycrafting.
 * **ElvUI Support:** Integrated skinning support that matches your UI while preserving custom high-visibility slot borders.
 
 ### ⚡ Lightning Fast UI
-* **Clean, colored text aligned for easy information.
+* **Clean, colored text** aligned for easy information.
 * **Derived Stats:** Shows the *real* value of stats (e.g., converts "10 Intellect" into "150 Mana + 0.16% Crit").
 * **Conflict Manager:** Automatically detects other addons (RestedXP, Pawn, Zygor) and offers to disable their conflicting tooltips.
 * **Class Branded:** Features high-quality, class-specific background crests for a premium feel.
@@ -63,4 +66,4 @@ A custom visual interface for advanced theorycrafting.
 
 ### 📝 Credits
 * Author: SuperSharpie
-* Version: 1.5.2
+* Version: 1.6.2

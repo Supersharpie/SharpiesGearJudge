@@ -87,7 +87,24 @@ function MSC.CreateOptionsFrame()
     local header2 = CreateHeader("Character Profile", potentialDesc, -25)
     local dropDown = CreateFrame("Frame", "SGJ_SpecDropDown", f, "UIDropDownMenuTemplate"); dropDown:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", -15, -10)
     
-    local function OnClick(self) UIDropDownMenu_SetSelectedID(dropDown, self:GetID()); SGJ_Settings.Mode = self.value; print("|cff00ccffSharpie:|r Profile changed to " .. self.value) end
+    -- [[ FIXED DROPDOWN LOGIC ]] --
+    local function UpdateDropDownText()
+        if SGJ_Settings.Mode == "Auto" then
+             -- Ask Helpers.lua what it actually found!
+             local _, displayName = MSC.GetCurrentWeights()
+             UIDropDownMenu_SetText(dropDown, displayName or "Auto (Detecting...)")
+        else
+             UIDropDownMenu_SetText(dropDown, SGJ_Settings.Mode)
+        end
+    end
+
+    local function OnClick(self) 
+        SGJ_Settings.Mode = self.value
+        UIDropDownMenu_SetSelectedID(dropDown, self:GetID())
+        UpdateDropDownText() -- Update the text immediately
+        print("|cff00ccffSharpie:|r Profile changed to " .. self.value) 
+    end
+
     local function Initialize(self, level)
         local info = UIDropDownMenu_CreateInfo(); info.text = "Auto-Detect"; info.value = "Auto"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Auto"); UIDropDownMenu_AddButton(info, level)
         local _, englishClass = UnitClass("player")
@@ -99,7 +116,13 @@ function MSC.CreateOptionsFrame()
             info = UIDropDownMenu_CreateInfo(); info.text = "Tanking (Threat/Surv)"; info.value = "Tank"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Tank"); UIDropDownMenu_AddButton(info, level)
         end
     end
-    UIDropDownMenu_Initialize(dropDown, Initialize); UIDropDownMenu_SetWidth(dropDown, 200); UIDropDownMenu_SetButtonWidth(dropDown, 124); UIDropDownMenu_SetText(dropDown, SGJ_Settings.Mode or "Auto")
+    
+    UIDropDownMenu_Initialize(dropDown, Initialize)
+    UIDropDownMenu_SetWidth(dropDown, 200)
+    UIDropDownMenu_SetButtonWidth(dropDown, 124)
+    
+    -- Call our new helper to set the initial text correctly
+    UpdateDropDownText() 
 
     local header3 = CreateHeader("Interface Settings", dropDown, -25); header3:SetPoint("TOPLEFT", potentialDesc, "BOTTOMLEFT", -20, -110) 
     

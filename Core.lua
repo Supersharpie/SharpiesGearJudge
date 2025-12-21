@@ -5,11 +5,33 @@ local _, MSC = ...
 -- =============================================================
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:SetScript("OnEvent", function(self, event, addonName)
-    if addonName == "SharpiesGearJudge" then
+eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE") -- [[ NEW: Detect Spec Swaps ]]
+
+eventFrame:SetScript("OnEvent", function(self, event, arg1)
+    
+    -- LOAD LOGIC
+    if event == "ADDON_LOADED" and arg1 == "SharpiesGearJudge" then
         if not SGJ_Settings then SGJ_Settings = { Mode = "Auto", MinimapPos = 45, IncludeEnchants = false, ProjectEnchants = true } end
         if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
-        print("|cff00ccffSharpie's Gear Judge|r loaded! Type |cff00ff00/sgj|r to open the lab.")
+        print("|cff00ccffSharpie's Gear Judge|r loaded!")
+    end
+
+    -- SPEC SWAP LOGIC
+    if event == "PLAYER_TALENT_UPDATE" then
+        -- 1. Force a re-check of the weights immediately
+        local _, newSpecName = MSC.GetCurrentWeights()
+        
+        -- 2. Notify the user (Optional polish)
+        -- We check if the name changed to avoid spamming on login
+        if MSC.LastActiveSpec and MSC.LastActiveSpec ~= newSpecName then
+             print("|cff00ccffSharpie's Gear Judge:|r Spec change detected. Active Profile: |cff00ff00" .. newSpecName .. "|r")
+        end
+        MSC.LastActiveSpec = newSpecName
+
+        -- 3. If the Lab Window is open, refresh it live
+        if MSCLabFrame and MSCLabFrame:IsShown() then
+            MSC.UpdateLabCalc()
+        end
     end
 end)
 
