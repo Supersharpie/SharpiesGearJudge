@@ -115,7 +115,7 @@ function MSC.UpdateTooltip(tooltip)
         else newStats = ohStats; newScore = ohScore; noteText = "|cffff0000(No Mainhand found)|r" end
         oldStats = MSC.SafeGetItemStats(equippedMH, 16); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, 16)
 
-elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" then
+    elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" then
         local s1, s2 = 11, 12; if itemEquipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
         local l1, l2 = GetInventoryItemLink("player", s1), GetInventoryItemLink("player", s2)
         
@@ -179,7 +179,7 @@ elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" the
         newScore = MSC.GetItemScore(newStats, currentWeights, specName, slotId)
     end
 
--- [RENDER UI]
+    -- [RENDER UI]
     local scoreDiff = newScore - oldScore
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
@@ -218,7 +218,7 @@ elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" the
         end
     end
 
--- [STAT BREAKDOWN - COMBINED LINE MODE]
+    -- [STAT BREAKDOWN - COMBINED LINE MODE]
     local oldExpanded = MSC.ExpandDerivedStats(oldStats, (isEquipped and link or nil)) 
     local newExpanded = MSC.ExpandDerivedStats(newStats, link)
     local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded)
@@ -295,7 +295,6 @@ elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" the
             -- Only print if both stats actually exist on this item/comparison
             if primStr and derStr then
                 -- Combine format: "Stamina" -> "20 (+20)   Health (from Stam)   200 (+200)"
-                -- We use |cffcccccc (light gray) for the middle label text to separate it visually
                 local combinedRight = primStr .. "   |cffcccccc" .. pair.derLabel .. "|r " .. derStr
                 tooltip:AddDoubleLine(pair.primLabel, combinedRight, pr, pg, pb)
                 
@@ -306,27 +305,26 @@ elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" the
         end
     end
 
--- PASS 2: Render Remaining Unhandled Stats
+    -- PASS 2: Render Remaining Unhandled Stats
     for _, entry in ipairs(sortedDiffs) do
         if not handledStats[entry.key] and entry.key ~= "IS_PROJECTED" then
             local isRelevant = (currentWeights and currentWeights[entry.key] and currentWeights[entry.key] > 0)
-            -- Whitelist common stats just in case weights are zero/missing
-            if entry.key == "ITEM_MOD_HEALTH_SHORT" or entry.key == "ITEM_MOD_MANA_SHORT" or entry.key == "ITEM_MOD_ATTACK_POWER_SHORT" or entry.key == "ITEM_MOD_SPELL_POWER_SHORT" or entry.key == "ITEM_MOD_HEALING_POWER_SHORT" then isRelevant = true end
+            
+            -- [[ THE FIX: STRICT WHITELIST ]]
+            -- Only Health and Mana are allowed to show without weight.
+            -- Stats like Healing, Spell Power, and AP must now have > 0 Weight to appear.
+            if entry.key == "ITEM_MOD_HEALTH_SHORT" or entry.key == "ITEM_MOD_MANA_SHORT" then isRelevant = true end
             
             if isRelevant then
                 local valStr, r, g, b = GetFormattedStatValue(entry.key)
                 if valStr then
                     local cleanName = MSC.GetCleanStatName(entry.key)
                     
-                    -- [[ RACIAL CHECK START ]] --
-                    -- If we are displaying Weapon Skill, but the raw item has 0, it's a Racial.
+                    -- Racial Check
                     if entry.key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then
                         local rawVal = newStats["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] or 0
-                        if rawVal == 0 then
-                            cleanName = "Wpn Skill (Racial)"
-                        end
+                        if rawVal == 0 then cleanName = "Wpn Skill (Racial)" end
                     end
-                    -- [[ RACIAL CHECK END ]] --
 
                     tooltip:AddDoubleLine(cleanName, valStr, r, g, b)
                     handledStats[entry.key] = true
@@ -360,27 +358,20 @@ SlashCmdList["SGJDEBUG"] = function(msg)
     print(" ")
     print("|cff00ff00=== DEBUGGING: " .. itemLink .. " ===|r")
 
-    -- Create a hidden tooltip to scan the item
     local tip = CreateFrame("GameTooltip", "MSC_DebugTooltip", nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE")
     tip:SetHyperlink(itemLink)
 
-    -- Loop through every line of text on the item
     for i = 1, tip:NumLines() do
         local line = _G["MSC_DebugTooltipTextLeft" .. i]
         if line then
             local text = line:GetText()
             if text then
-                -- Run the parser on this specific line
                 local statKey, statVal = MSC.ParseTooltipLine(text)
-                
-                -- Print the result
                 if statKey then
-                    -- SUCCESS: Found a stat
                     print("|cff00ffff[Line " .. i .. "]|r '" .. text .. "'")
                     print("   -> |cff00ff00MATCH:|r " .. (MSC.ShortNames[statKey] or statKey) .. " = " .. statVal)
                 else
-                    -- FAIL: No stat found (normal for flavor text, Name, etc.)
                     print("|cffaaaaaa[Line " .. i .. "]|r '" .. text .. "'")
                     print("   -> |cffff0000No Match|r")
                 end
@@ -389,6 +380,3 @@ SlashCmdList["SGJDEBUG"] = function(msg)
     end
     print("|cff00ff00================================|r")
 end
-
-
-
