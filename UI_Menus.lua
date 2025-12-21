@@ -38,7 +38,7 @@ MinimapButton:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", 
 MinimapButton:SetScript("OnClick", function(self, button) 
     if button == "LeftButton" then 
         if MSC.CreateLabFrame then MSC.CreateLabFrame() else print("Lab module not loaded.") end
-    else 
+    else
         MSC.CreateOptionsFrame() 
     end 
 end)
@@ -118,5 +118,5 @@ function MSC.CreateOptionsFrame()
         if MSC.ShowReceipt then MSC.ShowReceipt() else print("Core module not ready.") end
     end)
     
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie (v1.6.0)")
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie (v1.6.1)")
 end

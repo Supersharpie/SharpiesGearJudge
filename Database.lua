@@ -79,7 +79,13 @@ MSC.WeightDB = {
         },
     },
     ["PALADIN"] = {
-        ["Default"]     = { ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+        ["Default"]     = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.6, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_SHORT"]=0.04 -- 20 Mana ~= 1 Int
+        },
         
         -- HOLY: Crit Healer (Illumination)
         ["Holy"]        = { 
@@ -87,6 +93,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, -- Crit = Mana Return (Illumination)
             ["ITEM_MOD_INTELLECT_SHORT"]=1.6,     -- Crit % + Mana Pool
+            ["ITEM_MOD_MANA_SHORT"]=0.08,         -- 20 Mana ~= 1 Int
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.8, -- Mp5
             ["ITEM_MOD_STAMINA_SHORT"]=0.8 
         },
@@ -101,6 +108,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5,  -- Consecration Threat needs SP
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8,    -- Need mana to tank
+            ["ITEM_MOD_MANA_SHORT"]=0.04,        -- 20 Mana ~= 1 Int
             ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.5      -- Block Value
         },
@@ -114,6 +122,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,   
             ["ITEM_MOD_SPELL_POWER_SHORT"]=0.6,  -- Judgement/Exorcism scaling
             ["ITEM_MOD_INTELLECT_SHORT"]=0.5,    -- Mana for rotations
+            ["ITEM_MOD_MANA_SHORT"]=0.025,       -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=1.0 
         },
         
@@ -124,12 +133,14 @@ MSC.WeightDB = {
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.7, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05,        -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0            -- Regen
         },
         ["Leveling_21_40"] = { 
             ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
+            ["ITEM_MOD_MANA_SHORT"]=0.04,        -- 20 Mana ~= 1 Int
             ["ITEM_MOD_AGILITY_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.0 
         },
@@ -137,17 +148,24 @@ MSC.WeightDB = {
             ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.6 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,
+            ["ITEM_MOD_MANA_SHORT"]=0.03         -- 20 Mana ~= 1 Int
         },
     },
     ["PRIEST"] = {
-        ["Default"]    = { ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        ["Default"]    = { 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05         -- 20 Mana ~= 1 Int
+        },
         
         -- DISCIPLINE: Int (Mana Pool) + Spirit (Meditation)
         ["Discipline"] = { 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.6,     -- Mental Strength (+10% Mana)
+            ["ITEM_MOD_MANA_SHORT"]=0.08,         -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPIRIT_SHORT"]=1.5,        -- Meditation (Regen)
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
@@ -161,6 +179,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.8, -- Mp5
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_MANA_SHORT"]=0.06,         -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- Inspiration procs
             ["ITEM_MOD_STAMINA_SHORT"]=0.8 
         },
@@ -172,6 +191,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- Shadow Power = 100% crit dmg bonus
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=1.0,           
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5             
         },
@@ -181,19 +201,22 @@ MSC.WeightDB = {
             ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, -- WAND DPS IS GOD
             ["ITEM_MOD_SPIRIT_SHORT"]=2.0,            -- Spirit Tap = Infinite Mana
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=0.8
         },
         ["Leveling_21_40"] = { 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.2,            -- Spirit Tap is still king
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.5, -- Wanding still happens
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
+            ["ITEM_MOD_MANA_SHORT"]=0.06              -- 20 Mana ~= 1 Int
         },
         ["Leveling_41_59"] = { 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05              -- 20 Mana ~= 1 Int
         },
     },
     ["ROGUE"] = {
@@ -263,6 +286,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.5,     -- Mana pool
+            ["ITEM_MOD_MANA_SHORT"]=0.025,        -- 20 Mana ~= 1 Int
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
         },
         
@@ -274,7 +298,8 @@ MSC.WeightDB = {
             ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0,
             ["ITEM_MOD_STAMINA_SHORT"]=1.2,       -- Pet/Hunter survival
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0,        -- Low downtime
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_SHORT"]=0.025         -- 20 Mana ~= 1 Int
         },
         
         -- MARKSMANSHIP: Raid DPS
@@ -285,7 +310,8 @@ MSC.WeightDB = {
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,   -- Mortal Shots talent
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2      -- Mana pots cover this
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,      -- Mana pots cover this
+            ["ITEM_MOD_MANA_SHORT"]=0.01           -- 20 Mana ~= 1 Int
         },
         
         -- SURVIVAL: PvP / Agility Stacking
@@ -294,6 +320,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_AGILITY_SHORT"]=2.2,       -- Lightning Reflexes scales this
             ["ITEM_MOD_STAMINA_SHORT"]=1.5,       -- PvP Survival
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8,     -- PvP utility mana
+            ["ITEM_MOD_MANA_SHORT"]=0.04,         -- 20 Mana ~= 1 Int
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,    -- 5% PvP cap
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
             ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=0.8 
@@ -305,13 +332,15 @@ MSC.WeightDB = {
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.2,        -- Regen is vital early
             ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_SHORT"]=0.025         -- 20 Mana ~= 1 Int
         },
         ["Leveling_21_40"] = { 
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.6,
+            ["ITEM_MOD_MANA_SHORT"]=0.03,         -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=1.0 
         },
         ["Leveling_41_59"] = { 
@@ -322,11 +351,16 @@ MSC.WeightDB = {
         },
     },
     ["MAGE"] = {
-        ["Default"] = { ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 },
+        ["Default"] = { 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05, -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 
+        },
         
         -- ARCANE: Mana Pool + Dmg
         ["Arcane"]  = { 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.8,     -- Arcane scales with Mana Pool
+            ["ITEM_MOD_MANA_SHORT"]=0.09,         -- 20 Mana ~= 1 Int
             ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.5, -- Hit is massive
@@ -349,18 +383,21 @@ MSC.WeightDB = {
             ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,-- Shatter gives 50%, so gear crit is lower priority
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05             -- 20 Mana ~= 1 Int
         },
         
         -- LEVELING: AoE Grinding (Stam/Int) vs Wanding
         ["Leveling_1_20"]  = { 
             ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.5, -- Wand DPS
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_MANA_SHORT"]=0.075,            -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPIRIT_SHORT"]=1.2,            -- Regen
             ["ITEM_MOD_STAMINA_SHORT"]=1.2            -- Survival
         },
         ["Leveling_21_40"] = { 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5,         -- Mana for Blizzard
+            ["ITEM_MOD_MANA_SHORT"]=0.075,            -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=1.5,           -- Surviving the pull
             ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2
@@ -369,11 +406,17 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=1.0 
         },
     },
     ["WARLOCK"] = {
-        ["Default"]     = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+        ["Default"]     = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_SHORT"]=0.04 -- 20 Mana ~= 1 Int
+        },
         
         -- AFFLICTION: Drain Tanking / DoTs
         ["Affliction"]  = { 
@@ -381,14 +424,16 @@ MSC.WeightDB = {
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5,       -- Life Tap fuel
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_SHORT"]=0.04          -- 20 Mana ~= 1 Int
         },
 
         -- DEMONOLOGY: Pet Scaling (Stam/Int)
         ["Demonology"]  = { 
             ["ITEM_MOD_STAMINA_SHORT"]=2.0,       -- Demonic Embrace (+15% Stam)
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05          -- 20 Mana ~= 1 Int
         },
         
         -- DESTRUCTION: Crit (Ruin) + Hit
@@ -399,6 +444,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,    -- Shadow Bolt is still main nuke
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8,  
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=0.8
         },
         
@@ -414,6 +460,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.5, -- Wand DPS
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
         },
        ["Leveling_21_40"] = { 
@@ -422,6 +469,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,
             ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.0, -- Wanding
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0,     -- Mana
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 
         },
@@ -429,11 +477,16 @@ MSC.WeightDB = {
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_SHORT"]=0.04              -- 20 Mana ~= 1 Int
         },
     },
     ["SHAMAN"] = {
-        ["Default"]     = { ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
+        ["Default"]     = { 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05, -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
+        },
         
         -- ELEMENTAL: Nature Dmg / Crit
         ["Elemental"]   = { 
@@ -441,7 +494,8 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.6, -- Elemental Fury (+100% Crit Dmg)
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0,  -- Hard to find, but needed
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05              -- 20 Mana ~= 1 Int
         },
 
         -- ENHANCEMENT: Windfury (Crit/AP)
@@ -460,20 +514,49 @@ MSC.WeightDB = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, -- Mp5
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_MANA_SHORT"]=0.06,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- Ancestral Healing
             ["ITEM_MOD_STAMINA_SHORT"]=0.8 
         },
         
         -- TANK: (Meme/Niche)
-        ["Tank"]        = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
+        ["Tank"]        = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
+        },
         
         -- LEVELING: 2H Staff/Mace hitting
-        ["Leveling_1_20"]  = { ["ITEM_MOD_STRENGTH_SHORT"]=1.6, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-        ["Leveling_41_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2 },
+        ["Leveling_1_20"]  = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05              -- 20 Mana ~= 1 Int
+        },
+        ["Leveling_21_40"] = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+        },
+        ["Leveling_41_59"] = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2 
+        },
     },
     ["DRUID"] = {
-        ["Default"]     = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        ["Default"]     = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.05 -- 20 Mana ~= 1 Int
+        },
         
         -- BALANCE: Oomkin needs mana & Crit
         ["Balance"]     = { 
@@ -483,6 +566,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=2.0,     -- Starfire
             ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0,     -- Wrath
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2,         -- Mana issues are real
+            ["ITEM_MOD_MANA_SHORT"]=0.06,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=0.8 
         },
 
@@ -505,6 +589,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_MANA_SHORT"]=0.06,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_STAMINA_SHORT"]=0.8 
         },
 
@@ -520,9 +605,23 @@ MSC.WeightDB = {
         },
         
         -- LEVELING: Cat Form speed
-        ["Leveling_1_20"]  = { ["ITEM_MOD_STRENGTH_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-        ["Leveling_41_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 },
+        ["Leveling_1_20"]  = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+        },
+        ["Leveling_21_40"] = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.4, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+        },
+        ["Leveling_41_59"] = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 
+        },
     },
 }
 
@@ -542,49 +641,7 @@ MSC.SpecNames = {
 }
 
 -- =============================================================
--- 3. ENCHANT DATABASE
--- =============================================================
-MSC.EnchantDB = {
-    [2504] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 30 }, 
-    [2505] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 55 },
-    [2564] = { ["ITEM_MOD_AGILITY_SHORT"] = 15 },
-    [2563] = { ["ITEM_MOD_STRENGTH_SHORT"] = 15 },
-    [1900] = { ["ITEM_MOD_STRENGTH_SHORT"] = 100 }, 
-    [2565] = { ["ITEM_MOD_INTELLECT_SHORT"] = 22 },
-    [1897] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30 },
-    [2503] = { ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 7 },
-    [2621] = { ["ITEM_MOD_STAMINA_SHORT"] = 4, ["ITEM_MOD_STRENGTH_SHORT"] = 4, ["ITEM_MOD_AGILITY_SHORT"] = 4, ["ITEM_MOD_INTELLECT_SHORT"] = 4, ["ITEM_MOD_SPIRIT_SHORT"] = 4 },
-    [2629] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 4 },
-    [2603] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 26, ["ITEM_MOD_CRIT_RATING_SHORT"] = 1 },
-    [2604] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 15, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1 },
-    [2605] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 33, ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 5 },
-    [2606] = { ["ITEM_MOD_STAMINA_SHORT"] = 16, ["ITEM_MOD_ARMOR_SHORT"] = 100 },
-    [2586] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 24, ["ITEM_MOD_STAMINA_SHORT"] = 10, ["ITEM_MOD_HIT_RATING_SHORT"] = 1 },
-    [2585] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 28, ["ITEM_MOD_DODGE_RATING_SHORT"] = 1 },
-    [2583] = { ["ITEM_MOD_STAMINA_SHORT"] = 10, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 7, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 15 },
-    [2584] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 24, ["ITEM_MOD_STAMINA_SHORT"] = 10, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 7 },
-    [2589] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 24, ["ITEM_MOD_STAMINA_SHORT"] = 10, ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 4 },
-    [2587] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 18, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1 },
-    [2588] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 18, ["ITEM_MOD_STAMINA_SHORT"] = 10 },
-    [2591] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 13, ["ITEM_MOD_INTELLECT_SHORT"] = 15 },
-    [2590] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 24, ["ITEM_MOD_STAMINA_SHORT"] = 10, ["ITEM_MOD_INTELLECT_SHORT"] = 10 },
-    [2607] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30 },
-    [2608] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 18 },
-    [2609] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 33 },
-    [2443] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 8 },
-    [2543] = { ["ITEM_MOD_ATTACK_SPEED_SHORT"] = 1 }, 
-    [2544] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 8 },
-    [2545] = { ["ITEM_MOD_DODGE_RATING_SHORT"] = 1 },
-    [2488] = { ["ITEM_MOD_HEALTH_SHORT"] = 100 },
-    [2483] = { ["ITEM_MOD_STRENGTH_SHORT"] = 8 },
-    [2484] = { ["ITEM_MOD_STAMINA_SHORT"] = 8 },
-    [2485] = { ["ITEM_MOD_AGILITY_SHORT"] = 8 },
-    [2486] = { ["ITEM_MOD_INTELLECT_SHORT"] = 8 },
-    [2487] = { ["ITEM_MOD_SPIRIT_SHORT"] = 8 },
-}
-
--- =============================================================
--- 4. RACIAL BONUSES (Using IDs)
+-- 3. RACIAL BONUSES (Using IDs)
 -- =============================================================
 MSC.RacialTraits = {
     ["Human"] = { 
@@ -607,7 +664,7 @@ MSC.RacialTraits = {
 }
 
 -- =============================================================
--- 5. WEAPON SPEED PREFERENCES
+-- 4. WEAPON SPEED PREFERENCES
 -- =============================================================
 MSC.SpeedChecks = {
     ["WARRIOR"] = { ["Fury"]={ MH_Slow=true, OH_Fast=true }, ["Protection"]={ MH_Fast=true }, ["Default"]={ MH_Slow=true } },
@@ -618,7 +675,7 @@ MSC.SpeedChecks = {
 }
 
 -- =============================================================
--- 6. CLASS WEAPON PROFICIENCIES
+-- 5. CLASS WEAPON PROFICIENCIES
 -- =============================================================
 MSC.ValidWeapons = {
     ["WARRIOR"] = { [0]=true, [1]=true, [2]=true, [3]=true, [4]=true, [5]=true, [6]=true, [7]=true, [8]=true, [10]=true, [13]=true, [15]=true, [18]=true, [19]=false },
@@ -633,7 +690,7 @@ MSC.ValidWeapons = {
 }
 
 -- =============================================================
--- 7. SHORT NAMES (Display text for Tooltips)
+-- 6. SHORT NAMES (Display text for Tooltips)
 -- =============================================================
 MSC.ShortNames = {
     -- [[ FIX FOR BLIZZARD ARMOR RETURN ]]
@@ -701,7 +758,7 @@ MSC.ShortNames = {
 }
 
 -- =============================================================
--- 8. SLOT MAPPING
+-- 7. SLOT MAPPING
 -- =============================================================
 MSC.SlotMap = { 
     ["INVTYPE_HEAD"]=1, ["INVTYPE_NECK"]=2, ["INVTYPE_SHOULDER"]=3, ["INVTYPE_BODY"]=4, 
@@ -714,7 +771,7 @@ MSC.SlotMap = {
 }
 
 -- =============================================================
--- 9. CRIT CONVERSION MATRIX (Level Brackets)
+-- 8. CRIT CONVERSION MATRIX (Level Brackets)
 -- =============================================================
 MSC.StatToCritMatrix = {
     ["WARRIOR"] = { 

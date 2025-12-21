@@ -1,3 +1,7 @@
+## v1.6.1
+* **Added: "Smart Capping" logic.
+* **The addon now checks your character's current Hit % and Spell Hit % in real-time.
+
 ## v1.6.0 - The "Receipt & Reality" Update
 
 ### 🌟 New Experimental Feature: The Gear Receipt
@@ -14,7 +18,7 @@
 * **API Force-Feed:** Implemented a "Force-Feed" system that guarantees Spell Power and Healing are counted, even if the game client tries to hide them.
 
 ### 🏹 Class Tuning
-* **Warlock Fix:** Fixed a database error where **Spell Power** was weighted as 0 for Leveling Warlocks (Levels 21-40). The *Mageblade* is now correctly identified as a massive upgrade.
+* **Warlock Fix:** Fixed a database error where **Spell Power** was weighted as 0 for Leveling Warlocks (Levels 21-40).
 * **Hunter Love:** Added specific support for **"Ranged Attack Power"**. Hunters will now see correct values for items like *Blackhand's Breadth* and Tier sets.
 
 ### 🛠️ Polish
