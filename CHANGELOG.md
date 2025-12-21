@@ -190,5 +190,4 @@
 
 ## v0.5 (Alpha)
 * Initial project setup.
-
 * Basic `GetItemStats` logic.
