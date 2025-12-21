@@ -108,6 +108,15 @@ function MSC.CreateOptionsFrame()
 
     local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
     tooltipCheck:SetScript("OnClick", function(self) SGJ_Settings.HideTooltips = not self:GetChecked() end)
+
+    -- [[ NEW FEATURE: GEAR RECEIPT BUTTON ]] --
+    local receiptBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    receiptBtn:SetPoint("TOPLEFT", tooltipCheck, "BOTTOMLEFT", 20, -20)
+    receiptBtn:SetSize(200, 30)
+    receiptBtn:SetText("Show Gear Receipt")
+    receiptBtn:SetScript("OnClick", function() 
+        if MSC.ShowReceipt then MSC.ShowReceipt() else print("Core module not ready.") end
+    end)
     
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie (v1.5.5)")
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie (v1.6.0)")
 end

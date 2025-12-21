@@ -1,4 +1,4 @@
-# Sharpie's Gear Judge (v1.5.4)
+# Sharpie's Gear Judge (v1.6.0)
 **The Final Verdict on your Gear for WoW Classic Era**
 
 Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
@@ -23,9 +23,11 @@ The addon evolves with you as you grow:
 * **Dungeon Smart:** If you are spec'd as a Tank or Healer, the addon automatically switches to "Dungeon Mode" weights so you can gear for your role, not just for solo questing.
 * **Auto-Spec Detection:** Detects your talent build to apply accurate stat weights (Holy, Protection, Retribution, etc.).
 
-### ⚖️ The Judge's Lab
-* Type `/sgj` to open the visual Drag-and-Drop laboratory.
-* Test hypothetical loadouts by dragging items from the shop, dungeon journal, or other players into the slots to compare against your current gear.
+### 🧾The Gear Receipt (Experimental)
+Type `/sgjreceipt` (or click the button in options) to open your **Character Audit**.
+* **Full Loadout Scan:** See a clean, zebra-striped list of every equipped item and its contribution to your power.
+* **Combined Stats:** A dynamic summary box that adds up *all* your gear's stats.
+* **Smart Filtering:** Automatically hides useless stats (e.g., hides Strength for Mages) and highlights your most important attributes in **Green**.
 
 ### 🧪 The Judge's Lab (`/sgj`)
 A custom visual interface for advanced theorycrafting.

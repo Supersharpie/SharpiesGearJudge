@@ -344,39 +344,194 @@ if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", MSC.Upd
 if ShoppingTooltip2 then ShoppingTooltip2:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
 
 -- =============================================================
--- DEBUGGER TOOL
--- Usage: /sgjdebug [Shift-Click Item]
+-- GEAR RECEIPT WINDOW (V4.4 - True Weighted Highlighting)
 -- =============================================================
-SLASH_SGJDEBUG1 = "/sgjdebug"
-SlashCmdList["SGJDEBUG"] = function(msg)
-    local itemLink = msg:match("(|c.+|r)")
-    if not itemLink then 
-        print("|cffff0000SGJ Debug:|r Please link an item. Example: /sgjdebug [Item Link]")
-        return 
+function MSC.ShowReceipt()
+    -- 1. Create the Frame (First Time Only)
+    if not MSC.ReceiptFrame then
+        local f = CreateFrame("Frame", "MSC_ReceiptFrame", UIParent, "BasicFrameTemplateWithInset")
+        f:SetSize(420, 600)
+        f:SetPoint("CENTER")
+        f:SetMovable(true)
+        f:EnableMouse(true)
+        f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving)
+        f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        f.TitleBg:SetHeight(30)
+        f.TitleText:SetText("Sharpie's Gear Receipt")
+        
+        -- Class Colors for Border
+        local _, classFilename = UnitClass("player")
+        local color = RAID_CLASS_COLORS[classFilename]
+        if f.SetBorderColor then f:SetBorderColor(color.r, color.g, color.b) end 
+        
+        MSC.ReceiptFrame = f
+        
+        -- ScrollFrame
+        f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+        f.Scroll:SetPoint("TOPLEFT", 10, -30)
+        f.Scroll:SetPoint("BOTTOMRIGHT", -30, 160)
+        
+        -- Content Child
+        f.Content = CreateFrame("Frame", nil, f.Scroll)
+        f.Content:SetSize(380, 480)
+        f.Scroll:SetScrollChild(f.Content)
+        
+        -- [[ STAT SUMMARY CONTAINER ]]
+        f.SummaryBox = CreateFrame("Frame", nil, f)
+        f.SummaryBox:SetPoint("TOPLEFT", f.Scroll, "BOTTOMLEFT", 0, -5)
+        f.SummaryBox:SetPoint("BOTTOMRIGHT", -10, 50)
+        
+        -- Separator Line
+        f.Separator = f.SummaryBox:CreateTexture(nil, "ARTWORK")
+        f.Separator:SetHeight(1)
+        f.Separator:SetPoint("TOPLEFT", 10, 0)
+        f.Separator:SetPoint("TOPRIGHT", -10, 0)
+        f.Separator:SetColorTexture(1, 0.82, 0, 0.5) 
+        
+        -- Background
+        f.SummaryBg = f.SummaryBox:CreateTexture(nil, "BACKGROUND")
+        f.SummaryBg:SetPoint("TOPLEFT", 0, -5)
+        f.SummaryBg:SetPoint("BOTTOMRIGHT", 0, 0)
+        f.SummaryBg:SetColorTexture(0, 0, 0, 0.3)
+        
+        f.SummaryTitle = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        f.SummaryTitle:SetPoint("TOP", 0, -12)
+        f.SummaryTitle:SetText("COMBINED STATS FROM GEAR")
+        f.SummaryTitle:SetTextColor(1, 0.82, 0) 
+
+        -- Footer
+        f.FooterBg = f:CreateTexture(nil, "BACKGROUND")
+        f.FooterBg:SetPoint("BOTTOMLEFT", 4, 4)
+        f.FooterBg:SetPoint("BOTTOMRIGHT", -4, 4)
+        f.FooterBg:SetHeight(40)
+        f.FooterBg:SetColorTexture(0, 0, 0, 0.5) 
+
+        -- Total Score
+        f.TotalText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+        f.TotalText:SetPoint("BOTTOM", f, "BOTTOM", 0, 15)
+        f.TotalText:SetTextColor(color.r, color.g, color.b) 
+        
+        MSC.ReceiptRows = {}
+        MSC.SummaryRows = {}
     end
+    
+    MSC.ReceiptFrame:Show()
 
-    print(" ")
-    print("|cff00ff00=== DEBUGGING: " .. itemLink .. " ===|r")
+    -- 2. Define Slots
+    local slots = {
+        { name="Head", id=1 }, { name="Neck", id=2 }, { name="Shoulder", id=3 },
+        { name="Back", id=15 }, { name="Chest", id=5 }, { name="Wrist", id=9 },
+        { name="Hands", id=10 }, { name="Waist", id=6 }, { name="Legs", id=7 },
+        { name="Feet", id=8 }, { name="Finger 1", id=11 }, { name="Finger 2", id=12 },
+        { name="Trinket 1", id=13 }, { name="Trinket 2", id=14 },
+        { name="Main Hand", id=16 }, { name="Off Hand", id=17 }, { name="Ranged", id=18 }
+    }
 
-    local tip = CreateFrame("GameTooltip", "MSC_DebugTooltip", nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
-    tip:SetHyperlink(itemLink)
-
-    for i = 1, tip:NumLines() do
-        local line = _G["MSC_DebugTooltipTextLeft" .. i]
-        if line then
-            local text = line:GetText()
-            if text then
-                local statKey, statVal = MSC.ParseTooltipLine(text)
-                if statKey then
-                    print("|cff00ffff[Line " .. i .. "]|r '" .. text .. "'")
-                    print("   -> |cff00ff00MATCH:|r " .. (MSC.ShortNames[statKey] or statKey) .. " = " .. statVal)
-                else
-                    print("|cffaaaaaa[Line " .. i .. "]|r '" .. text .. "'")
-                    print("   -> |cffff0000No Match|r")
-                end
+    local currentWeights, specName = MSC.GetCurrentWeights()
+    local totalScore = 0
+    local combinedStats = {}
+    local yOffset = 0
+    
+    -- 3. Loop Items & Accumulate
+    for i, slot in ipairs(slots) do
+        -- A. Row Setup
+        if not MSC.ReceiptRows[i] then
+            local row = CreateFrame("Frame", nil, MSC.ReceiptFrame.Content)
+            row:SetSize(380, 24) 
+            row.BG = row:CreateTexture(nil, "BACKGROUND"); row.BG:SetAllPoints()
+            row.Icon = row:CreateTexture(nil, "ARTWORK"); row.Icon:SetSize(20, 20); row.Icon:SetPoint("LEFT", 4, 0); row.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92) 
+            row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", row.Icon, "RIGHT", 8, 0); row.Label:SetWidth(65); row.Label:SetJustifyH("LEFT"); row.Label:SetTextColor(0.6, 0.6, 0.6) 
+            row.Score = row:CreateFontString(nil, "OVERLAY", "GameFontNormal"); row.Score:SetPoint("RIGHT", -5, 0); row.Score:SetWidth(60); row.Score:SetJustifyH("RIGHT"); row.Score:SetTextColor(0, 1, 0) 
+            row.Item = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Item:SetPoint("LEFT", row.Label, "RIGHT", 5, 0); row.Item:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Item:SetJustifyH("LEFT")
+            MSC.ReceiptRows[i] = row
+        end
+        local row = MSC.ReceiptRows[i]
+        row:SetPoint("TOPLEFT", 0, yOffset)
+        
+        -- B. Data
+        local link = GetInventoryItemLink("player", slot.id)
+        local texture = GetInventoryItemTexture("player", slot.id)
+        local itemScore = 0
+        local itemText = "|cff444444(Empty)|r"
+        
+        if link then
+            itemText = link
+            local stats = MSC.SafeGetItemStats(link, slot.id)
+            if stats then
+                itemScore = MSC.GetItemScore(stats, currentWeights, specName, slot.id)
+                for k, v in pairs(stats) do combinedStats[k] = (combinedStats[k] or 0) + v end
             end
         end
+        totalScore = totalScore + itemScore
+        
+        row.Label:SetText(slot.name)
+        row.Item:SetText(itemText)
+        row.Score:SetText(string.format("%.1f", itemScore))
+        if texture then row.Icon:SetTexture(texture); row.Icon:SetDesaturated(false) else row.Icon:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot"); row.Icon:SetDesaturated(true) end
+        if i % 2 == 0 then row.BG:SetColorTexture(1, 1, 1, 0.03) else row.BG:SetColorTexture(0, 0, 0, 0) end
+        yOffset = yOffset - 24
     end
-    print("|cff00ff00================================|r")
+    
+    -- 4. BUILD SUMMARY (Highlight Weighted Stats)
+    for _, line in pairs(MSC.SummaryRows) do line:Hide() end
+    
+    local sortedStats = {}
+    for k, v in pairs(combinedStats) do
+        local weight = currentWeights[k] or 0
+        local alwaysShow = (k == "ITEM_MOD_STAMINA_SHORT") 
+        
+        if (weight > 0 or alwaysShow) then
+            -- Assign a tiny weight to Stamina if it's 0, so it appears at the bottom
+            local sortWeight = (weight > 0) and weight or 0.001
+            table.insert(sortedStats, { key=k, val=v, weight=sortWeight, realWeight=weight })
+        end
+    end
+    table.sort(sortedStats, function(a,b) return a.weight > b.weight end)
+
+    -- GRID SETTINGS
+    local col1X, col2X = 20, 210
+    local startY = -35
+    
+    for i, data in ipairs(sortedStats) do
+        if i > 12 then break end -- Increased max lines slightly
+        if not MSC.SummaryRows[i] then
+            local f = CreateFrame("Frame", nil, MSC.ReceiptFrame.SummaryBox)
+            f:SetSize(160, 16)
+            f.Label = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            f.Label:SetPoint("LEFT", 0, 0)
+            f.Value = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            f.Value:SetPoint("RIGHT", 0, 0)
+            MSC.SummaryRows[i] = f
+        end
+        
+        local row = MSC.SummaryRows[i]
+        row:Show()
+        
+        -- [[ COLOR LOGIC ]]
+        -- If weight > 0, it's contributing Score -> GREEN
+        -- If weight == 0 (Info Only) -> GRAY
+        local cleanName = MSC.GetCleanStatName(data.key)
+        local labelColor = "|cff888888" -- Default Gray
+        
+        if data.realWeight > 0 then
+            labelColor = "|cff00ff00" -- Green for Active Stats
+        end
+        
+        row.Label:SetText(labelColor .. cleanName .. ":|r")
+        row.Value:SetText(string.format("%.1f", data.val))
+        
+        local isLeft = (i % 2 ~= 0)
+        local rowIdx = math.ceil(i / 2) - 1
+        local yPos = startY - (rowIdx * 16)
+        
+        if isLeft then row:SetPoint("TOPLEFT", col1X, yPos) else row:SetPoint("TOPLEFT", col2X, yPos) end
+    end
+
+    -- 5. Footer
+    MSC.ReceiptFrame.TotalText:SetText("TOTAL SCORE: " .. string.format("%.1f", totalScore))
 end
+
+-- Slash Command
+SLASH_SGJRECEIPT1 = "/sgjreceipt"
+SlashCmdList["SGJRECEIPT"] = function() MSC.ShowReceipt() end
