@@ -1,4 +1,3 @@
-# Sharpie's Gear Judge (v1.6.2)
 # Sharpie's Gear Judge (v1.7.0)
 **The Final Verdict on your Gear for WoW Classic Era**
 
