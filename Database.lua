@@ -808,3 +808,66 @@ MSC.StatToCritMatrix = {
         Int = { {1, 6.5}, {20, 16.0}, {40, 38.0}, {60, 60.6} } 
     },
 }
+-- =============================================================
+-- 9. ITEM OVERRIDES (Manual Values for Trinkets/Procs)
+-- =============================================================
+-- Formula: (Stat Value * Duration) / Cooldown = Average Value
+MSC.ItemOverrides = {
+    -- [[ CASTER DPS ]]
+    [18820] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 29 }, -- Talisman of Ephemeral Power (175sp * 15s / 90s)
+    [19339] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 33, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 20 }, -- Mind Quickening Gem (Mage)
+    [12930] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 29 }, -- Briarwood Reed (Static)
+    [11832] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5 }, -- Burst of Knowledge
+    [19959] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 28 }, -- Hakkari Shrunken Head (Hunter/Caster)
+    [23046] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 85 }, -- The Restrained Essence of Sapphiron
+    [21563] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 33 }, -- Don Rodrigo's Band
+    
+    -- [[ MELEE DPS ]]
+    [11815] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 }, -- Hand of Justice (Proc Estimate ~20 AP value)
+    [13965] = { ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0 }, -- Blackhand's Breadth (Static)
+    [19341] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 60 }, -- Earthstrike (Avg)
+    [21180] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 60 }, -- Earthstrike (Stage 2)
+    [21142] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 200 }, -- Kiss of the Spider (Speed/Haste converted to AP value)
+    [19955] = { ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0 }, -- Wushoolay's Charm of Nature (Use effect is weak, mostly used for hit)
+    [13522] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 100 }, -- Flask of Titans (Quest Reward)
+    [18640] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40 }, -- Counterattack Lodestone
+    
+    -- [[ HEALER ]]
+    [19340] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 66 }, -- Grace of Earth
+    [18443] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 12 }, -- Second Wind
+    [19958] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 10, ["ITEM_MOD_HEALING_POWER_SHORT"] = 40 }, -- Zandalarian Hero Charm
+    [22666] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 80 }, -- Eye of the Dead (Naxx)
+    
+    -- [[ TANK ]]
+    [11811] = { ["ITEM_MOD_STAMINA_SHORT"] = 25 }, -- Smoking Heart of the Mountain (Armor/Resist hard to weigh, buffing Stam)
+    [19337] = { ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.0 }, -- The Black Book (Warlock/Tank situational)
+    [19343] = { ["ITEM_MOD_HEALTH_SHORT"] = 400 }, -- Scroll of Blinding Light
+    
+    -- [[ CLASS SPECIFIC ]]
+    [19336] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45 }, -- Natural Alignment Crystal (Shaman)
+    [19342] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50 }, -- Venomous Totem (Rogue)
+    [19338] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 15 }, -- Aegis of Preservation (Druid)
+    [19335] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 15 }, -- Enamored Water Spirit (Priest)
+    
+    -- [[ MISC / UTILITY / LEVELING ]]
+    [11122] = { ["ITEM_MOD_STAMINA_SHORT"] = 10 }, -- Carrot on a Stick (Movement Speed)
+    [13209] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30 }, -- Seal of the Dawn (AP against Undead)
+    [17774] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 }, -- Mark of the Chosen (Proc ~20 stats)
+	
+	-- [[ LEVELING / QUEST REWARDS ]]
+    [20130] = { ["ITEM_MOD_STRENGTH_SHORT"] = 75, ["ITEM_MOD_HEALING_POWER_SHORT"] = 50 }, -- Diamond Flask (The scanner misses the "75 Str" because it's in the Use effect. We force it here.)
+    [19024] = { ["ITEM_MOD_HEALTH_SHORT"] = 300 }, -- Arena Grand Master (The absorb shield is practically 750-1200 HP. We give it a conservative "Health" value so it scores high for tanks/survival.)
+    [11832] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0 }, -- Burst of Knowledge (Quest)
+    [15818] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 15 }, -- Ray of the New Moon (Damage Use effect approximated as SP)
+    [11302] = { ["ITEM_MOD_STRENGTH_SHORT"] = 8 }, -- Uther's Strength (Chance on hit proc ~ 8 Str avg)
+    
+    -- [[ PVP / SURVIVAL ]]
+    [18854] = { ["ITEM_MOD_STAMINA_SHORT"] = 15 }, -- Insignia of the Alliance (Freedom effect is invaluable, weighted as high Stamina)
+    [18834] = { ["ITEM_MOD_STAMINA_SHORT"] = 15 }, -- Insignia of the Horde
+    [18850] = { ["ITEM_MOD_STAMINA_SHORT"] = 15 }, -- Insignia (Rank 2)
+    [1404]  = { ["ITEM_MOD_STAMINA_SHORT"] = 10 }, -- Tidal Charm (Stun utility weighted as survival)
+    
+    -- [[ CLASS QUESTS ]]
+    [19990] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 10 }, -- Blessed Prayer Beads (Priest)
+    [20042] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 }, -- Sanctified Orb (Paladin/Warrior)
+}

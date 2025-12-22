@@ -3,8 +3,11 @@ local _, MSC = ...
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0 end
     
+    -- Filter out Set Bonuses (unless active/green) and passive descriptions
     if text:find("Set:") and not text:find("ff00ff00") then return nil, 0 end
     text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    
+    -- Ignore "Use" effects (usually temporary) but KEEP "Equip" lines
     if text:find("^Use:") or text:find("^Chance on hit:") or text:find("when fighting") then return nil, 0 end
     
     local patterns = {
@@ -35,9 +38,12 @@ function MSC.ParseTooltipLine(text)
         { pattern = "hit.-spells.-(%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "hit.-(%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
 
-        -- [[ 6. MP5 / HP5 ]]
+        -- [[ 6. MP5 / HP5 (UPDATED FOR LIFESTONE) ]]
         { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "(%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+        -- New generic "Restores" catchers:
+        { pattern = "Restores (%d+) health", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" }, 
+        { pattern = "Restores (%d+) mana", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         
         -- [[ 7. ATTACK POWER ]]
         { pattern = "Attack Power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
@@ -51,15 +57,15 @@ function MSC.ParseTooltipLine(text)
         { pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
         
-		-- [[ 9. MISSING ENCHANTS (Expanded for "Mana +30" format) ]]
+		-- [[ 9. MISSING ENCHANTS ]]
         { pattern = "%+(%d+) Health", stat = "ITEM_MOD_HEALTH_SHORT" },
-        { pattern = "Health %+(%d+)", stat = "ITEM_MOD_HEALTH_SHORT" }, -- New
+        { pattern = "Health %+(%d+)", stat = "ITEM_MOD_HEALTH_SHORT" },
         
         { pattern = "%+(%d+) Mana", stat = "ITEM_MOD_MANA_SHORT" },
-        { pattern = "Mana %+(%d+)", stat = "ITEM_MOD_MANA_SHORT" }, -- New
+        { pattern = "Mana %+(%d+)", stat = "ITEM_MOD_MANA_SHORT" },
         
         { pattern = "%+(%d+) Armor", stat = "ITEM_MOD_ARMOR_SHORT" }, 
-        { pattern = "Armor %+(%d+)", stat = "ITEM_MOD_ARMOR_SHORT" }, -- New
+        { pattern = "Armor %+(%d+)", stat = "ITEM_MOD_ARMOR_SHORT" },
         
         { pattern = "%+(%d+) Block", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
         

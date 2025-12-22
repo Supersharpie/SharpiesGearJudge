@@ -209,10 +209,35 @@ function MSC.ApplyElvUISkin(frame)
 end
 
 -- =============================================================
--- 5. ITEM STAT SCANNER
+-- 5. ITEM STAT SCANNER (UPDATED FOR OVERRIDES)
 -- =============================================================
 function MSC.SafeGetItemStats(itemLink, slotId, skipProjection)
     if not itemLink then return {} end
+    
+    -- [[ 1. CHECK OVERRIDES DATABASE FIRST ]] --
+    local itemID = tonumber(string.match(itemLink, "item:(%d+)")) -- [[ FIXED: Correct ID Extraction ]]
+    
+    if itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID] then
+        -- Return a copy of the manual stats immediately
+        local manualStats = {}
+        for k, v in pairs(MSC.ItemOverrides[itemID]) do manualStats[k] = v end
+        
+        -- We still want to project enchants on top of manual overrides!
+        if SGJ_Settings.ProjectEnchants and slotId and not skipProjection then
+            local equippedLink = GetInventoryItemLink("player", slotId)
+            local isEquipped = (equippedLink and itemLink and equippedLink == itemLink)
+            if not isEquipped then 
+                local myEnchantStats = MSC.GetEnchantStats(slotId) 
+                for k, v in pairs(myEnchantStats) do
+                    if k == "IS_PROJECTED" then manualStats.IS_PROJECTED = true
+                    else manualStats[k] = (manualStats[k] or 0) + v end
+                end
+            end
+        end
+        return manualStats
+    end
+
+    -- [[ 2. STANDARD SCANNER (Fallback) ]] --
     local stats = GetItemStats(itemLink) or {}
     local finalStats = {}
     local foundByAPI = {} 
@@ -242,7 +267,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, skipProjection)
                 if lineText then
                     local s, v = MSC.ParseTooltipLine(lineText)
                     if s and v then 
-                        local isForceStat = (s == "ITEM_MOD_SPELL_POWER_SHORT") or (s == "ITEM_MOD_HEALING_POWER_SHORT") or (s == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT")
+                        local isForceStat = (s == "ITEM_MOD_SPELL_POWER_SHORT") or (s == "ITEM_MOD_HEALING_POWER_SHORT") or (s == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT") or (s == "ITEM_MOD_MANA_REGENERATION_SHORT") or (s == "ITEM_MOD_HEALTH_REGENERATION_SHORT")
                         if isForceStat or not foundByAPI[s] then finalStats[s] = (finalStats[s] or 0) + v end
                     end
                 end
