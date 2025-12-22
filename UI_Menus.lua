@@ -87,10 +87,8 @@ function MSC.CreateOptionsFrame()
     local header2 = CreateHeader("Character Profile", potentialDesc, -25)
     local dropDown = CreateFrame("Frame", "SGJ_SpecDropDown", f, "UIDropDownMenuTemplate"); dropDown:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", -15, -10)
     
-    -- [[ FIXED DROPDOWN LOGIC ]] --
     local function UpdateDropDownText()
         if SGJ_Settings.Mode == "Auto" then
-             -- Ask Helpers.lua what it actually found!
              local _, displayName = MSC.GetCurrentWeights()
              UIDropDownMenu_SetText(dropDown, displayName or "Auto (Detecting...)")
         else
@@ -101,7 +99,7 @@ function MSC.CreateOptionsFrame()
     local function OnClick(self) 
         SGJ_Settings.Mode = self.value
         UIDropDownMenu_SetSelectedID(dropDown, self:GetID())
-        UpdateDropDownText() -- Update the text immediately
+        UpdateDropDownText() 
         print("|cff00ccffSharpie:|r Profile changed to " .. self.value) 
     end
 
@@ -120,8 +118,6 @@ function MSC.CreateOptionsFrame()
     UIDropDownMenu_Initialize(dropDown, Initialize)
     UIDropDownMenu_SetWidth(dropDown, 200)
     UIDropDownMenu_SetButtonWidth(dropDown, 124)
-    
-    -- Call our new helper to set the initial text correctly
     UpdateDropDownText() 
 
     local header3 = CreateHeader("Interface Settings", dropDown, -25); header3:SetPoint("TOPLEFT", potentialDesc, "BOTTOMLEFT", -20, -110) 
@@ -138,8 +134,19 @@ function MSC.CreateOptionsFrame()
     receiptBtn:SetSize(200, 30)
     receiptBtn:SetText("Show Gear Receipt")
     receiptBtn:SetScript("OnClick", function() 
+        f:Hide() -- Auto-Close Options
         if MSC.ShowReceipt then MSC.ShowReceipt() else print("Core module not ready.") end
     end)
     
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: SuperSharpie (v1.6.1)")
+    -- [[ NEW FEATURE: HISTORY BUTTON ]] --
+    local historyBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    historyBtn:SetPoint("TOPLEFT", receiptBtn, "BOTTOMLEFT", 0, -10)
+    historyBtn:SetSize(200, 30)
+    historyBtn:SetText("View Transaction History")
+    historyBtn:SetScript("OnClick", function() 
+        f:Hide()
+        if MSC.ShowHistory then MSC.ShowHistory() else print("Core module not ready.") end
+    end)
+    
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: Supersharpie (v1.7.0)")
 end

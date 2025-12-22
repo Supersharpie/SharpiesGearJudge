@@ -1,3 +1,21 @@
+## v1.7.0 - The "Consultant" Update
+### 🕵️ Audit Mode (Inspect)
+* Added a **"Judge Target"** button to the Receipt. You can now inspect other players and generate a Gear Receipt for them!
+* Automatically applies target-specific stat weights (e.g., inspecting a Rogue applies Rogue weights).
+
+### 📜 Transaction History
+* **Level Up Tracking:** The addon now automatically takes a "Snapshot" of your gear score every time you level up.
+* **History Window:** Added a log to view your past scores and track your progression.
+
+### 📤 Export & Share
+* Added an **"Export"** button. Generates a formatted text string of your gear and score, perfect for pasting into Discord or spreadsheets.
+
+### 🧾 UI Polish
+* **Action Bar:** Moved buttons to a new dedicated footer row.
+* **Smart Layout:** "Judge Target", "Export", and "Print" are now evenly spaced for a cleaner look.
+------------------------------------------------------------------------------------------------
+
+
 ## v1.6.2 - The "Dynamic Engine" Update
 ### 🧠 Real-Time Stat Engine
 * **Hit Cap Awareness:** The addon now monitors your Hit % in real-time. If you reach the hard cap (e.g., 9% for Melee, 16% for Spell), the addon instantly devalues Hit Rating to 0 on tooltips, ensuring you never waste stats.

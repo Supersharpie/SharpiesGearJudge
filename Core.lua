@@ -5,33 +5,35 @@ local _, MSC = ...
 -- =============================================================
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE") -- [[ NEW: Detect Spec Swaps ]]
+eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE") 
+eventFrame:RegisterEvent("PLAYER_LEVEL_UP") 
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1)
     
     -- LOAD LOGIC
     if event == "ADDON_LOADED" and arg1 == "SharpiesGearJudge" then
         if not SGJ_Settings then SGJ_Settings = { Mode = "Auto", MinimapPos = 45, IncludeEnchants = false, ProjectEnchants = true } end
+        if not SGJ_History then SGJ_History = {} end 
         if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
         print("|cff00ccffSharpie's Gear Judge|r loaded!")
     end
 
     -- SPEC SWAP LOGIC
     if event == "PLAYER_TALENT_UPDATE" then
-        -- 1. Force a re-check of the weights immediately
         local _, newSpecName = MSC.GetCurrentWeights()
-        
-        -- 2. Notify the user (Optional polish)
-        -- We check if the name changed to avoid spamming on login
         if MSC.LastActiveSpec and MSC.LastActiveSpec ~= newSpecName then
              print("|cff00ccffSharpie's Gear Judge:|r Spec change detected. Active Profile: |cff00ff00" .. newSpecName .. "|r")
         end
         MSC.LastActiveSpec = newSpecName
+        if MSCLabFrame and MSCLabFrame:IsShown() then MSC.UpdateLabCalc() end
+    end
 
-        -- 3. If the Lab Window is open, refresh it live
-        if MSCLabFrame and MSCLabFrame:IsShown() then
-            MSC.UpdateLabCalc()
-        end
+    -- [[ LEVEL UP SNAPSHOT ]] --
+    if event == "PLAYER_LEVEL_UP" then
+        local newLevel = arg1
+        C_Timer.After(2, function() -- Wait 2s for stats to update
+            MSC.RecordSnapshot("Level " .. newLevel)
+        end)
     end
 end)
 
@@ -41,13 +43,14 @@ end)
 SLASH_SHARPIESGEARJUDGE1 = "/sgj"
 SLASH_SHARPIESGEARJUDGE2 = "/judge"
 SlashCmdList["SHARPIESGEARJUDGE"] = function(msg) 
-    if msg == "options" or msg == "config" then MSC.CreateOptionsFrame() else MSC.CreateLabFrame() end 
+    if msg == "options" or msg == "config" then MSC.CreateOptionsFrame() 
+    elseif msg == "history" then MSC.ShowHistory()
+    else MSC.CreateLabFrame() end 
 end
 
 -- =============================================================
 -- 3. TOOLTIP LOGIC 
 -- =============================================================
--- [FIX] Using MSC.MergeStats to avoid scope errors
 function MSC.MergeStats(t1, t2)
     local out = {}
     if t1 then for k,v in pairs(t1) do out[k] = v end end
@@ -62,12 +65,10 @@ function MSC.UpdateTooltip(tooltip)
     local _, link = tooltip:GetItem()
     if not link then return end
     
-    -- CHECK 1: Class Usable
     if not MSC.IsItemUsable(link) then 
         tooltip:AddLine(" "); tooltip:AddLine("|cffff0000Sharpie's Verdict: CLASS UNUSABLE|r"); tooltip:Show(); return 
     end
 
-    -- CHECK 2: Future Upgrade Logic
     local _, _, _, _, dbMinLevel = GetItemInfo(link)
     local myLevel = UnitLevel("player")
     local isFutureItem = false
@@ -107,7 +108,6 @@ function MSC.UpdateTooltip(tooltip)
     local noteText, partnerItemLink = nil, nil
     local isBestInBag, isEquipped = false, false
 
-    -- [COMPARISON LOGIC]
     if itemEquipLoc == "INVTYPE_2HWEAPON" then
         newStats = MSC.SafeGetItemStats(link, 16)
         newScore = MSC.GetItemScore(newStats, currentWeights, specName, 16)
@@ -170,7 +170,6 @@ function MSC.UpdateTooltip(tooltip)
         newStats = MSC.SafeGetItemStats(link, slotId); newScore = MSC.GetItemScore(newStats, currentWeights, specName, slotId)
     end
 
-    -- [RENDER UI]
     local scoreDiff = newScore - oldScore
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
@@ -199,7 +198,6 @@ function MSC.UpdateTooltip(tooltip)
         end
     end
 
-    -- [STAT BREAKDOWN]
     local oldExpanded = MSC.ExpandDerivedStats(oldStats, (isEquipped and link or nil)) 
     local newExpanded = MSC.ExpandDerivedStats(newStats, link)
     local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded)
@@ -331,9 +329,191 @@ SlashCmdList["SGJDIAG"] = function(msg)
 end
 
 -- =============================================================
--- GEAR RECEIPT WINDOW (V4.4)
+-- GEAR RECEIPT WINDOW (V7.3 - Final Layout)
 -- =============================================================
-function MSC.ShowReceipt()
+
+-- [[ HELPER: PHASE 2 BAG SCANNER ]] --
+local function CheckBagsForUpgrade(slotId, currentScore, weights, specName)
+    local bestBagItem, bestBagScore = nil, currentScore
+    
+    -- Iterate Bags
+    for bag = 0, 4 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local link = C_Container.GetContainerItemLink(bag, slot)
+            if link then
+                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                local itemSlotId = MSC.SlotMap[equipLoc]
+                
+                -- Check matching slot (including Ring/Weapon overlaps)
+                local isMatch = false
+                if itemSlotId == slotId then isMatch = true end
+                if (slotId == 12 and itemSlotId == 11) then isMatch = true end
+                if (slotId == 14 and itemSlotId == 13) then isMatch = true end
+                if slotId == 16 and (equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND") then isMatch = true end
+                if slotId == 17 and (equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND") then isMatch = true end
+                
+                if isMatch and MSC.IsItemUsable(link) then
+                    local stats = MSC.SafeGetItemStats(link, slotId)
+                    if stats then
+                        local score = MSC.GetItemScore(stats, weights, specName, slotId)
+                        if score > bestBagScore + 0.1 then -- Must be strictly better
+                            bestBagScore = score
+                            bestBagItem = link
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return bestBagItem, bestBagScore
+end
+
+-- [[ HELPER: PHASE 3 ENCHANT CHECKER (FIXED) ]] --
+local function IsMissingEnchant(itemLink, slotId)
+    if not itemLink then return false end
+    
+    local validSlots = { [15]=true, [5]=true, [9]=true, [10]=true, [8]=true, [16]=true, [17]=true }
+    if not validSlots[slotId] then return false end
+
+    if slotId == 17 then
+        local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(itemLink)
+        if equipLoc == "INVTYPE_HOLDABLE" then return false end
+    end
+    
+    local itemString = string.match(itemLink, "item[%-?%d:]+")
+    if not itemString then return false end
+    
+    local _, _, enchantID = strsplit(":", itemString)
+    if not enchantID or enchantID == "" or enchantID == "0" then return true end
+    
+    return false
+end
+
+-- [[ PHASE 6: EXPORT FUNCTION ]] --
+function MSC.ExportData(dataRows, score, unitName)
+    if not MSC.ExportFrame then
+        local f = CreateFrame("Frame", "MSC_ExportFrame", UIParent, "BasicFrameTemplateWithInset")
+        f:SetSize(400, 300); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:EnableMouse(true); f.TitleText:SetText("Export Data")
+        local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+        scroll:SetPoint("TOPLEFT", 10, -30); scroll:SetPoint("BOTTOMRIGHT", -30, 10)
+        local editBox = CreateFrame("EditBox", nil, scroll)
+        editBox:SetMultiLine(true); editBox:SetFontObject("ChatFontNormal"); editBox:SetWidth(360)
+        scroll:SetScrollChild(editBox); f.EditBox = editBox
+        MSC.ExportFrame = f
+    end
+    
+    local dateStr = date("%Y-%m-%d")
+    local export = "**Sharpie's Gear Receipt** (" .. dateStr .. ")\n"
+    export = export .. "Judge: " .. unitName .. "\n"
+    export = export .. "Score: **" .. score .. "**\n"
+    export = export .. "----------------------------------\n"
+    
+    for _, row in ipairs(dataRows) do
+        export = export .. "*" .. row.slot .. "*: " .. row.link .. " (" .. row.score .. ")\n"
+    end
+    
+    MSC.ExportFrame.EditBox:SetText(export)
+    MSC.ExportFrame.EditBox:HighlightText()
+    MSC.ExportFrame:Show()
+end
+
+-- [[ PHASE 4: RECORD HISTORY (Hidden Logic) ]] --
+function MSC.RecordSnapshot(eventLabel)
+    if not SGJ_History then SGJ_History = {} end
+    
+    local slots = {{id=1},{id=2},{id=3},{id=15},{id=5},{id=9},{id=10},{id=6},{id=7},{id=8},{id=11},{id=12},{id=13},{id=14},{id=16},{id=17},{id=18}}
+    local currentWeights, specName = MSC.GetCurrentWeights()
+    local totalScore = 0
+    
+    for i, slot in ipairs(slots) do
+        local link = GetInventoryItemLink("player", slot.id)
+        if link then
+            local stats = MSC.SafeGetItemStats(link, slot.id)
+            if stats then totalScore = totalScore + MSC.GetItemScore(stats, currentWeights, specName, slot.id) end
+        end
+    end
+    
+    local entry = {
+        date = date("%Y-%m-%d"),
+        label = eventLabel or "Snapshot",
+        score = string.format("%.1f", totalScore),
+        spec = specName
+    }
+    
+    table.insert(SGJ_History, 1, entry) -- Insert at top
+    
+    -- Keep only last 20 entries
+    if #SGJ_History > 20 then table.remove(SGJ_History, #SGJ_History) end
+    
+    print("|cff00ccffSharpie's Gear Judge:|r " .. eventLabel .. " recorded! (Score: " .. entry.score .. ")")
+end
+
+-- [[ PHASE 4: SHOW HISTORY UI (Fixed) ]] --
+function MSC.ShowHistory()
+    if not MSC.HistoryFrame then
+        local f = CreateFrame("Frame", "MSC_HistoryFrame", UIParent, "BasicFrameTemplateWithInset")
+        
+        -- [[ FIX ADDED: Make it movable ]] --
+        f:SetSize(350, 400); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        f.TitleBg:SetHeight(30); f.TitleText:SetText("Transaction History")
+        
+        f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+        f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 10)
+        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(310, 380)
+        f.Scroll:SetScrollChild(f.Content)
+        
+        f.Rows = {}
+        MSC.HistoryFrame = f
+    end
+    
+    if not SGJ_History or #SGJ_History == 0 then
+        print("|cffff0000SGJ:|r No history recorded yet.")
+        return
+    end
+    
+    local yOffset = 0
+    for i, entry in ipairs(SGJ_History) do
+        if not MSC.HistoryFrame.Rows[i] then
+            local row = MSC.HistoryFrame.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            row:SetPoint("TOPLEFT", 10, yOffset)
+            row:SetWidth(300)
+            row:SetJustifyH("LEFT")
+            MSC.HistoryFrame.Rows[i] = row
+        end
+        
+        local color = "|cffffffff"
+        if entry.label:find("Level") then color = "|cff00ff00" end -- Green for level ups
+        
+        local text = color .. entry.date .. "|r - " .. entry.label .. ": |cff00ccff" .. entry.score .. "|r"
+        MSC.HistoryFrame.Rows[i]:SetText(text)
+        
+        yOffset = yOffset - 20
+    end
+    
+    MSC.HistoryFrame:Show()
+end
+
+-- [[ UPDATED: INSPECT-CAPABLE RECEIPT ]] --
+function MSC.ShowReceipt(unitOverride)
+    local unit = unitOverride or "player"
+    local isPlayer = (unit == "player")
+    local unitName = UnitName(unit)
+    local _, unitClass = UnitClass(unit)
+    
+    local currentWeights, specName
+    if isPlayer then
+        currentWeights, specName = MSC.GetCurrentWeights()
+    else
+        if MSC.WeightDB[unitClass] and MSC.WeightDB[unitClass]["Default"] then
+            currentWeights = MSC.WeightDB[unitClass]["Default"]
+            specName = unitClass .. " (Default)"
+        else
+            print("|cffff0000SGJ:|r Unsupported Class for Inspection.")
+            return
+        end
+    end
+
     if not MSC.ReceiptFrame then
         local f = CreateFrame("Frame", "MSC_ReceiptFrame", UIParent, "BasicFrameTemplateWithInset")
         f:SetSize(420, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
@@ -344,17 +524,83 @@ function MSC.ShowReceipt()
         MSC.ReceiptFrame = f
         f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate"); f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 160)
         f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(380, 480); f.Scroll:SetScrollChild(f.Content)
-        f.SummaryBox = CreateFrame("Frame", nil, f); f.SummaryBox:SetPoint("TOPLEFT", f.Scroll, "BOTTOMLEFT", 0, -5); f.SummaryBox:SetPoint("BOTTOMRIGHT", -10, 50)
+        
+        -- [[ VISUAL ADJUSTMENT 1: Raise Content Container to avoid new footer ]]
+        f.SummaryBox = CreateFrame("Frame", nil, f); f.SummaryBox:SetPoint("TOPLEFT", f.Scroll, "BOTTOMLEFT", 0, -5); f.SummaryBox:SetPoint("BOTTOMRIGHT", -10, 70) 
+        
         f.Separator = f.SummaryBox:CreateTexture(nil, "ARTWORK"); f.Separator:SetHeight(1); f.Separator:SetPoint("TOPLEFT", 10, 0); f.Separator:SetPoint("TOPRIGHT", -10, 0); f.Separator:SetColorTexture(1, 0.82, 0, 0.5) 
         f.SummaryBg = f.SummaryBox:CreateTexture(nil, "BACKGROUND"); f.SummaryBg:SetPoint("TOPLEFT", 0, -5); f.SummaryBg:SetPoint("BOTTOMRIGHT", 0, 0); f.SummaryBg:SetColorTexture(0, 0, 0, 0.3)
         f.SummaryTitle = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryTitle:SetPoint("TOP", 0, -12); f.SummaryTitle:SetText("COMBINED STATS FROM GEAR"); f.SummaryTitle:SetTextColor(1, 0.82, 0) 
-        f.FooterBg = f:CreateTexture(nil, "BACKGROUND"); f.FooterBg:SetPoint("BOTTOMLEFT", 4, 4); f.FooterBg:SetPoint("BOTTOMRIGHT", -4, 4); f.FooterBg:SetHeight(40); f.FooterBg:SetColorTexture(0, 0, 0, 0.5) 
-        f.TotalText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.TotalText:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); f.TotalText:SetTextColor(color.r, color.g, color.b) 
+        
+        -- [[ VISUAL ADJUSTMENT 2: Taller Footer ]]
+        f.FooterBg = f:CreateTexture(nil, "BACKGROUND"); f.FooterBg:SetPoint("BOTTOMLEFT", 4, 4); f.FooterBg:SetPoint("BOTTOMRIGHT", -4, 4); f.FooterBg:SetHeight(60); f.FooterBg:SetColorTexture(0, 0, 0, 0.5) 
+        
+        -- [[ VISUAL ADJUSTMENT 3: Score moved to Top Row of Footer ]]
+        f.TotalText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.TotalText:SetPoint("BOTTOM", f, "BOTTOM", 0, 40); f.TotalText:SetTextColor(color.r, color.g, color.b) 
+        
+        -- [[ BUTTON 1: PRINT (RIGHT) ]] --
+        local printBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+        printBtn:SetSize(80, 24)
+        printBtn:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 10) -- [[ NEW ANCHOR ]]
+        printBtn:SetText("Print")
+        printBtn:SetScript("OnClick", function()
+            local data = f.printData; if not data then return end
+            
+            local owner = f.unitName or "Sharpie"
+            local msg1 = "[" .. owner .. "'s Gear]: Score " .. data.score
+            if data.topLink then msg1 = msg1 .. " - MVP: " .. data.topLink end
+            
+            local chatType = "SAY"
+            if IsInRaid() then chatType = "RAID" elseif IsInGroup() then chatType = "PARTY" end
+            
+            SendChatMessage(msg1, chatType)
+
+            if #data.missing > 0 then
+                local mStr = ""
+                if #data.missing > 4 then mStr = data.missing[1] .. ", " .. data.missing[2] .. ", " .. data.missing[3] .. "..."
+                else mStr = table.concat(data.missing, ", ") end
+                local msg2 = "[" .. owner .. "'s Gear]: Missing: " .. mStr
+                SendChatMessage(msg2, chatType)
+            end
+        end)
+        
+        -- [[ BUTTON 2: JUDGE TARGET (LEFT) ]] --
+        local targetBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+        targetBtn:SetSize(100, 24)
+        targetBtn:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 10) -- [[ NEW ANCHOR ]]
+        targetBtn:SetText("Judge Target")
+        targetBtn:SetScript("OnClick", function()
+            if UnitExists("target") and UnitIsPlayer("target") then
+                MSC.ShowReceipt("target")
+            else
+                print("|cffff0000SGJ:|r Invalid Target.")
+            end
+        end)
+        
+        -- [[ BUTTON 3: EXPORT (CENTER) ]] --
+        local exportBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+        exportBtn:SetSize(80, 24)
+        exportBtn:SetPoint("BOTTOM", f, "BOTTOM", 0, 10) -- [[ NEW ANCHOR ]]
+        exportBtn:SetText("Export")
+        exportBtn:SetScript("OnClick", function()
+            local data = f.printData; if not data then return end
+            MSC.ExportData(data.rows, data.score, f.unitName or "Player")
+        end)
+
         MSC.ReceiptRows = {}; MSC.SummaryRows = {}
     end
+    
+    MSC.ReceiptFrame.unitName = unitName
+    if isPlayer then MSC.ReceiptFrame.TitleText:SetText("Sharpie's Gear Receipt")
+    else MSC.ReceiptFrame.TitleText:SetText("Judge: " .. unitName) end
     MSC.ReceiptFrame:Show()
+    
     local slots = {{name="Head",id=1},{name="Neck",id=2},{name="Shoulder",id=3},{name="Back",id=15},{name="Chest",id=5},{name="Wrist",id=9},{name="Hands",id=10},{name="Waist",id=6},{name="Legs",id=7},{name="Feet",id=8},{name="Finger 1",id=11},{name="Finger 2",id=12},{name="Trinket 1",id=13},{name="Trinket 2",id=14},{name="Main Hand",id=16},{name="Off Hand",id=17},{name="Ranged",id=18}}
-    local currentWeights, specName = MSC.GetCurrentWeights(); local totalScore = 0; local combinedStats = {}; local yOffset = 0
+    local totalScore = 0; local combinedStats = {}; local yOffset = 0
+    local maxItemScore = -1; local maxItemLink = nil; local missingSlots = {}
+    
+    local exportRows = {} 
+
     for i, slot in ipairs(slots) do
         if not MSC.ReceiptRows[i] then
             local row = CreateFrame("Frame", nil, MSC.ReceiptFrame.Content); row:SetSize(380, 24); row.BG = row:CreateTexture(nil, "BACKGROUND"); row.BG:SetAllPoints()
@@ -362,18 +608,74 @@ function MSC.ShowReceipt()
             row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", row.Icon, "RIGHT", 8, 0); row.Label:SetWidth(65); row.Label:SetJustifyH("LEFT"); row.Label:SetTextColor(0.6, 0.6, 0.6) 
             row.Score = row:CreateFontString(nil, "OVERLAY", "GameFontNormal"); row.Score:SetPoint("RIGHT", -5, 0); row.Score:SetWidth(60); row.Score:SetJustifyH("RIGHT"); row.Score:SetTextColor(0, 1, 0) 
             row.Item = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Item:SetPoint("LEFT", row.Label, "RIGHT", 5, 0); row.Item:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Item:SetJustifyH("LEFT")
+            
+            row.Alert = row:CreateTexture(nil, "OVERLAY")
+            row.Alert:SetSize(16, 16)
+            row.Alert:SetPoint("RIGHT", row.Score, "LEFT", -5, 0)
+            row.Alert:Hide() 
+            
+            row.AlertFrame = CreateFrame("Frame", nil, row)
+            row.AlertFrame:SetAllPoints(row.Alert)
+            row.AlertFrame:SetScript("OnEnter", function(self) 
+                if self.mode == "UPGRADE" and self.link then 
+                   GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                   GameTooltip:SetHyperlink(self.link)
+                   GameTooltip:AddLine(" ")
+                   GameTooltip:AddLine("|cff00ff00BETTER ITEM IN BAGS!|r")
+                   GameTooltip:Show()
+                elseif self.mode == "ENCHANT" then
+                   GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                   GameTooltip:SetText("|cffff0000MISSING ENCHANT!|r")
+                   GameTooltip:AddLine("You are losing potential stats.", 1, 1, 1)
+                   GameTooltip:Show()
+                end 
+            end)
+            row.AlertFrame:SetScript("OnLeave", GameTooltip_Hide)
+            
             MSC.ReceiptRows[i] = row
         end
         local row = MSC.ReceiptRows[i]; row:SetPoint("TOPLEFT", 0, yOffset)
-        local link = GetInventoryItemLink("player", slot.id); local texture = GetInventoryItemTexture("player", slot.id); local itemScore = 0; local itemText = "|cff444444(Empty)|r"
+        local link = GetInventoryItemLink(unit, slot.id); local texture = GetInventoryItemTexture(unit, slot.id); local itemScore = 0; local itemText = "|cff444444(Empty)|r"
+        
+        row.Alert:Hide()
+        row.AlertFrame.mode = nil; row.AlertFrame.link = nil
+
         if link then
             itemText = link; local stats = MSC.SafeGetItemStats(link, slot.id)
-            if stats then itemScore = MSC.GetItemScore(stats, currentWeights, specName, slot.id); for k, v in pairs(stats) do combinedStats[k] = (combinedStats[k] or 0) + v end end
+            if stats then 
+                itemScore = MSC.GetItemScore(stats, currentWeights, specName, slot.id); 
+                for k, v in pairs(stats) do combinedStats[k] = (combinedStats[k] or 0) + v end 
+                if itemScore > maxItemScore then maxItemScore = itemScore; maxItemLink = link end
+            end
+            
+            if IsMissingEnchant(link, slot.id) then
+                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther") -- Red Exclamation
+                row.Alert:Show()
+                row.AlertFrame.mode = "ENCHANT"
+            end
+        else
+            table.insert(missingSlots, slot.name)
         end
+        
+        if isPlayer then
+            local upgradeLink, upgradeScore = CheckBagsForUpgrade(slot.id, itemScore, currentWeights, specName)
+            if upgradeLink then
+                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew") -- Yellow Triangle
+                row.Alert:Show()
+                row.AlertFrame.mode = "UPGRADE"
+                row.AlertFrame.link = upgradeLink
+            end
+        end
+        
         totalScore = totalScore + itemScore; row.Label:SetText(slot.name); row.Item:SetText(itemText); row.Score:SetText(string.format("%.1f", itemScore))
         if texture then row.Icon:SetTexture(texture); row.Icon:SetDesaturated(false) else row.Icon:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot"); row.Icon:SetDesaturated(true) end
         if i % 2 == 0 then row.BG:SetColorTexture(1, 1, 1, 0.03) else row.BG:SetColorTexture(0, 0, 0, 0) end; yOffset = yOffset - 24
+        
+        table.insert(exportRows, { slot = slot.name, link = (link or "(Empty)"), score = string.format("%.1f", itemScore) })
     end
+    
+    MSC.ReceiptFrame.printData = { score = string.format("%.1f", totalScore), topLink = maxItemLink, missing = missingSlots, rows = exportRows }
+    
     for _, line in pairs(MSC.SummaryRows) do line:Hide() end
     local sortedStats = {}
     for k, v in pairs(combinedStats) do
@@ -396,7 +698,7 @@ function MSC.ShowReceipt()
         local isLeft = (i % 2 ~= 0); local rowIdx = math.ceil(i / 2) - 1; local yPos = startY - (rowIdx * 16)
         if isLeft then row:SetPoint("TOPLEFT", col1X, yPos) else row:SetPoint("TOPLEFT", col2X, yPos) end
     end
-    MSC.ReceiptFrame.TotalText:SetText("TOTAL SCORE: " .. string.format("%.1f", totalScore))
+    MSC.ReceiptFrame.TotalText:SetText("SCORE: " .. string.format("%.1f", totalScore))
 end
 
 -- Slash Command
