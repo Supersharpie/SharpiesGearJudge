@@ -1,13 +1,17 @@
-# Sharpie's Gear Judge (v1.7.0)
-**The Final Verdict on your Gear for WoW Classic Era & Anniversary **
+# Sharpie's Gear Judge (v1.8.0)
+**The Final Verdict on your Gear for WoW Classic Era**
 
 Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, **your talents**, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
 
-## 🌟 New in v1.7.0: The "Gear Consultant" Update
-The Judge has graduated from a simple tooltip into a full-service consultant.
-* **🕵️ Audit Mode (Inspect):** Target any player and click **"Judge Target"** to generate a full Gear Receipt for them using their class weights.
-* **📜 Transaction History:** The addon now automatically takes a **Snapshot** of your score every time you **Level Up**. Track your power growth from Level 1 to 60!
-* **📤 Export for Taxes:** Generate a text-based report of your gear and score to paste into Discord, Spreadsheets, or Class Sims.
+## 🌟 New in v1.8.0: The "Final Polish" Update
+The Judge is now feature-complete and smarter than ever.
+
+* **🔮 Active Item Estimator:** No more guessing the value of On-Use trinkets. The Judge now estimates the average combat value of powerful actives (like *Earthstrike* or *Kiss of the Spider*) and marks them with a Tilde (**~**) so you know it's a variable bonus.
+    * *Example:* **Diamond Flask** now shows `Score: ~60.0` instead of 0.
+    * *Hybrid Display:* Items with both passive stats AND a proc (like *Kiss of the Spider*) now show a split score: `Score: 30.0 (+~55.0)`.
+* **🗿 Relic & Totem Support:** The Judge now understands Idols, Librams, and Totems! Items like *Totem of the Storm* or *Libram of Divinity* now have estimated generic scores instead of showing "0".
+* **🩸 Dynamic Health Logic:** Items like *Lifegiving Gem* are now calculated in real-time based on **30% of your current max health** (Buff + Heal), giving Tanks an accurate survival score that scales with their gear.
+* **📜 Smart History:** Transaction History logs are now separated by **Character - Realm**, so your Alt's leveling journey doesn't mess up your Main's raid logs.
 
 ---
 
