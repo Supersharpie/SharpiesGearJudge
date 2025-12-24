@@ -174,6 +174,34 @@ function MSC.UpdateTooltip(tooltip)
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
     
+    -- [[ 1. NEW SMART SCORE DISPLAY ]] --
+    -- This adds the missing "Score: X (+~Y)" line logic
+    if newStats.estimate and MSC.ItemOverrides then
+        local itemID = tonumber(string.match(link, "item:(%d+)"))
+        local bonusData = MSC.ItemOverrides[itemID]
+        
+        if bonusData then
+            -- Calculate ONLY the bonus part
+            local bonusScore = MSC.GetItemScore(bonusData, currentWeights, specName, slotId)
+            local baseScore = newScore - bonusScore
+            
+            -- If base score is tiny (Pure Replacement), just show "~Total"
+            -- If base score is real (Hybrid), show "Base + ~Bonus"
+            if baseScore < 1 then
+                 tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", "~" .. string.format("%.1f", newScore), 1, 1, 1, 0, 1, 0)
+            else
+                 tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", string.format("%.1f", baseScore) .. " |cff00ff00(+~" .. string.format("%.1f", bonusScore) .. ")|r")
+            end
+        else
+            -- Fallback
+             tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", "~" .. string.format("%.1f", newScore), 1, 1, 1, 0, 1, 0)
+        end
+    else
+        -- Standard Item (Show Real Score)
+        tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", string.format("%.1f", newScore), 1, 1, 1, 1, 1, 1)
+    end
+    -- [[ END SMART SCORE DISPLAY ]] --
+
     if noteText and not isBestInBag then tooltip:AddLine(noteText, 0.7, 0.7, 0.7) end
     if newStats.IS_PROJECTED then 
         local enchantText = MSC.GetEnchantString(slotId)
@@ -188,11 +216,15 @@ function MSC.UpdateTooltip(tooltip)
         local bestText = isBestInBag and " (Best in Bag)" or ""
         local capNote = ""
         if specName and specName:find("Capped") then capNote = " (Cap Adjusted)" end
+        
+        -- Add Tilde to Upgrade Text if it's an estimate
+        local tilde = newStats.estimate and "~" or ""
+        
         if scoreDiff > 0 then
-            if isFutureItem then tooltip:AddLine("|cffFF55FF*** FUTURE UPGRADE (+" .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. capNote .. " ***|r"); tooltip:AddLine("|cffFF55FF(Requires Level " .. finalMinLevel .. ")|r")
-            else tooltip:AddLine("|cff00ff00*** UPGRADE (+" .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. capNote .. " ***|r") end
+            if isFutureItem then tooltip:AddLine("|cffFF55FF*** FUTURE UPGRADE (+" .. tilde .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. capNote .. " ***|r"); tooltip:AddLine("|cffFF55FF(Requires Level " .. finalMinLevel .. ")|r")
+            else tooltip:AddLine("|cff00ff00*** UPGRADE (+" .. tilde .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. capNote .. " ***|r") end
         elseif scoreDiff < 0 then 
-            tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. string.format("%.1f", scoreDiff) .. ")" .. capNote .. " ***|r")
+            tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. tilde .. string.format("%.1f", scoreDiff) .. ")" .. capNote .. " ***|r")
         else 
             tooltip:AddLine("|cffffffff*** EQUAL STATS ***|r") 
         end
@@ -416,11 +448,14 @@ function MSC.ExportData(dataRows, score, unitName)
     MSC.ExportFrame.EditBox:HighlightText()
     MSC.ExportFrame:Show()
 end
-
--- [[ PHASE 4: RECORD HISTORY (Hidden Logic) ]] --
+-- [[ PHASE 4: RECORD HISTORY (Character Specific) ]] --
 function MSC.RecordSnapshot(eventLabel)
     if not SGJ_History then SGJ_History = {} end
     
+    -- Create unique key for this character
+    local key = UnitName("player") .. " - " .. GetRealmName()
+    if not SGJ_History[key] then SGJ_History[key] = {} end
+
     local slots = {{id=1},{id=2},{id=3},{id=15},{id=5},{id=9},{id=10},{id=6},{id=7},{id=8},{id=11},{id=12},{id=13},{id=14},{id=16},{id=17},{id=18}}
     local currentWeights, specName = MSC.GetCurrentWeights()
     local totalScore = 0
@@ -440,23 +475,31 @@ function MSC.RecordSnapshot(eventLabel)
         spec = specName
     }
     
-    table.insert(SGJ_History, 1, entry) -- Insert at top
+    -- Insert into THIS character's list, not the global list
+    table.insert(SGJ_History[key], 1, entry) 
     
-    -- Keep only last 20 entries
-    if #SGJ_History > 20 then table.remove(SGJ_History, #SGJ_History) end
+    -- Keep only last 20 entries per character
+    if #SGJ_History[key] > 20 then table.remove(SGJ_History[key], #SGJ_History[key]) end
     
     print("|cff00ccffSharpie's Gear Judge:|r " .. eventLabel .. " recorded! (Score: " .. entry.score .. ")")
 end
 
--- [[ PHASE 4: SHOW HISTORY UI (Fixed) ]] --
+-- [[ PHASE 4: SHOW HISTORY UI (Character Specific) ]] --
 function MSC.ShowHistory()
+    local key = UnitName("player") .. " - " .. GetRealmName()
+    local charHistory = SGJ_History and SGJ_History[key]
+
+    if not charHistory or #charHistory == 0 then
+        print("|cffff0000SGJ:|r No history recorded for " .. key)
+        return
+    end
+
     if not MSC.HistoryFrame then
         local f = CreateFrame("Frame", "MSC_HistoryFrame", UIParent, "BasicFrameTemplateWithInset")
         
-        -- [[ FIX ADDED: Make it movable ]] --
         f:SetSize(350, 400); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
         f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleBg:SetHeight(30); f.TitleText:SetText("Transaction History")
+        f.TitleBg:SetHeight(30); f.TitleText:SetText("History: " .. UnitName("player")) 
         
         f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
         f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 10)
@@ -465,15 +508,16 @@ function MSC.ShowHistory()
         
         f.Rows = {}
         MSC.HistoryFrame = f
+    else
+        -- Update title in case you switched characters without reloading
+        MSC.HistoryFrame.TitleText:SetText("History: " .. UnitName("player"))
     end
     
-    if not SGJ_History or #SGJ_History == 0 then
-        print("|cffff0000SGJ:|r No history recorded yet.")
-        return
-    end
-    
+    -- Clear old rows from view
+    for _, row in pairs(MSC.HistoryFrame.Rows) do row:SetText("") end
+
     local yOffset = 0
-    for i, entry in ipairs(SGJ_History) do
+    for i, entry in ipairs(charHistory) do
         if not MSC.HistoryFrame.Rows[i] then
             local row = MSC.HistoryFrame.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             row:SetPoint("TOPLEFT", 10, yOffset)
@@ -483,7 +527,7 @@ function MSC.ShowHistory()
         end
         
         local color = "|cffffffff"
-        if entry.label:find("Level") then color = "|cff00ff00" end -- Green for level ups
+        if entry.label:find("Level") then color = "|cff00ff00" end 
         
         local text = color .. entry.date .. "|r - " .. entry.label .. ": |cff00ccff" .. entry.score .. "|r"
         MSC.HistoryFrame.Rows[i]:SetText(text)
@@ -541,7 +585,7 @@ function MSC.ShowReceipt(unitOverride)
         -- [[ BUTTON 1: PRINT (RIGHT) ]] --
         local printBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
         printBtn:SetSize(80, 24)
-        printBtn:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 10) -- [[ NEW ANCHOR ]]
+        printBtn:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 10) 
         printBtn:SetText("Print")
         printBtn:SetScript("OnClick", function()
             local data = f.printData; if not data then return end
@@ -567,7 +611,7 @@ function MSC.ShowReceipt(unitOverride)
         -- [[ BUTTON 2: JUDGE TARGET (LEFT) ]] --
         local targetBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
         targetBtn:SetSize(100, 24)
-        targetBtn:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 10) -- [[ NEW ANCHOR ]]
+        targetBtn:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 10) 
         targetBtn:SetText("Judge Target")
         targetBtn:SetScript("OnClick", function()
             if UnitExists("target") and UnitIsPlayer("target") then
@@ -580,7 +624,7 @@ function MSC.ShowReceipt(unitOverride)
         -- [[ BUTTON 3: EXPORT (CENTER) ]] --
         local exportBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
         exportBtn:SetSize(80, 24)
-        exportBtn:SetPoint("BOTTOM", f, "BOTTOM", 0, 10) -- [[ NEW ANCHOR ]]
+        exportBtn:SetPoint("BOTTOM", f, "BOTTOM", 0, 10) 
         exportBtn:SetText("Export")
         exportBtn:SetScript("OnClick", function()
             local data = f.printData; if not data then return end
@@ -644,12 +688,19 @@ function MSC.ShowReceipt(unitOverride)
             itemText = link; local stats = MSC.SafeGetItemStats(link, slot.id)
             if stats then 
                 itemScore = MSC.GetItemScore(stats, currentWeights, specName, slot.id); 
-                for k, v in pairs(stats) do combinedStats[k] = (combinedStats[k] or 0) + v end 
+                
+                -- [[ FIXED: IGNORE BOOLEANS TO PREVENT CRASH ]]
+                for k, v in pairs(stats) do 
+                    if type(v) == "number" then
+                        combinedStats[k] = (combinedStats[k] or 0) + v 
+                    end
+                end 
+
                 if itemScore > maxItemScore then maxItemScore = itemScore; maxItemLink = link end
             end
             
             if IsMissingEnchant(link, slot.id) then
-                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther") -- Red Exclamation
+                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther") 
                 row.Alert:Show()
                 row.AlertFrame.mode = "ENCHANT"
             end
@@ -660,7 +711,7 @@ function MSC.ShowReceipt(unitOverride)
         if isPlayer then
             local upgradeLink, upgradeScore = CheckBagsForUpgrade(slot.id, itemScore, currentWeights, specName)
             if upgradeLink then
-                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew") -- Yellow Triangle
+                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew") 
                 row.Alert:Show()
                 row.AlertFrame.mode = "UPGRADE"
                 row.AlertFrame.link = upgradeLink

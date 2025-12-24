@@ -809,65 +809,120 @@ MSC.StatToCritMatrix = {
     },
 }
 -- =============================================================
--- 9. ITEM OVERRIDES (Manual Values for Trinkets/Procs)
+-- 9. ITEM OVERRIDES (Master List: Active & Passive)
 -- =============================================================
--- Formula: (Stat Value * Duration) / Cooldown = Average Value
+-- This list acts as a manual "Stat Force" for complex items.
+-- It combines Active Cooldown math with Passive Stat guarantees.
+
 MSC.ItemOverrides = {
-    -- [[ CASTER DPS ]]
-    [18820] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 29 }, -- Talisman of Ephemeral Power (175sp * 15s / 90s)
-    [19339] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 33, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 20 }, -- Mind Quickening Gem (Mage)
-    [12930] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 29 }, -- Briarwood Reed (Static)
-    [11832] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5 }, -- Burst of Knowledge
-    [19959] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 28 }, -- Hakkari Shrunken Head (Hunter/Caster)
-    [23046] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 85 }, -- The Restrained Essence of Sapphiron
-    [21563] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 33 }, -- Don Rodrigo's Band
+    -- [[ ⚠️ HYBRID / ADDITIVE (Scanner Stats + ~Bonus) ]]
+    -- These add a bonus on top of what the scanner finds.
+    [22954] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 55, estimate = true }, -- Kiss of the Spider
+    [23041] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20, estimate = true }, -- Slayer's Crest
+    [11815] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 22, estimate = true }, -- Hand of Justice
+    [23046] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 26, estimate = true },  -- Essence of Sapphiron
+
+    -- [[ ⚠️ PURE REPLACEMENTS (Ignore Scanner -> Force ~Value) ]]
+    -- We add 'replace = true' so the scanner is ignored completely.
     
-    -- [[ MELEE DPS ]]
-    [11815] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 }, -- Hand of Justice (Proc Estimate ~20 AP value)
-    [13965] = { ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0 }, -- Blackhand's Breadth (Static)
-    [19341] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 60 }, -- Earthstrike (Avg)
-    [21180] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 60 }, -- Earthstrike (Stage 2)
-    [21142] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 200 }, -- Kiss of the Spider (Speed/Haste converted to AP value)
-    [19955] = { ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0 }, -- Wushoolay's Charm of Nature (Use effect is weak, mostly used for hit)
-    [13522] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 100 }, -- Flask of Titans (Quest Reward)
-    [18640] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40 }, -- Counterattack Lodestone
+    -- Melee Replacements
+    [19406] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 86, estimate = true, replace = true }, -- Drake Fang Talisman
+    [13965] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30, estimate = true, replace = true }, -- Blackhand's Breadth
+    [19991] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 39, estimate = true, replace = true }, -- Devilsaur Eye
+    [19120] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 35, estimate = true, replace = true }, -- Rune of the Guard Captain
+    [18469] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30, estimate = true, replace = true }, -- Royal Seal (Rogue)
+    [21567] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20, estimate = true, replace = true }, -- Rune of Duty
     
-    -- [[ HEALER ]]
-    [19340] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 66 }, -- Grace of Earth
-    [18443] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 12 }, -- Second Wind
-    [19958] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 10, ["ITEM_MOD_HEALING_POWER_SHORT"] = 40 }, -- Zandalarian Hero Charm
-    [22666] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 80 }, -- Eye of the Dead (Naxx)
-    
-    -- [[ TANK ]]
-    [11811] = { ["ITEM_MOD_STAMINA_SHORT"] = 25 }, -- Smoking Heart of the Mountain (Armor/Resist hard to weigh, buffing Stam)
-    [19337] = { ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.0 }, -- The Black Book (Warlock/Tank situational)
-    [19343] = { ["ITEM_MOD_HEALTH_SHORT"] = 400 }, -- Scroll of Blinding Light
-    
-    -- [[ CLASS SPECIFIC ]]
-    [19336] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45 }, -- Natural Alignment Crystal (Shaman)
-    [19342] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50 }, -- Venomous Totem (Rogue)
-    [19338] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 15 }, -- Aegis of Preservation (Druid)
-    [19335] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 15 }, -- Enamored Water Spirit (Priest)
-    
-    -- [[ MISC / UTILITY / LEVELING ]]
-    [11122] = { ["ITEM_MOD_STAMINA_SHORT"] = 10 }, -- Carrot on a Stick (Movement Speed)
-    [13209] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30 }, -- Seal of the Dawn (AP against Undead)
-    [17774] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 }, -- Mark of the Chosen (Proc ~20 stats)
-	
-	-- [[ LEVELING / QUEST REWARDS ]]
-    [20130] = { ["ITEM_MOD_STRENGTH_SHORT"] = 75, ["ITEM_MOD_HEALING_POWER_SHORT"] = 50 }, -- Diamond Flask (The scanner misses the "75 Str" because it's in the Use effect. We force it here.)
-    [19024] = { ["ITEM_MOD_HEALTH_SHORT"] = 300 }, -- Arena Grand Master (The absorb shield is practically 750-1200 HP. We give it a conservative "Health" value so it scores high for tanks/survival.)
-    [11832] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0 }, -- Burst of Knowledge (Quest)
-    [15818] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 15 }, -- Ray of the New Moon (Damage Use effect approximated as SP)
-    [11302] = { ["ITEM_MOD_STRENGTH_SHORT"] = 8 }, -- Uther's Strength (Chance on hit proc ~ 8 Str avg)
-    
-    -- [[ PVP / SURVIVAL ]]
-    [18854] = { ["ITEM_MOD_STAMINA_SHORT"] = 15 }, -- Insignia of the Alliance (Freedom effect is invaluable, weighted as high Stamina)
-    [18834] = { ["ITEM_MOD_STAMINA_SHORT"] = 15 }, -- Insignia of the Horde
-    [18850] = { ["ITEM_MOD_STAMINA_SHORT"] = 15 }, -- Insignia (Rank 2)
-    [1404]  = { ["ITEM_MOD_STAMINA_SHORT"] = 10 }, -- Tidal Charm (Stun utility weighted as survival)
-    
-    -- [[ CLASS QUESTS ]]
-    [19990] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 10 }, -- Blessed Prayer Beads (Priest)
-    [20042] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 }, -- Sanctified Orb (Paladin/Warrior)
+    -- Active/Procs (Treated as Replacements because they have no passive stats)
+    [19949] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 34, estimate = true, replace = true }, -- Zandalarian Hero Medallion
+    [23570] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 65, estimate = true, replace = true }, -- Jom Gabbar
+    [21180] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 47, estimate = true, replace = true }, -- Earthstrike
+    [21670] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 60, estimate = true, replace = true }, -- Badge of the Swarmguard
+    [20130] = { ["ITEM_MOD_STRENGTH_SHORT"] = 60, estimate = true, replace = true },     -- Diamond Flask
+    [19342] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30, estimate = true, replace = true }, -- Venomous Totem
+    [11302] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 15, estimate = true, replace = true }, -- Uther's Strength
+
+    -- Caster Replacements
+    [19379] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 70, estimate = true, replace = true }, -- Neltharion's Tear
+    [12930] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 29, estimate = true, replace = true }, -- Briarwood Reed
+    [18467] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 23, estimate = true, replace = true }, -- Royal Seal (Mage)
+    [19336] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 39, estimate = true, replace = true }, -- Arcane Infused Gem
+    [21566] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 20, estimate = true, replace = true }, -- Rune of Perfection
+    [18820] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 39, estimate = true, replace = true }, -- Talisman of Ephemeral Power
+    [19339] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Mind Quickening Gem
+    [19950] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 34, estimate = true, replace = true }, -- Zandalarian Hero Charm
+    [21891] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 32, estimate = true, replace = true }, -- Shard of the Fallen Star
+    [18646] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 40, estimate = true, replace = true }, -- The Black Book
+    [11832] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 12, estimate = true, replace = true }, -- Burst of Knowledge
+    [23001] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 20, estimate = true, replace = true }, -- Eye of Diminution
+    [22268] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 20, ["ITEM_MOD_HEALING_POWER_SHORT"] = 18, estimate = true, replace = true }, -- Draconic Infused Emblem
+
+    -- Healer Replacements
+    [19395] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 102, estimate = true, replace = true }, -- Rejuvenating Gem
+    [23027] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 64, estimate = true, replace = true },  -- Warmth of Forgiveness
+    [17064] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 64, estimate = true, replace = true },  -- Shard of the Scale
+    [18371] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true },  -- Mindtap Talisman
+    [18665] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 55, estimate = true, replace = true },  -- The Eye of Divinity
+    [18466] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 44, estimate = true, replace = true },  -- Royal Seal (Druid)
+    [18468] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 44, estimate = true, replace = true },  -- Royal Seal (Priest)
+    [23047] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 135, estimate = true, replace = true }, -- Eye of the Dead
+    [19288] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 70, estimate = true, replace = true },  -- Darkmoon Card: Blue Dragon
+    [19344] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 65, estimate = true, replace = true },  -- Natural Alignment Crystal
+    [11819] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 35, estimate = true, replace = true },  -- Second Wind
+    [19990] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 32, estimate = true, replace = true },  -- Blessed Prayer Beads
+    [21625] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 65, estimate = true, replace = true },  -- Scarab Brooch
+
+    -- Tank Replacements (Virtual Stats)
+    [19431] = { ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 25, ["ITEM_MOD_STAMINA_SHORT"] = 30, estimate = true, replace = true }, -- Styleen's
+    [13966] = { ["ITEM_MOD_ARMOR_SHORT"] = 450, ["ITEM_MOD_DODGE_RATING_SHORT"] = 1, estimate = true, replace = true }, -- Mark of Tyranny
+    [23040] = { ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 60, ["ITEM_MOD_ARMOR_SHORT"] = 300, estimate = true, replace = true }, -- Glyph of Deflection
+    [21685] = { ["ITEM_MOD_STAMINA_SHORT"] = 50, estimate = true, replace = true }, -- Petrified Scarab
+    [11811] = { ["ITEM_MOD_ARMOR_SHORT"] = 300, ["ITEM_MOD_STAMINA_SHORT"] = 15, estimate = true, replace = true }, -- Smoking Heart
+    [18406] = { ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 15, ["ITEM_MOD_PARRY_RATING_SHORT"] = 2, estimate = true, replace = true }, -- Onyxia Blood
+    [11810] = { ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 12, ["ITEM_MOD_STAMINA_SHORT"] = 10, estimate = true, replace = true }, -- Force of Will
+    [17744] = { ["ITEM_MOD_DODGE_RATING_SHORT"] = 15, estimate = true, replace = true }, -- Vigilance Charm
+    [18537] = { ["ITEM_MOD_PARRY_RATING_SHORT"] = 10, estimate = true, replace = true }, -- Counterattack
+    [23558] = { ["ITEM_MOD_STAMINA_SHORT"] = 40, estimate = true, replace = true }, -- Burrower's Shell
+    [21647] = { ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 40, ["ITEM_MOD_ARMOR_SHORT"] = 150, estimate = true, replace = true }, -- Chitinous Spikes
+    [18815] = { ["ITEM_MOD_STAMINA_SHORT"] = 10, estimate = true, replace = true }, -- Pure Flame
+    -- [[ FIXED LIFEGIVING GEM (DYNAMIC) ]]
+    -- Value = 0.30 (15% Max HP Buff + 15% Instant Heal)
+    -- This calculates 30% of your CURRENT HP and converts it to Stamina for the score.
+    [19341] = { percent_hp_value = 0.30, estimate = true, replace = true },
+	-- [[ 💎 LIFESTONE (Fixing Unscanned Hp5) ]]
+    [833] = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 10, replace = true }, -- Lifestone (Forces 10 Hp5)
+    -- PvP / Utility
+    [1404]  = { ["ITEM_MOD_STAMINA_SHORT"] = 20, estimate = true, replace = true }, -- Tidal Charm
+    [18638] = { ["ITEM_MOD_STAMINA_SHORT"] = 18, estimate = true, replace = true }, -- Reflectors
+    [18639] = { ["ITEM_MOD_STAMINA_SHORT"] = 18, estimate = true, replace = true },
+    [14557] = { ["ITEM_MOD_STAMINA_SHORT"] = 16, estimate = true, replace = true }, -- Stopwatch
+    [17909] = { ["ITEM_MOD_STAMINA_SHORT"] = 14, estimate = true, replace = true }, -- Insignia
+    [17904] = { ["ITEM_MOD_STAMINA_SHORT"] = 14, estimate = true, replace = true },
+    [10577] = { ["ITEM_MOD_STAMINA_SHORT"] = 12, estimate = true, replace = true }, -- Mortar
+    [10587] = { ["ITEM_MOD_STAMINA_SHORT"] = 10, estimate = true, replace = true }, -- Bomb Dispenser
+    [21115] = { ["ITEM_MOD_STAMINA_SHORT"] = 8, estimate = true, replace = true },  -- Defiler's
+    [11905] = { ["ITEM_MOD_STAMINA_SHORT"] = 8, estimate = true, replace = true },  -- Linken's
+
+-- [[ 🗿 RELICS, IDOLS, LIBRAMS, TOTEMS (Converted to Generic Stats) ]]
+    -- Since these affect specific spells, we estimate a "Generic Power" equivalent.
+
+    -- SHAMAN (Totems)
+    [23199] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 33, estimate = true, replace = true }, -- Totem of the Storm (+33 LB/CL)
+    [22395] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 65, estimate = true, replace = true }, -- Totem of Life (+80 Lesser Healing Wave) -> Est: ~65 Global
+    [23200] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Totem of Sustaining (+53 Healing Wave) -> Est: ~40 Global
+    [22397] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 20, estimate = true, replace = true }, -- Totem of Rage (+30 Earth Shock) -> Est: ~20 Global
+    [20644] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2, estimate = true, replace = true }, -- Totem of Rebirth (Utility -> Minor Score)
+
+    -- PALADIN (Librams)
+    [23201] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Libram of Divinity (+53 Flash of Light) -> Est: ~45 Global
+    [22396] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Libram of Truth (+55 Holy Light) -> Est: ~45 Global
+    [22402] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 8, estimate = true, replace = true }, -- Libram of Hope (Seal Cost Reduct -> Est: ~8 Mp5)
+    [23006] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 25, estimate = true, replace = true },   -- Libram of Fervor (Crusader Strike - TBC/SoD?) or Classic Leveling items
+
+    -- DRUID (Idols)
+    [22398] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Idol of Rejuvenation (+50 Rejuv Ticks) -> Est: ~40 Global
+    [22399] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 50, estimate = true, replace = true }, -- Idol of Health (Cast Time Reduct) -> High Value
+    [23197] = { ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 25, estimate = true, replace = true }, -- Idol of the Moon (+17% Moonfire) -> Est: ~25 Power
+    [23198] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40, estimate = true, replace = true },  -- Idol of Brutality (+50 Maul) -> Est: ~40 AP
+    [22394] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50, estimate = true, replace = true },  -- Idol of Ferocity (Cost Reduct) -> Est: ~50 AP Equiv
 }

@@ -1,5 +1,5 @@
 # Sharpie's Gear Judge (v1.7.0)
-**The Final Verdict on your Gear for WoW Classic Era**
+**The Final Verdict on your Gear for WoW Classic Era & Anniversary **
 
 Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, **your talents**, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
 
@@ -69,4 +69,4 @@ A custom visual interface for advanced theorycrafting.
 
 ### 📝 Credits
 * Author: Supersharpie
-* Version: 1.7.0
+* Version: 1.8.0

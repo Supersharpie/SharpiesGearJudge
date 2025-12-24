@@ -111,19 +111,24 @@ function MSC.GetCurrentWeights()
 end
 
 -- =============================================================
--- 2. STAT COMPARISON TOOLS
+-- 2. STAT COMPARISON TOOLS (FIXED: Ignored Booleans)
 -- =============================================================
 function MSC.GetStatDifferences(new, old)
     local diffs = {}
     local seen = {}
+    
+    -- Loop through NEW stats
     for k, v in pairs(new) do 
-        if k ~= "IS_PROJECTED" then
+        -- FIX: Only compare if 'v' is actually a number (ignores estimate=true, replace=true)
+        if k ~= "IS_PROJECTED" and type(v) == "number" then
             local d = v - (old[k] or 0)
             if d ~= 0 then table.insert(diffs, { key=k, val=d }); seen[k] = true end
         end
     end
+    
+    -- Loop through OLD stats
     for k, v in pairs(old) do
-        if not seen[k] and k ~= "IS_PROJECTED" then
+        if not seen[k] and k ~= "IS_PROJECTED" and type(v) == "number" then
             local d = (new[k] or 0) - v
             if d ~= 0 then table.insert(diffs, { key=k, val=d }) end
         end
@@ -214,82 +219,76 @@ end
 function MSC.SafeGetItemStats(itemLink, slotId, skipProjection)
     if not itemLink then return {} end
     
-    -- [[ 1. CHECK OVERRIDES DATABASE FIRST ]] --
-    local itemID = tonumber(string.match(itemLink, "item:(%d+)")) -- [[ FIXED: Correct ID Extraction ]]
-    
-    if itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID] then
-        -- Return a copy of the manual stats immediately
-        local manualStats = {}
-        for k, v in pairs(MSC.ItemOverrides[itemID]) do manualStats[k] = v end
+    local itemID = tonumber(string.match(itemLink, "item:(%d+)"))
+    local override = itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID]
+    local finalStats = {}
+
+   -- [[ PATH A: REPLACEMENT (Ignore Scanner) ]]
+    if override and override.replace then
+        for k, v in pairs(override) do finalStats[k] = v end
         
-        -- We still want to project enchants on top of manual overrides!
+        -- [[ LOGIC: DYNAMIC HEALTH CALCULATION ]]
+        -- If the item has a "percent_hp_value" flag (like Lifegiving Gem), 
+        -- we calculate that % of your CURRENT Max Health and convert it to Stamina.
+        if finalStats.percent_hp_value then
+            local currentMaxHP = UnitHealthMax("player") or 1
+            local bonusHP = currentMaxHP * finalStats.percent_hp_value
+            
+            -- Convert Health to Stamina (approx 1 Stam = 10 HP) so weights can score it
+            -- Example: 5000 HP * 0.30 (Buff+Heal) = 1500 Effective HP -> 150 Stamina
+            finalStats["ITEM_MOD_STAMINA_SHORT"] = (finalStats["ITEM_MOD_STAMINA_SHORT"] or 0) + (bonusHP / 10)
+        end
+
+        -- Enchants still project on top
         if SGJ_Settings.ProjectEnchants and slotId and not skipProjection then
             local equippedLink = GetInventoryItemLink("player", slotId)
-            local isEquipped = (equippedLink and itemLink and equippedLink == itemLink)
-            if not isEquipped then 
-                local myEnchantStats = MSC.GetEnchantStats(slotId) 
-                for k, v in pairs(myEnchantStats) do
-                    if k == "IS_PROJECTED" then manualStats.IS_PROJECTED = true
-                    else manualStats[k] = (manualStats[k] or 0) + v end
+            if equippedLink ~= itemLink then 
+                local enc = MSC.GetEnchantStats(slotId)
+                for k,v in pairs(enc) do 
+                    if k=="IS_PROJECTED" then finalStats.IS_PROJECTED=true else finalStats[k]=(finalStats[k] or 0)+v end 
                 end
             end
         end
-        return manualStats
+        return finalStats
     end
 
-    -- [[ 2. STANDARD SCANNER (Fallback) ]] --
+    -- [[ PATH B: SCANNER + ADDITIVE OVERRIDE ]]
     local stats = GetItemStats(itemLink) or {}
-    local finalStats = {}
-    local foundByAPI = {} 
-    
+    local foundByAPI = {}
     for k, v in pairs(stats) do
-        if v > 0 then
-            finalStats[k] = v 
-            foundByAPI[k] = true 
-            if type(k) == "string" then
-                if k:find("_SHORT") then local base = k:gsub("_SHORT", ""); foundByAPI[base] = true
-                else local short = k .. "_SHORT"; foundByAPI[short] = true end
-            end
-        end
+        if v > 0 then finalStats[k] = v; foundByAPI[k] = true; foundByAPI[k:gsub("_SHORT","")] = true end
     end
     
-    local tipName = "MSC_Scanner_" .. math.random(100000)
-    local tip = CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
-    tip:SetHyperlink(itemLink)
-    
-    local numLines = tip:NumLines()
-    if numLines > 0 then
-        for i = 2, numLines do
-            local lineObj = _G[tipName .. "TextLeft"..i]
-            if lineObj then
-                local lineText = lineObj:GetText()
-                if lineText then
-                    local s, v = MSC.ParseTooltipLine(lineText)
-                    if s and v then 
-                        local isForceStat = (s == "ITEM_MOD_SPELL_POWER_SHORT") or (s == "ITEM_MOD_HEALING_POWER_SHORT") or (s == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT") or (s == "ITEM_MOD_MANA_REGENERATION_SHORT") or (s == "ITEM_MOD_HEALTH_REGENERATION_SHORT")
-                        if isForceStat or not foundByAPI[s] then finalStats[s] = (finalStats[s] or 0) + v end
-                    end
-                end
-            end
+    -- Smart Scan (Tooltip Parsing)
+    local tipName = "MSC_Scanner_" .. (MSC.ScanTicker or 1); MSC.ScanTicker = (MSC.ScanTicker or 1) + 1
+    local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:SetHyperlink(itemLink)
+    for i = 2, tip:NumLines() do
+        local line = _G[tipName.."TextLeft"..i]; local text = line and line:GetText()
+        if text then
+            local s, v = MSC.ParseTooltipLine(text)
+            if s and v and not foundByAPI[s] then finalStats[s] = (finalStats[s] or 0) + v end
         end
     end
-    
-    -- [[ PROJECT EQUIPPED ENCHANT LOGIC ]] --
+
+    -- Add the Override (Hybrid Bonus)
+    if override then
+        for k, v in pairs(override) do
+            if k == "estimate" then finalStats.estimate = true
+            else finalStats[k] = (finalStats[k] or 0) + v end
+        end
+    end
+
+    -- Project Enchant
     if SGJ_Settings.ProjectEnchants and slotId and not skipProjection then
         local equippedLink = GetInventoryItemLink("player", slotId)
-        local isEquipped = (equippedLink and itemLink and equippedLink == itemLink)
-        
-        if not isEquipped then 
-            local myEnchantStats = MSC.GetEnchantStats(slotId) 
-            for k, v in pairs(myEnchantStats) do
-                if k == "IS_PROJECTED" then
-                    finalStats.IS_PROJECTED = true
-                else
-                    finalStats[k] = (finalStats[k] or 0) + v
-                end
+        if equippedLink ~= itemLink then
+            local enc = MSC.GetEnchantStats(slotId)
+            for k,v in pairs(enc) do 
+                if k=="IS_PROJECTED" then finalStats.IS_PROJECTED=true else finalStats[k]=(finalStats[k] or 0)+v end 
             end
         end
     end
+
     return finalStats
 end

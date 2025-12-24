@@ -1,3 +1,19 @@
+## v1.8.0 - The "Final Polish" Update
+### 🗿 Relic & Totem Support
+* **Database Update:** Added support for **Idols, Librams, and Totems**!
+* **Smart Estimation:** Because relics affect specific spells (which generic scanners can't read), the Judge now assigns them an "Estimated Generic Score" (e.g., *Totem of the Storm* = ~33 Nature Dmg) so they are correctly valued in comparisons.
+
+### 🩸 Dynamic Health Engine
+* **Lifegiving Gem:** Now calculates its score based on **30% of your CURRENT Max Health** (15% Buff + 15% Heal), making it scale correctly with your gear level.
+* **Lifestone:** Fixed an issue where the scanner ignored the "10 Health per 5 sec" effect. It is now correctly valued as a high-sustain item.
+
+### 🛠️ Critical Fixes
+* **History Log Separation:** Transaction History is now saved per **Character - Realm**. Your Alt's leveling snapshots will no longer overwrite or clutter your Main's history.
+* **Crash Fix:** Fixed a Lua error where the addon attempted to perform arithmetic on internal flags (`estimate`, `replace`), causing the Receipt window to fail.
+* **Database:** Fixed a typo (`MMSC` -> `MSC`) that prevented the Item Overrides database from loading.
+
+------------------------------------------------------------------------------------------------
+
 ## v1.7.0 - The "Consultant" Update
 ### 🕵️ Audit Mode (Inspect)
 * Added a **"Judge Target"** button to the Receipt. You can now inspect other players and generate a Gear Receipt for them!
