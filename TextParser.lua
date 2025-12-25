@@ -24,7 +24,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "healing done.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
         { pattern = "spells and effects.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
 
-        -- [[ 4. SPECIFIC SCHOOLS ]]
+        -- [[ 4. SPECIFIC SCHOOLS (Short Form) ]]
         { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
         { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
         { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
@@ -32,16 +32,23 @@ function MSC.ParseTooltipLine(text)
         { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
         { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
 
+        -- [[ 4b. SPECIFIC SCHOOLS (Long Form - "Damage done by...") ]]
+        { pattern = "damage done by Shadow.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "damage done by Fire.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "damage done by Frost.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "damage done by Arcane.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "damage done by Nature.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "damage done by Holy.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+
         -- [[ 5. CRIT & HIT ]]
         { pattern = "critical strike.-spells.-(%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
         { pattern = "critical strike.-(%d+)%%", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "hit.-spells.-(%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "hit.-(%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
 
-        -- [[ 6. MP5 / HP5 (UPDATED FOR LIFESTONE) ]]
+        -- [[ 6. MP5 / HP5 ]]
         { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "(%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-        -- New generic "Restores" catchers:
         { pattern = "Restores (%d+) health", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" }, 
         { pattern = "Restores (%d+) mana", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         
