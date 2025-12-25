@@ -18,21 +18,9 @@ function MSC.ParseTooltipLine(text)
         { pattern = "ranged attack power.-by (%d+)", stat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
         { pattern = "%+(%d+) Ranged Attack Power", stat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
 
-        -- [[ 3. SPELL POWER & HEALING ]]
-        { pattern = "damage and healing.-up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { pattern = "magical spells.-up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { pattern = "healing done.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
-        { pattern = "spells and effects.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
-
-        -- [[ 4. SPECIFIC SCHOOLS (Short Form) ]]
-        { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-        { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-        { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-        { pattern = "Arcane damage.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-        { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-        { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-
-        -- [[ 4b. SPECIFIC SCHOOLS (Long Form - "Damage done by...") ]]
+        -- [[ 3. SPECIFIC SCHOOLS - LONG FORM (PRIORITY #1) ]]
+        -- Catches: "Increases damage done by Shadow spells and effects by up to 21"
+        -- MUST be checked before generic "spells and effects" or it gets misread as Healing!
         { pattern = "damage done by Shadow.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
         { pattern = "damage done by Fire.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
         { pattern = "damage done by Frost.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
@@ -40,31 +28,47 @@ function MSC.ParseTooltipLine(text)
         { pattern = "damage done by Nature.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
         { pattern = "damage done by Holy.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
 
-        -- [[ 5. CRIT & HIT ]]
+        -- [[ 4. SPECIFIC SCHOOLS - SHORT FORM (PRIORITY #2) ]]
+        -- Catches: "Increases Shadow damage by up to 21"
+        { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "Arcane damage.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+
+        -- [[ 5. GENERIC SPELL POWER & HEALING (PRIORITY #3) ]]
+        -- We only check these if no specific school was found above.
+        { pattern = "damage and healing.-up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "magical spells.-up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "healing done.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
+        { pattern = "spells and effects.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
+
+        -- [[ 6. CRIT & HIT ]]
         { pattern = "critical strike.-spells.-(%d+)%%", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
         { pattern = "critical strike.-(%d+)%%", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "hit.-spells.-(%d+)%%", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "hit.-(%d+)%%", stat = "ITEM_MOD_HIT_RATING_SHORT" },
 
-        -- [[ 6. MP5 / HP5 ]]
+        -- [[ 7. MP5 / HP5 ]]
         { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "(%d+) health per 5 sec", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
         { pattern = "Restores (%d+) health", stat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" }, 
         { pattern = "Restores (%d+) mana", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         
-        -- [[ 7. ATTACK POWER ]]
+        -- [[ 8. ATTACK POWER ]]
         { pattern = "Attack Power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
         { pattern = "Attack Power in Cat, Bear", stat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, 
         { pattern = "%+(%d+) Attack Power", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
         
-        -- [[ 8. BASIC STATS ]]
+        -- [[ 9. BASIC STATS ]]
         { pattern = "%+(%d+) Stamina", stat = "ITEM_MOD_STAMINA_SHORT" },
         { pattern = "%+(%d+) Intellect", stat = "ITEM_MOD_INTELLECT_SHORT" },
         { pattern = "%+(%d+) Spirit", stat = "ITEM_MOD_SPIRIT_SHORT" },
         { pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
         
-		-- [[ 9. MISSING ENCHANTS ]]
+		-- [[ 10. MISSING ENCHANTS / EXTRAS ]]
         { pattern = "%+(%d+) Health", stat = "ITEM_MOD_HEALTH_SHORT" },
         { pattern = "Health %+(%d+)", stat = "ITEM_MOD_HEALTH_SHORT" },
         
@@ -81,7 +85,7 @@ function MSC.ParseTooltipLine(text)
         { pattern = "%+(%d+) Defense", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
         { pattern = "%+(%d+) All Stats", stat = "ITEM_MOD_STATS_ALL_SHORT" },
         
-        -- [[ 10. FALLBACK ]]
+        -- [[ 11. FALLBACK ]]
         { pattern = "up to (%d+)%.?$", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
     }
 
