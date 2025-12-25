@@ -1,5 +1,7 @@
-## v1.8.2
+## v1.8.2 - v1.8.3
 * ** small naming issue causing almost unnoticeable silent fail in game .
+* ** Equip: stats name ordering, Trying to be "clever" with short patterns is what caused this mess because "spells and effects" is a phrase used by both Healing gear and specific Shadow/Fire gear.
+* ** The inconsistent wording in Vanilla WoW (sometimes "Shadow damage" and sometimes "damage done by Shadow spells") is a classic parser trap. Parser was misreading "Shadow spells and effects" as generic "Healing Power"
 ------------------------------------------------------------------------------------------------
   
 ## v1.8.1
