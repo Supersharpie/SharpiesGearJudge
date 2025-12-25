@@ -259,10 +259,13 @@ function MSC.SafeGetItemStats(itemLink, slotId, skipProjection)
         if v > 0 then finalStats[k] = v; foundByAPI[k] = true; foundByAPI[k:gsub("_SHORT","")] = true end
     end
     
-    -- Smart Scan (Tooltip Parsing)
-    local tipName = "MSC_Scanner_" .. (MSC.ScanTicker or 1); MSC.ScanTicker = (MSC.ScanTicker or 1) + 1
+	-- Smart Scan (Tooltip Parsing)
+    -- Reuse a single frame to save memory
+    local tipName = "MSC_ScannerTooltip"
     local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:SetHyperlink(itemLink)
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    tip:ClearLines() -- Reset the tooltip
+    tip:SetHyperlink(itemLink)
     for i = 2, tip:NumLines() do
         local line = _G[tipName.."TextLeft"..i]; local text = line and line:GetText()
         if text then
@@ -291,4 +294,37 @@ function MSC.SafeGetItemStats(itemLink, slotId, skipProjection)
     end
 
     return finalStats
+end
+
+-- [[ NEW: DETECT TARGET SPEC (STRICTER) ]] --
+function MSC.GetInspectSpec(unit)
+    local _, classFilename = UnitClass(unit)
+    if not classFilename then return "Default" end
+    
+    local bestTab = nil
+    local maxPoints = -1
+    local totalPointsFound = 0
+    
+    for i = 1, 3 do
+        -- Get raw data
+        local _, _, pointsSpent = GetTalentTabInfo(i, true)
+        local points = tonumber(pointsSpent) or 0
+        
+        totalPointsFound = totalPointsFound + points
+        
+        if points > maxPoints then
+            maxPoints = points
+            bestTab = i
+        end
+    end
+    
+    -- SAFETY CHECK: If the target has 0 points total (or scan failed), return Default
+    if totalPointsFound == 0 then return "Default" end
+
+    -- Map the winning tab to a name (e.g., 3 -> "Retribution")
+    if bestTab and MSC.SpecNames and MSC.SpecNames[classFilename] and MSC.SpecNames[classFilename][bestTab] then
+        return MSC.SpecNames[classFilename][bestTab]
+    end
+    
+    return "Default"
 end

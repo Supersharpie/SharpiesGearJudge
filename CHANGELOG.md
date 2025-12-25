@@ -1,5 +1,17 @@
-## v1.8.0 - The "Final Polish" Update
+## v1.8.1
+### 🧾Features & QoL:
+* **Smart Spec Detection: When inspecting a target, the addon now reads their talent tree to automatically detect their spec (e.g., "Holy" vs "Retribution") and applies the correct stat weights immediately.
+* **Manual Set Saving: Added a new "Save" bar to your own Gear Receipt window. You can now type a custom name (e.g., "Fire Res Set") and save a snapshot to your History without using slash commands.
+* **Improved Window Titles: The Receipt window now displays the detected spec next to the player's name (e.g., "Judge: PlayerName (Destruction)").
 
+### 🪰 Bug Fixes:
+* **Fixed Infinite Inspection Loop: Resolved an issue where the Judge window would continuously refresh or flash empty slots due to server latency.
+* **Fixed "0.0" Score Bug: The window now properly waits for item data to be cached before calculating scores, preventing the "Zero Score" error on first inspect.
+* **Fixed Lua Crash: Added safety checks for nil/string values in the talent scanner to prevent crashes when receiving invalid server data.
+* **UI Overlap Fix: Adjusted the footer layout in the Receipt window to prevent the "Score" text from overlapping with the "Combined Stats" list.
+------------------------------------------------------------------------------------------------
+
+## v1.8.0 - The "Final Polish" Update
 ### 🔮 Trinket & Proc Estimator
 * **Active Item Support:** The Judge now estimates the value of "On Use" or "Proc" effects!
 * **Smart Display:** Scores based on estimates are now marked with a Tilde (**~**) to indicate they are approximations based on average combat uptime.
