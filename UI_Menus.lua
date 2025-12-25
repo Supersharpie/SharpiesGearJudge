@@ -148,5 +148,6 @@ function MSC.CreateOptionsFrame()
         if MSC.ShowHistory then MSC.ShowHistory() else print("Core module not ready.") end
     end)
     
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: Supersharpie (v1.8.1)")
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: Supersharpie (v1.8.2)")
+
 end
