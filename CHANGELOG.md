@@ -1,3 +1,7 @@
+## v1.8.2
+* ** small naming issue causing almost unnoticeable silent fail in game .
+------------------------------------------------------------------------------------------------
+  
 ## v1.8.1
 ### 🧾Features & QoL:
 * **Smart Spec Detection: When inspecting a target, the addon now reads their talent tree to automatically detect their spec (e.g., "Holy" vs "Retribution") and applies the correct stat weights immediately.
@@ -69,4 +73,5 @@
 * **Character Audit Window:** Added a new UI (`/sgjreceipt`) that displays a categorized list of all your equipped gear and their individual scores.
 * **Combined Stat Summary:** The Receipt now mathematically sums up stats from all your gear and displays them in a clean grid.
 * **Smart Filtering:** The summary automatically highlights your class's primary stats in **Green** and hides irrelevant stats (e.g., Agility is hidden for Warlocks, Strength is hidden for Mages).
+
 * **Visual Overhaul:** Added class-colored borders, item icons, and zebra-striped rows for better readability.
