@@ -26,88 +26,34 @@ end
 
 -- [[ FIXED SPEC DETECTION LOGIC ]] --
 function MSC.GetCurrentWeights()
-    local _, englishClass = UnitClass("player")
-    if not englishClass then return {}, "Unknown" end
+    local _, class = UnitClass("player")
+    if not class then return {}, "Unknown" end
     
-    local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
+    local classData = MSC.WeightDB and MSC.WeightDB[class]
     if not classData then return {}, "No Data" end
     
-    local activeProfile = nil
-    local displayName = "Default"
-    local playerLevel = UnitLevel("player")
+    -- 1. Identify the spec tree with the most points (specIndex)
+    local maxPoints, specIndex = -1, 1
+    for i = 1, 3 do
+        local _, _, _, _, points = GetTalentTabInfo(i)
+        local p = points or 0
+        if p > maxPoints then
+            maxPoints = p
+            specIndex = i
+        end
+    end
+
+    -- 2. Pass base weights, level, and specIndex to the Engine
+    local baseWeights = classData["Default"] or {}
+    local adjustedWeights, specKey = MSC:ApplyDynamicAdjustments(baseWeights, UnitLevel("player"), specIndex)
     
-    -- 1. DETERMINE BASE PROFILE
-    if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
-        -- MANUAL MODE
-        activeProfile = classData[SGJ_Settings.Mode]
-        displayName = SGJ_Settings.Mode
-        if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
-    else
-        -- AUTO-DETECT SPEC (Manual Counting Fix)
-        local maxPoints = 0
-        local activeSpec = "Default"
-        local specIndex = 1
-        
-        if MSC.SpecNames and MSC.SpecNames[englishClass] then
-            for tabIndex = 1, 3 do
-                -- MANUAL COUNT: Loop through talents to get the real score
-                local tabPoints = 0
-                local numTalents = GetNumTalents(tabIndex) or 0
-                for t = 1, numTalents do
-                    local _, _, _, _, rank = GetTalentInfo(tabIndex, t)
-                    tabPoints = tabPoints + (rank or 0)
-                end
-                
-                -- Check if this tree is the winner
-                if tabPoints > maxPoints then 
-                    maxPoints = tabPoints
-                    activeSpec = MSC.SpecNames[englishClass][tabIndex] 
-                    specIndex = tabIndex
-                end
-            end
-        end
-        
-        activeProfile = classData[activeSpec] or classData["Default"]
-        displayName = activeSpec .. " (Auto)"
-
-        -- 2. LEVELING LOGIC
-        if playerLevel < 60 then
-            local isDungeonRole = false
-            if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end 
-            if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end 
-            if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end 
-            if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end 
-            if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end 
-
-            if not isDungeonRole then
-                if playerLevel <= 20 and classData["Leveling_1_20"] then 
-                    activeProfile = classData["Leveling_1_20"]
-                    displayName = activeSpec .. " (Lv 1-20)"
-                elseif playerLevel <= 40 and classData["Leveling_21_40"] then 
-                    activeProfile = classData["Leveling_21_40"]
-                    displayName = activeSpec .. " (Lv 21-40)"
-                elseif classData["Leveling_41_59"] then 
-                    activeProfile = classData["Leveling_41_59"]
-                    displayName = activeSpec .. " (Lv 41-59)"
-                end
-            end
-        end
+    -- 3. Lookup the Pretty Name
+    local displayName = specKey
+    if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][specKey] then
+        displayName = MSC.PrettyNames[class][specKey]
     end
-
-    -- 3. APPLY DYNAMIC ENGINE
-    if activeProfile and MSC.ApplyDynamicAdjustments then
-        local dynamicWeights = MSC:ApplyDynamicAdjustments(activeProfile)
-        
-        if dynamicWeights["ITEM_MOD_HIT_RATING_SHORT"] and dynamicWeights["ITEM_MOD_HIT_RATING_SHORT"] < 0.1 then
-            displayName = displayName .. " |cff00ff00(Hit Capped)|r"
-        elseif dynamicWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and dynamicWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] < 0.1 then
-            displayName = displayName .. " |cff00ff00(Hit Capped)|r"
-        end
-        
-        return dynamicWeights, displayName
-    end
-
-    return activeProfile, displayName
+    
+    return adjustedWeights, displayName
 end
 
 -- =============================================================
@@ -139,17 +85,6 @@ end
 function MSC.SortStatDiffs(diffs)
     table.sort(diffs, function(a,b) return a.val > b.val end)
     return diffs
-end
-
-function MSC.ExpandDerivedStats(stats)
-    local derived = {}
-    if not stats then return derived end
-    for k, v in pairs(stats) do derived[k] = v end
-    if derived["ITEM_MOD_STAMINA_SHORT"] then derived["ITEM_MOD_HEALTH_SHORT"] = (derived["ITEM_MOD_HEALTH_SHORT"] or 0) + (derived["ITEM_MOD_STAMINA_SHORT"] * 10) end
-    if derived["ITEM_MOD_INTELLECT_SHORT"] then derived["ITEM_MOD_MANA_SHORT"] = (derived["ITEM_MOD_MANA_SHORT"] or 0) + (derived["ITEM_MOD_INTELLECT_SHORT"] * 15) end
-    if derived["ITEM_MOD_STRENGTH_SHORT"] then derived["ITEM_MOD_ATTACK_POWER_SHORT"] = (derived["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + (derived["ITEM_MOD_STRENGTH_SHORT"] * 2) end
-    if derived["ITEM_MOD_AGILITY_SHORT"] then derived["ITEM_MOD_ARMOR_SHORT"] = (derived["ITEM_MOD_ARMOR_SHORT"] or 0) + (derived["ITEM_MOD_AGILITY_SHORT"] * 2) end
-    return derived
 end
 
 -- =============================================================

@@ -1,626 +1,963 @@
 local _, MSC = ...
 
 -- =============================================================
--- 1. STAT WEIGHTS (Raiding & Leveling Brackets)
+-- 1. STAT WEIGHTS (EP VALUES - v1.15.8 Classic
 -- =============================================================
+-- NOTE: Melee Weights normalized to Attack Power = 1
+-- NOTE: Caster Weights normalized to Spell Power = 1
+-- NOTE: Low weights (0.1 - 0.5) added to Stam/Int/Armor to ensure Tooltip Visibility
+
 MSC.WeightDB = {
-	["WARRIOR"] = {
-        ["Default"]    = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.75, -- (1 Str = 2 AP)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+    ["WARRIOR"] = {
+        ["Default"] = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0,       
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.3,        
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,        
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1, 
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,         
             ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 
         },
         
-        -- ARMS: PvP & 2-Hander Leveling
-        -- Focus: Big Hits (Str), Crit, and staying alive (Stam)
-        ["Arms"]       = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,   -- Crit is huge for Deep Wounds / Impale
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,       -- Agi = Crit in Classic
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,       -- PvP Survival
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0     -- Important, but usually capped easily for PvP (5%)
+        -- [[ DYNAMIC ENGINE SPECS ]] --
+        ["FURY_2H"] = {
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 7.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.3,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 28.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 12.0,  
+            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5,        
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.1, 
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.05,         
         },
-
-        -- FURY: Dual Wield PvE DPS
-        -- Focus: Hit Cap, Weapon Skill, Crit (Flurry uptime)
-        ["Fury"]       = { 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.5,    -- #1 Priority until cap
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.5, -- #1 Priority (Edgemasters, etc.)
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,   -- Critical for Flurry
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2,       -- Excellent for Crit
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.75, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5        -- Don't need much HP in Raids
+        ["FURY_DW"] = {
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 22.0,  
+            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 18.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 30.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.5,      
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5,        
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.1, 
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.05,
         },
-
-        -- PROTECTION: Tanking
-        -- Focus: Effective Health (Stam/Armor) > Mitigation > Threat
-        ["Protection"] = { 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.2,       -- Effective Health is King
-            ["ITEM_MOD_ARMOR_SHORT"]=0.15,        -- Armor is massive (weight must be low relative to raw value)
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8,   -- Shield Slam scaling
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,    -- Threat generation
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.8,      -- Block Value / Threat
-            ["ITEM_MOD_AGILITY_SHORT"]=0.8,       -- Dodge / Armor
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 
+        ["ARMS_MS"] = {
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 8.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 28.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,      
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,        
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
         },
-        
-        -- LEVELING: High Regen (Hp5/Spirit) + Kill Speed
+        ["DEEP_PROT"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,      
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.6,  
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 10.0,  
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 12.0,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 12.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,        
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,     
+            ["ITEM_MOD_AGILITY_SHORT"] = 0.5,      
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.1,
+        },
+        ["FURY_PROT"] = {
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 22.0,  
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,      
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.1,
+        },
+        ["ARMS_PROT"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 10.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.1,
+        },
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.0, -- Hp5 is God-Mode early game
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.75, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,              -- High Spirit = Low downtime
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_AGILITY_SHORT"]=0.8 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, 
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.0,              
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
         ["Leveling_21_40"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2,              -- Still very good
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,              
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.1, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.3, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
+
     ["PALADIN"] = {
         ["Default"]     = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.6, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.04 -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_SHORT"]=0.05,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5
         },
-        
-        -- HOLY: Crit Healer (Illumination)
-        ["Holy"]        = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, -- Crit = Mana Return (Illumination)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.6,     -- Crit % + Mana Pool
-            ["ITEM_MOD_MANA_SHORT"]=0.08,         -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.8, -- Mp5
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
+        ["HOLY_RAID"]   = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,          
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0,  
+            ["ITEM_MOD_MANA_SHORT"]=0.05,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,  
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01,  
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- PROTECTION: AoE Threat (Spell Power) + Survival
-        ["Protection"]  = { 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.2, 
+        ["HOLY_DEEP"]   = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_MANA_SHORT"]=0.04,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["PROT_DEEP"]   = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_ARMOR_SHORT"]=0.15,       
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5,  -- Consecration Threat needs SP
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,    -- Need mana to tank
-            ["ITEM_MOD_MANA_SHORT"]=0.04,        -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.5      -- Block Value
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8,    
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.6,    
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.8,
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=12.0, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=12.0, 
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1,          
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,      
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
         },
-
-        -- RETRIBUTION: Hybrid DPS (Str/AP/Crit + some SP/Int)
-        ["Retribution"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,  -- Vengeance uptime
-            ["ITEM_MOD_AGILITY_SHORT"]=0.9,      -- Crit only
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,   
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.6,  -- Judgement/Exorcism scaling
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,    -- Mana for rotations
-            ["ITEM_MOD_MANA_SHORT"]=0.025,       -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+        ["PROT_AOE"]    = { 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,    
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8,        
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.4,      
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.5,    
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.3,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
         },
-        
-        -- LEVELING: Sustain > Burst
+        ["RET_STANDARD"] = { 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=22.0,   
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,     
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.1,   
+            ["ITEM_MOD_MANA_SHORT"]=0.01,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
+        },
+        ["RET_UTILITY"] = { 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=30.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
+        },
+        ["SHOCKADIN"]   = { 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,    
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8,        
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1
+        },
+        ["RECK_BOMB"]   = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,        
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0,       
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1
+        },
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=2.0, -- Less downtime
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.7, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05,        -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0            -- Regen
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=4.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
         ["Leveling_21_40"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_MANA_SHORT"]=0.04,        -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_AGILITY_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,
-            ["ITEM_MOD_MANA_SHORT"]=0.03         -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.4,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
     },
+
     ["PRIEST"] = {
         ["Default"]    = { 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05         -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- DISCIPLINE: Int (Mana Pool) + Spirit (Meditation)
-        ["Discipline"] = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.6,     -- Mental Strength (+10% Mana)
-            ["ITEM_MOD_MANA_SHORT"]=0.08,         -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,        -- Meditation (Regen)
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+        ["HOLY_DEEP"] = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.2, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 6.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2, 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- HOLY: Spirit is a Power Stat (Spiritual Guidance: 25% Spirit -> SP)
-        ["Holy"]       = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.1,        -- HUGE VALUE: Regen + Healing Power
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.8, -- Mp5
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.06,         -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- Inspiration procs
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
+        ["DISC_PI_SUPPORT"] = { 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.5,
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.8,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.6, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.4, 
+            ["ITEM_MOD_MANA_SHORT"]=0.05,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- SHADOW: Hit Cap > Shadow Dmg > Crit (Shadow Power)
-        ["Shadow"]     = { 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.5,  -- Must cap Hit for raids
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- Shadow Power = 100% crit dmg bonus
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,           
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5             
+        ["SHADOW_PVE"] = { 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 15.0, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 8.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,   
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- LEVELING: Spirit Tap + Wand DPS
+        ["SHADOW_PVP"] = { 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 8.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,    
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["HYBRID_POWER_WEAVING"] = {
+             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 12.0,
+             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.0,
+             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+             ["ITEM_MOD_STAMINA_SHORT"]=0.3,
+             ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, -- WAND DPS IS GOD
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.0,            -- Spirit Tap = Infinite Mana
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.0,            
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_21_40"] = { 
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.2,            -- Spirit Tap is still king
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.5, -- Wanding still happens
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.06              -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.0,            
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05              -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
+
     ["ROGUE"] = {
         ["Default"]       = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, -- Added
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.7,     -- 1 Str = 1 AP
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,   
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 
-        },
-        
-        -- ASSASSINATION: Crit (Seal Fate) + Burst
-        ["Assassination"] = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.7,      -- Main Stat
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,  -- Seal Fate requires Crit
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,   -- Need 9% for yellow hits
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 
-        },
-        
-        -- COMBAT: The Raid Spec (Hit/Skill > All)
-        ["Combat"]        = { 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.5,   -- White hit cap is huge for energy gen
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.5, -- Glancing blow reduction
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.7, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.1   
-        },
-        
-        -- SUBTLETY: PvP Utility & Survival
-        ["Subtlety"]      = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.8,      -- Dmg + Dodge
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- PvP Survival is key
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.5    -- PvP relies on yellow hits (5% cap)
-        },
-        
-        -- LEVELING: Kill Speed (Agi/Str/AP)
-        ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.6, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
-        },
-        ["Leveling_21_40"] = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,   -- Misses start hurting here
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.9, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
-        },
-        ["Leveling_41_59"] = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,   
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 
-        },
-    },
-	["HUNTER"] = {
-        ["Default"]      = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2,       -- 1 Agi = 2 RAP + Crit
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, -- Added
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,     -- Mana pool
-            ["ITEM_MOD_MANA_SHORT"]=0.025,        -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
-        },
-        
-        -- BEAST MASTERY: Leveling / Solo Farming
-        -- Focus: Pet holding aggro (AP) + Regen (Spirit)
-        ["BeastMastery"] = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,       -- Pet/Hunter survival
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,        -- Low downtime
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.025         -- 20 Mana ~= 1 Int
-        },
-        
-        -- MARKSMANSHIP: Raid DPS
-        -- Focus: Hit Cap (9%) > Agility > Crit
-        ["Marksmanship"] = { 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=3.0,    -- Absolute priority until capped
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5,       -- Agi is king
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,   -- Mortal Shots talent
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,      -- Mana pots cover this
-            ["ITEM_MOD_MANA_SHORT"]=0.01           -- 20 Mana ~= 1 Int
-        },
-        
-        -- SURVIVAL: PvP / Agility Stacking
-        -- Focus: Stamina + Agility (Lightning Reflexes)
-        ["Survival"]     = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2,       -- Lightning Reflexes scales this
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,       -- PvP Survival
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,     -- PvP utility mana
-            ["ITEM_MOD_MANA_SHORT"]=0.04,         -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,    -- 5% PvP cap
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=0.8 
-        },
-        
-        -- LEVELING: Kill Speed + Regen
-        ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2,        -- Regen is vital early
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.025         -- 20 Mana ~= 1 Int
-        },
-        ["Leveling_21_40"] = { 
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,
-            ["ITEM_MOD_MANA_SHORT"]=0.03,         -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.1,     
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=15.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["RAID_COMBAT_SWORDS"] = { 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=22.0,   
+            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2, 
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01,  
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["RAID_COMBAT_DAGGERS"] = {
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0,  
+            ["ITEM_MOD_AGILITY_SHORT"]=2.4,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=20.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["RAID_SEAL_FATE"] = { 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0,  
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5,      
+            ["ITEM_MOD_HIT_RATING_SHORT"]=18.0,   
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["PVP_HEMO"] = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0,      
+            ["ITEM_MOD_HIT_RATING_SHORT"]=10.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1,        
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["PVP_CB_DAGGER"] = {
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0,  
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["PVP_MACE"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,      
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 15.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 10.0,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.1,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.1,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["Leveling_1_20"]  = { 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
+        },
+        ["Leveling_21_40"] = { 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.3, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=15.0,   
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
+        },
+        ["Leveling_41_59"] = { 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=18.0,   
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.1,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
+        },
+    },
+
+    ["HUNTER"] = {
+        ["Default"] = { 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=32.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["RAID_MM_STANDARD"] = {
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 32.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 2.5,
+            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 32.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["RAID_MM_STARTER"] = { 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 20.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 2.5,
+            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 32.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["RAID_SURV_DEEP"] = {
+            ["ITEM_MOD_AGILITY_SHORT"] = 3.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 30.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 30.0,
+            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["PVP_MM_UTIL"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 2.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["PVP_SURV_TANK"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 2.5,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["MELEE_NIGHTFALL"] = {
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 20.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["SOLO_DME_TRIBUTE"] = {
+            ["ITEM_MOD_AGILITY_SHORT"] = 2.5,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["Leveling_1_20"]  = { 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,        
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
+        },
+        ["Leveling_21_40"] = { 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_41_59"] = { 
             ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=20.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
+
     ["MAGE"] = {
         ["Default"] = { 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05, -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.3, 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- ARCANE: Mana Pool + Dmg
-        ["Arcane"]  = { 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.8,     -- Arcane scales with Mana Pool
-            ["ITEM_MOD_MANA_SHORT"]=0.09,         -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.5, -- Hit is massive
+        ["FIRE_RAID"] = { 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.0, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["FROST_AP"]  = {
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,   
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=16.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=9.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["FROST_WC"]  = {
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=16.0,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["FROST_AOE"] = {
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,     
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,       
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2,   
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,        
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["POM_PYRO"]  = {
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,   
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
             ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0         -- Evocation
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- FIRE: Crit (Ignite) + Hit
-        ["Fire"]    = { 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, -- Ignite rolling
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5,
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
+        ["ELEMENTAL"] = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.02,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
         },
-
-        -- FROST: Hit > SP > Crit
-        ["Frost"]   = { 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=3.0, -- Need cap (16% w/o talents, but talents give 6%)
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,-- Shatter gives 50%, so gear crit is lower priority
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05             -- 20 Mana ~= 1 Int
+        ["FROST_PVP"] = {
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.02,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
         },
-        
-        -- LEVELING: AoE Grinding (Stam/Int) vs Wanding
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.5, -- Wand DPS
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.075,            -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2,            -- Regen
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2            -- Survival
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,            
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5
         },
         ["Leveling_21_40"] = { 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,         -- Mana for Blizzard
-            ["ITEM_MOD_MANA_SHORT"]=0.075,            -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,           -- Surviving the pull
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,         
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,           
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
+
     ["WARLOCK"] = {
         ["Default"]     = { 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.04 -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- AFFLICTION: Drain Tanking / DoTs
-        ["Affliction"]  = { 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0,   -- DoTs scale 100% with SP
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,       -- Life Tap fuel
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.04          -- 20 Mana ~= 1 Int
+        ["RAID_DS_RUIN"] = {
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 15.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 11.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.3, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- DEMONOLOGY: Pet Scaling (Stam/Int)
-        ["Demonology"]  = { 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0,       -- Demonic Embrace (+15% Stam)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05          -- 20 Mana ~= 1 Int
+        ["RAID_SM_RUIN"] = {
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 15.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 9.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- DESTRUCTION: Crit (Ruin) + Hit
-        ["Destruction"] = { 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=3.0, -- No hit talents! Need gear.
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.0, -- Ruin (+100% Crit Dmg)
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,    -- Shadow Bolt is still main nuke
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8,  
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8
+        ["PVE_MD_RUIN"] = { 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 11.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 15.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.3,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- TANK (Twin Emperors)
-        ["Tank"]        = { 
-            ["ITEM_MOD_SHADOW_RESISTANCE_SHORT"]=5.0, -- The only thing that matters
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0 
+        ["PVP_NF_CONFLAG"] = { 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 10.0, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
-        
-        -- LEVELING: Drain Tanking (Stam/Spirit/SP)
+        ["PVP_SOUL_LINK"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 5.0, 
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
+        },
+        ["PVP_DEEP_DESTRO"] = {
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 12.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.5, -- Wand DPS
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
-        },
-       ["Leveling_21_40"] = { 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5,   -- The Game MUST see this 1.5
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,
-            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.0, -- Wanding
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,     -- Mana
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
+        },
+        ["Leveling_21_40"] = { 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,   
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0,
+            ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,     
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.04              -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
+
     ["SHAMAN"] = {
         ["Default"]     = { 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05, -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
+            ["ITEM_MOD_MANA_SHORT"]=0.05, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- ELEMENTAL: Nature Dmg / Crit
-        ["Elemental"]   = { 
-            ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.6, -- Elemental Fury (+100% Crit Dmg)
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0,  -- Hard to find, but needed
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05              -- 20 Mana ~= 1 Int
+        ["ELE_PVE"] = {
+            ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 10.0, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 13.0,  
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- ENHANCEMENT: Windfury (Crit/AP)
-        ["Enhancement"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6,      -- 1 Str = 2 AP
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8,  -- Added
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,   -- Flurry uptime
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2,       -- Crit + Dodge
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,    
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.5 
+        ["ELE_PVP"] = {
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 10.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.05,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
         },
-
-        -- RESTORATION: Chain Heal Spam
-        ["Restoration"] = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.5, -- Raw output
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, -- Mp5
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.06,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- Ancestral Healing
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
+        ["ENH_STORMSTRIKE"] = {
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,     
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,  
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 25.0,  
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.5,       
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 20.0,    
+            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 10.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
-        
-        -- TANK: (Meme/Niche)
-        ["Tank"]        = { 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
+        ["RESTO_DEEP"] = {
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 8.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- LEVELING: 2H Staff/Mace hitting
+        ["RESTO_TOTEM_SUPPORT"] = {
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 4.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["HYBRID_ELE_RESTO"] = {
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.8,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.6,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 8.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["HYBRID_ENH_RESTO"] = {
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05              -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05
         },
         ["Leveling_21_40"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
+
     ["DRUID"] = {
         ["Default"]     = { 
             ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.05 -- 20 Mana ~= 1 Int
+            ["ITEM_MOD_MANA_SHORT"]=0.05,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- BALANCE: Oomkin needs mana & Crit
-        ["Balance"]     = { 
-            ["ITEM_MOD_SPELL_HIT_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, -- Vengeance (+100% Crit Dmg)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=2.0,     -- Starfire
-            ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0,     -- Wrath
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,         -- Mana issues are real
-            ["ITEM_MOD_MANA_SHORT"]=0.06,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
+        ["BALANCE_BOOMKIN"] = {
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 10.0, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 15.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.3, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.2,
+            ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- FERAL DPS: Cat Form
-        ["FeralCombat"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8,      -- 1 Str = 2 AP
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.4,       -- 1 Agi = 1 AP + Crit
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,   -- Combo point generation
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,    -- 9% Cap
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.0 -- USELESS IN FORM
+        ["RESTO_MOONGLOW"] = {
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.6, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- RESTORATION: Innervate & Efficiency
-        ["Restoration"] = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8,        -- Innervate scales off Spirit
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.06,             -- 20 Mana ~= 1 Int
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
+        ["RESTO_REGROWTH"] = {
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 12.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-
-        -- TANK: Bear Form (Armor/Stam/Dodge)
-        ["Tank"]        = { 
-            ["ITEM_MOD_ARMOR_SHORT"]=3.0,         -- Bear form multiplies Armor
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5,       -- Bear form multiplies Stamina
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5,       -- Dodge
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,    -- Threat
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.0 -- USELESS IN FORM
+        ["RESTO_DEEP"] = {
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
         },
-        
-        -- LEVELING: Cat Form speed
+        ["FERAL_CAT_DPS"] = {
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.4, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.5,  
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- REQUIRED for new Scoring
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 26.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 22.0, 
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.05,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.1
+        },
+        ["FERAL_BEAR_TANK"] = {
+            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"] = 1.0, 
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 15.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 10.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=0.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
+        ["HYBRID_HOTW"] = {
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,  
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.8,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.2
+        },
         ["Leveling_1_20"]  = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.6, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_21_40"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
         ["Leveling_41_59"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.4, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.5
         },
     },
 }
@@ -716,9 +1053,7 @@ MSC.ShortNames = {
     -- [[ PHYSICAL ]]
     ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "DPS",
     ["ITEM_MOD_ATTACK_POWER_SHORT"]      = "Attack Power",
-    ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "Ranged AP", -- [[ NEW: RANGED AP ]]
-    ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = "Feral AP",
-    ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "Ranged AP",
+    ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "Ranged AP", 
     ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = "Feral AP",
     ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = "Hp5",
 
@@ -811,21 +1146,15 @@ MSC.StatToCritMatrix = {
 -- =============================================================
 -- 9. ITEM OVERRIDES (Master List: Active & Passive)
 -- =============================================================
--- This list acts as a manual "Stat Force" for complex items.
--- It combines Active Cooldown math with Passive Stat guarantees.
-
 MSC.ItemOverrides = {
     -- [[ ⚠️ HYBRID / ADDITIVE (Scanner Stats + ~Bonus) ]]
-    -- These add a bonus on top of what the scanner finds.
     [22954] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 55, estimate = true }, -- Kiss of the Spider
     [23041] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20, estimate = true }, -- Slayer's Crest
     [11815] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 22, estimate = true }, -- Hand of Justice
     [23046] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 26, estimate = true },  -- Essence of Sapphiron
 
-    -- [[ ⚠️ PURE REPLACEMENTS (Ignore Scanner -> Force ~Value) ]]
-    -- We add 'replace = true' so the scanner is ignored completely.
-    
-    -- Melee Replacements
+    -- [[ ⚠️ PURE REPLACEMENTS ]]
+    -- Melee
     [19406] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 86, estimate = true, replace = true }, -- Drake Fang Talisman
     [13965] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30, estimate = true, replace = true }, -- Blackhand's Breadth
     [19991] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 39, estimate = true, replace = true }, -- Devilsaur Eye
@@ -833,7 +1162,7 @@ MSC.ItemOverrides = {
     [18469] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30, estimate = true, replace = true }, -- Royal Seal (Rogue)
     [21567] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20, estimate = true, replace = true }, -- Rune of Duty
     
-    -- Active/Procs (Treated as Replacements because they have no passive stats)
+    -- Active/Procs 
     [19949] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 34, estimate = true, replace = true }, -- Zandalarian Hero Medallion
     [23570] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 65, estimate = true, replace = true }, -- Jom Gabbar
     [21180] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 47, estimate = true, replace = true }, -- Earthstrike
@@ -842,7 +1171,7 @@ MSC.ItemOverrides = {
     [19342] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30, estimate = true, replace = true }, -- Venomous Totem
     [11302] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 15, estimate = true, replace = true }, -- Uther's Strength
 
-    -- Caster Replacements
+    -- Caster 
     [19379] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 70, estimate = true, replace = true }, -- Neltharion's Tear
     [12930] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 29, estimate = true, replace = true }, -- Briarwood Reed
     [18467] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 23, estimate = true, replace = true }, -- Royal Seal (Mage)
@@ -857,7 +1186,7 @@ MSC.ItemOverrides = {
     [23001] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 20, estimate = true, replace = true }, -- Eye of Diminution
     [22268] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 20, ["ITEM_MOD_HEALING_POWER_SHORT"] = 18, estimate = true, replace = true }, -- Draconic Infused Emblem
 
-    -- Healer Replacements
+    -- Healer 
     [19395] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 102, estimate = true, replace = true }, -- Rejuvenating Gem
     [23027] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 64, estimate = true, replace = true },  -- Warmth of Forgiveness
     [17064] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 64, estimate = true, replace = true },  -- Shard of the Scale
@@ -872,7 +1201,7 @@ MSC.ItemOverrides = {
     [19990] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 32, estimate = true, replace = true },  -- Blessed Prayer Beads
     [21625] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 65, estimate = true, replace = true },  -- Scarab Brooch
 
-    -- Tank Replacements (Virtual Stats)
+    -- Tank
     [19431] = { ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 25, ["ITEM_MOD_STAMINA_SHORT"] = 30, estimate = true, replace = true }, -- Styleen's
     [13966] = { ["ITEM_MOD_ARMOR_SHORT"] = 450, ["ITEM_MOD_DODGE_RATING_SHORT"] = 1, estimate = true, replace = true }, -- Mark of Tyranny
     [23040] = { ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 60, ["ITEM_MOD_ARMOR_SHORT"] = 300, estimate = true, replace = true }, -- Glyph of Deflection
@@ -885,12 +1214,12 @@ MSC.ItemOverrides = {
     [23558] = { ["ITEM_MOD_STAMINA_SHORT"] = 40, estimate = true, replace = true }, -- Burrower's Shell
     [21647] = { ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 40, ["ITEM_MOD_ARMOR_SHORT"] = 150, estimate = true, replace = true }, -- Chitinous Spikes
     [18815] = { ["ITEM_MOD_STAMINA_SHORT"] = 10, estimate = true, replace = true }, -- Pure Flame
-    -- [[ FIXED LIFEGIVING GEM (DYNAMIC) ]]
-    -- Value = 0.30 (15% Max HP Buff + 15% Instant Heal)
-    -- This calculates 30% of your CURRENT HP and converts it to Stamina for the score.
+    
+    -- Lifegiving Gem
     [19341] = { percent_hp_value = 0.30, estimate = true, replace = true },
-	-- [[ 💎 LIFESTONE (Fixing Unscanned Hp5) ]]
-    [833] = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 10, replace = true }, -- Lifestone (Forces 10 Hp5)
+    -- Lifestone
+    [833] = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 10, replace = true }, 
+
     -- PvP / Utility
     [1404]  = { ["ITEM_MOD_STAMINA_SHORT"] = 20, estimate = true, replace = true }, -- Tidal Charm
     [18638] = { ["ITEM_MOD_STAMINA_SHORT"] = 18, estimate = true, replace = true }, -- Reflectors
@@ -904,25 +1233,132 @@ MSC.ItemOverrides = {
     [11905] = { ["ITEM_MOD_STAMINA_SHORT"] = 8, estimate = true, replace = true },  -- Linken's
 
 -- [[ 🗿 RELICS, IDOLS, LIBRAMS, TOTEMS (Converted to Generic Stats) ]]
-    -- Since these affect specific spells, we estimate a "Generic Power" equivalent.
-
     -- SHAMAN (Totems)
-    [23199] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 33, estimate = true, replace = true }, -- Totem of the Storm (+33 LB/CL)
-    [22395] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 65, estimate = true, replace = true }, -- Totem of Life (+80 Lesser Healing Wave) -> Est: ~65 Global
-    [23200] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Totem of Sustaining (+53 Healing Wave) -> Est: ~40 Global
-    [22397] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 20, estimate = true, replace = true }, -- Totem of Rage (+30 Earth Shock) -> Est: ~20 Global
-    [20644] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2, estimate = true, replace = true }, -- Totem of Rebirth (Utility -> Minor Score)
+    [23199] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 33, estimate = true, replace = true }, -- Totem of the Storm
+    [22395] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 65, estimate = true, replace = true }, -- Totem of Life
+    [23200] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Totem of Sustaining
+    [22397] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 20, estimate = true, replace = true }, -- Totem of Rage
+    [20644] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2, estimate = true, replace = true }, -- Totem of Rebirth
 
     -- PALADIN (Librams)
-    [23201] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Libram of Divinity (+53 Flash of Light) -> Est: ~45 Global
-    [22396] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Libram of Truth (+55 Holy Light) -> Est: ~45 Global
-    [22402] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 8, estimate = true, replace = true }, -- Libram of Hope (Seal Cost Reduct -> Est: ~8 Mp5)
-    [23006] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 25, estimate = true, replace = true },   -- Libram of Fervor (Crusader Strike - TBC/SoD?) or Classic Leveling items
+    [23201] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Libram of Divinity
+    [22396] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 45, estimate = true, replace = true }, -- Libram of Truth
+    [22402] = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 8, estimate = true, replace = true }, -- Libram of Hope
+    [23006] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 25, estimate = true, replace = true },   -- Libram of Fervor
 
     -- DRUID (Idols)
-    [22398] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Idol of Rejuvenation (+50 Rejuv Ticks) -> Est: ~40 Global
-    [22399] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 50, estimate = true, replace = true }, -- Idol of Health (Cast Time Reduct) -> High Value
-    [23197] = { ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 25, estimate = true, replace = true }, -- Idol of the Moon (+17% Moonfire) -> Est: ~25 Power
-    [23198] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40, estimate = true, replace = true },  -- Idol of Brutality (+50 Maul) -> Est: ~40 AP
-    [22394] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50, estimate = true, replace = true },  -- Idol of Ferocity (Cost Reduct) -> Est: ~50 AP Equiv
+    [22398] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Idol of Rejuvenation
+    [22399] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 50, estimate = true, replace = true }, -- Idol of Health
+    [23197] = { ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 25, estimate = true, replace = true }, -- Idol of the Moon
+    [23198] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40, estimate = true, replace = true },  -- Idol of Brutality
+    [22394] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50, estimate = true, replace = true },  -- Idol of Ferocity
+}
+-- =============================================================
+-- 10. PRETTY NAMES (Translation Layer for UI)
+-- =============================================================
+MSC.PrettyNames = {
+    ["WARRIOR"] = {
+        ["FURY_DW"]         = "Raid: Fury (Dual Wield)",
+        ["FURY_2H"]         = "Raid: Fury (2H Slam)",
+        ["ARMS_MS"]         = "PvP: Arms (Mortal Strike)",
+        ["DEEP_PROT"]       = "Tank: Deep Protection",
+        ["FURY_PROT"]       = "Tank: Fury-Prot (Threat)",
+        ["ARMS_PROT"]       = "Tank: Arms (Dungeon Hybrid)",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["PALADIN"] = {
+        ["HOLY_RAID"]       = "Healer: Holy (Illumination)",
+        ["HOLY_DEEP"]       = "Healer: Deep Holy (Buffs)",
+        ["PROT_DEEP"]       = "Tank: Deep Protection",
+        ["PROT_AOE"]        = "Farming: Protection AoE",
+        ["RET_STANDARD"]    = "DPS: Retribution",
+        ["SHOCKADIN"]       = "PvP: Shockadin (Burst)",
+        ["RECK_BOMB"]       = "PvP: Reck-Bomb (One-Shot)",
+        ["RET_UTILITY"]     = "Raid: Ret Utility (Nightfall)",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["HUNTER"] = {
+        ["RAID_MM_STANDARD"] = "Raid: Marksmanship (Standard)",
+        ["RAID_MM_SUREFOOTED"]  = "Raid: MM (Surefooted)",
+        ["RAID_SURV_DEEP"]   = "Raid: Deep Survival (Agi)",
+        ["PVP_MM_UTIL"]      = "PvP: Marksmanship Utility",
+        ["PVP_SURV_TANK"]    = "PvP: Survival Tank",
+        ["MELEE_NIGHTFALL"]  = "Support: Nightfall (Melee)",
+        ["SOLO_DME_TRIBUTE"] = "Farming: DM North Solo",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["ROGUE"] = {
+        ["RAID_COMBAT_SWORDS"]  = "Raid: Combat Swords",  -- Changed from PVE_
+        ["RAID_COMBAT_DAGGERS"] = "Raid: Combat Daggers", -- Changed from PVE_
+        ["RAID_SEAL_FATE"]      = "Raid: Seal Fate (Crit)", -- Changed from PVE_
+        ["PVP_MACE"]		    = "PvP: Mace Specialization (Stun)",
+		["PVP_HEMO"]            = "PvP: Hemo Control",
+        ["PVP_CB_DAGGER"]       = "PvP: Cold Blood Burst",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["PRIEST"] = {
+        ["HOLY_DEEP"]          = "Healer: Deep Holy",
+        ["DISC_PI_SUPPORT"]    = "Healer: Disc (Power Infusion)",
+        ["SHADOW_PVE"]         = "DPS: Shadow (PvE)",
+        ["SHADOW_PVP"]         = "PvP: Shadow (Blackout)",
+        ["HYBRID_POWER_WEAVING"] = "Support: Power Weaving",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["SHAMAN"] = {
+        ["ELE_PVE"]            = "DPS: Elemental (PvE)",
+        ["ELE_PVP"]            = "PvP: Elemental (Burst)",
+        ["RESTO_DEEP"]         = "Healer: Deep Restoration",
+        ["RESTO_TOTEM_SUPPORT"]= "Healer: Totem Twisting",
+        ["ENH_STORMSTRIKE"]    = "DPS: Enhancement",
+        ["HYBRID_ELE_RESTO"]   = "Hybrid: Ele / Resto (NS)",
+        ["HYBRID_ENH_RESTO"]   = "Hybrid: Enh / Resto (PvP)",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["MAGE"] = {
+        ["FIRE_RAID"]          = "Raid: Deep Fire (Combustion)",
+        ["FROST_AP"]           = "Raid: Frost (Arcane Power)",
+        ["FROST_WC"]           = "Raid: Frost (Winter's Chill)",
+        ["POM_PYRO"]           = "PvP: PoM Pyro (3-Min Mage)",
+        ["ELEMENTAL"]          = "PvP: Elemental (Shatter)", -- Changed from PVP_ELEMENTAL
+        ["FARM_AOE_BLIZZ"]     = "Farming: Frost AoE",
+        ["FROST_PVP"]          = "PvP: Deep Frost",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["WARLOCK"] = {
+        ["RAID_DS_RUIN"]        = "Raid: Destruction (DS/Ruin)", -- Changed from PVE_
+        ["RAID_SM_RUIN"]        = "Raid: Affliction (SM/Ruin)",  -- Changed from PVE_
+        ["PVE_MD_RUIN"]    = "Raid: Master Demonologist (Ruin)",
+		["PVP_NF_CONFLAG"] = "PvP: Nightfall / Conflagrate",
+		["PVP_SOUL_LINK"]      = "PvP: Soul Link (Tank)",
+        ["PVP_DEEP_DESTRO"]    = "PvP: Destruction (Conflag)",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
+    ["DRUID"] = {
+        ["BALANCE_BOOMKIN"]    = "DPS: Balance (Boomkin)",
+        ["RESTO_DEEP"]         = "Healer: Deep Restoration",
+        ["RESTO_MOONGLOW"]     = "Healer: Moonglow",
+        ["RESTO_REGROWTH"]     = "Healer: Regrowth (Crit)",
+        ["FERAL_CAT_DPS"]      = "DPS: Feral Cat",
+        ["FERAL_BEAR_TANK"]    = "Tank: Feral Bear",
+        ["HYBRID_HOTW"]        = "Hybrid: Heart of the Wild",
+		["Leveling_1_20"] = "Leveling (Brackets 1-20)",
+		["Leveling_21_40"] = "Leveling (Brackets 21-40)",
+		["Leveling_41_59"] = "Leveling (Brackets 41-59)",
+    },
 }

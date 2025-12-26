@@ -1,3 +1,21 @@
+## v1.8.5
+* **New Name-Based Talent Scanner: Completely replaced the old "index-based" system with a new smart scanner. The addon now detects talents by their English name, making it immune to internal ID shifts caused by Blizzard patches (like the recent Anniversary update).
+
+### 🩸 Smarter Spec Detection
+* **Strict Priority Logic: The engine now correctly distinguishes between specific builds (e.g., Shockadin vs. Holy Raid vs. Deep Holy) based on key talent "anchors" (like Kings, Illumination, or Reckoning).
+* **Dungeon Role Protection: Fixed an issue where generic "Leveling" weights would overwrite your stats even if you were playing a dedicated Tank or Healer spec while below level 60.
+* **Live Updates: The "Auto-Detect" feature now updates instantly when you spend a talent point or open the config window—no more /reload required to see changes!
+
+### 🪰 Bug Fixes & Polish
+* **UI Display Fixed: Resolved the issue where the dropdown would display raw codes like Auto: Holy(Auto) or DEEP_PROT. It now correctly displays user-friendly names like "Auto: Healer: Holy (Illumination)".
+* **Naming Mismatch Resolved: Fixed internal naming errors for Rogues, Warlocks, and Paladins that were preventing the correct stat weights from loading (e.g., RAID_COMBAT_SWORDS vs PVE_COMBAT_SWORDS).
+* **Leveling Brackets: Re-integrated polished leveling weights (Leveling_1_20, 21_40, etc.) that automatically apply to pure DPS/Hybrid builds while leveling.
+
+### 🧾 For Developers / Debugging
+* **Added a new slash command: /sgjtalents
+* **Prints your current talent tree points and validates which "Key Talents" the addon has successfully detected. Useful for verifying your build.
+------------------------------------------------------------------------------------------------
+
 ## v1.8.2 - v1.8.3
 * ** small naming issue causing almost unnoticeable silent fail in game .
 * ** Equip: stats name ordering, Trying to be "clever" with short patterns is what caused this mess because "spells and effects" is a phrase used by both Healing gear and specific Shadow/Fire gear.

@@ -1,6 +1,6 @@
 local _, MSC = ...
 
--- 1. MINIMAP BUTTON
+-- 1. MINIMAP BUTTON (Standard Setup)
 local MinimapButton = CreateFrame("Button", "MSC_MinimapButton", Minimap)
 MinimapButton:SetSize(32, 32)
 MinimapButton:SetFrameStrata("MEDIUM")
@@ -43,16 +43,7 @@ MinimapButton:SetScript("OnClick", function(self, button)
     end 
 end)
 
-MinimapButton:SetScript("OnEnter", function(self) 
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:SetText("Sharpie's Gear Judge")
-    GameTooltip:AddLine("|cffffffffLeft-Click:|r Toggle Judge's Lab", 1, 1, 1)
-    GameTooltip:AddLine("|cffffffffRight-Click:|r Toggle Settings", 1, 1, 1)
-    GameTooltip:Show() 
-end)
-MinimapButton:SetScript("OnLeave", GameTooltip_Hide)
-
--- 2. CONFIGURATION PANEL (TOGGLE FIX)
+-- 2. CONFIGURATION PANEL
 function MSC.CreateOptionsFrame()
     if MyStatCompareFrame then 
         if MyStatCompareFrame:IsShown() then MyStatCompareFrame:Hide() else MyStatCompareFrame:Show() end
@@ -66,6 +57,17 @@ function MSC.CreateOptionsFrame()
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.title:SetPoint("LEFT", f.TitleBg, "LEFT", 5, 0); f.title:SetText("Sharpie's Gear Judge Configuration")
 
+    -- [[ HELPER: Defined here so both Initialize and UpdateDropDown can see it ]] --
+    local function GetDisplayName(specKey)
+        local _, class = UnitClass("player")
+        -- Remove any legacy (Auto) tags from the key string
+        local cleanKey = specKey:gsub("%(Auto%)", ""):gsub("%s+", "")
+        if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][cleanKey] then
+            return MSC.PrettyNames[class][cleanKey]
+        end
+        return specKey
+    end
+
     local function CreateHeader(text, relativeTo, yOffset)
         local h = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); h:SetPoint("TOPLEFT", relativeTo, "BOTTOMLEFT", 0, yOffset); h:SetText(text); return h
     end
@@ -74,80 +76,70 @@ function MSC.CreateOptionsFrame()
     end
 
     local header1 = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); header1:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -40); header1:SetText("Comparison Mode")
-
-    local strictCheck = CreateFrame("CheckButton", "SGJ_StrictCheck", f, "ChatConfigCheckButtonTemplate"); strictCheck:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -10); strictCheck.Text:SetText("Strict Mode (What you see is what you get)"); strictCheck:SetChecked(SGJ_Settings.IncludeEnchants)
+    local strictCheck = CreateFrame("CheckButton", "SGJ_StrictCheck", f, "ChatConfigCheckButtonTemplate"); strictCheck:SetPoint("TOPLEFT", header1, "BOTTOMLEFT", 0, -10); strictCheck.Text:SetText("Strict Mode (No Enchants)"); strictCheck:SetChecked(SGJ_Settings.IncludeEnchants)
     local strictDesc = CreateDesc("Compares items exactly as they are.", strictCheck)
-
     local potentialCheck = CreateFrame("CheckButton", "SGJ_PotentialCheck", f, "ChatConfigCheckButtonTemplate"); potentialCheck:SetPoint("TOPLEFT", strictDesc, "BOTTOMLEFT", -20, -15); potentialCheck.Text:SetText("Potential Mode (Simulate Enchants)"); potentialCheck:SetChecked(SGJ_Settings.ProjectEnchants)
     local potentialDesc = CreateDesc("Virtually applies your current enchant to the new item.", potentialCheck)
 
-    strictCheck:SetScript("OnClick", function(self) if self:GetChecked() then SGJ_Settings.IncludeEnchants=true; SGJ_Settings.ProjectEnchants=false; potentialCheck:SetChecked(false) else self:SetChecked(true) end end)
-    potentialCheck:SetScript("OnClick", function(self) if self:GetChecked() then SGJ_Settings.ProjectEnchants=true; SGJ_Settings.IncludeEnchants=false; strictCheck:SetChecked(false) else self:SetChecked(true) end end)
+    strictCheck:SetScript("OnClick", function(self) if self:GetChecked() then SGJ_Settings.IncludeEnchants=true; SGJ_Settings.ProjectEnchants=false; potentialCheck:SetChecked(false) end end)
+    potentialCheck:SetScript("OnClick", function(self) if self:GetChecked() then SGJ_Settings.ProjectEnchants=true; SGJ_Settings.IncludeEnchants=false; strictCheck:SetChecked(false) end end)
 
     local header2 = CreateHeader("Character Profile", potentialDesc, -25)
     local dropDown = CreateFrame("Frame", "SGJ_SpecDropDown", f, "UIDropDownMenuTemplate"); dropDown:SetPoint("TOPLEFT", header2, "BOTTOMLEFT", -15, -10)
     
     local function UpdateDropDownText()
-        if SGJ_Settings.Mode == "Auto" then
-             local _, displayName = MSC.GetCurrentWeights()
-             UIDropDownMenu_SetText(dropDown, displayName or "Auto (Detecting...)")
+        if SGJ_Settings.Mode == "AUTO" or SGJ_Settings.Mode == "Auto" then
+             local _, detectedKey = MSC.GetCurrentWeights()
+             UIDropDownMenu_SetText(dropDown, "Auto: " .. GetDisplayName(detectedKey))
         else
-             UIDropDownMenu_SetText(dropDown, SGJ_Settings.Mode)
+             UIDropDownMenu_SetText(dropDown, "Manual: " .. GetDisplayName(SGJ_Settings.Mode))
         end
     end
 
     local function OnClick(self) 
         SGJ_Settings.Mode = self.value
-        UIDropDownMenu_SetSelectedID(dropDown, self:GetID())
+        MSC.ManualSpec = self.value 
         UpdateDropDownText() 
-        print("|cff00ccffSharpie:|r Profile changed to " .. self.value) 
+        print("|cff00ccffSharpie:|r Profile changed to " .. GetDisplayName(self.value))
     end
 
     local function Initialize(self, level)
-        local info = UIDropDownMenu_CreateInfo(); info.text = "Auto-Detect"; info.value = "Auto"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Auto"); UIDropDownMenu_AddButton(info, level)
-        local _, englishClass = UnitClass("player")
-        if MSC.SpecNames and MSC.SpecNames[englishClass] then
-            for i=1, 3 do local spec = MSC.SpecNames[englishClass][i]; info = UIDropDownMenu_CreateInfo(); info.text = spec; info.value = spec; info.func = OnClick; info.checked = (SGJ_Settings.Mode == spec); UIDropDownMenu_AddButton(info, level) end
-        end
-        info = UIDropDownMenu_CreateInfo(); info.text = "Leveling / PvP"; info.value = "Hybrid"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Hybrid"); UIDropDownMenu_AddButton(info, level)
-        if MSC.WeightDB and MSC.WeightDB[englishClass] and MSC.WeightDB[englishClass]["Tank"] then
-            info = UIDropDownMenu_CreateInfo(); info.text = "Tanking (Threat/Surv)"; info.value = "Tank"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "Tank"); UIDropDownMenu_AddButton(info, level)
+        local info = UIDropDownMenu_CreateInfo()
+        info.text = "Auto-Detect"; info.value = "AUTO"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "AUTO"); UIDropDownMenu_AddButton(info)
+
+        local _, class = UnitClass("player")
+        if MSC.WeightDB and MSC.WeightDB[class] then
+            local sortedKeys = {}
+            for k in pairs(MSC.WeightDB[class]) do if k ~= "Default" then table.insert(sortedKeys, k) end end
+            table.sort(sortedKeys)
+
+            info = UIDropDownMenu_CreateInfo(); info.text = "--- Manual Selection ---"; info.isTitle = true; info.notCheckable = true; UIDropDownMenu_AddButton(info)
+
+            for _, key in ipairs(sortedKeys) do
+                info = UIDropDownMenu_CreateInfo()
+                info.text = GetDisplayName(key)
+                info.value = key
+                info.func = OnClick
+                info.checked = (SGJ_Settings.Mode == key)
+                UIDropDownMenu_AddButton(info)
+            end
         end
     end
     
     UIDropDownMenu_Initialize(dropDown, Initialize)
-    UIDropDownMenu_SetWidth(dropDown, 200)
-    UIDropDownMenu_SetButtonWidth(dropDown, 124)
+    UIDropDownMenu_SetWidth(dropDown, 250)
     UpdateDropDownText() 
 
-    local header3 = CreateHeader("Interface Settings", dropDown, -25); header3:SetPoint("TOPLEFT", potentialDesc, "BOTTOMLEFT", -20, -110) 
-    
+	f:SetScript("OnShow", function(self)
+        MSC:BuildTalentCache()
+        UpdateDropDownText()
+    end)
+	
+    local header3 = CreateHeader("Interface Settings", dropDown, -25)
     local minimapCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); minimapCheck:SetPoint("TOPLEFT", header3, "BOTTOMLEFT", 0, -10); minimapCheck.Text:SetText("Show Minimap Button"); minimapCheck:SetChecked(not SGJ_Settings.HideMinimap)
     minimapCheck:SetScript("OnClick", function(self) SGJ_Settings.HideMinimap = not self:GetChecked(); MSC.UpdateMinimapPosition() end)
-
     local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
     tooltipCheck:SetScript("OnClick", function(self) SGJ_Settings.HideTooltips = not self:GetChecked() end)
 
-    -- [[ NEW FEATURE: GEAR RECEIPT BUTTON ]] --
-    local receiptBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-    receiptBtn:SetPoint("TOPLEFT", tooltipCheck, "BOTTOMLEFT", 20, -20)
-    receiptBtn:SetSize(200, 30)
-    receiptBtn:SetText("Show Gear Receipt")
-    receiptBtn:SetScript("OnClick", function() 
-        f:Hide() -- Auto-Close Options
-        if MSC.ShowReceipt then MSC.ShowReceipt() else print("Core module not ready.") end
-    end)
-    
-    -- [[ NEW FEATURE: HISTORY BUTTON ]] --
-    local historyBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-    historyBtn:SetPoint("TOPLEFT", receiptBtn, "BOTTOMLEFT", 0, -10)
-    historyBtn:SetSize(200, 30)
-    historyBtn:SetText("View Transaction History")
-    historyBtn:SetScript("OnClick", function() 
-        f:Hide()
-        if MSC.ShowHistory then MSC.ShowHistory() else print("Core module not ready.") end
-    end)
-    
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5, 1); credits:SetText("Author: Supersharpie (v1.8.3)")
-
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5); credits:SetText("Author: Supersharpie (v1.8.5)")
 end
