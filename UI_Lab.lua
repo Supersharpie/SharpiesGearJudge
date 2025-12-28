@@ -1,74 +1,274 @@
 local _, MSC = ...
 
 -- =============================================================
--- 1. THE LABORATORY (Manual Compare)
+-- PART 1: THE LABORATORY (Restored from your Working Code)
 -- =============================================================
-function MSC.CreateLabFrame()
-    if MSC.LabFrame then MSC.LabFrame:Show(); return end
-    
-    local f = CreateFrame("Frame", "MSCLabFrame", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(400, 500); f:SetPoint("CENTER"); f:SetFrameStrata("HIGH")
-    f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-    
-    f.TitleBg:SetHeight(30)
-    f.TitleText:SetText("The Judge's Lab")
-    
-    if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
-    
-    -- Drop Sockets
-    local function CreateSocket(name, y)
-        local btn = CreateFrame("Button", nil, f, "ItemButtonTemplate")
-        btn:SetSize(37, 37); btn:SetPoint("TOPLEFT", 30, y)
-        btn.lbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        btn.lbl:SetPoint("LEFT", btn, "RIGHT", 10, 0); btn.lbl:SetText(name)
-        btn:SetScript("OnEnter", function(self) if self.link then GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetHyperlink(self.link); GameTooltip:Show() end end)
-        btn:SetScript("OnLeave", GameTooltip_Hide)
-        btn:SetScript("OnClick", function(self) 
-            if IsShiftKeyDown() and self.link then ChatEdit_InsertLink(self.link) 
-            elseif CursorHasItem() then 
-                local infoType, itemID, itemLink = GetCursorInfo()
-                if infoType == "item" then self.link = itemLink; self.icon:SetTexture(GetItemIcon(itemLink)); ClearCursor(); MSC.UpdateLabCalc() end
-            else self.link = nil; self.icon:SetTexture(nil); MSC.UpdateLabCalc() end 
-        end)
-        return btn
-    end
-    
-    f.Item1 = CreateSocket("Item A (Drag Here)", -50)
-    f.Item2 = CreateSocket("Item B (Drag Here)", -100)
-    
-    f.Result = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
-    f.Result:SetPoint("TOP", 0, -180); f.Result:SetText("Score: 0 vs 0")
-    
-    f.Detail = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    f.Detail:SetPoint("TOP", 0, -210); f.Detail:SetText("")
-    
-    MSC.LabFrame = f
-end
+
+local LabFrame = nil
+local LabMH, LabOH, Lab2H = nil, nil, nil
 
 function MSC.UpdateLabCalc()
-    if not MSC.LabFrame then return end
-    local f = MSC.LabFrame
-    local w, spec = MSC.GetCurrentWeights()
+    if not LabFrame or not LabFrame:IsShown() then return end
     
-    local function GetS(link)
-        if not link then return 0 end
-        local st = MSC.SafeGetItemStats(link)
-        return MSC.GetItemScore(st, w, spec)
+    local weights, profileName = MSC.GetCurrentWeights()
+    -- Pretty Name Fix for Lab
+    local _, class = UnitClass("player")
+    if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][profileName] then
+        profileName = MSC.PrettyNames[class][profileName]
+    end
+    LabFrame.ProfileText:SetText("Profile: " .. profileName)
+    
+    if not LabMH.link and not LabOH.link and not Lab2H.link then
+        LabFrame.ScoreCurrent:SetText(""); LabFrame.ScoreNew:SetText(""); LabFrame.Result:SetText("Shift+Click items to add"); LabFrame.Details:SetText(""); return
+    end
+
+    local scoreMHOH, statsMHOH = 0, {}
+    
+    -- MH Calculation
+    if LabMH.link then 
+        local s = MSC.SafeGetItemStats(LabMH.link, 16)
+        scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 16) 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then 
+                statsMHOH[k] = (statsMHOH[k] or 0) + v 
+            end
+        end 
     end
     
-    local s1 = GetS(f.Item1.link)
-    local s2 = GetS(f.Item2.link)
+    -- OH Calculation
+    if LabOH.link then 
+        local s = MSC.SafeGetItemStats(LabOH.link, 17)
+        scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 17) 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then 
+                statsMHOH[k] = (statsMHOH[k] or 0) + v 
+            end
+        end 
+    end
     
-    local c1, c2 = "|cffffffff", "|cffffffff"
-    if s1 > s2 then c1 = "|cff00ff00" elseif s2 > s1 then c2 = "|cff00ff00" end
+    -- 2H Calculation
+    local score2H, stats2H = 0, {}
+    if Lab2H.link then 
+        local s = MSC.SafeGetItemStats(Lab2H.link, 16)
+        score2H = score2H + MSC.GetItemScore(s, weights, profileName, 16) 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then 
+                stats2H[k] = (stats2H[k] or 0) + v 
+            end
+        end 
+    end
     
-    f.Result:SetText(c1..s1.."|r  vs  "..c2..s2.."|r")
-    f.Detail:SetText("Profile: " .. (spec or "Unknown"))
+    local scoreBase, statsBase = 0, {}
+
+    -- SCENARIO 1: Comparing Dual Wield (MH/OH) vs 2-Hander
+    if (LabMH.link or LabOH.link) and Lab2H.link then
+        scoreBase, statsBase = scoreMHOH, statsMHOH
+        LabFrame.ScoreCurrent:SetText(string.format("Dual Wield: %.1f", scoreMHOH))
+        LabFrame.ScoreNew:SetText(string.format("2-Hander: %.1f", score2H))
+        
+        local diff = score2H - scoreBase
+        LabFrame.Result:SetText(diff > 0 and string.format("|cff00ff002H WINS (+%.1f)|r", diff) or string.format("|cffff00002H LOSES (%.1f)|r", diff))
+        
+        local diffs = MSC.GetStatDifferences(stats2H, statsBase)
+        local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
+        for i=1, math.min(10, #sortedDiffs) do
+            local e = sortedDiffs[i]
+            local name = MSC.GetCleanStatName(e.key)
+            local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
+            local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
+            local sign = (e.val > 0) and "+" or ""
+            lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
+        end
+        LabFrame.Details:SetText(lines)
+        return
+    end
+
+    -- SCENARIO 2: Comparing Lab Item vs Currently Equipped
+    local currMH = GetInventoryItemLink("player", 16)
+    local currOH = GetInventoryItemLink("player", 17)
+    
+    if currMH then 
+        local s = MSC.SafeGetItemStats(currMH, 16)
+        scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 16) 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end 
+        end 
+    end
+    if currOH then 
+        local s = MSC.SafeGetItemStats(currOH, 17)
+        scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 17) 
+        for k, v in pairs(s) do 
+            if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end 
+        end 
+    end
+    
+    local finalScore = (LabMH.link or LabOH.link) and scoreMHOH or score2H
+    local finalStats = (LabMH.link or LabOH.link) and statsMHOH or stats2H
+    
+    LabFrame.ScoreCurrent:SetText(string.format("Current: %.1f", scoreBase))
+    LabFrame.ScoreNew:SetText(string.format("Custom: %.1f", finalScore))
+    
+    local diff = finalScore - scoreBase
+    LabFrame.Result:SetText(diff > 0 and string.format("|cff00ff00UPGRADE (+%.1f)|r", diff) or string.format("|cffff0000DOWNGRADE (%.1f)|r", diff))
+    
+    local diffs = MSC.GetStatDifferences(finalStats, statsBase)
+    local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
+    for i=1, math.min(10, #sortedDiffs) do
+        local e = sortedDiffs[i]
+        local name = MSC.GetCleanStatName(e.key)
+        local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
+        local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
+        local sign = (e.val > 0) and "+" or ""
+        lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
+    end
+    LabFrame.Details:SetText(lines)
 end
 
 -- =============================================================
--- 2. GEAR RECEIPT (The Audit Window)
+-- FRAME CREATION (Restored)
+-- =============================================================
+local function CreateItemButton(name, parent, x, y, iconType, labelText)
+    local btn = CreateFrame("Button", name, parent, "ItemButtonTemplate")
+    btn:SetPoint("CENTER", parent, "CENTER", x, y)
+    btn:RegisterForClicks("AnyUp")
+    
+    if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(btn) end
+    
+    btn.empty = btn:CreateTexture(nil, "BACKGROUND")
+    btn.empty:SetAllPoints(btn)
+    btn.empty:SetTexture(iconType == "OH" and "Interface\\Paperdoll\\UI-PaperDoll-Slot-SecondaryHand" or "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand")
+    btn.empty:SetAlpha(0.5)
+    
+    local r, g, b, a = 0.2, 0.8, 1.0, 0.6; local thick = 2
+    btn.bT = btn:CreateTexture(nil, "OVERLAY", nil, 7); btn.bT:SetColorTexture(r, g, b, a); btn.bT:SetPoint("TOPLEFT"); btn.bT:SetPoint("TOPRIGHT"); btn.bT:SetHeight(thick)
+    btn.bB = btn:CreateTexture(nil, "OVERLAY", nil, 7); btn.bB:SetColorTexture(r, g, b, a); btn.bB:SetPoint("BOTTOMLEFT"); btn.bB:SetPoint("BOTTOMRIGHT"); btn.bB:SetHeight(thick)
+    btn.bL = btn:CreateTexture(nil, "OVERLAY", nil, 7); btn.bL:SetColorTexture(r, g, b, a); btn.bL:SetPoint("TOPLEFT"); btn.bL:SetPoint("BOTTOMLEFT"); btn.bL:SetWidth(thick)
+    btn.bR = btn:CreateTexture(nil, "OVERLAY", nil, 7); btn.bR:SetColorTexture(r, g, b, a); btn.bR:SetPoint("TOPRIGHT"); btn.bR:SetPoint("BOTTOMRIGHT"); btn.bR:SetWidth(thick)
+
+    btn.Label = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); btn.Label:SetPoint("BOTTOM", btn, "TOP", 0, 3); btn.Label:SetText(labelText); btn.Label:SetTextColor(0.8, 0.8, 0.8, 1)
+
+    -- Fix for Icon Retrieval (Standard ItemButtonTemplate uses 'icon')
+    -- We assume the template created a texture named $parentIcon, which we can access via .icon
+    if not btn.icon then btn.icon = _G[name.."Icon"] end
+
+    btn:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(labelText); GameTooltip:AddLine("|cffaaaaaaShift+Click any item to link|r") end
+        GameTooltip:Show()
+    end)
+    btn:SetScript("OnLeave", GameTooltip_Hide)
+
+    btn:SetScript("OnClick", function(self)
+        local type, _, link = GetCursorInfo()
+        if type == "item" then
+            if not MSC.IsItemUsable(link) then
+                if not SGJ_Settings.MuteSounds then PlaySound(847, "Master") end
+                print("|cffff0000Sharpie:|r You cannot use this!")
+                ClearCursor(); return
+            end
+            self.link = link; 
+            if self.icon then self.icon:SetTexture(select(10, GetItemInfo(link))) end
+            self.empty:Hide(); ClearCursor(); MSC.UpdateLabCalc()
+        elseif IsShiftKeyDown() then 
+            self.link = nil; 
+            if self.icon then self.icon:SetTexture(nil) end
+            self.empty:Show(); MSC.UpdateLabCalc() 
+        end
+    end)
+    return btn
+end
+
+function MSC.CreateLabFrame()
+    if MSCLabFrame then 
+        if MSCLabFrame:IsShown() then MSCLabFrame:Hide() else MSCLabFrame:Show() end
+        return 
+    end
+    
+    local f = CreateFrame("Frame", "MSCLabFrame", UIParent)
+    f:SetSize(360, 420); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    
+    f.bg = f:CreateTexture(nil, "BACKGROUND"); f.bg:SetAllPoints(f); f.bg:SetColorTexture(0, 0, 0, 0.9) 
+    if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
+
+    -- Dynamic Class Background
+    local _, class = UnitClass("player")
+    if class then
+        local fixed = class:sub(1,1) .. class:sub(2):lower()
+        f.crest = f:CreateTexture(nil, "ARTWORK"); f.crest:SetAllPoints(f)
+        -- Fallback if texture missing
+        pcall(function() f.crest:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixed .. ".tga") end)
+        f.crest:SetVertexColor(0.6, 0.6, 0.6, 0.6)
+    end
+    
+    f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.title:SetPoint("TOP", f, "TOP", 0, -10); f.title:SetText("Sharpie's Gear Judge")
+    
+    LabMH = CreateItemButton("MSCLabMH", f, -65, 120, "MH", "Main Hand")
+    LabOH = CreateItemButton("MSCLabOH", f, 65, 120, "OH", "Off Hand")
+    Lab2H = CreateItemButton("MSCLab2H", f, 0, 50, "2H", "Two-Hand")
+
+    f.Instruction = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.Instruction:SetPoint("TOP", Lab2H, "BOTTOM", 0, -5); f.Instruction:SetText("(Shift+Click to clear)"); f.Instruction:SetTextColor(0.5, 0.5, 0.5, 1)
+    
+    f.ProfileText = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.ProfileText:SetPoint("TOP", f, "TOP", 0, -30)
+    f.ScoreCurrent = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.ScoreCurrent:SetPoint("CENTER", f, "CENTER", 0, -10)
+    f.ScoreNew = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.ScoreNew:SetPoint("CENTER", f, "CENTER", 0, -30)
+    f.Result = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Result:SetPoint("CENTER", f, "CENTER", 0, -50)
+    f.Details = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.Details:SetPoint("TOP", f.Result, "BOTTOM", 0, -10); f.Details:SetJustifyH("CENTER")
+    
+    local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    close:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0)
+    
+    LabFrame = f 
+    MSC.UpdateLabCalc()
+end
+
+-- =============================================================
+-- ATLASLOOT / CHAT LINK SUPPORT (Shift+Click Magic)
+-- =============================================================
+local function LoadLabItem(btn, link)
+    if not btn or not link then return end
+    btn.link = link
+    if btn.icon then btn.icon:SetTexture(select(10, GetItemInfo(link))) end
+    btn.empty:Hide()
+end
+
+hooksecurefunc("ChatEdit_InsertLink", function(text)
+    if LabMH and LabMH:IsMouseOver() then return end
+    if LabOH and LabOH:IsMouseOver() then return end
+    if Lab2H and Lab2H:IsMouseOver() then return end
+
+    if text and LabFrame and LabFrame:IsShown() and string.find(text, "item:", 1, true) then
+        local equipLoc = select(9, GetItemInfo(text))
+        
+        if equipLoc == "INVTYPE_2HWEAPON" then
+            LoadLabItem(Lab2H, text)
+        elseif equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" then
+            LoadLabItem(LabOH, text)
+        elseif equipLoc == "INVTYPE_WEAPON" then
+             local _, class = UnitClass("player")
+             local canDW = (class == "ROGUE" or class == "WARRIOR" or class == "HUNTER" or class == "SHAMAN")
+             if canDW and LabMH.link and not LabOH.link then
+                  LoadLabItem(LabOH, text)
+             else
+                  LoadLabItem(LabMH, text)
+             end
+        elseif equipLoc == "INVTYPE_WEAPONMAINHAND" then
+            LoadLabItem(LabMH, text)
+        else
+            return 
+        end
+        MSC.UpdateLabCalc()
+        
+        local editBox = ChatEdit_GetActiveWindow()
+        if editBox and editBox:GetText() == text then
+            editBox:SetText("")
+            editBox:Hide()
+        end
+    end
+end)
+
+-- =============================================================
+-- PART 2: THE RECEIPT (Merged from New Logic)
 -- =============================================================
 local function CheckBagsForUpgrade(slotId, currentScore, weights, specName)
     local bestBagItem, bestBagScore = nil, currentScore
@@ -196,14 +396,15 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         if not MSC.ReceiptRows[i] then
              local row = CreateFrame("Frame", nil, MSC.ReceiptFrame.Content); row:SetSize(380, 24); row.BG = row:CreateTexture(nil, "BACKGROUND"); row.BG:SetAllPoints(); row.Icon = row:CreateTexture(nil, "ARTWORK"); row.Icon:SetSize(20, 20); row.Icon:SetPoint("LEFT", 4, 0); row.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92); row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", row.Icon, "RIGHT", 8, 0); row.Label:SetWidth(65); row.Label:SetJustifyH("LEFT"); row.Label:SetTextColor(0.6, 0.6, 0.6); row.Score = row:CreateFontString(nil, "OVERLAY", "GameFontNormal"); row.Score:SetPoint("RIGHT", -5, 0); row.Score:SetWidth(60); row.Score:SetJustifyH("RIGHT"); row.Score:SetTextColor(0, 1, 0); row.Item = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Item:SetPoint("LEFT", row.Label, "RIGHT", 5, 0); row.Item:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Item:SetJustifyH("LEFT"); row.Alert = row:CreateTexture(nil, "OVERLAY"); row.Alert:SetSize(16, 16); row.Alert:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Alert:Hide(); 
              
-             -- [[ ALERT FRAME LOGIC (Updated to show Tooltip) ]] --
+             -- [[ ALERT FRAME LOGIC (UPDATED) ]] --
              row.AlertFrame = CreateFrame("Frame", nil, row); row.AlertFrame:SetAllPoints(row.Alert); 
              row.AlertFrame:SetScript("OnEnter", function(self) 
                 if self.mode == "UPGRADE" and self.link then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
-                    GameTooltip:SetHyperlink(self.link); -- SHOWS THE ACTUAL ITEM CARD
+                    GameTooltip:SetHyperlink(self.link); 
                     GameTooltip:AddLine(" "); 
                     GameTooltip:AddLine("|cff00ff00BETTER ITEM IN BAGS!|r"); 
+                    GameTooltip:AddLine("|cff888888Shift-Click to Link|r");
                     GameTooltip:Show() 
                 elseif self.mode == "ENCHANT" then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
@@ -213,6 +414,13 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
                 end 
              end); 
              row.AlertFrame:SetScript("OnLeave", GameTooltip_Hide);
+             row.AlertFrame:SetScript("OnMouseUp", function(self)
+                 if self.mode == "UPGRADE" and self.link then
+                    if IsShiftKeyDown() then ChatEdit_InsertLink(self.link)
+                    else HandleModifiedItemClick(self.link) end
+                 end
+             end)
+             
              MSC.ReceiptRows[i] = row
         end
         local row = MSC.ReceiptRows[i]; row:SetPoint("TOPLEFT", 0, yOffset)
@@ -266,7 +474,7 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
 end
 
 -- =============================================================
--- 3. MATH BREAKDOWN WINDOW (With Pretty Names)
+-- PART 3: MATH BREAKDOWN WINDOW (Merged from New Logic)
 -- =============================================================
 function MSC.ShowMathBreakdown()
     if not MSC.MathFrame then
