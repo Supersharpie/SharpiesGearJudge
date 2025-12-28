@@ -79,9 +79,9 @@ function MSC.ExpandDerivedStats(stats, itemLink)
         out["ITEM_MOD_MANA_SHORT"] = (out["ITEM_MOD_MANA_SHORT"] or 0) + (out["ITEM_MOD_INTELLECT_SHORT"] * 15) 
     end
     
-    -- [[ NOTE: ATTACK POWER CONVERSION REMOVED ]]
-    -- Since Database.lua uses EP Weights (e.g. Str = 2.4), we do NOT convert Str to AP here.
-    -- Doing so would cause double-scoring. The score comes directly from the Attribute weight.
+    -- [[ DELETED: Physical AP Conversion ]]
+    -- Strength/Agility are now weighted directly in Database.lua.
+    -- Converting them here causes double-scoring.
 
     -- 3. CRIT SCALING (For Tooltip Display Only - Weight is 0)
     local ratioTable = MSC.StatToCritMatrix[class]
