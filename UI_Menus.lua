@@ -1,7 +1,7 @@
 local _, MSC = ...
 
 -- =========================================================================
--- 1. MINIMAP BUTTON (Restored)
+-- 1. MINIMAP BUTTON
 -- =========================================================================
 local MinimapButton = CreateFrame("Button", "MSC_MinimapButton", Minimap)
 MinimapButton:SetSize(32, 32)
@@ -73,11 +73,14 @@ function MSC.CreateOptionsFrame()
     -- [[ HELPER: Spec Name Cleaner ]] --
     local function GetDisplayName(specKey)
         local _, class = UnitClass("player")
-        local cleanKey = specKey:gsub("%(Auto%)", ""):gsub("%s+", "")
+        -- Remove "Auto: " prefix if passed accidentally, remove spaces for key lookup
+        local cleanKey = specKey:gsub("Auto: ", ""):gsub("%s+", "")
+        
+        -- Check Database for Pretty Name
         if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][cleanKey] then
             return MSC.PrettyNames[class][cleanKey]
         end
-        return specKey
+        return specKey -- Fallback to raw key
     end
 
     local function CreateHeader(text, relativeTo, yOffset)
@@ -124,21 +127,35 @@ function MSC.CreateOptionsFrame()
         info.text = "Auto-Detect"; info.value = "AUTO"; info.func = OnClick; info.checked = (SGJ_Settings.Mode == "AUTO"); UIDropDownMenu_AddButton(info)
 
         local _, class = UnitClass("player")
+        local sortedKeys = {}
+        
+        -- [[ COMBINE BOTH DATABASES FOR MENU ]] --
+        
+        -- 1. Add Endgame Specs
         if MSC.WeightDB and MSC.WeightDB[class] then
-            local sortedKeys = {}
-            for k in pairs(MSC.WeightDB[class]) do if k ~= "Default" then table.insert(sortedKeys, k) end end
-            table.sort(sortedKeys)
-
-            info = UIDropDownMenu_CreateInfo(); info.text = "--- Manual Selection ---"; info.isTitle = true; info.notCheckable = true; UIDropDownMenu_AddButton(info)
-
-            for _, key in ipairs(sortedKeys) do
-                info = UIDropDownMenu_CreateInfo()
-                info.text = GetDisplayName(key)
-                info.value = key
-                info.func = OnClick
-                info.checked = (SGJ_Settings.Mode == key)
-                UIDropDownMenu_AddButton(info)
+            for k in pairs(MSC.WeightDB[class]) do 
+                if k ~= "Default" then table.insert(sortedKeys, k) end 
             end
+        end
+        
+        -- 2. Add Leveling Specs
+        if MSC.LevelingWeightDB and MSC.LevelingWeightDB[class] then
+            for k in pairs(MSC.LevelingWeightDB[class]) do 
+                if k ~= "Default" then table.insert(sortedKeys, k) end 
+            end
+        end
+        
+        table.sort(sortedKeys)
+
+        info = UIDropDownMenu_CreateInfo(); info.text = "--- Manual Selection ---"; info.isTitle = true; info.notCheckable = true; UIDropDownMenu_AddButton(info)
+
+        for _, key in ipairs(sortedKeys) do
+            info = UIDropDownMenu_CreateInfo()
+            info.text = GetDisplayName(key)
+            info.value = key
+            info.func = OnClick
+            info.checked = (SGJ_Settings.Mode == key)
+            UIDropDownMenu_AddButton(info)
         end
     end
     
@@ -155,7 +172,7 @@ function MSC.CreateOptionsFrame()
     local tooltipCheck = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); tooltipCheck:SetPoint("TOPLEFT", minimapCheck, "BOTTOMLEFT", 0, -5); tooltipCheck.Text:SetText("Show Verdict in Tooltips"); tooltipCheck:SetChecked(not SGJ_Settings.HideTooltips)
     tooltipCheck:SetScript("OnClick", function(self) SGJ_Settings.HideTooltips = not self:GetChecked() end)
 
-    -- [[ 4. RECEIPT & HISTORY BUTTONS (Restored) ]] --
+    -- [[ 4. RECEIPT & HISTORY BUTTONS ]] --
     local receiptBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     receiptBtn:SetPoint("TOPLEFT", tooltipCheck, "BOTTOMLEFT", 20, -20)
     receiptBtn:SetSize(200, 30)
@@ -174,7 +191,7 @@ function MSC.CreateOptionsFrame()
         if MSC.ShowHistory then MSC.ShowHistory() else print("Core module not ready.") end
     end)
 
-    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5); credits:SetText("Author: Supersharpie (v1.8.5)")
+    local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); credits:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); credits:SetTextColor(0.5, 0.5, 0.5); credits:SetText("Author: Supersharpie (v1.9.0)")
 
     -- [[ ON SHOW REFRESH ]] --
     f:SetScript("OnShow", function(self)

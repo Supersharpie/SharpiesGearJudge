@@ -1,38 +1,67 @@
+# Sharpie's Gear Judge - Version History
+
+## v1.9.0 - The "Engine Rebuild" Update
+### 🏗️ Major Architecture Overhaul
+* **Modular "Two-Brain" System:** Completely rewrote the addon's core logic into a professional modular architecture. The addon now features two distinct engines: a **Leveling Engine** (for growth) and a **Dynamic Engine** (for endgame), managed by a smart "Traffic Controller."
+* **Database Consolidation:** All stat weights, pretty names, and enchant data have been moved to a centralized Data Warehouse (`Database.lua`), making the addon faster and easier to update.
+
+### ⚔️ The Leveling Revolution
+* **30+ New Profiles:** The addon now understands the nuance of leveling! It no longer treats a Level 25 Mage the same as a Level 59 Mage.
+* **Smart Brackets:** Introduced specific weighting for leveling brackets (e.g., *Leveling 21-40* vs *Leveling 41-51*).
+* **Pre-BiS Logic:** Added dedicated "Pre-BiS" logic for levels 52-59, helping you start collecting your endgame gear before you even hit 60.
+
+### 🧠 Smarter Scoring & Math
+* **"Green Item" Fix:** Implemented a **"Heavy Duty" Text Parser**. The Judge now correctly reads and scores "Random Enchantment" items (e.g., *"...of the Owl"* or *"...of the Eagle"*) that the standard WoW API often returns as empty.
+* **Math Breakdown Upgrade:** The Math Window (`/sgj math`) now displays human-readable profile names (e.g., *"Leveling: Affliction (21-40)"*) instead of raw internal codes.
+* **Manual Override:** Added a "Manual Mode" to the Minimap menu. You can now force the Judge to use a specific profile (e.g., forcing "Pre-BiS Farming" logic while still Level 58).
+
+### 🛡️ Peacekeeper Module (Conflict Manager)
+* **Addon Diplomacy:** Added a dedicated **Conflict Manager**. The Judge now detects active instances of *RestedXP*, *Zygor*, or *Pawn* and offers to auto-disable their conflicting tooltips to keep your interface clean.
+
+### 🔧 Technical Improvements
+* **File Consolidation:** Merged `Scoring.lua`, `Enchants.lua`, and `TextParser.lua` into a single, unified `Helpers.lua` master toolbox. This reduces file loads and eliminates "nil value" errors caused by load order.
+* **Wand Speed Logic:** Finalized the math for Wands—Speed is now deemed irrelevant for scoring (DPS is king), preventing false positives on "Fast" wands.
+
+------------------------------------------------------------------------------------------------
+
 ## v1.8.5
-* **New Name-Based Talent Scanner: Completely replaced the old "index-based" system with a new smart scanner. The addon now detects talents by their English name, making it immune to internal ID shifts caused by Blizzard patches (like the recent Anniversary update).
+* **New Name-Based Talent Scanner:** Completely replaced the old "index-based" system with a new smart scanner. The addon now detects talents by their English name, making it immune to internal ID shifts caused by Blizzard patches (like the recent Anniversary update).
 
 ### 🩸 Smarter Spec Detection
-* **Strict Priority Logic: The engine now correctly distinguishes between specific builds (e.g., Shockadin vs. Holy Raid vs. Deep Holy) based on key talent "anchors" (like Kings, Illumination, or Reckoning).
-* **Dungeon Role Protection: Fixed an issue where generic "Leveling" weights would overwrite your stats even if you were playing a dedicated Tank or Healer spec while below level 60.
-* **Live Updates: The "Auto-Detect" feature now updates instantly when you spend a talent point or open the config window—no more /reload required to see changes!
+* **Strict Priority Logic:** The engine now correctly distinguishes between specific builds (e.g., Shockadin vs. Holy Raid vs. Deep Holy) based on key talent "anchors" (like Kings, Illumination, or Reckoning).
+* **Dungeon Role Protection:** Fixed an issue where generic "Leveling" weights would overwrite your stats even if you were playing a dedicated Tank or Healer spec while below level 60.
+* **Live Updates:** The "Auto-Detect" feature now updates instantly when you spend a talent point or open the config window—no more `/reload` required to see changes!
 
 ### 🪰 Bug Fixes & Polish
-* **UI Display Fixed: Resolved the issue where the dropdown would display raw codes like Auto: Holy(Auto) or DEEP_PROT. It now correctly displays user-friendly names like "Auto: Healer: Holy (Illumination)".
-* **Naming Mismatch Resolved: Fixed internal naming errors for Rogues, Warlocks, and Paladins that were preventing the correct stat weights from loading (e.g., RAID_COMBAT_SWORDS vs PVE_COMBAT_SWORDS).
-* **Leveling Brackets: Re-integrated polished leveling weights (Leveling_1_20, 21_40, etc.) that automatically apply to pure DPS/Hybrid builds while leveling.
+* **UI Display Fixed:** Resolved the issue where the dropdown would display raw codes like `Auto: Holy(Auto)` or `DEEP_PROT`. It now correctly displays user-friendly names like "Auto: Healer: Holy (Illumination)".
+* **Naming Mismatch Resolved:** Fixed internal naming errors for Rogues, Warlocks, and Paladins that were preventing the correct stat weights from loading (e.g., `RAID_COMBAT_SWORDS` vs `PVE_COMBAT_SWORDS`).
+* **Leveling Brackets:** Re-integrated polished leveling weights (`Leveling_1_20`, `21_40`, etc.) that automatically apply to pure DPS/Hybrid builds while leveling.
 
 ### 🧾 For Developers / Debugging
-* **Added a new slash command: /sgjtalents
-* **Prints your current talent tree points and validates which "Key Talents" the addon has successfully detected. Useful for verifying your build.
+* **Added a new slash command:** `/sgjtalents`
+* Prints your current talent tree points and validates which "Key Talents" the addon has successfully detected. Useful for verifying your build.
+
 ------------------------------------------------------------------------------------------------
 
 ## v1.8.2 - v1.8.3
-* ** small naming issue causing almost unnoticeable silent fail in game .
-* ** Equip: stats name ordering, Trying to be "clever" with short patterns is what caused this mess because "spells and effects" is a phrase used by both Healing gear and specific Shadow/Fire gear.
-* ** The inconsistent wording in Vanilla WoW (sometimes "Shadow damage" and sometimes "damage done by Shadow spells") is a classic parser trap. Parser was misreading "Shadow spells and effects" as generic "Healing Power"
+* **Hotfix:** Small naming issue causing almost unnoticeable silent fail in game.
+* **Fix:** `Equip:` stats name ordering. Trying to be "clever" with short patterns caused parser errors because "spells and effects" is a phrase used by both Healing gear and specific Shadow/Fire gear.
+* **Context:** The inconsistent wording in Vanilla WoW (sometimes "Shadow damage" and sometimes "damage done by Shadow spells") is a classic parser trap. Parser was misreading "Shadow spells and effects" as generic "Healing Power".
+
 ------------------------------------------------------------------------------------------------
-  
+
 ## v1.8.1
 ### 🧾Features & QoL:
-* **Smart Spec Detection: When inspecting a target, the addon now reads their talent tree to automatically detect their spec (e.g., "Holy" vs "Retribution") and applies the correct stat weights immediately.
-* **Manual Set Saving: Added a new "Save" bar to your own Gear Receipt window. You can now type a custom name (e.g., "Fire Res Set") and save a snapshot to your History without using slash commands.
-* **Improved Window Titles: The Receipt window now displays the detected spec next to the player's name (e.g., "Judge: PlayerName (Destruction)").
+* **Smart Spec Detection:** When inspecting a target, the addon now reads their talent tree to automatically detect their spec (e.g., "Holy" vs "Retribution") and applies the correct stat weights immediately.
+* **Manual Set Saving:** Added a new "Save" bar to your own Gear Receipt window. You can now type a custom name (e.g., "Fire Res Set") and save a snapshot to your History without using slash commands.
+* **Improved Window Titles:** The Receipt window now displays the detected spec next to the player's name (e.g., "Judge: PlayerName (Destruction)").
 
 ### 🪰 Bug Fixes:
-* **Fixed Infinite Inspection Loop: Resolved an issue where the Judge window would continuously refresh or flash empty slots due to server latency.
-* **Fixed "0.0" Score Bug: The window now properly waits for item data to be cached before calculating scores, preventing the "Zero Score" error on first inspect.
-* **Fixed Lua Crash: Added safety checks for nil/string values in the talent scanner to prevent crashes when receiving invalid server data.
-* **UI Overlap Fix: Adjusted the footer layout in the Receipt window to prevent the "Score" text from overlapping with the "Combined Stats" list.
+* **Fixed Infinite Inspection Loop:** Resolved an issue where the Judge window would continuously refresh or flash empty slots due to server latency.
+* **Fixed "0.0" Score Bug:** The window now properly waits for item data to be cached before calculating scores, preventing the "Zero Score" error on first inspect.
+* **Fixed Lua Crash:** Added safety checks for nil/string values in the talent scanner to prevent crashes when receiving invalid server data.
+* **UI Overlap Fix:** Adjusted the footer layout in the Receipt window to prevent the "Score" text from overlapping with the "Combined Stats" list.
+
 ------------------------------------------------------------------------------------------------
 
 ## v1.8.0 - The "Final Polish" Update
@@ -72,8 +101,8 @@
 ### 🧾 UI Polish
 * **Action Bar:** Moved buttons to a new dedicated footer row.
 * **Smart Layout:** "Judge Target", "Export", and "Print" are now evenly spaced for a cleaner look.
-------------------------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------------------------
 
 ## v1.6.2 - The "Dynamic Engine" Update
 ### 🧠 Real-Time Stat Engine
@@ -84,14 +113,12 @@
 * **Universal Scaling:** This engine works for **Leveling Profiles** too! A Level 14 Paladin with *Divine Strength* will see accurate, scaled weights just like a Level 60 raider.
 
 ## v1.6.1
-* **Added: "Smart Capping" logic.
-* **The addon now checks your character's current Hit % and Spell Hit % in real-time.
+* **Added: "Smart Capping" logic.**
+* The addon now checks your character's current Hit % and Spell Hit % in real-time.
 
 ## v1.6.0 - The "Receipt & Reality" Update
-
 ### 🌟 New Experimental Feature: The Gear Receipt
 * **Character Audit Window:** Added a new UI (`/sgjreceipt`) that displays a categorized list of all your equipped gear and their individual scores.
 * **Combined Stat Summary:** The Receipt now mathematically sums up stats from all your gear and displays them in a clean grid.
 * **Smart Filtering:** The summary automatically highlights your class's primary stats in **Green** and hides irrelevant stats (e.g., Agility is hidden for Warlocks, Strength is hidden for Mages).
-
 * **Visual Overhaul:** Added class-colored borders, item icons, and zebra-striped rows for better readability.

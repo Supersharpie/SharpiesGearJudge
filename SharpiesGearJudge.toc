@@ -2,16 +2,14 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r
 ## Notes: The Final Verdict on your gear. (Features Complete)
 ## Author: SuperSharpie
-## Version: 1.8.5
+## Version: 1.9.0
 ## SavedVariables: SGJ_Settings, SGJ_History
 
-Database.lua
-TextParser.lua
-Enchants.lua
-Dynamic_Engine.lua
-Scoring.lua
 Helpers.lua
-ConflictManager.lua
-UI_Lab.lua
+Database.lua
+Leveling_Engine.lua
+Dynamic_Engine.lua
 UI_Menus.lua
+UI_Lab.lua
+ConflictManager.lua
 Core.lua

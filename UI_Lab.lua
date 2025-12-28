@@ -449,9 +449,16 @@ function MSC.ShowMathBreakdown()
     local function add(text, isHeader) if isHeader then table.insert(log, "\n|cffffd100" .. text .. "|r") else table.insert(log, text) end end
     
     local _, class = UnitClass("player"); local lvl = UnitLevel("player"); local weights, detectedKey = MSC.GetCurrentWeights()
+    
+    -- [[ FIX: LOOKUP PRETTY NAME ]] --
+    local displayName = detectedKey
+    if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][detectedKey] then
+        displayName = MSC.PrettyNames[class][detectedKey]
+    end
+
     add("=== CUSTOMER INFORMATION ===", true)
     add(format("Class: %s | Level: %d", class, lvl))
-    add(format("Detected Profile: |cff00ff00%s|r", detectedKey))
+    add(format("Detected Profile: |cff00ff00%s|r", displayName)) -- Uses Pretty Name now
     
     add("=== TALENT ADJUSTMENTS ===", true)
     local foundTalent = false
@@ -478,7 +485,7 @@ function MSC.ShowMathBreakdown()
     add(format("Current Hit: %.1f%%  |  Hard Cap: %d%%", myHit, hitCap))
     if myHit >= hitCap then add("|cffff0000• HARD CAP REACHED:|r Hit Weight = 0.01") else add("• Under Cap: Hit Rating is FULL VALUE.") end
 
-    -- [[ HELPER: Get Stat Reasoning (UPDATED) ]]
+    -- [[ HELPER: Get Stat Reasoning ]]
     local function GetStatReason(stat, class, profileName)
         if not profileName then profileName = "" end
         
