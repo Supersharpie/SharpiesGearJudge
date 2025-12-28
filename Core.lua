@@ -15,6 +15,36 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         if not SGJ_Settings then SGJ_Settings = { Mode = "Auto", MinimapPos = 45, IncludeEnchants = false, ProjectEnchants = true } end
         if not SGJ_History then SGJ_History = {} end 
         if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
+
+        -- [[ 🛡️ LEVELING PROTECTION OVERRIDE 🛡️ ]] --
+        -- This intercepts the detection logic. If under Level 60, it FORCES a leveling profile.
+        -- If Level 60, it lets the standard detector run (checking for Raid/PvP specs).
+        if MSC.GetCurrentWeights and not MSC.Hooked_GetCurrentWeights then
+            MSC.Hooked_GetCurrentWeights = MSC.GetCurrentWeights -- Save original function
+            
+            MSC.GetCurrentWeights = function()
+                local lvl = UnitLevel("player")
+                
+                -- FORCE LEVELING PROFILE IF UNDER 60
+                if lvl < 60 then
+                    local _, class = UnitClass("player")
+                    local key = "Leveling_41_59" -- Default high bracket
+                    
+                    if lvl <= 20 then key = "Leveling_1_20"
+                    elseif lvl <= 40 then key = "Leveling_21_40" end
+                    
+                    -- Check if database has this leveling profile
+                    if MSC.WeightDB[class] and MSC.WeightDB[class][key] then
+                        local pName = (MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][key]) or key
+                        return MSC.WeightDB[class][key], pName
+                    end
+                end
+                
+                -- IF LEVEL 60 (or profile missing), RUN ORIGINAL DETECTION
+                return MSC.Hooked_GetCurrentWeights() 
+            end
+        end
+
         print("|cff00ccffSharpie's Gear Judge|r loaded!")
     end
 
@@ -33,6 +63,8 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         local newLevel = arg1
         C_Timer.After(2, function() -- Wait 2s for stats to update
             MSC.RecordSnapshot("Level " .. newLevel)
+            -- Force update to switch brackets if needed (e.g. hitting lvl 21 or 41)
+            if MSCLabFrame and MSCLabFrame:IsShown() then MSC.UpdateLabCalc() end
         end)
     end
 end)

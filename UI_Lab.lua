@@ -304,9 +304,9 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         else print("|cffff0000SGJ:|r Unsupported Class for Inspection."); return end
     end
 
-    -- [[ NAME CHANGE: Forces Fresh Window (v17) ]]
+    -- [[ NAME CHANGE: Forces Fresh Window (v19) ]]
     if not MSC.ReceiptFrame then
-        local f = CreateFrame("Frame", "SGJ_ReceiptFrame_v17", UIParent, "BasicFrameTemplateWithInset")
+        local f = CreateFrame("Frame", "SGJ_ReceiptFrame_v19", UIParent, "BasicFrameTemplateWithInset")
         f:SetSize(420, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
         f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
         f.TitleBg:SetHeight(30); f.TitleText:SetText("Sharpie's Gear Receipt")
@@ -497,10 +497,38 @@ function MSC.ShowMathBreakdown()
              return "Less Downtime (Eating/Drinking)"
         end
 
+        -- SPELL SCHOOL LOGIC (Class Specific)
+        if stat == "ITEM_MOD_SHADOW_DAMAGE_SHORT" then
+            if class == "WARLOCK" then return "Shadow Bolt / DoT Scaling" end
+            if class == "PRIEST" then return "Mind Blast / Flay Scaling" end
+            return "Specific Magic School"
+        end
+        if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then
+            if class == "MAGE" then return "Fireball / Pyro Scaling" end
+            if class == "WARLOCK" then return "Immolate / Conflag Scaling" end
+            return "Specific Magic School"
+        end
+        if stat == "ITEM_MOD_FROST_DAMAGE_SHORT" then return "Frostbolt / Blizzard Scaling" end
+        if stat == "ITEM_MOD_NATURE_DAMAGE_SHORT" then
+            if class == "SHAMAN" then return "Lightning / Chain Scaling" end
+            if class == "DRUID" then return "Wrath / Swarm Scaling" end
+            return "Specific Magic School"
+        end
+        if stat == "ITEM_MOD_ARCANE_DAMAGE_SHORT" then
+            if class == "MAGE" then return "Arcane Missiles / Blast" end
+            if class == "DRUID" then return "Starfire / Moonfire" end
+            return "Specific Magic School"
+        end
+        if stat == "ITEM_MOD_HOLY_DAMAGE_SHORT" then
+            if class == "PALADIN" then return "Judgement / Holy Shock" end
+            if class == "PRIEST" then return "Smite / Holy Fire" end
+            return "Specific Magic School"
+        end
+
         -- WARRIOR LOGIC
         if class == "WARRIOR" then
-            if profileName:find("Arms") and stat == "ITEM_MOD_CRIT_RATING_SHORT" then return "Deep Wounds / Impale Synergy" end
-            if profileName:find("Fury") and stat == "ITEM_MOD_CRIT_RATING_SHORT" then return "Flurry Uptime" end
+            if profileName:find("Arms") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Deep Wounds / Impale Synergy" end
+            if profileName:find("Fury") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Flurry Uptime" end
             if stat == "ITEM_MOD_AGILITY_SHORT" then return "Only grants Crit (No AP)" end
             if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 2 AP" end
             if stat == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return "Reduces Glancing Blow penalty" end
@@ -526,6 +554,8 @@ function MSC.ShowMathBreakdown()
             if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Useless in Combat)" end
             if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("PvP") then return "PvP Survival" end
             if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("Leveling") then return "Lifetap / Survival" end
+            if profileName:find("Fire") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Ignite / Combustion" end
+            if profileName:find("Destruction") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Ruin (High Crit Dmg)" end
         end
         
         -- HEALER LOGIC (Priest, Druid, Shaman, Paladin)
@@ -533,6 +563,7 @@ function MSC.ShowMathBreakdown()
             if stat == "ITEM_MOD_HEALING_POWER_SHORT" then return "Raw Healing Output" end
             if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana Sustain (Mp5)" end
             if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Spirit)" end
+            if class == "PALADIN" and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Mana Refund (Illumination)" end
         end
         
         -- TANK LOGIC
@@ -549,16 +580,11 @@ function MSC.ShowMathBreakdown()
         if stat == "ITEM_MOD_INTELLECT_SHORT" then return "1 Int = 15 Mana + Crit" end
         if stat == "ITEM_MOD_STRENGTH_SHORT" then return "Melee AP" end
         if stat == "ITEM_MOD_AGILITY_SHORT" then return "Crit + Armor" end
-        if stat == "ITEM_MOD_SHADOW_DAMAGE_SHORT" then return "Specific Magic School" end
-        if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then return "Specific Magic School" end
-        if stat == "ITEM_MOD_FROST_DAMAGE_SHORT" then return "Specific Magic School" end
-        if stat == "ITEM_MOD_NATURE_DAMAGE_SHORT" then return "Specific Magic School" end
-        if stat == "ITEM_MOD_ARCANE_DAMAGE_SHORT" then return "Specific Magic School" end
-        if stat == "ITEM_MOD_HOLY_DAMAGE_SHORT" then return "Specific Magic School" end
         if stat == "ITEM_MOD_SPELL_HEALING_DONE_SHORT" then return "Healing Power" end
         if stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then return "Hit Chance (Spell)" end
         if stat == "ITEM_MOD_CRIT_SPELL_RATING_SHORT" then return "Crit Chance (Spell)" end
         if stat == "ITEM_MOD_CRIT_RATING_SHORT" then return "Crit Chance (Melee)" end
+        if stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then return "Crit Chance (Spell)" end
         
         return nil
     end
