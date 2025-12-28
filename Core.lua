@@ -16,31 +16,32 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         if not SGJ_History then SGJ_History = {} end 
         if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
 
-        -- [[ 🛡️ LEVELING PROTECTION OVERRIDE 🛡️ ]] --
-        -- This intercepts the detection logic. If under Level 60, it FORCES a leveling profile.
-        -- If Level 60, it lets the standard detector run (checking for Raid/PvP specs).
+        -- [[ 🛡️ LEVELING PROTECTION OVERRIDE (v21) 🛡️ ]] --
         if MSC.GetCurrentWeights and not MSC.Hooked_GetCurrentWeights then
-            MSC.Hooked_GetCurrentWeights = MSC.GetCurrentWeights -- Save original function
+            MSC.Hooked_GetCurrentWeights = MSC.GetCurrentWeights 
             
             MSC.GetCurrentWeights = function()
+                -- 1. Manual Mode: Skip override
+                if SGJ_Settings.Mode ~= "Auto" then
+                    return MSC.Hooked_GetCurrentWeights()
+                end
+
+                -- 2. Auto Mode & Under 60: Force Leveling Profile
                 local lvl = UnitLevel("player")
-                
-                -- FORCE LEVELING PROFILE IF UNDER 60
                 if lvl < 60 then
                     local _, class = UnitClass("player")
-                    local key = "Leveling_41_59" -- Default high bracket
+                    local key = "Leveling_41_59" 
                     
                     if lvl <= 20 then key = "Leveling_1_20"
                     elseif lvl <= 40 then key = "Leveling_21_40" end
                     
-                    -- Check if database has this leveling profile
                     if MSC.WeightDB[class] and MSC.WeightDB[class][key] then
                         local pName = (MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][key]) or key
                         return MSC.WeightDB[class][key], pName
                     end
                 end
                 
-                -- IF LEVEL 60 (or profile missing), RUN ORIGINAL DETECTION
+                -- 3. Level 60: Standard Detection
                 return MSC.Hooked_GetCurrentWeights() 
             end
         end
@@ -61,9 +62,8 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
     -- [[ LEVEL UP SNAPSHOT ]] --
     if event == "PLAYER_LEVEL_UP" then
         local newLevel = arg1
-        C_Timer.After(2, function() -- Wait 2s for stats to update
+        C_Timer.After(2, function() 
             MSC.RecordSnapshot("Level " .. newLevel)
-            -- Force update to switch brackets if needed (e.g. hitting lvl 21 or 41)
             if MSCLabFrame and MSCLabFrame:IsShown() then MSC.UpdateLabCalc() end
         end)
     end
@@ -279,11 +279,23 @@ function MSC.UpdateTooltip(tooltip)
         local newStr = (newVal % 1 == 0) and string.format("%d", newVal) or string.format("%.1f", newVal)
         local diffStr = (diffVal % 1 == 0) and string.format("%d", diffVal) or string.format("%.1f", diffVal)
         if diffVal > 0 then diffStr = "+" .. diffStr end
+        
         local finalStr = ""
-        local r, g, b = 1, 1, 1 
-        if diffVal > 0 then finalStr = "|cffffffff" .. newStr .. "|r |cff00ff00(" .. diffStr .. ")|r"; r, g, b = 0, 1, 0 
-        elseif diffVal < 0 then finalStr = "|cffffffff" .. newStr .. "|r |cffff0000(" .. diffStr .. ")|r"; r, g, b = 1, 0.2, 0.2 
-        else if isEquipped then finalStr = "|cff00ff00" .. newStr .. "|r"; r, g, b = 1, 0.82, 0 else finalStr = "|cffffffff" .. newStr .. "|r |cff777777(+0)|r" end end
+        local r, g, b = 1, 1, 1
+        
+        if diffVal > 0 then 
+            finalStr = "|cffffffff" .. newStr .. "|r |cff00ff00(" .. diffStr .. ")|r"
+            r, g, b = 0, 1, 0 
+        elseif diffVal < 0 then 
+            finalStr = "|cffffffff" .. newStr .. "|r |cffff0000(" .. diffStr .. ")|r"
+            r, g, b = 1, 0.2, 0.2 
+        elseif isEquipped then 
+            finalStr = "|cff00ff00" .. newStr .. "|r"
+            r, g, b = 1, 0.82, 0 
+        else 
+            finalStr = "|cffffffff" .. newStr .. "|r |cff777777(+0)|r" 
+        end
+        
         return finalStr, r, g, b
     end
 
