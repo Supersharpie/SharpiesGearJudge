@@ -8,9 +8,10 @@
 
 
 Database.lua
-Dynamic_Engine.lua
 Leveling_Engine.lua
+Dynamic_Engine.lua
 Helpers.lua
+Evaluator.lua
 Core.lua
 ConflictManager.lua
 UI_Menus.lua

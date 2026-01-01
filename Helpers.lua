@@ -42,6 +42,7 @@ function MSC.GetCleanStatName(key)
     return clean:gsub("^%l", string.upper)
 end
 
+-- HELPER 1: Check if class can wear item
 function MSC.IsItemUsable(link)
     if not link then return false end
     local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
@@ -58,13 +59,34 @@ function MSC.IsItemUsable(link)
         elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
             if subclassID > 3 then return false end 
         end
-        -- Plate Users (Subclass 4) - Warrior/Paladin can wear everything.
     end
     
     if classID == 2 and MSC.ValidWeapons and MSC.ValidWeapons[playerClass] then
         if not MSC.ValidWeapons[playerClass][subclassID] then return false end
     end
     return true
+end
+
+-- HELPER 2: Determines what kind of enchant an item can accept
+function MSC:GetValidEnchantType(itemLink)
+    if not itemLink then return nil end
+    local _, _, _, _, _, itemClass, itemSubClassID, _, itemEquipLoc = GetItemInfo(itemLink)
+    
+    -- 1. Ranged Weapons (Scopes)
+    if itemEquipLoc == "INVTYPE_RANGED" or itemEquipLoc == "INVTYPE_RANGEDRIGHT" then
+        if itemSubClassID == 2 or itemSubClassID == 3 or itemSubClassID == 18 then return "SCOPE" end
+        return nil 
+    end
+    -- 2. Shields
+    if itemEquipLoc == "INVTYPE_SHIELD" then return "SHIELD" end
+    -- 3. Held In Off-Hand (Cannot enchant)
+    if itemEquipLoc == "INVTYPE_HOLDABLE" then return nil end
+    -- 4. 2-Handed Weapons
+    if itemEquipLoc == "INVTYPE_2HWEAPON" then return "2H_WEAPON" end
+    -- 5. 1-Handed Weapons
+    if itemClass == 2 then return "WEAPON" end
+    
+    return "ARMOR"
 end
 
 -- =============================================================
@@ -250,36 +272,38 @@ function MSC.ProjectGems(itemLink, bonusStats)
     return finalStats, hasSockets, useMatch, gemText
 end
 
-function MSC.GetBestEnchantForSlot(slotId, level, specName)
-    -- 1. Get current dynamic weights (Hit Cap Aware)
-    local weights = MSC.GetCurrentWeights()
-    if not weights or not next(weights) then return nil end
-    
-    -- 2. Select Candidate List (Level 60 is the TBC transition)
-    local dbToUse = (level >= 60) and MSC.EnchantCandidates or MSC.EnchantCandidates_Leveling
-    local candidates = dbToUse and dbToUse[slotId]
-    if not candidates or #candidates == 0 then return nil end
-    
+function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType)
+    local bestScore = 0
     local bestID = nil
-    local bestScore = -1
     
-    -- 3. Mathematical Comparison
-    for _, eID in ipairs(candidates) do
-        local data = MSC.EnchantDB[eID]
-        if data and data.stats then
-            local score = 0
-            for stat, val in pairs(data.stats) do
-                if weights[stat] then
-                    score = score + (val * weights[stat])
-                end
+    -- Loop through your Enchant Database directly
+    if not MSC.EnchantDB then return nil end
+
+    for eID, data in pairs(MSC.EnchantDB) do
+        local isValid = false
+
+        -- FILTER 1: Slot Match
+        if data.slot == slotId then isValid = true end
+        
+        -- FILTER 2: Type Match (Scopes vs Shields vs Weapons)
+        if isValid and enchantType then
+            if enchantType == "SCOPE" then
+                if not data.isScope then isValid = false end
+            elseif enchantType == "SHIELD" then
+                if not data.isShield then isValid = false end
+            elseif enchantType == "WEAPON" or enchantType == "2H_WEAPON" then
+                if data.isShield or data.isScope then isValid = false end
+                if data.requires2H and enchantType ~= "2H_WEAPON" then isValid = false end
             end
-            
-            -- Tie-breaker: If scores are equal, prefer the higher ID (usually newer)
+        end
+
+        -- Score it
+        if isValid then
+            local weights = MSC.GetCurrentWeights()
+            local score = MSC.GetItemScore(data.stats, weights, specName)
             if score > bestScore then
                 bestScore = score
                 bestID = eID
-            elseif score == bestScore and score > 0 then
-                if eID > (bestID or 0) then bestID = eID end
             end
         end
     end
@@ -320,10 +344,13 @@ end
 function MSC.SafeGetItemStats(itemLink, slotId)
     if not itemLink then return {} end
     
+    -- [[ MOVED UP ]] Extract ID early so we can use it for Procs
+    local id = tonumber(itemLink:match("item:(%d+)"))
+
     -- A. Base Stats (API)
     local stats = GetItemStats(itemLink) or {}
     local finalStats = {}
-    local bonusStats = {} -- Holds Socket Bonus separately
+    local bonusStats = {} 
     
     for k, v in pairs(stats) do
         if MSC.StatShortNames[k] or k == "ITEM_MOD_SPELL_HEALING_DONE" or k == "ITEM_MOD_SPELL_DAMAGE_DONE" then 
@@ -333,28 +360,34 @@ function MSC.SafeGetItemStats(itemLink, slotId)
         end
     end
     
-    -- B. Tooltip Scan (Catch missing stats + Separate Socket Bonus)
+    -- B. Tooltip Scan (Catch missing stats + Socket Bonus + PROCS)
     local tipName = "MSC_ScannerTooltip"
     local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE")
     tip:ClearLines()
     tip:SetHyperlink(itemLink)
+    
     for i = 2, tip:NumLines() do
         local line = _G[tipName.."TextLeft"..i]; local text = line and line:GetText()
         if text then
+            -- 1. Standard Stat Parse
             local s, v, isBonus = MSC.ParseTooltipLine(text)
             if s and v then
-                if isBonus then
-                    bonusStats[s] = (bonusStats[s] or 0) + v
-                elseif not finalStats[s] then 
-                    finalStats[s] = (finalStats[s] or 0) + v 
+                if isBonus then bonusStats[s] = (bonusStats[s] or 0) + v
+                elseif not finalStats[s] then finalStats[s] = (finalStats[s] or 0) + v end
+            end
+
+            -- 2. [[ NEW ]] Proc Text Parse (The Wiring!)
+            if id then
+                local pStat, pVal = MSC:ParseProcText(text, id)
+                if pStat and pVal > 0 then
+                    finalStats[pStat] = (finalStats[pStat] or 0) + pVal
                 end
             end
         end
     end
 
     -- C. Manual Overrides
-    local id = tonumber(itemLink:match("item:(%d+)"))
     if id and MSC.ItemOverrides and MSC.ItemOverrides[id] then
         local override = MSC.ItemOverrides[id]
         if override.replace then finalStats = {} end
@@ -364,55 +397,41 @@ function MSC.SafeGetItemStats(itemLink, slotId)
         if override.estimate then finalStats.estimate = true end
     end
 
-    -- D. ENCHANT PROJECTION
+    -- D. ENCHANT PROJECTION (Updated)
     local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 3 
-    if enchantMode == 2 then 
-        local _, _, _, enchantID = string.find(itemLink, "item:%d+:(%d+)")
-        if enchantID and tonumber(enchantID) > 0 and MSC.EnchantDB[tonumber(enchantID)] then
-            local eStats = MSC.EnchantDB[tonumber(enchantID)]
-            local src = eStats.stats or eStats
-            for k, v in pairs(src) do if k~="name" then finalStats[k] = (finalStats[k] or 0) + v end end
-        end
-    elseif enchantMode == 3 and slotId then 
-        local level = UnitLevel("player")
-        local _, specName = MSC.GetCurrentWeights()
-        local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName)
-        if bestID and MSC.EnchantDB[bestID] then
-            local eStats = MSC.EnchantDB[bestID]
-            local src = eStats.stats or eStats
-            for k, v in pairs(src) do if k~="name" then finalStats[k] = (finalStats[k] or 0) + v end end
-            finalStats.IS_PROJECTED = true
-            finalStats.ENCHANT_TEXT = eStats.name
+    if enchantMode == 3 and slotId then 
+        -- [[ NEW ]] Check if item can be enchanted
+        local enchantType = MSC:GetValidEnchantType(itemLink)
+        
+        if enchantType then
+            local level = UnitLevel("player")
+            local _, specName = MSC.GetCurrentWeights()
+            -- Pass the type so we get Scopes for Bows, etc.
+            local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType)
+            
+            if bestID and MSC.EnchantDB[bestID] then
+                local eStats = MSC.EnchantDB[bestID]
+                local src = eStats.stats or eStats
+                for k, v in pairs(src) do if k~="name" then finalStats[k] = (finalStats[k] or 0) + v end end
+                finalStats.IS_PROJECTED = true
+                finalStats.ENCHANT_TEXT = eStats.name
+            end
         end
     end
 
-    -- E. GEM PROJECTION (Pass Bonus Stats to decide)
+    -- E. GEM PROJECTION
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
-    
-    -- Legacy Modes (1 & 2): Assume Bonus is Active if Gems present (or empty sockets usually imply potential)
     if gemMode == 1 or gemMode == 2 then
-        -- Just add bonus stats blindly (Old Behavior)
         for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
-        
-        -- If Mode 2 (Current Gems), standard API handles current gem stats, nothing to add.
-    
-    -- Projection Modes (3 & 4)
     else
         local gemStats, hasSockets, bonusActive, gemText = MSC.ProjectGems(itemLink, bonusStats)
         if hasSockets then
             for k, v in pairs(gemStats) do if k~="COUNT" then finalStats[k] = (finalStats[k] or 0) + v end end
             finalStats.GEMS_PROJECTED = gemStats.COUNT 
             finalStats.GEM_TEXT = gemText
-            
--- Only add bonus if the Projector says we matched!
             if bonusActive then 
-                local bonusApplied = false
-                for k, v in pairs(bonusStats) do 
-                    finalStats[k] = (finalStats[k] or 0) + v 
-                    bonusApplied = true
-                end
-                -- Only show the text if we actually added stats
-                if bonusApplied then finalStats.BONUS_PROJECTED = true end
+                for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
+                finalStats.BONUS_PROJECTED = true 
             end
         end
     end
@@ -613,4 +632,49 @@ function MSC.ApplyElvUISkin(frame)
             if S and S.HandleFrame then S:HandleFrame(frame, true) end
         end
     end
+end
+-- ============================================================================
+--  6. PROC CALCULATOR (The "Chance on Hit" Fix)
+-- ============================================================================
+function MSC:ParseProcText(text, itemID)
+-- Inputs:
+--   text: The tooltip text (e.g., "Chance on hit: Increases Haste by 300 for 10 sec")
+--   itemID: The ID of the item (to look up PPM)
+-- Returns: 
+--   statName: (e.g., "HASTE")
+--   value: The calculated static value (e.g., 25)
+    -- 1. Check if this is actually a proc line
+    if not (string.find(text, "Chance on hit:") or string.find(text, "Equip: When struck")) then
+        return nil, 0
+    end
+
+    -- 2. Look up the Hidden Variable (PPM)
+    -- If the item isn't in your ProcDB, we default to 1.0 PPM just to give it SOME value.
+    local procData = MSC:GetProcData(itemID)
+    local ppm = procData and procData.ppm or 1.0 
+    
+    -- 3. Extract the Numbers from the text
+    -- We are looking for "by X" (Amount) and "for Y sec" (Duration)
+    local amount = tonumber(string.match(text, "by (%d+)"))
+    local duration = tonumber(string.match(text, "for (%d+) sec"))
+    
+    if not amount or not duration then return nil, 0 end
+
+    -- 4. Identify the Stat
+    local statName = nil
+    if string.find(text, "Haste") then statName = "HASTE"
+    elseif string.find(text, "Strength") then statName = "STR"
+    elseif string.find(text, "Agility") then statName = "AGI"
+    elseif string.find(text, "Intellect") then statName = "INT"
+    elseif string.find(text, "Attack Power") then statName = "AP"
+    elseif string.find(text, "Spell Power") or string.find(text, "damage and healing") then statName = "SPELL_DMG"
+    end
+
+    if not statName then return nil, 0 end
+
+    -- 5. The Math (The "Static Stat Equivalent" Formula)
+    -- Value = (Amount * Duration * PPM) / 60 seconds
+    local sse = (amount * duration * ppm) / 60
+    
+    return statName, sse
 end
