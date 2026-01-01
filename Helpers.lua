@@ -3,7 +3,6 @@ local _, MSC = ...
 -- =============================================================
 -- 1. GENERAL HELPERS
 -- =============================================================
--- New Table for "Short Form" Tooltip Text
 MSC.StatShortNames = {
     ["ITEM_MOD_STAMINA_SHORT"] = "Stam",
     ["ITEM_MOD_INTELLECT_SHORT"] = "Int",
@@ -22,10 +21,23 @@ MSC.StatShortNames = {
     ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = "Resil",
     ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = "ArP",
     ["ITEM_MOD_BLOCK_VALUE_SHORT"] = "BlockVal",
+    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = "SpellCrit",
+    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = "SpellHit",
+    ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = "Shadow",
+    ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = "Fire",
+    ["ITEM_MOD_FROST_DAMAGE_SHORT"] = "Frost",
+    ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = "Arcane",
+    ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = "Nature",
+    ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = "Holy",
 }
 
+function MSC.Round(num, numDecimalPlaces)
+    local mult = 10^(numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
 function MSC.GetCleanStatName(key)
-    if MSC.ShortNames and MSC.ShortNames[key] then return MSC.ShortNames[key] end
+    if MSC.StatShortNames and MSC.StatShortNames[key] then return MSC.StatShortNames[key] end
     local clean = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower()
     return clean:gsub("^%l", string.upper)
 end
@@ -35,22 +47,18 @@ function MSC.IsItemUsable(link)
     local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
     local _, playerClass = UnitClass("player")
     
-    if classID == 4 and subclassID == 0 then return true end
-    if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" or equipLoc == "INVTYPE_NECK" or equipLoc == "INVTYPE_CLOAK" then return true end
-
-    if classID == 4 then
-        if subclassID == 6 then
-            if playerClass == "WARRIOR" or playerClass == "PALADIN" or playerClass == "SHAMAN" then return true end
-            return false
+    if classID == 4 then -- Armor
+        -- Cloth Users (Subclass 1)
+        if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then 
+            if subclassID > 1 then return false end 
+        -- Leather Users (Subclass 2)
+        elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
+            if subclassID > 2 then return false end 
+        -- Mail Users (Subclass 3)
+        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
+            if subclassID > 3 then return false end 
         end
-        if subclassID == 7 then return (playerClass == "PALADIN") end
-        if subclassID == 8 then return (playerClass == "DRUID") end
-        if subclassID == 9 then return (playerClass == "SHAMAN") end
-        if subclassID == 10 then return (playerClass == "DEATHKNIGHT") end
-        
-        if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then if subclassID > 1 then return false end 
-        elseif playerClass == "ROGUE" or playerClass == "DRUID" then if subclassID > 2 then return false end 
-        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then if subclassID > 3 then return false end end
+        -- Plate Users (Subclass 4) - Warrior/Paladin can wear everything.
     end
     
     if classID == 2 and MSC.ValidWeapons and MSC.ValidWeapons[playerClass] then
@@ -59,239 +67,474 @@ function MSC.IsItemUsable(link)
     return true
 end
 
-function MSC.GetCurrentWeights()
-    local _, englishClass = UnitClass("player")
-    if not englishClass then return {}, "Unknown" end
-    local classData = MSC.WeightDB and MSC.WeightDB[englishClass]
-    if not classData then return {}, "No Data" end
+-- =============================================================
+-- 2. TBC STAT PARSER (Smart Bonus Detection)
+-- =============================================================
+function MSC.ParseTooltipLine(text)
+    if not text then return nil, 0, false end
     
-    if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "Auto" and classData[SGJ_Settings.Mode] then
-        local displayName = SGJ_Settings.Mode
-        if displayName == "Hybrid" then displayName = "Leveling (Manual)" end
-        return classData[SGJ_Settings.Mode], displayName
-    end
+    -- [[ 1. CRITICAL FIX: Sanitize Newlines/Wrapping ]]
+    text = text:gsub("\n", " "):gsub("%s+", " ")
 
-    local maxPoints, activeSpec = 0, "Default"
-    local specIndex = 1
-    if MSC.SpecNames and MSC.SpecNames[englishClass] then
-        for i=1, 3 do
-            local _, _, pointsSpent, _, previewPoints = GetTalentTabInfo(i)
-            local totalPoints = (tonumber(pointsSpent) or 0) + (tonumber(previewPoints) or 0)
-            if totalPoints > maxPoints then 
-                maxPoints = totalPoints; activeSpec = MSC.SpecNames[englishClass][i]; specIndex = i
-            end
-        end
-    end
+    -- [[ 2. Set Bonus Filter ]]
+    if text:find("Set:") and not text:find("ff00ff00") then return nil, 0, false end
     
-    local playerLevel = UnitLevel("player")
-    if playerLevel < 70 then
-        local isDungeonRole = false
-        if englishClass == "WARRIOR" and specIndex == 3 then isDungeonRole = true end
-        if englishClass == "PALADIN" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end
-        if englishClass == "PRIEST" and (specIndex == 1 or specIndex == 2) then isDungeonRole = true end
-        if englishClass == "SHAMAN" and specIndex == 3 then isDungeonRole = true end
-        if englishClass == "DRUID" and specIndex == 3 then isDungeonRole = true end
+    -- [[ 3. Socket Bonus Detection ]]
+    local isSocketBonus = false
+    if text:find("Socket Bonus:") then isSocketBonus = true end
+
+    -- Remove Color Codes
+    text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    
+    -- [[ 4. Ignore Active/Temporary Effects ]]
+    if text:find("^Use:") or text:find("^Chance on hit:") then return nil, 0, false end
+    
+    local patterns = {
+        -- [[ TBC RATINGS ]]
+        { pattern = "hit rating by (%d+)", stat = "ITEM_MOD_HIT_RATING_SHORT" },
+        { pattern = "spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { pattern = "critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { pattern = "spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+        { pattern = "haste rating by (%d+)", stat = "ITEM_MOD_HASTE_RATING_SHORT" },
+        { pattern = "spell haste rating by (%d+)", stat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
+        { pattern = "resilience rating by (%d+)", stat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+        { pattern = "expertise rating by (%d+)", stat = "ITEM_MOD_EXPERTISE_RATING_SHORT" }, 
+        { pattern = "ignore (%d+) of your opponent's armor", stat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
         
-        if not isDungeonRole then
-            if playerLevel <= 20 and classData["Leveling_1_20"] then return classData["Leveling_1_20"], activeSpec .. " (Lv 1-20)"
-            elseif playerLevel <= 40 and classData["Leveling_21_40"] then return classData["Leveling_21_40"], activeSpec .. " (Lv 21-40)"
-            elseif playerLevel <= 57 and classData["Leveling_41_57"] then return classData["Leveling_41_57"], activeSpec .. " (Lv 41-57)"
-            elseif playerLevel <= 69 and classData["Leveling_58_69"] then return classData["Leveling_58_69"], activeSpec .. " (Outland)"
-            end
-        end
-    end
-    return (classData[activeSpec] or classData["Default"]), activeSpec .. " (Auto)"
-end
+        -- [[ SIMPLIFIED SPELL POWER ]]
+        { pattern = "Increases spell power by (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "Increases attack power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { pattern = "Increases healing by (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
 
--- =============================================================
--- 2. SAFE ITEM STATS (The Engine)
--- =============================================================
-function MSC.SafeGetItemStats(itemLink, slotId)
-    if not itemLink then return {} end 
-    local stats = GetItemStats(itemLink) or {}
-    local finalStats = {}
-    
-    -- [[ STAT NORMALIZATION ]]
-    for k, v in pairs(stats) do
-        if k == "ITEM_MOD_SPELL_HEALING_DONE" then 
-            finalStats["ITEM_MOD_HEALING_POWER_SHORT"] = (finalStats["ITEM_MOD_HEALING_POWER_SHORT"] or 0) + v
-        elseif k == "ITEM_MOD_SPELL_DAMAGE_DONE" then
-            finalStats["ITEM_MOD_SPELL_POWER_SHORT"] = (finalStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + v
-        else
-            finalStats[k] = v
-        end
-    end
-    
-    -- [[ 1. GEM PROJECTION ]]
-    local gemStats, hasSockets, bonusActive, gemText = MSC.ProjectGems(itemLink)
-    if hasSockets then
-        for k, v in pairs(gemStats) do finalStats[k] = (finalStats[k] or 0) + v end
-        finalStats.GEMS_PROJECTED = gemStats.COUNT 
-        finalStats.GEM_TEXT = gemText -- Store the text summary
-        if bonusActive then finalStats.BONUS_PROJECTED = true end
-    end
-    
-    -- [[ 2. ENCHANT PROJECTION ]]
-    local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 3 
-    if enchantMode == 2 then
-        local found = string.match(itemLink, "item:%d+:(%d+):")
-        if found and found ~= "0" then
-            local enchID = tonumber(found)
-            if MSC.EnchantDB[enchID] then
-                for k, v in pairs(MSC.EnchantDB[enchID]) do finalStats[k] = (finalStats[k] or 0) + v end
-            end
-        end
-    elseif enchantMode == 3 and slotId then
-        local _, specName = MSC.GetCurrentWeights()
-        local cleanSpec = string.match(specName, "^(%a+)") or "Default"
-        local dbToUse = (UnitLevel("player") < 70) and MSC.BestEnchants_Leveling or MSC.BestEnchants
-        if dbToUse[slotId] then
-            local enchID = dbToUse[slotId][cleanSpec] or dbToUse[slotId]["Default"]
-            if enchID and enchID > 0 and MSC.EnchantDB[enchID] then
-                local eStats = MSC.EnchantDB[enchID]
-                local txtParts = {}
-                for k, v in pairs(eStats) do 
-                    finalStats[k] = (finalStats[k] or 0) + v 
-                    table.insert(txtParts, "+" .. v .. " " .. (MSC.StatShortNames[k] or "Stat"))
-                end
-                finalStats.IS_PROJECTED = true
-                finalStats.ENCHANT_TEXT = table.concat(txtParts, "/")
-            end
-        end
-    end
-    
-    -- [[ 3. RACIAL SYNERGY ]]
-    local _, playerRace = UnitRace("player")
-    if MSC.RacialTraits and MSC.RacialTraits[playerRace] then
-        local _, _, _, _, _, _, itemSubType = GetItemInfo(itemLink)
-        if itemSubType then
-            local bonus = MSC.RacialTraits[playerRace][itemSubType]
-            if bonus then
-                finalStats[bonus.stat] = (finalStats[bonus.stat] or 0) + bonus.val
-                finalStats.IS_PROJECTED = true
-            end
-        end
-    end
-
-    -- [[ 4. TEXT PARSING ]]
-    if hasSockets or (slotId == 13) or (slotId == 11) or (slotId == 2) then 
-        local tooltip = MSCScanTooltip
-        if not tooltip then
-            tooltip = CreateFrame("GameTooltip", "MSCScanTooltip", nil, "GameTooltipTemplate")
-            tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-        end
-        tooltip:ClearLines()
-        tooltip:SetHyperlink(itemLink)
+        -- [[ CLASSIC / LEGACY ]]
+        { pattern = "Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
+        { pattern = "ranged attack power.-by (%d+)", stat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
+        { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "Arcane damage.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
         
-        for i = 2, tooltip:NumLines() do
-            local lineObj = _G["MSCScanTooltipTextLeft"..i]
-            if lineObj then
-                local line = lineObj:GetText()
-                if line then
-                    if hasSockets and (SGJ_Settings.GemMode == 3) and string.find(line, "Socket Bonus:") then
-                        local s, v = MSC.ParseStatText(line)
-                        if s and v and not stats[s] then finalStats[s] = (finalStats[s] or 0) + v end
-                    end
-                end
-            end
+        -- [[ REGEN / ATTRIBUTES ]]
+        { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { pattern = "%+(%d+) Stamina", stat = "ITEM_MOD_STAMINA_SHORT" },
+        { pattern = "%+(%d+) Intellect", stat = "ITEM_MOD_INTELLECT_SHORT" },
+        { pattern = "%+(%d+) Spirit", stat = "ITEM_MOD_SPIRIT_SHORT" },
+        { pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
+        { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
+        { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { pattern = "%+(%d+) Block", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+    }
+    
+    for _, p in ipairs(patterns) do
+        local val = text:match(p.pattern)
+        if val then return p.stat, (p.val or tonumber(val)), isSocketBonus end
+    end
+    return nil, 0, false
+end
+
+-- =============================================================
+-- 3. PROJECTION LOGIC (Gems & Enchants)
+-- =============================================================
+
+function MSC.GetBestGemForSocket(socketColor, level, weights)
+    local db = (level >= 70) and MSC.GemOptions or MSC.GemOptions_Leveling
+    local candidates = db[socketColor]
+    if not candidates then return nil, 0 end
+    
+    local bestGem, bestScore = nil, -1
+    
+    for _, gem in ipairs(candidates) do
+        local score = 0
+        if weights[gem.stat] then score = score + (gem.val * weights[gem.stat]) end
+        if gem.stat2 and weights[gem.stat2] then score = score + (gem.val2 * weights[gem.stat2]) end
+        
+        if score > bestScore then
+            bestScore = score
+            bestGem = gem
         end
     end
-    
-    return finalStats
+    return bestGem, bestScore
 end
 
--- =============================================================
--- 3. UTILITY FUNCTIONS
--- =============================================================
-function MSC.ParseStatText(text)
-    if not text then return nil end
-    for pattern, statKey in pairs(MSC.ShortNames) do
-        local val = string.match(text, "(%d+) " .. pattern)
-        if not val then val = string.match(text, pattern .. " by (%d+)") end
-        if not val then val = string.match(text, pattern .. " %+(%d+)") end
-        if not val and statKey == "ITEM_MOD_MANA_REGENERATION_SHORT" then val = string.match(text, "(%d+) mana per 5 sec") end
-        if val then return statKey, tonumber(val) end
-    end
-    return nil
-end
-
-function MSC.ProjectGems(itemLink)
+function MSC.ProjectGems(itemLink, bonusStats)
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     if gemMode == 1 or gemMode == 2 then return {}, false, false, nil end
-    
-    local stats = { COUNT = 0 }
-    local hasSockets = false
-    local bonusMatch = true
-    local gemCounts = {} -- Store text summary counts
     
     local baseStats = GetItemStats(itemLink)
     if not baseStats then return {}, false, false, nil end
     
-    local db = (UnitLevel("player") < 70) and MSC.GemOptions_Leveling or MSC.GemOptions
+    local socketKeys = {"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}
+    local level = UnitLevel("player")
+    local weights = MSC.GetCurrentWeights()
+    if not weights then return {}, false, false, nil end
+
+    -- Helper to calculate total gem score for a strategy
+    local function CalculateStrategy(ignoreColors)
+        local totalScore = 0
+        local gemSet = {}
+        for _, colorKey in ipairs(socketKeys) do
+            local count = baseStats[colorKey] or 0
+            if count > 0 then
+                for i=1, count do
+                    local bestGem, score = nil, 0
+                    if ignoreColors and colorKey ~= "EMPTY_SOCKET_META" then
+                        -- Scan all colors for best raw score
+                        for _, c in ipairs({"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE"}) do
+                            local g, s = MSC.GetBestGemForSocket(c, level, weights)
+                            if g and s > score then bestGem = g; score = s end
+                        end
+                    else
+                        bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights)
+                    end
+                    
+                    if bestGem then
+                        totalScore = totalScore + score
+                        table.insert(gemSet, bestGem)
+                    end
+                end
+            end
+        end
+        return totalScore, gemSet
+    end
+
+    -- [[ SMART LOGIC (Option 4) ]]
+    -- Compare: (Matching Gems + Bonus) vs (Best Raw Gems)
+    local useMatch = true
     
-    for key, count in pairs(baseStats) do
-        if string.find(key, "EMPTY_SOCKET_") and count > 0 then
-            hasSockets = true
-            local gemData = nil
-            if gemMode == 4 then 
-                gemData = MSC.PickBestGem("EMPTY_SOCKET_RED")
-                bonusMatch = false
-            else 
-                gemData = MSC.PickBestGem(key)
+    if gemMode == 4 then
+        -- 1. Calculate Match Score
+        local scoreMatch, gemsMatch = CalculateStrategy(false)
+        local bonusScore = 0
+        if bonusStats then
+            for k, v in pairs(bonusStats) do
+                if weights[k] then bonusScore = bonusScore + (v * weights[k]) end
+            end
+        end
+        local totalMatch = scoreMatch + bonusScore
+        
+        -- 2. Calculate Ignore Score
+        local scoreIgnore, gemsIgnore = CalculateStrategy(true)
+        
+        -- 3. Decide
+        if scoreIgnore > totalMatch then
+            useMatch = false
+        end
+    elseif gemMode == 3 then
+        useMatch = true
+    end
+
+    -- [[ BUILD FINAL RESULTS ]]
+    local finalStats = { COUNT = 0 }
+    local hasSockets = false
+    local gemCounts = {}
+    
+    local _, chosenGems = CalculateStrategy(not useMatch)
+    
+    for _, gem in ipairs(chosenGems) do
+        hasSockets = true
+        finalStats.COUNT = finalStats.COUNT + 1
+        finalStats[gem.stat] = (finalStats[gem.stat] or 0) + gem.val
+        if gem.stat2 then finalStats[gem.stat2] = (finalStats[gem.stat2] or 0) + gem.val2 end
+        
+        local sName = MSC.StatShortNames[gem.stat] or "Stat"
+        local label = "+" .. gem.val .. " " .. sName
+        gemCounts[label] = (gemCounts[label] or 0) + 1
+    end
+    
+    local textParts = {}
+    for label, count in pairs(gemCounts) do table.insert(textParts, count .. "x (" .. label .. ")") end
+    local gemText = table.concat(textParts, ", ")
+    
+    return finalStats, hasSockets, useMatch, gemText
+end
+
+function MSC.GetBestEnchantForSlot(slotId, level, specName)
+    -- 1. Get current dynamic weights (Hit Cap Aware)
+    local weights = MSC.GetCurrentWeights()
+    if not weights or not next(weights) then return nil end
+    
+    -- 2. Select Candidate List (Level 60 is the TBC transition)
+    local dbToUse = (level >= 60) and MSC.EnchantCandidates or MSC.EnchantCandidates_Leveling
+    local candidates = dbToUse and dbToUse[slotId]
+    if not candidates or #candidates == 0 then return nil end
+    
+    local bestID = nil
+    local bestScore = -1
+    
+    -- 3. Mathematical Comparison
+    for _, eID in ipairs(candidates) do
+        local data = MSC.EnchantDB[eID]
+        if data and data.stats then
+            local score = 0
+            for stat, val in pairs(data.stats) do
+                if weights[stat] then
+                    score = score + (val * weights[stat])
+                end
             end
             
-            if gemData then
-                stats.COUNT = stats.COUNT + count
-                stats[gemData.stat] = (stats[gemData.stat] or 0) + (gemData.val * count)
-                if gemData.stat2 then stats[gemData.stat2] = (stats[gemData.stat2] or 0) + (gemData.val2 * count) end
-                
-                -- Build Text Label
-                local sName = MSC.StatShortNames[gemData.stat] or "Stat"
-                local label = "+" .. gemData.val .. " " .. sName
-                if gemData.stat2 then 
-                    label = label .. "/+" .. gemData.val2 .. " " .. (MSC.StatShortNames[gemData.stat2] or "Stat")
-                end
-                gemCounts[label] = (gemCounts[label] or 0) + count
+            -- Tie-breaker: If scores are equal, prefer the higher ID (usually newer)
+            if score > bestScore then
+                bestScore = score
+                bestID = eID
+            elseif score == bestScore and score > 0 then
+                if eID > (bestID or 0) then bestID = eID end
             end
         end
     end
     
-    -- Compile the text summary
-    local textParts = {}
-    for label, count in pairs(gemCounts) do
-        table.insert(textParts, count .. "x (" .. label .. ")")
-    end
-    local gemText = table.concat(textParts, ", ")
-    
-    return stats, hasSockets, bonusMatch, gemText
+    return bestID
 end
 
-function MSC.PickBestGem(socketColor)
-    local weights = MSC.GetCurrentWeights()
-    if not weights then return nil end
-    local db = (UnitLevel("player") < 70) and MSC.GemOptions_Leveling or MSC.GemOptions
-    local options = db[socketColor]
-    if not options then return nil end
-    local bestGem, bestScore = nil, 0
-    for _, gem in ipairs(options) do
-        local score = (weights[gem.stat] or 0) * gem.val
-        if gem.stat2 then score = score + ((weights[gem.stat2] or 0) * gem.val2) end
-        if score > bestScore then bestScore = score; bestGem = gem end
+function MSC.GetEnchantStats(slotId)
+    local link = GetInventoryItemLink("player", slotId)
+    if not link then return {} end
+    local _, _, _, enchantID = string.find(link, "item:(%d+):(%d+)")
+    enchantID = tonumber(enchantID)
+    if enchantID and enchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[enchantID] then
+        local data = MSC.EnchantDB[enchantID]
+        local stats = {}
+        if data.stats then for k,v in pairs(data.stats) do stats[k]=v end
+        else for k,v in pairs(data) do stats[k]=v end end
+        return stats
     end
-    return bestGem
+    return {}
+end
+
+function MSC.GetEnchantString(slotId)
+    local link = GetInventoryItemLink("player", slotId)
+    if not link then return "" end
+    local _, _, _, enchantID = string.find(link, "item:%d+:(%d+)")
+    enchantID = tonumber(enchantID)
+    if enchantID and MSC.EnchantDB and MSC.EnchantDB[enchantID] then
+        local data = MSC.EnchantDB[enchantID]
+        return data.name or ("Enchant #"..enchantID)
+    end
+    return ""
+end
+
+-- =============================================================
+-- 4. MAIN STAT SCANNER (Wrapper)
+-- =============================================================
+function MSC.SafeGetItemStats(itemLink, slotId)
+    if not itemLink then return {} end
+    
+    -- A. Base Stats (API)
+    local stats = GetItemStats(itemLink) or {}
+    local finalStats = {}
+    local bonusStats = {} -- Holds Socket Bonus separately
+    
+    for k, v in pairs(stats) do
+        if MSC.StatShortNames[k] or k == "ITEM_MOD_SPELL_HEALING_DONE" or k == "ITEM_MOD_SPELL_DAMAGE_DONE" then 
+            if k == "ITEM_MOD_SPELL_HEALING_DONE" then finalStats["ITEM_MOD_HEALING_POWER_SHORT"] = (finalStats["ITEM_MOD_HEALING_POWER_SHORT"] or 0) + v
+            elseif k == "ITEM_MOD_SPELL_DAMAGE_DONE" then finalStats["ITEM_MOD_SPELL_POWER_SHORT"] = (finalStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + v
+            else finalStats[k] = v end
+        end
+    end
+    
+    -- B. Tooltip Scan (Catch missing stats + Separate Socket Bonus)
+    local tipName = "MSC_ScannerTooltip"
+    local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    tip:ClearLines()
+    tip:SetHyperlink(itemLink)
+    for i = 2, tip:NumLines() do
+        local line = _G[tipName.."TextLeft"..i]; local text = line and line:GetText()
+        if text then
+            local s, v, isBonus = MSC.ParseTooltipLine(text)
+            if s and v then
+                if isBonus then
+                    bonusStats[s] = (bonusStats[s] or 0) + v
+                elseif not finalStats[s] then 
+                    finalStats[s] = (finalStats[s] or 0) + v 
+                end
+            end
+        end
+    end
+
+    -- C. Manual Overrides
+    local id = tonumber(itemLink:match("item:(%d+)"))
+    if id and MSC.ItemOverrides and MSC.ItemOverrides[id] then
+        local override = MSC.ItemOverrides[id]
+        if override.replace then finalStats = {} end
+        for k, v in pairs(override) do
+            if k ~= "replace" and k ~= "estimate" then finalStats[k] = (finalStats[k] or 0) + v end
+        end
+        if override.estimate then finalStats.estimate = true end
+    end
+
+    -- D. ENCHANT PROJECTION
+    local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 3 
+    if enchantMode == 2 then 
+        local _, _, _, enchantID = string.find(itemLink, "item:%d+:(%d+)")
+        if enchantID and tonumber(enchantID) > 0 and MSC.EnchantDB[tonumber(enchantID)] then
+            local eStats = MSC.EnchantDB[tonumber(enchantID)]
+            local src = eStats.stats or eStats
+            for k, v in pairs(src) do if k~="name" then finalStats[k] = (finalStats[k] or 0) + v end end
+        end
+    elseif enchantMode == 3 and slotId then 
+        local level = UnitLevel("player")
+        local _, specName = MSC.GetCurrentWeights()
+        local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName)
+        if bestID and MSC.EnchantDB[bestID] then
+            local eStats = MSC.EnchantDB[bestID]
+            local src = eStats.stats or eStats
+            for k, v in pairs(src) do if k~="name" then finalStats[k] = (finalStats[k] or 0) + v end end
+            finalStats.IS_PROJECTED = true
+            finalStats.ENCHANT_TEXT = eStats.name
+        end
+    end
+
+    -- E. GEM PROJECTION (Pass Bonus Stats to decide)
+    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
+    
+    -- Legacy Modes (1 & 2): Assume Bonus is Active if Gems present (or empty sockets usually imply potential)
+    if gemMode == 1 or gemMode == 2 then
+        -- Just add bonus stats blindly (Old Behavior)
+        for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
+        
+        -- If Mode 2 (Current Gems), standard API handles current gem stats, nothing to add.
+    
+    -- Projection Modes (3 & 4)
+    else
+        local gemStats, hasSockets, bonusActive, gemText = MSC.ProjectGems(itemLink, bonusStats)
+        if hasSockets then
+            for k, v in pairs(gemStats) do if k~="COUNT" then finalStats[k] = (finalStats[k] or 0) + v end end
+            finalStats.GEMS_PROJECTED = gemStats.COUNT 
+            finalStats.GEM_TEXT = gemText
+            
+-- Only add bonus if the Projector says we matched!
+            if bonusActive then 
+                local bonusApplied = false
+                for k, v in pairs(bonusStats) do 
+                    finalStats[k] = (finalStats[k] or 0) + v 
+                    bonusApplied = true
+                end
+                -- Only show the text if we actually added stats
+                if bonusApplied then finalStats.BONUS_PROJECTED = true end
+            end
+        end
+    end
+
+    return finalStats
+end
+
+-- =============================================================
+-- 5. SCORING & UTILITIES
+-- =============================================================
+
+function MSC.GetInterpolatedRatio(table, level)
+    if not table then return nil end
+    if level <= table[1][1] then return table[1][2] end
+    local count = #table
+    if level >= table[count][1] then return table[count][2] end
+    for i = 1, count - 1 do
+        local lowNode, highNode = table[i], table[i+1]
+        if level >= lowNode[1] and level <= highNode[1] then
+            local range = highNode[1] - lowNode[1]
+            local progress = (level - lowNode[1]) / range
+            local valDiff = highNode[2] - lowNode[2]
+            return lowNode[2] + (progress * valDiff)
+        end
+    end
+    return table[count][2]
+end
+
+function MSC.GetItemScore(stats, weights, specName, slotId)
+    if not stats or not weights then return 0 end
+    local score = 0
+    
+    for stat, val in pairs(stats) do
+        if weights[stat] and type(val) == "number" then score = score + (val * weights[stat]) end
+    end
+    
+    if stats.MSC_WEAPON_SPEED and MSC.SpeedChecks then
+        local _, class = UnitClass("player")
+        local pref = MSC.SpeedChecks[class] and (MSC.SpeedChecks[class][specName] or MSC.SpeedChecks[class]["Default"])
+        if pref then
+            local speed = stats.MSC_WEAPON_SPEED
+            local bonus = 20 
+            if slotId == 16 then
+                if pref.MH_Slow and speed >= 2.6 then score = score + bonus end
+                if pref.MH_Fast and speed <= 1.6 then score = score + bonus end
+            end
+            if slotId == 17 then
+                if pref.OH_Fast and speed <= 1.7 then score = score + bonus end
+                if pref.OH_Slow and speed >= 2.4 then score = score + bonus end
+            end
+            if slotId == 18 and pref.Ranged_Slow and speed >= 2.8 then score = score + bonus end
+        end
+    end
+    return MSC.Round(score, 1)
+end
+
+function MSC.ExpandDerivedStats(stats, itemLink)
+    if not stats then return {} end
+    local out = {}
+    for k, v in pairs(stats) do out[k] = v end
+    local _, class = UnitClass("player")
+    local _, race = UnitRace("player")
+    local powerType = UnitPowerType("player")
+    
+    -- 1. RACIAL BONUSES (TBC UPDATE: Expertise Fix)
+    if itemLink and MSC.RacialTraits and MSC.RacialTraits[race] then
+        local _, _, _, _, _, _, _, _, _, _, _, _, subclassID = GetItemInfo(itemLink)
+        if subclassID and MSC.RacialTraits[race][subclassID] then
+            local val = MSC.RacialTraits[race][subclassID]
+            if type(val) == "number" then
+                if subclassID == 2 or subclassID == 3 or subclassID == 18 then
+                     out["ITEM_MOD_CRIT_RATING_SHORT"] = (out["ITEM_MOD_CRIT_RATING_SHORT"] or 0) + val
+                else
+                     out["ITEM_MOD_EXPERTISE_RATING_SHORT"] = (out["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) + val
+                end
+            elseif type(val) == "table" and val.stat then
+                out[val.stat] = (out[val.stat] or 0) + val.val
+            end
+        end
+    end
+
+    -- 2. BASIC CONVERSIONS (Stam->HP, Int->Mana)
+    if out["ITEM_MOD_STAMINA_SHORT"] then 
+        out["ITEM_MOD_HEALTH_SHORT"] = (out["ITEM_MOD_HEALTH_SHORT"] or 0) + (out["ITEM_MOD_STAMINA_SHORT"] * 10) 
+    end
+    if powerType == 0 and out["ITEM_MOD_INTELLECT_SHORT"] then 
+        out["ITEM_MOD_MANA_SHORT"] = (out["ITEM_MOD_MANA_SHORT"] or 0) + (out["ITEM_MOD_INTELLECT_SHORT"] * 15) 
+    end
+    
+    -- 3. CRIT SCALING
+    local ratioTable = MSC.StatToCritMatrix and MSC.StatToCritMatrix[class]
+    local myLevel = UnitLevel("player")
+    if ratioTable then
+        if ratioTable.Agi and out["ITEM_MOD_AGILITY_SHORT"] then
+            local ratio = MSC.GetInterpolatedRatio(ratioTable.Agi, myLevel)
+            if ratio and ratio > 0 then
+                local critVal = out["ITEM_MOD_AGILITY_SHORT"] / ratio
+                if critVal > 0 then out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_CRIT_FROM_STATS_SHORT"] or 0) + critVal end
+            end
+        end
+        if ratioTable.Int and out["ITEM_MOD_INTELLECT_SHORT"] then
+             local ratio = MSC.GetInterpolatedRatio(ratioTable.Int, myLevel)
+             if ratio and ratio > 0 then
+                 local spellCritVal = out["ITEM_MOD_INTELLECT_SHORT"] / ratio
+                 if spellCritVal > 0 then out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] = (out["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] or 0) + spellCritVal end
+             end
+        end
+    end
+    return out
 end
 
 function MSC.GetStatDifferences(new, old)
     local diffs = {}
     local seen = {}
     for k, v in pairs(new) do 
-        if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" then
+        if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" and type(v) == "number" then
             local d = v - (old[k] or 0)
             if d ~= 0 then table.insert(diffs, { key=k, val=d }); seen[k] = true end
         end
     end
     for k, v in pairs(old) do
-        if not seen[k] and k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" then
+        if not seen[k] and k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" and type(v) == "number" then
             local d = (new[k] or 0) - v
             if d ~= 0 then table.insert(diffs, { key=k, val=d }) end
         end
@@ -313,8 +556,10 @@ function MSC.FindBestMainHand(weights, specName)
                 local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
                 if equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND" then
                     local stats = MSC.SafeGetItemStats(link, 16)
-                    local score = MSC.GetItemScore(stats, weights, specName, 16)
-                    if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end
+                    if stats then 
+                        local score = MSC.GetItemScore(stats, weights, specName, 16)
+                        if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end 
+                    end
                 end
             end
         end
@@ -331,13 +576,32 @@ function MSC.FindBestOffhand(weights, specName)
                 local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
                 if equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" or equipLoc == "INVTYPE_WEAPON" then
                     local stats = MSC.SafeGetItemStats(link, 17)
-                    local score = MSC.GetItemScore(stats, weights, specName, 17)
-                    if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end
+                    if stats then 
+                        local score = MSC.GetItemScore(stats, weights, specName, 17)
+                        if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end 
+                    end
                 end
             end
         end
     end
     return bestLink, bestScore, bestStats
+end
+
+function MSC.GetInspectSpec(unit)
+    local _, classFilename = UnitClass(unit)
+    if not classFilename then return "Default" end
+    local bestTab, maxPoints, totalPointsFound = nil, -1, 0
+    for i = 1, 3 do
+        local _, _, pointsSpent = GetTalentTabInfo(i, true)
+        local points = tonumber(pointsSpent) or 0
+        totalPointsFound = totalPointsFound + points
+        if points > maxPoints then maxPoints = points; bestTab = i end
+    end
+    if totalPointsFound == 0 then return "Default" end
+    if bestTab and MSC.SpecNames and MSC.SpecNames[classFilename] and MSC.SpecNames[classFilename][bestTab] then
+        return MSC.SpecNames[classFilename][bestTab]
+    end
+    return "Default"
 end
 
 function MSC.ApplyElvUISkin(frame)
