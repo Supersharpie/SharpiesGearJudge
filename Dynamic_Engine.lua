@@ -1,133 +1,39 @@
 local _, MSC = ... 
 
 -- =========================================================================
--- SHARPIES GEAR JUDGE: DYNAMIC STAT ENGINE (TBC Edition)
+-- SHARPIES GEAR JUDGE: DYNAMIC STAT ENGINE (Optimized - Caching Added)
 -- =========================================================================
 
--- [[ 1. TALENT NAME MAPPING (TBC 2.4.3 Strings) ]] --
+-- [[ 1. TALENT NAME MAPPING ]] --
 MSC.TalentStringMap = {
-    ["DRUID"] = {
-        ["MOONKIN_FORM"]    = "Moonkin Form",
-        ["FORCE_OF_NATURE"] = "Force of Nature", 
-        ["MANGLE"]          = "Mangle",          
-        ["TREE_OF_LIFE"]    = "Tree of Life",    
-        ["NATURES_GRACE"]   = "Nature's Grace",
-        ["HEART_WILD"]      = "Heart of the Wild",
-        ["LIVING_SPIRIT"]   = "Living Spirit",   
-        ["DREAMSTATE"]      = "Dreamstate",      
-        ["MOONGLOW"]        = "Moonglow",
-        ["NATURES_SWIFTNESS"] = "Nature's Swiftness",
-        ["FERAL_INSTINCT"]  = "Feral Instinct",
-        ["THICK_HIDE"]      = "Thick Hide",
-    },
-    ["HUNTER"] = {
-        ["BESTIAL_WRATH"]   = "Bestial Wrath",
-        ["BEAST_WITHIN"]    = "The Beast Within", 
-        ["TRUESHOT_AURA"]   = "Trueshot Aura",
-        ["SILENCING_SHOT"]  = "Silencing Shot",   
-        ["SCATTER_SHOT"]    = "Scatter Shot",     
-        ["WYVERN_STING"]    = "Wyvern Sting",
-        ["READYNESS"]       = "Readiness",        
-        ["EXPOSE_WEAKNESS"] = "Expose Weakness",  
-        ["CAREFUL_AIM"]     = "Careful Aim",      
-        ["SURVIVAL_INST"]   = "Survival Instincts",
-    },
-    ["MAGE"] = {
-        ["ARCANE_POWER"]    = "Arcane Power",
-        ["SLOW"]            = "Slow",             
-        ["COMBUSTION"]      = "Combustion",
-        ["DRAGONS_BREATH"]  = "Dragon's Breath",  
-        ["ICE_BARRIER"]     = "Ice Barrier",
-        ["SUMMON_WELE"]     = "Summon Water Elemental", 
-        ["WINTERS_CHILL"]   = "Winter's Chill",   
-        ["IMP_BLIZZARD"]    = "Improved Blizzard", -- Farming Key
-        ["ARCANE_MIND"]     = "Arcane Mind",
-        ["MOLTEN_ARMOR"]    = "Molten Armor",
-        ["ICY_VEINS"]       = "Icy Veins",
-    },
-    ["PALADIN"] = {
-        ["HOLY_SHOCK"]      = "Holy Shock",
-        ["DIVINE_ILLUM"]    = "Divine Illumination", 
-        ["HOLY_SHIELD"]     = "Holy Shield",
-        ["AVENGERS_SHIELD"] = "Avenger's Shield",    
-        ["REPENTANCE"]      = "Repentance",
-        ["CRUSADER_STRIKE"] = "Crusader Strike",     
-        ["SANCTITY_AURA"]   = "Sanctity Aura",       
-        ["DIVINE_STR"]      = "Divine Strength",
-        ["DIVINE_INT"]      = "Divine Intellect",
-        ["COMBAT_EXPERTISE"]= "Combat Expertise",    
-    },
-    ["PRIEST"] = {
-        ["POWER_INFUSION"]  = "Power Infusion",
-        ["PAIN_SUPP"]       = "Pain Suppression",    
-        ["SPIRIT_GUIDANCE"] = "Spiritual Guidance",
-        ["CIRCLE_HEALING"]  = "Circle of Healing",  
-        ["SEARING_LIGHT"]   = "Searing Light",       
-        ["SPIRIT_OF_REDEMPTION"] = "Spirit of Redemption", 
-        ["SHADOWFORM"]      = "Shadowform",
-        ["VAMPIRIC_TOUCH"]  = "Vampiric Touch",      
-        ["ENLIGHTENMENT"]   = "Enlightenment",       
-    },
-    ["ROGUE"] = {
-        ["MUTILATE"]        = "Mutilate",            
-        ["ADRENALINE_RUSH"] = "Adrenaline Rush",
-        ["SURPRISE_ATTACK"] = "Surprise Attack",    
-        ["COMBAT_POTENCY"]  = "Combat Potency",      
-        ["HEMORRHAGE"]      = "Hemorrhage",
-        ["SHADOWSTEP"]      = "Shadowstep",          
-        ["CHEAT_DEATH"]     = "Cheat Death",         
-        ["VITALITY"]        = "Vitality",            
-        ["SINISTER_CALLING"]= "Sinister Calling",    
-    },
-    ["SHAMAN"] = {
-        ["ELEMENTAL_MASTERY"] = "Elemental Mastery",
-        ["TOTEM_OF_WRATH"]    = "Totem of Wrath",    
-        ["LIGHTNING_MASTERY"] = "Lightning Mastery",
-        ["STORMSTRIKE"]       = "Stormstrike",
-        ["SHAMANISTIC_RAGE"]  = "Shamanistic Rage", 
-        ["MANA_TIDE"]         = "Mana Tide Totem",
-        ["EARTH_SHIELD"]      = "Earth Shield",      
-        ["NATURE_GUIDANCE"]   = "Nature's Guidance",
-        ["ANCESTRAL_KNOW"]    = "Ancestral Knowledge",
-        ["MENTAL_QUICKNESS"]  = "Mental Quickness",
-        ["SHIELD_SPEC"]       = "Shield Specialization",
-        ["ANTICIPATION"]      = "Anticipation",     
-    },
-    ["WARLOCK"] = {
-        ["DARK_PACT"]         = "Dark Pact",
-        ["UNSTABLE_AFF"]      = "Unstable Affliction", 
-        ["SIPHON_LIFE"]       = "Siphon Life",         
-        ["SOUL_LINK"]         = "Soul Link",           
-        ["SUMMON_FELGUARD"]   = "Summon Felguard",     
-        ["CONFLAGRATE"]       = "Conflagrate",
-        ["RUIN"]              = "Ruin",                
-        ["SHADOWFURY"]        = "Shadowfury",          
-        ["DEMONIC_EMBRACE"]   = "Demonic Embrace",
-        ["FEL_INTELLECT"]     = "Fel Intellect",
-    },
-    ["WARRIOR"] = {
-        ["MORTAL_STRIKE"]    = "Mortal Strike",
-        ["ENDLESS_RAGE"]     = "Endless Rage",       
-        ["BLOOD_FRENZY"]     = "Blood Frenzy",       
-        ["SECOND_WIND"]      = "Second Wind",        
-        ["BLOODTHIRST"]      = "Bloodthirst",
-        ["RAMPAGE"]          = "Rampage",            
-        ["SHIELD_SLAM"]      = "Shield Slam",
-        ["DEVASTATE"]        = "Devastate",          
-        ["VITALITY"]         = "Vitality",           
-    },
+    ["DRUID"] = { ["MOONKIN_FORM"]="Moonkin Form", ["FORCE_OF_NATURE"]="Force of Nature", ["MANGLE"]="Mangle", ["TREE_OF_LIFE"]="Tree of Life", ["NATURES_GRACE"]="Nature's Grace", ["HEART_WILD"]="Heart of the Wild", ["LIVING_SPIRIT"]="Living Spirit", ["DREAMSTATE"]="Dreamstate", ["MOONGLOW"]="Moonglow", ["NATURES_SWIFTNESS"]="Nature's Swiftness", ["FERAL_INSTINCT"]="Feral Instinct", ["THICK_HIDE"]="Thick Hide" },
+    ["HUNTER"] = { ["BESTIAL_WRATH"]="Bestial Wrath", ["BEAST_WITHIN"]="The Beast Within", ["TRUESHOT_AURA"]="Trueshot Aura", ["SILENCING_SHOT"]="Silencing Shot", ["SCATTER_SHOT"]="Scatter Shot", ["WYVERN_STING"]="Wyvern Sting", ["READYNESS"]="Readiness", ["EXPOSE_WEAKNESS"]="Expose Weakness", ["CAREFUL_AIM"]="Careful Aim", ["SURVIVAL_INST"]="Survival Instincts" },
+    ["MAGE"] = { ["ARCANE_POWER"]="Arcane Power", ["SLOW"]="Slow", ["COMBUSTION"]="Combustion", ["DRAGONS_BREATH"]="Dragon's Breath", ["ICE_BARRIER"]="Ice Barrier", ["SUMMON_WELE"]="Summon Water Elemental", ["WINTERS_CHILL"]="Winter's Chill", ["IMP_BLIZZARD"]="Improved Blizzard", ["ARCANE_MIND"]="Arcane Mind", ["MOLTEN_ARMOR"]="Molten Armor", ["ICY_VEINS"]="Icy Veins" },
+    ["PALADIN"] = { ["HOLY_SHOCK"]="Holy Shock", ["DIVINE_ILLUM"]="Divine Illumination", ["HOLY_SHIELD"]="Holy Shield", ["AVENGERS_SHIELD"]="Avenger's Shield", ["REPENTANCE"]="Repentance", ["CRUSADER_STRIKE"]="Crusader Strike", ["SANCTITY_AURA"]="Sanctity Aura", ["DIVINE_STR"]="Divine Strength", ["DIVINE_INT"]="Divine Intellect", ["COMBAT_EXPERTISE"]="Combat Expertise" },
+    ["PRIEST"] = { ["POWER_INFUSION"]="Power Infusion", ["PAIN_SUPP"]="Pain Suppression", ["SPIRIT_GUIDANCE"]="Spiritual Guidance", ["CIRCLE_HEALING"]="Circle of Healing", ["SEARING_LIGHT"]="Searing Light", ["SPIRIT_OF_REDEMPTION"]="Spirit of Redemption", ["SHADOWFORM"]="Shadowform", ["VAMPIRIC_TOUCH"]="Vampiric Touch", ["ENLIGHTENMENT"]="Enlightenment" },
+    ["ROGUE"] = { ["MUTILATE"]="Mutilate", ["ADRENALINE_RUSH"]="Adrenaline Rush", ["SURPRISE_ATTACK"]="Surprise Attack", ["COMBAT_POTENCY"]="Combat Potency", ["HEMORRHAGE"]="Hemorrhage", ["SHADOWSTEP"]="Shadowstep", ["CHEAT_DEATH"]="Cheat Death", ["VITALITY"]="Vitality", ["SINISTER_CALLING"]="Sinister Calling" },
+    ["SHAMAN"] = { ["ELEMENTAL_MASTERY"]="Elemental Mastery", ["TOTEM_OF_WRATH"]="Totem of Wrath", ["LIGHTNING_MASTERY"]="Lightning Mastery", ["STORMSTRIKE"]="Stormstrike", ["SHAMANISTIC_RAGE"]="Shamanistic Rage", ["MANA_TIDE"]="Mana Tide Totem", ["EARTH_SHIELD"]="Earth Shield", ["NATURE_GUIDANCE"]="Nature's Guidance", ["ANCESTRAL_KNOW"]="Ancestral Knowledge", ["MENTAL_QUICKNESS"]="Mental Quickness", ["SHIELD_SPEC"]="Shield Specialization", ["ANTICIPATION"]="Anticipation" },
+    ["WARLOCK"] = { ["DARK_PACT"]="Dark Pact", ["UNSTABLE_AFF"]="Unstable Affliction", ["SIPHON_LIFE"]="Siphon Life", ["SOUL_LINK"]="Soul Link", ["SUMMON_FELGUARD"]="Summon Felguard", ["CONFLAGRATE"]="Conflagrate", ["RUIN"]="Ruin", ["SHADOWFURY"]="Shadowfury", ["DEMONIC_EMBRACE"]="Demonic Embrace", ["FEL_INTELLECT"]="Fel Intellect" },
+    ["WARRIOR"] = { ["MORTAL_STRIKE"]="Mortal Strike", ["ENDLESS_RAGE"]="Endless Rage", ["BLOOD_FRENZY"]="Blood Frenzy", ["SECOND_WIND"]="Second Wind", ["BLOODTHIRST"]="Bloodthirst", ["RAMPAGE"]="Rampage", ["SHIELD_SLAM"]="Shield Slam", ["DEVASTATE"]="Devastate", ["VITALITY"]="Vitality" },
 }
 
 -- =========================================================================
--- 2. SCANNER LOGIC
+-- 2. SCANNER LOGIC (Safe & Robust)
 -- =========================================================================
 
 MSC.TalentCache = {}
 MSC.TalentCacheLoaded = false
 
+-- [[ NEW: WEIGHT CACHE ]] --
+-- This stores the final calculated weights so we don't recalculate on every mouseover.
+MSC.CachedWeights = nil
+MSC.CachedSpecKey = nil
+
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
     local tabs = GetNumTalentTabs() or 0
+    if tabs == 0 then return end
+
     for t = 1, tabs do
         local num = GetNumTalents(t) or 0
         for i = 1, num do
@@ -140,9 +46,10 @@ end
 
 function MSC:GetTalentRank(talentKey)
     local _, class = UnitClass("player")
-    -- Only build cache if empty
-    if not next(MSC.TalentCache) then self:BuildTalentCache() end 
-    
+    if not MSC.TalentCacheLoaded then 
+        self:BuildTalentCache() 
+        if not MSC.TalentCacheLoaded then return 0 end
+    end
     if not self.TalentStringMap[class] then return 0 end
     local englishName = self.TalentStringMap[class][talentKey]
     if not englishName then return 0 end
@@ -150,7 +57,7 @@ function MSC:GetTalentRank(talentKey)
 end
 
 -- =========================================================================
--- 3. SYSTEM B: ENDGAME DETECTORS (TBC Updated)
+-- 3. SYSTEM B: ENDGAME DETECTORS
 -- =========================================================================
 
 function MSC:GetDruidRaidSpec()
@@ -242,7 +149,6 @@ function MSC:GetShamanRaidSpec()
     return "RESTO_PVE"
 end
 
--- MAIN ROUTER FOR SYSTEM B
 function MSC:GetEndgameSpec(class)
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then return MSC.ManualSpec end
     if class == "WARRIOR" then return self:GetWarriorRaidSpec() end
@@ -258,74 +164,38 @@ function MSC:GetEndgameSpec(class)
 end
 
 -- =========================================================================
--- 4. DYNAMIC SCALERS (TBC Adjusted)
+-- 4. DYNAMIC SCALERS
 -- =========================================================================
 
 function MSC:ApplyTalentScalers(class, w, spec)
-    
-    -- [[ TBC: PALADIN ]]
     if class == "PALADIN" then
         local rStr = self:GetTalentRank("DIVINE_STR")
-        if rStr > 0 and w["ITEM_MOD_STRENGTH_SHORT"] then 
-            w["ITEM_MOD_STRENGTH_SHORT"] = w["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rStr * 0.02)) 
-        end
+        if rStr > 0 and w["ITEM_MOD_STRENGTH_SHORT"] then w["ITEM_MOD_STRENGTH_SHORT"] = w["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rStr * 0.02)) end
         local rInt = self:GetTalentRank("DIVINE_INT")
-        if rInt > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then 
-            w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rInt * 0.02)) 
-        end
+        if rInt > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rInt * 0.02)) end
         local rStam = self:GetTalentRank("COMBAT_EXPERTISE")
-        if rStam > 0 and w["ITEM_MOD_STAMINA_SHORT"] then
-            w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * (1 + (rStam * 0.02))
-        end
-
-    -- [[ TBC: HUNTER ]]
+        if rStam > 0 and w["ITEM_MOD_STAMINA_SHORT"] then w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * (1 + (rStam * 0.02)) end
     elseif class == "HUNTER" then
         local rExp = self:GetTalentRank("EXPOSE_WEAKNESS")
-        if rExp > 0 and w["ITEM_MOD_AGILITY_SHORT"] then
-            w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * 1.2 
-        end
-
-    -- [[ TBC: DRUID ]]
+        if rExp > 0 and w["ITEM_MOD_AGILITY_SHORT"] then w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * 1.2 end
     elseif class == "DRUID" then
         local rHotW = self:GetTalentRank("HEART_WILD")
-        if rHotW > 0 then
-            if w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.04)) end
-        end
+        if rHotW > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.04)) end
         local rLiv = self:GetTalentRank("LIVING_SPIRIT")
-        if rLiv > 0 and w["ITEM_MOD_SPIRIT_SHORT"] then
-            w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.03))
-        end
-
-    -- [[ TBC: WARLOCK ]]
+        if rLiv > 0 and w["ITEM_MOD_SPIRIT_SHORT"] then w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.03)) end
     elseif class == "WARLOCK" then
         local rEmb = self:GetTalentRank("DEMONIC_EMBRACE")
-        if rEmb > 0 and w["ITEM_MOD_STAMINA_SHORT"] then
-            w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03))
-        end
+        if rEmb > 0 and w["ITEM_MOD_STAMINA_SHORT"] then w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03)) end
         local rFel = self:GetTalentRank("FEL_INTELLECT")
-        if rFel > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
-             w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rFel * 0.01))
-        end
-
-    -- [[ TBC: MAGE ]]
+        if rFel > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rFel * 0.01)) end
     elseif class == "MAGE" then
         local rMind = self:GetTalentRank("ARCANE_MIND")
-        if rMind > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then 
-            w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMind * 0.03)) 
-        end
-
-    -- [[ TBC: SHAMAN ]]
+        if rMind > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMind * 0.03)) end
     elseif class == "SHAMAN" then
         local rAncestral = self:GetTalentRank("ANCESTRAL_KNOW")
-        if rAncestral > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
-            w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAncestral * 0.01))
-        end
+        if rAncestral > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAncestral * 0.01)) end
         local rMent = self:GetTalentRank("MENTAL_QUICKNESS")
-        if rMent > 0 and w["ITEM_MOD_ATTACK_POWER_SHORT"] then
-            w["ITEM_MOD_ATTACK_POWER_SHORT"] = w["ITEM_MOD_ATTACK_POWER_SHORT"] * 1.1
-        end
-
-    -- [[ TBC: PRIEST ]]
+        if rMent > 0 and w["ITEM_MOD_ATTACK_POWER_SHORT"] then w["ITEM_MOD_ATTACK_POWER_SHORT"] = w["ITEM_MOD_ATTACK_POWER_SHORT"] * 1.1 end
     elseif class == "PRIEST" then
         local rEnlight = self:GetTalentRank("ENLIGHTENMENT")
         if rEnlight > 0 then
@@ -333,70 +203,46 @@ function MSC:ApplyTalentScalers(class, w, spec)
             if w["ITEM_MOD_SPIRIT_SHORT"] then w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rEnlight * 0.01)) end
             if w["ITEM_MOD_STAMINA_SHORT"] then w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEnlight * 0.01)) end
         end
-
-    -- [[ TBC: ROGUE ]]
     elseif class == "ROGUE" then
         local rVit = self:GetTalentRank("VITALITY")
-        if rVit > 0 and w["ITEM_MOD_AGILITY_SHORT"] then
-            w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * (1 + (rVit * 0.01))
-        end
+        if rVit > 0 and w["ITEM_MOD_AGILITY_SHORT"] then w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * (1 + (rVit * 0.01)) end
         local rSin = self:GetTalentRank("SINISTER_CALLING")
-        if rSin > 0 and w["ITEM_MOD_AGILITY_SHORT"] then
-            w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * (1 + (rSin * 0.03))
-        end
+        if rSin > 0 and w["ITEM_MOD_AGILITY_SHORT"] then w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * (1 + (rSin * 0.03)) end
     end
-
     return w
 end
 
 -- =========================================================================
--- 5. TRAFFIC CONTROLLER (The Brain)
+-- 5. TRAFFIC CONTROLLER (Safe Copy & Caching)
 -- =========================================================================
 
--- Helper to safely clone tables so we don't delete Hit from the permanent DB
-function MSC:DeepCopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-            copy[MSC:DeepCopy(orig_key)] = MSC:DeepCopy(orig_value)
-        end
-        setmetatable(copy, MSC:DeepCopy(getmetatable(orig)))
-    else
-        copy = orig
-    end
+function MSC:SafeCopy(orig)
+    if type(orig) ~= 'table' then return orig end
+    local copy = {}
+    for k, v in pairs(orig) do copy[k] = v end
     return copy
 end
 
--- NEW: Hit Cap Logic
 function MSC:ApplyHitCaps(weights, specName)
     if not weights then return weights end
     
-    -- TBC Caps: ~142 rating (9%) for Melee, ~202 rating (16%) for Casters
     local hitRating = 0
     local isCaster = false
     
-    -- 1. Identify Caster vs Melee based on Spec Name
     if specName:find("MAGE") or specName:find("WARLOCK") or specName:find("PRIEST") or specName:find("ELE") or specName:find("BALANCE") then
         isCaster = true
         hitRating = GetCombatRating(CR_HIT_SPELL)
     else
         local _, class = UnitClass("player")
-        if class == "HUNTER" then 
-            hitRating = GetCombatRating(CR_HIT_RANGED) 
-        else
-            hitRating = GetCombatRating(CR_HIT_MELEE)
-        end
+        if class == "HUNTER" then hitRating = GetCombatRating(CR_HIT_RANGED) 
+        else hitRating = GetCombatRating(CR_HIT_MELEE) end
     end
     
-    -- 2. Check Thresholds
     local cap = isCaster and 202 or 142
+    local safeZone = cap + 25 -- Safety Buffer
     
-    -- 3. If Capped, SLASH the weight
-    if hitRating >= cap then
-        -- Clone first to protect database
-        local safeWeights = MSC:DeepCopy(weights)
+    if hitRating >= safeZone then
+        local safeWeights = MSC:SafeCopy(weights)
         if safeWeights["ITEM_MOD_HIT_RATING_SHORT"] then safeWeights["ITEM_MOD_HIT_RATING_SHORT"] = 0.01 end
         if safeWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then safeWeights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.01 end
         return safeWeights
@@ -407,24 +253,18 @@ end
 
 function MSC:ApplyDynamicAdjustments(baseWeights)
     local w = {}
-    -- If baseWeights were passed (unlikely in this flow, but safe to keep), copy them
     if baseWeights then for k,v in pairs(baseWeights) do w[k] = v end end
     
     local _, class = UnitClass("player")
     local level = UnitLevel("player")
     local specKey = "Default"
-    local weightTable = MSC.WeightDB -- Default to Endgame DB
+    local weightTable = MSC.WeightDB
 
-    -- [[ TRAFFIC CONTROL & MANUAL OVERRIDE ]] --
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
         specKey = MSC.ManualSpec
-        if MSC.WeightDB[class][specKey] then 
-            weightTable = MSC.WeightDB
-        elseif MSC.LevelingWeightDB and MSC.LevelingWeightDB[class][specKey] then 
-            weightTable = MSC.LevelingWeightDB
-        end
+        if MSC.WeightDB[class][specKey] then weightTable = MSC.WeightDB
+        elseif MSC.LevelingWeightDB and MSC.LevelingWeightDB[class][specKey] then weightTable = MSC.LevelingWeightDB end
     elseif level < 70 then
-        -- SYSTEM A: LEVELING ENGINE (1-69)
         if MSC.GetLevelingSpec and MSC.LevelingWeightDB then
             specKey = MSC:GetLevelingSpec(class, level)
             weightTable = MSC.LevelingWeightDB
@@ -432,38 +272,63 @@ function MSC:ApplyDynamicAdjustments(baseWeights)
             specKey = "Leveling_1_20"
         end
     else
-        -- SYSTEM B: ENDGAME ENGINE (70+)
         specKey = self:GetEndgameSpec(class)
     end
 
-    -- [[ LOAD WEIGHTS ]] --
     if weightTable[class] and weightTable[class][specKey] then
         w = {}
         for k,v in pairs(weightTable[class][specKey]) do w[k] = v end
     end
 
-    -- [[ DYNAMIC SCALERS ]] --
     w = self:ApplyTalentScalers(class, w, specKey)
-    
-    -- [[ NEW: APPLY HIT CAPS ]] --
     w = self:ApplyHitCaps(w, specKey)
 
     return w, specKey
 end
 
--- Replaced the broken function with this Wrapper
+-- [[ THE MASTER WRAPPER (CACHE IMPLEMENTED) ]] --
 function MSC.GetCurrentWeights()
-    return MSC:ApplyDynamicAdjustments({})
+    -- If we have a cached result, return it instantly!
+    if MSC.CachedWeights then
+        return MSC.CachedWeights, MSC.CachedSpecKey
+    end
+
+    -- Otherwise, do the heavy math
+    local w, key = MSC:ApplyDynamicAdjustments({})
+    
+    -- Save the result
+    MSC.CachedWeights = w
+    MSC.CachedSpecKey = key
+    
+    return w, key
 end
 
 -- =========================================================================
--- EVENT LISTENER
+-- EVENT LISTENER (Cache Invalidation)
 -- =========================================================================
 local talentTracker = CreateFrame("Frame")
 talentTracker:RegisterEvent("CHARACTER_POINTS_CHANGED")
 talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")
-talentTracker:SetScript("OnEvent", function(self, event)
-    MSC.TalentCacheLoaded = false
+talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
+-- [[ NEW: We must listen for Gear Changes to update Hit Rating ]] --
+talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
+talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
+
+talentTracker:SetScript("OnEvent", function(self, event, unit)
+    -- Optimization: Only care about player inventory
+    if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
+
+    -- 1. Wipe Talent Cache (only on talent events)
+    if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" then
+        MSC.TalentCache = {} 
+        MSC.TalentCacheLoaded = false
+    end
+
+    -- 2. Wipe Weight Cache (ALWAYS - forces recalculation on next mouseover)
+    MSC.CachedWeights = nil
+    MSC.CachedSpecKey = nil
+    
+    -- 3. Update Dropdown if Open
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and SGJ_SpecDropDown then
         local _, class = UnitClass("player")
         local _, detectedKey = MSC.GetCurrentWeights()

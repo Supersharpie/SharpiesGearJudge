@@ -92,9 +92,8 @@ function MSC.MergeStats(t1, t2)
     end
     return out
 end
-
 -- =============================================================
--- TOOLTIP UPDATE LOGIC (Core.lua)
+-- TOOLTIP UPDATE LOGIC 
 -- =============================================================
 function MSC.UpdateTooltip(tooltip)
     if SGJ_Settings and SGJ_Settings.HideTooltips then return end 
@@ -103,7 +102,6 @@ function MSC.UpdateTooltip(tooltip)
     local _, link = tooltip:GetItem()
     if not link then return end
     
-    -- 1. Check Usability
     if MSC.IsItemUsable and not MSC.IsItemUsable(link) then 
         tooltip:AddLine(" ")
         tooltip:AddLine("|cffff0000Sharpie's Verdict: CLASS UNUSABLE|r")
@@ -115,100 +113,201 @@ function MSC.UpdateTooltip(tooltip)
     local slotId = MSC.SlotMap[itemEquipLoc] 
     if not slotId then return end
     
+    -- 2. Get Spec & Weights
     local currentWeights, specName = MSC.GetCurrentWeights()
+    local _, class = UnitClass("player")
+    if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][specName] then
+        specName = MSC.PrettyNames[class][specName]
+    end
+
+    -- [[ CREATE POTENTIAL WEIGHTS ]] 
+    local potentialWeights = {}
+    for k,v in pairs(currentWeights) do potentialWeights[k] = v end
+    local baseVal = potentialWeights["ITEM_MOD_CRIT_RATING_SHORT"] or 20
     
-    -- 2. DETERMINE COMPARISON SLOT (Smart Logic)
-    -- We need to know WHICH slot to replace (e.g. Weakest Ring) for the Simulation to be accurate.
+    local function RestoreIfCapped(key)
+        local val = potentialWeights[key] or 0
+        if val > 0 and val < 1 then potentialWeights[key] = baseVal end
+    end
+    RestoreIfCapped("ITEM_MOD_HIT_RATING_SHORT")
+    RestoreIfCapped("ITEM_MOD_HIT_SPELL_RATING_SHORT")
+    RestoreIfCapped("ITEM_MOD_EXPERTISE_RATING_SHORT")
+
+    -- 3. DETERMINE COMPARISON SLOT
     local targetSlot = slotId
-    
     if itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" then
         local s1, s2 = 11, 12
         if itemEquipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
-        
         local l1 = GetInventoryItemLink("player", s1)
         local l2 = GetInventoryItemLink("player", s2)
-        
-        -- If a slot is empty, target that one
         if not l1 then targetSlot = s1
         elseif not l2 then targetSlot = s2
         else
-            -- Both full: Compare scores to find the weakest
             local stats1 = MSC.SafeGetItemStats(l1, s1)
             local stats2 = MSC.SafeGetItemStats(l2, s2)
-            local score1 = MSC.GetItemScore(stats1, currentWeights, specName, s1)
-            local score2 = MSC.GetItemScore(stats2, currentWeights, specName, s2)
-            
+            local score1 = MSC.GetItemScore(stats1, potentialWeights, specName, s1)
+            local score2 = MSC.GetItemScore(stats2, potentialWeights, specName, s2)
             if score2 < score1 then targetSlot = s2 else targetSlot = s1 end
         end
-        
-        -- If we are hovering over one of the equipped items, compare against THAT slot
-        if link == l1 then targetSlot = s1
-        elseif link == l2 then targetSlot = s2 end
+        if link == l1 then targetSlot = s1 elseif link == l2 then targetSlot = s2 end
+    end
+    if itemEquipLoc == "INVTYPE_WEAPON" then
+        local canDW = (class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" or class == "SHAMAN")
+        if canDW then
+            local l1 = GetInventoryItemLink("player", 16)
+            local l2 = GetInventoryItemLink("player", 17)
+            if l1 and l2 then
+                 local _,_,_,_,_,_,_,_, loc2 = GetItemInfo(l2)
+                 if loc2 == "INVTYPE_WEAPON" or loc2 == "INVTYPE_WEAPONOFFHAND" then
+                     local stats1 = MSC.SafeGetItemStats(l1, 16)
+                     local stats2 = MSC.SafeGetItemStats(l2, 17)
+                     local score1 = MSC.GetItemScore(stats1, potentialWeights, specName, 16)
+                     local score2 = MSC.GetItemScore(stats2, potentialWeights, specName, 17)
+                     if score2 < score1 then targetSlot = 17 end
+                 end
+            end
+        end
     end
 
-    -- 3. CALCULATE RAW SCORE (Item in a vacuum)
-    local newStats = MSC.SafeGetItemStats(link, targetSlot)
-    local rawScore = MSC.GetItemScore(newStats, currentWeights, specName, targetSlot)
+    -- [[ 4. PREDICTIVE CAP LOGIC (Hit & Expertise) ]] --
+    local compLink = GetInventoryItemLink("player", targetSlot)
+    local useWeights = currentWeights 
+    local capWarning = nil
     
-    -- 4. RUN THE SIMULATION (Item + Context)
-    -- We pass 'targetSlot' so the engine replaces the correct ring/trinket
-    local simDiff = 0
-    if MSC.EvaluateUpgrade then
-        simDiff = MSC:EvaluateUpgrade(link, targetSlot)
+    local newStats = MSC.SafeGetItemStats(link, targetSlot)
+    local compStats = {}
+    if compLink then compStats = MSC.SafeGetItemStats(compLink, targetSlot) end
+
+    -- A. Hit Prediction
+    local isHitCapped = (currentWeights["ITEM_MOD_HIT_RATING_SHORT"] or 0) < 1
+    if isHitCapped then
+        local currentHitPct = GetCombatRatingBonus(6) -- 6 = Melee Hit
+        local newHit = newStats["ITEM_MOD_HIT_RATING_SHORT"] or 0
+        local oldHit = compStats["ITEM_MOD_HIT_RATING_SHORT"] or 0
+        local deltaHit = newHit - oldHit
+        
+        if deltaHit < 0 then
+            local hitLossPct = math.abs(deltaHit) / 15.77 -- TBC conversion
+            local futureHit = currentHitPct - hitLossPct
+            if currentHitPct >= 9.0 and futureHit < 9.0 then
+                useWeights = potentialWeights
+                capWarning = string.format("|cffff0000(Warning: Drops Hit to %.2f%%)|r", futureHit)
+            end
+        end
     end
 
-    -- 5. DISPLAY VERDICT
+    -- B. Expertise Prediction (New Request)
+    local isExpCapped = (currentWeights["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) < 1
+    if isExpCapped and not capWarning then -- Only check if we haven't already triggered a Hit warning
+        -- Expertise: API 24. 3.94 rating = 1 Skill = 0.25% reduction. Cap is roughly 6.5% (26 skill).
+        -- Let's assume TBC Soft Cap ~ 6.5% (Dodge). 
+        local currentExpPct = GetCombatRatingBonus(24) 
+        local newExp = newStats["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0
+        local oldExp = compStats["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0
+        local deltaExp = newExp - oldExp
+        
+        if deltaExp < 0 then
+            local expLossPct = math.abs(deltaExp) / 15.77 -- Approximation for Rating -> Pct (3.94 rating per point * 4 points per pct)
+            local futureExp = currentExpPct - expLossPct
+            -- Soft cap is usually around 5.6% - 6.5% depending on race. We use 5.5% as a safe trigger.
+            if currentExpPct >= 5.5 and futureExp < 5.5 then
+                useWeights = potentialWeights
+                capWarning = string.format("|cffff0000(Warning: Drops Exp to %.2f%%)|r", futureExp)
+            end
+        end
+    end
+
+    -- 5. CALCULATE SCORES
+    local activeScore = MSC.GetItemScore(newStats, useWeights, specName, targetSlot)
+    local potentialScore = MSC.GetItemScore(newStats, potentialWeights, specName, targetSlot)
+
+    local simDiff = 0
+    local currentScore = 0
+    
+    if compLink then
+        -- Merge OH if 2H
+        if itemEquipLoc == "INVTYPE_2HWEAPON" and slotId == 16 then
+            local offHandLink = GetInventoryItemLink("player", 17)
+            if offHandLink then
+               local ohStats = MSC.SafeGetItemStats(offHandLink, 17)
+               for k,v in pairs(ohStats) do if type(v)=="number" then compStats[k]=(compStats[k] or 0)+v end end
+            end
+        end
+        currentScore = MSC.GetItemScore(compStats, useWeights, specName, targetSlot)
+    end
+    simDiff = activeScore - currentScore
+
+    -- 6. DISPLAY HEADER
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
-    tooltip:AddDoubleLine("|cff00ccffGearScore:|r", string.format("%.1f", rawScore), 1, 1, 1, 1, 1, 1)
+    
+    if itemEquipLoc == "INVTYPE_2HWEAPON" and slotId == 16 then
+        local offHandLink = GetInventoryItemLink("player", 17)
+        if offHandLink then
+            tooltip:AddLine("Comparing vs: Main Hand + Off Hand", 0.6, 0.6, 0.6)
+        elseif compLink then
+            tooltip:AddLine("Comparing vs: " .. compLink .. " (No OH)", 0.6, 0.6, 0.6)
+        end
+    elseif compLink and compLink ~= link then
+        tooltip:AddLine("Comparing vs: " .. compLink, 0.6, 0.6, 0.6)
+    elseif not compLink then
+        tooltip:AddLine("|cff00ff00(Filling Empty Slot)|r")
+    end
+    
+    if capWarning or ((potentialScore - activeScore) > 1) then
+        tooltip:AddDoubleLine("|cff00ccffPotential Score:|r", string.format("%.1f", potentialScore), 1, 1, 1, 1, 1, 1)
+        if capWarning then
+            tooltip:AddLine(capWarning)
+        else
+            tooltip:AddDoubleLine("|cffffaa00(Hit/Exp Capped Value):|r", "|cffffaa00" .. string.format("%.1f", activeScore) .. "|r")
+        end
+    else
+        tooltip:AddDoubleLine("|cff00ccffGearScore:|r", string.format("%.1f", activeScore), 1, 1, 1, 1, 1, 1)
+    end
 
-    -- Display Upgrade/Downgrade based on SIMULATION
+    -- 7. UPGRADE VERDICT
     if simDiff > 0.1 then
-        local upgradeText = "|cff00ff00*** UPGRADE (+" .. string.format("%.1f", simDiff) .. ")"
-        -- Add note if we are filling an empty slot
-        if not GetInventoryItemLink("player", targetSlot) then upgradeText = upgradeText .. " (Fill Slot)" end
-        tooltip:AddLine(upgradeText .. " ***|r")
+        tooltip:AddLine("|cff00ff00>> Upgrade (+" .. string.format("%.1f", simDiff) .. ") <<|r")
     elseif simDiff < -0.1 then
-        tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. string.format("%.1f", simDiff) .. ") ***|r")
+        tooltip:AddLine("|cffff0000<< Downgrade (" .. string.format("%.1f", simDiff) .. ") >>|r")
     else
         tooltip:AddLine("|cffaaaaaa(Sidegrade / No Change)|r")
     end
 
-    -- 6. SHOW SET BONUS / PROC IMPACT
-    -- Calculate the difference between "Simulated Gain" and "Raw Stat Gain"
-    local currentItemLink = GetInventoryItemLink("player", targetSlot)
-    local currentRawScore = 0
-    if currentItemLink then
-        local currentStats = MSC.SafeGetItemStats(currentItemLink, targetSlot)
-        currentRawScore = MSC.GetItemScore(currentStats, currentWeights, specName, targetSlot)
-    end
-    
-    local rawDiff = rawScore - currentRawScore
-    local hiddenValue = simDiff - rawDiff
-
-    -- Only show if the hidden value (Set Bonus/Proc) is significant (> 1 point)
-    if math.abs(hiddenValue) > 1 then
-        if hiddenValue > 0 then
-            tooltip:AddDoubleLine("Set Bonus / Proc:", "|cff00ff00+" .. string.format("%.1f", hiddenValue) .. "|r")
-        else
-            tooltip:AddDoubleLine("Set Bonus Break:", "|cffff0000" .. string.format("%.1f", hiddenValue) .. "|r")
+    -- 8. STAT BREAKDOWN
+    local currentStats = {}
+    if compLink then currentStats = MSC.SafeGetItemStats(compLink, targetSlot) end
+    if itemEquipLoc == "INVTYPE_2HWEAPON" and slotId == 16 then
+        local offHandLink = GetInventoryItemLink("player", 17)
+        if offHandLink then
+            local ohStats = MSC.SafeGetItemStats(offHandLink, 17)
+            for k, v in pairs(ohStats) do
+                if type(v) == "number" then currentStats[k] = (currentStats[k] or 0) + v end
+            end
         end
     end
-
-    -- 7. PROJECTION DISPLAY
+    local oldExp = MSC.ExpandDerivedStats(currentStats, compLink)
+    local newExp = MSC.ExpandDerivedStats(newStats, link)
+    local diffs = MSC.GetStatDifferences(newExp, oldExp)
+    local sorted = MSC.SortStatDiffs(diffs)
+    for i, d in ipairs(sorted) do
+        if i > 12 then break end
+        local k, v = d.key, d.val
+        if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" and k~= "estimate" then
+             local name = MSC.GetCleanStatName(k)
+             local color = (v > 0) and "|cff00ff00" or "|cffff0000"
+             local sign = (v > 0) and "+" or ""
+             if math.abs(v) > 0.1 then
+                 tooltip:AddDoubleLine(name, color .. sign .. string.format("%.1f", v) .. "|r")
+             end
+        end
+    end
+    
     if newStats.IS_PROJECTED and newStats.ENCHANT_TEXT then
         tooltip:AddLine("(Enchant: |cffffffff" .. newStats.ENCHANT_TEXT .. "|r)", 0, 1, 1)
     end
     if newStats.GEMS_PROJECTED and newStats.GEM_TEXT then
         tooltip:AddLine("(Gems: |cffffffff" .. newStats.GEM_TEXT .. "|r)", 0, 1, 1)
-    end
-	-- [[ VISUAL CLARITY: 2H vs 1H+OH ]] --
-    -- If hovering a 2H weapon while dual-wielding, tell the user we checked both.
-    if itemEquipLoc == "INVTYPE_2HWEAPON" and slotId == 16 then
-        local offHandLink = GetInventoryItemLink("player", 17)
-        if offHandLink then
-            tooltip:AddLine("|cffaaaaaa(Comparing vs Main Hand + Off Hand)|r")
-        end
     end
 
     tooltip:Show()

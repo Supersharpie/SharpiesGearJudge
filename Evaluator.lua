@@ -50,7 +50,7 @@ function MSC:GetTotalCharacterScore(gearTable, weights)
                     if procData.ppm then
                         local dur = procData.dur or 10 -- default 10s if missing
                         local val = procData.val or 0
-                        local statName = procData.stat or "AP" -- default to AP
+                        local statName = procData.stat or "ITEM_MOD_ATTACK_POWER_SHORT" -- default to AP
                         local sse = (val * dur * procData.ppm) / 60
                         stats[statName] = (stats[statName] or 0) + sse
                     elseif procData.score then
@@ -66,9 +66,11 @@ function MSC:GetTotalCharacterScore(gearTable, weights)
                 end
             end
 
-            -- Add to Accumulator
+            -- Add to Accumulator (FIXED: Filter out non-number flags)
             for stat, value in pairs(stats) do
-                accumulator[stat] = (accumulator[stat] or 0) + value
+                if type(value) == "number" then
+                    accumulator[stat] = (accumulator[stat] or 0) + value
+                end
             end
         end
     end
@@ -97,7 +99,6 @@ function MSC:GetTotalCharacterScore(gearTable, weights)
 
     -- C. APPLY WEIGHTS
     for stat, val in pairs(accumulator) do
-        -- Check both precise names ("ITEM_MOD_STRENGTH_SHORT") and simple keys ("STR") if you use them
         local weight = weights[stat] or 0
         totalScore = totalScore + (val * weight)
     end

@@ -1,83 +1,90 @@
-# Sharpie's Gear Judge (v1.9.0)
-### The Final Verdict on your Gear for WoW Classic Era
+Sharpie's Gear Judge (v2.0.0 - TBC Edition)
+The Final Verdict on your Gear for WoW: Burning Crusade
+Sharpie's Gear Judge takes the guesswork out of loot. It doesn't just look at stats; it Simulates your character. It calculates Set Bonuses, estimates Proc rates, projects Gem combinations, and checks your Talent Tree to render a final verdict: UPGRADE or DOWNGRADE.
 
-**Sharpie's Gear Judge** takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, **your talents**, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
+🚀 New in v2.0.0: "The Simulator Update"
+We have completely replaced the old math engine with a State-Based Simulator. The Judge now understands context:
 
----
+Set Bonus Awareness: The Judge knows that breaking your 2-Piece Tier 4 bonus might lose you DPS, even if the new item has more raw stats. It calculates the net change of gaining/losing set bonuses in real-time.
 
-## 🌟 New in v1.9.0: "The Engine Rebuild"
-We have completely rewritten the core logic from a monolithic script into a professional, modular architecture. The Judge now has **Two Brains**:
+Proc Calculation: "Chance on hit" is no longer a mystery. The Judge uses a "Static Stat Equivalent" (SSE) formula to convert procs (like Dragonspine Trophy or Mongoose) into hard score values.
 
-1.  **The Leveling Engine:** A dedicated system for character growth. It understands that a Level 25 Mage needs different stats than a Level 59 Mage. It features **30+ new leveling profiles** and specific logic for **Pre-BiS farming** (Levels 52-59).
-2.  **The Dynamic Engine:** A high-level traffic controller that takes over at Level 60 (or when you force it). It handles complex End-Game logic, Hit Caps, and Raid-Specific builds.
+Smart Caching: A new Zero-Lag caching system reads item data once and remembers it, allowing for instant comparisons even with complex tooltips.
 
-### Other v1.9.0 Highlights:
-* **"Green Item" Fix:** A new **Heavy Duty Text Scanner** now correctly reads and scores "Random Enchantment" items (e.g., *"...of the Owl"* or *"...of the Eagle"*) that the standard WoW API often ignores.
-* **Conflict Manager (The Peacekeeper):** The Judge now automatically detects conflicting tooltips from **RestedXP**, **Zygor**, and **Pawn**, offering to auto-disable them to keep your interface clean.
-* **Manual Override:** You can now force the Judge to use a specific profile (e.g., force "Pre-BiS Farming" logic while still Level 58) via the Minimap menu.
+TBC Exclusive Features:
+💎 Gem Projection: Hover over an empty socketed item? The Judge simulates filling it with the best available gems for your level to show you its true potential score.
 
----
+🔮 Enchant Simulation: Comparing a clean item vs. your enchanted gear? The Judge can virtually apply your preferred enchant to the new item to make the comparison fair.
 
-## 🧠 The Dynamic Brain (Endgame)
-The Judge thinks like a theorycrafter. It calculates stat weights in **Real-Time** every time you hover over an item:
+Contextual Stats: Full support for Haste, Armor Penetration, Expertise, and Resilience.
 
-* **🚫 Hit Cap Awareness:** If you reach the Hit Cap (e.g., 9% for Melee, 16% for Spells), the addon instantly detects it and devalues Hit Rating to **0.01** on the next tooltip. No more wasted stats.
-* **⚡ Talent Scaling:** The addon reads your Talent Tree. If you have *Divine Strength* (+10% Str) or *Heart of the Wild* (+20% Int), the addon automatically increases the score of items with those stats to reflect their *true* value to you.
-* **📉 Diminishing Returns:** Automatically adjusts weights as you approach caps, ensuring you never "overpay" for a stat you don't need.
+🧠 The Dynamic Brain (Endgame)
+The Judge thinks like a theorycrafter. It recalculates stat weights in Real-Time:
 
-## 📈 The Leveling Brain (Growth)
-The addon evolves with you as you grow using **Smart Brackets**:
+🚫 Hit Cap Awareness: If you reach the Hit Cap (9% Melee / 16% Spell), the addon instantly detects it and devalues Hit Rating to 0.01 on the next tooltip. No more wasted stats.
 
-* **Levels 1-20:** Scores items based on Survival & Regeneration (Spirit/Stamina).
-* **Levels 21-40:** Shifts focus to Raw Power & Talent scaling.
-* **Levels 41-51:** Prioritizes efficiency and kill speed.
-* **Levels 52-59 (Pre-BiS Mode):** Automatically switches to "Pre-Raid" weights (Hit/Crit) to help you farm your Level 60 gear before you even ding.
-* **Dungeon Smart:** If you are spec'd as a Tank or Healer, the addon automatically switches to "Dungeon Mode" weights so you can gear for your role, not just for solo questing.
+⚡ Talent Scaling: The addon reads your Talent Tree. If you have Combat Potency (Rogue) or Divine Strength (Paladin), the addon multiplies the value of relevant stats to reflect their true power.
 
----
+📉 Diminishing Returns: Automatically adjusts weights as you approach soft caps.
 
-## ⚖️ Key Features
+📈 The Leveling Brain (Growth)
+The addon evolves with you as you journey to Level 70:
 
-### ⚔️ The Verdict Tooltip (Context-Aware Scoring)
+Levels 1-58 (Azeroth): Standard leveling weights prioritizing efficiency and sustain.
+
+Levels 58-69 (Outland): Switches to "TBC Leveling" profiles, prioritizing Stamina and Questing power.
+
+Level 70 (Endgame): Activates the Simulator Engine for Raid/Heroic/Arena optimization.
+
+Dungeon Smart: If you spec Tank or Healer, the addon automatically switches to role-specific weights.
+
+⚖️ Key Features
+⚔️ The Verdict Tooltip
 Hover over any item to see an instant, intelligent comparison against your equipped gear.
-* **Enchant Projection:** Toggle "Potential Mode" to virtually apply your current enchant onto new loot to see if it's *actually* an upgrade once fully set up.
-* **Active Item Estimator:** Estimates the average combat value of On-Use trinkets (e.g., *Earthstrike*, *Diamond Flask*) and marks them with a Tilde (**~**).
-* **Smart Pairing:** If you compare a 2-Hander while dual-wielding, it automatically finds the best combination in your bags to calculate the **net** gain/loss.
 
-### 🧾 The Gear Receipt (Audit)
-Type `/sgjreceipt` to open your **Character Audit**.
-* **⚠️ Return Policy (Bag Scanning):** The Receipt scans your bags. If you have an item in your bag that is better than what you are wearing, a **Yellow Alert** icon will appear to warn you!
-* **💸 Tax Collector (Enchant Check):** Detects unenchanted gear. If an item is missing an enchant, a **Red Alert** icon will flag it as a "Missed Opportunity."
-* **Export:** Generate a text string of your gear and score to paste into Discord or spreadsheets.
+Upgrade/Downgrade: Shows the exact score difference (e.g., *** UPGRADE (+24.5) ***).
 
-### 🧪 The Judge's Lab (/sgj)
-A custom visual interface for advanced theorycrafting.
-* **Gap Filling:** Drag items into empty slots to simulate future loadouts.
-* **Math Breakdown:** Click "MATH MODE" to see exactly *why* the Judge gave a score. It breaks down your Talent Multipliers, Hit Cap status, and Profile logic in plain English.
+Breakdown: Shows exactly why it's better (e.g., +15 Stamina, -10 Intellect, Set Bonus: +40).
 
----
+Smart Pairing: If comparing a 2-Hander while Dual-Wielding, it simulates removing your Off-Hand to calculate the Net Change.
 
-## ⚙️ Configuration
-* **Strict Mode:** Compare items exactly as they drop.
-* **Potential Mode:** Compare items as if they were fully enchanted.
-* **Profile:** Auto-detects your spec/level, or **Force Manual Mode** via the Minimap button (Right-Click).
-* **Conflict Manager:** Auto-resolves tooltip overlaps with other addons.
+🧾 The Gear Receipt (Audit)
+Type /sgjreceipt (or use the Minimap button) to open your Character Audit.
 
-## 🛠 Installation
-1.  **Delete** any old `SharpiesGearJudge` folder from your AddOns directory (Critical for v1.9.0!).
-2.  Extract the new folder into `_classic_era_\Interface\AddOns\`.
-3.  Launch WoW Classic.
+⚠️ Bag Scanning: Scans your bags for upgrades you might have missed. If a better item is hiding in your bag, a Yellow Alert icon appears.
 
-## 🎮 Commands
-* `/sgj` or `/judge` - Open "The Judge's Lab".
-* `/sgjreceipt` - Open the Gear Receipt (Audit).
-* `/sgj history` - View your Level-Up history log.
-* `/sgj options` - Open the Configuration Panel.
+💸 Tax Collector: Detects missing Enchants or Gems. A Red Alert icon flags missed opportunities.
 
-**Minimap Button:**
-* **Left-Click:** Toggle Judge's Lab.
-* **Right-Click:** Open Settings / Manual Override.
+Export: Generate a text string of your gear and score to paste into Discord.
 
----
-**Author:** Supersharpie  
-**Version:** 1.9.0
+🧪 The Judge's Lab
+A custom visual interface for manual theorycrafting.
+
+Gap Filling: Drag items into the Lab to simulate future loadouts or compare specific pairings (e.g., "Staff X" vs "Main Hand Y + Off Hand Z").
+
+Math Breakdown: Click "MATH MODE" to see the raw data. It breaks down your Talent Multipliers, Hit Cap status, and EP (Equivalence Points) in plain English.
+
+⚙️ Configuration
+Projection Mode: Choose how the Judge handles empty sockets (Ignore, Match Color, or Smart Match).
+
+Profile: Auto-detects your spec/level, or Force Manual Mode via the Minimap button (Right-Click).
+
+Minimap Button: Toggle the Lab (Left-Click) or Settings (Right-Click).
+
+🛠 Installation
+Delete any old SharpiesGearJudge folder from your AddOns directory (Critical for v2.0!).
+
+Extract the new folder into _classic_\Interface\AddOns\.
+
+Launch WoW Burning Crusade Classic.
+
+🎮 Commands
+/sgj or /judge - Open "The Judge's Lab".
+
+/sgj options - Open the Configuration Panel.
+
+/sgj receipt - Open the Gear Audit.
+
+/sgj save <name> - Save a snapshot of your current gear score to history.
+
+Author: Supersharpie Version: 2.0.0 (TBC Edition)
