@@ -11,12 +11,50 @@ MSC.TalentStringMap = {
     ["MAGE"] = { ["ARCANE_POWER"]="Arcane Power", ["SLOW"]="Slow", ["COMBUSTION"]="Combustion", ["DRAGONS_BREATH"]="Dragon's Breath", ["ICE_BARRIER"]="Ice Barrier", ["SUMMON_WELE"]="Summon Water Elemental", ["WINTERS_CHILL"]="Winter's Chill", ["IMP_BLIZZARD"]="Improved Blizzard", ["ARCANE_MIND"]="Arcane Mind", ["MOLTEN_ARMOR"]="Molten Armor", ["ICY_VEINS"]="Icy Veins" },
     ["PALADIN"] = { ["HOLY_SHOCK"]="Holy Shock", ["DIVINE_ILLUM"]="Divine Illumination", ["HOLY_SHIELD"]="Holy Shield", ["AVENGERS_SHIELD"]="Avenger's Shield", ["REPENTANCE"]="Repentance", ["CRUSADER_STRIKE"]="Crusader Strike", ["SANCTITY_AURA"]="Sanctity Aura", ["DIVINE_STR"]="Divine Strength", ["DIVINE_INT"]="Divine Intellect", ["COMBAT_EXPERTISE"]="Combat Expertise" },
     ["PRIEST"] = { ["POWER_INFUSION"]="Power Infusion", ["PAIN_SUPP"]="Pain Suppression", ["SPIRIT_GUIDANCE"]="Spiritual Guidance", ["CIRCLE_HEALING"]="Circle of Healing", ["SEARING_LIGHT"]="Searing Light", ["SPIRIT_OF_REDEMPTION"]="Spirit of Redemption", ["SHADOWFORM"]="Shadowform", ["VAMPIRIC_TOUCH"]="Vampiric Touch", ["ENLIGHTENMENT"]="Enlightenment" },
-    ["ROGUE"] = { ["MUTILATE"]="Mutilate", ["ADRENALINE_RUSH"]="Adrenaline Rush", ["SURPRISE_ATTACK"]="Surprise Attack", ["COMBAT_POTENCY"]="Combat Potency", ["HEMORRHAGE"]="Hemorrhage", ["SHADOWSTEP"]="Shadowstep", ["CHEAT_DEATH"]="Cheat Death", ["VITALITY"]="Vitality", ["SINISTER_CALLING"]="Sinister Calling" },
-    ["SHAMAN"] = { ["ELEMENTAL_MASTERY"]="Elemental Mastery", ["TOTEM_OF_WRATH"]="Totem of Wrath", ["LIGHTNING_MASTERY"]="Lightning Mastery", ["STORMSTRIKE"]="Stormstrike", ["SHAMANISTIC_RAGE"]="Shamanistic Rage", ["MANA_TIDE"]="Mana Tide Totem", ["EARTH_SHIELD"]="Earth Shield", ["NATURE_GUIDANCE"]="Nature's Guidance", ["ANCESTRAL_KNOW"]="Ancestral Knowledge", ["MENTAL_QUICKNESS"]="Mental Quickness", ["SHIELD_SPEC"]="Shield Specialization", ["ANTICIPATION"]="Anticipation" },
-    ["WARLOCK"] = { ["DARK_PACT"]="Dark Pact", ["UNSTABLE_AFF"]="Unstable Affliction", ["SIPHON_LIFE"]="Siphon Life", ["SOUL_LINK"]="Soul Link", ["SUMMON_FELGUARD"]="Summon Felguard", ["CONFLAGRATE"]="Conflagrate", ["RUIN"]="Ruin", ["SHADOWFURY"]="Shadowfury", ["DEMONIC_EMBRACE"]="Demonic Embrace", ["FEL_INTELLECT"]="Fel Intellect" },
-    ["WARRIOR"] = { ["MORTAL_STRIKE"]="Mortal Strike", ["ENDLESS_RAGE"]="Endless Rage", ["BLOOD_FRENZY"]="Blood Frenzy", ["SECOND_WIND"]="Second Wind", ["BLOODTHIRST"]="Bloodthirst", ["RAMPAGE"]="Rampage", ["SHIELD_SLAM"]="Shield Slam", ["DEVASTATE"]="Devastate", ["VITALITY"]="Vitality" },
+    ["ROGUE"] = { 
+        ["MUTILATE"]="Mutilate", 
+        ["ADRENALINE_RUSH"]="Adrenaline Rush", 
+        ["SURPRISE_ATTACK"]="Surprise Attack", 
+        ["COMBAT_POTENCY"]="Combat Potency", 
+        ["HEMORRHAGE"]="Hemorrhage", 
+        ["SHADOWSTEP"]="Shadowstep", 
+        ["CHEAT_DEATH"]="Cheat Death", 
+        ["VITALITY"]="Vitality", 
+        ["SINISTER_CALLING"]="Sinister Calling",
+        ["DAGGER_SPEC"] = "Dagger Specialization",
+        ["FIST_SPEC"]   = "Fist Weapon Specialization",
+        ["SWORD_SPEC"]  = "Sword Specialization",
+        ["MACE_SPEC"]   = "Mace Specialization" 
+    },
+	["SHAMAN"] = { ["ELEMENTAL_MASTERY"]="Elemental Mastery", ["TOTEM_OF_WRATH"]="Totem of Wrath", ["LIGHTNING_MASTERY"]="Lightning Mastery", ["STORMSTRIKE"]="Stormstrike", ["SHAMANISTIC_RAGE"]="Shamanistic Rage", ["MANA_TIDE"]="Mana Tide Totem", ["EARTH_SHIELD"]="Earth Shield", ["NATURE_GUIDANCE"]="Nature's Guidance", ["ANCESTRAL_KNOW"]="Ancestral Knowledge", ["MENTAL_QUICKNESS"]="Mental Quickness", ["SHIELD_SPEC"]="Shield Specialization", ["ANTICIPATION"]="Anticipation" },
+    ["WARLOCK"] = { 
+		["DARK_PACT"]="Dark Pact", 
+		["UNSTABLE_AFF"]="Unstable Affliction", 
+		["SIPHON_LIFE"]="Siphon Life", 
+		["SOUL_LINK"]="Soul Link", 
+		["SUMMON_FELGUARD"]="Summon Felguard", 
+		["CONFLAGRATE"]="Conflagrate", 
+		["RUIN"]="Ruin", 
+		["SHADOWFURY"]="Shadowfury", 
+		["DEMONIC_EMBRACE"]="Demonic Embrace", 
+		["FEL_INTELLECT"]="Fel Intellect" 
+	},
+	
+    ["WARRIOR"] = { 
+		["MORTAL_STRIKE"]	="Mortal Strike",
+		["ENDLESS_RAGE"]	="Endless Rage",
+		["BLOOD_FRENZY"]	="Blood Frenzy",
+		["SECOND_WIND"]		="Second Wind",
+		["BLOODTHIRST"]		="Bloodthirst",
+		["RAMPAGE"]			="Rampage",
+		["SHIELD_SLAM"]		="Shield Slam",
+		["DEVASTATE"]		="Devastate",
+		["VITALITY"]		="Vitality",
+		["POLEAXE_SPEC"]    = "Poleaxe Specialization",
+        ["SWORD_SPEC"]      = "Sword Specialization",
+        ["MACE_SPEC"]       = "Mace Specialization"
+	}
 }
-
 -- =========================================================================
 -- 2. SCANNER LOGIC (Safe & Robust)
 -- =========================================================================
@@ -147,6 +185,80 @@ function MSC:GetShamanRaidSpec()
     if self:GetTalentRank("EARTH_SHIELD") > 0 or self:GetTalentRank("MANA_TIDE") > 0 then return "RESTO_PVE" end
     if self:GetTalentRank("SHIELD_SPEC") > 0 and self:GetTalentRank("ANTICIPATION") > 0 then return "SHAMAN_TANK" end
     return "RESTO_PVE"
+end
+
+-- [[ WEAPON SPECIALIZATION & RACIAL BONUS ]] --
+function MSC:GetWeaponSpecBonus(itemLink, class, specKey)
+    if not itemLink then return 0 end
+    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
+    -- classID 2 = Weapon. 
+    -- SubIDs: 0=Axe1H, 1=Axe2H, 2=Bow, 3=Gun, 4=Mace1H, 5=Mace2H, 6=Polearm, 7=Sword1H, 8=Sword2H, 10=Staff, 13=Fist, 15=Dagger, 18=XBow
+    if classID ~= 2 then return 0 end 
+
+    local bonus = 0
+    local _, race = UnitRace("player")
+
+    -- [[ 1. RACIAL BONUSES (Hidden Stats) ]] --
+    -- HUMAN: Sword/Mace (+5 Expertise ~ 20 Rating ~ 40 Score)
+    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then
+        bonus = bonus + 40
+    end
+    -- ORC: Axe (+5 Expertise ~ 40 Score)
+    if race == "Orc" and (subClassID == 0 or subClassID == 1) then
+        bonus = bonus + 40
+    end
+    -- DWARF: Gun (+1% Crit from Skill ~ 35 Score)
+    if race == "Dwarf" and subClassID == 3 then
+        bonus = bonus + 35
+    end
+    -- TROLL: Bow (+1% Crit from Skill ~ 35 Score)
+    if race == "Troll" and subClassID == 2 then
+        bonus = bonus + 35
+    end
+
+    -- [[ 2. CLASS TALENT BONUSES ]] --
+    if class == "WARRIOR" then
+        -- Poleaxe Spec (Axes & Polearms): 1% Crit per rank
+        if subClassID == 0 or subClassID == 1 or subClassID == 6 then
+            local rank = self:GetTalentRank("POLEAXE_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 35.0) end
+        end
+        -- Sword Spec (Swords): Extra Swing
+        if subClassID == 7 or subClassID == 8 then
+            local rank = self:GetTalentRank("SWORD_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 35.0) end
+        end
+        -- Mace Spec (Maces): Stun/Rage (Low PvE value)
+        if subClassID == 4 or subClassID == 5 then
+            local rank = self:GetTalentRank("MACE_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 10.0) end
+        end
+
+    elseif class == "ROGUE" then
+        -- Dagger Spec: 1% Crit per rank
+        if subClassID == 15 then 
+            local rank = self:GetTalentRank("DAGGER_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 35.0) end
+        end
+        -- Fist Spec: 1% Crit per rank
+        if subClassID == 13 then
+            local rank = self:GetTalentRank("FIST_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 35.0) end
+        end
+        -- Sword Spec: Extra Swing
+        if subClassID == 7 or subClassID == 8 then
+            local rank = self:GetTalentRank("SWORD_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 35.0) end
+        end
+        -- Mace Spec (Rogue): Increases Expertise by 2 per rank (+Stun)
+        -- 2 Skill = ~7.8 Rating. Weight ~2.0. Value ~16 per rank. + Stun Utility.
+        if subClassID == 4 or subClassID == 5 then
+            local rank = self:GetTalentRank("MACE_SPEC")
+            if rank > 0 then bonus = bonus + (rank * 25.0) end
+        end
+    end
+    
+    return bonus
 end
 
 function MSC:GetEndgameSpec(class)
