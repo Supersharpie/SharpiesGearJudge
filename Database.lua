@@ -89,7 +89,7 @@ MSC.WeightDB = {
         ["RESTO_PVE"] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.6, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.9, ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8 },
         ["SHAMAN_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.8, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=0.8 },
     },
-["DRUID"] = {
+	["DRUID"] = {
         ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
 
         -- [[ 1. BALANCE (Standard PvE) ]]
@@ -103,16 +103,15 @@ MSC.WeightDB = {
             ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.3,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.4,
-            
-            -- POISON PROTECTION (Don't reject hybrid leather)
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.01, -- Poison Protection
             ["ITEM_MOD_AGILITY_SHORT"]=0.01,
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.01,
         },
 
         -- [[ 2. FERAL CAT (DPS) ]]
         ["FERAL_CAT"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,                    -- Weapon DPS = 0
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["MSC_WEAPON_SPEED"]=0.0,                  -- << Stops "Speed 3.60" from penalizing score
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.8,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.9,
             ["ITEM_MOD_STRENGTH_SHORT"]=2.2,
@@ -122,20 +121,21 @@ MSC.WeightDB = {
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
             ["ITEM_MOD_ARMOR_PENETRATION_SHORT"]=0.4,
             
-            -- POISON PROTECTION (Immunize against "Hybrid Tax" stats)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,         -- Tier sets have Int. Don't Poison.
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,            -- Tier sets have Spirit. Don't Poison.
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01, -- "Of the Bandit" gear might have MP5.
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.01, -- Cats don't need it, but shouldn't hate it.
+            -- POISON PROTECTION (Critical for Tier/PvP Gear)
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,         -- << FIXES NEGATIVE SCORE
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.01,
             ["ITEM_MOD_DODGE_RATING_SHORT"]=0.01,
-            ["ITEM_MOD_STAMINA_SHORT"]=0.1,            -- Cats don't prioritize HP, but it's not poison.
+            ["ITEM_MOD_STAMINA_SHORT"]=0.1,
         },
 
         -- [[ 3. FERAL BEAR (TANK) ]]
         ["FERAL_BEAR"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,                    -- Weapon DPS = 0
+            ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WEAPON_SPEED"]=0.0,                  -- << Stops Speed Penalty
             ["ITEM_MOD_STAMINA_SHORT"]=1.7,
-            ["ITEM_MOD_ARMOR_SHORT"]=0.35,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.35,             -- High weight for Armor
             ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=1.2,
             ["ITEM_MOD_AGILITY_SHORT"]=1.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"]=1.3, 
@@ -145,13 +145,13 @@ MSC.WeightDB = {
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.0,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.8,
             ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]=0.5,
-
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,         -- Bears shift forms. Int is okay.
+            
+            -- POISON PROTECTION (Critical for Gladiator Tunic)
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,         -- << FIXES NEGATIVE SCORE
             ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=0.0,       -- Bears CANNOT Parry. This stays 0 (or Poison).
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.0,       -- Bears CANNOT Block.
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=0.01,      
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.01,      
         },
 
         -- [[ 4. RESTO TREE (PvE) ]]
@@ -162,9 +162,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_INTELLECT_SHORT"]=0.7, 
             ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.6, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.3,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,           -- Leather often has Agi. Don't kill score.
+            ["ITEM_MOD_AGILITY_SHORT"]=0.01,           
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_STAMINA_SHORT"]=0.1,
         },
@@ -176,8 +174,6 @@ MSC.WeightDB = {
             ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.9,
             ["ITEM_MOD_SPIRIT_SHORT"]=0.6,
-
-            -- POISON PROTECTION
             ["ITEM_MOD_AGILITY_SHORT"]=0.01,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
         },
@@ -189,12 +185,10 @@ MSC.WeightDB = {
             ["ITEM_MOD_HEALING_POWER_SHORT"]=0.9, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5,
-            
-            -- POISON PROTECTION
             ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01,
         },
-
+        
         -- [[ 7. MOONGLOW ]]
         ["MOONGLOW"] = { 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
@@ -202,8 +196,6 @@ MSC.WeightDB = {
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.9, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.7,
-            
-            -- POISON PROTECTION
             ["ITEM_MOD_AGILITY_SHORT"]=0.01,
         },
     },

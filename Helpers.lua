@@ -48,43 +48,50 @@ end
 
 function MSC.IsItemUsable(link)
     if not link then return false end
-    local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
+    -- We grab 'equipLoc' (Arg 9) because it is more reliable than ClassIDs for Relics
+    local _, _, _, _, _, _, subType, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
     local _, playerClass = UnitClass("player")
     
-    -- [[ 1. ARMOR CHECKS ]] --
-    if classID == 4 then 
-        -- Subclass 11 = Idols, Librams, Totems (Relics)
-        if subclassID == 11 then
-            if playerClass == "DRUID" or playerClass == "PALADIN" or playerClass == "SHAMAN" then
-                -- Double check it's the right relic for the right class
-                -- (GetItemInfo returns specific subtypes like "Libram", "Idol", "Totem")
-                local relicType = select(7, GetItemInfo(link)) 
-                if playerClass == "DRUID" and relicType == "Idol" then return true end
-                if playerClass == "PALADIN" and relicType == "Libram" then return true end
-                if playerClass == "SHAMAN" and relicType == "Totem" then return true end
-                return false -- Wrong relic for this class
+    -- [[ 1. RELIC CHECK (Fixes "Class Unusable" on Idols) ]] --
+    if equipLoc == "INVTYPE_RELIC" then
+        if playerClass == "DRUID" or playerClass == "PALADIN" or playerClass == "SHAMAN" then
+            -- We just check if the item isn't explicitly for another class
+            -- (e.g. A Druid can use Relics, unless it's specifically a "Totem" or "Libram")
+            if subType then
+                if playerClass == "DRUID" and (subType == "Totem" or subType == "Libram") then return false end
+                if playerClass == "PALADIN" and (subType == "Totem" or subType == "Idol") then return false end
+                if playerClass == "SHAMAN" and (subType == "Libram" or subType == "Idol") then return false end
             end
-            return false -- Non-hybrid classes can't use relics
+            return true
         end
+        return false
+    end
 
-        -- Standard Armor Checks
-        -- 0=Misc, 1=Cloth, 2=Leather, 3=Mail, 4=Plate, 6=Shield
-        if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then 
-            if subclassID > 1 then return false end -- Cloth only
-        elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
-            if subclassID > 2 then return false end -- Cloth/Leather
-        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
-            if subclassID > 3 then return false end -- Cloth/Leather/Mail
+    -- [[ 2. THROWN WEAPON CHECK ]] --
+    if equipLoc == "INVTYPE_THROWN" then
+        if playerClass == "WARRIOR" or playerClass == "ROGUE" or playerClass == "HUNTER" then
+            return true
         end
-        -- Warriors/Paladins can use everything (Subclass 4=Plate), so no 'if' needed for them here.
+        -- (Priests/Mages etc can't use Thrown)
+        return false
+    end
+
+    -- [[ 3. STANDARD ARMOR CHECKS ]] --
+    -- 0=Misc, 1=Cloth, 2=Leather, 3=Mail, 4=Plate, 6=Shield
+    if classID == 4 then 
+        if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then 
+            if subclassID and subclassID > 1 then return false end -- Cloth only
+        elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
+            if subclassID and subclassID > 2 then return false end -- Cloth/Leather
+        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
+            if subclassID and subclassID > 3 then return false end -- Cloth/Leather/Mail
+        end
+        -- Warriors/Paladins can use everything.
     end
     
-    -- [[ 2. WEAPON CHECKS ]] --
+    -- [[ 4. WEAPON CHECKS ]] --
     if classID == 2 and MSC.ValidWeapons and MSC.ValidWeapons[playerClass] then
-        -- Thrown Weapons are Subclass 16. 
-        -- If the user hasn't learned the skill yet, GetItemInfo might behave weirdly, 
-        -- but 'ValidWeapons' should cover the hard rules.
-        if not MSC.ValidWeapons[playerClass][subclassID] then return false end
+        if subclassID and not MSC.ValidWeapons[playerClass][subclassID] then return false end
     end
     
     return true
