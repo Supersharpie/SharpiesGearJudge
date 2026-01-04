@@ -128,6 +128,10 @@ local patterns = {
         -- [[ 1. TRAPS & SPECIALS ]]
         { pattern = "attack power by (%d+) when fighting", stat = "ITEM_MOD_CONDITIONAL_AP_SHORT" }, 
 
+		-- [[ WEAPON DATA ]]
+        { pattern = "%((%d+%.?%d*) damage per second%)", stat = "MSC_WEAPON_DPS" },
+        { pattern = "Speed (%d+%.?%d*)", stat = "MSC_WEAPON_SPEED" },
+		
         -- [[ 2. SPECIFIC SPELL STATS (Must come first to avoid confusion) ]]
         { pattern = "spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
@@ -161,13 +165,24 @@ local patterns = {
         -- "Healing Done" (Broader Match)
         { pattern = "healing done.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" }, -- NEW (Catches "Increases healing done by...")
         
-        -- Specific Schools
+        -- Specific Schools (Updated to catch "damage done by X spells")
         { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "damage done by Shadow spells.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" }, -- << NEW
+        
         { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "damage done by Fire spells.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" }, -- << NEW
+        
         { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "damage done by Frost spells.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" }, -- << NEW
+        
         { pattern = "Arcane damage.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "damage done by Arcane spells.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" }, -- << NEW
+        
         { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "damage done by Nature spells.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" }, -- << NEW
+        
         { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+        { pattern = "damage done by Holy spells.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" }, -- << NEW
         
         -- [[ 7. ATTRIBUTES & REGEN ]]
         { pattern = "Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
@@ -265,26 +280,35 @@ end
 -- =============================================================
 -- 3. PROJECTION LOGIC (Gems & Enchants)
 -- =============================================================
+
+-- Helper: Finds the highest scoring gem of a specific color
 function MSC.GetBestGemForSocket(socketColor, level, weights)
     local db = (level >= 70) and MSC.GemOptions or MSC.GemOptions_Leveling
     if not db then return nil, 0 end
+    
     local candidates = db[socketColor]
     if not candidates then return nil, 0 end
+
     local bestGem, bestScore = nil, -1
+
     for _, gem in ipairs(candidates) do
         local score = 0
         if weights[gem.stat] then score = score + (gem.val * weights[gem.stat]) end
+        -- Handle Hybrid Gems (e.g. Purple = Blue + Red stats)
         if gem.stat2 and weights[gem.stat2] then score = score + (gem.val2 * weights[gem.stat2]) end
+        
         if score > bestScore then bestScore = score; bestGem = gem end
     end
+
     return bestGem, bestScore
 end
 
+-- Main Projector: Determines if we should match colors or go for raw stats
 function MSC.ProjectGems(itemLink, bonusStats)
-    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
+    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1 -- 1=Off, 4=Smart
     if gemMode == 1 or gemMode == 2 then return {}, false, false, nil end
     
-    local baseStats = GetItemStats(itemLink)
+    local baseStats = GetItemStats(itemLink) -- Assumes parsing of sockets into keys exists
     if not baseStats then return {}, false, false, nil end
     
     local socketKeys = {"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}
@@ -292,66 +316,100 @@ function MSC.ProjectGems(itemLink, bonusStats)
     local weights = MSC.GetCurrentWeights()
     if not weights then return {}, false, false, nil end
 
+    -- Strategy function: Calculates total score of gems with or without strict color matching
     local function CalculateStrategy(ignoreColors)
         local totalScore = 0
         local gemSet = {}
+
         for _, colorKey in ipairs(socketKeys) do
             local count = baseStats[colorKey] or 0
             if count > 0 then
                 for i=1, count do
                     local bestGem, score = nil, 0
-                    if ignoreColors and colorKey ~= "EMPTY_SOCKET_META" then
+                    
+                    -- CHECK 1: Meta Sockets (Always Strict)
+                    if colorKey == "EMPTY_SOCKET_META" then
+                         bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights)
+                    
+                    -- CHECK 2: Prismatic OR Ignore Colors (Scan Red/Yellow/Blue for best value)
+                    elseif colorKey == "EMPTY_SOCKET_PRISMATIC" or ignoreColors then
                         for _, c in ipairs({"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE"}) do
                             local g, s = MSC.GetBestGemForSocket(c, level, weights)
                             if g and s > score then bestGem = g; score = s end
                         end
+                    
+                    -- CHECK 3: Strict Matching (Scan only specific color)
                     else
                         bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights)
                     end
-                    if bestGem then totalScore = totalScore + score; table.insert(gemSet, bestGem) end
+
+                    if bestGem then 
+                        totalScore = totalScore + score
+                        table.insert(gemSet, bestGem) 
+                    end
                 end
             end
         end
         return totalScore, gemSet
     end
 
+    -- [[ DECISION PHASE: Match vs. Raw Stats ]]
     local useMatch = true
-    if gemMode == 4 then
-        local scoreMatch, _ = CalculateStrategy(false)
-        local bonusScore = 0
-        if bonusStats then for k, v in pairs(bonusStats) do if weights[k] then bonusScore = bonusScore + (v * weights[k]) end end end
+    if gemMode == 4 then -- Smart Mode
+        local scoreMatch, _ = CalculateStrategy(false) -- Strict Matching
         
-        local totalMatch = scoreMatch + bonusScore
-        local scoreIgnore, _ = CalculateStrategy(true)
+        -- Calculate value of the Socket Bonus
+        local bonusValue = 0
+        if bonusStats then 
+            for k, v in pairs(bonusStats) do 
+                if weights[k] then bonusValue = bonusValue + (v * weights[k]) end 
+            end 
+        end
         
-        if scoreIgnore > totalMatch then useMatch = false end
-    elseif gemMode == 3 then useMatch = true end
+        local totalWithBonus = scoreMatch + bonusValue
+        local scoreIgnore, _ = CalculateStrategy(true) -- Ignore Colors (Raw Power)
+        
+        -- If ignoring colors gives more points than (Matching + Bonus), break the bonus.
+        if scoreIgnore > totalWithBonus then useMatch = false end
 
+    elseif gemMode == 3 then 
+        useMatch = true -- Force Match
+    end
+
+    -- [[ CONSTRUCTION PHASE ]]
     local finalStats = { COUNT = 0 }
     local hasSockets = false
     local gemCounts = {}
-    local _, chosenGems = CalculateStrategy(not useMatch)
+    local _, chosenGems = CalculateStrategy(not useMatch) -- Run the winning strategy
     
     for _, gem in ipairs(chosenGems) do
         hasSockets = true
         finalStats.COUNT = finalStats.COUNT + 1
+        
+        -- Add Gem Stats to Final Stats
         finalStats[gem.stat] = (finalStats[gem.stat] or 0) + gem.val
         if gem.stat2 then finalStats[gem.stat2] = (finalStats[gem.stat2] or 0) + gem.val2 end
         
+        -- UI Text Building
         local sName = MSC.StatShortNames[gem.stat] or "Stat"
         local label = "+" .. gem.val .. " " .. sName
         gemCounts[label] = (gemCounts[label] or 0) + 1
     end
     
+    -- [[ CRITICAL FIX: Add Bonus Stats to Final Table ]]
+    local hasBonus = false
+    if bonusStats then for k,v in pairs(bonusStats) do hasBonus = true break end end
+
+    if useMatch and hasBonus then
+        for k, v in pairs(bonusStats) do
+            finalStats[k] = (finalStats[k] or 0) + v
+        end
+    end
+
+    -- [[ UI TEXT GENERATION ]]
     local textParts = {}
     for label, count in pairs(gemCounts) do table.insert(textParts, count .. "x (" .. label .. ")") end
     local gemText = table.concat(textParts, ", ")
-
-    -- [[ VISUAL FIX: Add "(+Bonus)" text ]] --
-    -- We only add the text if we decided to Match Colors (useMatch) 
-    -- AND the item actually has bonus stats to activate.
-    local hasBonus = false
-    if bonusStats then for k,v in pairs(bonusStats) do hasBonus = true break end end
 
     if useMatch and hasBonus then
         gemText = gemText .. " |cff00ff00(+Bonus)|r"

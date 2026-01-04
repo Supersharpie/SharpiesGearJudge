@@ -1,10 +1,13 @@
 local _, MSC = ... 
 
 -- =========================================================================
--- SHARPIES GEAR JUDGE: DYNAMIC STAT ENGINE (Optimized - Caching Added)
+-- DYNAMIC STAT ENGINE (Optimized - Caching Added)
 -- =========================================================================
 
+-- =========================================================================
 -- [[ 1. TALENT NAME MAPPING ]] --
+-- =========================================================================
+
 MSC.TalentStringMap = {
     ["DRUID"] = { ["MOONKIN_FORM"]="Moonkin Form", ["FORCE_OF_NATURE"]="Force of Nature", ["MANGLE"]="Mangle", ["TREE_OF_LIFE"]="Tree of Life", ["NATURES_GRACE"]="Nature's Grace", ["HEART_WILD"]="Heart of the Wild", ["LIVING_SPIRIT"]="Living Spirit", ["DREAMSTATE"]="Dreamstate", ["MOONGLOW"]="Moonglow", ["NATURES_SWIFTNESS"]="Nature's Swiftness", ["FERAL_INSTINCT"]="Feral Instinct", ["THICK_HIDE"]="Thick Hide" },
     ["HUNTER"] = { ["BESTIAL_WRATH"]="Bestial Wrath", ["BEAST_WITHIN"]="The Beast Within", ["TRUESHOT_AURA"]="Trueshot Aura", ["SILENCING_SHOT"]="Silencing Shot", ["SCATTER_SHOT"]="Scatter Shot", ["WYVERN_STING"]="Wyvern Sting", ["READYNESS"]="Readiness", ["EXPOSE_WEAKNESS"]="Expose Weakness", ["CAREFUL_AIM"]="Careful Aim", ["SURVIVAL_INST"]="Survival Instincts" },
@@ -27,18 +30,19 @@ MSC.TalentStringMap = {
         ["MACE_SPEC"]   = "Mace Specialization" 
     },
 	["SHAMAN"] = { ["ELEMENTAL_MASTERY"]="Elemental Mastery", ["TOTEM_OF_WRATH"]="Totem of Wrath", ["LIGHTNING_MASTERY"]="Lightning Mastery", ["STORMSTRIKE"]="Stormstrike", ["SHAMANISTIC_RAGE"]="Shamanistic Rage", ["MANA_TIDE"]="Mana Tide Totem", ["EARTH_SHIELD"]="Earth Shield", ["NATURE_GUIDANCE"]="Nature's Guidance", ["ANCESTRAL_KNOW"]="Ancestral Knowledge", ["MENTAL_QUICKNESS"]="Mental Quickness", ["SHIELD_SPEC"]="Shield Specialization", ["ANTICIPATION"]="Anticipation" },
-    ["WARLOCK"] = { 
-		["DARK_PACT"]="Dark Pact", 
-		["UNSTABLE_AFF"]="Unstable Affliction", 
-		["SIPHON_LIFE"]="Siphon Life", 
-		["SOUL_LINK"]="Soul Link", 
-		["SUMMON_FELGUARD"]="Summon Felguard", 
-		["CONFLAGRATE"]="Conflagrate", 
-		["RUIN"]="Ruin", 
-		["SHADOWFURY"]="Shadowfury", 
-		["DEMONIC_EMBRACE"]="Demonic Embrace", 
-		["FEL_INTELLECT"]="Fel Intellect" 
-	},
+		["WARLOCK"] = { 
+        ["DARK_PACT"]       = "Dark Pact", 
+        ["UNSTABLE_AFF"]    = "Unstable Affliction", 
+        ["SIPHON_LIFE"]     = "Siphon Life", 
+        ["SOUL_LINK"]       = "Soul Link", 
+        ["SUMMON_FELGUARD"] = "Summon Felguard", 
+        ["CONFLAGRATE"]     = "Conflagrate", 
+        ["RUIN"]            = "Ruin", 
+        ["SHADOWFURY"]      = "Shadowfury", 
+        ["DEMONIC_EMBRACE"] = "Demonic Embrace", 
+        ["FEL_INTELLECT"]   = "Fel Intellect",
+        ["EMBERSTORM"]      = "Emberstorm"   
+    },
 	
     ["WARRIOR"] = { 
 		["MORTAL_STRIKE"]	="Mortal Strike",
@@ -55,6 +59,7 @@ MSC.TalentStringMap = {
         ["MACE_SPEC"]       = "Mace Specialization"
 	}
 }
+
 -- =========================================================================
 -- 2. SCANNER LOGIC (Safe & Robust)
 -- =========================================================================
@@ -62,7 +67,9 @@ MSC.TalentStringMap = {
 MSC.TalentCache = {}
 MSC.TalentCacheLoaded = false
 
--- [[ NEW: WEIGHT CACHE ]] --
+-- =========================================================================
+-- 3. WEIGHT CACHE --
+-- =========================================================================
 -- This stores the final calculated weights so we don't recalculate on every mouseover.
 MSC.CachedWeights = nil
 MSC.CachedSpecKey = nil
@@ -92,99 +99,6 @@ function MSC:GetTalentRank(talentKey)
     local englishName = self.TalentStringMap[class][talentKey]
     if not englishName then return 0 end
     return MSC.TalentCache[englishName] or 0
-end
-
--- =========================================================================
--- 3. SYSTEM B: ENDGAME DETECTORS
--- =========================================================================
-
-function MSC:GetDruidRaidSpec()
-    if self:GetTalentRank("TREE_OF_LIFE") > 0 then return "RESTO_TREE" end
-    if self:GetTalentRank("DREAMSTATE") > 0 and self:GetTalentRank("MOONKIN_FORM") == 0 then return "DREAMSTATE" end
-    if self:GetTalentRank("MOONKIN_FORM") > 0 or self:GetTalentRank("FORCE_OF_NATURE") > 0 then return "BALANCE_PVE" end
-    if self:GetTalentRank("MOONGLOW") > 0 and self:GetTalentRank("NATURES_SWIFTNESS") > 0 then return "MOONGLOW" end
-    if self:GetTalentRank("MANGLE") > 0 or self:GetTalentRank("FERAL_INSTINCT") > 0 then
-        if self:GetTalentRank("THICK_HIDE") >= 3 then return "FERAL_BEAR" end
-        return "FERAL_CAT"
-    end
-    if self:GetTalentRank("NATURES_SWIFTNESS") > 0 then return "RESTO_PVP" end
-    return "FERAL_CAT"
-end
-
-function MSC:GetHunterRaidSpec()
-    if self:GetTalentRank("BEAST_WITHIN") > 0 or self:GetTalentRank("BESTIAL_WRATH") > 0 then return "RAID_BM" end
-    if self:GetTalentRank("EXPOSE_WEAKNESS") > 0 or self:GetTalentRank("WYVERN_STING") > 0 then return "RAID_SURV" end
-    if self:GetTalentRank("TRUESHOT_AURA") > 0 or self:GetTalentRank("SILENCING_SHOT") > 0 then
-        if self:GetTalentRank("SURVIVAL_INST") > 0 then return "PVP_MM" end
-        return "RAID_MM"
-    end
-    return "RAID_BM" 
-end
-
-function MSC:GetPaladinRaidSpec()
-    if self:GetTalentRank("AVENGERS_SHIELD") > 0 or self:GetTalentRank("HOLY_SHIELD") > 0 then return "PROT_DEEP" end
-    if self:GetTalentRank("CRUSADER_STRIKE") > 0 or self:GetTalentRank("REPENTANCE") > 0 then return "RET_STANDARD" end
-    if self:GetTalentRank("HOLY_SHOCK") > 0 then
-        if self:GetTalentRank("SANCTITY_AURA") > 0 then return "SHOCKADIN_PVP" end
-        return "HOLY_RAID"
-    end
-    if self:GetTalentRank("DIVINE_ILLUM") > 0 then return "HOLY_RAID" end
-    return "RET_STANDARD"
-end
-
-function MSC:GetWarriorRaidSpec()
-    if self:GetTalentRank("DEVASTATE") > 0 or self:GetTalentRank("SHIELD_SLAM") > 0 then return "DEEP_PROT" end
-    if self:GetTalentRank("RAMPAGE") > 0 or self:GetTalentRank("BLOODTHIRST") > 0 then return "FURY_DW" end
-    if self:GetTalentRank("MORTAL_STRIKE") > 0 then
-        if self:GetTalentRank("BLOOD_FRENZY") > 0 then return "ARMS_PVE" end
-        return "ARMS_PVP"
-    end
-    return "FURY_DW"
-end
-
-function MSC:GetPriestRaidSpec()
-    if self:GetTalentRank("VAMPIRIC_TOUCH") > 0 or self:GetTalentRank("SHADOWFORM") > 0 then return "SHADOW_PVE" end
-    if self:GetTalentRank("CIRCLE_HEALING") > 0 or self:GetTalentRank("SPIRIT_OF_REDEMPTION") > 0 then return "HOLY_DEEP" end
-    if self:GetTalentRank("SEARING_LIGHT") > 0 then return "SMITE_DPS" end
-    if self:GetTalentRank("PAIN_SUPP") > 0 or self:GetTalentRank("POWER_INFUSION") > 0 then return "DISC_SUPPORT" end
-    return "HOLY_DEEP"
-end
-
-function MSC:GetRogueRaidSpec()
-    if self:GetTalentRank("SHADOWSTEP") > 0 or self:GetTalentRank("CHEAT_DEATH") > 0 then return "PVP_SUBTLETY" end
-    if self:GetTalentRank("HEMORRHAGE") > 0 and self:GetTalentRank("ADRENALINE_RUSH") == 0 then return "PVP_SUBTLETY" end
-    if self:GetTalentRank("MUTILATE") > 0 then return "RAID_MUTILATE" end
-    if self:GetTalentRank("ADRENALINE_RUSH") > 0 or self:GetTalentRank("COMBAT_POTENCY") > 0 then return "RAID_COMBAT" end
-    return "RAID_COMBAT"
-end
-
-function MSC:GetMageRaidSpec()
-    if self:GetTalentRank("DRAGONS_BREATH") > 0 or self:GetTalentRank("COMBUSTION") > 0 then return "FIRE_RAID" end
-    if self:GetTalentRank("SLOW") > 0 or self:GetTalentRank("ARCANE_POWER") > 0 then return "ARCANE_RAID" end
-    if self:GetTalentRank("SUMMON_WELE") > 0 or self:GetTalentRank("ICE_BARRIER") > 0 then
-        if self:GetTalentRank("IMP_BLIZZARD") > 0 and self:GetTalentRank("WINTERS_CHILL") == 0 then return "FROST_AOE" end
-        if self:GetTalentRank("WINTERS_CHILL") > 0 then return "FROST_PVE" end
-        return "FROST_PVP"
-    end
-    return "FROST_PVP"
-end
-
-function MSC:GetWarlockRaidSpec()
-    if self:GetTalentRank("SUMMON_FELGUARD") > 0 then return "DEMO_PVE" end
-    if self:GetTalentRank("SIPHON_LIFE") > 0 and self:GetTalentRank("SOUL_LINK") > 0 then return "PVP_SL_SL" end
-    if self:GetTalentRank("UNSTABLE_AFF") > 0 or self:GetTalentRank("DARK_PACT") > 0 then return "RAID_AFFLICTION" end
-    if self:GetTalentRank("SHADOWFURY") > 0 or self:GetTalentRank("CONFLAGRATE") > 0 or self:GetTalentRank("RUIN") > 0 then return "RAID_DESTRUCTION" end
-    return "RAID_DESTRUCTION"
-end
-
-function MSC:GetShamanRaidSpec()
-    if self:GetTalentRank("TOTEM_OF_WRATH") > 0 then return "ELE_PVE" end
-    if self:GetTalentRank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVP" end
-    if self:GetTalentRank("LIGHTNING_MASTERY") > 0 then return "ELE_PVE" end
-    if self:GetTalentRank("SHAMANISTIC_RAGE") > 0 or self:GetTalentRank("STORMSTRIKE") > 0 then return "ENH_PVE" end
-    if self:GetTalentRank("EARTH_SHIELD") > 0 or self:GetTalentRank("MANA_TIDE") > 0 then return "RESTO_PVE" end
-    if self:GetTalentRank("SHIELD_SPEC") > 0 and self:GetTalentRank("ANTICIPATION") > 0 then return "SHAMAN_TANK" end
-    return "RESTO_PVE"
 end
 
 -- [[ WEAPON SPECIALIZATION & RACIAL BONUS ]] --
@@ -261,6 +175,121 @@ function MSC:GetWeaponSpecBonus(itemLink, class, specKey)
     return bonus
 end
 
+-- =========================================================================
+-- 4. ENDGAME LEVEL DETECTORS
+-- =========================================================================
+
+function MSC:GetDruidRaidSpec()
+    if self:GetTalentRank("TREE_OF_LIFE") > 0 then return "RESTO_TREE" end
+    if self:GetTalentRank("DREAMSTATE") > 0 and self:GetTalentRank("MOONKIN_FORM") == 0 then return "DREAMSTATE" end
+    if self:GetTalentRank("MOONKIN_FORM") > 0 or self:GetTalentRank("FORCE_OF_NATURE") > 0 then return "BALANCE_PVE" end
+    if self:GetTalentRank("MOONGLOW") > 0 and self:GetTalentRank("NATURES_SWIFTNESS") > 0 then return "MOONGLOW" end
+    if self:GetTalentRank("MANGLE") > 0 or self:GetTalentRank("FERAL_INSTINCT") > 0 then
+        if self:GetTalentRank("THICK_HIDE") >= 3 then return "FERAL_BEAR" end
+        return "FERAL_CAT"
+    end
+    if self:GetTalentRank("NATURES_SWIFTNESS") > 0 then return "RESTO_PVP" end
+    return "FERAL_CAT"
+end
+
+function MSC:GetHunterRaidSpec()
+    if self:GetTalentRank("BEAST_WITHIN") > 0 or self:GetTalentRank("BESTIAL_WRATH") > 0 then return "RAID_BM" end
+    if self:GetTalentRank("EXPOSE_WEAKNESS") > 0 or self:GetTalentRank("WYVERN_STING") > 0 then return "RAID_SURV" end
+    if self:GetTalentRank("TRUESHOT_AURA") > 0 or self:GetTalentRank("SILENCING_SHOT") > 0 then
+        if self:GetTalentRank("SURVIVAL_INST") > 0 then return "PVP_MM" end
+        return "RAID_MM"
+    end
+    return "RAID_BM" 
+end
+
+function MSC:GetPaladinRaidSpec()
+    if self:GetTalentRank("AVENGERS_SHIELD") > 0 or self:GetTalentRank("HOLY_SHIELD") > 0 then return "PROT_DEEP" end
+    if self:GetTalentRank("CRUSADER_STRIKE") > 0 or self:GetTalentRank("REPENTANCE") > 0 then return "RET_STANDARD" end
+    if self:GetTalentRank("HOLY_SHOCK") > 0 then
+        if self:GetTalentRank("SANCTITY_AURA") > 0 then return "SHOCKADIN_PVP" end
+        return "HOLY_RAID"
+    end
+    if self:GetTalentRank("DIVINE_ILLUM") > 0 then return "HOLY_RAID" end
+    return "RET_STANDARD"
+end
+
+function MSC:GetWarriorRaidSpec()
+    if self:GetTalentRank("DEVASTATE") > 0 or self:GetTalentRank("SHIELD_SLAM") > 0 then return "DEEP_PROT" end
+    if self:GetTalentRank("RAMPAGE") > 0 or self:GetTalentRank("BLOODTHIRST") > 0 then return "FURY_DW" end
+    if self:GetTalentRank("MORTAL_STRIKE") > 0 then
+        if self:GetTalentRank("BLOOD_FRENZY") > 0 then return "ARMS_PVE" end
+        return "ARMS_PVP"
+    end
+    return "FURY_DW"
+end
+
+function MSC:GetPriestRaidSpec()
+    if self:GetTalentRank("VAMPIRIC_TOUCH") > 0 or self:GetTalentRank("SHADOWFORM") > 0 then return "SHADOW_PVE" end
+    if self:GetTalentRank("CIRCLE_HEALING") > 0 or self:GetTalentRank("SPIRIT_OF_REDEMPTION") > 0 then return "HOLY_DEEP" end
+    if self:GetTalentRank("SEARING_LIGHT") > 0 then return "SMITE_DPS" end
+    if self:GetTalentRank("PAIN_SUPP") > 0 or self:GetTalentRank("POWER_INFUSION") > 0 then return "DISC_SUPPORT" end
+    return "HOLY_DEEP"
+end
+
+function MSC:GetRogueRaidSpec()
+    if self:GetTalentRank("SHADOWSTEP") > 0 or self:GetTalentRank("CHEAT_DEATH") > 0 then return "PVP_SUBTLETY" end
+    if self:GetTalentRank("HEMORRHAGE") > 0 and self:GetTalentRank("ADRENALINE_RUSH") == 0 then return "PVP_SUBTLETY" end
+    if self:GetTalentRank("MUTILATE") > 0 then return "RAID_MUTILATE" end
+    if self:GetTalentRank("ADRENALINE_RUSH") > 0 or self:GetTalentRank("COMBAT_POTENCY") > 0 then return "RAID_COMBAT" end
+    return "RAID_COMBAT"
+end
+
+function MSC:GetMageRaidSpec()
+    if self:GetTalentRank("DRAGONS_BREATH") > 0 or self:GetTalentRank("COMBUSTION") > 0 then return "FIRE_RAID" end
+    if self:GetTalentRank("SLOW") > 0 or self:GetTalentRank("ARCANE_POWER") > 0 then return "ARCANE_RAID" end
+    if self:GetTalentRank("SUMMON_WELE") > 0 or self:GetTalentRank("ICE_BARRIER") > 0 then
+        if self:GetTalentRank("IMP_BLIZZARD") > 0 and self:GetTalentRank("WINTERS_CHILL") == 0 then return "FROST_AOE" end
+        if self:GetTalentRank("WINTERS_CHILL") > 0 then return "FROST_PVE" end
+        return "FROST_PVP"
+    end
+    return "FROST_PVP"
+end
+
+function MSC:GetWarlockRaidSpec()
+    -- 1. DEMONOLOGY (Felguard is the defining talent)
+    if self:GetTalentRank("SUMMON_FELGUARD") > 0 then return "DEMO_PVE" end
+
+    -- 2. PVP SL/SL (Siphon Life + Soul Link combo)
+    if self:GetTalentRank("SIPHON_LIFE") > 0 and self:GetTalentRank("SOUL_LINK") > 0 then return "PVP_SL_SL" end
+
+    -- 3. AFFLICTION (UA or Dark Pact)
+    if self:GetTalentRank("UNSTABLE_AFF") > 0 or self:GetTalentRank("DARK_PACT") > 0 then return "RAID_AFFLICTION" end
+
+    -- 4. DESTRUCTION FIRE (Incinerate Spec)
+    -- Must have Emberstorm (faster Incinerate) or Conflagrate
+    if self:GetTalentRank("EMBERSTORM") > 0 or self:GetTalentRank("CONFLAGRATE") > 0 then 
+        return "DESTRUCT_FIRE" 
+    end
+
+    -- 5. DESTRUCTION SHADOW (Shadow Bolt Spec)
+    -- STRICTER CHECK: Must have Ruin (Crit Bonus). 
+    -- If they don't have Ruin, they aren't a Raid Destro lock.
+    if self:GetTalentRank("RUIN") > 0 or self:GetTalentRank("SHADOWFURY") > 0 then
+        return "DESTRUCT_SHADOW"
+    end
+
+    -- 6. FALLBACK (Leveling / Mixed / Unknown)
+    -- Returns the ["Default"] block (Generic SP/Stam/Int)
+    return "Default"
+end
+
+function MSC:GetShamanRaidSpec()
+    if self:GetTalentRank("TOTEM_OF_WRATH") > 0 then return "ELE_PVE" end
+    if self:GetTalentRank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVP" end
+    if self:GetTalentRank("LIGHTNING_MASTERY") > 0 then return "ELE_PVE" end
+    if self:GetTalentRank("SHAMANISTIC_RAGE") > 0 or self:GetTalentRank("STORMSTRIKE") > 0 then return "ENH_PVE" end
+    if self:GetTalentRank("EARTH_SHIELD") > 0 or self:GetTalentRank("MANA_TIDE") > 0 then return "RESTO_PVE" end
+    if self:GetTalentRank("SHIELD_SPEC") > 0 and self:GetTalentRank("ANTICIPATION") > 0 then return "SHAMAN_TANK" end
+    return "RESTO_PVE"
+end
+
+
+
 function MSC:GetEndgameSpec(class)
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then return MSC.ManualSpec end
     if class == "WARRIOR" then return self:GetWarriorRaidSpec() end
@@ -276,7 +305,90 @@ function MSC:GetEndgameSpec(class)
 end
 
 -- =========================================================================
--- 4. DYNAMIC SCALERS
+-- 5. LEVELING LOGIC (The Brain for < 70) --
+-- =========================================================================
+
+function MSC:GetLevelingSpec(class, level)
+    -- 1. Determine Level Suffix
+    local suffix = ""
+    if level <= 20 then suffix = "_1_20"
+    elseif level <= 40 then suffix = "_21_40"
+    elseif level < 52 then suffix = "_41_51"
+    elseif level < 60 then suffix = "_52_59" 
+    else suffix = "_60_70" end
+
+    -- 2. Determine Role Prefix
+    local role = "Leveling" -- Default Fallback
+
+    if class == "PALADIN" then
+        -- Updated to match our new dynamic DB keys:
+        if self:GetTalentRank("HOLY_SHIELD") > 0 or self:GetTalentRank("AVENGERS_SHIELD") > 0 then 
+            role = "Leveling_PROT_AOE"
+        elseif self:GetTalentRank("DIVINE_ILLUM") > 0 or self:GetTalentRank("HOLY_SHOCK") > 0 then 
+            role = "Leveling_HOLY_DUNGEON"
+        else 
+            role = "Leveling_RET" -- Always use specific RET table (we defined 1-70)
+        end 
+
+    elseif class == "PRIEST" then
+        if self:GetTalentRank("SEARING_LIGHT") > 0 then role = "Leveling_Smite"
+        elseif self:GetTalentRank("CIRCLE_HEALING") > 0 or self:GetTalentRank("SPIRIT_OF_REDEMPTION") > 0 then role = "Leveling_Healer"
+        else role = "Leveling" end -- Shadow
+
+    elseif class == "WARRIOR" then
+        if self:GetTalentRank("SHIELD_SLAM") > 0 or self:GetTalentRank("DEVASTATE") > 0 then role = "Leveling_Tank"
+        elseif self:GetTalentRank("BLOODTHIRST") > 0 or self:GetTalentRank("RAMPAGE") > 0 then role = "Leveling_DW"
+        else role = "Leveling" end -- Arms
+
+    elseif class == "DRUID" then
+        if self:GetTalentRank("MOONKIN_FORM") > 0 then role = "Leveling_Caster"
+        elseif self:GetTalentRank("TREE_OF_LIFE") > 0 or self:GetTalentRank("NATURES_SWIFTNESS") > 0 then role = "Leveling_Healer"
+        elseif self:GetTalentRank("THICK_HIDE") >= 3 then role = "Leveling_Bear"
+        else role = "Leveling" end -- Feral Cat
+
+    elseif class == "SHAMAN" then
+        if self:GetTalentRank("SHIELD_SPEC") > 0 and self:GetTalentRank("ANTICIPATION") > 0 then role = "Leveling_Tank"
+        elseif self:GetTalentRank("ELEMENTAL_MASTERY") > 0 or self:GetTalentRank("TOTEM_OF_WRATH") > 0 then role = "Leveling_Caster"
+        elseif self:GetTalentRank("MANA_TIDE") > 0 or self:GetTalentRank("EARTH_SHIELD") > 0 then role = "Leveling_Healer"
+        else role = "Leveling" end -- Enhancement
+
+    elseif class == "MAGE" then
+        if self:GetTalentRank("IMP_BLIZZARD") >= 2 then role = "Leveling_AoE"
+        elseif self:GetTalentRank("DRAGONS_BREATH") > 0 or self:GetTalentRank("COMBUSTION") > 0 then role = "Leveling_Fire"
+        else role = "Leveling" end -- Frost
+
+    elseif class == "WARLOCK" then
+        if self:GetTalentRank("CONFLAGRATE") > 0 or self:GetTalentRank("SHADOWFURY") > 0 then role = "Leveling_Fire"
+        elseif self:GetTalentRank("SUMMON_FELGUARD") > 0 or self:GetTalentRank("SOUL_LINK") > 0 then role = "Leveling_Demo"
+        else role = "Leveling" end -- Affliction
+
+    elseif class == "HUNTER" then
+        if self:GetTalentRank("SURVIVAL_INST") > 0 and self:GetTalentRank("WYVERN_STING") == 0 then role = "Leveling_Melee"
+        else role = "Leveling" end -- Ranged
+
+    elseif class == "ROGUE" then
+        if self:GetTalentRank("MUTILATE") > 0 then role = "Leveling_Dagger"
+        elseif self:GetTalentRank("HEMORRHAGE") > 0 then role = "Leveling_Hemo"
+        else role = "Leveling" end -- Combat
+    end
+
+    -- 3. Construct Key (e.g., "Leveling_RET_21_40")
+    local specificKey = role .. suffix
+    
+    -- Handle Generic "Leveling" prefix (e.g. "Leveling" + "_21_40" -> "Leveling_21_40")
+    if role == "Leveling" then specificKey = "Leveling" .. suffix end
+
+    -- 4. Safety Lookup
+    if MSC.LevelingWeightDB[class] and MSC.LevelingWeightDB[class][specificKey] then 
+        return specificKey
+    else
+        -- Fallback: If specialized key missing, try generic
+        return "Leveling" .. suffix 
+    end
+end
+
+-- =========================================================================
+-- 6. DYNAMIC SCALERS
 -- =========================================================================
 
 function MSC:ApplyTalentScalers(class, w, spec)
@@ -325,7 +437,7 @@ function MSC:ApplyTalentScalers(class, w, spec)
 end
 
 -- =========================================================================
--- 5. TRAFFIC CONTROLLER (Safe Copy & Caching)
+-- 7. TRAFFIC CONTROLLER (Safe Copy & Caching)
 -- =========================================================================
 
 function MSC:SafeCopy(orig)
@@ -416,8 +528,9 @@ function MSC.GetCurrentWeights()
 end
 
 -- =========================================================================
--- EVENT LISTENER (Cache Invalidation)
+-- 8. EVENT LISTENER (Cache Invalidation)
 -- =========================================================================
+
 local talentTracker = CreateFrame("Frame")
 talentTracker:RegisterEvent("CHARACTER_POINTS_CHANGED")
 talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")

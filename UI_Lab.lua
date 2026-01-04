@@ -1,7 +1,7 @@
 local _, MSC = ...
 
 -- =============================================================
--- PART 1: THE LABORATORY (Restored from your Working Code)
+-- PART 1: THE LABORATORY
 -- =============================================================
 
 local LabFrame = nil
@@ -125,7 +125,7 @@ function MSC.UpdateLabCalc()
 end
 
 -- =============================================================
--- FRAME CREATION (Restored)
+-- FRAME CREATION
 -- =============================================================
 local function CreateItemButton(name, parent, x, y, iconType, labelText)
     local btn = CreateFrame("Button", name, parent, "ItemButtonTemplate")
@@ -147,8 +147,6 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
 
     btn.Label = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); btn.Label:SetPoint("BOTTOM", btn, "TOP", 0, 3); btn.Label:SetText(labelText); btn.Label:SetTextColor(0.8, 0.8, 0.8, 1)
 
-    -- Fix for Icon Retrieval (Standard ItemButtonTemplate uses 'icon')
-    -- We assume the template created a texture named $parentIcon, which we can access via .icon
     if not btn.icon then btn.icon = _G[name.."Icon"] end
 
     btn:SetScript("OnEnter", function(self)
@@ -191,12 +189,10 @@ function MSC.CreateLabFrame()
     f.bg = f:CreateTexture(nil, "BACKGROUND"); f.bg:SetAllPoints(f); f.bg:SetColorTexture(0, 0, 0, 0.9) 
     if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
 
-    -- Dynamic Class Background
     local _, class = UnitClass("player")
     if class then
         local fixed = class:sub(1,1) .. class:sub(2):lower()
         f.crest = f:CreateTexture(nil, "ARTWORK"); f.crest:SetAllPoints(f)
-        -- Fallback if texture missing
         pcall(function() f.crest:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixed .. ".tga") end)
         f.crest:SetVertexColor(0.6, 0.6, 0.6, 0.6)
     end
@@ -223,7 +219,7 @@ function MSC.CreateLabFrame()
 end
 
 -- =============================================================
--- ATLASLOOT / CHAT LINK SUPPORT (Shift+Click Magic)
+-- ATLASLOOT / CHAT LINK SUPPORT
 -- =============================================================
 local function LoadLabItem(btn, link)
     if not btn or not link then return end
@@ -268,7 +264,7 @@ hooksecurefunc("ChatEdit_InsertLink", function(text)
 end)
 
 -- =============================================================
--- PART 2: THE RECEIPT (Merged from New Logic)
+-- PART 2: THE RECEIPT
 -- =============================================================
 local function CheckBagsForUpgrade(slotId, currentScore, weights, specName)
     local bestBagItem, bestBagScore = nil, currentScore
@@ -361,10 +357,19 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         f.SummaryBox = CreateFrame("Frame", nil, f); f.SummaryBox:SetPoint("TOPLEFT", f.Scroll, "BOTTOMLEFT", 0, -5); f.SummaryBox:SetPoint("BOTTOMRIGHT", -10, 100) 
         f.Separator = f.SummaryBox:CreateTexture(nil, "ARTWORK"); f.Separator:SetHeight(1); f.Separator:SetPoint("TOPLEFT", 10, 0); f.Separator:SetPoint("TOPRIGHT", -10, 0); f.Separator:SetColorTexture(1, 0.82, 0, 0.5) 
         f.SummaryBg = f.SummaryBox:CreateTexture(nil, "BACKGROUND"); f.SummaryBg:SetPoint("TOPLEFT", 0, -5); f.SummaryBg:SetPoint("BOTTOMRIGHT", 0, 0); f.SummaryBg:SetColorTexture(0, 0, 0, 0.3)
-        f.SummaryTitle = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryTitle:SetPoint("TOP", 0, -12); f.SummaryTitle:SetText("COMBINED STATS FROM GEAR"); f.SummaryTitle:SetTextColor(1, 0.82, 0) 
+        
+        -- [[ UI FIX: MOVED HEADER LEFT ]] --
+        f.SummaryTitle = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); 
+        f.SummaryTitle:SetPoint("TOPLEFT", 10, -12); 
+        f.SummaryTitle:SetText("COMBINED STATS FROM GEAR"); 
+        f.SummaryTitle:SetTextColor(1, 0.82, 0) 
+        
+        -- [[ UI FIX: MOVED SCORE RIGHT (SAME ROW) ]] --
+        f.TotalText = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); -- Same font size
+        f.TotalText:SetPoint("TOPRIGHT", -10, -12); 
+        f.TotalText:SetTextColor(color.r, color.g, color.b) 
         
         f.FooterBg = f:CreateTexture(nil, "BACKGROUND"); f.FooterBg:SetPoint("BOTTOMLEFT", 4, 4); f.FooterBg:SetPoint("BOTTOMRIGHT", -4, 4); f.FooterBg:SetHeight(90); f.FooterBg:SetColorTexture(0, 0, 0, 0.5) 
-        f.TotalText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.TotalText:SetPoint("BOTTOM", f, "BOTTOM", 0, 68); f.TotalText:SetTextColor(color.r, color.g, color.b) 
         
         f.SaveBox = CreateFrame("EditBox", nil, f, "InputBoxTemplate"); f.SaveBox:SetSize(160, 24); f.SaveBox:SetPoint("BOTTOMLEFT", 30, 38); f.SaveBox:SetAutoFocus(false); f.SaveBox:SetText("< set name here >"); f.SaveBox:SetCursorPosition(0)
         f.SaveBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate"); f.SaveBtn:SetSize(80, 24); f.SaveBtn:SetPoint("LEFT", f.SaveBox, "RIGHT", 10, 0); f.SaveBtn:SetText("Save")
@@ -390,20 +395,30 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
     MSC.ReceiptFrame:Show()
     
     local slots = {{name="Head",id=1},{name="Neck",id=2},{name="Shoulder",id=3},{name="Back",id=15},{name="Chest",id=5},{name="Wrist",id=9},{name="Hands",id=10},{name="Waist",id=6},{name="Legs",id=7},{name="Feet",id=8},{name="Finger 1",id=11},{name="Finger 2",id=12},{name="Trinket 1",id=13},{name="Trinket 2",id=14},{name="Main Hand",id=16},{name="Off Hand",id=17},{name="Ranged",id=18}}
-    local totalScore = 0; local combinedStats = {}; local yOffset = 0; local maxItemScore = -1; local maxItemLink = nil; local missingSlots = {}; local exportRows = {} 
+    
+    local gearTable = {}
+    for _, slot in ipairs(slots) do
+        local link = GetInventoryItemLink(unit, slot.id)
+        if link then gearTable[slot.id] = link end
+    end
+    
+    local trueTotalScore = MSC:GetTotalCharacterScore(gearTable, currentWeights)
+    
+    local combinedStats = {}; local yOffset = 0; local maxItemScore = -1; local maxItemLink = nil; local missingSlots = {}; local exportRows = {} 
     
     for i, slot in ipairs(slots) do
         if not MSC.ReceiptRows[i] then
              local row = CreateFrame("Frame", nil, MSC.ReceiptFrame.Content); row:SetSize(380, 24); row.BG = row:CreateTexture(nil, "BACKGROUND"); row.BG:SetAllPoints(); row.Icon = row:CreateTexture(nil, "ARTWORK"); row.Icon:SetSize(20, 20); row.Icon:SetPoint("LEFT", 4, 0); row.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92); row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", row.Icon, "RIGHT", 8, 0); row.Label:SetWidth(65); row.Label:SetJustifyH("LEFT"); row.Label:SetTextColor(0.6, 0.6, 0.6); row.Score = row:CreateFontString(nil, "OVERLAY", "GameFontNormal"); row.Score:SetPoint("RIGHT", -5, 0); row.Score:SetWidth(60); row.Score:SetJustifyH("RIGHT"); row.Score:SetTextColor(0, 1, 0); row.Item = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Item:SetPoint("LEFT", row.Label, "RIGHT", 5, 0); row.Item:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Item:SetJustifyH("LEFT"); row.Alert = row:CreateTexture(nil, "OVERLAY"); row.Alert:SetSize(16, 16); row.Alert:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Alert:Hide(); 
              
-             -- [[ ALERT FRAME LOGIC (UPDATED) ]] --
              row.AlertFrame = CreateFrame("Frame", nil, row); row.AlertFrame:SetAllPoints(row.Alert); 
              row.AlertFrame:SetScript("OnEnter", function(self) 
                 if self.mode == "UPGRADE" and self.link then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
                     GameTooltip:SetHyperlink(self.link); 
                     GameTooltip:AddLine(" "); 
-                    GameTooltip:AddLine("|cff00ff00BETTER ITEM IN BAGS!|r"); 
+                    
+                    local diffText = self.diff and string.format("%.1f", self.diff) or "?"
+                    GameTooltip:AddLine("|cff00ff00THE BETTER ITEM (+" .. diffText .. ")|r"); 
                     GameTooltip:AddLine("|cff888888Shift-Click to Link|r");
                     GameTooltip:Show() 
                 elseif self.mode == "ENCHANT" then 
@@ -425,7 +440,7 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         end
         local row = MSC.ReceiptRows[i]; row:SetPoint("TOPLEFT", 0, yOffset)
         local link = GetInventoryItemLink(unit, slot.id); local texture = GetInventoryItemTexture(unit, slot.id); local itemScore = 0; local itemText = "|cff444444(Empty)|r"
-        row.Alert:Hide(); row.AlertFrame.mode = nil; row.AlertFrame.link = nil
+        row.Alert:Hide(); row.AlertFrame.mode = nil; row.AlertFrame.link = nil; row.AlertFrame.diff = nil
 
         if link then
             itemText = link; local stats = MSC.SafeGetItemStats(link, slot.id)
@@ -439,16 +454,22 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         
         if isPlayer then
             local upgradeLink, upgradeScore = CheckBagsForUpgrade(slot.id, itemScore, currentWeights, specName)
-            if upgradeLink then row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); row.Alert:Show(); row.AlertFrame.mode = "UPGRADE"; row.AlertFrame.link = upgradeLink end
+            if upgradeLink then 
+                row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); 
+                row.Alert:Show(); 
+                row.AlertFrame.mode = "UPGRADE"; 
+                row.AlertFrame.link = upgradeLink
+                row.AlertFrame.diff = upgradeScore - itemScore
+            end
         end
         
-        totalScore = totalScore + itemScore; row.Label:SetText(slot.name); row.Item:SetText(itemText); row.Score:SetText(string.format("%.1f", itemScore))
+        row.Label:SetText(slot.name); row.Item:SetText(itemText); row.Score:SetText(string.format("%.1f", itemScore))
         if texture then row.Icon:SetTexture(texture); row.Icon:SetDesaturated(false) else row.Icon:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot"); row.Icon:SetDesaturated(true) end
         if i % 2 == 0 then row.BG:SetColorTexture(1, 1, 1, 0.03) else row.BG:SetColorTexture(0, 0, 0, 0) end; yOffset = yOffset - 24
         table.insert(exportRows, { slot = slot.name, link = (link or "(Empty)"), score = string.format("%.1f", itemScore) })
     end
     
-    MSC.ReceiptFrame.printData = { score = string.format("%.1f", totalScore), topLink = maxItemLink, missing = missingSlots, rows = exportRows }
+    MSC.ReceiptFrame.printData = { score = string.format("%.1f", trueTotalScore), topLink = maxItemLink, missing = missingSlots, rows = exportRows }
     
     for _, line in pairs(MSC.SummaryRows) do line:Hide() end
     local sortedStats = {}
@@ -470,11 +491,12 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         local isLeft = (i % 2 ~= 0); local rowIdx = math.ceil(i / 2) - 1; local yPos = startY - (rowIdx * 16)
         if isLeft then row:SetPoint("TOPLEFT", col1X, yPos) else row:SetPoint("TOPLEFT", col2X, yPos) end
     end
-    MSC.ReceiptFrame.TotalText:SetText("SCORE: " .. string.format("%.1f", totalScore))
+    
+    MSC.ReceiptFrame.TotalText:SetText("SCORE: " .. string.format("%.1f", trueTotalScore))
 end
 
 -- =============================================================
--- PART 3: MATH BREAKDOWN WINDOW (Merged from New Logic)
+-- PART 3: MATH BREAKDOWN WINDOW
 -- =============================================================
 function MSC.ShowMathBreakdown()
     if not MSC.MathFrame then
@@ -546,7 +568,7 @@ function MSC.ShowMathBreakdown()
         if stat == "ITEM_MOD_HOLY_DAMAGE_SHORT" then if class == "PALADIN" then return "Judgement / Holy Shock" end if class == "PRIEST" then return "Smite / Holy Fire" end return "Specific Magic School" end
         if class == "WARRIOR" then if profileName:find("Arms") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Deep Wounds / Impale Synergy" end if profileName:find("Fury") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Flurry Uptime" end if stat == "ITEM_MOD_AGILITY_SHORT" then return "Only grants Crit (No AP)" end if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 2 AP" end if stat == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return "Reduces Glancing Blow penalty" end end
         if class == "ROGUE" then if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 1 AP (No Crit)" end if stat == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return "Reduces Glancing Blow penalty" end end
-		if class == "HUNTER" then if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end if stat == "ITEM_MOD_INTELLECT_SHORT" then return "Mana Pool Size" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Weak)" end end
+        if class == "HUNTER" then if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end if stat == "ITEM_MOD_INTELLECT_SHORT" then return "Mana Pool Size" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Weak)" end end
         if class == "MAGE" or class == "WARLOCK" then if stat == "ITEM_MOD_INTELLECT_SHORT" then return "1 Int = 15 Mana + Crit" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Useless in Combat)" end if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("PvP") then return "PvP Survival" end if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("Leveling") then return "Lifetap / Survival" end if profileName:find("Fire") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Ignite / Combustion" end if profileName:find("Destruction") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Ruin (High Crit Dmg)" end end
         if profileName:find("Heal") or profileName:find("Resto") or profileName:find("Holy") then if stat == "ITEM_MOD_HEALING_POWER_SHORT" then return "Raw Healing Output" end if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana Sustain (Mp5)" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Spirit)" end if class == "PALADIN" and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Mana Refund (Illumination)" end end
         if profileName:find("Tank") or profileName:find("Prot") or profileName:find("Bear") then if stat == "ITEM_MOD_STAMINA_SHORT" then return "Effective Health (EHP)" end if stat == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then return "Push Crits off Table" end if stat == "ITEM_MOD_DODGE_RATING_SHORT" or stat == "ITEM_MOD_PARRY_RATING_SHORT" then return "Avoidance" end if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "Mitigation" end end

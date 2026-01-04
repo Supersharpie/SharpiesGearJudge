@@ -6,16 +6,29 @@
 ## SavedVariables: SGJ_Settings, SGJ_History
 
 
-
 Database.lua
-Leveling_Engine.lua
 Dynamic_Engine.lua
+Data_Sets.lua
 Helpers.lua
 Evaluator.lua
-Core.lua
-ConflictManager.lua
 UI_Menus.lua
+ConflictManager.lua
 UI_Lab.lua
+Core.lua
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
