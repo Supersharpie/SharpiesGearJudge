@@ -578,39 +578,91 @@ function MSC.ShowMathBreakdown()
     add(format("Current Hit: %.1f%%  |  Hard Cap: %d%%", myHit, hitCap))
     if myHit >= hitCap then add("|cffff0000• HARD CAP REACHED:|r Hit Weight = 0.01") else add("• Under Cap: Hit Rating is FULL VALUE.") end
 
-    local function GetStatReason(stat, class, profileName)
+	local function GetStatReason(stat, class, profileName)
         if not profileName then profileName = "" end
-        if stat:find("HIT") or stat:find("EXPERTISE") then return "Reduces Miss Chance" end
+        
+        -- [[ 1. UNIVERSAL / SHARED REASONS ]] --
+        if stat:find("HIT") then return "Reduces Miss Chance" end
+        if stat:find("EXPERTISE") then return "Reduces Dodge/Parry Chance" end
         if stat == "ITEM_MOD_ATTACK_POWER_SHORT" or stat == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" then return "Raw Damage Added" end
         if stat == "ITEM_MOD_SPELL_POWER_SHORT" then return "Raw Spell Scaling" end
-        if stat == "ITEM_MOD_POWER_REGEN0_SHORT" or stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana per 5 Sec (Sustain)" end
+        if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana per 5 Sec (Sustain)" end
         if stat == "ITEM_MOD_HEALTH_REGENERATION_SHORT" then return "Health per 5 Sec" end
-        if stat == "ITEM_MOD_SPIRIT_SHORT" and profileName:find("Leveling") then return "Less Downtime (Eating/Drinking)" end
-        if stat == "ITEM_MOD_SHADOW_DAMAGE_SHORT" then if class == "WARLOCK" then return "Shadow Bolt / DoT Scaling" end if class == "PRIEST" then return "Mind Blast / Flay Scaling" end return "Specific Magic School" end
-        if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then if class == "MAGE" then return "Fireball / Pyro Scaling" end if class == "WARLOCK" then return "Immolate / Conflag Scaling" end return "Specific Magic School" end
-        if stat == "ITEM_MOD_FROST_DAMAGE_SHORT" then return "Frostbolt / Blizzard Scaling" end
-        if stat == "ITEM_MOD_NATURE_DAMAGE_SHORT" then if class == "SHAMAN" then return "Lightning / Chain Scaling" end if class == "DRUID" then return "Wrath / Swarm Scaling" end return "Specific Magic School" end
-        if stat == "ITEM_MOD_ARCANE_DAMAGE_SHORT" then if class == "MAGE" then return "Arcane Missiles / Blast" end if class == "DRUID" then return "Starfire / Moonfire" end return "Specific Magic School" end
-        if stat == "ITEM_MOD_HOLY_DAMAGE_SHORT" then if class == "PALADIN" then return "Judgement / Holy Shock" end if class == "PRIEST" then return "Smite / Holy Fire" end return "Specific Magic School" end
-        if class == "WARRIOR" then if profileName:find("Arms") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Deep Wounds / Impale Synergy" end if profileName:find("Fury") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Flurry Uptime" end if stat == "ITEM_MOD_AGILITY_SHORT" then return "Only grants Crit (No AP)" end if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 2 AP" end if stat == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return "Reduces Glancing Blow penalty" end end
-        if class == "ROGUE" then if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 1 AP (No Crit)" end if stat == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return "Reduces Glancing Blow penalty" end end
-        if class == "HUNTER" then if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end if stat == "ITEM_MOD_INTELLECT_SHORT" then return "Mana Pool Size" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Weak)" end end
-        if class == "MAGE" or class == "WARLOCK" then if stat == "ITEM_MOD_INTELLECT_SHORT" then return "1 Int = 15 Mana + Crit" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Useless in Combat)" end if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("PvP") then return "PvP Survival" end if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("Leveling") then return "Lifetap / Survival" end if profileName:find("Fire") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Ignite / Combustion" end if profileName:find("Destruction") and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Ruin (High Crit Dmg)" end end
-        if profileName:find("Heal") or profileName:find("Resto") or profileName:find("Holy") then if stat == "ITEM_MOD_HEALING_POWER_SHORT" then return "Raw Healing Output" end if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana Sustain (Mp5)" end if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Mana Regen (Spirit)" end if class == "PALADIN" and (stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") then return "Mana Refund (Illumination)" end end
-        if profileName:find("Tank") or profileName:find("Prot") or profileName:find("Bear") then if stat == "ITEM_MOD_STAMINA_SHORT" then return "Effective Health (EHP)" end if stat == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then return "Push Crits off Table" end if stat == "ITEM_MOD_DODGE_RATING_SHORT" or stat == "ITEM_MOD_PARRY_RATING_SHORT" then return "Avoidance" end if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "Mitigation" end end
         if stat == "ITEM_MOD_STAMINA_SHORT" then return "1 Sta = 10 Health" end
-        if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Regens Mana & Health" end
-        if stat == "ITEM_MOD_INTELLECT_SHORT" then return "1 Int = 15 Mana + Crit" end
-        if stat == "ITEM_MOD_STRENGTH_SHORT" then return "Melee AP" end
-        if stat == "ITEM_MOD_AGILITY_SHORT" then return "Crit + Armor" end
-        if stat == "ITEM_MOD_SPELL_HEALING_DONE_SHORT" then return "Healing Power" end
-        if stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then return "Hit Chance (Spell)" end
-        if stat == "ITEM_MOD_CRIT_SPELL_RATING_SHORT" then return "Crit Chance (Spell)" end
-        if stat == "ITEM_MOD_CRIT_RATING_SHORT" then return "Crit Chance (Melee)" end
-        if stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then return "Crit Chance (Spell)" end
-		if stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon DMG (Top Priority)" end
-		if stat == "MSC_WEAPON_DPS" then return "Weapon DMG (Top Priority)" end
-		if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Efficiency)" end 
+        if stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon DMG (Top Priority)" end
+        if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Efficiency)" end 
+
+        -- [[ 2. CLASS SPECIFIC REASONS ]] --
+        
+        -- WARRIOR
+        if class == "WARRIOR" then
+            if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 2 AP" end
+            if stat == "ITEM_MOD_AGILITY_SHORT" then return "Crit & Armor (No AP)" end
+            if stat == "ITEM_MOD_CRIT_RATING_SHORT" then
+                if profileName:find("Arms") then return "Deep Wounds / Impale Synergy" end
+                return "Flurry Uptime"
+            end
+        end
+
+        -- ROGUE
+        if class == "ROGUE" then
+            if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end
+            if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 1 AP (No Crit)" end
+        end
+
+        -- HUNTER
+        if class == "HUNTER" then
+            if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end
+            if stat == "ITEM_MOD_INTELLECT_SHORT" then return "Mana Pool (Viper Scaling)" end
+        end
+
+        -- SHAMAN
+        if class == "SHAMAN" then
+            if stat == "ITEM_MOD_INTELLECT_SHORT" then 
+                if profileName:find("ENH") then return "Mental Dexterity (Int -> AP)" end
+                return "Mana Pool & Spell Crit" 
+            end
+            if stat == "ITEM_MOD_NATURE_DAMAGE_SHORT" then return "Lightning / Chain Scaling" end
+            if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then return "Nova / Shock Scaling" end
+            if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Spirit (Useless for Shaman)" end
+        end
+
+        -- PALADIN
+        if class == "PALADIN" then
+            if stat == "ITEM_MOD_STRENGTH_SHORT" then return "Melee AP & Block Value" end
+            if stat == "ITEM_MOD_SPELL_POWER_SHORT" and profileName:find("PROT") then return "Holy Threat (Consecration)" end
+            if stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" and profileName:find("HOLY") then return "Illumination (Mana Refund)" end
+        end
+
+        -- PRIEST
+        if class == "PRIEST" then
+            if stat == "ITEM_MOD_SPIRIT_SHORT" then 
+                if profileName:find("Shadow") then return "Spirit Tap Efficiency" end
+                return "Spiritual Guidance (Spt -> Heal)" 
+            end
+            if stat == "ITEM_MOD_SHADOW_DAMAGE_SHORT" then return "Mind Blast / Flay Scaling" end
+        end
+
+        -- MAGE / WARLOCK
+        if class == "MAGE" or class == "WARLOCK" then
+            if stat == "ITEM_MOD_INTELLECT_SHORT" then return "1 Int = 15 Mana + Crit" end
+            if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("Demo") then return "Demonic Knowledge (Stam -> SP)" end
+            if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then return "Fire Scaling (Ignite/Destro)" end
+            if stat == "ITEM_MOD_FROST_DAMAGE_SHORT" then return "Frost Scaling (Shatter)" end
+        end
+
+        -- TANKING (Any Class)
+        if profileName:find("Tank") or profileName:find("Prot") or profileName:find("Bear") then
+            if stat == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then return "Push Crits off Table" end
+            if stat == "ITEM_MOD_DODGE_RATING_SHORT" or stat == "ITEM_MOD_PARRY_RATING_SHORT" then return "Avoidance" end
+            if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "Mitigation / Shield Slam" end
+        end
+
+        -- LEVELING UNIVERSAL
+        if profileName:find("Leveling") and stat == "ITEM_MOD_SPIRIT_SHORT" then
+            return "Less Downtime (Eating/Drinking)"
+        end
+
         return nil
     end
 
