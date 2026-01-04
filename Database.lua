@@ -202,6 +202,7 @@ MSC.WeightDB = {
             ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5,
             ["MSC_WEAPON_DPS"]=0.0 -- Casters ignore weapon damage
+			["MSC_WAND_DPS"]=2.5
         },
 
         -- [[ 1. HOLY (Deep Healing) ]]
@@ -1113,21 +1114,23 @@ MSC.LevelingWeightDB = {
     },
 ["MAGE"] = {
         -- [[ 1. STANDARD FROST (Single Target) ]]
-        -- Safe, efficient, low gear requirement.
+        -- Focus: Mana efficiency via Wanding finishers.
         ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,              -- Mages don't melee
+            ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.5,            -- Vital for mana efficiency early
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,  -- SP starts appearing on wands/greens
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,       -- Regen is nice early on
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
         ["Leveling_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.2,            -- Used as mana-free finisher
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.8, -- Azure Silk gear starts dropping
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1135,6 +1138,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.6,            -- Spells are much stronger now
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
@@ -1145,6 +1149,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.2,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
@@ -1155,6 +1160,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,            -- Stat stick only
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
@@ -1165,21 +1171,23 @@ MSC.LevelingWeightDB = {
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
 
-        -- [[ 2. FIRE LEVELING (High Damage / Downtime) ]]
+        -- [[ 2. FIRE LEVELING (High Damage) ]]
         ["Leveling_Fire_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.0,
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
         ["Leveling_Fire_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.5,
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- Pyroblast/Ignite scaling
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1187,6 +1195,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Fire_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.2,
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
@@ -1197,6 +1206,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Fire_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
@@ -1208,12 +1218,12 @@ MSC.LevelingWeightDB = {
         },
 
         -- [[ 3. AOE BLIZZARD LEVELING ]]
-        -- Needs massive Stamina (to survive the pull) and Int (to cast enough Blizzards).
-        -- Spell Power is secondary because Blizzard has poor SP scaling.
+        -- Wands are useless here; you need Stamina to survive the pull and Int for Blizzard.
         ["Leveling_AoE_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0,     -- Don't die
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,   -- Mana pool > SP for AoE
+            ["MSC_WAND_DPS"]=0.1,            -- You don't wand in AoE
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1221,28 +1231,31 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_AoE_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,
             ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
         ["Leveling_AoE_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,
             ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
         ["Leveling_AoE_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=2.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
@@ -1657,19 +1670,21 @@ MSC.LevelingWeightDB = {
     },
 ["WARLOCK"] = {
         -- [[ 1. AFFLICTION / DRAIN TANK (The Meta) ]]
-        -- High Efficiency. Uses Health as Mana (Life Tap). Heals via Damage (Drain Life).
+        -- Spirit > Wand DPS > Spell Power > Stamina
         ["Leveling_1_20"] = { 
             ["MSC_WEAPON_DPS"]=0.0,              -- Casters don't melee
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,  -- Wands/Greens with "Shadow Wrath" are huge
+            ["MSC_WAND_DPS"]=2.0,                -- << HIGH PRIO: Primary mana saver
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- Life Tap fuel
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,       -- Regen is good early
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,       -- Fel Armor makes this better later
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
         ["Leveling_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, -- "Of Shadow Wrath" gear is BiS
+            ["MSC_WAND_DPS"]=1.5,                -- Transitioning to Drain Life
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
@@ -1679,15 +1694,17 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.8,                -- Spells/Drains are dominant
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8,       -- Drain Tanking needs big HP pool
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
         ["Leveling_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.4,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
@@ -1698,9 +1715,10 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,                -- Stat stick only
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0,       -- Unstable Affliction protection / PvP overlap
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
@@ -1709,12 +1727,12 @@ MSC.LevelingWeightDB = {
         },
 
         -- [[ 2. DESTRUCTION / FIRE LEVELING ]]
-        -- Faster kills, more drinking.
         ["Leveling_Fire_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.2,                -- Finisher to save mana
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,    -- Needs bigger mana pool than Affliction
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1722,6 +1740,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Fire_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.8,
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
@@ -1731,6 +1750,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Fire_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.4,
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
@@ -1740,6 +1760,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Fire_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
@@ -1750,10 +1771,10 @@ MSC.LevelingWeightDB = {
         },
 
         -- [[ 3. DEMONOLOGY (Felguard / Stat Stick) ]]
-        -- "Demonic Knowledge" talent converts Stamina/Int into Spell Power.
         ["Leveling_Demo_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5,      -- << KING STAT. Feeds Pet & Player.
+            ["MSC_WAND_DPS"]=1.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5,      -- << KING STAT
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
@@ -1762,7 +1783,8 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Demo_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0,      -- Demonic Knowledge is online
+            ["MSC_WAND_DPS"]=0.6,
+            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, 
@@ -1771,6 +1793,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Demo_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.2,
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
@@ -1780,6 +1803,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Demo_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.1,
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
@@ -1791,11 +1815,12 @@ MSC.LevelingWeightDB = {
     },
 ["PRIEST"] = {
         -- [[ 1. SHADOW / SPIRIT TAP (The Leveling Standard) ]]
-        -- Spirit > Spell Power > Int > Stam
+        -- Spirit > Wand DPS > Spell Power > Int > Stam
         ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,              -- Don't melee. Use Wands.
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.5,       -- << SPIRIT TAP IS LIFE
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,  -- Wands with stats > White wands
+            ["MSC_WEAPON_DPS"]=0.0,              -- Don't melee.
+            ["MSC_WAND_DPS"]=2.5,                -- << KING STAT: Wands are your rotation
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.5,       -- Spirit Tap efficiency
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,  -- Helps everything
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1803,9 +1828,10 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=2.0,                -- Still vital for mana-free kills
             ["ITEM_MOD_SPIRIT_SHORT"]=2.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, -- Mind Blast/Flay scaling
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=0.8,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1813,8 +1839,9 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.5,                -- Tap it down as Shadowform dmg ramps up
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, -- Shadowform is live
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.0,
@@ -1823,6 +1850,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
@@ -1834,6 +1862,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.5,                -- Mostly a stat stick in Outland
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
@@ -1848,9 +1877,10 @@ MSC.LevelingWeightDB = {
         -- Relies on Holy Fire / Smite Crits (Surge of Light).
         ["Leveling_Smite_21_40"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.5,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,     -- Still need Spirit Tap
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
@@ -1858,6 +1888,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Smite_41_51"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=1.2,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
@@ -1867,6 +1898,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Smite_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.8,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
@@ -1876,6 +1908,7 @@ MSC.LevelingWeightDB = {
         },
         ["Leveling_Smite_60_70"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
+            ["MSC_WAND_DPS"]=0.4,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
@@ -1884,7 +1917,6 @@ MSC.LevelingWeightDB = {
             ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
             ["ITEM_MOD_AGILITY_SHORT"]=0.01
         },
-
         -- [[ 3. HOLY / DISC (Dungeon Healer) ]]
         ["Leveling_Healer_52_59"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
@@ -2087,27 +2119,47 @@ MSC.SpeedChecks = {
 
 MSC.ValidWeapons = {
     ["WARRIOR"] = {
-        [0]=true, [1]=true, [4]=true, [5]=true, [6]=true, [7]=true, [8]=true, [10]=true, [13]=true, [14]=true, [15]=true, 
-        [16]=true, -- Thrown
-        [18]=true, -- Crossbows
-        [2]=true, [3]=true -- Bows/Guns
+        [0]=true, [1]=true,   -- Axes
+        [4]=true, [5]=true,   -- Maces
+        [7]=true, [8]=true,   -- Swords
+        [6]=true, [10]=true,  -- Polearm, Staff
+        [13]=true, [15]=true, -- Fist, Dagger
+        [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Xbow, Thrown
     },
     ["ROGUE"] = {
-        [0]=true, [4]=true, [5]=true, [7]=true, [13]=true, [15]=true, 
-        [16]=true, -- Thrown
-        [2]=true, [3]=true, [18]=true
+        [4]=true,             -- 1H Maces (No 2H)
+        [7]=true,             -- 1H Swords (No 2H)
+        [13]=true, [15]=true, -- Fist, Dagger
+        [2]=true, [3]=true, [18]=true, [16]=true, -- Bow, Gun, Xbow, Thrown
+        -- REMOVED: [0] Axes (WotLK), [5] 2H Maces (Never)
     },
     ["HUNTER"] = {
-        [0]=true, [1]=true, [4]=true, [5]=true, [6]=true, [7]=true, [8]=true, [10]=true, [13]=true, [15]=true, 
-        [2]=true, [3]=true, [18]=true, -- Bow/Gun/Xbow
-        [16]=true -- Thrown (Yes, Hunters can technically equip them, though useless)
+        [0]=true, [1]=true,   -- Axes
+        [7]=true, [8]=true,   -- Swords
+        [6]=true, [10]=true,  -- Polearm, Staff
+        [13]=true, [15]=true, -- Fist, Dagger
+        [2]=true, [3]=true, [18]=true, [16]=true, -- Bow, Gun, Xbow, Thrown
+        -- REMOVED: [4],[5] Maces (Hunters cannot use Maces)
     },
-    ["PRIEST"]   = { [4]=true, [10]=true, [15]=true, [19]=true }, -- Mace, Staff, Dagger, Wand
-    ["MAGE"]     = { [7]=true, [10]=true, [15]=true, [19]=true }, -- Sword, Staff, Dagger, Wand
-    ["WARLOCK"]  = { [7]=true, [10]=true, [15]=true, [19]=true },
-    ["DRUID"]    = { [4]=true, [5]=true, [10]=true, [13]=true, [15]=true, [11]=true }, -- Mace, Polearm, Staff, Fist, Dagger
-    ["SHAMAN"]   = { [0]=true, [1]=true, [4]=true, [10]=true, [13]=true, [15]=true }, -- Axes, Maces, Staff, Fist, Dagger
-    ["PALADIN"]  = { [0]=true, [1]=true, [4]=true, [5]=true, [6]=true, [7]=true, [8]=true }, -- Axes, Maces, Polearms, Swords
+    ["PRIEST"]   = { [4]=true, [10]=true, [15]=true, [19]=true }, -- 1H Mace, Staff, Dagger, Wand
+    ["MAGE"]     = { [7]=true, [10]=true, [15]=true, [19]=true }, -- 1H Sword, Staff, Dagger, Wand
+    ["WARLOCK"]  = { [7]=true, [10]=true, [15]=true, [19]=true }, -- 1H Sword, Staff, Dagger, Wand
+    ["DRUID"]    = { 
+        [4]=true, [5]=true,   -- Maces (1H/2H)
+        [10]=true, [15]=true  -- Staff, Dagger
+        -- REMOVED: [13] Fists (Cataclysm), [6] Polearms (WotLK)
+    },
+    ["SHAMAN"]   = { 
+        [0]=true, [1]=true,   -- Axes (1H/2H)
+        [4]=true, [5]=true,   -- Maces (1H/2H)
+        [10]=true, [13]=true, [15]=true -- Staff, Fist, Dagger
+    },
+    ["PALADIN"]  = { 
+        [0]=true, [1]=true,   -- Axes
+        [4]=true, [5]=true,   -- Maces
+        [7]=true, [8]=true,   -- Swords
+        [6]=true              -- Polearms
+    },
 }
 
 MSC.ShortNames = {
@@ -2162,6 +2214,9 @@ MSC.ShortNames = {
     ["ITEM_MOD_NATURE_RESISTANCE_SHORT"] = "Nature Res",
     ["ITEM_MOD_ARCANE_RESISTANCE_SHORT"] = "Arcane Res",
     ["ITEM_MOD_ALL_RESISTANCE_SHORT"]    = "All Res",
+	["MSC_WEAPON_SPEED"]				 = "Speed",
+    ["MSC_WEAPON_DPS"]					 = "Weapon DPS",
+    ["MSC_WAND_DPS"]					 = "Wand DPS",
 }
 
 MSC.SlotMap = { 

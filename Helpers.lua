@@ -31,8 +31,8 @@ MSC.StatShortNames = {
     ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = "Arcane",
     ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = "Nature",
     ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = "Holy",
-	["ITEM_MOD_CONDITIONAL_AP_SHORT"] = "AP (Conditional)",
-	["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = "Crit (from Agi/Int)",
+    ["ITEM_MOD_CONDITIONAL_AP_SHORT"] = "AP (Conditional)",
+    ["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = "Crit (from Agi/Int)",
 }
 
 function MSC.Round(num, numDecimalPlaces)
@@ -48,15 +48,12 @@ end
 
 function MSC.IsItemUsable(link)
     if not link then return false end
-    -- We grab 'equipLoc' (Arg 9) because it is more reliable than ClassIDs for Relics
     local _, _, _, _, _, _, subType, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
     local _, playerClass = UnitClass("player")
     
-    -- [[ 1. RELIC CHECK (Fixes "Class Unusable" on Idols) ]] --
+    -- [[ 1. RELIC CHECK ]] --
     if equipLoc == "INVTYPE_RELIC" then
         if playerClass == "DRUID" or playerClass == "PALADIN" or playerClass == "SHAMAN" then
-            -- We just check if the item isn't explicitly for another class
-            -- (e.g. A Druid can use Relics, unless it's specifically a "Totem" or "Libram")
             if subType then
                 if playerClass == "DRUID" and (subType == "Totem" or subType == "Libram") then return false end
                 if playerClass == "PALADIN" and (subType == "Totem" or subType == "Idol") then return false end
@@ -69,24 +66,22 @@ function MSC.IsItemUsable(link)
 
     -- [[ 2. THROWN WEAPON CHECK ]] --
     if equipLoc == "INVTYPE_THROWN" then
-        if playerClass == "WARRIOR" or playerClass == "ROGUE" or playerClass == "HUNTER" then
-            return true
-        end
-        -- (Priests/Mages etc can't use Thrown)
+        if playerClass == "WARRIOR" or playerClass == "ROGUE" or playerClass == "HUNTER" then return true end
         return false
     end
 
     -- [[ 3. STANDARD ARMOR CHECKS ]] --
-    -- 0=Misc, 1=Cloth, 2=Leather, 3=Mail, 4=Plate, 6=Shield
     if classID == 4 then 
         if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then 
-            if subclassID and subclassID > 1 then return false end -- Cloth only
+            if subclassID and subclassID > 1 then return false end 
         elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
-            if subclassID and subclassID > 2 then return false end -- Cloth/Leather
-        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
-            if subclassID and subclassID > 3 then return false end -- Cloth/Leather/Mail
+            if subclassID and subclassID > 2 then return false end 
+        elseif playerClass == "HUNTER" then 
+            if subclassID and subclassID > 3 then return false end 
+        elseif playerClass == "SHAMAN" then
+            -- Allow Mail(3) and Shields(6)
+            if subclassID and subclassID > 3 and subclassID ~= 6 then return false end 
         end
-        -- Warriors/Paladins can use everything.
     end
     
     -- [[ 4. WEAPON CHECKS ]] --
@@ -101,19 +96,40 @@ function MSC:GetValidEnchantType(itemLink)
     if not itemLink then return nil end
     local _, _, _, _, _, itemClass, itemSubClassID, _, itemEquipLoc = GetItemInfo(itemLink)
     
+    -- 1. Ranged
     if itemEquipLoc == "INVTYPE_RANGED" or itemEquipLoc == "INVTYPE_RANGEDRIGHT" then
         if itemSubClassID == 2 or itemSubClassID == 3 or itemSubClassID == 18 then return "SCOPE" end
         return nil 
     end
-    if itemEquipLoc == "INVTYPE_SHIELD" then return "SHIELD" end
-    if itemEquipLoc == "INVTYPE_HOLDABLE" then return nil end
-    if itemEquipLoc == "INVTYPE_2HWEAPON" then return "2H_WEAPON" end
-    if itemClass == 2 then return "WEAPON" end
-    return "ARMOR"
+    
+    -- 2. Weapons (Class 2)
+    if itemClass == 2 then 
+        if itemEquipLoc == "INVTYPE_2HWEAPON" then return "2H_WEAPON" end
+        return "WEAPON"
+    end
+
+    -- 3. Shields & Armor
+    if itemClass == 4 then
+        -- Shields (Subclass 6)
+        if itemSubClassID == 6 or itemEquipLoc == "INVTYPE_SHIELD" then return "SHIELD" end
+        
+        -- [[ FIX: HARD BLOCK FRILLS / ORBS ]] --
+        -- Subclass 0 (Misc) in Armor = Held In Off-hand. These CANNOT be enchanted.
+        if itemSubClassID == 0 and (itemEquipLoc == "INVTYPE_HOLDABLE" or itemEquipLoc == "INVTYPE_WEAPONOFFHAND") then 
+            return nil 
+        end
+        
+        -- Also check string explicitly
+        if itemEquipLoc == "INVTYPE_HOLDABLE" then return nil end
+
+        return "ARMOR"
+    end
+    
+    return nil
 end
 
 -- =============================================================
--- 2. TOOLTIP PARSER (Unified Classic + TBC)
+-- 2. TOOLTIP PARSER
 -- =============================================================
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0, false end
@@ -124,164 +140,99 @@ function MSC.ParseTooltipLine(text)
     text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
     if text:find("^Use:") or text:find("^Chance on hit:") then return nil, 0, false end
     
-local patterns = {
-        -- [[ 1. TRAPS & SPECIALS ]]
-        { pattern = "attack power by (%d+) when fighting", stat = "ITEM_MOD_CONDITIONAL_AP_SHORT" }, 
+	local patterns = {
+        -- [[ PRIORITY 1: SPECIFIC SCHOOLS (Before Generic SP) ]] --
+        { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "damage done by Shadow spells.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+        { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "damage done by Fire spells.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+        { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "damage done by Frost spells.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+        { pattern = "Arcane damage.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "damage done by Arcane spells.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+        { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "damage done by Nature spells.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+        { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+        { pattern = "damage done by Holy spells.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
 
-		-- [[ WEAPON DATA ]]
+        -- [[ PRIORITY 2: GENERIC STATS ]] --
+        { pattern = "Increases spell power by (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "damage and healing.-by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "damage and healing.-by (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { pattern = "Increases attack power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { pattern = "Increases healing by (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
+        { pattern = "healing done.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
+        
+        -- [[ PRIORITY 3: OTHER STATS ]] --
+        { pattern = "attack power by (%d+) when fighting", stat = "ITEM_MOD_CONDITIONAL_AP_SHORT" }, 
         { pattern = "%((%d+%.?%d*) damage per second%)", stat = "MSC_WEAPON_DPS" },
         { pattern = "Speed (%d+%.?%d*)", stat = "MSC_WEAPON_SPEED" },
-		
-        -- [[ 2. SPECIFIC SPELL STATS (Must come first to avoid confusion) ]]
         { pattern = "spell hit rating by (%d+)", stat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { pattern = "spell critical strike rating by (%d+)", stat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
         { pattern = "spell haste rating by (%d+)", stat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
-        { pattern = "spell penetration by (%d+)", stat = "ITEM_MOD_SPELL_PENETRATION_SHORT" }, -- Added PvP Stat
-
-        -- [[ 3. GENERIC RATINGS (Hit/Crit/Haste) ]]
+        { pattern = "spell penetration by (%d+)", stat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
         { pattern = "hit rating by (%d+)", stat = "ITEM_MOD_HIT_RATING_SHORT" },
         { pattern = "critical strike rating by (%d+)", stat = "ITEM_MOD_CRIT_RATING_SHORT" },
         { pattern = "haste rating by (%d+)", stat = "ITEM_MOD_HASTE_RATING_SHORT" },
-        
-        -- [[ 4. TANK & PVP RATINGS (CRITICAL MISSING STATS ADDED HERE) ]]
         { pattern = "resilience rating by (%d+)", stat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
         { pattern = "expertise rating by (%d+)", stat = "ITEM_MOD_EXPERTISE_RATING_SHORT" }, 
         { pattern = "defense rating by (%d+)", stat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { pattern = "dodge rating by (%d+)", stat = "ITEM_MOD_DODGE_RATING_SHORT" }, -- NEW
-        { pattern = "parry rating by (%d+)", stat = "ITEM_MOD_PARRY_RATING_SHORT" }, -- NEW
-        { pattern = "block rating by (%d+)", stat = "ITEM_MOD_BLOCK_RATING_SHORT" }, -- NEW (Shield Block Rating)
+        { pattern = "dodge rating by (%d+)", stat = "ITEM_MOD_DODGE_RATING_SHORT" }, 
+        { pattern = "parry rating by (%d+)", stat = "ITEM_MOD_PARRY_RATING_SHORT" }, 
+        { pattern = "block rating by (%d+)", stat = "ITEM_MOD_BLOCK_RATING_SHORT" }, 
         { pattern = "ignore (%d+) of your opponent's armor", stat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-
-        -- [[ 5. MODERNIZED / SIMPLIFIED STATS ]]
-        { pattern = "Increases spell power by (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { pattern = "Increases attack power by (%d+)", stat = "ITEM_MOD_ATTACK_POWER_SHORT" }, -- (This triggers the Feral Check logic we added)
-        { pattern = "Increases healing by (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" },
-        
-        -- [[ 6. CLASSIC / TBC PHRASING ]]
-        -- "Damage and Healing" = Spell Power
-        { pattern = "damage and healing.-by up to (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { pattern = "damage and healing.-by (%d+)", stat = "ITEM_MOD_SPELL_POWER_SHORT" },
-        
-        -- "Healing Done" (Broader Match)
-        { pattern = "healing done.-up to (%d+)", stat = "ITEM_MOD_HEALING_POWER_SHORT" }, -- NEW (Catches "Increases healing done by...")
-        
-        -- Specific Schools (Updated to catch "damage done by X spells")
-        { pattern = "Shadow damage.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-        { pattern = "damage done by Shadow spells.-up to (%d+)", stat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" }, -- << NEW
-        
-        { pattern = "Fire damage.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-        { pattern = "damage done by Fire spells.-up to (%d+)", stat = "ITEM_MOD_FIRE_DAMAGE_SHORT" }, -- << NEW
-        
-        { pattern = "Frost damage.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-        { pattern = "damage done by Frost spells.-up to (%d+)", stat = "ITEM_MOD_FROST_DAMAGE_SHORT" }, -- << NEW
-        
-        { pattern = "Arcane damage.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-        { pattern = "damage done by Arcane spells.-up to (%d+)", stat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" }, -- << NEW
-        
-        { pattern = "Nature damage.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-        { pattern = "damage done by Nature spells.-up to (%d+)", stat = "ITEM_MOD_NATURE_DAMAGE_SHORT" }, -- << NEW
-        
-        { pattern = "Holy damage.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-        { pattern = "damage done by Holy spells.-up to (%d+)", stat = "ITEM_MOD_HOLY_DAMAGE_SHORT" }, -- << NEW
-        
-        -- [[ 7. ATTRIBUTES & REGEN ]]
-        { pattern = "Speed (%d+%.%d+)", stat = "MSC_WEAPON_SPEED" },
         { pattern = "ranged attack power.-by (%d+)", stat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
-        
-        -- Mana Regen (Catches "per 5" and "every 5")
         { pattern = "(%d+) mana per 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-        { pattern = "(%d+) mana every 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" }, -- NEW
-        
+        { pattern = "(%d+) mana every 5 sec", stat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { pattern = "%+(%d+) Stamina", stat = "ITEM_MOD_STAMINA_SHORT" },
         { pattern = "%+(%d+) Intellect", stat = "ITEM_MOD_INTELLECT_SHORT" },
         { pattern = "%+(%d+) Spirit", stat = "ITEM_MOD_SPIRIT_SHORT" },
         { pattern = "%+(%d+) Strength", stat = "ITEM_MOD_STRENGTH_SHORT" },
         { pattern = "%+(%d+) Agility", stat = "ITEM_MOD_AGILITY_SHORT" },
-        { pattern = "block value.-by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, -- NEW (TBC phrasing)
-        { pattern = "%+(%d+) Block", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, -- (Classic phrasing)
+        { pattern = "block value.-by (%d+)", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+        { pattern = "%+(%d+) Block", stat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
     }
     
     for _, p in ipairs(patterns) do
         local val = text:match(p.pattern)
         if val then
             local finalStat = p.stat
-            
-            -- [[ THE FERAL TRAP FIX ]] --
-            -- If we detected Attack Power, check the fine print for Druid forms.
-            if finalStat == "ITEM_MOD_ATTACK_POWER_SHORT" then
-                if text:find("Cat") or text:find("Bear") or text:find("forms only") then
-                    finalStat = "ITEM_MOD_ATTACK_POWER_FERAL_SHORT"
-                end
+            if finalStat == "ITEM_MOD_ATTACK_POWER_SHORT" and (text:find("Cat") or text:find("Bear") or text:find("forms only")) then
+                finalStat = "ITEM_MOD_ATTACK_POWER_FERAL_SHORT"
             end
-
             return finalStat, (p.val or tonumber(val)), isSocketBonus
         end
     end
-	
-	-- [[ HYBRID RELIC FIX (Librams, Idols, Totems) ]] --
-    -- FIX: Now handles both "by up to 25" AND "by 25" (Fixed amounts)
-
-    -- 1. SPELL DAMAGE / HEALING (Generic Catch-All)
-    -- Check "damage of your X"
+    
     local spellDmg = text:match("damage of your .* spell by up to (%d+)")
-    if not spellDmg then spellDmg = text:match("damage of your .* spell by (%d+)") end
-    
-    -- Check "damage dealt by X"
     if not spellDmg then spellDmg = text:match("damage dealt by .* by up to (%d+)") end
-    if not spellDmg then spellDmg = text:match("damage dealt by .* by (%d+)") end -- << Catches Idol of the Avenger
-    
     if spellDmg then return "ITEM_MOD_SPELL_POWER_SHORT", tonumber(spellDmg), false end
 
-    -- Check Healing
     local healing = text:match("healing done by .* by up to (%d+)")
-    if not healing then healing = text:match("healing done by .* by (%d+)") end
     if healing then return "ITEM_MOD_HEALING_POWER_SHORT", tonumber(healing), false end
 
-    -- 2. SHAMAN TOTEMS
-    if text:find("Lightning Bolt") or text:find("Chain Lightning") then
-        local dmg = text:match("by up to (%d+)")
-        if not dmg then dmg = text:match("by (%d+)") end
+    if text:find("Lightning Bolt") or text:find("Chain Lightning") or (text:find("Shock") and text:find("damage dealt")) then
+        local dmg = text:match("by up to (%d+)") or text:match("by (%d+)")
         if dmg then return "ITEM_MOD_SPELL_POWER_SHORT", tonumber(dmg), false end
     end
-    if text:find("Shock") and text:find("damage dealt by") then
-        local dmg = text:match("by up to (%d+)")
-        if not dmg then dmg = text:match("by (%d+)") end
-        if dmg then return "ITEM_MOD_SPELL_POWER_SHORT", tonumber(dmg), false end
-    end
-
-    -- 3. DRUID IDOLS
+    
     local feralAP = text:match("attack power of your .* forms by (%d+)")
     if feralAP then return "ITEM_MOD_ATTACK_POWER_SHORT", tonumber(feralAP), false end
 
-    local mangleDmg = text:match("damage dealt by Mangle by up to (%d+)")
-    if not mangleDmg then mangleDmg = text:match("damage dealt by Mangle by (%d+)") end
-    if mangleDmg then return "ITEM_MOD_STRENGTH_SHORT", tonumber(mangleDmg), false end
+    if text:match("damage dealt by Mangle") or text:match("damage dealt by Shred") or text:match("damage dealt by Crusader Strike") then
+        local dmg = text:match("by (%d+)") or text:match("up to (%d+)")
+        if dmg then return "ITEM_MOD_STRENGTH_SHORT", tonumber(dmg), false end
+    end
     
-    local shredDmg = text:match("damage dealt by Shred by up to (%d+)")
-    if not shredDmg then shredDmg = text:match("damage dealt by Shred by (%d+)") end
-    if shredDmg then return "ITEM_MOD_STRENGTH_SHORT", tonumber(shredDmg), false end
-    
-    -- "Increases damage dealt by Wrath by 25" -> (Mapped to Starfire/Nature or Generic SP)
-    -- Since our first block catches "damage dealt by", this is covered, but we can be specific if needed.
-
-    -- 4. PALADIN LIBRAMS
-    local csDmg = text:match("damage dealt by Crusader Strike by (%d+)")
-    if csDmg then return "ITEM_MOD_STRENGTH_SHORT", tonumber(csDmg), false end
-    
-    -- 5. BLOCK VALUE
     local blockVal = text:match("block value by (%d+)")
     if blockVal then return "ITEM_MOD_BLOCK_VALUE_SHORT", tonumber(blockVal), false end
 
-    -- [[ END HYBRID FIX ]] --
-    
     return nil, 0, false
 end
 
 -- =============================================================
--- 3. PROJECTION LOGIC (Gems & Enchants)
+-- 3. PROJECTION LOGIC
 -- =============================================================
-
--- Helper: Finds the highest scoring gem of a specific color
 function MSC.GetBestGemForSocket(socketColor, level, weights)
     local db = (level >= 70) and MSC.GemOptions or MSC.GemOptions_Leveling
     if not db then return nil, 0 end
@@ -290,25 +241,20 @@ function MSC.GetBestGemForSocket(socketColor, level, weights)
     if not candidates then return nil, 0 end
 
     local bestGem, bestScore = nil, -1
-
     for _, gem in ipairs(candidates) do
         local score = 0
         if weights[gem.stat] then score = score + (gem.val * weights[gem.stat]) end
-        -- Handle Hybrid Gems (e.g. Purple = Blue + Red stats)
         if gem.stat2 and weights[gem.stat2] then score = score + (gem.val2 * weights[gem.stat2]) end
-        
         if score > bestScore then bestScore = score; bestGem = gem end
     end
-
     return bestGem, bestScore
 end
 
--- Main Projector: Determines if we should match colors or go for raw stats
 function MSC.ProjectGems(itemLink, bonusStats)
-    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1 -- 1=Off, 4=Smart
+    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     if gemMode == 1 or gemMode == 2 then return {}, false, false, nil end
     
-    local baseStats = GetItemStats(itemLink) -- Assumes parsing of sockets into keys exists
+    local baseStats = GetItemStats(itemLink)
     if not baseStats then return {}, false, false, nil end
     
     local socketKeys = {"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}
@@ -316,104 +262,66 @@ function MSC.ProjectGems(itemLink, bonusStats)
     local weights = MSC.GetCurrentWeights()
     if not weights then return {}, false, false, nil end
 
-    -- Strategy function: Calculates total score of gems with or without strict color matching
     local function CalculateStrategy(ignoreColors)
         local totalScore = 0
         local gemSet = {}
-
         for _, colorKey in ipairs(socketKeys) do
             local count = baseStats[colorKey] or 0
             if count > 0 then
                 for i=1, count do
                     local bestGem, score = nil, 0
-                    
-                    -- CHECK 1: Meta Sockets (Always Strict)
                     if colorKey == "EMPTY_SOCKET_META" then
                          bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights)
-                    
-                    -- CHECK 2: Prismatic OR Ignore Colors (Scan Red/Yellow/Blue for best value)
                     elseif colorKey == "EMPTY_SOCKET_PRISMATIC" or ignoreColors then
                         for _, c in ipairs({"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE"}) do
                             local g, s = MSC.GetBestGemForSocket(c, level, weights)
                             if g and s > score then bestGem = g; score = s end
                         end
-                    
-                    -- CHECK 3: Strict Matching (Scan only specific color)
                     else
                         bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights)
                     end
-
-                    if bestGem then 
-                        totalScore = totalScore + score
-                        table.insert(gemSet, bestGem) 
-                    end
+                    if bestGem then totalScore = totalScore + score; table.insert(gemSet, bestGem) end
                 end
             end
         end
         return totalScore, gemSet
     end
 
-    -- [[ DECISION PHASE: Match vs. Raw Stats ]]
     local useMatch = true
-    if gemMode == 4 then -- Smart Mode
-        local scoreMatch, _ = CalculateStrategy(false) -- Strict Matching
-        
-        -- Calculate value of the Socket Bonus
+    if gemMode == 4 then 
+        local scoreMatch, _ = CalculateStrategy(false)
         local bonusValue = 0
-        if bonusStats then 
-            for k, v in pairs(bonusStats) do 
-                if weights[k] then bonusValue = bonusValue + (v * weights[k]) end 
-            end 
-        end
-        
-        local totalWithBonus = scoreMatch + bonusValue
-        local scoreIgnore, _ = CalculateStrategy(true) -- Ignore Colors (Raw Power)
-        
-        -- If ignoring colors gives more points than (Matching + Bonus), break the bonus.
-        if scoreIgnore > totalWithBonus then useMatch = false end
+        if bonusStats then for k, v in pairs(bonusStats) do if weights[k] then bonusValue = bonusValue + (v * weights[k]) end end end
+        if (scoreMatch + bonusValue) < CalculateStrategy(true) then useMatch = false end
+    elseif gemMode == 3 then useMatch = true end
 
-    elseif gemMode == 3 then 
-        useMatch = true -- Force Match
-    end
-
-    -- [[ CONSTRUCTION PHASE ]]
     local finalStats = { COUNT = 0 }
     local hasSockets = false
     local gemCounts = {}
-    local _, chosenGems = CalculateStrategy(not useMatch) -- Run the winning strategy
+    local _, chosenGems = CalculateStrategy(not useMatch)
     
     for _, gem in ipairs(chosenGems) do
         hasSockets = true
         finalStats.COUNT = finalStats.COUNT + 1
-        
-        -- Add Gem Stats to Final Stats
         finalStats[gem.stat] = (finalStats[gem.stat] or 0) + gem.val
         if gem.stat2 then finalStats[gem.stat2] = (finalStats[gem.stat2] or 0) + gem.val2 end
         
-        -- UI Text Building
         local sName = MSC.StatShortNames[gem.stat] or "Stat"
         local label = "+" .. gem.val .. " " .. sName
         gemCounts[label] = (gemCounts[label] or 0) + 1
     end
     
-    -- [[ CRITICAL FIX: Add Bonus Stats to Final Table ]]
     local hasBonus = false
     if bonusStats then for k,v in pairs(bonusStats) do hasBonus = true break end end
 
     if useMatch and hasBonus then
-        for k, v in pairs(bonusStats) do
-            finalStats[k] = (finalStats[k] or 0) + v
-        end
+        for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
     end
 
-    -- [[ UI TEXT GENERATION ]]
     local textParts = {}
     for label, count in pairs(gemCounts) do table.insert(textParts, count .. "x (" .. label .. ")") end
     local gemText = table.concat(textParts, ", ")
-
-    if useMatch and hasBonus then
-        gemText = gemText .. " |cff00ff00(+Bonus)|r"
-    end
+    if useMatch and hasBonus then gemText = gemText .. " |cff00ff00(+Bonus)|r" end
 
     return finalStats, hasSockets, useMatch, gemText
 end
@@ -422,15 +330,27 @@ function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType)
     local bestScore = 0; local bestID = nil
     if not MSC.EnchantDB then return nil end
     for eID, data in pairs(MSC.EnchantDB) do
-        local isValid = (data.slot == slotId)
+        local isValid = false
+        
+        if data.slot then
+            isValid = (data.slot == slotId)
+        else
+            -- No slot in DB implies Weapon Enchant (16/17)
+            if slotId == 16 or slotId == 17 then isValid = true end
+        end
+
         if isValid and enchantType then
             if enchantType == "SCOPE" then if not data.isScope then isValid = false end
             elseif enchantType == "SHIELD" then if not data.isShield then isValid = false end
             elseif enchantType == "WEAPON" or enchantType == "2H_WEAPON" then
                 if data.isShield or data.isScope then isValid = false end
                 if data.requires2H and enchantType ~= "2H_WEAPON" then isValid = false end
+            elseif enchantType == "ARMOR" then
+                -- Block weapon enchants on armor (off-hands)
+                if not data.slot then isValid = false end
             end
         end
+        
         if isValid then
             local weights = MSC.GetCurrentWeights()
             local score = MSC.GetItemScore(data.stats, weights, specName)
@@ -450,7 +370,7 @@ function MSC.GetEnchantString(slotId)
 end
 
 -- =============================================================
--- 4. CACHED STAT SCANNER
+-- 4. CACHED STAT SCANNER & SCORING
 -- =============================================================
 function MSC.GetStaticItemStats(itemLink)
     if not itemLink then return {} end
@@ -459,7 +379,10 @@ function MSC.GetStaticItemStats(itemLink)
     local id = tonumber(itemLink:match("item:(%d+)"))
     local finalStats = {}; local bonusStats = {}
     
-    -- 1. Get Base Stats from API
+    -- [[ 1. DETECT ITEM TYPE ]] --
+    local _, _, _, _, _, classID, subclassID = GetItemInfo(itemLink)
+    local isWand = (classID == 2 and subclassID == 19) -- Class 2=Weapon, Subclass 19=Wand
+
     local stats = GetItemStats(itemLink) or {}
     for k, v in pairs(stats) do
         if MSC.StatShortNames[k] or k == "ITEM_MOD_SPELL_HEALING_DONE" or k == "ITEM_MOD_SPELL_DAMAGE_DONE" then 
@@ -469,7 +392,6 @@ function MSC.GetStaticItemStats(itemLink)
         end
     end
 
-    -- 2. Scan Tooltip for "Hidden" Stats and Bonuses
     local tipName = "MSC_ScannerTooltip"
     local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines(); tip:SetHyperlink(itemLink)
@@ -480,33 +402,27 @@ function MSC.GetStaticItemStats(itemLink)
         local r, g, b = line and line:GetTextColor() or 1, 1, 1
         
         if text then
-            -- [[ GRAY TEXT LOGIC ]] --
             local isGray = (r > 0.4 and r < 0.65) and (g > 0.4 and g < 0.65) and (b > 0.4 and b < 0.65)
             local isSocketBonusLine = text:find("Socket Bonus:")
             local shouldSkip = false
 
             if isGray then
                 shouldSkip = true
-                -- EXCEPTION: Allow Gray Socket Bonus if GemMode is 3 (Match) or 4 (Smart)
-                -- We use '(SGJ_Settings.GemMode or 1)' to be safe.
                 if isSocketBonusLine and SGJ_Settings and (SGJ_Settings.GemMode or 1) >= 3 then
                     shouldSkip = false
                 end
             end
 
-            -- [[ PARSING ]] --
             if not shouldSkip then
                 local s, v, isBonus = MSC.ParseTooltipLine(text)
                 if s and v then
                     if isBonus then 
                         bonusStats[s] = (bonusStats[s] or 0) + v
                     elseif not finalStats[s] then 
-                        -- Only add if API didn't already catch it (prevents duplicates)
                         finalStats[s] = (finalStats[s] or 0) + v 
                     end
                 end
                 
-                -- [[ PROC SCANNING ]] --
                 if id then
                     local pStat, pVal = MSC:ParseProcText(text, id)
                     if pStat and pVal > 0 then finalStats[pStat] = (finalStats[pStat] or 0) + pVal end
@@ -515,7 +431,13 @@ function MSC.GetStaticItemStats(itemLink)
         end
     end
 
-    -- 3. Apply Manual Overrides
+    -- [[ 2. WAND DPS SEPARATION ]] --
+    -- If we found DPS on a Wand, rename it so Casters can value it separately from Melee DPS
+    if isWand and finalStats["MSC_WEAPON_DPS"] then
+        finalStats["MSC_WAND_DPS"] = finalStats["MSC_WEAPON_DPS"]
+        finalStats["MSC_WEAPON_DPS"] = nil -- Remove "Melee" DPS from the wand
+    end
+
     if id and MSC.ItemOverrides and MSC.ItemOverrides[id] then
         local override = MSC.ItemOverrides[id]
         if override.replace then finalStats = {} end
@@ -535,6 +457,9 @@ function MSC.GetStaticItemStats(itemLink)
 end
 
 function MSC.SafeGetItemStats(itemLink, slotId)
+    -- [[ CRASH FIX: Guard against unloaded items ]]
+    if not itemLink or not GetItemInfo(itemLink) then return {} end
+
     local cachedStats = MSC.GetStaticItemStats(itemLink)
     local finalStats = {}
     for k,v in pairs(cachedStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
@@ -575,9 +500,6 @@ function MSC.SafeGetItemStats(itemLink, slotId)
     return finalStats
 end
 
--- =============================================================
--- 5. SCORING & UTILITIES
--- =============================================================
 function MSC.GetInterpolatedRatio(table, level)
     if not table then return nil end
     if level <= table[1][1] then return table[1][2] end
@@ -599,7 +521,6 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         if weights[stat] and type(val) == "number" then score = score + (val * weights[stat]) end
     end
     
-    -- [[ WEAPON SPEED LOGIC ]]
     if stats.MSC_WEAPON_SPEED and MSC.SpeedChecks then
         local _, class = UnitClass("player")
         local pref = MSC.SpeedChecks[class] and (MSC.SpeedChecks[class][specName] or MSC.SpeedChecks[class]["Default"])
@@ -617,13 +538,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         end
     end
     
-    -- [[ "WRONG ITEM" PENALTY (Universal Fix) ]] --
-    -- If an item has a LOT of a stat that your profile considers "Worthless" (Weight 0),
-    -- we penalize the score. This prevents off-spec items with Sockets from looking like upgrades.
-    
-    local penalty = 0
-    
-    -- List of "Spec Defining" stats. If you have 0 weight for these, you shouldn't wear them.
+local penalty = 0
     local poisonCandidates = {
         "ITEM_MOD_INTELLECT_SHORT",
         "ITEM_MOD_SPIRIT_SHORT",
@@ -634,30 +549,25 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         "ITEM_MOD_PARRY_RATING_SHORT",
         "ITEM_MOD_DODGE_RATING_SHORT",
         "ITEM_MOD_MANA_REGENERATION_SHORT",
-		"ITEM_MOD_ATTACK_POWER_SHORT",
+        "ITEM_MOD_ATTACK_POWER_SHORT",
         "ITEM_MOD_CRIT_RATING_SHORT",
         "ITEM_MOD_HASTE_RATING_SHORT",
         "ITEM_MOD_HIT_RATING_SHORT",
-        "ITEM_MOD_HIT_SPELL_RATING_SHORT"
+        "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+        -- [[ NEW POISON LIST ADDITIONS ]]
+        "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+        "ITEM_MOD_FIRE_DAMAGE_SHORT",
+        "ITEM_MOD_FROST_DAMAGE_SHORT",
+        "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+        "ITEM_MOD_NATURE_DAMAGE_SHORT",
+        "ITEM_MOD_HOLY_DAMAGE_SHORT",
+		"MSC_WAND_DPS",
     }
 
     for _, statKey in ipairs(poisonCandidates) do
-        local statVal = stats[statKey] or 0
-        local statWeight = weights[statKey] or 0
-        
-        -- If the item has the stat (> 0) BUT your profile hates it (Weight <= 0.1)
-        if statVal > 0 and statWeight <= 0.01 then
-            -- Apply a massive penalty so the Socket/Stamina can't save it
-            penalty = penalty + 1000
-        end
+        if (stats[statKey] or 0) > 0 and (weights[statKey] or 0) <= 0.01 then penalty = penalty + 1000 end
     end
-    
-    -- Special Case: Hunters use Strength for 1 AP, but very inefficiently. 
-    -- If weight is tiny (e.g. 0.1) vs Primary (2.0), we might still want to penalize 
-    -- pure Str gear, but for now the "Weight <= 0.01" check is safer for hybrids.
-
     score = score - penalty
-
     return MSC.Round(score, 1)
 end
 
@@ -665,25 +575,16 @@ function MSC.ExpandDerivedStats(stats, itemLink)
     if not stats then return {} end
     local out = {}
     for k, v in pairs(stats) do out[k] = v end
-    local _, class = UnitClass("player")
-    local _, race = UnitRace("player")
-    local powerType = UnitPowerType("player")
+    local _, class = UnitClass("player"); local _, race = UnitRace("player"); local powerType = UnitPowerType("player")
     
-    -- [[ RACIAL LOGIC RESTORED (TBC Expertise) ]]
     if itemLink and MSC.RacialTraits and MSC.RacialTraits[race] then
         local _, _, _, _, _, _, _, _, _, _, _, _, subclassID = GetItemInfo(itemLink)
         if subclassID and MSC.RacialTraits[race][subclassID] then
             local val = MSC.RacialTraits[race][subclassID]
             if type(val) == "number" then
-                if subclassID == 2 or subclassID == 3 or subclassID == 18 then
-                     out["ITEM_MOD_CRIT_RATING_SHORT"] = (out["ITEM_MOD_CRIT_RATING_SHORT"] or 0) + val
-                else
-                     -- TBC: Weapon Skill is now Expertise Rating
-                     out["ITEM_MOD_EXPERTISE_RATING_SHORT"] = (out["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) + val
-                end
-            elseif type(val) == "table" and val.stat then
-                out[val.stat] = (out[val.stat] or 0) + val.val
-            end
+                if subclassID == 2 or subclassID == 3 or subclassID == 18 then out["ITEM_MOD_CRIT_RATING_SHORT"] = (out["ITEM_MOD_CRIT_RATING_SHORT"] or 0) + val
+                else out["ITEM_MOD_EXPERTISE_RATING_SHORT"] = (out["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) + val end
+            elseif type(val) == "table" and val.stat then out[val.stat] = (out[val.stat] or 0) + val.val end
         end
     end
     
@@ -705,20 +606,16 @@ function MSC.ExpandDerivedStats(stats, itemLink)
     return out
 end
 
--- [[ THE MISSING FUNCTIONS (Restored) ]] --
 function MSC.GetStatDifferences(new, old)
-    local diffs = {}
-    local seen = {}
+    local diffs = {}; local seen = {}
     for k, v in pairs(new) do 
         if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" and type(v) == "number" then
-            local d = v - (old[k] or 0)
-            if d ~= 0 then table.insert(diffs, { key=k, val=d }); seen[k] = true end
+            local d = v - (old[k] or 0); if d ~= 0 then table.insert(diffs, { key=k, val=d }); seen[k] = true end
         end
     end
     for k, v in pairs(old) do
         if not seen[k] and k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" and type(v) == "number" then
-            local d = (new[k] or 0) - v
-            if d ~= 0 then table.insert(diffs, { key=k, val=d }) end
+            local d = (new[k] or 0) - v; if d ~= 0 then table.insert(diffs, { key=k, val=d }) end
         end
     end
     return diffs
@@ -729,49 +626,6 @@ function MSC.SortStatDiffs(diffs)
     return diffs
 end
 
-function MSC.FindBestMainHand(weights, specName)
-    local bestLink, bestScore, bestStats = nil, 0, {}
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then
-                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                if equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND" then
-                    local stats = MSC.SafeGetItemStats(link, 16)
-                    if stats then 
-                        local score = MSC.GetItemScore(stats, weights, specName, 16)
-                        if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end 
-                    end
-                end
-            end
-        end
-    end
-    return bestLink, bestScore, bestStats
-end
-
-function MSC.FindBestOffhand(weights, specName)
-    local bestLink, bestScore, bestStats = nil, 0, {}
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then
-                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                if equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" or equipLoc == "INVTYPE_WEAPON" then
-                    local stats = MSC.SafeGetItemStats(link, 17)
-                    if stats then 
-                        local score = MSC.GetItemScore(stats, weights, specName, 17)
-                        if score > bestScore then bestScore = score; bestLink = link; bestStats = stats end 
-                    end
-                end
-            end
-        end
-    end
-    return bestLink, bestScore, bestStats
-end
-
--- ============================================================================
---  6. PROC & ON-USE CALCULATOR
--- ============================================================================
 function MSC:ParseProcText(text, itemID)
     local isProc = string.find(text, "Chance on hit:") or string.find(text, "Equip: When struck")
     local isUse = string.find(text, "^Use:")

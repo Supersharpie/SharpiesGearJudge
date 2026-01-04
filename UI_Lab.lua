@@ -149,9 +149,22 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
 
     if not btn.icon then btn.icon = _G[name.."Icon"] end
 
+    -- [[ CRASH FIX 1: TOOLTIP SAFETY ]] --
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(labelText); GameTooltip:AddLine("|cffaaaaaaShift+Click any item to link|r") end
+        if self.link then 
+            -- Check if data exists before trying to render
+            if GetItemInfo(self.link) then
+                GameTooltip:SetHyperlink(self.link) 
+            else
+                -- Data loading, show placeholder to prevent crash
+                GameTooltip:SetText(labelText)
+                GameTooltip:AddLine("|cffaaaaaa(Retrieving Item Info...)|r")
+            end
+        else 
+            GameTooltip:SetText(labelText)
+            GameTooltip:AddLine("|cffaaaaaaShift+Click any item to link|r") 
+        end
         GameTooltip:Show()
     end)
     btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -165,7 +178,14 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
                 ClearCursor(); return
             end
             self.link = link; 
-            if self.icon then self.icon:SetTexture(select(10, GetItemInfo(link))) end
+            
+            -- [[ CRASH FIX 2: ICON SAFETY ]] --
+            if self.icon then 
+                local texture = select(10, GetItemInfo(link))
+                -- Use Question Mark if texture is nil (uncached)
+                self.icon:SetTexture(texture or "Interface\\Icons\\INV_Misc_QuestionMark") 
+            end
+            
             self.empty:Hide(); ClearCursor(); MSC.UpdateLabCalc()
         elseif IsShiftKeyDown() then 
             self.link = nil; 
@@ -414,12 +434,19 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
              row.AlertFrame:SetScript("OnEnter", function(self) 
                 if self.mode == "UPGRADE" and self.link then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
-                    GameTooltip:SetHyperlink(self.link); 
-                    GameTooltip:AddLine(" "); 
                     
-                    local diffText = self.diff and string.format("%.1f", self.diff) or "?"
-                    GameTooltip:AddLine("|cff00ff00THE BETTER ITEM (+" .. diffText .. ")|r"); 
-                    GameTooltip:AddLine("|cff888888Shift-Click to Link|r");
+                    -- SAFETY CHECK: Only link if data is ready
+                    if GetItemInfo(self.link) then
+                        GameTooltip:SetHyperlink(self.link); 
+                        GameTooltip:AddLine(" "); 
+                        
+                        local diffText = self.diff and string.format("%.1f", self.diff) or "?"
+                        GameTooltip:AddLine("|cff00ff00THE BETTER ITEM (+" .. diffText .. ")|r"); 
+                        GameTooltip:AddLine("|cff888888Shift-Click to Link|r");
+                    else
+                        GameTooltip:SetText("Loading Item Data...")
+                    end
+                    
                     GameTooltip:Show() 
                 elseif self.mode == "ENCHANT" then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
@@ -556,7 +583,6 @@ function MSC.ShowMathBreakdown()
         if stat:find("HIT") or stat:find("EXPERTISE") then return "Reduces Miss Chance" end
         if stat == "ITEM_MOD_ATTACK_POWER_SHORT" or stat == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" then return "Raw Damage Added" end
         if stat == "ITEM_MOD_SPELL_POWER_SHORT" then return "Raw Spell Scaling" end
-        if stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon DMG (Top Priority)" end
         if stat == "ITEM_MOD_POWER_REGEN0_SHORT" or stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana per 5 Sec (Sustain)" end
         if stat == "ITEM_MOD_HEALTH_REGENERATION_SHORT" then return "Health per 5 Sec" end
         if stat == "ITEM_MOD_SPIRIT_SHORT" and profileName:find("Leveling") then return "Less Downtime (Eating/Drinking)" end
@@ -582,6 +608,9 @@ function MSC.ShowMathBreakdown()
         if stat == "ITEM_MOD_CRIT_SPELL_RATING_SHORT" then return "Crit Chance (Spell)" end
         if stat == "ITEM_MOD_CRIT_RATING_SHORT" then return "Crit Chance (Melee)" end
         if stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then return "Crit Chance (Spell)" end
+		if stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon DMG (Top Priority)" end
+		if stat == "MSC_WEAPON_DPS" then return "Weapon DMG (Top Priority)" end
+		if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Efficiency)" end 
         return nil
     end
 
