@@ -119,6 +119,52 @@ MSC.RawSetData = {
     [529] = { {22506,22507,22504,22511,22509,22510,22505,22508,23063} }, -- Plagueheart
     [530] = { {22438,22439,22436,22443,22441,22442,22437,22440,23067} }, -- Cryptstalker
     [521] = { {22490,22491,22488,22495,22493,22494,22489,22492,23064} }, -- Dreamwalker
+	
+    -- ========================================================================
+    -- [[ CLASSIC PVP (RANK 12-14) - LEVEL 60 ]]
+    -- ========================================================================
+    -- Many players are wearing this during the transition to Outland.
+    
+    -- [[ WARRIOR ]]
+    [384] = { {16477,16478,16479,16480,16483,16484} }, -- Field Marshal's Battlegear (Ally)
+    [383] = { {16541,16542,16543,16544,16545,16548} }, -- Warlord's Battlegear (Horde)
+
+    -- [[ PALADIN ]]
+    [386] = { {16472,16473,16474,16475,16476,16481,16482} }, -- Field Marshal's Aegis (Ally)
+
+    -- [[ HUNTER ]]
+    [388] = { {16462,16463,16464,16465,16466,16467,16468} }, -- Field Marshal's Pursuit (Ally)
+    [387] = { {16518,16519,16520,16521,16522,16523,16524} }, -- Warlord's Pursuit (Horde)
+
+    -- [[ ROGUE ]]
+    [390] = { {16453,16454,16455,16456,16457,16459} }, -- Field Marshal's Vestments (Ally)
+    [389] = { {16550,16551,16552,16554,16555,16558} }, -- Warlord's Vestments (Horde)
+
+    -- [[ PRIEST ]]
+    [392] = { {17602,17603,17604,17605,17607,17608} }, -- Field Marshal's Raiment (Ally)
+    [391] = { {17618,17620,17622,17623,17624,17625} }, -- Warlord's Raiment (Horde)
+
+    -- [[ SHAMAN ]]
+    [393] = { {16573,16574,16577,16578,16579,16580} }, -- Warlord's Earthshaker (Horde)
+
+    -- [[ MAGE ]]
+    [395] = { {16437,16440,16441,16442,16443,16444} }, -- Field Marshal's Regalia (Ally)
+    [394] = { {16533,16534,16535,16536,16539,16540} }, -- Warlord's Regalia (Horde)
+
+    -- [[ WARLOCK ]]
+    [397] = { {17578,17579,17580,17581,17583,17584} }, -- Field Marshal's Threads (Ally)
+    [396] = { {17562,17564,17566,17567,17568,17569} }, -- Warlord's Threads (Horde)
+
+    -- [[ DRUID ]]
+    [399] = { {16446,16448,16449,16450,16451,16452} }, -- Field Marshal's Sanctuary (Ally)
+    [398] = { {16559,16561,16562,16563,16564,16560} }, -- Warlord's Sanctuary (Horde)
+
+    -- [[ RARE SETS (RANK 7-10) ]]
+    -- Still very common for fresh 60s
+    [538] = { {23243,23244,23300,23301,23242,23245} }, -- Champion's Battlegear (Ally War)
+    [543] = { {22872,22873,22886,22874,22875,22887} }, -- Legionnaire's Battlegear (Horde War)
+    [537] = { {23259,23260,23302,23303,23261,23262} }, -- Champion's Vestments (Ally Rogue)
+    [542] = { {22877,22878,22883,22881,22882,22885} }, -- Legionnaire's Vestments (Horde Rogue)
 
     -- [[ PVP / ARATHI BASIN ]]
     [467] = { {20057,20041,20048} }, -- Highlander's Resolution
@@ -205,6 +251,61 @@ MSC.RawSetData = {
 
     -- LEGENDARY
     [699] = { {32837, 32838} }, -- Warglaives
+	
+	-- ========================================================================
+    -- [[ 5. PVP ARENA SETS (TBC) ]]
+    -- ========================================================================
+    
+    -- [[ SEASON 1: GLADIATOR ]]
+    [700] = { {28331,28334,28332,28335,28333} }, -- Warrior S1
+    [701] = { {28336,28339,28337,28340,28338} }, -- Paladin Holy S1
+    [702] = { {28341,28344,28342,28345,28343} }, -- Hunter S1
+    [703] = { {28346,28349,28347,28350,28348} }, -- Rogue S1
+    [704] = { {28351,28354,28352,28355,28353} }, -- Priest Holy S1
+    [705] = { {28356,28359,28357,28360,28358} }, -- Shaman Ele S1
+    [706] = { {28361,28364,28362,28365,28363} }, -- Mage S1
+    [707] = { {28366,28369,28367,28370,28368} }, -- Warlock S1
+    [708] = { {28371,28374,28372,28375,28373} }, -- Druid Resto S1
+    [709] = { {31580,31584,31581,31588,31582} }, -- Druid Feral S1
+    [710] = { {31590,31594,31591,31598,31592} }, -- Druid Balance S1
+    [711] = { {31600,31604,31601,31608,31602} }, -- Shaman Enh S1
+    [712] = { {31610,31614,31611,31618,31612} }, -- Shaman Resto S1
+    [713] = { {31620,31624,31621,31628,31622} }, -- Priest Shadow S1
+
+    -- [[ SEASON 2: MERCILESS GLADIATOR ]]
+    [720] = { {31973,31976,31974,31977,31975} }, -- Warrior S2
+    [721] = { {31988,31996,31991,31997,31994} }, -- Paladin Holy S2
+    [722] = { {31960,31965,31961,31966,31963} }, -- Hunter S2
+    [723] = { {31998,32002,31999,32003,32000} }, -- Rogue S2
+    [724] = { {31978,31986,31981,31987,31984} }, -- Priest Holy S2
+    [725] = { {31967,31971,31968,31972,31969} }, -- Shaman Ele S2
+    [726] = { {32047,32051,32048,32052,32049} }, -- Mage S2
+    [727] = { {32054,32058,32055,32059,32056} }, -- Warlock S2
+    [728] = { {32033,32037,32034,32038,32035} }, -- Druid Resto S2
+    [729] = { {32040,32045,32041,32046,32043} }, -- Druid Feral S2
+    [730] = { {32019,32024,32020,32025,32022} }, -- Druid Balance S2
+    [731] = { {32012,32017,32013,32018,32015} }, -- Shaman Enh S2
+    [732] = { {32005,32010,32006,32011,32008} }, -- Shaman Resto S2
+    [733] = { {32026,32031,32027,32032,32029} }, -- Priest Shadow S2
+    [734] = { {32061,32065,32062,32066,32063} }, -- Paladin Ret S2
+
+    -- [[ SEASON 3: VENGEFUL GLADIATOR ]]
+    [740] = { {33665,33668,33666,33669,33667} }, -- Warrior S3
+    [741] = { {33671,33674,33672,33675,33673} }, -- Paladin Holy S3
+    [742] = { {33677,33680,33678,33681,33679} }, -- Hunter S3
+    [743] = { {33683,33686,33684,33687,33685} }, -- Rogue S3
+    [744] = { {33689,33692,33690,33693,33691} }, -- Priest Holy S3
+    [745] = { {33695,33698,33696,33699,33697} }, -- Shaman Ele S3
+    [746] = { {33701,33704,33702,33705,33703} }, -- Mage S3
+    [747] = { {33719,33722,33720,33723,33721} }, -- Warlock S3
+    [748] = { {33707,33710,33708,33711,33709} }, -- Druid Resto S3
+    [749] = { {33713,33716,33714,33717,33715} }, -- Druid Feral S3
+    [750] = { {33725,33728,33726,33729,33727} }, -- Druid Balance S3
+    [751] = { {33731,33734,33732,33735,33733} }, -- Shaman Enh S3
+    [752] = { {33737,33740,33738,33741,33739} }, -- Shaman Resto S3
+    [753] = { {33743,33746,33744,33747,33745} }, -- Priest Shadow S3
+    [754] = { {33758,33761,33759,33762,33760} }, -- Paladin Ret S3
+    [755] = { {33749,33752,33750,33753,33751} }, -- Paladin Tank S3
 }
 
 -- ============================================================================
@@ -289,6 +390,62 @@ MSC.SetBonusScores = {
 
     -- [[ LEGENDARY ]]
     [699] = { [2] = { score=500 } }, -- Warglaives
+	
+	-- [[ CLASSIC PVP (RANK 12-14) ]]
+    -- Most of these sets share the same bonus structure:
+    -- 2 Piece: +20 Stamina
+    -- 3 Piece: Reduced Cooldown on a key ability (hard to score, usually ignored) or +AP
+    -- 6 Piece: +40 Attack Power or +23 Spell Power
+    
+    -- WARRIOR (Epic)
+    [383] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Horde
+    [384] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Ally
+
+    -- ROGUE (Epic)
+    [389] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Horde
+    [390] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Ally
+    
+    -- HUNTER (Epic)
+    [387] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Horde
+    [388] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Ally
+
+    -- MAGE / WARLOCK (Epic)
+    [394] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Mage
+    [395] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Mage
+    [396] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Lock
+    [397] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Lock
+    
+    -- PALADIN (Epic)
+    [386] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Paladin
+
+    -- SHAMAN (Epic)
+    [393] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Shaman
+
+    -- DRUID (Epic)
+    [398] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Druid
+    [399] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Druid
+	
+	-- Gladiator (S1)
+    [700] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20}} }, -- War
+    [703] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Rogue
+    [702] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} }, -- Hunter
+    [706] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} }, -- Mage
+    [707] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} }, -- Warlock
+    [704] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_HEALING_POWER_SHORT"]=40}} }, -- Priest Holy
+
+    -- Merciless (S2)
+    [720] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=40} }, -- War (Intercept duration/AP)
+    [723] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Rogue
+    [726] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} }, -- Mage
+    [727] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} }, -- Warlock
+    [729] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} }, -- Druid Feral
+
+    -- Vengeful (S3)
+    [740] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=50} }, -- War
+    [743] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Rogue
+    [746] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} }, -- Mage
+    [747] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} }, -- Warlock
+    [755] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=20}} }, -- Paladin Tank
 }
 
 -- ============================================================================
