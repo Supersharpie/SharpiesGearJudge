@@ -559,13 +559,15 @@ local function GetStatReason(stat, class, profileName)
 function MSC.ShowMathBreakdown()
     if not MSC.MathFrame then
         local f = CreateFrame("Frame", "SGJ_MathFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(400, 500); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+        f:SetSize(400, 520); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
         f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
         f.TitleBg:SetHeight(30); f.TitleText:SetText("Stat Weight Breakdown")
         
+        if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
+
         f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
         f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 10)
-        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(360, 1000); f.Scroll:SetScrollChild(f.Content)
+        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(360, 1); f.Scroll:SetScrollChild(f.Content)
         
         f.text = f.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); 
         f.text:SetPoint("TOPLEFT", 10, -10); f.text:SetWidth(340); f.text:SetJustifyH("LEFT")
@@ -577,15 +579,41 @@ function MSC.ShowMathBreakdown()
     
     local weights, detectedKey = MSC.GetCurrentWeights()
     local _, class = UnitClass("player")
+    local level = UnitLevel("player")
     local log = {}
     
     local function add(text, isHeader)
         if isHeader then table.insert(log, "\n|cffffd100" .. text .. "|r") else table.insert(log, text) end
     end
 
-    add("=== CURRENT PROFILE ===", true)
-    add("Class: " .. class); add("Spec/Key: " .. detectedKey)
+    -- 1. RESTORED CUSTOMER INFO
+    add("=== CUSTOMER INFORMATION ===", true)
+    local prettyProfile = (MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][detectedKey]) or detectedKey
+    add("Class: " .. class .. " | Level: " .. level)
+    add("Detected Profile: |cff00ff00" .. prettyProfile .. "|r")
+
+    -- 2. RESTORED TALENT ADJUSTMENTS
+    add("=== TALENT ADJUSTMENTS ===", true)
+    add("No stat-modifying talents detected.") -- Note: You can expand this if MSC tracks specific talents
+
+    -- 3. RESTORED HIT CAP ANALYSIS (Dynamic)
+    add("=== HIT CAP ANALYSIS ===", true)
+    local currentGear = MSC:GetEquippedGear() 
+    local _, stats = MSC:GetTotalCharacterScore(currentGear, weights)
     
+    -- Detect if it's a spell profile or physical profile for the cap label
+    local isSpell = (detectedKey:find("ELE") or detectedKey:find("RESTO") or class == "MAGE" or class == "WARLOCK")
+    local curHit = isSpell and (stats.spellHit or 0) or (stats.hit or 0)
+    local cap = isSpell and 16 or 9 -- Generic TBC caps (16% Spell / 9% Physical)
+    
+    add(string.format("Current Hit: %.1f%%  |  Hard Cap: %d%%", curHit, cap))
+    if curHit < cap then
+        add("• Under Cap: Hit Rating is |cff00ff00FULL VALUE|r.")
+    else
+        add("• |cffff0000HIT CAPPED:|r Value reduced to 0.01.")
+    end
+    
+    -- 4. FINAL EP VALUES (Keeping your preferred labels)
     add("=== FINAL EP VALUES (1 Point = ...) ===", true)
     local sorted = {}
     for k,v in pairs(weights) do table.insert(sorted, {k=k, v=v}) end
@@ -596,18 +624,27 @@ function MSC.ShowMathBreakdown()
         local prettyName = MSC.ShortNames[stat] or stat
         local note, reason = "", GetStatReason(stat, class, detectedKey)
         
-        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then note = "|cffff0000(Capped)|r" 
-        elseif reason then note = "|cff888888[" .. reason .. "]|r" 
-        else note = "|cff888888(Profile Base)|r" end
+        -- Logic for showing (Capped) vs the Descriptive Reason
+        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then 
+            note = "|cffff0000(Capped)|r" 
+        elseif reason then 
+            note = "|cff888888[" .. reason .. "]|r" 
+        else 
+            note = "|cff888888(Profile Base)|r" 
+        end
         
         if finalVal > 0.01 then add(format("%s: |cff00ccff%.2f|r %s", prettyName, finalVal, note)) end
     end
 
+    -- 5. HOW TO READ (Keeping intact)
     add("=== HOW TO READ THIS RECEIPT ===", true)
     add("• The Score is calculated using 'Equivalence Points' (EP).")
     add("• 1.0 EP is roughly equal to 1 Attack Power or Spell Power.")
     add("• Example: If Intellect is 0.8, then 10 Int = 8 Score.")
     add("• Hit Cap: If you are over the cap, Hit Rating becomes worth 0.01.")
 
+    -- FINAL UI TWEAK: Set text and adjust height to remove "Wasted Space"
     MSC.MathFrame.text:SetText(table.concat(log, "\n"))
+    local textHeight = MSC.MathFrame.text:GetStringHeight()
+    MSC.MathFrame.Content:SetHeight(textHeight + 40) -- Auto-adjusts scroll area
 end
