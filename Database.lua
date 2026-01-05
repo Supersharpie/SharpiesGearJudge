@@ -201,10 +201,10 @@ MSC.WeightDB = {
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5,
-            ["MSC_WEAPON_DPS"]=0.0 -- Casters ignore weapon damage
-			["MSC_WAND_DPS"]=2.5
-        },
-
+            ["MSC_WEAPON_DPS"]=0.0, -- Casters ignore weapon damage
+			["MSC_WAND_DPS"]=2.5,
+		},
+		
         -- [[ 1. HOLY (Deep Healing) ]]
         ["HOLY_DEEP"] = { 
             ["MSC_WEAPON_DPS"]=0.0,
@@ -1540,15 +1540,15 @@ MSC.LevelingWeightDB = {
 			["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5,
 			["ITEM_MOD_STRENGTH_SHORT"]=0.01 
 		},
-		
-		-- 41-59: Throughput (Healing Power)
-		["Leveling_HOLY_DUNGEON_41_51"] = { 
+	
+		["Leveling_HOLY_DUNGEON_41_51"] = {  -- 41-59: Throughput (Healing Power)
 			["MSC_WEAPON_DPS"]=0.0, 
 			["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
 			["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
 			["ITEM_MOD_SPIRIT_SHORT"]=1.2, 
 			["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01 },
+			["ITEM_MOD_STRENGTH_SHORT"]=0.01
+		},	
 		
 		["Leveling_HOLY_DUNGEON_52_59"] = { 
 			["MSC_WEAPON_DPS"]=0.0, 
@@ -1556,17 +1556,17 @@ MSC.LevelingWeightDB = {
 			["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
 			["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
 			["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, 
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01 },
-
-		-- 60-70: TBC Scaling
-		["Leveling_HOLY_DUNGEON_60_70"] = { 
+			["ITEM_MOD_STRENGTH_SHORT"]=0.01,
+		},
+		
+		["Leveling_HOLY_DUNGEON_60_70"] = { -- 60-70: TBC Scaling
 			["MSC_WEAPON_DPS"]=0.0, 
 			["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
 			["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
 			["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
 			["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- Illumination
 			["ITEM_MOD_STAMINA_SHORT"]=1.0,
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01 
+			["ITEM_MOD_STRENGTH_SHORT"]=0.01,
 		},
 	},
 ["HUNTER"] = {

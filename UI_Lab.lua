@@ -525,159 +525,138 @@ end
 -- =============================================================
 -- PART 3: MATH BREAKDOWN WINDOW
 -- =============================================================
-function MSC.ShowMathBreakdown()
-    if not MSC.MathFrame then
-        local f = CreateFrame("Frame", "SGJ_MathFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(500, 500); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleBg:SetHeight(30); f.TitleText:SetText("Judge's Math Breakdown")
-        if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
-        
-        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
-        sf:SetPoint("TOPLEFT", 10, -30); sf:SetPoint("BOTTOMRIGHT", -30, 10)
-        local content = CreateFrame("Frame", nil, sf); content:SetSize(460, 1000); sf:SetScrollChild(content)
-        
-        f.text = content:CreateFontString(nil, "OVERLAY", "GameFontHighlightLeft")
-        f.text:SetPoint("TOPLEFT", 10, -10); f.text:SetWidth(440); f.text:SetJustifyH("LEFT")
-        MSC.MathFrame = f
-    end
-    MSC.MathFrame:Show()
-    local log = {}
-    local function add(text, isHeader) if isHeader then table.insert(log, "\n|cffffd100" .. text .. "|r") else table.insert(log, text) end end
-    
-    local _, class = UnitClass("player"); local lvl = UnitLevel("player"); local weights, detectedKey = MSC.GetCurrentWeights()
-    local displayName = detectedKey
-    if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][detectedKey] then displayName = MSC.PrettyNames[class][detectedKey] end
 
-    add("=== CUSTOMER INFORMATION ===", true)
-    add(format("Class: %s | Level: %d", class, lvl))
-    add(format("Detected Profile: |cff00ff00%s|r", displayName)) 
-    
-    add("=== TALENT ADJUSTMENTS ===", true)
-    local foundTalent = false
-    if class == "PALADIN" then
-        local rStr = MSC:GetTalentRank("DIVINE_STR"); if rStr > 0 then add(format("• Divine Strength (Rank %d): Strength Weight x %.2f", rStr, 1+(rStr*0.02))); foundTalent=true end
-        local rVeng = MSC:GetTalentRank("VENGEANCE"); if rVeng > 0 then add("• Vengeance: Crit Value INCREASED (x1.2)"); foundTalent=true end
-    elseif class == "WARLOCK" then
-        local rRuin = MSC:GetTalentRank("RUIN"); if rRuin > 0 then add("• Ruin: Crit Value INCREASED (x1.5)"); foundTalent=true end
-        local rEmb = MSC:GetTalentRank("DEMONIC_EMBRACE"); if rEmb > 0 then add(format("• Demonic Embrace: Stamina Weight x %.2f", 1+(rEmb*0.03))); foundTalent=true end
-    elseif class == "HUNTER" then
-        local rRef = MSC:GetTalentRank("LIGHTNING_REF"); if rRef > 0 then add(format("• Lightning Reflexes: Agility Weight x %.2f", 1+(rRef*0.03))); foundTalent=true end
-    end
-    if not foundTalent then add("No stat-modifying talents detected.") end
-    
-    add("=== HIT CAP ANALYSIS ===", true)
-    local myHit, hitCap = 0, 9
-    if class == "MAGE" or class == "WARLOCK" then hitCap = 16 end
-    if class == "SHAMAN" and detectedKey == "ELE_PVE" then hitCap = 16 end
-    if class == "PALADIN" or class == "ROGUE" then myHit = (GetHitModifier() or 0) + MSC:GetTalentRank("PRECISION")
-    elseif class == "MAGE" then myHit = (GetSpellHitModifier() or 0) + math.max(MSC:GetTalentRank("ELE_PRECISION")*2, MSC:GetTalentRank("ARCANE_FOCUS")*2)
-    elseif class == "HUNTER" then myHit = (GetHitModifier() or 0) + MSC:GetTalentRank("SUREFOOTED")
-    else myHit = (GetHitModifier() or 0) end
-    
-    add(format("Current Hit: %.1f%%  |  Hard Cap: %d%%", myHit, hitCap))
-    if myHit >= hitCap then add("|cffff0000• HARD CAP REACHED:|r Hit Weight = 0.01") else add("• Under Cap: Hit Rating is FULL VALUE.") end
-
-	local function GetStatReason(stat, class, profileName)
+-- 1. Helper Function for descriptions
+local function GetStatReason(stat, class, profileName)
         if not profileName then profileName = "" end
         
-        -- [[ 1. UNIVERSAL / SHARED REASONS ]] --
-        if stat:find("HIT") then return "Reduces Miss Chance" end
-        if stat:find("EXPERTISE") then return "Reduces Dodge/Parry Chance" end
-        if stat == "ITEM_MOD_ATTACK_POWER_SHORT" or stat == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" then return "Raw Damage Added" end
+        -- [[ 1. THE BIG THREE: HIT, CRIT, HASTE ]] --
+        if stat:find("HIT") then return "Reduces Chance to Miss" end
+        if stat:find("HASTE") then return "Increases Casting/Attack Speed" end
+        if stat:find("CRIT") and not stat:find("FROM_STATS") then 
+            if profileName:find("HOLY") or profileName:find("RESTO") then return "Crit Heals & Mana Refund" end
+            return "Higher Critical Strike Chance" 
+        end
+
+        -- [[ 2. TBC SPECIFIC MECHANICS ]] --
+        if stat:find("EXPERTISE") then return "Reduces Enemy Dodge/Parry" end
+        if stat:find("RESILIENCE") then return "Reduces Crit Chance & DMG Taken" end
+        if stat:find("ARMOR_PENETRATION") then return "Ignores Portion of Enemy Armor" end
+        if stat:find("DEFENSE_SKILL") then return "Increases Avoidance & Crit Cap" end
+
+        -- [[ 3. SPELL SCHOOLS (The Orb/Suffix Fix) ]] --
+        if stat:find("SHADOW") then return "Shadow Spell Scaling" end
+        if stat:find("FIRE") then return "Fire Spell Scaling" end
+        if stat:find("FROST") then return "Frost Spell Scaling" end
+        if stat:find("ARCANE") then return "Arcane Spell Scaling" end
+        if stat:find("NATURE") then return "Nature Spell Scaling" end
+        if stat:find("HOLY") and not profileName:find("HOLY") then return "Holy Spell Scaling" end
+
+        -- [[ 4. ATTRIBUTES & RESOURCES ]] --
+        if stat == "ITEM_MOD_INTELLECT_SHORT" then 
+            if class == "SHAMAN" and profileName:find("ENH") then return "Mental Dexterity (Int -> AP)" end
+            if class == "HUNTER" then return "Mana Pool (Viper Scaling)" end
+            if class == "MAGE" or class == "WARLOCK" then return "Mana Pool & Spell Crit" end
+            return "Mana Pool & Intellect"
+        end
+        if stat == "ITEM_MOD_STRENGTH_SHORT" then 
+            if class == "WARRIOR" or class == "PALADIN" then return "Attack Power & Block Value" end
+            return "Melee Attack Power"
+        end
+        if stat == "ITEM_MOD_AGILITY_SHORT" then 
+            if class == "ROGUE" or class == "HUNTER" then return "AP, Crit, and Armor" end
+            return "Crit, Dodge, and Armor"
+        end
+        if stat == "ITEM_MOD_SPIRIT_SHORT" then 
+            if profileName:find("Shadow") then return "Spirit Tap Efficiency" end
+            if class == "PRIEST" or class == "DRUID" then return "Spiritual Guidance / Regen" end
+            return "Out-of-Combat Regeneration"
+        end
+        if stat == "ITEM_MOD_STAMINA_SHORT" then 
+            if profileName:find("Demo") then return "Demonic Knowledge (Stam -> SP)" end
+            return "Increases Total Health" 
+        end
+
+        -- [[ 5. POWER & REGEN ]] --
         if stat == "ITEM_MOD_SPELL_POWER_SHORT" then return "Raw Spell Scaling" end
+        if stat == "ITEM_MOD_HEALING_POWER_SHORT" then return "Raw Healing Output" end
+        if stat == "ITEM_MOD_ATTACK_POWER_SHORT" or stat == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" then return "Direct Damage Increase" end
         if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana per 5 Sec (Sustain)" end
         if stat == "ITEM_MOD_HEALTH_REGENERATION_SHORT" then return "Health per 5 Sec" end
-        if stat == "ITEM_MOD_STAMINA_SHORT" then return "1 Sta = 10 Health" end
-        if stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon DMG (Top Priority)" end
-        if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Efficiency)" end 
 
-        -- [[ 2. CLASS SPECIFIC REASONS ]] --
-        
-        -- WARRIOR
-        if class == "WARRIOR" then
-            if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 2 AP" end
-            if stat == "ITEM_MOD_AGILITY_SHORT" then return "Crit & Armor (No AP)" end
-            if stat == "ITEM_MOD_CRIT_RATING_SHORT" then
-                if profileName:find("Arms") then return "Deep Wounds / Impale Synergy" end
-                return "Flurry Uptime"
-            end
-        end
+        -- [[ 6. WEAPONS & SHIELDS ]] --
+        if stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon Damage (Priority)" end
+        if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Speed)" end
+        if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "DMG Blocked / Shield Slam" end
+        if stat == "ITEM_MOD_BLOCK_RATING_SHORT" then return "Chance to Block" end
+        if stat == "ITEM_MOD_DODGE_RATING_SHORT" then return "Chance to Dodge" end
+        if stat == "ITEM_MOD_PARRY_RATING_SHORT" then return "Chance to Parry" end
 
-        -- ROGUE
-        if class == "ROGUE" then
-            if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end
-            if stat == "ITEM_MOD_STRENGTH_SHORT" then return "1 Str = 1 AP (No Crit)" end
-        end
-
-        -- HUNTER
-        if class == "HUNTER" then
-            if stat == "ITEM_MOD_AGILITY_SHORT" then return "1 Agi = 1 AP + Crit" end
-            if stat == "ITEM_MOD_INTELLECT_SHORT" then return "Mana Pool (Viper Scaling)" end
-        end
-
-        -- SHAMAN
-        if class == "SHAMAN" then
-            if stat == "ITEM_MOD_INTELLECT_SHORT" then 
-                if profileName:find("ENH") then return "Mental Dexterity (Int -> AP)" end
-                return "Mana Pool & Spell Crit" 
-            end
-            if stat == "ITEM_MOD_NATURE_DAMAGE_SHORT" then return "Lightning / Chain Scaling" end
-            if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then return "Nova / Shock Scaling" end
-            if stat == "ITEM_MOD_SPIRIT_SHORT" then return "Spirit (Useless for Shaman)" end
-        end
-
-        -- PALADIN
-        if class == "PALADIN" then
-            if stat == "ITEM_MOD_STRENGTH_SHORT" then return "Melee AP & Block Value" end
-            if stat == "ITEM_MOD_SPELL_POWER_SHORT" and profileName:find("PROT") then return "Holy Threat (Consecration)" end
-            if stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" and profileName:find("HOLY") then return "Illumination (Mana Refund)" end
-        end
-
-        -- PRIEST
-        if class == "PRIEST" then
-            if stat == "ITEM_MOD_SPIRIT_SHORT" then 
-                if profileName:find("Shadow") then return "Spirit Tap Efficiency" end
-                return "Spiritual Guidance (Spt -> Heal)" 
-            end
-            if stat == "ITEM_MOD_SHADOW_DAMAGE_SHORT" then return "Mind Blast / Flay Scaling" end
-        end
-
-        -- MAGE / WARLOCK
-        if class == "MAGE" or class == "WARLOCK" then
-            if stat == "ITEM_MOD_INTELLECT_SHORT" then return "1 Int = 15 Mana + Crit" end
-            if stat == "ITEM_MOD_STAMINA_SHORT" and profileName:find("Demo") then return "Demonic Knowledge (Stam -> SP)" end
-            if stat == "ITEM_MOD_FIRE_DAMAGE_SHORT" then return "Fire Scaling (Ignite/Destro)" end
-            if stat == "ITEM_MOD_FROST_DAMAGE_SHORT" then return "Frost Scaling (Shatter)" end
-        end
-
-        -- TANKING (Any Class)
-        if profileName:find("Tank") or profileName:find("Prot") or profileName:find("Bear") then
-            if stat == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then return "Push Crits off Table" end
-            if stat == "ITEM_MOD_DODGE_RATING_SHORT" or stat == "ITEM_MOD_PARRY_RATING_SHORT" then return "Avoidance" end
-            if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "Mitigation / Shield Slam" end
-        end
-
-        -- LEVELING UNIVERSAL
-        if profileName:find("Leveling") and stat == "ITEM_MOD_SPIRIT_SHORT" then
-            return "Less Downtime (Eating/Drinking)"
-        end
+        -- [[ 7. LEVELING SPECIALS ]] --
+        if profileName:find("Leveling") and stat == "ITEM_MOD_SPIRIT_SHORT" then return "Less Downtime (Eating/Drinking)" end
 
         return nil
     end
 
+-- 2. The Main Function to Show the Window
+function MSC.ShowMathBreakdown()
+    if not MSC.MathFrame then
+        local f = CreateFrame("Frame", "SGJ_MathFrame", UIParent, "BasicFrameTemplateWithInset")
+        f:SetSize(400, 500); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        f.TitleBg:SetHeight(30); f.TitleText:SetText("Stat Weight Breakdown")
+        
+        f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+        f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 10)
+        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(360, 1000); f.Scroll:SetScrollChild(f.Content)
+        
+        f.text = f.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); 
+        f.text:SetPoint("TOPLEFT", 10, -10); f.text:SetWidth(340); f.text:SetJustifyH("LEFT")
+        
+        MSC.MathFrame = f
+    end
+    
+    MSC.MathFrame:Show()
+    
+    local weights, detectedKey = MSC.GetCurrentWeights()
+    local _, class = UnitClass("player")
+    local log = {}
+    
+    local function add(text, isHeader)
+        if isHeader then 
+            table.insert(log, "\n|cffffd100" .. text .. "|r") 
+        else 
+            table.insert(log, text) 
+        end
+    end
+
+    add("=== CURRENT PROFILE ===", true)
+    add("Class: " .. class)
+    add("Spec/Key: " .. detectedKey)
+    
     add("=== FINAL EP VALUES (1 Point = ...) ===", true)
     local sorted = {}
     for k,v in pairs(weights) do table.insert(sorted, {k=k, v=v}) end
     table.sort(sorted, function(a,b) return a.v > b.v end)
+    
     for _, data in ipairs(sorted) do
         local stat = data.k
         local finalVal = data.v
         local prettyName = MSC.ShortNames[stat] or stat
         local note = ""
         local reason = GetStatReason(stat, class, detectedKey)
-        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then note = "|cffff0000(Capped)|r" elseif reason then note = "|cff888888[" .. reason .. "]|r" else note = "|cff888888(Profile Base)|r" end
-        if finalVal > 0.01 then add(format("%s: |cff00ccff%.2f|r %s", prettyName, finalVal, note)) end
+        
+        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then 
+            note = "|cffff0000(Capped)|r" 
+        elseif reason then 
+            note = "|cff888888[" .. reason .. "]|r" 
+        else 
+            note = "|cff888888(Profile Base)|r" 
+        end
+        
+        if finalVal > 0.01 then 
+            add(format("%s: |cff00ccff%.2f|r %s", prettyName, finalVal, note)) 
+        end
     end
 
     add("=== HOW TO READ THIS RECEIPT ===", true)
