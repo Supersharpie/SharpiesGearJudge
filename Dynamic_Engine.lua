@@ -9,12 +9,78 @@ local _, MSC = ...
 -- =========================================================================
 
 MSC.TalentStringMap = {
-    ["DRUID"] = { ["MOONKIN_FORM"]="Moonkin Form", ["FORCE_OF_NATURE"]="Force of Nature", ["MANGLE"]="Mangle", ["TREE_OF_LIFE"]="Tree of Life", ["NATURES_GRACE"]="Nature's Grace", ["HEART_WILD"]="Heart of the Wild", ["LIVING_SPIRIT"]="Living Spirit", ["DREAMSTATE"]="Dreamstate", ["MOONGLOW"]="Moonglow", ["NATURES_SWIFTNESS"]="Nature's Swiftness", ["FERAL_INSTINCT"]="Feral Instinct", ["THICK_HIDE"]="Thick Hide" },
-    ["HUNTER"] = { ["BESTIAL_WRATH"]="Bestial Wrath", ["BEAST_WITHIN"]="The Beast Within", ["TRUESHOT_AURA"]="Trueshot Aura", ["SILENCING_SHOT"]="Silencing Shot", ["SCATTER_SHOT"]="Scatter Shot", ["WYVERN_STING"]="Wyvern Sting", ["READYNESS"]="Readiness", ["EXPOSE_WEAKNESS"]="Expose Weakness", ["CAREFUL_AIM"]="Careful Aim", ["SURVIVAL_INST"]="Survival Instincts" },
-    ["MAGE"] = { ["ARCANE_POWER"]="Arcane Power", ["SLOW"]="Slow", ["COMBUSTION"]="Combustion", ["DRAGONS_BREATH"]="Dragon's Breath", ["ICE_BARRIER"]="Ice Barrier", ["SUMMON_WELE"]="Summon Water Elemental", ["WINTERS_CHILL"]="Winter's Chill", ["IMP_BLIZZARD"]="Improved Blizzard", ["ARCANE_MIND"]="Arcane Mind", ["MOLTEN_ARMOR"]="Molten Armor", ["ICY_VEINS"]="Icy Veins" },
-    ["PALADIN"] = { ["HOLY_SHOCK"]="Holy Shock", ["DIVINE_ILLUM"]="Divine Illumination", ["HOLY_SHIELD"]="Holy Shield", ["AVENGERS_SHIELD"]="Avenger's Shield", ["REPENTANCE"]="Repentance", ["CRUSADER_STRIKE"]="Crusader Strike", ["SANCTITY_AURA"]="Sanctity Aura", ["DIVINE_STR"]="Divine Strength", ["DIVINE_INT"]="Divine Intellect", ["COMBAT_EXPERTISE"]="Combat Expertise" },
-    ["PRIEST"] = { ["POWER_INFUSION"]="Power Infusion", ["PAIN_SUPP"]="Pain Suppression", ["SPIRIT_GUIDANCE"]="Spiritual Guidance", ["CIRCLE_HEALING"]="Circle of Healing", ["SEARING_LIGHT"]="Searing Light", ["SPIRIT_OF_REDEMPTION"]="Spirit of Redemption", ["SHADOWFORM"]="Shadowform", ["VAMPIRIC_TOUCH"]="Vampiric Touch", ["ENLIGHTENMENT"]="Enlightenment" },
-    ["ROGUE"] = { 
+    ["DRUID"] = { 
+		["MOONKIN_FORM"]="Moonkin Form", 
+		["FORCE_OF_NATURE"]="Force of Nature", 
+		["MANGLE"]="Mangle", 
+		["TREE_OF_LIFE"]="Tree of Life", 
+		["NATURES_GRACE"]="Nature's Grace", 
+		["HEART_WILD"]="Heart of the Wild", 
+		["LIVING_SPIRIT"]="Living Spirit", 
+		["DREAMSTATE"]="Dreamstate", 
+		["MOONGLOW"]="Moonglow", 
+		["NATURES_SWIFTNESS"]="Nature's Swiftness", 
+		["FERAL_INSTINCT"]="Feral Instinct",
+		["BALANCE_OF_POWER"] = "Balance of Power",	
+		["THICK_HIDE"]="Thick Hide" 
+	},
+	
+    ["HUNTER"] = { 
+		["SUREFOOTED"] = "Surefooted",
+		["BESTIAL_WRATH"]="Bestial Wrath", 
+		["BEAST_WITHIN"]="The Beast Within", 
+		["TRUESHOT_AURA"]="Trueshot Aura", 
+		["SILENCING_SHOT"]="Silencing Shot", 
+		["SCATTER_SHOT"]="Scatter Shot", 
+		["WYVERN_STING"]="Wyvern Sting", 
+		["READYNESS"]="Readiness", 
+		["EXPOSE_WEAKNESS"]="Expose Weakness", 
+		["CAREFUL_AIM"]="Careful Aim", 
+		["SURVIVAL_INST"]="Survival Instincts" 
+	},
+	
+    ["MAGE"] = { 
+		["ELEMENTAL_PRECISION"] = "Elemental Precision",
+		["ARCANE_POWER"]="Arcane Power", 
+		["SLOW"]="Slow", ["COMBUSTION"]="Combustion", 
+		["DRAGONS_BREATH"]="Dragon's Breath", 
+		["ICE_BARRIER"]="Ice Barrier", 
+		["SUMMON_WELE"]="Summon Water Elemental", 
+		["WINTERS_CHILL"]="Winter's Chill", 
+		["IMP_BLIZZARD"]="Improved Blizzard", 
+		["ARCANE_MIND"]="Arcane Mind", 
+		["MOLTEN_ARMOR"]="Molten Armor", 
+		["ICY_VEINS"]="Icy Veins" 
+	},
+	
+    ["PALADIN"] = { 
+		["PRECISION"] = "Precision",
+		["HOLY_SHOCK"]="Holy Shock", 
+		["DIVINE_ILLUM"]="Divine Illumination", 
+		["HOLY_SHIELD"]="Holy Shield", 
+		["AVENGERS_SHIELD"]="Avenger's Shield", 
+		["REPENTANCE"]="Repentance", 
+		["CRUSADER_STRIKE"]="Crusader Strike", 
+		["SANCTITY_AURA"]="Sanctity Aura", 
+		["DIVINE_STR"]="Divine Strength", 
+		["DIVINE_INT"]="Divine Intellect", 
+		["COMBAT_EXPERTISE"]="Combat Expertise" 
+	},
+	
+    ["PRIEST"] = { 
+		["POWER_INFUSION"]="Power Infusion", 
+		["PAIN_SUPP"]="Pain Suppression", 
+		["SPIRIT_GUIDANCE"]="Spiritual Guidance", 
+		["CIRCLE_HEALING"]="Circle of Healing", 
+		["SEARING_LIGHT"]="Searing Light", 
+		["SPIRIT_OF_REDEMPTION"]="Spirit of Redemption", 
+		["SHADOWFORM"]="Shadowform", 
+		["VAMPIRIC_TOUCH"]="Vampiric Touch",
+		["ENLIGHTENMENT"]="Enlightenment" 
+	},
+	
+    ["ROGUE"] = {
+		["PRECISION"] = "Precision",	
         ["MUTILATE"]="Mutilate", 
         ["ADRENALINE_RUSH"]="Adrenaline Rush", 
         ["SURPRISE_ATTACK"]="Surprise Attack", 
@@ -29,8 +95,22 @@ MSC.TalentStringMap = {
         ["SWORD_SPEC"]  = "Sword Specialization",
         ["MACE_SPEC"]   = "Mace Specialization" 
     },
-	["SHAMAN"] = { ["ELEMENTAL_MASTERY"]="Elemental Mastery", ["TOTEM_OF_WRATH"]="Totem of Wrath", ["LIGHTNING_MASTERY"]="Lightning Mastery", ["STORMSTRIKE"]="Stormstrike", ["SHAMANISTIC_RAGE"]="Shamanistic Rage", ["MANA_TIDE"]="Mana Tide Totem", ["EARTH_SHIELD"]="Earth Shield", ["NATURE_GUIDANCE"]="Nature's Guidance", ["ANCESTRAL_KNOW"]="Ancestral Knowledge", ["MENTAL_QUICKNESS"]="Mental Quickness", ["SHIELD_SPEC"]="Shield Specialization", ["ANTICIPATION"]="Anticipation" },
-		["WARLOCK"] = { 
+	["SHAMAN"] = { 
+		["ELEMENTAL_MASTERY"]="Elemental Mastery", 
+		["TOTEM_OF_WRATH"]="Totem of Wrath", 
+		["LIGHTNING_MASTERY"]="Lightning Mastery", 
+		["STORMSTRIKE"]="Stormstrike", 
+		["SHAMANISTIC_RAGE"]="Shamanistic Rage", 
+		["MANA_TIDE"]="Mana Tide Totem", 
+		["EARTH_SHIELD"]="Earth Shield", 
+		["NATURE_GUIDANCE"]="Nature's Guidance", 
+		["ANCESTRAL_KNOW"]="Ancestral Knowledge", 
+		["MENTAL_QUICKNESS"]="Mental Quickness", 
+		["SHIELD_SPEC"]="Shield Specialization", 
+		["ANTICIPATION"]="Anticipation" 
+		},
+		
+	["WARLOCK"] = { 
         ["DARK_PACT"]       = "Dark Pact", 
         ["UNSTABLE_AFF"]    = "Unstable Affliction", 
         ["SIPHON_LIFE"]     = "Siphon Life", 
@@ -45,6 +125,7 @@ MSC.TalentStringMap = {
     },
 	
     ["WARRIOR"] = { 
+		["PRECISION"] = "Precision",
 		["MORTAL_STRIKE"]	="Mortal Strike",
 		["ENDLESS_RAGE"]	="Endless Rage",
 		["BLOOD_FRENZY"]	="Blood Frenzy",
@@ -450,21 +531,46 @@ end
 function MSC:ApplyHitCaps(weights, specName)
     if not weights then return weights end
     
+    local _, class = UnitClass("player")
     local hitRating = 0
     local isCaster = false
     
+    -- 1. Determine if Caster and get current Gear Rating
     if specName:find("MAGE") or specName:find("WARLOCK") or specName:find("PRIEST") or specName:find("ELE") or specName:find("BALANCE") then
         isCaster = true
         hitRating = GetCombatRating(CR_HIT_SPELL)
     else
-        local _, class = UnitClass("player")
         if class == "HUNTER" then hitRating = GetCombatRating(CR_HIT_RANGED) 
         else hitRating = GetCombatRating(CR_HIT_MELEE) end
     end
     
-    local cap = isCaster and 202 or 142
-    local safeZone = cap + 25 -- Safety Buffer
+    -- 2. TBC Base Caps and Conversions
+    local baseCap = isCaster and 202 or 142
+    local ratingPerPercent = isCaster and 12.6 or 15.8
+
+    -- 3. Calculate "Invisible" Hit % from Talents
+    local talentBonusPct = 0
+    if class == "WARRIOR" or class == "ROGUE" or class == "PALADIN" then
+        talentBonusPct = self:GetTalentRank("PRECISION") * 1 -- 1% per rank
+    elseif class == "SHAMAN" then
+        talentBonusPct = self:GetTalentRank("NATURES_GUIDANCE") * 1
+        if specName:find("ENHANCE") then 
+            talentBonusPct = talentBonusPct + (self:GetTalentRank("DUAL_WIELD_SPEC") * 2) 
+        end
+    elseif class == "HUNTER" then
+        talentBonusPct = self:GetTalentRank("SUREFOOTED") * 1
+    elseif class == "DRUID" and isCaster then
+        talentBonusPct = self:GetTalentRank("BALANCE_OF_POWER") * 2
+    elseif class == "PRIEST" and specName:find("SHADOW") then
+        talentBonusPct = self:GetTalentRank("SHADOW_FOCUS") * 2
+    end
+
+    -- 4. Adjust the Cap (Subtract talent value from the required rating)
+    -- If you have 5% hit from talents, your "Required Gear Rating" drops by ~79
+    local adjustedCap = baseCap - (talentBonusPct * ratingPerPercent)
+    local safeZone = adjustedCap + 5 -- Reduced buffer because calculation is now precise
     
+    -- 5. If current gear rating is over the talent-adjusted cap, kill the weight
     if hitRating >= safeZone then
         local safeWeights = MSC:SafeCopy(weights)
         if safeWeights["ITEM_MOD_HIT_RATING_SHORT"] then safeWeights["ITEM_MOD_HIT_RATING_SHORT"] = 0.01 end

@@ -546,6 +546,7 @@ local function GetStatReason(stat, class, profileName)
         if stat == "ITEM_MOD_ATTACK_POWER_SHORT" or stat == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" then return "Direct Damage Increase" end
         if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana per 5 Sec (Sustain)" end
         if stat == "ITEM_MOD_HEALTH_REGENERATION_SHORT" then return "Health per 5 Sec" end
+		if stat == "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" then return "Ignores Portion of Enemy Armor" end
         if stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon Damage (Priority)" end
         if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Speed)" end
         if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "DMG Blocked / Shield Slam" end
@@ -596,21 +597,31 @@ function MSC.ShowMathBreakdown()
     add("=== TALENT ADJUSTMENTS ===", true)
     add("No stat-modifying talents detected.") -- Note: You can expand this if MSC tracks specific talents
 
-    -- 3. RESTORED HIT CAP ANALYSIS (Dynamic)
+    -- 3. UPDATED HIT CAP ANALYSIS (Dynamic & Accurate)
     add("=== HIT CAP ANALYSIS ===", true)
     local currentGear = MSC:GetEquippedGear() 
     local _, stats = MSC:GetTotalCharacterScore(currentGear, weights)
     
-    -- Detect if it's a spell profile or physical profile for the cap label
-    local isSpell = (detectedKey:find("ELE") or detectedKey:find("RESTO") or class == "MAGE" or class == "WARLOCK")
-    local curHit = isSpell and (stats.spellHit or 0) or (stats.hit or 0)
-    local cap = isSpell and 16 or 9 -- Generic TBC caps (16% Spell / 9% Physical)
+    local isSpell = (detectedKey:find("MAGE") or detectedKey:find("WARLOCK") or detectedKey:find("PRIEST") or detectedKey:find("ELE") or detectedKey:find("BALANCE"))
     
-    add(string.format("Current Hit: %.1f%%  |  Hard Cap: %d%%", curHit, cap))
-    if curHit < cap then
-        add("• Under Cap: Hit Rating is |cff00ff00FULL VALUE|r.")
+    local hitRating = isSpell and (stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (stats["ITEM_MOD_HIT_RATING_SHORT"] or 0)
+    
+    -- TBC Conversions: 12.6 rating = 1% Spell Hit, 15.8 rating = 1% Melee Hit
+    local conversion = isSpell and 12.6 or 15.8
+    local curHitPct = hitRating / conversion
+    
+    -- Base Caps
+    local capPct = isSpell and 16 or 9 
+    
+    add(string.format("Current Hit: %d Rating (%.1f%%) | Cap: %d%%", hitRating, curHitPct, capPct))
+    
+    -- Check if the weight is currently suppressed by your ApplyHitCaps logic
+    local hitWeight = isSpell and (weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (weights["ITEM_MOD_HIT_RATING_SHORT"] or 0)
+    
+    if hitWeight > 0.1 then
+        add(" Under Cap: Hit Rating is |cff00ff00FULL VALUE|r.")
     else
-        add("• |cffff0000HIT CAPPED:|r Value reduced to 0.01.")
+        add(" |cffff0000HIT CAPPED:|r Value reduced to 0.01.")
     end
     
     -- 4. FINAL EP VALUES (Keeping your preferred labels)
@@ -638,10 +649,10 @@ function MSC.ShowMathBreakdown()
 
     -- 5. HOW TO READ (Keeping intact)
     add("=== HOW TO READ THIS RECEIPT ===", true)
-    add("• The Score is calculated using 'Equivalence Points' (EP).")
-    add("• 1.0 EP is roughly equal to 1 Attack Power or Spell Power.")
-    add("• Example: If Intellect is 0.8, then 10 Int = 8 Score.")
-    add("• Hit Cap: If you are over the cap, Hit Rating becomes worth 0.01.")
+    add("The Score is calculated using 'Equivalence Points' (EP).")
+    add("1.0 EP is roughly equal to 1 Attack Power or Spell Power.")
+    add("Example: If Intellect is 0.8, then 10 Int = 8 Score.")
+    add("Hit Cap: If you are over the cap, Hit Rating becomes worth 0.01.")
 
     -- FINAL UI TWEAK: Set text and adjust height to remove "Wasted Space"
     MSC.MathFrame.text:SetText(table.concat(log, "\n"))
