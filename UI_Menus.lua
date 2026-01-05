@@ -201,16 +201,23 @@ function MSC.CreateOptionsFrame()
     local dd3 = CreateDropdown("Scoring Profile:", "Mode", specOptions, header2, -10)
 
 
-    -- SECTION 3: INTERFACE
+	-- SECTION 3: INTERFACE
     local header3 = CreateHeader("Interface Settings", dd3, -25)
     
+    -- [Existing] Minimap & Tooltips
     local cb1 = CreateCheck("Minimap Button", "HideMinimap", nil, header3, -110, -10)
     local cb2 = CreateCheck("Verdict in Tooltips", "HideTooltips", nil, header3, 10, -10)
+    
+    -- [NEW] Laboratory Sounds (Missing setting referenced in UI_Lab.lua)
+    local cb3 = CreateCheck("Mute Lab Errors", "MuteSounds", "Disables the 'Error' sound when clicking unusable items in the Lab.", header3, -110, -35)
+
+    -- [NEW] Peacekeeper Toggle (Conflict Manager)
+    local cb4 = CreateCheck("Disable Conflict Warnings", "DisableConflictCheck", "Stops the addon from checking for conflicts with Zygor/RestedXP/Pawn on login.", header3, 10, -35)
     
     -- SECTION 4: BUTTONS
     local receiptBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     receiptBtn:SetSize(180, 30)
-    receiptBtn:SetPoint("TOP", header3, "BOTTOM", -100, -45) -- Left Button
+    receiptBtn:SetPoint("TOP", header3, "BOTTOM", -100, -85) -- Adjusted Y-Offset for new checkboxes
     receiptBtn:SetText("Show Gear Receipt")
     receiptBtn:SetScript("OnClick", function() 
         f:Hide()
@@ -219,12 +226,15 @@ function MSC.CreateOptionsFrame()
     
     local historyBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     historyBtn:SetSize(180, 30)
-    historyBtn:SetPoint("TOP", header3, "BOTTOM", 100, -45) -- Right Button
+    historyBtn:SetPoint("TOP", header3, "BOTTOM", 100, -85) -- Adjusted Y-Offset
     historyBtn:SetText("View History")
     historyBtn:SetScript("OnClick", function() 
         f:Hide()
         if MSC.ShowHistory then MSC.ShowHistory() else print("Core module not ready.") end
     end)
+    
+    -- [NEW] ElvUI Skinning Support (Consistency)
+    if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
 
     -- SECTION 5: CREDITS
     local credits = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
