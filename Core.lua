@@ -231,33 +231,18 @@ function MSC.UpdateTooltip(tooltip)
     end
 
     -- 5. CALCULATE SCORES
-    local activeScore = MSC.GetItemScore(newStats, useWeights, specName, targetSlot)
-    local potentialScore = MSC.GetItemScore(newStats, potentialWeights, specName, targetSlot)
-
-    if MSC.GetWeaponSpecBonus then
-        local bonus = MSC:GetWeaponSpecBonus(link, class, specName)
-        activeScore = activeScore + bonus
-        potentialScore = potentialScore + bonus
-    end
-
-    local simDiff = 0
-    local currentScore = 0
+-- 5. CALCULATE SCORES (Using Evaluator Integration)
+    -- We pass the 'potentialWeights' (Hit Cap Logic) to the Evaluator
     
-    if compLink then
-        if itemEquipLoc == "INVTYPE_2HWEAPON" and slotId == 16 then
-            local offHandLink = GetInventoryItemLink("player", 17)
-            if offHandLink then
-               local ohStats = MSC.SafeGetItemStats(offHandLink, 17)
-               for k,v in pairs(ohStats) do if type(v)=="number" then compStats[k]=(compStats[k] or 0)+v end end
-            end
-        end
-        currentScore = MSC.GetItemScore(compStats, useWeights, specName, targetSlot)
-        if MSC.GetWeaponSpecBonus then
-            local compBonus = MSC:GetWeaponSpecBonus(compLink, class, specName)
-            currentScore = currentScore + compBonus
-        end
-    end
-    simDiff = activeScore - currentScore
+    local activeNew, activeOld, activeStatsNew, activeStatsOld = MSC:EvaluateUpgrade(link, targetSlot, currentWeights, specName)
+    local potNew, potOld = MSC:EvaluateUpgrade(link, targetSlot, potentialWeights, specName)
+
+    local activeScore = activeNew
+    local potentialScore = potNew
+    
+    -- Calculate the Delta based on the TOTAL character score difference
+    -- This handles the case where equipping a 2H weapon removes your Off-hand
+    local simDiff = activeNew - activeOld
 
     -- 6. DISPLAY HEADER
     tooltip:AddLine(" ")
@@ -296,30 +281,30 @@ function MSC.UpdateTooltip(tooltip)
     elseif simDiff < -0.1 then tooltip:AddLine("|cffff0000<< Downgrade (" .. string.format("%.1f", simDiff) .. ") >>|r")
     else tooltip:AddLine("|cffaaaaaa(Sidegrade / No Change)|r") end
 
-    -- 8. STAT BREAKDOWN (Existing Code)
-    local currentStats = {}
-    if compLink then currentStats = MSC.SafeGetItemStats(compLink, targetSlot) end
-    if itemEquipLoc == "INVTYPE_2HWEAPON" and slotId == 16 then
-        local offHandLink = GetInventoryItemLink("player", 17)
-        if offHandLink then
-            local ohStats = MSC.SafeGetItemStats(offHandLink, 17)
-            for k, v in pairs(ohStats) do if type(v) == "number" then currentStats[k] = (currentStats[k] or 0) + v end end
-        end
-    end
-    local oldExp = MSC.ExpandDerivedStats(currentStats, compLink)
-    local newExp = MSC.ExpandDerivedStats(newStats, link)
-    local diffs = MSC.GetStatDifferences(newExp, oldExp)
+    -- 8. STAT BREAKDOWN (Now Context Aware)
+    -- We use the stats returned by EvaluateUpgrade, which includes Set Bonuses!
+    
+    -- We filter out the "Base" stats to only show the difference this swap makes
+    local diffs = MSC.GetStatDifferences(activeStatsNew, activeStatsOld)
     local sorted = MSC.SortStatDiffs(diffs)
+    
     for i, d in ipairs(sorted) do
         if i > 12 then break end
         local k, v = d.key, d.val
+        
+        -- Filter out internal flags
         if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and k ~= "GEM_TEXT" and k ~= "ENCHANT_TEXT" and k~= "estimate" then
              local name = MSC.GetCleanStatName(k)
              local color = (v > 0) and "|cff00ff00" or "|cffff0000"
              local sign = (v > 0) and "+" or ""
-             if math.abs(v) > 0.1 then tooltip:AddDoubleLine(name, color .. sign .. string.format("%.1f", v) .. "|r") end
+             
+             -- Only show if significant (prevents floating point clutter)
+             if math.abs(v) > 0.1 then 
+                tooltip:AddDoubleLine(name, color .. sign .. string.format("%.1f", v) .. "|r") 
+             end
         end
     end
+	
     if newStats.IS_PROJECTED and newStats.ENCHANT_TEXT then tooltip:AddLine("(Enchant: |cffffffff" .. newStats.ENCHANT_TEXT .. "|r)", 0, 1, 1) end
     if newStats.GEMS_PROJECTED and newStats.GEM_TEXT then tooltip:AddLine("(Gems: |cffffffff" .. newStats.GEM_TEXT .. "|r)", 0, 1, 1) end
 
