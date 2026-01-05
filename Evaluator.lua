@@ -1,35 +1,28 @@
 local _, MSC = ...
 
--- ============================================================================
--- 1. CONSTANTS & SETUP
--- ============================================================================
--- Slots to scan for total character power
-local GEAR_SLOTS = {
-    1,  -- Head
-    2,  -- Neck
-    3,  -- Shoulder
-    15, -- Back
-    5,  -- Chest
-    9,  -- Wrist
-    10, -- Hands
-    6,  -- Waist
-    7,  -- Legs
-    8,  -- Feet
-    11, -- Ring 1
-    12, -- Ring 2
-    13, -- Trinket 1
-    14, -- Trinket 2
-    16, -- Main Hand
-    17, -- Off Hand
-    18  -- Ranged
-}
+-- =============================================================
+-- 1. GEAR SNAPSHOT
+-- =============================================================
+local GEAR_SLOTS = { 1, 2, 3, 15, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18 }
 
--- ============================================================================
--- 2. THE SCORING ENGINE
--- ============================================================================
+function MSC:GetEquippedGear()
+    local gear = {}
+    for _, slotID in ipairs(GEAR_SLOTS) do
+        gear[slotID] = GetInventoryItemLink("player", slotID)
+    end
+    return gear
+end
 
--- Calculates the TOTAL score of a gear list (Stats + Procs + Set Bonuses)
--- [[ Evaluator.lua ]]
+function MSC:SafeCopy(orig)
+    local copy = {}
+    if not orig then return {} end
+    for k,v in pairs(orig) do copy[k] = v end
+    return copy
+end
+
+-- =============================================================
+-- 2. SCORING ENGINE (THE BRAIN)
+-- =============================================================
 
 -- A. The Master Score Function
 function MSC:GetTotalCharacterScore(gearTable, weights, specName)
@@ -52,7 +45,7 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                 if type(v) == "number" then accumulatedStats[k] = (accumulatedStats[k] or 0) + v end
             end
 
-            -- Track Sets
+            -- Track Sets & Procs
             local itemID = GetItemInfoInstant(itemLink)
             if itemID then
                 local setID = MSC:GetItemSetID(itemID)
@@ -75,7 +68,7 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
         end
     end
 
-    -- 2. ADD SET BONUSES (The missing link!)
+    -- 2. ADD SET BONUSES
     for setID, count in pairs(setCounts) do
         if MSC.SetBonusScores[setID] then
             for reqCount, bonusData in pairs(MSC.SetBonusScores[setID]) do
@@ -123,52 +116,4 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local newScore, newStats = MSC:GetTotalCharacterScore(newGear, weights, specName)
     
     return newScore, currentScore, newStats, currentStats
-end
-
--- Helper for shallow copying tables
-function MSC:SafeCopy(orig)
-    local copy = {}
-    for k,v in pairs(orig) do copy[k] = v end
-    return copy
-end
-
--- ============================================================================
--- 3. THE "DELTA" SIMULATOR
--- ============================================================================
-
--- Snapshots current gear into a table
-function MSC:GetEquippedGear()
-    local gear = {}
-    for _, slot in ipairs(GEAR_SLOTS) do
-        gear[slot] = GetInventoryItemLink("player", slot)
-    end
-    return gear
-end
-
--- Simulates swapping an item and returns the Score Difference
-function MSC:EvaluateUpgrade(newItemLink, targetSlotID)
-    local currentWeights, specName = MSC.GetCurrentWeights()
-    
-    -- 1. Snapshot Current State
-    local currentGear = MSC:GetEquippedGear()
-    local currentScore = MSC:GetTotalCharacterScore(currentGear, currentWeights)
-
-    -- 2. Create Simulation State
-    local newGear = {}
-    for k, v in pairs(currentGear) do newGear[k] = v end -- Shallow copy
-
-    -- 3. Apply the Swap
-    newGear[targetSlotID] = newItemLink
-
-    -- SPECIAL LOGIC: 2-Handers
-    -- If equipping a 2H weapon, we must remove the Offhand (Slot 17)
-    local equipLoc = select(9, GetItemInfo(newItemLink))
-    if equipLoc == "INVTYPE_2HWEAPON" and targetSlotID == 16 then
-        newGear[17] = nil -- Unequip offhand
-    end
-
-    -- 4. Calculate New Score
-    local newScore = MSC:GetTotalCharacterScore(newGear, currentWeights)
-
-    return newScore - currentScore
 end

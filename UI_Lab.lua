@@ -1,125 +1,118 @@
 local _, MSC = ...
 
 -- =============================================================
--- PART 1: THE LABORATORY
+-- PART 1: THE LABORATORY (Now Smart & Clean)
 -- =============================================================
 
 local LabFrame = nil
 local LabMH, LabOH, Lab2H = nil, nil, nil
 
+-- [[ NEW SMART CALCULATOR ]]
 function MSC.UpdateLabCalc()
     if not LabFrame or not LabFrame:IsShown() then return end
     
+    -- 1. GET ENGINE DATA
     local weights, profileName = MSC.GetCurrentWeights()
-    -- Pretty Name Fix for Lab
+    
+    -- Pretty Name Fix
     local _, class = UnitClass("player")
     if MSC.PrettyNames and MSC.PrettyNames[class] and MSC.PrettyNames[class][profileName] then
         profileName = MSC.PrettyNames[class][profileName]
     end
     LabFrame.ProfileText:SetText("Profile: " .. profileName)
     
+    -- Reset if empty
     if not LabMH.link and not LabOH.link and not Lab2H.link then
-        LabFrame.ScoreCurrent:SetText(""); LabFrame.ScoreNew:SetText(""); LabFrame.Result:SetText("Shift+Click items to add"); LabFrame.Details:SetText(""); return
-    end
-
-    local scoreMHOH, statsMHOH = 0, {}
-    
-    -- MH Calculation
-    if LabMH.link then 
-        local s = MSC.SafeGetItemStats(LabMH.link, 16)
-        scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 16) 
-        for k, v in pairs(s) do 
-            if type(v) == "number" then 
-                statsMHOH[k] = (statsMHOH[k] or 0) + v 
-            end
-        end 
-    end
-    
-    -- OH Calculation
-    if LabOH.link then 
-        local s = MSC.SafeGetItemStats(LabOH.link, 17)
-        scoreMHOH = scoreMHOH + MSC.GetItemScore(s, weights, profileName, 17) 
-        for k, v in pairs(s) do 
-            if type(v) == "number" then 
-                statsMHOH[k] = (statsMHOH[k] or 0) + v 
-            end
-        end 
-    end
-    
-    -- 2H Calculation
-    local score2H, stats2H = 0, {}
-    if Lab2H.link then 
-        local s = MSC.SafeGetItemStats(Lab2H.link, 16)
-        score2H = score2H + MSC.GetItemScore(s, weights, profileName, 16) 
-        for k, v in pairs(s) do 
-            if type(v) == "number" then 
-                stats2H[k] = (stats2H[k] or 0) + v 
-            end
-        end 
-    end
-    
-    local scoreBase, statsBase = 0, {}
-
-    -- SCENARIO 1: Comparing Dual Wield (MH/OH) vs 2-Hander
-    if (LabMH.link or LabOH.link) and Lab2H.link then
-        scoreBase, statsBase = scoreMHOH, statsMHOH
-        LabFrame.ScoreCurrent:SetText(string.format("Dual Wield: %.1f", scoreMHOH))
-        LabFrame.ScoreNew:SetText(string.format("2-Hander: %.1f", score2H))
-        
-        local diff = score2H - scoreBase
-        LabFrame.Result:SetText(diff > 0 and string.format("|cff00ff002H WINS (+%.1f)|r", diff) or string.format("|cffff00002H LOSES (%.1f)|r", diff))
-        
-        local diffs = MSC.GetStatDifferences(stats2H, statsBase)
-        local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
-        for i=1, math.min(10, #sortedDiffs) do
-            local e = sortedDiffs[i]
-            local name = MSC.GetCleanStatName(e.key)
-            local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
-            local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
-            local sign = (e.val > 0) and "+" or ""
-            lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
-        end
-        LabFrame.Details:SetText(lines)
+        LabFrame.ScoreCurrent:SetText(""); LabFrame.ScoreNew:SetText("")
+        LabFrame.Result:SetText("Shift+Click items to add"); LabFrame.Details:SetText("")
         return
     end
 
-    -- SCENARIO 2: Comparing Lab Item vs Currently Equipped
-    local currMH = GetInventoryItemLink("player", 16)
-    local currOH = GetInventoryItemLink("player", 17)
-    
-    if currMH then 
-        local s = MSC.SafeGetItemStats(currMH, 16)
-        scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 16) 
-        for k, v in pairs(s) do 
-            if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end 
-        end 
+    -- 2. SNAPSHOT CURRENT CHARACTER (The Baseline)
+    -- We use the Evaluator to get the TRUE score (Sets, Hit Cap, etc included)
+    local currentGear = MSC:GetEquippedGear() 
+    local currentScore, currentStats = MSC:GetTotalCharacterScore(currentGear, weights)
+
+    -- 3. DEFINE SCENARIOS
+    local scoreA, statsA = 0, {}
+    local scoreB, statsB = 0, {}
+    local mode = "NORMAL" -- 'NORMAL' or 'COMPARE'
+
+    -- Scenario A: 2H vs Dual Wield (Internal Lab Comparison)
+    if (LabMH.link or LabOH.link) and Lab2H.link then
+        mode = "COMPARE"
+        
+        -- Build Virtual DW Set
+        local setDW = MSC:SafeCopy(currentGear)
+        setDW[16] = LabMH.link
+        setDW[17] = LabOH.link 
+        
+        -- Build Virtual 2H Set
+        local set2H = MSC:SafeCopy(currentGear)
+        set2H[16] = Lab2H.link
+        set2H[17] = nil -- Must unequip OH for 2H
+        
+        scoreA, statsA = MSC:GetTotalCharacterScore(setDW, weights)
+        scoreB, statsB = MSC:GetTotalCharacterScore(set2H, weights)
+
+        LabFrame.ScoreCurrent:SetText(string.format("Dual Wield: %.1f", scoreA))
+        LabFrame.ScoreNew:SetText(string.format("2-Hander: %.1f", scoreB))
+        
+        local diff = scoreB - scoreA
+        if diff > 0.1 then LabFrame.Result:SetText("|cff00ff002H WINS (+"..string.format("%.1f", diff)..")|r")
+        elseif diff < -0.1 then LabFrame.Result:SetText("|cffff00002H LOSES ("..string.format("%.1f", diff)..")|r")
+        else LabFrame.Result:SetText("|cffaaaaaaEven (0.0)|r") end
+
+    -- Scenario B: Lab Item(s) vs Currently Equipped
+    else
+        -- Build Virtual Custom Set
+        local setCustom = MSC:SafeCopy(currentGear)
+        if Lab2H.link then
+            setCustom[16] = Lab2H.link
+            setCustom[17] = nil
+        else
+            if LabMH.link then setCustom[16] = LabMH.link end
+            if LabOH.link then setCustom[17] = LabOH.link end
+        end
+        
+        scoreA, statsA = currentScore, currentStats
+        scoreB, statsB = MSC:GetTotalCharacterScore(setCustom, weights)
+        
+        LabFrame.ScoreCurrent:SetText(string.format("Current: %.1f", scoreA))
+        LabFrame.ScoreNew:SetText(string.format("Custom: %.1f", scoreB))
+        
+        local diff = scoreB - scoreA
+        if diff > 0.1 then LabFrame.Result:SetText("|cff00ff00UPGRADE (+"..string.format("%.1f", diff)..")|r")
+        elseif diff < -0.1 then LabFrame.Result:SetText("|cffff0000DOWNGRADE ("..string.format("%.1f", diff)..")|r")
+        else LabFrame.Result:SetText("|cffaaaaaaSidegrade (0.0)|r") end
     end
-    if currOH then 
-        local s = MSC.SafeGetItemStats(currOH, 17)
-        scoreBase = scoreBase + MSC.GetItemScore(s, weights, profileName, 17) 
-        for k, v in pairs(s) do 
-            if type(v) == "number" then statsBase[k] = (statsBase[k] or 0) + v end 
-        end 
-    end
+
+    -- 4. CLEAN STAT BREAKDOWN (New UI Logic)
+    -- Define keys to hide
+    local hiddenKeys = {
+        ["IS_PROJECTED"] = true, ["GEMS_PROJECTED"] = true, ["BONUS_PROJECTED"] = true,
+        ["GEM_TEXT"] = true, ["ENCHANT_TEXT"] = true, ["estimate"] = true
+    }
     
-    local finalScore = (LabMH.link or LabOH.link) and scoreMHOH or score2H
-    local finalStats = (LabMH.link or LabOH.link) and statsMHOH or stats2H
+    -- Calculate difference
+    local statDiffs = MSC.GetStatDifferences(statsB, statsA)
+    local sorted = MSC.SortStatDiffs(statDiffs)
+    local lines = ""
+    local c = 0
     
-    LabFrame.ScoreCurrent:SetText(string.format("Current: %.1f", scoreBase))
-    LabFrame.ScoreNew:SetText(string.format("Custom: %.1f", finalScore))
-    
-    local diff = finalScore - scoreBase
-    LabFrame.Result:SetText(diff > 0 and string.format("|cff00ff00UPGRADE (+%.1f)|r", diff) or string.format("|cffff0000DOWNGRADE (%.1f)|r", diff))
-    
-    local diffs = MSC.GetStatDifferences(finalStats, statsBase)
-    local sortedDiffs, lines = MSC.SortStatDiffs(diffs), ""
-    for i=1, math.min(10, #sortedDiffs) do
-        local e = sortedDiffs[i]
-        local name = MSC.GetCleanStatName(e.key)
-        local valStr = (e.val % 1 == 0) and string.format("%d", e.val) or string.format("%.1f", e.val)
-        local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
-        local sign = (e.val > 0) and "+" or ""
-        lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
+    for _, e in ipairs(sorted) do
+        if c >= 10 then break end
+        
+        -- Filter out hidden keys and tiny numbers
+        if not hiddenKeys[e.key] and math.abs(e.val) > 0.05 then
+            local name = MSC.GetCleanStatName(e.key)
+            local valStr = string.format("%.1f", e.val)
+            local color = (e.val > 0) and "|cff00ff00" or "|cffff0000"
+            local sign = (e.val > 0) and "+" or ""
+            
+            lines = lines .. "|cffffd100" .. name .. ":|r " .. color .. sign .. valStr .. "|r\n"
+            c = c + 1
+        end
     end
     LabFrame.Details:SetText(lines)
 end
@@ -149,21 +142,14 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
 
     if not btn.icon then btn.icon = _G[name.."Icon"] end
 
-    -- [[ CRASH FIX 1: TOOLTIP SAFETY ]] --
+    -- TOOLTIP
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if self.link then 
-            -- Check if data exists before trying to render
-            if GetItemInfo(self.link) then
-                GameTooltip:SetHyperlink(self.link) 
-            else
-                -- Data loading, show placeholder to prevent crash
-                GameTooltip:SetText(labelText)
-                GameTooltip:AddLine("|cffaaaaaa(Retrieving Item Info...)|r")
-            end
+            if GetItemInfo(self.link) then GameTooltip:SetHyperlink(self.link) 
+            else GameTooltip:SetText(labelText); GameTooltip:AddLine("|cffaaaaaa(Loading...)|r") end
         else 
-            GameTooltip:SetText(labelText)
-            GameTooltip:AddLine("|cffaaaaaaShift+Click any item to link|r") 
+            GameTooltip:SetText(labelText); GameTooltip:AddLine("|cffaaaaaaShift+Click to link|r") 
         end
         GameTooltip:Show()
     end)
@@ -178,14 +164,10 @@ local function CreateItemButton(name, parent, x, y, iconType, labelText)
                 ClearCursor(); return
             end
             self.link = link; 
-            
-            -- [[ CRASH FIX 2: ICON SAFETY ]] --
             if self.icon then 
                 local texture = select(10, GetItemInfo(link))
-                -- Use Question Mark if texture is nil (uncached)
                 self.icon:SetTexture(texture or "Interface\\Icons\\INV_Misc_QuestionMark") 
             end
-            
             self.empty:Hide(); ClearCursor(); MSC.UpdateLabCalc()
         elseif IsShiftKeyDown() then 
             self.link = nil; 
@@ -219,6 +201,7 @@ function MSC.CreateLabFrame()
     
     f.title = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.title:SetPoint("TOP", f, "TOP", 0, -10); f.title:SetText("Sharpie's Gear Judge")
     
+    LabFrame = f -- Assign global reference
     LabMH = CreateItemButton("MSCLabMH", f, -65, 120, "MH", "Main Hand")
     LabOH = CreateItemButton("MSCLabOH", f, 65, 120, "OH", "Off Hand")
     Lab2H = CreateItemButton("MSCLab2H", f, 0, 50, "2H", "Two-Hand")
@@ -234,7 +217,6 @@ function MSC.CreateLabFrame()
     local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0)
     
-    LabFrame = f 
     MSC.UpdateLabCalc()
 end
 
@@ -284,7 +266,7 @@ hooksecurefunc("ChatEdit_InsertLink", function(text)
 end)
 
 -- =============================================================
--- PART 2: THE RECEIPT
+-- PART 2: THE RECEIPT (Kept Intact)
 -- =============================================================
 local function CheckBagsForUpgrade(slotId, currentScore, weights, specName)
     local bestBagItem, bestBagScore = nil, currentScore
@@ -378,14 +360,12 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         f.Separator = f.SummaryBox:CreateTexture(nil, "ARTWORK"); f.Separator:SetHeight(1); f.Separator:SetPoint("TOPLEFT", 10, 0); f.Separator:SetPoint("TOPRIGHT", -10, 0); f.Separator:SetColorTexture(1, 0.82, 0, 0.5) 
         f.SummaryBg = f.SummaryBox:CreateTexture(nil, "BACKGROUND"); f.SummaryBg:SetPoint("TOPLEFT", 0, -5); f.SummaryBg:SetPoint("BOTTOMRIGHT", 0, 0); f.SummaryBg:SetColorTexture(0, 0, 0, 0.3)
         
-        -- [[ UI FIX: MOVED HEADER LEFT ]] --
         f.SummaryTitle = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); 
         f.SummaryTitle:SetPoint("TOPLEFT", 10, -12); 
         f.SummaryTitle:SetText("COMBINED STATS FROM GEAR"); 
         f.SummaryTitle:SetTextColor(1, 0.82, 0) 
         
-        -- [[ UI FIX: MOVED SCORE RIGHT (SAME ROW) ]] --
-        f.TotalText = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); -- Same font size
+        f.TotalText = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); 
         f.TotalText:SetPoint("TOPRIGHT", -10, -12); 
         f.TotalText:SetTextColor(color.r, color.g, color.b) 
         
@@ -434,19 +414,15 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
              row.AlertFrame:SetScript("OnEnter", function(self) 
                 if self.mode == "UPGRADE" and self.link then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
-                    
-                    -- SAFETY CHECK: Only link if data is ready
                     if GetItemInfo(self.link) then
                         GameTooltip:SetHyperlink(self.link); 
                         GameTooltip:AddLine(" "); 
-                        
                         local diffText = self.diff and string.format("%.1f", self.diff) or "?"
                         GameTooltip:AddLine("|cff00ff00THE BETTER ITEM (+" .. diffText .. ")|r"); 
                         GameTooltip:AddLine("|cff888888Shift-Click to Link|r");
                     else
                         GameTooltip:SetText("Loading Item Data...")
                     end
-                    
                     GameTooltip:Show() 
                 elseif self.mode == "ENCHANT" then 
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
@@ -462,7 +438,6 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
                     else HandleModifiedItemClick(self.link) end
                  end
              end)
-             
              MSC.ReceiptRows[i] = row
         end
         local row = MSC.ReceiptRows[i]; row:SetPoint("TOPLEFT", 0, yOffset)
@@ -523,36 +498,26 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
 end
 
 -- =============================================================
--- PART 3: MATH BREAKDOWN WINDOW
+-- PART 3: MATH BREAKDOWN WINDOW (Kept Intact)
 -- =============================================================
-
--- 1. Helper Function for descriptions
 local function GetStatReason(stat, class, profileName)
         if not profileName then profileName = "" end
-        
-        -- [[ 1. THE BIG THREE: HIT, CRIT, HASTE ]] --
         if stat:find("HIT") then return "Reduces Chance to Miss" end
         if stat:find("HASTE") then return "Increases Casting/Attack Speed" end
         if stat:find("CRIT") and not stat:find("FROM_STATS") then 
             if profileName:find("HOLY") or profileName:find("RESTO") then return "Crit Heals & Mana Refund" end
             return "Higher Critical Strike Chance" 
         end
-
-        -- [[ 2. TBC SPECIFIC MECHANICS ]] --
         if stat:find("EXPERTISE") then return "Reduces Enemy Dodge/Parry" end
         if stat:find("RESILIENCE") then return "Reduces Crit Chance & DMG Taken" end
         if stat:find("ARMOR_PENETRATION") then return "Ignores Portion of Enemy Armor" end
         if stat:find("DEFENSE_SKILL") then return "Increases Avoidance & Crit Cap" end
-
-        -- [[ 3. SPELL SCHOOLS (The Orb/Suffix Fix) ]] --
         if stat:find("SHADOW") then return "Shadow Spell Scaling" end
         if stat:find("FIRE") then return "Fire Spell Scaling" end
         if stat:find("FROST") then return "Frost Spell Scaling" end
         if stat:find("ARCANE") then return "Arcane Spell Scaling" end
         if stat:find("NATURE") then return "Nature Spell Scaling" end
         if stat:find("HOLY") and not profileName:find("HOLY") then return "Holy Spell Scaling" end
-
-        -- [[ 4. ATTRIBUTES & RESOURCES ]] --
         if stat == "ITEM_MOD_INTELLECT_SHORT" then 
             if class == "SHAMAN" and profileName:find("ENH") then return "Mental Dexterity (Int -> AP)" end
             if class == "HUNTER" then return "Mana Pool (Viper Scaling)" end
@@ -576,29 +541,21 @@ local function GetStatReason(stat, class, profileName)
             if profileName:find("Demo") then return "Demonic Knowledge (Stam -> SP)" end
             return "Increases Total Health" 
         end
-
-        -- [[ 5. POWER & REGEN ]] --
         if stat == "ITEM_MOD_SPELL_POWER_SHORT" then return "Raw Spell Scaling" end
         if stat == "ITEM_MOD_HEALING_POWER_SHORT" then return "Raw Healing Output" end
         if stat == "ITEM_MOD_ATTACK_POWER_SHORT" or stat == "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" then return "Direct Damage Increase" end
         if stat == "ITEM_MOD_MANA_REGENERATION_SHORT" then return "Mana per 5 Sec (Sustain)" end
         if stat == "ITEM_MOD_HEALTH_REGENERATION_SHORT" then return "Health per 5 Sec" end
-
-        -- [[ 6. WEAPONS & SHIELDS ]] --
         if stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then return "Weapon Damage (Priority)" end
         if stat == "MSC_WAND_DPS" then return "Wand DPS (Leveling Speed)" end
         if stat == "ITEM_MOD_BLOCK_VALUE_SHORT" then return "DMG Blocked / Shield Slam" end
         if stat == "ITEM_MOD_BLOCK_RATING_SHORT" then return "Chance to Block" end
         if stat == "ITEM_MOD_DODGE_RATING_SHORT" then return "Chance to Dodge" end
         if stat == "ITEM_MOD_PARRY_RATING_SHORT" then return "Chance to Parry" end
-
-        -- [[ 7. LEVELING SPECIALS ]] --
         if profileName:find("Leveling") and stat == "ITEM_MOD_SPIRIT_SHORT" then return "Less Downtime (Eating/Drinking)" end
-
         return nil
     end
 
--- 2. The Main Function to Show the Window
 function MSC.ShowMathBreakdown()
     if not MSC.MathFrame then
         local f = CreateFrame("Frame", "SGJ_MathFrame", UIParent, "BasicFrameTemplateWithInset")
@@ -623,16 +580,11 @@ function MSC.ShowMathBreakdown()
     local log = {}
     
     local function add(text, isHeader)
-        if isHeader then 
-            table.insert(log, "\n|cffffd100" .. text .. "|r") 
-        else 
-            table.insert(log, text) 
-        end
+        if isHeader then table.insert(log, "\n|cffffd100" .. text .. "|r") else table.insert(log, text) end
     end
 
     add("=== CURRENT PROFILE ===", true)
-    add("Class: " .. class)
-    add("Spec/Key: " .. detectedKey)
+    add("Class: " .. class); add("Spec/Key: " .. detectedKey)
     
     add("=== FINAL EP VALUES (1 Point = ...) ===", true)
     local sorted = {}
@@ -640,23 +592,15 @@ function MSC.ShowMathBreakdown()
     table.sort(sorted, function(a,b) return a.v > b.v end)
     
     for _, data in ipairs(sorted) do
-        local stat = data.k
-        local finalVal = data.v
+        local stat, finalVal = data.k, data.v
         local prettyName = MSC.ShortNames[stat] or stat
-        local note = ""
-        local reason = GetStatReason(stat, class, detectedKey)
+        local note, reason = "", GetStatReason(stat, class, detectedKey)
         
-        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then 
-            note = "|cffff0000(Capped)|r" 
-        elseif reason then 
-            note = "|cff888888[" .. reason .. "]|r" 
-        else 
-            note = "|cff888888(Profile Base)|r" 
-        end
+        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then note = "|cffff0000(Capped)|r" 
+        elseif reason then note = "|cff888888[" .. reason .. "]|r" 
+        else note = "|cff888888(Profile Base)|r" end
         
-        if finalVal > 0.01 then 
-            add(format("%s: |cff00ccff%.2f|r %s", prettyName, finalVal, note)) 
-        end
+        if finalVal > 0.01 then add(format("%s: |cff00ccff%.2f|r %s", prettyName, finalVal, note)) end
     end
 
     add("=== HOW TO READ THIS RECEIPT ===", true)
