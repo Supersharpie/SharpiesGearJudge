@@ -48,3 +48,6 @@ SGJ plays nice with others. It automatically detects if you are running **Rested
 ## Credits
 * **Author:** SuperSharpie
 * **Version:** 2.0.0 (TBC)
+* **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
+* **Feedback:** Found a weight that feels off? Open an issue on GitHub!
+* **Discord:** https://discord.gg/yTSX8Us6WE
