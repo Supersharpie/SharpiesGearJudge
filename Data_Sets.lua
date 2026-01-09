@@ -471,34 +471,3 @@ MSC.ProcDB = {
     [28767] = { score=40 }, -- The Decapitator
     [19019] = { score=30 }, -- Thunderfury
 }
-
--- ============================================================================
--- 7. INITIALIZATION
--- ============================================================================
-function MSC:BuildDatabase()
-    for setID, data in pairs(MSC.RawSetData) do
-        local itemIDs = data[1]
-        for _, itemID in ipairs(itemIDs) do
-            MSC.ItemSetMap[itemID] = setID
-        end
-    end
-end
-
-function MSC:GetItemSetID(itemID)
-    if not itemID then return nil end
-    return MSC.ItemSetMap[tonumber(itemID)]
-end
-
-function MSC:GetSetBonusDefinition(setID, count)
-    if MSC.SetBonusScores[setID] and MSC.SetBonusScores[setID][count] then
-        return MSC.SetBonusScores[setID][count]
-    end
-    return nil
-end
-
-function MSC:GetProcData(id)
-    return MSC.ProcDB[tonumber(id)]
-end
-
--- Run initialization
-MSC:BuildDatabase()

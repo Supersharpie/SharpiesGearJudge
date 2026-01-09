@@ -1,2165 +1,16 @@
 local _, MSC = ...
 
--- =============================================================
--- 1. ENDGAME STAT WEIGHTS (Normalized & Immunized)
--- =============================================================
-MSC.WeightDB = {
-["WARRIOR"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
-            ["MSC_WEAPON_DPS"]=2.0 -- Essential for leveling
-        },
-       
-        -- [[ 1. FURY DW (Dual Wield) ]]
-        ["FURY_DW"] = { 
-            ["MSC_WEAPON_DPS"]=4.0,                    -- << CRITICAL: Weapon DPS is king
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.35, -- Fixed Key Name
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,         -- Don't hate Hunter Mail
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,            -- Don't hate Leather
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
-        },
-       
-        -- [[ 2. FURY 2H (Slam Spec) ]]
-        ["FURY_2H"] = { 
-            ["MSC_WEAPON_DPS"]=5.5,                    -- << CRITICAL: Massive weight for 2H
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.35, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-        },
-       
-        -- [[ 3. ARMS PVE ]]
-        ["ARMS_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,                    -- Arms relies on slow, high damage weapons
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.3, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.1, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.4,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-        },
-       
-        -- [[ 4. ARMS PVP ]]
-        ["ARMS_PVP"] = { 
-            ["MSC_WEAPON_DPS"]=4.5,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.8,  -- High priority
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.5,         -- Cap is low (5%)
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-        },
-       
-        -- [[ 5. DEEP_PROT (Tank) ]]
-        ["DEEP_PROT"] = { 
-            ["MSC_WEAPON_DPS"]=1.5,                    -- Important for Threat (Devastate/Heroic Strike)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.6, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.7,        -- Shield Slam scales heavily on this
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.9,       -- Added Block Rating
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.6, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=0.8,  -- Crit immunity alternative
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.6,           -- Bumped up: 1 Str = 0.5 Block Value
-            ["ITEM_MOD_AGILITY_SHORT"]=0.5,            -- Bumped up: Armor/Dodge/Crit
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,         -- Paladin Plate often has Int
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,       -- Mage/Paladin Weapons have SP
-        },
-    },
-["PALADIN"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.3, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-            ["MSC_WEAPON_DPS"]=2.0 
-        },
-
-        -- [[ 1. HOLY (Healer) ]]
-        ["HOLY_RAID"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,              -- Caster Weapon (SP is king)
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,    -- King Stat (Mana + Crit)
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.9, -- Mana Refund mechanics
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.6, -- Int is better than MP5 in TBC
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.9, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.5, 
-            
-            -- POISON PROTECTION (Allow wearing Cloth/Leather/Mail)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-        },
-
-        -- [[ 2. PROTECTION (Tank) ]]
-        ["PROT_DEEP"] = {
-            ["MSC_WEAPON_DPS"]=0.2,             -- Low priority. Spell Power weapon > High DPS weapon.
-            
-            -- SURVIVAL
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.6,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.4,
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.3,
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.3,
-            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.1,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.65,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.12,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.8, -- Crit Immunity
-
-            -- THREAT
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.85,      -- The "Strength" of Prot Pally
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8,  -- Taunt Hit
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,        -- Melee Hit
-            
-            -- HYBRID / POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,         -- Mana pool is good, but SP is better
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 0.35,         -- Block Value
-            ["ITEM_MOD_AGILITY_SHORT"] = 0.3,           -- Dodge
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.1,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.1,
-        },
-
-        -- [[ 3. RETRIBUTION (DPS) ]]
-        ["RET_STANDARD"] = { 
-            ["MSC_WEAPON_DPS"]=4.5,                     -- << CRITICAL: Weapon Damage is everything
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.3, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.1, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.4, -- Added ArP
-            
-            -- POISON PROTECTION (Tier Gear often has Int/SP)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,          -- Don't penalize Tier gear
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,        -- Don't penalize Tier gear
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
-        },
-
-        -- [[ 4. SHOCKADIN (PvP/Niche) ]]
-        ["SHOCKADIN_PVP"] = { 
-            ["MSC_WEAPON_DPS"]=0.0, -- Caster Weapon
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.6, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-        
-        -- [[ 5. PROT AOE FARMING (Strat Farming) ]]
-        ["PROT_AOE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5,         -- Block Value kills low-level mobs
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,         -- Consecration damage
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.2 
-        },
-    },
-["PRIEST"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5,
-            ["MSC_WEAPON_DPS"]=0.0, -- Casters ignore weapon damage
-			["MSC_WAND_DPS"]=2.5,
-		},
-		
-        -- [[ 1. HOLY (Deep Healing) ]]
-        ["HOLY_DEEP"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.9, -- Counts as healing
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.1,      -- Spiritual Guidance (Spirit -> Healing)
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.6, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.4, 
-
-            -- POISON PROTECTION
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.01, -- Hit doesn't help healers, but isn't poison
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-
-        -- [[ 2. DISC (Support/Efficiency) ]]
-        ["DISC_SUPPORT"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,   -- Max Mana = Efficiency/Rapture
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.9,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, -- Spirit is less valuable than Int for Disc
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.6, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.01,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-
-        -- [[ 3. SHADOW PVE (Mana Battery) ]]
-        ["SHADOW_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, -- Hit Cap is massive priority
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.4, -- DoTs don't crit in TBC. Low value.
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,     -- Mana pool
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.3,        -- Spirit Tap regen
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.1, -- Shadow gear often has "Healing" (Generic SP)
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-
-        -- [[ 4. SMITE DPS (Niche) ]]
-        ["SMITE_DPS"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.7, -- Smite CAN crit
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.7, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-
-        -- [[ 5. SHADOW PVP ]]
-        ["SHADOW_PVP"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,       -- Survival is key
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,     -- Need mana to burn
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.5, -- Lower cap for PvP (3-4%)
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-    },
-["ROGUE"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
-            ["MSC_WEAPON_DPS"]=3.0 -- Always prioritize better weapons while leveling
-        },
-
-        -- [[ 1. COMBAT (Sword/Mace Specialization) ]]
-        ["RAID_COMBAT"] = { 
-            ["MSC_WEAPON_DPS"]=5.5,             -- << CRITICAL: White damage is ~50% of total DPS
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9,  -- Hit Cap is huge
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.1, -- Dodge Parries = DPS loss
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2,     -- 1 Agi = 1 AP + Crit + Dodge
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.4, -- Blade Flurry scales well with Haste
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.35, -- Fixed Key Name
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.1,    -- 1 Str = 1 AP
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,  -- Don't wear Hunter Jewelry
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
-        },
-
-        -- [[ 2. MUTILATE (Daggers) ]]
-        ["RAID_MUTILATE"] = { 
-            ["MSC_WEAPON_DPS"]=4.5,             -- Dagger DPS is vital for Mutilate dmg
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, -- Seal Fate relies on Crits
-            ["ITEM_MOD_AGILITY_SHORT"]=2.1, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.7, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 3. SUBTLETY (PvP / Hemorrhage) ]]
-        ["PVP_SUBTLETY"] = { 
-            ["MSC_WEAPON_DPS"]=3.0,             -- Burst damage matters
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,     -- Survival
-            ["ITEM_MOD_AGILITY_SHORT"]=2.4,     -- Sinister Calling (+15% Agi)
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.5,  -- 5% PvP Cap
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.3, -- Fixed Key Name
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-        },
-    },
-["HUNTER"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4,
-            ["MSC_WEAPON_DPS"]=1.5 -- Balanced: Good for Bows, but lets Agility win on Polearms
-        },
-
-        -- [[ 1. BEAST MASTERY (The "One Button" Macro) ]]
-        ["RAID_BM"] = { 
-            ["MSC_WEAPON_DPS"]=2.0,             -- Pet scales off your damage, so Bow DPS is vital
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9,  -- Hit Cap #1
-            ["ITEM_MOD_AGILITY_SHORT"]=1.9,     -- Good, but raw AP is also great for pet
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.3, -- Go for the Throat (Pet Resource)
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.2, -- Auto Shot speed = More DPS
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.3, -- Fixed Key Name
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,   -- 100% Useless for Hunters
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 2. SURVIVAL (Expose Weakness Buffer) ]]
-        ["RAID_SURV"] = { 
-            ["MSC_WEAPON_DPS"]=1.5,             -- Stats > Weapon DPS for Survival
-            ["ITEM_MOD_AGILITY_SHORT"]=3.0,     -- << KING STAT. 1 Agi = Raid Wide DPS.
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.1, -- Expose Weakness relies on Crits to proc
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.6, -- Raw AP is weak compared to Agi
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=0.6,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.6,   -- Thrill of the Hunt (Mana efficiency)
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.2,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 3. MARKSMANSHIP (Physical DPS) ]]
-        ["RAID_MM"] = { 
-            ["MSC_WEAPON_DPS"]=2.2,             -- Weapon Dmg scales hard with Multi-Shot/Aimed Shot
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2,     -- Strong scaling
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0,
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.5, -- ArP is great for MM
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 4. PVP (Drain Team) ]]
-        ["PVP_MM"] = { 
-            ["MSC_WEAPON_DPS"]=1.5,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,     -- Don't die
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,   -- Viper Sting spam requires mana
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.5,  -- 3% Cap
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01,
-        },
-    },
-["MAGE"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["MSC_WEAPON_DPS"]=0.0 -- Casters ignore weapon damage
-        },
-
-        -- [[ 1. ARCANE (Mana Battery / Burst) ]]
-        ["ARCANE_RAID"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,    -- King Stat (Mana = Dmg for Arcane)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, -- Hit Cap is #1
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.7, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.9, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.6,       -- Arcane Meditation (Regen)
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01, -- Hybrid gear often has "Healing"
-        },
-
-        -- [[ 2. FIRE (Crit / Ignite) ]]
-        ["FIRE_RAID"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.95, -- Ignite needs Crit
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.9, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,         -- Molten Armor handles regen, not Spirit
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 3. FROST PVE (Safe DPS) ]]
-        ["FROST_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.6, -- Shatter provides crit, so rating is less vital
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 4. FROST PVP (Survival / Shatter) ]]
-        ["FROST_PVP"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,       -- Don't die
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,     -- Mana is life
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.6, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.5, -- Lower cap for PvP
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-
-        -- [[ 5. FROST AOE (Leveling / Farming) ]]
-        ["FROST_AOE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,       -- Don't get dazed/killed
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,     -- Need huge mana pool for max Blizzard uptime
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.1, -- Blizzard cannot crit
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.1,  -- AoE talents provide hit often
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-    },
-["WARLOCK"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.3, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            ["MSC_WEAPON_DPS"]=0.0 
-        },
-
-        -- [[ 1. DESTRUCTION SHADOW (The "Shadow Bolt" Turret) ]]
-        -- Relies on Shadow Bolt, ISB proc, and Shadow Weaving (if Affli present)
-        ["DESTRUCT_SHADOW"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2,   -- Frozen Shadoweave is King
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.9, -- Ruin Talent
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.01,    -- Don't get baited by Spellfire set
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 2. DESTRUCTION FIRE (The "Incinerate" Turret) ]]
-        -- Relies on Immolate, Incinerate, Conflagrate
-        ["DESTRUCT_FIRE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2,     -- Spellfire Set is King
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.9, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.01,  -- Don't get baited by Frozen Shadoweave
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 3. RAID AFFLICTION (UA / DoTs) ]]
-        ["RAID_AFFLICTION"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.6, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.3,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.01,
-        },
-
-        -- [[ 4. DEMO PVE (Felguard) ]]
-        ["DEMO_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.9,         -- Demonic Knowledge (Stam -> SP)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.6, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.9, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 5. PVP SL/SL ]]
-        ["PVP_SL_SL"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8,         -- King Stat
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.3, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-    },
-["SHAMAN"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.05, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5,
-            ["MSC_WEAPON_DPS"]=1.0
-        },
-
-        -- [[ 1. ELEMENTAL (Lightning Bolt Turret) ]]
-        ["ELE_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,             -- Caster Weapon
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.3, -- Hit Cap #1
-            ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8, -- Lightning Mastery (Talent) loves Crit
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.9, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5, -- Unrelenting Storm converts Int to MP5, but raw MP5 is ok
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,     -- Shamans don't use Spirit
-        },
-
-        -- [[ 2. ELEMENTAL PVP ]]
-        ["ELE_PVP"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,     -- Survival is key
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,   -- Mana pool for endurance
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.5,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-        },
-
-        -- [[ 3. ENHANCEMENT (Dual Wield / Windfury) ]]
-        ["ENH_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=4.5,             -- << CRITICAL: Windfury scales off Weapon Dmg
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.9,  -- Dual Wield Hit Cap is massive
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.1, -- Dodge reduction
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.1,    -- 1 Str = 2 AP (with Kings/Unleashed Rage, highly valuable)
-            ["ITEM_MOD_AGILITY_SHORT"]=1.6,     -- 1 Agi = 1 AP + Crit (slightly less AP than Str)
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.1,   -- << FIX: Mental Dexterity (1 Int = 1 AP + Mana + SpellCrit)
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_HASTE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.4,
-            
-            -- POISON PROTECTION (Don't use Caster Weapons)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01, -- Nature's Blessing gives SP from Int/AP. Raw SP is inefficient.
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-        },
-
-        -- [[ 4. RESTORATION (Chain Heal) ]]
-        ["RESTO_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, -- High value, but not infinite
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.9,     -- Ancestral Knowledge (Mana %)
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.6, -- Ancestral Awakening synergy
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.01,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,     -- Still useless for Shamans (no Spirit regen while casting)
-        },
-
-        -- [[ 5. SHAMAN TANK (The Meme Dream) ]]
-        ["SHAMAN_TANK"] = { 
-            ["MSC_WEAPON_DPS"]=1.0,             -- Threat generation
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_ARMOR_SHORT"]=0.8, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.2, -- Added Block Rating
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.2, -- Needed for Crit Immunity
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,      -- Dodge/Armor
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,     -- Block Value
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,    -- Mana for Shocks
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,  -- Threat (Earth Shock / Lightning Shield)
-        },
-    },
-["DRUID"] = {
-        ["Default"] = { 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["MSC_WEAPON_DPS"]=0.0, -- Druids never rely on weapon DPS
-            ["MSC_WEAPON_SPEED"]=0.0,
-        },
-
-        -- [[ 1. BALANCE (Boomkin / Starfire) ]]
-        ["BALANCE_PVE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, -- Hit Cap #1
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,    -- Mana pool
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.3,       -- Intensity (Regen)
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.4,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,    -- Don't penalize Feral items
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.01,
-            ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]=0.01,
-        },
-
-        -- [[ 2. FERAL CAT (DPS) ]]
-        ["FERAL_CAT"] = { 
-            ["MSC_WEAPON_DPS"]=0.0, 
-            ["MSC_WEAPON_SPEED"]=0.0,            -- No penalty for slow/fast
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.9, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2,     -- 1 Str = 2 AP
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0,      -- 1 Agi = 1 AP + Crit
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.4, -- Fixed Key Name
-            
-            -- POISON PROTECTION (Tier Gear often has Int)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,   
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01, -- Hybrid off-pieces
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-        },
-
-        -- [[ 3. FERAL BEAR (Tank) ]]
-        ["FERAL_BEAR"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WEAPON_SPEED"]=0.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.7,      -- Effective Health
-            ["ITEM_MOD_ARMOR_SHORT"]=0.35,       -- 400% Multiplier makes this HUGE
-            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=1.2, -- Bonus Armor (Green text)
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5,      -- Dodge/Armor/Crit
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.3, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.0, -- Crit Immunity
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.6, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.8, 
-            ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]=0.5,
-            
-            -- POISON PROTECTION (The "Gladiator" Fix)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,   
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.01,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01, -- Don't punish PvP gear
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01,
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=0.01, -- Bears can't parry, but don't hate the stat
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.01,
-        },
-
-        -- [[ 4. RESTO TREE (PvE) ]]
-        ["RESTO_TREE"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.1,       -- Intensity (Regen)
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.7, 
-            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=0.6, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.3,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,     -- Don't punish Feral gear
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.01,
-        },
-
-        -- [[ 5. RESTO PVP (SL/SL of Druids) ]]
-        ["RESTO_PVP"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.8, -- King Stat
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- Bear Form survival
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.9,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.6,
-            
-            -- POISON PROTECTION
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-        },
-    },
-}
--- =========================================================================
--- 2. LEVELING MODULE (Normalized & Immunized)
--- =========================================================================
-MSC.LevelingWeightDB = {
-["WARRIOR"] = {
-        -- [[ 1. UNIVERSAL STARTER (1-20) ]]
-        -- Weapon DPS is everything here. Spirit is great for reducing downtime (eating).
-        ["Leveling_1_20"]  = { 
-            ["MSC_WEAPON_DPS"]=10.0,             -- << KING STAT
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.0,       -- High regen value
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=0.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01    -- Poison Protection
-        },
-
-        -- [[ 2. ARMS / 2H LEVELING (Mortal Strike) ]]
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=8.0, 
-            ["MSC_WEAPON_SPEED"]=2.0,            -- Slow weapons hit harder with abilities
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=6.0,
-            ["MSC_WEAPON_SPEED"]=1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.4, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["MSC_WEAPON_SPEED"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,              -- Outland weapons are huge
-            ["MSC_WEAPON_SPEED"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8,   -- Misses kill leveling speed
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.3,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-
-        -- [[ 3. FURY / DW LEVELING ]]
-        ["Leveling_DW_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=6.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,       -- Downtime reduction
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_DW_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_DW_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_DW_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=4.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.2,   -- Hit is vital for DW in Outland
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-
-        -- [[ 4. TANK LEVELING (Dungeon Grinding) ]]
-        ["Leveling_Tank_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=4.0,              -- Threat requires dmg
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
-            ["ITEM_MOD_ARMOR_SHORT"]=0.1, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Tank_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=3.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Tank_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=2.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,     -- Bumped from 0.2 (Threat matters!)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Tank_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=2.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, -- Crit Immunity help
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,     -- Bumped from 0.2
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-    },
-["ROGUE"] = {
-        -- [[ 1. STANDARD COMBAT (Swords/Maces/Fists) ]]
-        -- The "Sinister Strike" spammer. 
-        -- Weapon DPS is King. Agility is Queen.
-        ["Leveling_1_20"]  = { 
-            ["MSC_WEAPON_DPS"]=8.0,              -- << ABSOLUTE PRIORITY
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.1,     -- 1 Str = 1 AP
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,       -- Reduces eating downtime (OOC regen)
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=0.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=0.5,
-            
-            -- Poison Protection
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=6.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.3, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=6.0,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,   -- Precision talent helps, but hit is still good
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.5, -- Glancing blow reduction
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,   -- TBC Hit Cap is vital
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-
-        -- [[ 2. DAGGERS (Backstab/Ambush) ]]
-        -- Requires slow, high-damage Main Hand dagger.
-        ["Leveling_Dagger_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=8.0,              -- Ambush 1-shots mobs if weapon is good
-            ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Dagger_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=7.0,
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,  -- Crits needed for combo points (Seal Fate later)
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Dagger_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=6.0,
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Dagger_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.5,
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Dagger_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-
-        -- [[ 3. HEMO (PvP / Solo Grinding) ]]
-        -- Values Stamina highly for survival.
-        ["Leveling_Hemo_1_20"]    = { 
-            ["MSC_WEAPON_DPS"]=6.0,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- Survival > Glass Cannon
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Hemo_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=5.5,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, -- Hemo scales well with AP
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Hemo_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Hemo_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-        ["Leveling_Hemo_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=4.5,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.01
-        },
-    },
-["MAGE"] = {
-        -- [[ 1. STANDARD FROST (Single Target) ]]
-        -- Focus: Mana efficiency via Wanding finishers.
-        ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.5,            -- Vital for mana efficiency early
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.2,            -- Used as mana-free finisher
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.6,            -- Spells are much stronger now
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.2,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,            -- Stat stick only
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 2. FIRE LEVELING (High Damage) ]]
-        ["Leveling_Fire_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.0,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Fire_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.5,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Fire_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.2,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Fire_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 3. AOE BLIZZARD LEVELING ]]
-        -- Wands are useless here; you need Stamina to survive the pull and Int for Blizzard.
-        ["Leveling_AoE_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,            -- You don't wand in AoE
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_AoE_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_AoE_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_AoE_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=2.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-    },
-["DRUID"] = {
-        -- [[ 1. FERAL CAT (The Leveling Standard) ]]
-        -- Weapon DPS is 0.0. Use "Stat Sticks" (Str/Agi).
-        ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,              -- Useless for Feral
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0,     -- 1 Str = 2 AP
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2,      -- Crit/Armor
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,       -- High regen value early on
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,    -- Mana for shifting
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01, -- Poison
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.01
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.4, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.0, -- Green Armor text
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]=1.0, -- << The real "Weapon DPS" for 60+
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-
-        -- [[ 2. FERAL BEAR (Dungeon Grinding) ]]
-        ["Leveling_Bear_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_ARMOR_SHORT"]=0.4,        -- Bear multiplier makes Armor huge
-            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=0.8, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_Bear_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_ARMOR_SHORT"]=0.4,
-            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02 
-        },
-        ["Leveling_Bear_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_ARMOR_SHORT"]=0.4,
-            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02 
-        },
-        ["Leveling_Bear_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]=0.5, -- Threat
-            ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-
-        -- [[ 3. BALANCE (Boomkin Leveling) ]]
-        ["Leveling_Caster_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Caster_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- Fixed Typo
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-        ["Leveling_Caster_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-
-        -- [[ 4. RESTO (Dungeon Healer) ]]
-        ["Leveling_Healer_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-        ["Leveling_Healer_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-    },
-["PALADIN"] = {
-		-- [[ 1. RETRIBUTION (The Dynamics of Bonk) ]]
-		
-		-- 1-20: Survival & Mana. You have no buttons, just Auto Attack + Seal.
-		["Leveling_RET_1_20"] = { 
-			["MSC_WEAPON_DPS"]=8.0, 
-			["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-			["ITEM_MOD_AGILITY_SHORT"]=1.2,      -- Crit is rare and valuable
-			["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-			["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-			["ITEM_MOD_INTELLECT_SHORT"]=0.8,    -- High weight: OOM = Zero DPS
-			["ITEM_MOD_SPIRIT_SHORT"]=1.0,       -- Downtime reduction
-			["ITEM_MOD_SPELL_POWER_SHORT"]=0.01 
-		},
-
-		-- 21-40: "Vengeance" Era. Agility/Crit is vital to keep the buff active.
-		["Leveling_RET_21_40"]  = { 
-			["MSC_WEAPON_DPS"]=7.0, 
-			["MSC_WEAPON_SPEED"]=1.8,            -- Slow Weapons are mandatory for SoC
-			["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-			["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,  -- << BUMPED: Vengeance uptime is #1 priority
-			["ITEM_MOD_AGILITY_SHORT"]=1.5,      -- Agility is great here for Crit/Dodge
-			["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-			["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-			["ITEM_MOD_INTELLECT_SHORT"]=0.5,    -- Wis or Illumination helps mana issues
-			["ITEM_MOD_SPIRIT_SHORT"]=0.8,
-			["ITEM_MOD_SPELL_POWER_SHORT"]=0.01 
-		},
-
-		-- 41-51: "Divine Strength" Era. Raw AP scaling takes over.
-		["Leveling_RET_41_51"]  = { 
-			["MSC_WEAPON_DPS"]=6.5, 
-			["MSC_WEAPON_SPEED"]=1.8, 
-			["ITEM_MOD_STRENGTH_SHORT"]=2.5,     -- << BUMPED: Divine Strength talent scales this hard
-			["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-			["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-			["ITEM_MOD_AGILITY_SHORT"]=1.2,      -- Agility value drops slightly vs Strength
-			["ITEM_MOD_STAMINA_SHORT"]=1.2,      -- Mobs hit harder
-			["ITEM_MOD_INTELLECT_SHORT"]=0.3,    
-			["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-			["ITEM_MOD_SPELL_POWER_SHORT"]=0.01 
-		},
-
-		-- 52-59: Pre-Outland. Hit Rating appears.
-		["Leveling_RET_52_59"]  = { 
-			["MSC_WEAPON_DPS"]=6.0, 
-			["MSC_WEAPON_SPEED"]=1.5, 
-			["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-			["ITEM_MOD_HIT_RATING_SHORT"]=1.5,   -- << NEW: Misses are DPS losses
-			["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-			["ITEM_MOD_AGILITY_SHORT"]=1.1, 
-			["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-			["ITEM_MOD_INTELLECT_SHORT"]=0.2,    
-			["ITEM_MOD_SPELL_POWER_SHORT"]=0.1   -- Small value for Consecration/Judgement
-		},
-
-		-- 60-70: Crusader Strike & TBC Itemization.
-		["Leveling_RET_60_70"]  = { 
-			["MSC_WEAPON_DPS"]=5.0, 
-			["MSC_WEAPON_SPEED"]=1.2,
-			["ITEM_MOD_STRENGTH_SHORT"]=2.6, 
-			["ITEM_MOD_HIT_RATING_SHORT"]=2.0,   -- Hit Cap is mandatory
-			["ITEM_MOD_CRIT_RATING_SHORT"]=1.7, 
-			["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-			["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-			["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- TBC mobs hurt
-			["ITEM_MOD_INTELLECT_SHORT"]=0.2, 
-			["ITEM_MOD_SPELL_POWER_SHORT"]=0.1,
-			["ITEM_MOD_HEALING_POWER_SHORT"]=0.01
-		},
-
-		-- [[ 2. PROTECTION / AOE GRINDING ]]
-
-		-- 21-40: The "Face Tank". You cannot effectively AoE grind yet.
-		-- Focus: Just surviving the dungeon.
-		["Leveling_PROT_AOE_21_40"] = { 
-			["MSC_WEAPON_DPS"]=2.0,              -- Need some threat
-			["ITEM_MOD_STAMINA_SHORT"]=2.0,      -- Surviving is the only goal
-			["ITEM_MOD_ARMOR_SHORT"]=0.5,
-			["ITEM_MOD_STRENGTH_SHORT"]=1.0,     -- Block Value
-			["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-			["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,  -- Low value until Consecration rank up
-			["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0
-		},
-
-		-- 41-51: The "Holy Shield" Era. AoE Grinding comes online.
-		-- Focus: BLOCK VALUE. It creates damage when you block.
-		["Leveling_PROT_AOE_41_51"] = { 
-			["MSC_WEAPON_DPS"]=1.0, 
-			["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5,  -- << KING STAT. Reflects damage.
-			["ITEM_MOD_SPELL_POWER_SHORT"]=1.5,  -- Consecration threat
-			["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-			["ITEM_MOD_INTELLECT_SHORT"]=1.0,    -- Mana to sustain the pull
-			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2,
-			["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5, -- Must block to deal damage
-			["ITEM_MOD_STRENGTH_SHORT"]=0.8 
-		},
-
-		-- 52-59: Pre-Outland.
-		["Leveling_PROT_AOE_52_59"] = { 
-			["MSC_WEAPON_DPS"]=1.0, 
-			["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-			["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.2, 
-			["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-			["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5,
-			["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5,
-			["ITEM_MOD_STRENGTH_SHORT"]=0.5 
-		},
-
-		-- 60-70: TBC Dungeons / Shattered Halls
-		-- Focus: Spell Power to hold aggro against Warlocks/Mages.
-		["Leveling_PROT_AOE_60_70"] = { 
-			["MSC_WEAPON_DPS"]=1.0, 
-			["ITEM_MOD_SPELL_POWER_SHORT"]=2.0,  -- << BUMPED: Threat is harder in TBC
-			["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, 
-			["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-			["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8, -- Crit immunity goal
-			["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,
-			["ITEM_MOD_PARRY_RATING_SHORT"]=1.5,
-			["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 -- Discount Defense
-		},
-		
-		-- [[ 3. HOLY (Corrected Suffixes) ]]
-		-- 1-40: Mana Efficiency (Int/Spirit)
-		["Leveling_HOLY_DUNGEON_21_40"] = { 
-			["MSC_WEAPON_DPS"]=0.0, 
-			["ITEM_MOD_INTELLECT_SHORT"]=2.0,    -- Max Mana is everything
-			["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-			["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
-			["ITEM_MOD_STAMINA_SHORT"]=0.8,
-			["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5,
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01 
-		},
-	
-		["Leveling_HOLY_DUNGEON_41_51"] = {  -- 41-59: Throughput (Healing Power)
-			["MSC_WEAPON_DPS"]=0.0, 
-			["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-			["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-			["ITEM_MOD_SPIRIT_SHORT"]=1.2, 
-			["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01
-		},	
-		
-		["Leveling_HOLY_DUNGEON_52_59"] = { 
-			["MSC_WEAPON_DPS"]=0.0, 
-			["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
-			["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-			["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
-			["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, 
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-		},
-		
-		["Leveling_HOLY_DUNGEON_60_70"] = { -- 60-70: TBC Scaling
-			["MSC_WEAPON_DPS"]=0.0, 
-			["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
-			["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-			["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-			["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- Illumination
-			["ITEM_MOD_STAMINA_SHORT"]=1.0,
-			["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-		},
-	},
-["HUNTER"] = {
-        -- [[ 1. STANDARD RANGED (Beast Mastery/Marksman) ]]
-        -- Focus: Bow DPS > Agility > AP > Int/Stam
-        ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=2.0,              -- Auto Shot is ~40% of dmg
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5,      -- 1 Agi = 1 AP + Crit + Armor
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,       -- Regen is huge early game
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,    -- Mana for Arcane Shot
-            
-            -- Poison Protection (Don't wear Shaman Gear)
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,    
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=1.8,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4,  -- Go For The Throat (Pet Energy)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,    -- Viper Aspect helps, but Int still needed
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=1.8,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,   -- Misses start to hurt
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.3,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=1.5,              -- Stats start to outweigh raw dps on "sticks"
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.4,    -- Aspect of the Viper scaling
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=1.5,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.6, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,   -- Hit Cap (9%) is vital
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.4,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01
-        },
-
-        -- [[ 2. MELEE HUNTER (Survival/Niche) ]]
-        -- Requires Raptor Strike / Mongoose Bite usage.
-        -- Needs Melee Weapon DPS and Strength (which gives 1 AP).
-        ["Leveling_Melee_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,              -- << Melee Weapon is primary source of dmg
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5,     -- Valid for Melee Hunters
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- Face tanking mobs
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.2, -- Survival talents benefit from Parry
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=0.5
-        },
-        ["Leveling_Melee_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
-        },
-        ["Leveling_Melee_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
-        },
-        ["Leveling_Melee_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
-        },
-    },
-["WARLOCK"] = {
-        -- [[ 1. AFFLICTION / DRAIN TANK (The Meta) ]]
-        -- Spirit > Wand DPS > Spell Power > Stamina
-        ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,              -- Casters don't melee
-            ["MSC_WAND_DPS"]=2.0,                -- << HIGH PRIO: Primary mana saver
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- Life Tap fuel
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,       -- Fel Armor makes this better later
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.5,                -- Transitioning to Drain Life
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.8,                -- Spells/Drains are dominant
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.4,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,                -- Stat stick only
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 2. DESTRUCTION / FIRE LEVELING ]]
-        ["Leveling_Fire_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.2,                -- Finisher to save mana
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Fire_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.8,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Fire_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.4,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Fire_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 3. DEMONOLOGY (Felguard / Stat Stick) ]]
-        ["Leveling_Demo_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5,      -- << KING STAT
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Demo_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.6,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Demo_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.2,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Demo_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.1,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-    },
-["PRIEST"] = {
-        -- [[ 1. SHADOW / SPIRIT TAP (The Leveling Standard) ]]
-        -- Spirit > Wand DPS > Spell Power > Int > Stam
-        ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,              -- Don't melee.
-            ["MSC_WAND_DPS"]=2.5,                -- << KING STAT: Wands are your rotation
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.5,       -- Spirit Tap efficiency
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,  -- Helps everything
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=2.0,                -- Still vital for mana-free kills
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, -- Mind Blast/Flay scaling
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.5,                -- Tap it down as Shadowform dmg ramps up
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.5,                -- Mostly a stat stick in Outland
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 2. SMITE PRIEST (Holy DPS) ]]
-        -- Relies on Holy Fire / Smite Crits (Surge of Light).
-        ["Leveling_Smite_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Smite_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=1.2,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Smite_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.8,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Smite_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["MSC_WAND_DPS"]=0.4,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        -- [[ 3. HOLY / DISC (Dungeon Healer) ]]
-        ["Leveling_Healer_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Healer_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-    },
-["SHAMAN"] = {
-        -- [[ 1. ENHANCEMENT (Windfury Leveling) ]]
-        -- Weapon DPS > Strength > Agility > Int (Mental Dexterity)
-        ["Leveling_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=8.0,              -- White damage is king
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,    -- Mana for shocks/totems
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0,       -- Regen is vital early
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.1
-        },
-        ["Leveling_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=6.0,
-            ["MSC_WEAPON_SPEED"]=2.0,            -- Slow weapons for Windfury
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4,  -- Flurry uptime
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,    -- Mental Dexterity starts helping
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.1
-        },
-        ["Leveling_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=5.5,
-            ["MSC_WEAPON_SPEED"]=2.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.1,    -- Int = AP
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.1
-        },
-        ["Leveling_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["MSC_WEAPON_SPEED"]=2.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.1, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,   -- Dual Wield miss rate is high
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.1
-        },
-        ["Leveling_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,   -- Hit Cap is huge for DW
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.1, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.1
-        },
-
-        -- [[ 2. ELEMENTAL (Caster) ]]
-        ["Leveling_Caster_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- Fixed Typo
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Caster_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, -- Fixed Typo
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 3. RESTORATION (Healer) ]]
-        ["Leveling_Healer_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-        ["Leveling_Healer_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.01,
-            ["ITEM_MOD_AGILITY_SHORT"]=0.01
-        },
-
-        -- [[ 4. SHAMAN TANK (The Dream) ]]
-        -- Needs Block Value (Shield Spec) + Stam + Threat stats (Str/Int/SP)
-        ["Leveling_Tank_1_20"] = { 
-            ["MSC_WEAPON_DPS"]=5.0,              -- Threat
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5,     -- Block Value
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,      -- Dodge/Armor
-            ["ITEM_MOD_ARMOR_SHORT"]=0.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0
-        },
-        ["Leveling_Tank_21_40"] = { 
-            ["MSC_WEAPON_DPS"]=4.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_ARMOR_SHORT"]=0.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5,  -- Crucial for Shaman Tanks
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,    -- Shocks for threat
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8
-        },
-        ["Leveling_Tank_41_51"] = { 
-            ["MSC_WEAPON_DPS"]=4.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_ARMOR_SHORT"]=0.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8
-        },
-        ["Leveling_Tank_52_59"] = { 
-            ["MSC_WEAPON_DPS"]=3.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0
-        },
-        ["Leveling_Tank_60_70"] = { 
-            ["MSC_WEAPON_DPS"]=3.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5
-        },
-    },
-}
--- =============================================================
--- 3. UTILITY TABLES (Spec Names, Racials, UI)
--- =============================================================
-MSC.SpecNames = {
-    ["WARLOCK"] = { [1]="Affliction", [2]="Demonology", [3]="Destruction" },
-    ["PALADIN"] = { [1]="Holy", [2]="Protection", [3]="Retribution" },
-    ["MAGE"]    = { [1]="Arcane", [2]="Fire", [3]="Frost" },
-    ["PRIEST"]  = { [1]="Discipline", [2]="Holy", [3]="Shadow" },
-    ["DRUID"]   = { [1]="Balance", [2]="FeralCombat", [3]="Restoration" },
-    ["SHAMAN"]  = { [1]="Elemental", [2]="Enhancement", [3]="Restoration" },
-    ["ROGUE"]   = { [1]="Assassination", [2]="Combat", [3]="Subtlety" },
-    ["WARRIOR"] = { [1]="Arms", [2]="Fury", [3]="Protection" },
-    ["HUNTER"]  = { [1]="BeastMastery", [2]="Marksmanship", [3]="Survival" },
-}
-
-MSC.RacialTraits = {
-    ["Human"] = { [7]=5, [8]=5, [4]=5, [5]=5 },
-    ["Orc"] = { [0]=5, [1]=5 },
-    ["Dwarf"] = { [3]=5 },
-    ["Troll"] = { [2]=5, [16]=5 },
-    ["Draenei"] = {}, 
-    ["BloodElf"] = {}, 
-}
-
-MSC.SpeedChecks = {
-    ["WARRIOR"] = { ["Default"]={ MH_Slow=true }, ["FURY_DW"]={ MH_Slow=true, OH_Fast=true }, ["DEEP_PROT"]={ MH_Fast=true } },
-    ["ROGUE"] = { ["Default"]={ MH_Slow=true, OH_Fast=true } },
-    ["PALADIN"] = { ["Default"]={ MH_Slow=true }, ["PROT_DEEP"]={ MH_Fast=true } },
-    ["HUNTER"] = { ["Default"]={ Ranged_Slow=true } },
-    ["SHAMAN"] = { ["Default"]={ MH_Slow=true } }
-}
-
-MSC.ValidWeapons = {
-    ["WARRIOR"] = {
-        [0]=true, [1]=true,   -- Axes
-        [4]=true, [5]=true,   -- Maces
-        [7]=true, [8]=true,   -- Swords
-        [6]=true, [10]=true,  -- Polearm, Staff
-        [13]=true, [15]=true, -- Fist, Dagger
-        [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Xbow, Thrown
-    },
-    ["ROGUE"] = {
-        [4]=true,             -- 1H Maces (No 2H)
-        [7]=true,             -- 1H Swords (No 2H)
-        [13]=true, [15]=true, -- Fist, Dagger
-        [2]=true, [3]=true, [18]=true, [16]=true, -- Bow, Gun, Xbow, Thrown
-        -- REMOVED: [0] Axes (WotLK), [5] 2H Maces (Never)
-    },
-    ["HUNTER"] = {
-        [0]=true, [1]=true,   -- Axes
-        [7]=true, [8]=true,   -- Swords
-        [6]=true, [10]=true,  -- Polearm, Staff
-        [13]=true, [15]=true, -- Fist, Dagger
-        [2]=true, [3]=true, [18]=true, [16]=true, -- Bow, Gun, Xbow, Thrown
-        -- REMOVED: [4],[5] Maces (Hunters cannot use Maces)
-    },
-    ["PRIEST"]   = { [4]=true, [10]=true, [15]=true, [19]=true }, -- 1H Mace, Staff, Dagger, Wand
-    ["MAGE"]     = { [7]=true, [10]=true, [15]=true, [19]=true }, -- 1H Sword, Staff, Dagger, Wand
-    ["WARLOCK"]  = { [7]=true, [10]=true, [15]=true, [19]=true }, -- 1H Sword, Staff, Dagger, Wand
-    ["DRUID"]    = { 
-        [4]=true, [5]=true,   -- Maces (1H/2H)
-        [10]=true, [15]=true  -- Staff, Dagger
-        -- REMOVED: [13] Fists (Cataclysm), [6] Polearms (WotLK)
-    },
-    ["SHAMAN"]   = { 
-        [0]=true, [1]=true,   -- Axes (1H/2H)
-        [4]=true, [5]=true,   -- Maces (1H/2H)
-        [10]=true, [13]=true, [15]=true -- Staff, Fist, Dagger
-    },
-    ["PALADIN"]  = { 
-        [0]=true, [1]=true,   -- Axes
-        [4]=true, [5]=true,   -- Maces
-        [7]=true, [8]=true,   -- Swords
-        [6]=true              -- Polearms
-    },
+-- ============================================================================
+-- 1. GLOBAL CONSTANTS & MAPS
+-- ============================================================================
+MSC.SlotMap = {
+    ["INVTYPE_HEAD"]=1, ["INVTYPE_NECK"]=2, ["INVTYPE_SHOULDER"]=3, ["INVTYPE_BODY"]=4, 
+    ["INVTYPE_CHEST"]=5, ["INVTYPE_ROBE"]=5, ["INVTYPE_WAIST"]=6, ["INVTYPE_LEGS"]=7, 
+    ["INVTYPE_FEET"]=8, ["INVTYPE_WRIST"]=9, ["INVTYPE_HAND"]=10, ["INVTYPE_FINGER"]=11, 
+    ["INVTYPE_TRINKET"]=13, ["INVTYPE_CLOAK"]=15, ["INVTYPE_WEAPON"]=16, ["INVTYPE_SHIELD"]=17, 
+    ["INVTYPE_2HWEAPON"]=16, ["INVTYPE_WEAPONMAINHAND"]=16, ["INVTYPE_WEAPONOFFHAND"]=17, 
+    ["INVTYPE_HOLDABLE"]=17, ["INVTYPE_RANGED"]=18, ["INVTYPE_THROWN"]=18, 
+    ["INVTYPE_RANGEDRIGHT"]=18, ["INVTYPE_RELIC"]=18 
 }
 
 MSC.ShortNames = {
@@ -2168,9 +19,9 @@ MSC.ShortNames = {
     ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= "Spell Haste",
     ["ITEM_MOD_EXPERTISE_RATING_SHORT"]  = "Expertise",
     ["ITEM_MOD_ARMOR_PENETRATION_SHORT"] = "Armor Pen",
-	["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = "Armor Pen",
+    ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = "Armor Pen",
     ["ITEM_MOD_SPELL_PENETRATION_SHORT"] = "Spell Pen",
-	["ITEM_MOD_SPELL_PENETRATION_RATING_SHORT"] = "Spell Pen",
+    ["ITEM_MOD_SPELL_PENETRATION_RATING_SHORT"] = "Spell Pen",
     ["ITEM_MOD_ATTACK_POWER_FERAL_SHORT"]= "Feral AP",
     ["MSC_PVP_UTILITY"]                  = "PvP Utility",
     ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = "Expertise", 
@@ -2216,248 +67,25 @@ MSC.ShortNames = {
     ["ITEM_MOD_NATURE_RESISTANCE_SHORT"] = "Nature Res",
     ["ITEM_MOD_ARCANE_RESISTANCE_SHORT"] = "Arcane Res",
     ["ITEM_MOD_ALL_RESISTANCE_SHORT"]    = "All Res",
-	["MSC_WEAPON_SPEED"]				 = "Speed",
-    ["MSC_WEAPON_DPS"]					 = "Weapon DPS",
-    ["MSC_WAND_DPS"]					 = "Wand DPS",
-}
-
-MSC.SlotMap = { 
-    ["INVTYPE_HEAD"]=1, ["INVTYPE_NECK"]=2, ["INVTYPE_SHOULDER"]=3, ["INVTYPE_BODY"]=4, 
-    ["INVTYPE_CHEST"]=5, ["INVTYPE_ROBE"]=5, ["INVTYPE_WAIST"]=6, ["INVTYPE_LEGS"]=7, 
-    ["INVTYPE_FEET"]=8, ["INVTYPE_WRIST"]=9, ["INVTYPE_HAND"]=10, ["INVTYPE_FINGER"]=11, 
-    ["INVTYPE_TRINKET"]=13, ["INVTYPE_CLOAK"]=15, ["INVTYPE_WEAPON"]=16, ["INVTYPE_SHIELD"]=17, 
-    ["INVTYPE_2HWEAPON"]=16, ["INVTYPE_WEAPONMAINHAND"]=16, ["INVTYPE_WEAPONOFFHAND"]=17, 
-    ["INVTYPE_HOLDABLE"]=17, ["INVTYPE_RANGED"]=18, ["INVTYPE_THROWN"]=18, 
-    ["INVTYPE_RANGEDRIGHT"]=18, ["INVTYPE_RELIC"]=18 
-}
-
-MSC.StatToCritMatrix = {
-    ["WARRIOR"] = { Agi = { {1, 4.0}, {60, 20.0}, {70, 33.0} } },
-    ["ROGUE"] = { Agi = { {1, 3.5}, {60, 29.0}, {70, 40.0} } },
-    ["HUNTER"] = { Agi = { {1, 4.5}, {60, 53.0}, {70, 40.0} } },
-    ["PALADIN"] = { Agi = { {1, 4.0}, {60, 20.0}, {70, 25.0} }, Int = { {1, 6.0}, {60, 29.5}, {70, 80.0} } },
-    ["SHAMAN"] = { Agi = { {1, 4.0}, {60, 20.0}, {70, 25.0} }, Int = { {1, 6.0}, {60, 59.5}, {70, 80.0} } },
-    ["DRUID"] = { Agi = { {1, 4.0}, {60, 20.0}, {70, 25.0} }, Int = { {1, 6.5}, {60, 60.0}, {70, 80.0} } },
-    ["MAGE"] = { Agi = { {60, 20.0}, {70, 25.0} }, Int = { {1, 6.0}, {60, 59.5}, {70, 80.0} } },
-    ["PRIEST"] = { Agi = { {60, 20.0}, {70, 25.0} }, Int = { {1, 6.0}, {60, 59.2}, {70, 80.0} } },
-    ["WARLOCK"] = { Agi = { {60, 20.0}, {70, 25.0} }, Int = { {1, 6.5}, {60, 60.6}, {70, 80.0} } },
-}
-
--- =============================================================
--- 4. ITEM OVERRIDES (Manual Stats for Complex Items)
--- =============================================================
-MSC.ItemOverrides = {
-    -- [[ WEIRD / SPECIAL ITEMS ]]
-	
-    -- [[ PVP RELICS ]]
-    [32489] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26, estimate = true }, -- Gladiator's Libram of Vengeance
-    -- Burst of Knowledge (Mana Cost Reduction -> Int/SP)
-    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
-
-    -- Hand of Justice (Chance on hit: Extra Attack). Parser can't calculate "Extra Attack" value easily.
-    [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
-
-    -- Ironfoe (Chance on hit: Speak Dwarven + Extra Attacks). Too complex for parser.
-    [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
-
-    -- [[ PVP RELICS ]]
-    [32489] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26, estimate = true }, -- Gladiator's Libram of Vengeance
-
-    -- [[ PVP UTILITY (Keep These) ]]
-    -- The parser doesn't know what "PvP Utility" score is, so we manually assign it.
-    [18854] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18856] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18849] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [23835] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18851] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18852] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18853] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18850] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18846] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [28234] = { MSC_PVP_UTILITY = 80, estimate = true }, 
-    [18834] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18845] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18841] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18839] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18832] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18835] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18837] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18838] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [23832] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [28235] = { MSC_PVP_UTILITY = 80, estimate = true }, 
+    ["MSC_WEAPON_SPEED"]                 = "Speed",
+    ["MSC_WEAPON_DPS"]                   = "Weapon DPS",
+    ["MSC_WAND_DPS"]                     = "Wand DPS",
 }
 
 MSC.PrettyNames = {
-	-- [[ GENERIC / SHARED ]]
-    ["Leveling_1_20"]  = "Starter (1-20)",
+   ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_41_51"] = "Standard Leveling (41-51)",
     ["Leveling_52_59"] = "Standard Leveling (52-59)",
     ["Leveling_60_70"] = "Standard Leveling (Outland)",
-	
-    ["WARRIOR"] = {
-        ["FURY_2H"]         = "Raid: Arms/Fury (2H)",
-        ["FURY_DW"]         = "Raid: Fury (Dual Wield)",
-        ["ARMS_PVP"]        = "PvP: Arms (Mortal Strike)",
-        ["ARMS_PVE"]        = "Raid: Arms (Blood Frenzy)",
-        ["DEEP_PROT"]       = "Tank: Deep Protection",
-        -- Leveling
-        ["Leveling_DW_21_40"]   = "Fury/DW (21-40)",
-        ["Leveling_DW_41_51"]   = "Fury/DW (41-51)",
-        ["Leveling_DW_52_59"]   = "Fury/DW (52-59)",
-        ["Leveling_DW_60_70"]   = "Fury/DW (Outland)",
-        ["Leveling_Tank_21_40"] = "Dungeon Tank (21-40)",
-        ["Leveling_Tank_41_51"] = "Dungeon Tank (41-51)",
-        ["Leveling_Tank_52_59"] = "Dungeon Tank (52-59)",
-        ["Leveling_Tank_60_70"] = "Dungeon Tank (Outland)",
-    },
-    ["PALADIN"] = {
-        ["HOLY_RAID"]       = "Healer: Holy (Illumination)",
-        ["PROT_DEEP"]       = "Tank: Deep Protection",
-        ["PROT_AOE"]        = "Farming: AoE Grinding (Strat)",
-        ["RET_STANDARD"]    = "DPS: Retribution",
-        ["SHOCKADIN_PVP"]   = "PvP: Shockadin",
-		-- Leveling
-        ["Leveling_RET_1_20"]  = "Retribution (1-20)",
-        ["Leveling_RET_21_40"] = "Retribution (21-40)",
-        ["Leveling_RET_41_51"] = "Retribution (41-51)",
-        ["Leveling_RET_52_59"] = "Retribution (52-59)",
-        ["Leveling_RET_60_70"] = "Retribution (Outland)",
-        
-        ["Leveling_PROT_AOE_21_40"] = "Prot AoE Grind (21-40)",
-        ["Leveling_PROT_AOE_41_51"] = "Prot AoE Grind (41-51)",
-        ["Leveling_PROT_AOE_52_59"] = "Prot AoE Grind (52-59)",
-        ["Leveling_PROT_AOE_60_70"] = "Prot AoE Grind (Outland)",
-        
-        ["Leveling_HOLY_DUNGEON_21_40"] = "Holy Dungeon (21-40)",
-        ["Leveling_HOLY_DUNGEON_41_51"] = "Holy Dungeon (41-51)",
-        ["Leveling_HOLY_DUNGEON_52_59"] = "Holy Dungeon (52-59)",
-        ["Leveling_HOLY_DUNGEON_60_70"] = "Holy Dungeon (Outland)",
-    },
-    ["HUNTER"] = {
-        ["RAID_BM"]          = "Raid: Beast Mastery",
-        ["RAID_SURV"]        = "Raid: Survival (Expose Weakness)",
-        ["RAID_MM"]          = "Raid: Marksmanship",
-        ["PVP_MM"]           = "PvP: Marksmanship",
-		-- Leveling
-        ["Leveling_Melee_21_40"] = "Survival Melee (21-40)",
-        ["Leveling_Melee_41_51"] = "Survival Melee (41-51)",
-        ["Leveling_Melee_52_59"] = "Survival Melee (52-59)",
-        ["Leveling_Melee_60_70"] = "Survival Melee (Outland)",
-    },
-    ["ROGUE"] = {
-        ["RAID_COMBAT"]     = "Raid: Combat (Swords/Maces)",
-        ["RAID_MUTILATE"]   = "Raid: Mutilate (Daggers)",
-        ["PVP_SUBTLETY"]    = "PvP: Shadowstep / Hemo",
-		-- Leveling
-        ["Leveling_Dagger_1_20"]  = "Dagger/Ambush (1-20)",
-        ["Leveling_Dagger_21_40"] = "Dagger/Ambush (21-40)",
-        ["Leveling_Dagger_41_51"] = "Dagger/Ambush (41-51)",
-        ["Leveling_Dagger_52_59"] = "Dagger/Ambush (52-59)",
-        ["Leveling_Dagger_60_70"] = "Dagger/Ambush (Outland)",    
-        ["Leveling_Hemo_1_20"]    = "Hemorrhage (1-20)",
-        ["Leveling_Hemo_21_40"]   = "Hemorrhage (21-40)",
-        ["Leveling_Hemo_41_51"]   = "Hemorrhage (41-51)",
-        ["Leveling_Hemo_52_59"]   = "Hemorrhage (52-59)",
-        ["Leveling_Hemo_60_70"]   = "Hemorrhage (Outland)",
-    },
-    ["PRIEST"] = {
-        ["HOLY_DEEP"]       = "Healer: Circle of Healing",
-        ["DISC_SUPPORT"]    = "Healer: Discipline (Pain Supp)",
-        ["SMITE_DPS"]       = "DPS: Smite (Holy Fire)",
-        ["SHADOW_PVE"]      = "DPS: Shadow (Mana Battery)",
-        ["SHADOW_PVP"]      = "PvP: Shadow",
-		-- Leveling
-        ["Leveling_Smite_21_40"] = "Smite DPS (21-40)",
-        ["Leveling_Smite_41_51"] = "Smite DPS (41-51)",
-        ["Leveling_Smite_52_59"] = "Smite DPS (52-59)",
-        ["Leveling_Smite_60_70"] = "Smite DPS (Outland)",
-        
-        ["Leveling_Healer_52_59"] = "Dungeon Healer (52-59)",
-        ["Leveling_Healer_60_70"] = "Dungeon Healer (Outland)",
-    },
-    ["SHAMAN"] = {
-        ["ELE_PVE"]         = "Raid: Elemental (Totem of Wrath)",
-        ["ELE_PVP"]         = "PvP: Elemental (Burst)",
-        ["ENH_PVE"]         = "Raid: Enhancement (Dual Wield)",
-        ["RESTO_PVE"]       = "Healer: Chain Heal Spam",
-        ["SHAMAN_TANK"]     = "Tank: Warden (Experimental)",
-		-- Leveling
-        ["Leveling_Caster_52_59"] = "Elemental (52-59)",
-        ["Leveling_Caster_60_70"] = "Elemental (Outland)",
-        
-        ["Leveling_Healer_52_59"] = "Resto Dungeon (52-59)",
-        ["Leveling_Healer_60_70"] = "Resto Dungeon (Outland)",
-        
-        ["Leveling_Tank_1_20"]    = "Shaman Tank (1-20)",
-        ["Leveling_Tank_21_40"]   = "Shaman Tank (21-40)",
-        ["Leveling_Tank_41_51"]   = "Shaman Tank (41-51)",
-        ["Leveling_Tank_52_59"]   = "Shaman Tank (52-59)",
-        ["Leveling_Tank_60_70"]   = "Shaman Tank (Outland)",
-    },
-    ["MAGE"] = {
-        ["FIRE_RAID"]       = "Raid: Deep Fire",
-        ["ARCANE_RAID"]     = "Raid: Arcane (Mind Mastery)",
-        ["FROST_PVE"]       = "Raid: Deep Frost (Winter's Chill)",
-        ["FROST_PVP"]       = "PvP: Frost (Water Elemental)",
-        ["FROST_AOE"]       = "Farming: AoE Blizzard",
-		-- Leveling
-        ["Leveling_Fire_21_40"] = "Fire (21-40)",
-        ["Leveling_Fire_41_51"] = "Fire (41-51)",
-        ["Leveling_Fire_52_59"] = "Fire (52-59)",
-        ["Leveling_Fire_60_70"] = "Fire (Outland)",
-        
-        ["Leveling_AoE_21_40"] = "Frost AoE Grind (21-40)",
-        ["Leveling_AoE_41_51"] = "Frost AoE Grind (41-51)",
-        ["Leveling_AoE_52_59"] = "Frost AoE Grind (52-59)",
-        ["Leveling_AoE_60_70"] = "Frost AoE Grind (Outland)",
-    },
-    ["WARLOCK"] = {
-		["DESTRUCT_SHADOW"]  = "Raid: Destruction (Shadow)",
-        ["DESTRUCT_FIRE"]    = "Raid: Destruction (Fire)",
-        ["RAID_AFFLICTION"]  = "Raid: Affliction (UA)",
-        ["DEMO_PVE"]         = "Raid: Demonology (Felguard)",
-        ["PVP_SL_SL"]        = "PvP: Soul Link / Siphon Life",
-		-- Leveling
-        ["Leveling_Fire_21_40"] = "Destro Fire (21-40)",
-        ["Leveling_Fire_41_51"] = "Destro Fire (41-51)",
-        ["Leveling_Fire_52_59"] = "Destro Fire (52-59)",
-        ["Leveling_Fire_60_70"] = "Destro Fire (Outland)",
-        
-        ["Leveling_Demo_21_40"] = "Demonology (21-40)",
-        ["Leveling_Demo_41_51"] = "Demonology (41-51)",
-        ["Leveling_Demo_52_59"] = "Demonology (52-59)",
-        ["Leveling_Demo_60_70"] = "Demonology (Outland)",
-    },
-    ["DRUID"] = {
-        ["BALANCE_PVE"]      = "DPS: Balance (Boomkin)",
-        ["DREAMSTATE"]       = "Healer: Dreamstate (High Int)",
-        ["MOONGLOW"]         = "Healer: Moonglow (Efficiency)",
-        ["RESTO_TREE"]       = "Healer: Tree of Life",
-        ["RESTO_PVP"]        = "PvP: Resto (Resilience)",
-        ["FERAL_CAT"]        = "DPS: Feral Cat",
-        ["FERAL_BEAR"]       = "Tank: Feral Bear",
-		-- Leveling
-        ["Leveling_Bear_21_40"]   = "Feral Bear (21-40)",
-        ["Leveling_Bear_41_51"]   = "Feral Bear (41-51)",
-        ["Leveling_Bear_52_59"]   = "Feral Bear (52-59)",
-        ["Leveling_Bear_60_70"]   = "Feral Bear (Outland)",
-        
-        ["Leveling_Caster_41_51"] = "Balance (41-51)",
-        ["Leveling_Caster_52_59"] = "Balance (52-59)",
-        ["Leveling_Caster_60_70"] = "Balance (Outland)",
-        
-        ["Leveling_Healer_52_59"] = "Resto Dungeon (52-59)",
-        ["Leveling_Healer_60_70"] = "Resto Dungeon (Outland)",
-    },
 }
 
--- =============================================================
--- 5. ENCHANT DATABASE (Merged + Updated Flags)
--- =============================================================
+-- ============================================================================
+-- 2. ENCHANTS
+-- ============================================================================
 MSC.EnchantDB = {
     -- [[ WEAPON: TBC ENDGAME ]]
-    [2673] = { name = "Mongoose", stats = { ITEM_MOD_AGILITY_SHORT = 120, ITEM_MOD_HASTE_RATING_SHORT = 30 } }, -- Proc Avg
+    [2673] = { name = "Mongoose", stats = { ITEM_MOD_AGILITY_SHORT = 120, ITEM_MOD_HASTE_RATING_SHORT = 30 } }, 
     [2674] = { name = "Sunfire", stats = { ITEM_MOD_SPELL_POWER_SHORT = 50, ITEM_MOD_ARCANE_DAMAGE_SHORT = 50 } },
     [2675] = { name = "Soulfrost", stats = { ITEM_MOD_SPELL_POWER_SHORT = 54, ITEM_MOD_FROST_DAMAGE_SHORT = 54 } },
     [3225] = { name = "Executioner", stats = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 120 } }, 
@@ -2469,36 +97,40 @@ MSC.EnchantDB = {
     [2668] = { name = "Major Agility", stats = { ITEM_MOD_AGILITY_SHORT = 20 } },
     [3222] = { name = "Greater Agility (2H)", stats = { ITEM_MOD_AGILITY_SHORT = 35 }, requires2H = true }, 
 
-    -- [[ WEAPON: CLASSIC / LEVELING ]]
+    -- [[ WEAPON: CLASSIC / LEVELING (Cheap) ]]
     [2621] = { name = "Crusader", stats = { ITEM_MOD_STRENGTH_SHORT = 60 } }, 
     [803]  = { name = "Fiery Weapon", stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 4 } }, 
     [1897] = { name = "Weapon Dmg +5", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, 
-    [2504] = { name = "Spellpower (Classic)", stats = { ITEM_MOD_SPELL_POWER_SHORT = 30 } },
-    [2505] = { name = "Healing (Classic)", stats = { ITEM_MOD_HEALING_POWER_SHORT = 55 } },
+    [2504] = { name = "Spellpower +30", stats = { ITEM_MOD_SPELL_POWER_SHORT = 30 } },
+    [2505] = { name = "Healing +55", stats = { ITEM_MOD_HEALING_POWER_SHORT = 55 } },
     [1900] = { name = "Unholy Weapon", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 4 } }, 
-    [2563] = { name = "Major Strength", stats = { ITEM_MOD_STRENGTH_SHORT = 15 } },
+    [2563] = { name = "Major Strength (+15)", stats = { ITEM_MOD_STRENGTH_SHORT = 15 } },
     [1898] = { name = "Lifestealing", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 3 } },
     [943]  = { name = "Lesser Striking", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } },
+    [1894] = { name = "Icy Chill", stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 4 } },
+    [2564] = { name = "Agility +15", stats = { ITEM_MOD_AGILITY_SHORT = 15 } },
 
-    -- [[ SCOPES (New Flags) ]]
-    [23766] = { slot = 18, isScope = true, stats = {ITEM_MOD_CRIT_RATING_SHORT=14, ITEM_MOD_DAMAGE_PER_SECOND_SHORT=3}, name = "Adamantite Scope" }, -- +12 Dmg (~3 DPS)
-    [23764] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=3}, name = "Khorium Scope" }, -- +12 Dmg
-    [10548] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=2}, name = "Sniper Scope" }, -- +7 Dmg (~2 DPS)
+    -- [[ SCOPES ]]
+    [23766] = { slot = 18, isScope = true, stats = {ITEM_MOD_CRIT_RATING_SHORT=14, ITEM_MOD_DAMAGE_PER_SECOND_SHORT=3}, name = "Adamantite Scope" }, 
+    [23764] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=3}, name = "Khorium Scope" }, 
+    [10548] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=2}, name = "Sniper Scope" }, 
 
-    -- [[ SHIELD (New Flags) ]]
+    -- [[ SHIELD & SPIKES ]]
     [2655] = { name = "Major Stamina", slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 18 } },
     [2658] = { name = "Intellect", slot = 17, isShield = true, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
     [2659] = { name = "Shield Block", slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 15 } },
     [1071] = { name = "Lesser Stamina", slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 3 } }, 
+    [2748] = { name = "Felsteel Shield Spike", slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 32 } }, 
+    [2747] = { name = "Thorium Shield Spike", slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 25 } },
 
-    -- [[ HEAD (Glyphs) ]]
+    -- [[ HEAD (Glyphs - TBC Only) ]]
     [3012] = { name = "Glyph of Power (Sha'tar)", slot = 1, stats = { ITEM_MOD_SPELL_POWER_SHORT = 22, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } },
     [3010] = { name = "Glyph of Ferocity (Cenarion)", slot = 1, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 34, ITEM_MOD_HIT_RATING_SHORT = 16 } },
     [3013] = { name = "Glyph of the Defender (Keepers)", slot = 1, stats = { ITEM_MOD_DODGE_RATING_SHORT = 16, ITEM_MOD_BLOCK_VALUE_SHORT = 17 } },
     [3011] = { name = "Glyph of Renewal (Honor Hold)", slot = 1, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35, ITEM_MOD_MANA_REGENERATION_SHORT = 7 } },
     [3003] = { name = "Glyph of the Gladiator", slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 18, ITEM_MOD_RESILIENCE_RATING_SHORT = 20 } },
 
-    -- [[ SHOULDER (Inscriptions) ]]
+    -- [[ SHOULDER (Inscriptions - TBC Only) ]]
     [3004] = { name = "Greater Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [3007] = { name = "Greater Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
     [3009] = { name = "Greater Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } },
@@ -2507,55 +139,61 @@ MSC.EnchantDB = {
     [2998] = { name = "Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } },
 
     -- [[ BACK ]]
-    [2653] = { name = "Greater Agility", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
+    [2653] = { name = "Greater Agility (+12)", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
     [2662] = { name = "Spell Penetration", slot = 15, stats = { ITEM_MOD_SPELL_PENETRATION_SHORT = 20 } },
     [3296] = { name = "Steelweave", slot = 15, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } },
     [3294] = { name = "Major Armor", slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 120 } },
-    [849]  = { name = "Lesser Agility", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 3 } }, 
+    [849]  = { name = "Lesser Agility (+3)", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 3 } }, 
     [2502] = { name = "Greater Resistance", slot = 15, stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 5 } },
+    [1889] = { name = "Superior Defense (+70)", slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 70 } },
 
     -- [[ CHEST ]]
-    [2661] = { name = "Exceptional Stats", slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=6, ITEM_MOD_STRENGTH_SHORT=6, ITEM_MOD_INTELLECT_SHORT=6, ITEM_MOD_STAMINA_SHORT=6 } },
-    [2653] = { name = "Major Health", slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 150 } },
+    [2661] = { name = "Exceptional Stats (+6)", slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=6, ITEM_MOD_STRENGTH_SHORT=6, ITEM_MOD_INTELLECT_SHORT=6, ITEM_MOD_STAMINA_SHORT=6 } },
+    [2653] = { name = "Major Health (+150)", slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 150 } },
     [3297] = { name = "Major Resilience", slot = 5, stats = { ITEM_MOD_RESILIENCE_RATING_SHORT = 15 } },
     [2657] = { name = "Restore Mana Prime", slot = 5, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 6 } },
-    [1891] = { name = "Greater Stats", slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } },
-    [843]  = { name = "Minor Stats", slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=1, ITEM_MOD_STRENGTH_SHORT=1, ITEM_MOD_INTELLECT_SHORT=1, ITEM_MOD_STAMINA_SHORT=1 } },
+    [1891] = { name = "Greater Stats (+4)", slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } },
+    [843]  = { name = "Minor Stats (+1)", slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=1, ITEM_MOD_STRENGTH_SHORT=1, ITEM_MOD_INTELLECT_SHORT=1, ITEM_MOD_STAMINA_SHORT=1 } },
+    [1892] = { name = "Major Health (+100)", slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 100 } },
 
     -- [[ WRIST ]]
-    [2647] = { name = "Brawn", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, 
-    [2650] = { name = "Spellpower (Bracer)", slot = 9, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15 } }, 
-    [2651] = { name = "Major Healing (Bracer)", slot = 9, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, 
-    [2649] = { name = "Assault (Bracer)", slot = 9, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 24 } }, 
+    [2647] = { name = "Brawn (+12 Str)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, 
+    [2650] = { name = "Spellpower (+15)", slot = 9, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15 } }, 
+    [2651] = { name = "Major Healing (+30)", slot = 9, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, 
+    [2649] = { name = "Assault (+24 AP)", slot = 9, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 24 } }, 
     [2646] = { name = "Major Defense", slot = 9, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } },
-    [2655] = { name = "Fortitude", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 12 } }, 
+    [2655] = { name = "Fortitude (+12 Stam)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 12 } }, 
     [1883] = { name = "Intellect +7", slot = 9, stats = { ITEM_MOD_INTELLECT_SHORT = 7 } },
     [1884] = { name = "Spirit +9", slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 9 } },
-    [905]  = { name = "Minor Strength", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 1 } },
+    [905]  = { name = "Minor Strength (+1)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 1 } },
+    [1885] = { name = "Superior Strength (+9)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 9 } },
 
     -- [[ HANDS ]]
-    [2562] = { name = "Superior Agility", slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, 
-    [2937] = { name = "Major Spellpower", slot = 10, stats = { ITEM_MOD_SPELL_POWER_SHORT = 20 } }, 
-    [2935] = { name = "Major Healing", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35 } }, 
-    [2648] = { name = "Assault (Gloves)", slot = 10, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } }, 
-    [2613] = { name = "Threat", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } }, 
-    [3246] = { name = "Blast", slot = 10, stats = { ITEM_MOD_SPELL_CRIT_RATING_SHORT = 10 } },
+    [2562] = { name = "Superior Agility (+15)", slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, 
+    [2937] = { name = "Major Spellpower (+20)", slot = 10, stats = { ITEM_MOD_SPELL_POWER_SHORT = 20 } }, 
+    [2935] = { name = "Major Healing (+35)", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35 } }, 
+    [2648] = { name = "Assault (+26 AP)", slot = 10, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } }, 
+    [2613] = { name = "Threat (+Hit)", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } }, 
+    [3246] = { name = "Blast (+Crit)", slot = 10, stats = { ITEM_MOD_SPELL_CRIT_RATING_SHORT = 10 } },
     [1886] = { name = "Agility +7", slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 7 } },
+    [1888] = { name = "Greater Strength (+7)", slot = 10, stats = { ITEM_MOD_STRENGTH_SHORT = 7 } },
 
     -- [[ LEGS ]]
     [3154] = { name = "Runic Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 35, ITEM_MOD_STAMINA_SHORT = 20 } },
     [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_HEALING_POWER_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
     [2953] = { name = "Nethercobra Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [2952] = { name = "Nethercleft Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 40, ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2741] = { name = "Cobrahide Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 40, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
-    [2427] = { name = "Mystic Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 25, ITEM_MOD_STAMINA_SHORT = 15 } },
+    [2741] = { name = "Cobrahide Leg Armor (Cheap)", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 40, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
+    [2427] = { name = "Mystic Spellthread (Cheap)", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 25, ITEM_MOD_STAMINA_SHORT = 15 } },
+    [2743] = { name = "Clefthide Leg Armor (Cheap)", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } },
 
     -- [[ FEET ]]
     [2939] = { name = "Boar's Speed", slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 9, MSC_SPEED_BONUS = 8 } },
     [2656] = { name = "Cat's Swiftness", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 6, MSC_SPEED_BONUS = 8 } },
     [3232] = { name = "Surefooted", slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10, ITEM_MOD_CRIT_RATING_SHORT = 5 } }, 
     [2564] = { name = "Agility +7", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 7 } },
-    [911]  = { name = "Minor Agility", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
+    [911]  = { name = "Minor Agility (+1)", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
+    [910]  = { name = "Minor Speed", slot = 8, stats = { MSC_SPEED_BONUS = 8 } },
 
     -- [[ RINGS ]]
     [2931] = { name = "Spellpower", slot = 11, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } }, 
@@ -2564,9 +202,6 @@ MSC.EnchantDB = {
     [2629] = { name = "Striking", slot = 11, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } },
 }
 
--- =============================================================
--- 6. ENCHANT CANDIDATES (For Projections)
--- =============================================================
 MSC.EnchantCandidates = {
     [1] = { 3012, 3010, 3013, 3011, 3003 },
     [3] = { 3004, 3007, 3009, 3005, 2992, 2998 },
@@ -2579,87 +214,398 @@ MSC.EnchantCandidates = {
     [12] = { 2931, 2933, 2934, 2629 },
     [15] = { 2653, 2662, 3296, 3294, 2502, 849 },
     [16] = { 2673, 2674, 2675, 3225, 2669, 2642, 2671, 2666, 2667, 2668, 3222, 2621, 1897, 803, 1900, 2563, 1898, 2504, 2505, 943 },
-    [17] = { 2655, 2658, 2659, 1071, 2673, 2674, 2675, 3225, 2669, 2642, 2666, 2668, 2621, 803 },
-    [18] = { 23766, 23764, 10548 } -- Add Scopes to candidate list
+    [17] = { 2655, 2658, 2659, 1071, 2748, 2747, 2673, 2674, 2675, 3225, 2669, 2642, 2666, 2668, 2621, 803 },
+    [18] = { 23766, 23764, 10548 } 
 }
 
 MSC.EnchantCandidates_Leveling = {
-    [1] = {}, [3] = {},
-    [5] = { 1891, 843, 2653 }, 
-    [9] = { 2655, 1883, 1884, 905 },
-    [10] = { 2562, 1886 },
+    [1] = {}, [3] = {}, -- No low level head/shoulder enchants
+    [5] = { 1891, 1892, 843, 2653 }, -- Greater Stats +4, Major Health, Minor Stats
+    [9] = { 2655, 1885, 1883, 1884, 905 }, -- Fortitude, Superior Str, Int, Spirit
+    [10] = { 2562, 1886, 1888 }, -- Agi +15, Agi +7, Str +7
     [6] = {},
-    [7] = { 2741, 2743 }, 
-    [8] = { 2939, 2564, 911 },
-    [15] = { 849, 2622 },
-    [16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897 },
-    [17] = { 2621, 803, 1900, 1898, 2655, 1071 },
+    [7] = { 2741, 2743, 2427 }, -- Cobrahide, Clefthide (Req Lvl 60, good for Outland leveling)
+    [8] = { 910, 2564, 911 }, -- Minor Speed, Agi +7
+    [15] = { 849, 1889 }, -- Lesser Agi, Armor
+    [16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897, 2563, 1894, 2564 }, -- Crusader, Fiery, etc
+    [17] = { 2621, 803, 1900, 1898, 2655, 1071, 2747 }, -- Shield: Crusader (rare), Spikes
     [11] = {}, [12] = {},
-    [18] = { 10548 }
+    [18] = { 10548 } -- Sniper Scope
+}
+-- ============================================================================
+-- 3. GEM DATABASE (TBC RARE QUALITY)
+-- ============================================================================
+local GEMS = {
+    -- [[ 1. ENDGAME (RARE / BLUE QUALITY) ]]
+    RED = {
+        { id=24027, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Bold Living Ruby", colorType="RED" },
+        { id=24028, stat="ITEM_MOD_AGILITY_SHORT", val=8, name="Delicate Living Ruby", colorType="RED" },
+        { id=24030, stat="ITEM_MOD_SPELL_POWER_SHORT", val=9, name="Runed Living Ruby", colorType="RED" },
+        { id=24031, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=16, name="Bright Living Ruby", colorType="RED" },
+        { id=24032, stat="ITEM_MOD_DODGE_RATING_SHORT", val=8, name="Subtle Living Ruby", colorType="RED" },
+        { id=24033, stat="ITEM_MOD_PARRY_RATING_SHORT", val=8, name="Flashing Living Ruby", colorType="RED" },
+        { id=24035, stat="ITEM_MOD_HEALING_POWER_SHORT", val=18, name="Teardrop Living Ruby", colorType="RED" },
+    },
+    BLUE = {
+        { id=24053, stat="ITEM_MOD_STAMINA_SHORT", val=12, name="Solid Star of Elune", colorType="BLUE" }, 
+        { id=24054, stat="ITEM_MOD_SPIRIT_SHORT", val=8, name="Sparkling Star of Elune", colorType="BLUE" },
+        { id=24056, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name="Lustrous Star of Elune", colorType="BLUE" },
+        { id=24057, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=10, name="Stormy Star of Elune", colorType="BLUE" },
+    },
+    YELLOW = {
+        { id=24047, stat="ITEM_MOD_HIT_RATING_SHORT", val=8, name="Rigid Dawnstone", colorType="YELLOW" },
+        { id=24048, stat="ITEM_MOD_CRIT_RATING_SHORT", val=8, name="Smooth Dawnstone", colorType="YELLOW" },
+        { id=24050, stat="ITEM_MOD_INTELLECT_SHORT", val=8, name="Brilliant Dawnstone", colorType="YELLOW" },
+        { id=24051, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=8, name="Thick Dawnstone", colorType="YELLOW" },
+        { id=24052, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=8, name="Mystic Dawnstone", colorType="YELLOW" },
+        { id=24053, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=8, name="Gleaming Dawnstone", colorType="YELLOW" },
+        { id=24061, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=8, name="Great Dawnstone", colorType="YELLOW" },
+    },
+    ORANGE = {
+        { id=24058, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name="Inscribed Noble Topaz", colorType="ORANGE" },
+        { id=24060, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Etched Noble Topaz", colorType="ORANGE" },
+        { id=24059, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Potent Noble Topaz", colorType="ORANGE" },
+        { id=24062, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=4, name="Veiled Noble Topaz", colorType="ORANGE" },
+        { id=24061, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Glinting Noble Topaz", colorType="ORANGE" },
+        { id=24065, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Luminous Noble Topaz", colorType="ORANGE" },
+    },
+    PURPLE = {
+        { id=24063, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Nightseye", colorType="PURPLE" },
+        { id=24064, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Nightseye", colorType="PURPLE" },
+        { id=24065, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Nightseye", colorType="PURPLE" },
+        { id=24066, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Purified Nightseye", colorType="PURPLE" },
+        { id=24067, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Royal Nightseye", colorType="PURPLE" },
+        { id=24068, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Balanced Nightseye", colorType="PURPLE" },
+    },
+    GREEN = {
+        { id=24069, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Enduring Talasite", colorType="GREEN" },
+        { id=24070, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Dazzling Talasite", colorType="GREEN" },
+        { id=24071, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Jagged Talasite", colorType="GREEN" },
+        { id=24072, stat="ITEM_MOD_HIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Vivid Talasite", colorType="GREEN" },
+    },
+    
+    -- [[ 2. LEVELING (UNCOMMON / GREEN QUALITY) ]]
+    LEVELING_RED = {
+        { id=23095, stat="ITEM_MOD_STRENGTH_SHORT", val=6, name="Bold Blood Garnet", colorType="RED" },
+        { id=23096, stat="ITEM_MOD_AGILITY_SHORT", val=6, name="Delicate Blood Garnet", colorType="RED" },
+        { id=23097, stat="ITEM_MOD_SPELL_POWER_SHORT", val=7, name="Runed Blood Garnet", colorType="RED" },
+        { id=23098, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=12, name="Bright Blood Garnet", colorType="RED" },
+        { id=23101, stat="ITEM_MOD_HEALING_POWER_SHORT", val=14, name="Teardrop Blood Garnet", colorType="RED" },
+    },
+    LEVELING_BLUE = {
+        { id=23114, stat="ITEM_MOD_STAMINA_SHORT", val=9, name="Solid Azure Moonstone", colorType="BLUE" },
+        { id=23115, stat="ITEM_MOD_SPIRIT_SHORT", val=6, name="Sparkling Azure Moonstone", colorType="BLUE" },
+        { id=23116, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2, name="Lustrous Azure Moonstone", colorType="BLUE" },
+    },
+    LEVELING_YELLOW = {
+        { id=23103, stat="ITEM_MOD_HIT_RATING_SHORT", val=6, name="Rigid Golden Draenite", colorType="YELLOW" },
+        { id=23104, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, name="Smooth Golden Draenite", colorType="YELLOW" },
+        { id=23105, stat="ITEM_MOD_INTELLECT_SHORT", val=6, name="Brilliant Golden Draenite", colorType="YELLOW" },
+        { id=23106, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=6, name="Thick Golden Draenite", colorType="YELLOW" },
+        { id=23112, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=6, name="Great Golden Draenite", colorType="YELLOW" },
+    },
+    -- Leveling Hybrid gems omitted for brevity, usually Primary colors are prioritized during leveling
+    
+    META = {
+        { id=32409, stat="ITEM_MOD_AGILITY_SHORT", val=12, name="Relentless Earthstorm", isMeta=true, colorType="META" }, 
+        { id=34220, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name="Chaotic Skyfire", isMeta=true, colorType="META" }, 
+        { id=25893, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=0, name="Mystical Skyfire", isMeta=true, colorType="META" }, 
+        { id=25896, stat="ITEM_MOD_STAMINA_SHORT", val=18, name="Powerful Earthstorm", isMeta=true, colorType="META" }, 
+        { id=25899, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, name="Brutal Earthstorm", isMeta=true, colorType="META" }, 
+        { id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, name="Insightful Earthstorm", isMeta=true, colorType="META" }, 
+        { id=25890, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name="Destructive Skyfire", isMeta=true, colorType="META" }, 
+        { id=25894, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, name="Swift Starfire", isMeta=true, colorType="META" }, 
+    }
 }
 
--- =============================================================
--- 7. GEM OPTIONS (Auto-Picker)
--- =============================================================
+-- [[ CONSTRUCT OPTIONS PROGRAMMATICALLY ]]
 MSC.GemOptions = {
-    ["EMPTY_SOCKET_RED"] = {
-        { stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Bold Living Ruby" },
-        { stat="ITEM_MOD_AGILITY_SHORT", val=8, name="Delicate Living Ruby" },
-        { stat="ITEM_MOD_SPELL_POWER_SHORT", val=9, name="Runed Living Ruby" },
-        { stat="ITEM_MOD_HEALING_POWER_SHORT", val=18, name="Teardrop Living Ruby" },
-        { stat="ITEM_MOD_EXPERTISE_RATING_SHORT", val=8, name="Precise Living Ruby" }, -- << NEW: Critical for Rogues/Tanks
-        { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=2, name="Bright Living Ruby" }, -- (Late TBC)
-        
-        -- Orange (Red Match)
-        { stat="ITEM_MOD_STRENGTH_SHORT", val=4, val2=4, stat2="ITEM_MOD_CRIT_RATING_SHORT", name="Inscribed Noble Topaz" },
-        { stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, val2=4, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", name="Potent Noble Topaz" },
-        { stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, val2=4, stat2="ITEM_MOD_SPELL_HASTE_RATING_SHORT", name="Reckless Noble Topaz" }, -- << NEW: Critical for Casters
-    },
-
-    ["EMPTY_SOCKET_YELLOW"] = {
-        { stat="ITEM_MOD_CRIT_RATING_SHORT", val=8, name="Smooth Dawnstone" },
-        { stat="ITEM_MOD_HIT_RATING_SHORT", val=8, name="Rigid Dawnstone" },
-        { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=8, name="Thick Dawnstone" },
-        { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=8, name="Quick Dawnstone" }, -- << NEW
-        { stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=8, name="Smooth Dawnstone (Spell)" },
-        { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=8, name="Great Dawnstone" },
-    },
-
-    ["EMPTY_SOCKET_BLUE"] = {
-        { stat="ITEM_MOD_STAMINA_SHORT", val=12, name="Solid Star of Elune" },
-        { stat="ITEM_MOD_SPIRIT_SHORT", val=10, name="Sparkling Star of Elune" },
-        { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=4, name="Lustrous Star of Elune" }, -- MP5 is usually 4 (2mp5 per 5)
-        
-        -- Purple (Blue Match)
-        { stat="ITEM_MOD_STRENGTH_SHORT", val=4, val2=6, stat2="ITEM_MOD_STAMINA_SHORT", name="Sovereign Nightseye" },
-        { stat="ITEM_MOD_AGILITY_SHORT", val=4, val2=6, stat2="ITEM_MOD_STAMINA_SHORT", name="Shifting Nightseye" },
-        { stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, val2=6, stat2="ITEM_MOD_STAMINA_SHORT", name="Glowing Nightseye" },
-    },
-
-    ["EMPTY_SOCKET_META"] = {
-        -- Meta Gems are hard to score purely on stats because of the "Effect" (e.g. +3% Crit Dmg).
-        -- We give them high base stats to compensate.
-        { stat="ITEM_MOD_AGILITY_SHORT", val=24, name="Relentless Earthstorm (Effect)" }, -- Artificial Boost
-        { stat="ITEM_MOD_SPELL_POWER_SHORT", val=26, name="Chaotic Skyfire (Effect)" },
-        { stat="ITEM_MOD_STAMINA_SHORT", val=30, name="Austere Earthstorm (Effect)" },
-    }
+    EMPTY_SOCKET_RED = {},
+    EMPTY_SOCKET_YELLOW = {},
+    EMPTY_SOCKET_BLUE = {},
+    EMPTY_SOCKET_META = GEMS.META,
+    PRISMATIC_GEMS = {} 
 }
 
 MSC.GemOptions_Leveling = {
-    ["EMPTY_SOCKET_RED"] = {
-        { stat="ITEM_MOD_STRENGTH_SHORT", val=4, name="Bold Blood Garnet" },
-        { stat="ITEM_MOD_AGILITY_SHORT", val=4, name="Delicate Blood Garnet" },
-        { stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, name="Runed Blood Garnet" },
-    },
-    ["EMPTY_SOCKET_YELLOW"] = {
-        { stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, name="Smooth Golden Draenite" },
-        { stat="ITEM_MOD_HIT_RATING_SHORT", val=4, name="Rigid Golden Draenite" },
-    },
-    ["EMPTY_SOCKET_BLUE"] = {
-        { stat="ITEM_MOD_STAMINA_SHORT", val=6, name="Solid Azure Moonstone" },
-        { stat="ITEM_MOD_SPIRIT_SHORT", val=4, name="Sparkling Azure Moonstone" },
-    },
-    ["EMPTY_SOCKET_META"] = {
-        { stat="ITEM_MOD_AGILITY_SHORT", val=12, name="Relentless Earthstorm" },
-    }
+    EMPTY_SOCKET_RED = {},
+    EMPTY_SOCKET_YELLOW = {},
+    EMPTY_SOCKET_BLUE = {},
+    EMPTY_SOCKET_META = GEMS.META, -- Still use meta gems for leveling helms
+    PRISMATIC_GEMS = {} 
 }
+
+local function AddTo(targetList, sourceList)
+    for _, gem in ipairs(sourceList) do table.insert(targetList, gem) end
+end
+
+-- POPULATE ENDGAME (Blue Gems)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE)
+
+AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN)
+
+AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE)
+AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN)
+
+-- POPULATE LEVELING (Green Gems - Simplified logic for leveling)
+-- We allow Primary colors to fit their slots, and we allow them to cross-fit if user is "Casual"
+AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
+AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_YELLOW)
+AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_BLUE)
+
+-- Prismatic Lists
+AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.RED)
+AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.BLUE)
+AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.YELLOW)
+
+AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_RED)
+AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_BLUE)
+AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_YELLOW)
+
+-- ============================================================================
+-- 4. ITEM OVERRIDES (Manual Stats for "Use" & "Proc" Items)
+-- These are GLOBAL items (Trinkets, Weapons, PvP). 
+-- Class-specific Relics (Librams/Totems) live in their own Class.lua files.
+-- ============================================================================
+MSC.ItemOverrides = {
+    -- [[ GLOBAL TRINKETS ]]
+    -- Burst of Knowledge (Mana Cost Reduction -> Int/SP value)
+    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
+
+    -- Hand of Justice (Chance on hit: Extra Attack). 
+    -- Value depends on swing timer, but ~22 AP is a fair static average.
+    [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
+
+    -- Moroes' Lucky Pocket Watch (38 Dodge + 300 Dodge Use @ 8% uptime)
+    [28528] = { ITEM_MOD_DODGE_RATING_SHORT = 63 },
+
+    -- Figurine of the Colossus (Parser often misses "Shield Block Rating")
+    [27529] = { ITEM_MOD_BLOCK_RATING_SHORT = 32, ITEM_MOD_STAMINA_SHORT = 20 },
+
+    -- Dabiri's Enigma (30 Def + 125 Block Use @ 16% uptime)
+    [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21 },
+	-- [[ DARKMOON CARDS ]]
+	-- Darkmoon Card: Madness (51 Stam + Random Buffs)
+	-- Random buffs (Attack Power, Haste, etc.) average out to roughly ~35 "Stat Points" of value over a long fight.
+	[31856] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
+
+	-- Darkmoon Card: Vengeance (51 Stam + 10% chance for 95-115 Holy Dmg)
+	-- 10% chance on hit. 51 Stam is parsed automatically, but we add "estimate=true" to force our custom value logic if needed.
+	-- We approximate the Holy Damage proc as roughly ~25 Spell Power worth of threat/damage.
+	[31858] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
+
+    -- [[ WEAPONS ]]
+    -- Ironfoe (Chance on hit: Extra Attacks). Highly dependent on Windfury/HoJ synergy.
+    [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
+
+    -- [[ PVP UTILITY (Medallions / Insignias) ]]
+    -- We assign a custom "PVP_UTILITY" score so they don't show as 0 in PvP specs.
+    -- Level 60 Insignias
+    [18854] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18856] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18849] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18851] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18852] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18853] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18850] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18846] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18834] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18845] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18841] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18839] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18832] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18835] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18837] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    [18838] = { MSC_PVP_UTILITY = 60, estimate = true }, 
+    
+    -- TBC Rare Medallions (20 Resil + Utility)
+    [28234] = { MSC_PVP_UTILITY = 80, estimate = true }, -- Horde
+    [28235] = { MSC_PVP_UTILITY = 80, estimate = true }, -- Alliance
+    
+    -- TBC Epic Medallions (40 Resil + Utility)
+    [37864] = { MSC_PVP_UTILITY = 100, estimate = true }, -- Horde (Vindicator)
+    [37865] = { MSC_PVP_UTILITY = 100, estimate = true }, -- Alliance (Vindicator)
+}
+
+-- ============================================================================
+-- 5. INITIALIZATION
+-- ============================================================================
+function MSC:BuildDatabase()
+    for setID, data in pairs(MSC.RawSetData) do
+        local itemIDs = data[1] or data 
+        
+        if type(itemIDs) == "table" then
+            for _, itemID in ipairs(itemIDs) do
+                MSC.ItemSetMap[itemID] = setID
+            end
+        end
+    end
+end
+
+function MSC:GetItemSetID(itemID)
+    if not itemID then return nil end
+    return MSC.ItemSetMap[tonumber(itemID)]
+end
+
+function MSC:GetSetBonusDefinition(setID, count)
+    if MSC.SetBonusScores[setID] and MSC.SetBonusScores[setID][count] then
+        return MSC.SetBonusScores[setID][count]
+    end
+    return nil
+end
+
+-- ============================================================================
+-- 6. ITEM SETS & PROCS
+-- ============================================================================
+MSC.ItemSetMap = {} 
+MSC.RawSetData = {
+    -- [[ 1. LOW LEVEL / LEVELING SETS (15-50) ]]
+    [161] = { {10399,10401,10403,10400,10402} }, -- Defias Leather
+    [162] = { {6473,10413,10412,10410,10411} }, -- Embrace of the Viper
+    [163] = { {10328,10333,10331,10329,10330,10332} }, -- Chain of the Scarlet Crusade
+    [221] = { {7953,7950,7951,7948,7949,7952} }, -- Garb of Thero-shan
+    [522] = { {23257,23258,22879,22864,22880,22856} }, -- Champion's Guard
+    
+    -- [[ CRAFTED LEVELING SETS (40-60) ]]
+    [141] = { {15055,15053,15054} }, -- Volcanic Armor
+    [142] = { {15058,15056,21278,15057} }, -- Stormshroud Armor
+    [143] = { {15063,15062} }, -- Devilsaur Armor
+    [144] = { {15067,15066} }, -- Ironfeather Armor
+    [489] = { {15051,15050,15052,16984} }, -- Black Dragon Mail
+    [490] = { {15045,20296,15046} }, -- Green Dragon Mail
+    [491] = { {15049,15048,20295} }, -- Blue Dragon Mail
+    [520] = { {22302,22305,22301,22313,22304,22306,22303,22311} }, -- Ironweave Battlesuit
+
+    -- [[ CLASSIC DUNGEON SETS ]]
+    [121] = { {14637,14640,14636,14638,14641} }, -- Cadaverous Garb
+    [122] = { {14633,14626,14629,14632,14631} }, -- Necropile Raiment
+    [123] = { {14611,14615,14614,14612,14616} }, -- Bloodmail Regalia
+    [124] = { {14624,14622,14620,14623,14621} }, -- Deathbone Guardian
+    [81]  = { {13390,13388,13389,13391,13392} }, -- The Postmaster
+    [41]  = { {12940,12939} }, -- Dal'Rend's Arms
+    [65]  = { {13183,13218} }, -- Spider's Kiss
+
+    -- [[ DUNGEON SET 1 (Tier 0) ]]
+    [181] = { {16686,16689,16688,16683,16684,16685,16687,16682} }, -- Magister's
+    [182] = { {16693,16695,16690,16697,16692,16696,16694,16691} }, -- Devout
+    [183] = { {16698,16701,16700,16703,16705,16702,16699,16704} }, -- Dreadmist
+    [184] = { {16707,16708,16721,16710,16712,16713,16709,16711} }, -- Shadowcraft
+    [185] = { {16720,16718,16706,16714,16717,16716,16719,16715} }, -- Wildheart
+    [186] = { {16677,16679,16674,16681,16676,16680,16678,16675} }, -- Beaststalker
+    [187] = { {16667,16669,16666,16671,16672,16673,16668,16670} }, -- The Elements
+    [188] = { {16727,16729,16726,16722,16724,16723,16728,16725} }, -- Lightforge
+    [189] = { {16731,16733,16730,16735,16737,16736,16732,16734} }, -- Valor
+
+    -- [[ DUNGEON SET 2 (Tier 0.5) ]]
+    [511] = { {21999,22001,21997,21996,21998,21994,22000,21995} }, -- Heroism
+    [512] = { {22005,22008,22009,22004,22006,22002,22007,22003} }, -- Darkmantle
+    [513] = { {22109,22112,22113,22108,22110,22106,22111,22107} }, -- Feralheart
+    [514] = { {22080,22082,22083,22079,22081,22078,22085,22084} }, -- Virtuous
+    [515] = { {22013,22016,22060,22011,22015,22010,22017,22061} }, -- Beastmaster
+    [516] = { {22091,22093,22089,22088,22090,22086,22092,22087} }, -- Soulforge
+    [517] = { {22065,22068,22069,22063,22066,22062,22067,22064} }, -- Sorcerer's
+    [518] = { {22074,22073,22075,22071,22077,22070,22072,22076} }, -- Deathmist
+    [519] = { {22097,22101,22102,22095,22099,22098,22100,22096} }, -- Five Thunders
+
+    -- [[ CLASSIC RAIDS ]]
+    -- ZG
+    [461] = { {19865,19866} }, -- Twin Blades of Hakkari
+    [462] = { {19893,19905} }, -- Zanzil's
+    [463] = { {19896,19910} }, -- Primal Blessing
+    [464] = { {19912,19873} }, -- Overlord's Resolution
+    [465] = { {19920,19863} }, -- Prayer of the Primal
+    [466] = { {19925,19898} }, -- Major Mojo
+    [421] = { {19682,19683,19684} }, -- Bloodvine Garb
+    [441] = { {19685,19687,19686} }, -- Primal Batskin
+    [442] = { {19689,19688} }, -- Blood Tiger
+    [443] = { {19691,19690,19692} }, -- Bloodsoul
+    [444] = { {19695,19693,19694} }, -- Darksoul
+    [474] = { {19577,19822,19824,19823,19951} }, -- Vindicator's
+    [475] = { {19588,19825,19827,19826,19952} }, -- Freethinker's
+    [476] = { {19609,19828,19830,19829,19956} }, -- Augur's
+    [477] = { {19621,19831,19833,19832,19953} }, -- Predator's
+    [478] = { {19617,19835,19834,19836,19954} }, -- Madcap's
+    [479] = { {19613,19838,19840,19839,19955} }, -- Haruspex's
+    [480] = { {19594,19841,19843,19842,19958} }, -- Confessor's
+    [481] = { {19605,19849,20033,19848,19957} }, -- Demoniac's
+    [482] = { {19601,19845,20034,19846,19959} }, -- Illusionist's
+
+    -- TIER 1 (MC)
+    [201] = { {16795,16797,16798,16799,16801,16802,16796,16800} }, -- Arcanist
+    [202] = { {16813,16816,16815,16819,16812,16817,16814,16811} }, -- Prophecy
+    [203] = { {16808,16807,16809,16804,16805,16806,16810,16803} }, -- Felheart
+    [204] = { {16821,16823,16820,16825,16826,16827,16822,16824} }, -- Nightslayer
+    [205] = { {16834,16836,16833,16830,16831,16828,16835,16829} }, -- Cenarion
+    [206] = { {16846,16848,16845,16850,16852,16851,16847,16849} }, -- Giantstalker
+    [207] = { {16842,16844,16841,16840,16839,16838,16843,16837} }, -- Earthfury
+    [208] = { {16854,16856,16853,16857,16860,16858,16855,16859} }, -- Lawbringer
+    [209] = { {16866,16868,16865,16861,16863,16864,16867,16862} }, -- Might
+
+    -- TIER 2 (BWL)
+    [210] = { {16914,16917,16916,16918,16913,16818,16915,16912} }, -- Netherwind
+    [211] = { {16921,16924,16923,16926,16920,16925,16922,16919} }, -- Transcendence
+    [212] = { {16929,16932,16931,16934,16928,16933,16930,16927} }, -- Nemesis
+    [213] = { {16908,16832,16905,16911,16907,16910,16909,16906} }, -- Bloodfang
+    [214] = { {16900,16902,16897,16904,16899,16903,16901,16898} }, -- Stormrage
+    [215] = { {16939,16937,16942,16935,16940,16936,16938,16941} }, -- Dragonstalker
+    [216] = { {16947,16945,16950,16943,16948,16944,16946,16949} }, -- Ten Storms
+    [217] = { {16955,16953,16958,16951,16956,16952,16954,16957} }, -- Judgement
+    [218] = { {16963,16961,16966,16959,16964,16960,16962,16965} }, -- Wrath
+
+    -- TIER 3 (Naxx)
+    [523] = { {22418,22419,22416,22423,22421,22422,22417,22420,23059} }, -- Dreadnaught
+    [524] = { {22478,22479,22476,22483,22481,22482,22477,22480,23060} }, -- Bonescythe
+    [525] = { {22514,22515,22512,22519,22517,22518,22513,22516,23061} }, -- Faith
+    [526] = { {22498,22499,22496,22503,22501,22502,22497,22500,23062} }, -- Frostfire
+    [527] = { {22466,22467,22464,22471,22469,22470,22465,22468,23065} }, -- Earthshatterer
+    [528] = { {22428,22429,22425,22424,22426,22431,22427,22430,23066} }, -- Redemption
+    [529] = { {22506,22507,22504,22511,22509,22510,22505,22508,23063} }, -- Plagueheart
+    [530] = { {22438,22439,22436,22443,22441,22442,22437,22440,23067} }, -- Cryptstalker
+    [521] = { {22490,22491,22488,22495,22493,22494,22489,22492,23064} }, -- Dreamwalker
+    
+    -- [[ CLASSIC PVP (RANK 12-14) ]]
+    [383] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Horde
+    [384] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Ally
+    [389] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Horde
+    [390] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Ally
+    [387] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Horde
+    [388] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=40}} }, -- Ally
+    [394] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Mage
+    [395] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Mage
+    [396] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Lock
+    [397] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Lock
+    [386] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Paladin
+    [393] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Shaman
+    [398] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Horde Druid
+    [399] = { [2]={stats={["ITEM_MOD_STAMINA_SHORT"]=20}}, [6]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=23}} }, -- Ally Druid
+    
+    -- Gladiator (S1)
+    [700] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20}} }, -- War
+    [703] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Rogue
+    [702] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} }, -- Hunter
+    [706] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} }, -- Mage
+    [707] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} }, -- Warlock
+    [704] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_HEALING_POWER_SHORT"]=40}} }, -- Priest Holy
+
+    -- Merciless (S2)
+    [720] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=40} }, -- War (Intercept duration/AP)
+    [723] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Rogue
+    [726] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} }, -- Mage
+    [727] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} }, -- Warlock
+    [729] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} }, -- Druid Feral
+
+    -- Vengeful (S3)
+    [740] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=50} }, -- War
+    [743] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Rogue
+    [746] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} }, -- Mage
+    [747] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} }, -- Warlock
+    [755] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=20}} }, -- Paladin Tank
+}
+
+-- Initialize Set Map
+MSC:BuildDatabase()

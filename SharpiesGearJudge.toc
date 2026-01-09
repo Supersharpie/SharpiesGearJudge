@@ -6,29 +6,20 @@
 ## SavedVariables: SGJ_Settings, SGJ_History
 
 
+Core\Init.lua
 Database.lua
-Data_Sets.lua
 Helpers.lua
-Dynamic_Engine.lua
 Evaluator.lua
+Dynamic_Engine.lua
 ConflictManager.lua
-UI_Menus.lua
-UI_Lab.lua
+Classes\Warrior.lua
+Classes\Paladin.lua
+Classes\Rogue.lua
+Classes\Mage.lua
+Classes\Warlock.lua
+Classes\Priest.lua
+Classes\Shaman.lua
+Classes\Hunter.lua
+Classes\Druid.lua
+Interface.lua
 Core.lua
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
