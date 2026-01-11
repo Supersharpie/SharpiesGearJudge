@@ -330,7 +330,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- 1. TALENTS
+    -- [[ 1. EXISTING TALENTS ]]
     local rAnc = Rank("ANCESTRAL_KNOW")
     if rAnc > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAnc * 0.01)) 
@@ -340,38 +340,101 @@ function Shaman:ApplyScalers(weights, currentSpec)
     if rMent > 0 and weights["ITEM_MOD_ATTACK_POWER_SHORT"] then 
         weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * 1.1 
     end
+
+    -- [[ 2. COVARIANCE (Synergy) ]]
+    -- Branch based on Spec to apply the right math
     
-    -- 2. CAPS
+    if currentSpec:find("ENH") or currentSpec:find("Tank") then
+        -- ENHANCEMENT: Attack Power scales Crit
+        if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+            local base, pos, neg = UnitAttackPower("player")
+            local totalAP = base + pos + neg
+            
+            -- Enhancement Shamans get massive AP. 
+            if totalAP > 1000 then 
+                 local apScaler = 1 + ((totalAP - 1000) / 20000)
+                 if apScaler > 1.15 then apScaler = 1.15 end
+                 weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * apScaler
+            end
+        end
+
+    elseif currentSpec:find("ELE") or currentSpec:find("Caster") then
+        -- ELEMENTAL: Nature Dmg scales Haste
+        if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
+            local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
+            if spellPower > 600 then
+                 local spScaler = 1 + ((spellPower - 600) / 10000)
+                 if spScaler > 1.2 then spScaler = 1.2 end
+                 weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * spScaler
+            end
+        end
+
+    elseif currentSpec:find("RESTO") or currentSpec:find("Healer") then
+        -- RESTORATION: Healing scales Regen (Sustainability)
+        if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
+            local healPower = GetSpellBonusHealing()
+            if healPower > 800 then
+                local hScaler = 1 + ((healPower - 800) / 10000)
+                if hScaler > 1.2 then hScaler = 1.2 end
+                weights["ITEM_MOD_MANA_REGENERATION_SHORT"] = weights["ITEM_MOD_MANA_REGENERATION_SHORT"] * hScaler
+            end
+        end
+    end
+    
+    -- [[ 3. CAPS with HYSTERESIS ]]
     local baseCap = 142 
     local talentBonus = Rank("NATURE_GUIDANCE") * 15.8
+
+    -- A. DUAL WIELD HIT (Enhancement)
     if currentSpec:find("ENH") and Rank("DUAL_WIELD_SPEC") > 0 then
-         -- Dual Wield Hit Cap Logic
-         -- Cap is huge (363 rating). But special cap is 142.
-         -- If we hit Special Cap, lower weight but DON'T kill it.
+         -- Dual Wield has a high "White Hit" cap. 
+         -- Even after the Special Cap (9%), Hit is still valuable, just LESS valuable.
+         
          local hitRating = GetCombatRating(6)
-         if hitRating >= (baseCap - talentBonus) then
-             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 -- Reduced, but still useful for White Dmg
+         local specialCap = baseCap - talentBonus
+         
+         -- Hysteresis Buffer: 20 Rating (Wider buffer for DW)
+         if hitRating >= (specialCap + 20) then
+             -- Safely past Special Cap. Lower weight for "White Hit only"
+             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
              table.insert(activeCaps, "Yellow Hit")
+             
+         elseif hitRating >= specialCap then
+             -- Twilight Zone. We are technically capped on specials, 
+             -- but removing an item might drop us below.
+             -- Use a mid-point weight.
+             weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
+             table.insert(activeCaps, "Y-Hit (Soft)")
          end
+
+    -- B. 2H / TANK HIT (Hard Cap)
     elseif weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-         -- 2H or Tank Logic (Hard Cap)
          local hitRating = GetCombatRating(6)
-         if hitRating >= (baseCap - talentBonus) then
+         local cap = baseCap - talentBonus
+         
+         if hitRating >= (cap + 15) then
              weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
              table.insert(activeCaps, "Hit")
+         elseif hitRating >= cap then
+             weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
+             table.insert(activeCaps, "Hit (Soft)")
          end
     end
     
-    -- Spell Hit Cap (Elemental)
+    -- C. SPELL HIT (Elemental)
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
          local hitRating = GetCombatRating(8)
          -- Elemental Hit Cap is 164 (12.6%) because Totem of Wrath gives 3% + 3% Talents
          local spellCap = 164 
-         if Rank("ELEMENTAL_MASTERY") > 0 then spellCap = 76 end -- If deep Ele, likely have Totem + Talents
+         if Rank("ELEMENTAL_MASTERY") > 0 then spellCap = 76 end -- Deep Ele (likely has Totem)
          
-         if hitRating >= spellCap then
+         -- Hysteresis Buffer: 15 Rating
+         if hitRating >= (spellCap + 15) then
              weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
              table.insert(activeCaps, "Spell Hit")
+         elseif hitRating >= spellCap then
+             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+             table.insert(activeCaps, "Hit (Soft)")
          end
     end
     

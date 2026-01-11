@@ -332,56 +332,124 @@ function Druid:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {} -- Store capped stats here
     
-    -- 1. Heart of the Wild (Int)
+    -- [[ 1. EXISTING TALENT SCALERS ]]
+    -- Heart of the Wild (Int)
     local rHotW = Rank("HEART_WILD")
     if rHotW > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.04)) 
     end
     
-    -- 2. Living Spirit (Spirit)
+    -- Living Spirit (Spirit)
     local rLiv = Rank("LIVING_SPIRIT")
     if rLiv > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then 
         weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.03)) 
     end
+
+    -- [[ 2. COVARIANCE (Synergy) ]]
+    -- We must branch by spec because the stats are totally different.
+
+    if currentSpec:find("BALANCE") or currentSpec:find("Caster") then
+        -- BALANCE: Haste scales with Spell Power
+        if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
+            local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
+            if spellPower > 600 then
+                 local spScaler = 1 + ((spellPower - 600) / 10000)
+                 if spScaler > 1.2 then spScaler = 1.2 end
+                 weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * spScaler
+            end
+        end
+
+    elseif currentSpec:find("FERAL") or currentSpec:find("Bear") or currentSpec:find("Cat") then
+        -- FERAL: Crit scales with Attack Power
+        if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+            local base, pos, neg = UnitAttackPower("player")
+            local totalAP = base + pos + neg
+            
+            -- Feral AP is usually higher than Warrior AP, so threshold is 2000
+            if totalAP > 2000 then 
+                 local apScaler = 1 + ((totalAP - 2000) / 20000)
+                 if apScaler > 1.15 then apScaler = 1.15 end
+                 weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * apScaler
+            end
+        end
+
+    elseif currentSpec:find("RESTO") or currentSpec:find("Healer") then
+        -- RESTO: Regen scales with Healing Power
+        if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
+            local healPower = GetSpellBonusHealing()
+            if healPower > 800 then
+                local hScaler = 1 + ((healPower - 800) / 10000)
+                if hScaler > 1.2 then hScaler = 1.2 end
+                weights["ITEM_MOD_MANA_REGENERATION_SHORT"] = weights["ITEM_MOD_MANA_REGENERATION_SHORT"] * hScaler
+            end
+        end
+    end
     
-    -- 3. Balance of Power (Hit Cap)
-    if currentSpec:find("BALANCE") and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+    -- [[ 3. CAPS with HYSTERESIS (Anti-Loop) ]]
+    
+    -- A. BALANCE HIT CAP (Spell Hit)
+    if (currentSpec:find("BALANCE") or currentSpec:find("Caster")) and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(8) -- CR_HIT_SPELL
         local baseCap = 202 
-        local talentBonus = Rank("BALANCE_OF_POWER") * 25.2 
+        local talentBonus = Rank("BALANCE_OF_POWER") * 25.2 -- 2% per rank
+        local finalCap = baseCap - talentBonus
         
-        if hitRating >= (baseCap - talentBonus + 5) then
+        -- Hysteresis Buffer: 15 Rating
+        if hitRating >= (finalCap + 15) then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, "Hit")
+        elseif hitRating >= finalCap then
+            -- "Soft Cap" Zone
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+            table.insert(activeCaps, "Hit (Soft)")
         end
     end
 
-    -- 4. Bear Crit Immunity (Def/Resil)
-    if currentSpec == "FERAL_BEAR" and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] then
+    -- B. FERAL HIT CAP (Melee Hit 9%)
+    if (currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear")) and weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+        local hitRating = GetCombatRating(6)
+        local cap = 142
+        
+        if hitRating >= (cap + 15) then
+             if currentSpec:find("Bear") then
+                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 -- Bear hit is low value after cap
+             else
+                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 -- Cat white hit still decent
+             end
+             table.insert(activeCaps, "Hit")
+        elseif hitRating >= cap then
+             weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
+             table.insert(activeCaps, "Hit (Soft)")
+        end
+    end
+
+    -- C. BEAR CRIT IMMUNITY (Def/Resil)
+    if (currentSpec:find("FERAL_BEAR") or currentSpec:find("Bear")) and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] then
         local baseDef, armorDef = UnitDefense("player")
         local defenseSkill = baseDef + armorDef
+        local resil = GetCombatRating(15) -- CR_CRIT_TAKEN_MELEE
         
-        -- FIX: Changed 35 to 15 (CR_CRIT_TAKEN_MELEE)
-        local resil = GetCombatRating(15) 
-        
-        -- Logic: 5.6% chance to be critted. 
-        -- Survival of Fittest (3%) -> Need 2.6% reduction from gear.
-        -- 1% Reduction = ~25 Def Skill OR 39.4 Resil.
         local reductionNeeded = 5.6
-        if Rank("THICK_HIDE") >= 3 then 
-             -- Assuming Survival of the Fittest is taken if Thick Hide is maxed
-             reductionNeeded = 2.6 
-        end
+        -- Check for Survival of the Fittest (usually taken with Thick Hide)
+        if Rank("THICK_HIDE") >= 3 then reductionNeeded = 2.6 end
         
         local defReduction = (defenseSkill - 350) * 0.04
         if defReduction < 0 then defReduction = 0 end
         local resilReduction = resil / 39.4
         
-        if (defReduction + resilReduction) >= reductionNeeded then
-             -- Capped! Drop values.
+        local currentReduction = defReduction + resilReduction
+        
+        -- Hysteresis Buffer: 0.2% reduction (~8 defense skill or ~8 resil)
+        -- This prevents the "Equip/Unequip" loop for tanks hovering near the danger zone.
+        if currentReduction >= (reductionNeeded + 0.2) then
              weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
              weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5
              table.insert(activeCaps, "Crit Immune")
+        elseif currentReduction >= reductionNeeded then
+             -- Soft Cap
+             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0
+             weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.8
+             table.insert(activeCaps, "Immune (Soft)")
         end
     end
     

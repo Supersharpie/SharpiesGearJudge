@@ -109,7 +109,7 @@ Warrior.LevelingWeights = {
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02 
     },
     -- [[ 2. ARMS / 2H LEVELING (Mortal Strike) ]]
-    ["Leveling_21_40"] = { 
+    ["Leveling_2H_21_40"] = { 
         ["MSC_WEAPON_DPS"]=8.0, 
         ["MSC_WEAPON_SPEED"]=2.0, 
         ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
@@ -120,7 +120,7 @@ Warrior.LevelingWeights = {
         ["ITEM_MOD_STAMINA_SHORT"]=1.0,
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02
     },
-    ["Leveling_41_51"] = { 
+    ["Leveling_2H_41_51"] = { 
         ["MSC_WEAPON_DPS"]=6.0,
         ["MSC_WEAPON_SPEED"]=1.5,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
@@ -131,7 +131,7 @@ Warrior.LevelingWeights = {
         ["ITEM_MOD_STAMINA_SHORT"]=1.2,
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_2H_52_59"] = { 
         ["MSC_WEAPON_DPS"]=5.0,
         ["MSC_WEAPON_SPEED"]=1.0,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
@@ -140,7 +140,7 @@ Warrior.LevelingWeights = {
         ["ITEM_MOD_STAMINA_SHORT"]=1.5,
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02
     },
-    ["Leveling_60_70"] = { 
+    ["Leveling_2H_60_70"] = { 
         ["MSC_WEAPON_DPS"]=5.0, 
         ["MSC_WEAPON_SPEED"]=1.0,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
@@ -150,7 +150,7 @@ Warrior.LevelingWeights = {
         ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
         ["ITEM_MOD_AGILITY_SHORT"]=1.3,
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02
-    },
+    },		
     -- [[ 3. FURY / DW LEVELING ]]
     ["Leveling_DW_21_40"] = { 
         ["MSC_WEAPON_DPS"]=6.0, 
@@ -244,11 +244,11 @@ Warrior.PrettyNames = {
     ["ARMS_PVE"]        = "Raid: Arms (Blood Frenzy)",
     ["DEEP_PROT"]       = "Tank: Deep Protection",
 	-- Leveling Brackets
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    ["Leveling_2H_1_20"]  = "Starter (1-20)",
+    ["Leveling_2H_21_40"] = "Standard Leveling (21-40)",
+    ["Leveling_2H_41_51"] = "Standard Leveling (41-51)",
+    ["Leveling_2H_52_59"] = "Standard Leveling (52-59)",
+    ["Leveling_2H_60_70"] = "Standard Leveling (Outland)",
     ["Leveling_DW_21_40"]   = "Fury/DW (21-40)",
     ["Leveling_DW_41_51"]   = "Fury/DW (41-51)",
     ["Leveling_DW_52_59"]   = "Fury/DW (52-59)",
@@ -328,7 +328,14 @@ function Warrior:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- 1. TALENT SCALING (Vitality: +Strength/Stamina)
+    -- [[ 0. 2H SPECIALIZATION ENFORCER ]]
+    -- We explicitly tell the calculator: "If I am Arms, my Offhand DPS is worth ZERO."
+    -- This ensures 2H weapons always win against 1H+1H setups.
+    if currentSpec and (currentSpec:find("ARMS") or currentSpec:find("2H")) then
+        weights["MSC_WEAPON_DPS_OH"] = 0
+    end
+
+    -- [[ 1. TALENT SCALING (Existing) ]]
     local rVit = Rank("VITALITY")
     if rVit > 0 then
         if weights["ITEM_MOD_STRENGTH_SHORT"] then 
@@ -339,33 +346,67 @@ function Warrior:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- 2. HIT CAP (9%)
+    -- [[ 2. COVARIANCE (New: Crit Scales with AP) ]]
+    -- "The harder I hit, the more valuable a Crit becomes."
+    if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+        local base, pos, neg = UnitAttackPower("player")
+        local totalAP = base + pos + neg
+        
+        -- Start scaling after 1000 AP. 
+        if totalAP > 1000 then
+            -- Logic: Every 2000 AP adds 10% value to Crit.
+            local apScaler = 1 + ((totalAP - 1000) / 20000)
+            
+            -- CLAMP: Max 20% boost to prevent runaway loops
+            if apScaler > 1.2 then apScaler = 1.2 end
+            
+            weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * apScaler
+        end
+    end
+
+    -- [[ 3. HIT CAP with HYSTERESIS (New: Anti-Loop) ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(6) 
         local baseCap = 142
         local talentBonus = Rank("PRECISION") * 15.8
+        local finalCap = baseCap - talentBonus
         
-        if hitRating >= (baseCap - talentBonus + 5) then
+        -- HYSTERESIS BUFFER: 
+        -- We only drop the weight if we are SAFELY over the cap (by 15 rating).
+        -- This prevents the "Equip/Unequip" loop.
+        local buffer = 15 
+        
+        if hitRating >= (finalCap + buffer) then
+            -- Safely capped. Drop weight.
             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
             table.insert(activeCaps, "Hit")
+            
+        elseif hitRating >= finalCap then
+            -- "The Twilight Zone" (Capped, but barely).
+            -- Don't drop it to 0.1 yet, or we might suggest breaking the cap.
+            -- Use a middle-ground weight (e.g., 40% of normal value).
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
+            table.insert(activeCaps, "Hit (Soft)")
         end
     end
 
-    -- 3. DEFENSE CAP (490)
+    -- [[ 4. DEFENSE CAP (Existing) ]]
     if weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] > 1.0 then
         local baseDef, armorDef = UnitDefense("player")
         if (baseDef + armorDef) >= 490 then
-            weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.4
+            weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.4 -- Cap reached
             table.insert(activeCaps, "Def")
         end
     end
 
-    -- 4. EXPERTISE CAP
+    -- [[ 5. EXPERTISE CAP (Existing) ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24)
         local _, race = UnitRace("player")
-        local humanBonus = (race == "Human" or race == "Orc") and 20 or 0 -- Rough estimate
-        if (expRating + humanBonus) >= 103 then
+        local humanBonus = (race == "Human" or race == "Orc") and 20 or 0 
+        
+        -- Using Hysteresis here too is smart
+        if (expRating + humanBonus) >= (103 + 10) then
             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.5
             table.insert(activeCaps, "Exp")
         end

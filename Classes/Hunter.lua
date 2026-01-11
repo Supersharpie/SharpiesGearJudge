@@ -277,15 +277,59 @@ function Hunter:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + 0.45
     end
     
-    -- 3. Hit Cap (Surefooted)
-    if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(7) -- Ranged Hit
-        local baseCap = 142 
-        local talentBonus = Rank("SUREFOOTED") * 15.8 -- 1% per rank
+   -- [[ 2. NEW: COVARIANCE (Crit scales with AP) ]]
+    -- Paste this block right here, after the talents.
+    if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+        local base, pos, neg = UnitAttackPower("player")
+        local totalAP = base + pos + neg
         
-        if hitRating >= (baseCap - talentBonus + 5) then
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, "Hit")
+        -- Rogues scale very well with AP.
+        -- If AP > 1000, boost Crit value up to 15%
+        if totalAP > 1000 then
+            local apScaler = 1 + ((totalAP - 1000) / 20000)
+            if apScaler > 1.15 then apScaler = 1.15 end
+            weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * apScaler
+        end
+    end
+
+    -- [[ 3. HIT CAP (Updated with Hysteresis) ]]
+    if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+        local hitRating = GetCombatRating(6) 
+        local baseCap = 142
+        local talentBonus = Rank("PRECISION") * 15.8 
+        local finalCap = baseCap - talentBonus
+        
+        -- Hysteresis Buffer: 15 Rating
+        if hitRating >= (finalCap + 15) then
+            -- Safely Capped
+            if currentSpec:find("COMBAT") or currentSpec:find("Default") then
+                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
+                table.insert(activeCaps, "Yellow Hit")
+            else
+                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
+                table.insert(activeCaps, "Hit")
+            end
+        elseif hitRating >= finalCap then
+            -- "Twilight Zone" (Softened Weight)
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
+            table.insert(activeCaps, "Hit (Soft)")
+        end
+    end
+    
+    -- [[ 4. EXPERTISE CAP (Updated with Hysteresis) ]]
+    if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
+        local expRating = GetCombatRating(24)
+        local _, race = UnitRace("player")
+        local humanBonus = (race == "Human") and 20 or 0 
+        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
+        
+        -- Cap is ~103 rating. Buffer of 10.
+        if (expRating + humanBonus + talentBonus) >= (103 + 10) then
+             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
+             table.insert(activeCaps, "Exp")
+        elseif (expRating + humanBonus + talentBonus) >= 103 then
+             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
+             table.insert(activeCaps, "Exp (Soft)")
         end
     end
     

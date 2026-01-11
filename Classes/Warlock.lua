@@ -335,39 +335,60 @@ function Warlock:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- 1. TALENT: Demonic Embrace (Stamina)
+    -- [[ 1. EXISTING TALENTS ]]
     local rEmb = Rank("DEMONIC_EMBRACE")
     if rEmb > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then 
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03)) 
     end
     
-    -- 2. TALENT: Fel Intellect (Intellect)
     local rFel = Rank("FEL_INTELLECT")
     if rFel > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rFel * 0.01)) 
     end
+
+    -- [[ 2. COVARIANCE (Destro Loves Crit/Haste) ]]
+    if currentSpec:find("DESTRUCT") then
+        local spellPower = 0
+        if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) 
+        else spellPower = GetSpellBonusDamage(2) end
+        
+        if spellPower > 800 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+            -- Boost Crit/Haste value as SP climbs
+            local scaler = 1 + ((spellPower - 800) / 10000)
+            if scaler > 1.15 then scaler = 1.15 end
+            weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * scaler
+            if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
+                 weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * scaler
+            end
+        end
+    end
     
-    -- 3. HIT CAP (16% / 202 Rating)
+    -- [[ 3. HIT CAP with HYSTERESIS ]]
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) -- Spell Hit
+        local hitRating = GetCombatRating(8) 
         local baseCap = 202 
         local talentBonus = 0
         
-        -- Suppression (Affliction Only) gives 2% Hit per rank
+        -- Suppression: 2% per rank (Affliction)
         if currentSpec:find("AFFLICTION") or currentSpec:find("Leveling") then
              talentBonus = Rank("SUPPRESSION") * 25.2 
         end
         
-        if hitRating >= (baseCap - talentBonus + 5) then
+        local finalCap = baseCap - talentBonus
+        
+        -- BUFFER LOGIC
+        if hitRating >= (finalCap + 15) then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, "Hit")
+        elseif hitRating >= finalCap then
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+            table.insert(activeCaps, "Hit (Soft)")
         end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
     return weights, capText
 end
-
 function Warlock:GetWeaponBonus(itemLink) return 0 end
 
 MSC.RegisterModule("WARLOCK", Warlock)

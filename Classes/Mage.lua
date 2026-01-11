@@ -334,23 +334,18 @@ function Mage:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMind * 0.03)) 
     end
     
-    -- 2. Hit Cap (16% / 202 Rating)
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) -- Spell Hit
-        local baseCap = 202 
-        local talentBonus = 0
+   -- [[ 2. NEW: COVARIANCE (Crit scales with AP) ]]
+    -- Paste this block right here, after the talents.
+    if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+        local base, pos, neg = GetSpellBonusDamage(2)("player")
+        local totalAP = base + pos + neg
         
-        if currentSpec:find("ARCANE") then
-            -- Arcane Focus: 2% per rank (Max 10%)
-            talentBonus = Rank("ARCANE_FOCUS") * 25.2 
-        elseif currentSpec:find("FIRE") or currentSpec:find("FROST") then
-            -- Elemental Precision: 1% per rank (Max 3%)
-            talentBonus = Rank("ELEMENTAL_PRECISION") * 12.6
-        end
-        
-        if hitRating >= (baseCap - talentBonus + 5) then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, "Hit")
+        -- Rogues scale very well with AP.
+        -- If AP > 1000, boost Crit value up to 15%
+        if totalAP > 1000 then
+            local apScaler = 1 + ((totalAP - 1000) / 20000)
+            if apScaler > 1.15 then apScaler = 1.15 end
+            weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * apScaler
         end
     end
     

@@ -730,6 +730,16 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
                  if slot.id == 13 or slot.id == 14 then if cachedItem.slotId == 13 then isMatch = true end end
                  if isMatch and cachedItem.score > bestBagScore + 0.1 then foundUpgrade = true; bestBagScore = cachedItem.score; upLink = cachedItem.link end
              end
+			 -- NEW: Check for PvP Tax Visual
+        if link then
+             local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(link)
+             -- If it has resilience and we are in PvE mode
+             local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
+             if resVal > 0 and (currentWeights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0) <= 0.05 then
+                 -- Mark it as PvP gear so the user knows why the score is low
+                 row.Label:SetText("|cffcc0000PvP|r " .. slot.name)
+             end
+        end
              if foundUpgrade then 
                  row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew")
                  row.Alert:Show(); row.AlertFrame.mode = "UPGRADE"; row.AlertFrame.link = upLink; row.AlertFrame.diff = bestBagScore - itemScore
@@ -770,7 +780,7 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
 end
 
 -- =============================================================
--- 6. MATH BREAKDOWN
+-- 6. MATH BREAKDOWN (Optimized Padding)
 -- =============================================================
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
@@ -817,18 +827,22 @@ end
 function MSC.ShowMathBreakdown()
     if not MSC.MathFrame then
         local f = CreateFrame("Frame", "SGJ_MathFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(400, 520); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+        f:SetSize(420, 550); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
         f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleText:SetText("Stat Weight Breakdown")
+        f.TitleText:SetText("Stat Logic (The Receipt)")
         
         MSC.SkinFrame(f)
 
         f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
         f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 10)
-        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(360, 1); f.Scroll:SetScrollChild(f.Content)
+        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(380, 1); f.Scroll:SetScrollChild(f.Content)
         
         f.text = f.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); 
-        f.text:SetPoint("TOPLEFT", 10, -10); f.text:SetWidth(340); f.text:SetJustifyH("LEFT")
+        f.text:SetPoint("TOPLEFT", 10, -10); f.text:SetWidth(360); f.text:SetJustifyH("LEFT")
+        
+        -- VISUAL FIX: 6 pixels of padding between lines.
+        -- This is cleaner than double spacing (which adds a whole empty line).
+        f.text:SetSpacing(6)
         
         MSC.MathFrame = f
     end
@@ -841,20 +855,26 @@ function MSC.ShowMathBreakdown()
     local log = {}
     
     local function add(text, isHeader) 
-        if isHeader then table.insert(log, "\n|cffffd100" .. text .. "|r") else table.insert(log, text) end 
+        if isHeader then 
+            table.insert(log, "\n|cffffd100" .. text .. "|r") 
+        else 
+            table.insert(log, text) 
+        end
     end
 
+    -- 1. HEADER
     add("=== CUSTOMER INFORMATION ===", true)
     local prettyProfile = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[detectedKey]) or detectedKey
     add("Class: " .. class .. " | Level: " .. level)
-    add("Profile: |cff00ff00" .. prettyProfile .. "|r")
+    add("Active Profile: |cff00ff00" .. prettyProfile .. "|r")
 
-    add("=== HIT CAP ANALYSIS ===", true)
+    -- 2. CALCULATE
     local currentGear = MSC:GetEquippedGear() 
-    local _, stats = MSC:GetTotalCharacterScore(currentGear, weights)
+    local totalScore, playerStats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
     
+    add("=== HIT CAP ANALYSIS ===", true)
     local isSpell = (detectedKey:find("MAGE") or detectedKey:find("WARLOCK") or detectedKey:find("PRIEST") or detectedKey:find("ELE") or detectedKey:find("BALANCE"))
-    local hitRating = isSpell and (stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (stats["ITEM_MOD_HIT_RATING_SHORT"] or 0)
+    local hitRating = isSpell and (playerStats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (playerStats["ITEM_MOD_HIT_RATING_SHORT"] or 0)
     
     local conversion = isSpell and 12.6 or 15.8
     local curHitPct = hitRating / conversion
@@ -869,6 +889,7 @@ function MSC.ShowMathBreakdown()
         add(" Status: |cffff0000HIT CAPPED|r (Value reduced)")
     end
 
+    -- 3. TANK LOGIC
     if detectedKey:find("PROT") or detectedKey:find("TANK") or detectedKey:find("BEAR") then
         add("=== TANK SURVIVABILITY ===", true)
         
@@ -907,25 +928,36 @@ function MSC.ShowMathBreakdown()
         end
     end
 
-    add("=== STAT WEIGHTS (1 Point = ...) ===", true)
-    local sorted = {}
-    for k,v in pairs(weights) do table.insert(sorted, {k=k, v=v}) end
-    table.sort(sorted, function(a,b) return a.v > b.v end)
+    -- 4. SCORING BREAKDOWN (Single Spaced with Padding)
+    add("=== SCORING BREAKDOWN ===", true)
+    add("|cff888888(Total Amount x Weight = Contribution)|r")
     
-    for _, data in ipairs(sorted) do
-        local stat, finalVal = data.k, data.v
-        local prettyName = MSC.GetCleanStatName(stat)
-        local reason = GetStatReason(stat, class, detectedKey)
-        local note = reason and (" |cff888888[" .. reason .. "]|r") or ""
-        
-        if finalVal < 0.02 and (stat:find("HIT") or stat:find("EXPERTISE")) then 
-            note = " |cffff0000(Capped)|r" 
-        end
-        
-        if finalVal > 0.01 then 
-            add(format("%s: |cff00ccff%.2f|r%s", prettyName, finalVal, note)) 
+    local sorted = {}
+    for k, weight in pairs(weights) do 
+        if weight > 0 then
+            local myAmount = playerStats[k] or 0
+            local contrib = myAmount * weight
+            table.insert(sorted, {k=k, w=weight, amt=myAmount, score=contrib}) 
         end
     end
+    table.sort(sorted, function(a,b) return a.score > b.score end)
+    
+    for _, data in ipairs(sorted) do
+        if data.score > 0.1 then
+            local prettyName = MSC.GetCleanStatName(data.k)
+            local reason = GetStatReason(data.k, class, detectedKey)
+            
+            local line = string.format("%s: |cffffffff%.0f|r x |cff00ccff%.2f|r = |cff00ff00%.1f|r", 
+                prettyName, data.amt, data.w, data.score)
+                
+            if reason then
+                line = line .. " |cff888888(" .. reason .. ")|r"
+            end
+            add(line)
+        end
+    end
+    
+    add("\n|cff00ff00TOTAL JUDGE'S SCORE: " .. string.format("%.1f", totalScore) .. "|r")
 
     MSC.MathFrame.text:SetText(table.concat(log, "\n"))
     local textHeight = MSC.MathFrame.text:GetStringHeight()

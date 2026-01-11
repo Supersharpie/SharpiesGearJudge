@@ -317,36 +317,58 @@ function Rogue:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rSin * 0.03)) 
     end
 
-    -- 3. HIT CAP (Yellow Hit: 9% / 142 Rating)
+    -- [[ 2. NEW: COVARIANCE (Crit scales with AP) ]]
+    if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+        local base, pos, neg = UnitAttackPower("player")
+        local totalAP = base + pos + neg
+        
+        -- Rogues scale very well with AP.
+        -- If AP > 1000, boost Crit value up to 15%
+        if totalAP > 1000 then
+            local apScaler = 1 + ((totalAP - 1000) / 20000)
+            if apScaler > 1.15 then apScaler = 1.15 end
+            weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * apScaler
+        end
+    end
+
+    -- [[ 3. HIT CAP (Updated with Hysteresis) ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(6) 
         local baseCap = 142
         local talentBonus = Rank("PRECISION") * 15.8 
+        local finalCap = baseCap - talentBonus
         
-        if hitRating >= (baseCap - talentBonus + 5) then
-            -- Yellow Cap Reached
+        -- Hysteresis Buffer: 15 Rating
+        if hitRating >= (finalCap + 15) then
+            -- Safely Capped
             if currentSpec:find("COMBAT") or currentSpec:find("Default") then
-                -- Combat: White Hit is still valuable
                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
                 table.insert(activeCaps, "Yellow Hit")
             else
-                -- PvP/Mutilate: White Hit is less valuable
                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
                 table.insert(activeCaps, "Hit")
             end
+        elseif hitRating >= finalCap then
+            -- "Twilight Zone" (Softened Weight)
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
+            table.insert(activeCaps, "Hit (Soft)")
         end
     end
     
-    -- 4. EXPERTISE CAP (6.5% / ~103 Rating)
+    -- [[ 4. EXPERTISE CAP (Updated with Hysteresis) ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24)
         local _, race = UnitRace("player")
-        local humanBonus = (race == "Human") and 20 or 0 -- Approximate
-        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 -- 5 Skill per rank (~20 rating equiv)
+        local humanBonus = (race == "Human") and 20 or 0 
+        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
         
-        if (expRating + humanBonus + talentBonus) >= 103 then
+        -- Cap is ~103 rating. Buffer of 10.
+        if (expRating + humanBonus + talentBonus) >= (103 + 10) then
              weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
              table.insert(activeCaps, "Exp")
+        elseif (expRating + humanBonus + talentBonus) >= 103 then
+             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
+             table.insert(activeCaps, "Exp (Soft)")
         end
     end
     

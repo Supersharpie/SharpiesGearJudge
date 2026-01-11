@@ -302,23 +302,82 @@ function Priest:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- 1. Enlightenment (Stam/Int/Spirit)
+    -- [[ 1. EXISTING TALENT SCALING ]]
+    -- Enlightenment (Stam/Int/Spirit)
     local rEnlight = Rank("ENLIGHTENMENT")
     if rEnlight > 0 then
-        if weights["ITEM_MOD_INTELLECT_SHORT"] then weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rEnlight * 0.01)) end
-        if weights["ITEM_MOD_SPIRIT_SHORT"] then weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rEnlight * 0.01)) end
-        if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEnlight * 0.01)) end
+        local mult = 1 + (rEnlight * 0.01)
+        if weights["ITEM_MOD_INTELLECT_SHORT"] then weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * mult end
+        if weights["ITEM_MOD_SPIRIT_SHORT"] then weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * mult end
+        if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * mult end
     end
     
-    -- 2. Shadow Focus (Hit Cap)
-    if currentSpec:find("SHADOW") and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+    -- [[ 2. COVARIANCE (Synergy) ]]
+    
+    if currentSpec:find("SHADOW") or currentSpec:find("SMITE") then
+        -- DPS PRIEST: Haste/Crit scales with Spell Power
+        if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] or weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+            local spellPower = 0
+            if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) -- Shadow
+            else spellPower = GetSpellBonusDamage(2) end -- Holy (Smite)
+            
+            -- TBC Shadow scales exceptionally well with Haste once SP is high
+            if spellPower > 700 then
+                 local spScaler = 1 + ((spellPower - 700) / 10000)
+                 if spScaler > 1.2 then spScaler = 1.2 end -- Cap at 20% boost
+                 
+                 if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
+                     weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * spScaler
+                 end
+                 if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+                     weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * spScaler
+                 end
+            end
+        end
+
+    elseif currentSpec:find("HOLY") or currentSpec:find("DISC") or currentSpec:find("Healer") then
+        -- HEALER PRIEST: Regen scales with Healing Power
+        -- "The bigger my heals, the more Mana I need to sustain them."
+        if weights["ITEM_MOD_SPIRIT_SHORT"] or weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
+            local healPower = GetSpellBonusHealing()
+            
+            if healPower > 900 then
+                local hScaler = 1 + ((healPower - 900) / 10000)
+                if hScaler > 1.2 then hScaler = 1.2 end
+                
+                if weights["ITEM_MOD_SPIRIT_SHORT"] then
+                    weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler
+                end
+                if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
+                    weights["ITEM_MOD_MANA_REGENERATION_SHORT"] = weights["ITEM_MOD_MANA_REGENERATION_SHORT"] * hScaler
+                end
+            end
+        end
+    end
+    
+    -- [[ 3. HIT CAP with HYSTERESIS ]]
+    -- Shadow Focus (Hit Cap) or Smite Hit Cap
+    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(8) -- Spell Hit
         local baseCap = 202 
-        local talentBonus = Rank("SHADOW_FOCUS") * 25.2 -- 2% per rank
+        local talentBonus = 0
         
-        if hitRating >= (baseCap - talentBonus + 5) then
+        if currentSpec:find("SHADOW") then
+             talentBonus = Rank("SHADOW_FOCUS") * 25.2 -- 2% per rank
+        end
+        
+        local finalCap = baseCap - talentBonus
+        
+        -- Hysteresis Buffer: 15 Rating
+        if hitRating >= (finalCap + 15) then
+            -- Safely Capped
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, "Hit")
+            
+        elseif hitRating >= finalCap then
+            -- "Soft Cap" Zone: Reduce weight but don't zero it out
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+            table.insert(activeCaps, "Hit (Soft)")
         end
     end
     

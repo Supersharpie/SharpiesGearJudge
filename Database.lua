@@ -373,7 +373,7 @@ AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_YELLOW)
 -- Class-specific Relics (Librams/Totems) live in their own Class.lua files.
 -- ============================================================================
 MSC.ItemOverrides = {
-    -- [[ GLOBAL TRINKETS ]]
+    -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
     -- Burst of Knowledge (Mana Cost Reduction -> Int/SP value)
     [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
 
@@ -389,22 +389,211 @@ MSC.ItemOverrides = {
 
     -- Dabiri's Enigma (30 Def + 125 Block Use @ 16% uptime)
     [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21 },
-	-- [[ DARKMOON CARDS ]]
-	-- Darkmoon Card: Madness (51 Stam + Random Buffs)
-	-- Random buffs (Attack Power, Haste, etc.) average out to roughly ~35 "Stat Points" of value over a long fight.
-	[31856] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
+    
+    -- [[ DARKMOON CARDS ]]
+    -- Darkmoon Card: Madness (51 Stam + Random Buffs)
+    [31856] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
 
-	-- Darkmoon Card: Vengeance (51 Stam + 10% chance for 95-115 Holy Dmg)
-	-- 10% chance on hit. 51 Stam is parsed automatically, but we add "estimate=true" to force our custom value logic if needed.
-	-- We approximate the Holy Damage proc as roughly ~25 Spell Power worth of threat/damage.
-	[31858] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
+    -- Darkmoon Card: Vengeance (51 Stam + 10% chance for Holy Dmg)
+    -- FIX: Mapped to STRENGTH (Safe) instead of SP. Warriors/Tanks love Strength.
+    [31858] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_STRENGTH_SHORT = 25, estimate = true },
 
     -- [[ WEAPONS ]]
-    -- Ironfoe (Chance on hit: Extra Attacks). Highly dependent on Windfury/HoJ synergy.
+    -- Ironfoe (Chance on hit: Extra Attacks). 
     [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
+    
+    -- [[ TBC PHASE 1: PHYSICAL DPS ]]
+    -- Bloodlust Brooch (Use: 278 AP for 20s, 2m CD) -> ~46 AP
+    [29383] = { ITEM_MOD_ATTACK_POWER_SHORT = 46, estimate = true },
+
+    -- Abacus of Violent Odds (Use: 260 Haste for 10s, 2m CD) -> ~21 Haste
+    [28288] = { ITEM_MOD_HASTE_RATING_SHORT = 21, estimate = true },
+
+    -- Hourglass of the Unraveller (Proc: 300 AP for 10s, ~50s uptime) -> ~60 AP
+    [28034] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
+
+    -- Dragonspine Trophy (Proc: 325 Haste for 10s) -> ~45 Haste
+    [28830] = { ITEM_MOD_HASTE_RATING_SHORT = 45, estimate = true },
+
+    -- Romulo's Poison Vial (Proc: Arcane DMG) 
+    -- FIX: Mapped to AP (Safe) instead of Hit. (35 Hit * 1.8 = ~65 AP)
+    [28579] = { ITEM_MOD_ATTACK_POWER_SHORT = 65, estimate = true },
+
+    -- Bladefist's Breadth (Use: 200 AP for 15s, 90s CD) -> ~33 AP
+    [28041] = { ITEM_MOD_ATTACK_POWER_SHORT = 33, estimate = true },
+
+    -- Terokkar Tablet of Precision (Use: 85 Hit)
+    -- FIX: Mapped to CRIT (Safe). Temporary Hit rating should not count toward cap.
+    [25844] = { ITEM_MOD_CRIT_RATING_SHORT = 22, estimate = true },
+
+    -- Starkiller's Bauble (Use: 260 AP for 15s, 2m CD) -> ~32 AP
+    [32780] = { ITEM_MOD_ATTACK_POWER_SHORT = 32, estimate = true },
+
+    -- [[ TBC PHASE 1: CASTER DPS ]]
+    -- Icon of the Silver Crescent (Use: 155 SP for 20s, 2m CD) -> ~26 SP
+    [29370] = { ITEM_MOD_SPELL_POWER_SHORT = 26, estimate = true },
+
+    -- Quagmirran's Eye (Proc: 320 Haste for 6s) -> ~35 Haste
+    [27683] = { ITEM_MOD_HASTE_RATING_SHORT = 35, estimate = true },
+
+    -- Scryer's Bloodgem (Use: 150 SP for 15s, 90s CD) -> ~25 SP
+    [29132] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
+
+    -- Xiri's Gift (Use: 150 SP for 15s, 90s CD) -> ~25 SP
+    [29179] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
+
+    -- Lightning Capacitor (Proc: Bolt) -> ~45 SP (Simulated equivalence)
+    [28785] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true },
+
+    -- Shiffar's Nexus-Horn (Proc: 225 SP for 10s) -> ~40 Spell Power
+    [28418] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
+
+    -- Eye of Magtheridon (Proc: 170 SP on Resist) -> ~20 SP (Low uptime)
+    [28789] = { ITEM_MOD_SPELL_POWER_SHORT = 20, estimate = true },
+
+    -- [[ TBC PHASE 2: TIER 5 TRINKETS ]]
+    -- Tsunami Talisman (Proc: 340 AP for 10s) -> ~60 AP
+    [30627] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
+
+    -- The Skull of Gul'dan (Use: 175 Haste for 20s, 2m CD) -> ~29 Haste
+    [32483] = { ITEM_MOD_HASTE_RATING_SHORT = 29, estimate = true },
+
+    -- Sextant of Unstable Currents (Proc: 190 SP for 15s) -> ~40 SP
+    [30626] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
+    
+    -- Spyglass of the Hidden Fleet (Use: 320 AP for 20s) -> ~53 AP
+    [30621] = { ITEM_MOD_ATTACK_POWER_SHORT = 53, estimate = true },
+
+    -- Warp-Spring Coil (Proc: 1000 Armor Pen) -> ~200 ArP Rating
+    [30450] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 200, estimate = true },
+
+    -- Tome of Fiery Redemption (Use: 290 SP) -> ~48 SP
+    [30665] = { ITEM_MOD_SPELL_POWER_SHORT = 48, estimate = true },
+
+    -- Void Star Talisman (Pet Buffs) -> ~30 SP
+    [30448] = { ITEM_MOD_SPELL_POWER_SHORT = 30, estimate = true },
+
+    -- Solarian's Sapphire (Party Buff) -> ~70 AP
+    [30446] = { ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
+
+    -- [[ TBC HEALER TRINKETS ]]
+    -- Essence of the Martyr (Use: 297 Heal) -> ~50 Heal
+    [29376] = { ITEM_MOD_HEALING_SHORT = 50, estimate = true },
+
+    -- Lower City Prayerbook (Use: 220 Heal) -> ~55 Heal
+    [30841] = { ITEM_MOD_HEALING_SHORT = 55, estimate = true },
+
+    -- Ribbon of Sacrifice (Use: 73 Heal) -> ~9 Heal
+    [28590] = { ITEM_MOD_HEALING_SHORT = 9, estimate = true },
+
+    -- Bangle of Endless Blessings (Proc: Mana Regen) -> ~45 Mp5
+    [28370] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
+    
+    -- Pendant of the Violet Eye (Use: 1000 Mana) -> ~41 Mp5
+    [28727] = { ITEM_MOD_MANA_REGENERATION_SHORT = 41, estimate = true },
+
+    -- [[ TANKING UTILITY ]]
+    -- Gnomeregan Auto-Blocker 600 (Use: 59 BV) -> ~10 BV
+    [29387] = { ITEM_MOD_BLOCK_VALUE_SHORT = 10, estimate = true },
+
+    -- Mark of Defiance (Use: 128 Block Rating) -> ~21 Block Rating
+    [27928] = { ITEM_MOD_BLOCK_RATING_SHORT = 21, estimate = true },
+    
+    -- Argussian Compass (Use: Absorb) -> ~15 Stamina
+    [27922] = { ITEM_MOD_STAMINA_SHORT = 15, estimate = true },
+
+    -- [[ WEAPON PROCS ]]
+    -- Dragonmaw / Dragonstrike (Proc: Haste)
+    [28438] = { ITEM_MOD_HASTE_RATING_SHORT = 25, estimate = true }, 
+    [28439] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true }, 
+
+    -- Deep Thunder / Stormherald (Proc: Stun) -> PvP Value
+    [28441] = { ITEM_MOD_CRIT_RATING_SHORT = 30, estimate = true }, 
+    [28442] = { ITEM_MOD_CRIT_RATING_SHORT = 45, estimate = true }, 
+
+    -- Twinblade of the Phoenix (Proc: AP) -> ~40 AP
+    [29993] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true },
+
+    -- [[ TBC PHASE 3: BT / HYJAL ]]
+    -- Madness of the Betrayer (Proc: 300 ArP) -> ~60 ArP
+    [32505] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 60, estimate = true },
+
+    -- Ashtongue Talisman of Lethality (Rogue)
+    [32492] = { ITEM_MOD_ATTACK_POWER_SHORT = 200, estimate = true },
+
+    -- Ashtongue Talisman of Valor (Warrior)
+    [32485] = { ITEM_MOD_ATTACK_POWER_SHORT = 55, estimate = true },
+
+    -- Ashtongue Talisman of Vision (Shaman)
+    [32491] = { ITEM_MOD_ATTACK_POWER_SHORT = 80, ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
+
+    -- Ashtongue Talisman of Swiftness (Mage)
+    [32488] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true },
+
+    -- Ashtongue Talisman of Insight (Priest)
+    [32490] = { ITEM_MOD_SPELL_POWER_SHORT = 45, ITEM_MOD_HEALING_SHORT = 45, estimate = true },
+
+    -- Ashtongue Talisman of Equilibrium (Druid)
+    [32486] = { ITEM_MOD_STRENGTH_SHORT = 40, ITEM_MOD_SPELL_POWER_SHORT = 40, ITEM_MOD_HEALING_SHORT = 40, estimate = true },
+
+    -- Memento of Tyrande (Proc: Mp5)
+    [32496] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
+
+    -- Shadowmoon Insignia (Use: Health) -> ~29 Stam
+    [32501] = { ITEM_MOD_STAMINA_SHORT = 29, estimate = true },
+
+    -- Commendation of Kael'thas (Use: Stam, Proc: Dodge) -> ~25 Dodge
+    [32500] = { ITEM_MOD_DODGE_RATING_SHORT = 25, estimate = true },
+
+    -- [[ TBC PHASE 4: ZUL'AMAN ]]
+    -- Berserker's Call (Use: 360 AP) -> ~60 AP
+    [33830] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
+
+    -- Hex Shrunken Head (Use: 211 SP) -> ~35 SP
+    [33829] = { ITEM_MOD_SPELL_POWER_SHORT = 35, estimate = true },
+
+    -- Ancient Aqir Artifact (Use: Armor) -> ~333 Armor
+    [33831] = { ITEM_MOD_ARMOR_SHORT = 333, estimate = true },
+
+    -- Tome of Diabolic Remedy (Use: Heal) -> ~49 Heal
+    [33828] = { ITEM_MOD_HEALING_SHORT = 49, estimate = true },
+
+    -- [[ TBC PHASE 5: SUNWELL ]]
+    -- Blackened Naaru Sliver (Use: AP) -> ~130 AP
+    [34427] = { ITEM_MOD_ATTACK_POWER_SHORT = 130, estimate = true },
+
+    -- Shard of Contempt (Proc: 230 AP) -> ~100 AP
+    [34472] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, estimate = true },
+
+    -- Figurine - Shadowsong Panther (Use: AP) -> ~53 AP
+    [35702] = { ITEM_MOD_ATTACK_POWER_SHORT = 53, estimate = true },
+    
+    -- Shattered Sun Pendants (Procs)
+    [34678] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true },
+    [34679] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true },
+
+    -- Timbal's Focusing Crystal (Proc: Shadow Dmg) -> ~45 SP
+    [34470] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true },
+
+    -- Shifting Naaru Sliver (Use: SP) -> ~53 SP
+    [34429] = { ITEM_MOD_SPELL_POWER_SHORT = 53, estimate = true },
+
+    -- Shattered Sun Pendant of Acumen
+    [34664] = { ITEM_MOD_SPELL_POWER_SHORT = 20, estimate = true },
+
+    -- Vial of the Sunwell (Proc: Heal) -> ~70 Heal
+    [34471] = { ITEM_MOD_HEALING_SHORT = 70, estimate = true },
+    
+    -- Figurine - Seaspray Albatross (Mana) -> ~55 Mp5
+    [35703] = { ITEM_MOD_MANA_REGENERATION_SHORT = 55, estimate = true },
+
+    -- Commendation of Kael'thas (MgT) (Proc: Dodge) -> ~25 Dodge
+    [34473] = { ITEM_MOD_DODGE_RATING_SHORT = 25, estimate = true },
+
+    -- Figurine - Empyrean Tortoise (Use: Health) -> ~29 Stam
+    [35700] = { ITEM_MOD_STAMINA_SHORT = 29, estimate = true },
 
     -- [[ PVP UTILITY (Medallions / Insignias) ]]
-    -- We assign a custom "PVP_UTILITY" score so they don't show as 0 in PvP specs.
     -- Level 60 Insignias
     [18854] = { MSC_PVP_UTILITY = 60, estimate = true }, 
     [18856] = { MSC_PVP_UTILITY = 60, estimate = true }, 
