@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Mage = {}
 Mage.Name = "MAGE"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -11,20 +12,20 @@ Mage.Weights = {
         ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
         ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-        ["MSC_WEAPON_DPS"]=0.02 -- Safe value
+        ["MSC_WEAPON_DPS"]=0.02 
     },
 
     -- [[ 1. ARCANE (Mana Battery / Burst) ]]
     ["ARCANE_RAID"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.02,
-        ["ITEM_MOD_INTELLECT_SHORT"]        = 1.2, -- King Stat
+        ["ITEM_MOD_INTELLECT_SHORT"]        = 1.2, -- King Stat (Mind Mastery)
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
         ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]    = 1.0, 
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.3, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.7, 
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.9, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.6, -- Arcane Meditation
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -40,7 +41,7 @@ Mage.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.9, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.4, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.1,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -56,7 +57,7 @@ Mage.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.8, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.5, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.1,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -73,7 +74,8 @@ Mage.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.6, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.1,
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, 
-        -- POISON
+        ["MSC_PVP_UTILITY"]                 = 1.0,
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
     },
@@ -88,7 +90,7 @@ Mage.Weights = {
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.1, -- Blizzard doesn't crit
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.1, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.1,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
     },
@@ -242,7 +244,7 @@ Mage.PrettyNames = {
     ["FROST_PVE"]       = "Raid: Deep Frost",
     ["FROST_PVP"]       = "PvP: Frost",
     ["FROST_AOE"]       = "Farming: AoE Blizzard",
-	-- Leveling Brackets
+    -- Leveling Brackets
     ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_41_51"] = "Standard Leveling (41-51)",
@@ -286,7 +288,8 @@ Mage.Talents = {
     ["ARCANE_MIND"]     ="Arcane Mind", 
     ["MOLTEN_ARMOR"]    ="Molten Armor", 
     ["ICY_VEINS"]       ="Icy Veins",
-    ["ARCANE_FOCUS"]    ="Arcane Focus" -- Added
+    ["ARCANE_FOCUS"]    ="Arcane Focus",
+    ["MIND_MASTERY"]    ="Mind Mastery"
 }
 
 -- =============================================================
@@ -328,24 +331,54 @@ function Mage:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- 1. Arcane Mind (Int -> SP/Mana)
-    local rMind = Rank("ARCANE_MIND")
-    if rMind > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMind * 0.03)) 
+    -- [[ 1. MIND MASTERY / ARCANE MIND ]]
+    -- Mind Mastery (Deep Arcane): 25% of Int -> SP
+    local rMindMastery = Rank("MIND_MASTERY")
+    if rMindMastery > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+        local bonusRatio = rMindMastery * 0.05 -- 5% per rank
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (bonusRatio * (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
+    end
+
+    -- Arcane Mind (Arcane Tree): Int +15%
+    local rArcaneMind = Rank("ARCANE_MIND")
+    if rArcaneMind > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rArcaneMind * 0.03)) 
     end
     
-   -- [[ 2. NEW: COVARIANCE (Crit scales with AP) ]]
-    -- Paste this block right here, after the talents.
+   -- [[ 2. COVARIANCE (Fixed Crash) ]]
     if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-        local base, pos, neg = GetSpellBonusDamage(2)("player")
-        local totalAP = base + pos + neg
+        -- FIX: GetSpellBonusDamage returns a single number in TBC. Do not call it as a function.
+        local spellPower = GetSpellBonusDamage(2) -- 2 = Frost (generic enough)
         
-        -- Rogues scale very well with AP.
-        -- If AP > 1000, boost Crit value up to 15%
-        if totalAP > 1000 then
-            local apScaler = 1 + ((totalAP - 1000) / 20000)
-            if apScaler > 1.15 then apScaler = 1.15 end
-            weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * apScaler
+        -- If Spell Power > 500, boost Crit value up to 15%
+        if spellPower > 500 then
+            local spScaler = 1 + ((spellPower - 500) / 2000)
+            if spScaler > 1.15 then spScaler = 1.15 end
+            weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * spScaler
+        end
+    end
+
+    -- [[ 3. HIT CAP ]]
+    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+        local spellHitRating = GetCombatRating(8) 
+        local hitCapNeeded = 164 -- 12.6 * 13% (assuming 3% from raid debuffs)
+        
+        if currentSpec == "ARCANE_RAID" then
+            hitCapNeeded = hitCapNeeded - (Rank("ARCANE_FOCUS") * 25.2)
+        else
+            hitCapNeeded = hitCapNeeded - (Rank("ELEMENTAL_PRECISION") * 12.6)
+        end
+        
+        local _, race = UnitRace("player")
+        if race == "Draenei" then hitCapNeeded = hitCapNeeded - 12.6 end
+        if hitCapNeeded < 0 then hitCapNeeded = 0 end
+
+        if spellHitRating >= (hitCapNeeded + 12) then
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.1
+            table.insert(activeCaps, "Hit")
+        elseif spellHitRating >= hitCapNeeded then
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+            table.insert(activeCaps, "Hit (Soft)")
         end
     end
     

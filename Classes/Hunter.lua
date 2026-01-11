@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Hunter = {}
 Hunter.Name = "HUNTER"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -26,7 +27,7 @@ Hunter.Weights = {
         ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.2, 
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.3, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.4, 
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -42,8 +43,8 @@ Hunter.Weights = {
         ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]= 0.6,
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.6, -- Thrill of the Hunt
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.2,
-        -- POISON
-        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
+        -- POISON PROTECTION
+        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
     },
 
@@ -57,8 +58,8 @@ Hunter.Weights = {
         ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.3, 
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.9, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.5, 
-        -- POISON
-        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
+        -- POISON PROTECTION
+        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
     },
 
@@ -72,8 +73,8 @@ Hunter.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.8, 
         ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.0, 
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 0.5, 
-        -- POISON
-        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
+        -- POISON PROTECTION
+        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
     },
 }
@@ -102,7 +103,7 @@ Hunter.LevelingWeights = {
         ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
         ["ITEM_MOD_INTELLECT_SHORT"]=0.3, 
         ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
+        ["ITEM_MOD_STRENGTH_SHORT"]=0.02, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
     },
     ["Leveling_41_51"] = { 
@@ -137,7 +138,7 @@ Hunter.LevelingWeights = {
         ["ITEM_MOD_STRENGTH_SHORT"]=0.02
     },
 
-    -- [[ 2. MELEE HUNTER ]]
+    -- [[ 2. MELEE HUNTER (For the brave) ]]
     ["Leveling_Melee_21_40"] = { 
         ["MSC_WEAPON_DPS"]=5.0, 
         ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
@@ -264,26 +265,26 @@ function Hunter:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- 1. Expose Weakness (Agi Scaling)
+    -- [[ 1. EXISTING SCALERS ]]
+    -- Expose Weakness (Agi Scaling)
     if Rank("EXPOSE_WEAKNESS") > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then 
         weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * 1.2 
     end
     
-    -- 2. Careful Aim (Int -> RAP)
+    -- Careful Aim (Int -> RAP)
     -- Converts 45% of Int to Ranged AP
     local rCare = Rank("CAREFUL_AIM")
     if rCare > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
-        -- 1 Int gives 1 RAP (approx value)
+        -- 1 Int gives 1 RAP (approx value for this calculation)
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + 0.45
     end
     
-   -- [[ 2. NEW: COVARIANCE (Crit scales with AP) ]]
-    -- Paste this block right here, after the talents.
+   -- [[ 2. COVARIANCE (Crit scales with AP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
         local base, pos, neg = UnitAttackPower("player")
         local totalAP = base + pos + neg
         
-        -- Rogues scale very well with AP.
+        -- Hunters scale well with AP.
         -- If AP > 1000, boost Crit value up to 15%
         if totalAP > 1000 then
             local apScaler = 1 + ((totalAP - 1000) / 20000)
@@ -292,44 +293,32 @@ function Hunter:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- [[ 3. HIT CAP (Updated with Hysteresis) ]]
+    -- [[ 3. HIT CAP (FIXED: Uses Ranged Hit 7, not Melee 6) ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(6) 
-        local baseCap = 142
-        local talentBonus = Rank("PRECISION") * 15.8 
+        -- FIX: GetCombatRating(7) is Ranged Hit. (6 is Melee Hit)
+        local hitRating = GetCombatRating(7) 
+        local baseCap = 142 -- 9%
+        
+        -- Surefooted (Survival): 1% Hit per rank
+        local talentBonus = Rank("SUREFOOTED") * 15.8 
+        
         local finalCap = baseCap - talentBonus
         
-        -- Hysteresis Buffer: 15 Rating
+        -- Check Draenei Racial
+        local _, race = UnitRace("player")
+        if race == "Draenei" then finalCap = finalCap - 15.8 end
+        
+        if finalCap < 0 then finalCap = 0 end
+
+        -- Hysteresis Buffer
         if hitRating >= (finalCap + 15) then
             -- Safely Capped
-            if currentSpec:find("COMBAT") or currentSpec:find("Default") then
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
-                table.insert(activeCaps, "Yellow Hit")
-            else
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-                table.insert(activeCaps, "Hit")
-            end
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
+            table.insert(activeCaps, "Hit")
         elseif hitRating >= finalCap then
-            -- "Twilight Zone" (Softened Weight)
+            -- Soft Cap Zone
             weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
             table.insert(activeCaps, "Hit (Soft)")
-        end
-    end
-    
-    -- [[ 4. EXPERTISE CAP (Updated with Hysteresis) ]]
-    if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
-        local expRating = GetCombatRating(24)
-        local _, race = UnitRace("player")
-        local humanBonus = (race == "Human") and 20 or 0 
-        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
-        
-        -- Cap is ~103 rating. Buffer of 10.
-        if (expRating + humanBonus + talentBonus) >= (103 + 10) then
-             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
-             table.insert(activeCaps, "Exp")
-        elseif (expRating + humanBonus + talentBonus) >= 103 then
-             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
-             table.insert(activeCaps, "Exp (Soft)")
         end
     end
     
@@ -345,7 +334,7 @@ function Hunter:GetWeaponBonus(itemLink)
     local bonus = 0
     local _, race = UnitRace("player")
 
-    -- Racial: Troll (Bow) / Dwarf (Gun)
+    -- Racial: Troll (Bow) / Dwarf (Gun) (+1% Crit ~ 35 rating score equivalent)
     if race == "Dwarf" and subClassID == 3 then bonus = bonus + 35 end
     if race == "Troll" and subClassID == 2 then bonus = bonus + 35 end
     

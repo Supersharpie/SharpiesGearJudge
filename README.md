@@ -1,53 +1,55 @@
-# Sharpie's Gear Judge (TBC Edition)
+# Sharpie's Gear Judge (Anniversary Edition)
 
 **"The Final Verdict on your gear."**
 
-Sharpie's Gear Judge (SGJ) is a lightweight, highly accurate gear scoring addon designed for **The Burning Crusade (Classic)**. It analyzes your stats, talents, and current gear to tell you exactly which item is an upgrade, removing the guesswork from loot decisions.
+Sharpie's Gear Judge (SGJ) is a highly advanced, lightweight gear scoring addon designed for **World of Warcraft: The Burning Crusade (Anniversary / Classic)**. 
 
-## Key Features
+Unlike standard "BiS Lists" or heavy simulation addons, SGJ analyzes your **current** talents, level, and race to generate a dynamic "Score" for every item in the game. It tells you exactly what is an upgrade *right now*, removing the guesswork from loot decisions.
 
-### 🧠 Dynamic Stat Weights
-Unlike other addons that use static lists, SGJ adapts to YOU.
-* **Talent Detection:** Automatically switches weights based on your spec (e.g., switching from Feral to Resto Druid).
-* **Hit Cap Awareness:** Automatically reduces the value of Hit Rating if you are already at the Hit Cap.
-* **Leveling Logic:** Uses different stat priorities for Level 20 vs Level 70.
+## ✨ Key Features
 
-### ⚖️ The Verdict (Tooltip Integration)
+### 🧠 Dynamic "Plugin" Architecture
+SGJ uses a modern **Core + Plugin** system. It detects your class on login and loads a specialized mathematical model tailored specifically for you.
+* **Covariance:** The addon understands stat synergy. As your Attack Power grows, the value of Crit Rating rises to match it.
+* **Cap Guardian:** It knows your Hit, Defense, and Expertise caps. If you are over the cap, it lowers the value of that stat. If you are under, it raises it.
+* **Hysteresis:** Includes "Anti-Loop" logic to prevent the addon from telling you to break your caps.
+
+### ⚖️ The Verdict (Tooltip)
 Hover over any item to see:
-* **Sharpie's Verdict:** A clear "Upgrade" or "Downgrade" message with a score difference.
-* **Projected Score:** Shows you the potential score of an item if you were to add the best gems and enchants.
-* **Comparison:** Automatically compares against the correct slot (including 2H vs Dual Wield calculations).
+* **Sharpie's Verdict:** A clear `Upgrade` or `Downgrade` message with a precise score difference.
+* **Smart Projection:** The score includes the potential value of the **Best Gems** and **Best Enchants** available to you, so you can compare an unenchanted drop against your fully geared main piece fairly.
+* **Proc Valuation:** "Use" and "Proc" effects (like *Dragonspine Trophy* or *Bloodlust Brooch*) are mathematically converted into passive stats for accurate scoring.
 
-### 🧪 The Laboratory
-Want to compare two items that aren't equipped?
-* Open the Lab via the Minimap button or `/sgj`.
-* **Shift+Click** items from Chat or AtlasLoot directly into the Main Hand / Off Hand slots.
-* See instant comparisons between setups (e.g., Staff vs Dagger + Offhand).
+### 📜 The Ledger (History)
+Type `/sgj history` to open your Gear Receipt.
+* **Full Breakdown:** See exactly how your score is calculated.
+* **Bag Scanner:** A **Yellow Exclamation Mark (!)** appears on slots where you have a better item sitting in your bags.
+* **Enchant Alert:** A **Red Alert Icon** warns you if you are missing an enchant or gem.
 
-### 📜 The Receipt
-Type `/sgj history` or click "Show Gear Receipt" in options.
-* Shows a full breakdown of your current gear score.
-* **Bag Scanner:** Alerts you if you have a better item sitting in your bags (Yellow Exclamation Mark).
-* **Enchant Checker:** Alerts you if you are missing enchants (Red Alert Icon).
-* **Math Breakdown:** Explains exactly *why* a stat is weighted the way it is.
+### ⚔️ Hybrid Class Support
+SGJ fully supports complex hybrid mechanics:
+* **Druids:** Correctly parses "Feral Attack Power" on weapons.
+* **Warriors:** Enforces 2H priority for Arms and DW priority for Fury.
+* **Paladins/Shamans:** Scores Relics, Totems, and Librams based on their specific spell bonuses.
 
-### ⚔️ Conflict Manager
-SGJ plays nice with others. It automatically detects if you are running **RestedXP**, **Zygor**, or **Pawn** and offers to disable their conflicting tooltip lines so your screen stays clean.
+## 🛠️ Installation & Usage
 
-## Commands
-* `/sgj` or `/judge` - Open the Laboratory.
-* `/sgj config` - Open Settings (Profile selection, UI toggles).
-* `/sgj history` - Open the History/Receipt frame.
-* `/sgj save [Label]` - Snapshot your current gear set to history.
-
-## Installation
 1.  Download the latest release.
-2.  Extract the `SharpiesGearJudge` folder to `Interface\AddOns\` in your WoW directory.
-3.  Launch the game.
+2.  Extract `SharpiesGearJudge` to your `Interface\AddOns\` folder.
+3.  **Login and Play!** No setup required. The Judge automatically detects your spec.
+
+**Commands:**
+* `/sgj` - Open the Laboratory (Compare items manually).
+* `/sgj config` - Open Settings (Toggle Minimap button, Auto-Sell junk).
+* `/sgj history` - Open the Ledger.
+
+## 🤝 Compatibility
+* **Conflict Manager:** SGJ automatically detects other tooltip addons (Pawn, Zygor, RXP) and can disable their scoring lines to keep your tooltips clean.
+* **TBC Phase 5:** Fully updated for Sunwell Plateau itemization.
 
 ## Credits
 * **Author:** SuperSharpie
-* **Version:** 2.0.0 (TBC)
+* **Version:** 2.1.0 (TBC)
 * **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 * **Feedback:** Found a weight that feels off? Open an issue on GitHub!
 * **Discord:** https://discord.gg/yTSX8Us6WE

@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Warlock = {}
 Warlock.Name = "WARLOCK"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -24,7 +25,7 @@ Warlock.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 1.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.4, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.2,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_FIRE_DAMAGE_SHORT"]      = 0.02, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
@@ -41,7 +42,7 @@ Warlock.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 1.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.4, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.2,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]    = 0.02,
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
@@ -59,7 +60,7 @@ Warlock.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.5, 
         ["ITEM_MOD_STAMINA_SHORT"]          = 0.6, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.3,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -72,11 +73,11 @@ Warlock.Weights = {
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.3, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]          = 0.9, -- Demonic Knowledge
+        ["ITEM_MOD_STAMINA_SHORT"]          = 0.9, -- High base for Demonic Knowledge
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.6, 
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.9, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.2,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -92,7 +93,7 @@ Warlock.Weights = {
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.3, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.2,
         ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]    = 1.0,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
@@ -295,7 +296,8 @@ Warlock.Talents = {
     ["DEMONIC_EMBRACE"] = "Demonic Embrace", 
     ["FEL_INTELLECT"]   = "Fel Intellect",
     ["EMBERSTORM"]      = "Emberstorm",
-    ["SUPPRESSION"]     = "Suppression" 
+    ["SUPPRESSION"]     = "Suppression",
+    ["DEMONIC_KNOWLEDGE"] = "Demonic Knowledge" -- Added for Logic
 }
 
 -- =============================================================
@@ -346,7 +348,21 @@ function Warlock:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rFel * 0.01)) 
     end
 
-    -- [[ 2. COVARIANCE (Destro Loves Crit/Haste) ]]
+    -- [[ 2. DEMONIC KNOWLEDGE ]]
+    -- Demo Locks gain SP from Stamina/Int. We boost their value if this talent is taken.
+    local rDemoKnow = Rank("DEMONIC_KNOWLEDGE")
+    if rDemoKnow > 0 then
+        -- Approx 5% value boost to Stam/Int per rank (converting pet stats to master SP)
+        local boost = rDemoKnow * 0.05
+        if weights["ITEM_MOD_STAMINA_SHORT"] then 
+            weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] + boost
+        end
+        if weights["ITEM_MOD_INTELLECT_SHORT"] then 
+            weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + boost
+        end
+    end
+
+    -- [[ 3. COVARIANCE (Destro Loves Crit/Haste) ]]
     if currentSpec:find("DESTRUCT") then
         local spellPower = 0
         if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) 
@@ -363,10 +379,10 @@ function Warlock:ApplyScalers(weights, currentSpec)
         end
     end
     
-    -- [[ 3. HIT CAP with HYSTERESIS ]]
+    -- [[ 4. HIT CAP with HYSTERESIS ]]
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(8) 
-        local baseCap = 202 
+        local baseCap = 202 -- 16%
         local talentBonus = 0
         
         -- Suppression: 2% per rank (Affliction)
@@ -375,6 +391,12 @@ function Warlock:ApplyScalers(weights, currentSpec)
         end
         
         local finalCap = baseCap - talentBonus
+
+        -- Check Draenei
+        local _, race = UnitRace("player")
+        if race == "Draenei" then finalCap = finalCap - 12.6 end
+
+        if finalCap < 0 then finalCap = 0 end
         
         -- BUFFER LOGIC
         if hitRating >= (finalCap + 15) then

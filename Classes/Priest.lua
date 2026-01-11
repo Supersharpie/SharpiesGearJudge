@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Priest = {}
 Priest.Name = "PRIEST"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -25,7 +26,7 @@ Priest.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.6, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.4, 
 
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
@@ -41,7 +42,7 @@ Priest.Weights = {
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.6, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.5,
         
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02,
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
@@ -59,7 +60,7 @@ Priest.Weights = {
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.3, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.5,
         
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.1, -- Avoid penalty
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
@@ -75,7 +76,7 @@ Priest.Weights = {
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.7, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.4, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.2,
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
     },
@@ -89,7 +90,7 @@ Priest.Weights = {
         ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]    = 1.0,
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.6, 
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, 
-        -- POISON
+        -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
     },
@@ -100,7 +101,6 @@ Priest.Weights = {
 -- =============================================================
 Priest.LevelingWeights = {
     -- [[ 1. SHADOW / SPIRIT TAP ]]
-    -- Wands are the primary source of damage.
     ["Leveling_1_20"] = { 
         ["MSC_WEAPON_DPS"]=2.5,  -- High value for Wands
         ["ITEM_MOD_SPIRIT_SHORT"]=2.5, -- Spirit Tap
@@ -217,6 +217,14 @@ Priest.LevelingWeights = {
 }
 
 -- =============================================================
+-- RELIC / LIBRAM OVERRIDES (Placeholders - See Helpers.lua logic)
+-- =============================================================
+Priest.Relics = {
+    -- Relics are usually blank in standard DBs. Override here if needed.
+    -- Example: [12345] = { ITEM_MOD_SPELL_POWER_SHORT = 20 }
+}
+
+-- =============================================================
 -- CLASS METADATA
 -- =============================================================
 Priest.Specs = { [1]="Discipline", [2]="Holy", [3]="Shadow" }
@@ -311,6 +319,15 @@ function Priest:ApplyScalers(weights, currentSpec)
         if weights["ITEM_MOD_SPIRIT_SHORT"] then weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * mult end
         if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * mult end
     end
+
+    -- Spiritual Guidance (Spirit -> SP)
+    local rSpiritGuide = Rank("SPIRIT_GUIDANCE")
+    if rSpiritGuide > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+        -- 5 ranks = 25% of Spirit as Spell Power
+        -- If 1 SP = 1.0 weight, then 1 Spirit gains 0.25 weight
+        local bonus = rSpiritGuide * 0.05
+        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (bonus * (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
+    end
     
     -- [[ 2. COVARIANCE (Synergy) ]]
     
@@ -337,7 +354,6 @@ function Priest:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("HOLY") or currentSpec:find("DISC") or currentSpec:find("Healer") then
         -- HEALER PRIEST: Regen scales with Healing Power
-        -- "The bigger my heals, the more Mana I need to sustain them."
         if weights["ITEM_MOD_SPIRIT_SHORT"] or weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
             local healPower = GetSpellBonusHealing()
             
@@ -367,6 +383,12 @@ function Priest:ApplyScalers(weights, currentSpec)
         end
         
         local finalCap = baseCap - talentBonus
+
+        -- Check Draenei
+        local _, race = UnitRace("player")
+        if race == "Draenei" then finalCap = finalCap - 12.6 end
+
+        if finalCap < 0 then finalCap = 0 end
         
         -- Hysteresis Buffer: 15 Rating
         if hitRating >= (finalCap + 15) then

@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Druid = {}
 Druid.Name = "DRUID"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -41,7 +42,7 @@ Druid.Weights = {
         ["ITEM_MOD_STRENGTH_SHORT"]         = 2.2, -- 1 Str = 2 AP
         ["ITEM_MOD_AGILITY_SHORT"]          = 2.0, -- 1 Agi = 1 AP + Crit
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
-        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 1.0, -- FIXED KEY NAME
+        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 1.0, 
         ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.4, 
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.4,
         
@@ -65,7 +66,7 @@ Druid.Weights = {
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 0.6, 
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.8, 
-        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 0.5, -- FIXED KEY NAME
+        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 0.5,
         
         -- POISON PROTECTION
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.002,    
@@ -137,7 +138,7 @@ Druid.LevelingWeights = {
     },
     ["Leveling_60_70"] = { 
         ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, -- FIXED KEY
+        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, 
         ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
         ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
         ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
@@ -176,7 +177,7 @@ Druid.LevelingWeights = {
     },
     ["Leveling_Bear_60_70"] = { 
         ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5, -- FIXED KEY
+        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5,
         ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
         ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
         ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
@@ -242,8 +243,8 @@ Druid.PrettyNames = {
     ["RESTO_TREE"]        = "Healer: Tree of Life",
     ["FERAL_CAT"]         = "DPS: Feral Cat",
     ["FERAL_BEAR"]        = "Tank: Feral Bear",
-	
-	-- Leveling Brackets
+    
+    -- Leveling Brackets
     ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_41_51"] = "Standard Leveling (41-51)",
@@ -330,7 +331,7 @@ end
 
 function Druid:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
-    local activeCaps = {} -- Store capped stats here
+    local activeCaps = {} 
     
     -- [[ 1. EXISTING TALENT SCALERS ]]
     -- Heart of the Wild (Int)
@@ -346,10 +347,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 2. COVARIANCE (Synergy) ]]
-    -- We must branch by spec because the stats are totally different.
-
     if currentSpec:find("BALANCE") or currentSpec:find("Caster") then
-        -- BALANCE: Haste scales with Spell Power
         if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
             local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
             if spellPower > 600 then
@@ -360,12 +358,9 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
 
     elseif currentSpec:find("FERAL") or currentSpec:find("Bear") or currentSpec:find("Cat") then
-        -- FERAL: Crit scales with Attack Power
         if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
             local base, pos, neg = UnitAttackPower("player")
             local totalAP = base + pos + neg
-            
-            -- Feral AP is usually higher than Warrior AP, so threshold is 2000
             if totalAP > 2000 then 
                  local apScaler = 1 + ((totalAP - 2000) / 20000)
                  if apScaler > 1.15 then apScaler = 1.15 end
@@ -374,7 +369,6 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
 
     elseif currentSpec:find("RESTO") or currentSpec:find("Healer") then
-        -- RESTO: Regen scales with Healing Power
         if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
             local healPower = GetSpellBonusHealing()
             if healPower > 800 then
@@ -385,7 +379,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
     
-    -- [[ 3. CAPS with HYSTERESIS (Anti-Loop) ]]
+    -- [[ 3. CAPS with HYSTERESIS ]]
     
     -- A. BALANCE HIT CAP (Spell Hit)
     if (currentSpec:find("BALANCE") or currentSpec:find("Caster")) and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
@@ -393,13 +387,12 @@ function Druid:ApplyScalers(weights, currentSpec)
         local baseCap = 202 
         local talentBonus = Rank("BALANCE_OF_POWER") * 25.2 -- 2% per rank
         local finalCap = baseCap - talentBonus
+        if finalCap < 0 then finalCap = 0 end
         
-        -- Hysteresis Buffer: 15 Rating
         if hitRating >= (finalCap + 15) then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, "Hit")
         elseif hitRating >= finalCap then
-            -- "Soft Cap" Zone
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
             table.insert(activeCaps, "Hit (Soft)")
         end
@@ -412,9 +405,9 @@ function Druid:ApplyScalers(weights, currentSpec)
         
         if hitRating >= (cap + 15) then
              if currentSpec:find("Bear") then
-                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 -- Bear hit is low value after cap
+                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 
              else
-                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 -- Cat white hit still decent
+                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
              end
              table.insert(activeCaps, "Hit")
         elseif hitRating >= cap then
@@ -427,10 +420,9 @@ function Druid:ApplyScalers(weights, currentSpec)
     if (currentSpec:find("FERAL_BEAR") or currentSpec:find("Bear")) and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] then
         local baseDef, armorDef = UnitDefense("player")
         local defenseSkill = baseDef + armorDef
-        local resil = GetCombatRating(15) -- CR_CRIT_TAKEN_MELEE
+        local resil = GetCombatRating(15) 
         
         local reductionNeeded = 5.6
-        -- Check for Survival of the Fittest (usually taken with Thick Hide)
         if Rank("THICK_HIDE") >= 3 then reductionNeeded = 2.6 end
         
         local defReduction = (defenseSkill - 350) * 0.04
@@ -439,14 +431,11 @@ function Druid:ApplyScalers(weights, currentSpec)
         
         local currentReduction = defReduction + resilReduction
         
-        -- Hysteresis Buffer: 0.2% reduction (~8 defense skill or ~8 resil)
-        -- This prevents the "Equip/Unequip" loop for tanks hovering near the danger zone.
         if currentReduction >= (reductionNeeded + 0.2) then
              weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
              weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5
              table.insert(activeCaps, "Crit Immune")
         elseif currentReduction >= reductionNeeded then
-             -- Soft Cap
              weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0
              weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.8
              table.insert(activeCaps, "Immune (Soft)")
@@ -463,39 +452,43 @@ function Druid:GetWeaponBonus(itemLink) return 0 end
 -- CLASS SPECIFIC ITEMS (Idols)
 -- =============================================================
 Druid.Relics = {
-    -- [Idol of the Raven Goddess] (Swift Flight Form): Healing +20 / Crit +9 / Str +9
-    -- This is a "Stat Stick" that works for everyone.
-    [32387] = { ITEM_MOD_HEALING_POWER_SHORT = 20, ITEM_MOD_CRIT_RATING_SHORT = 9, ITEM_MOD_STRENGTH_SHORT = 9 },
-
-    -- [Idol of the Moon] (TBC): Moonfire Dmg +33
+    -- [[ LEVELING / CLASSIC IDOLS ]]
+    [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 },
+    [22396] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 },
+    [22397] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },
+    [22330] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },
     [23197] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 33 },
 
-    -- [Idol of the Avenger] (Shadowmoon): Wrath Dmg +25
+    -- [[ TBC DUNGEON / QUEST ]]
+    [25643] = { ITEM_MOD_HEALING_POWER_SHORT = 86 },
+    [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 },
+    [27526] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 },
+    [27483] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 24 },
+    [27886] = { ITEM_MOD_HEALING_POWER_SHORT = 47 },
     [31037] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 25 },
 
-    -- [Idol of Ursoc] (HFP): Lacerate Dmg +8 per stack (~24 Dmg avg)
-    [27483] = { ITEM_MOD_ATTACK_POWER_FERAL_SHORT = 24 },
-
-    -- [Idol of Terror] (Badges): Mangle (Cat) +24 Agi proc (~15 avg) / Mangle (Bear) +50 Dodge (~15 avg)
-    -- We assume average uptime makes this worth roughly 15 static stats.
-    [30652] = { ITEM_MOD_AGILITY_SHORT = 15, ITEM_MOD_DODGE_RATING_SHORT = 15 },
-
-    -- [Idol of the Wild] (Hellfire): Shred +48 / Maul +48
-    -- Roughly equivalent to 40 Attack Power in specific scenarios.
-    [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 },
-
-    -- [Idol of the Emerald Queen] (Shadowmoon): Lifebloom +47
-    [27886] = { ITEM_MOD_HEALING_POWER_SHORT = 47 },
-
-    -- [Harold's Rejuvenating Broach] (Quest): Rejuvenation +86
-    [25643] = { ITEM_MOD_HEALING_POWER_SHORT = 86 },
+    -- [[ TBC RAID ]]
+    [29390] = { ITEM_MOD_HEALING_POWER_SHORT = 136 },
+    [29391] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 45 },
+    [27885] = { ITEM_MOD_HEALING_POWER_SHORT = 65 },
+    [32387] = { ITEM_MOD_HEALING_POWER_SHORT = 44, ITEM_MOD_CRIT_RATING_SHORT = 40, ITEM_MOD_SPELL_CRIT_RATING_SHORT = 40 },
+    [30652] = { ITEM_MOD_AGILITY_SHORT = 45, ITEM_MOD_DODGE_RATING_SHORT = 45 },
+    [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70 },
+    [38295] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 60 },
+    
+    -- [[ PVP IDOLS ]]
+    [28355] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
+    [33076] = { ITEM_MOD_HEALING_POWER_SHORT = 105 },
+    [33841] = { ITEM_MOD_HEALING_POWER_SHORT = 116 },
+    [35021] = { ITEM_MOD_HEALING_POWER_SHORT = 131 },
+    [28356] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
+    [33074] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
+    [33840] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
+    [35020] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
+    [28357] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
+    [33075] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
+    [33842] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
+    [35019] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
 }
-
--- INJECT INTO MAIN DATABASE
-if MSC.RelicDB then
-    for id, stats in pairs(Druid.Relics) do
-        MSC.RelicDB[id] = stats
-    end
-end
 
 MSC.RegisterModule("DRUID", Druid)

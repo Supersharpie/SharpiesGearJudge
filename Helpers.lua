@@ -389,14 +389,25 @@ function MSC.GetRawItemStats(itemLink)
 
     local forcedOverride = false
     if id then
+        -- 1. Check Global Overrides (Database.lua)
         if MSC.ItemOverrides and MSC.ItemOverrides[id] then
             local override = MSC.ItemOverrides[id]
             if not override.estimate then forcedOverride = true end 
-            for k, v in pairs(override) do if k ~= "estimate" and k ~= "replace" then finalStats[k] = (finalStats[k] or 0) + v end end
+            for k, v in pairs(override) do 
+                if k ~= "estimate" and k ~= "replace" then 
+                    finalStats[k] = (finalStats[k] or 0) + v 
+                end 
+            end
         end
-        if MSC.RelicDB and MSC.RelicDB[id] then
+
+        -- 2. Check Class-Specific Relics (Druid.lua, Paladin.lua, etc.)
+        -- [[ THIS IS THE FIX ]] --
+        if MSC.CurrentClass and MSC.CurrentClass.Relics and MSC.CurrentClass.Relics[id] then
             forcedOverride = true 
-            for k, v in pairs(MSC.RelicDB[id]) do finalStats[k] = (finalStats[k] or 0) + v end
+            local rData = MSC.CurrentClass.Relics[id]
+            for k, v in pairs(rData) do 
+                finalStats[k] = (finalStats[k] or 0) + v 
+            end
         end
     end
 
@@ -405,6 +416,7 @@ function MSC.GetRawItemStats(itemLink)
         return finalStats
     end
 
+    -- (Standard Scanner continues below...)
     local stats = GetItemStats(itemLink) or {}
     for k, v in pairs(stats) do
         if MSC.StatShortNames[k] or k:find("SPELL") then 

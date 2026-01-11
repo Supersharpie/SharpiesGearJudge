@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Paladin = {}
 Paladin.Name = "PALADIN"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS (Patch 2.4.3 / 2.5.5)
 -- =============================================================
@@ -13,12 +14,12 @@ Paladin.Weights = {
         ["MSC_WEAPON_DPS"]=2.0 
     },
     ["HOLY_RAID"] = { 
-        ["MSC_WEAPON_DPS"]                  = 0.02, -- Just to avoid poison on weapons       
+        ["MSC_WEAPON_DPS"]                  = 0.02, -- Just to avoid poison on weapons        
         -- INTELLECT (The Stat King in 2.5.5)
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.75,
         -- THROUGHPUT
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.9,        
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.9,         
         -- HASTE (Sunwell Meta)
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 1.1,
         -- SUSTAIN
@@ -33,10 +34,10 @@ Paladin.Weights = {
     },
     ["PROT_DEEP"] = {
         ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.4, 
-        ["ITEM_MOD_DODGE_RATING_SHORT"]     = 2.0,      
-        ["ITEM_MOD_PARRY_RATING_SHORT"]     = 2.0,      
-        ["ITEM_MOD_BLOCK_RATING_SHORT"]     = 1.7,      
-        ["ITEM_MOD_STAMINA_SHORT"]          = 1.6,      
+        ["ITEM_MOD_DODGE_RATING_SHORT"]     = 2.0,       
+        ["ITEM_MOD_PARRY_RATING_SHORT"]     = 2.0,       
+        ["ITEM_MOD_BLOCK_RATING_SHORT"]     = 1.7,       
+        ["ITEM_MOD_STAMINA_SHORT"]          = 1.6,       
         ["ITEM_MOD_ARMOR_SHORT"]            = 0.12,
         ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.8,    
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.75,
@@ -44,7 +45,7 @@ Paladin.Weights = {
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 0.6, 
         ["ITEM_MOD_BLOCK_VALUE_SHORT"]      = 0.35,
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.1, 
-        ["ITEM_MOD_AGILITY_SHORT"]          = 0.6,      
+        ["ITEM_MOD_AGILITY_SHORT"]          = 0.6,       
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.1, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.2,
         ["MSC_WEAPON_DPS"]                  = 0.2, 
@@ -58,7 +59,7 @@ Paladin.Weights = {
         ["ITEM_MOD_AGILITY_SHORT"]          = 1.4, 
         ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.5,
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
-        ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.4,       
+        ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.4,        
         -- Caster Stats
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.05, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.1, 
@@ -113,7 +114,7 @@ Paladin.LevelingWeights = {
     ["Leveling_PROT_AOE_60_70"] = { ["MSC_WEAPON_DPS"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5, ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 },
     
     ["Leveling_HOLY_DUNGEON_21_40"] = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.01 },
-    ["Leveling_HOLY_DUNGEON_41_51"] = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.01 },   
+    ["Leveling_HOLY_DUNGEON_41_51"] = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.01 },    
     ["Leveling_HOLY_DUNGEON_52_59"] = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.01 },
     ["Leveling_HOLY_DUNGEON_60_70"] = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.01 },
 }
@@ -183,25 +184,43 @@ Paladin.StatToCritMatrix = {
 -- PALADIN SPECIFIC ITEMS (Librams)
 -- =============================================================
 Paladin.Relics = {
-    [27484] = { ITEM_MOD_MANA_REGENERATION_SHORT = 18 },
-    [28592] = { ITEM_MOD_MANA_REGENERATION_SHORT = 18 },
-    [28253] = { ITEM_MOD_CRIT_RATING_SHORT = 19 },
-    [28255] = { ITEM_MOD_STRENGTH_SHORT = 30, ITEM_MOD_SPELL_POWER_SHORT = 20 },
-    [23201] = { ITEM_MOD_BLOCK_VALUE_SHORT = 30 },
-    [27917] = { ITEM_MOD_SPELL_POWER_SHORT = 47 },
-    [23006] = { ITEM_MOD_STRENGTH_SHORT = 15 },
-    [23203] = { ITEM_MOD_STRENGTH_SHORT = 16 },
-    [23005] = { ITEM_MOD_SPELL_POWER_SHORT = 15 },
-    [27455] = { ITEM_MOD_HEALING_POWER_SHORT = 29 },
-    [25644] = { ITEM_MOD_HEALING_POWER_SHORT = 15 },
-    [25634] = { ITEM_MOD_HEALING_POWER_SHORT = 15 }, 
-}
+    -- [[ CLASSIC / LEVELING (1-60) ]]
+    [23201] = { ITEM_MOD_HEALING_POWER_SHORT = 53 },
+    [23006] = { ITEM_MOD_HEALING_POWER_SHORT = 83 },
+    [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 },
+    [22402] = { ITEM_MOD_ARMOR_SHORT = 0 },
 
-if MSC.RelicDB then
-    for id, stats in pairs(Paladin.Relics) do
-        MSC.RelicDB[id] = stats
-    end
-end
+    -- [[ TBC LEVELING / DUNGEON (60-70) ]]
+    [25644] = { ITEM_MOD_ATTACK_POWER_SHORT = 12 },
+    [27917] = { ITEM_MOD_SPELL_POWER_SHORT = 20 }, 
+    [28592] = { ITEM_MOD_HEALING_POWER_SHORT = 84 },
+
+    -- [[ TBC RAID (Holy) ]]
+    [30991] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
+    [29388] = { ITEM_MOD_HEALING_POWER_SHORT = 40 }, 
+    [34231] = { ITEM_MOD_HEALING_POWER_SHORT = 80 },
+    [28592] = { ITEM_MOD_HEALING_POWER_SHORT = 113 },
+
+    -- [[ TBC RAID (Retribution) ]]
+    [27484] = { ITEM_MOD_CRIT_RATING_SHORT = 53 },
+    [31033] = { ITEM_MOD_ATTACK_POWER_SHORT = 60 },
+    [33503] = { ITEM_MOD_ATTACK_POWER_SHORT = 120 },
+
+    -- [[ TBC RAID (Protection) ]]
+    [29386] = { ITEM_MOD_BLOCK_VALUE_SHORT = 42 },
+    [30642] = { ITEM_MOD_SPELL_POWER_SHORT = 47 },
+    [32489] = { ITEM_MOD_BLOCK_VALUE_SHORT = 100 },
+    [27958] = { ITEM_MOD_BLOCK_VALUE_SHORT = 53 },
+
+    -- [[ PVP LIBRAMS (Seasons 1-4) ]]
+    [28358] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 17 }, -- S1
+    [33077] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 21 }, -- S2
+    [33844] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 23 }, -- S3
+    [35026] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- S4
+    
+    [42612] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- (Wrath/Pre-patch?)
+    [42613] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 29 }, -- (Wrath/Pre-patch?)
+}
 
 -- =============================================================
 -- LOGIC
@@ -354,7 +373,10 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- D. EXPERTISE CAP (Ret/Prot)
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24) 
-        local humanBonus = (select(2, UnitRace("player")) == "Human") and 20 or 0
+        -- FIX: Use select(2, UnitRace) to get the safe, unlocalized ID
+        local _, raceID = UnitRace("player") 
+        local humanBonus = (raceID == "Human") and 20 or 0
+        
         if (expRating + humanBonus) >= 103 then
             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.5
             table.insert(activeCaps, "Exp")
@@ -371,9 +393,10 @@ function Paladin:GetWeaponBonus(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
+    -- FIX: Use select(2, UnitRace) for safe ID check
+    local _, raceID = UnitRace("player")
 
-    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then 
+    if raceID == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then 
         bonus = bonus + 40 
     end
     

@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Shaman = {}
 Shaman.Name = "SHAMAN"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -245,7 +246,7 @@ Shaman.PrettyNames = {
     ["ENH_PVE"]         = "Raid: Enhancement",
     ["RESTO_PVE"]       = "Raid: Restoration",
     ["SHAMAN_TANK"]     = "Tank: Warden",
-	-- Leveling Brackets
+    -- Leveling Brackets
     ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_41_51"] = "Standard Leveling (41-51)",
@@ -342,15 +343,10 @@ function Shaman:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 2. COVARIANCE (Synergy) ]]
-    -- Branch based on Spec to apply the right math
-    
     if currentSpec:find("ENH") or currentSpec:find("Tank") then
-        -- ENHANCEMENT: Attack Power scales Crit
         if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
             local base, pos, neg = UnitAttackPower("player")
             local totalAP = base + pos + neg
-            
-            -- Enhancement Shamans get massive AP. 
             if totalAP > 1000 then 
                  local apScaler = 1 + ((totalAP - 1000) / 20000)
                  if apScaler > 1.15 then apScaler = 1.15 end
@@ -359,7 +355,6 @@ function Shaman:ApplyScalers(weights, currentSpec)
         end
 
     elseif currentSpec:find("ELE") or currentSpec:find("Caster") then
-        -- ELEMENTAL: Nature Dmg scales Haste
         if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
             local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
             if spellPower > 600 then
@@ -370,7 +365,6 @@ function Shaman:ApplyScalers(weights, currentSpec)
         end
 
     elseif currentSpec:find("RESTO") or currentSpec:find("Healer") then
-        -- RESTORATION: Healing scales Regen (Sustainability)
         if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
             local healPower = GetSpellBonusHealing()
             if healPower > 800 then
@@ -384,25 +378,21 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- [[ 3. CAPS with HYSTERESIS ]]
     local baseCap = 142 
     local talentBonus = Rank("NATURE_GUIDANCE") * 15.8
+    
+    -- Draenei Check
+    local _, race = UnitRace("player")
+    if race == "Draenei" then talentBonus = talentBonus + 15.8 end
 
     -- A. DUAL WIELD HIT (Enhancement)
     if currentSpec:find("ENH") and Rank("DUAL_WIELD_SPEC") > 0 then
-         -- Dual Wield has a high "White Hit" cap. 
-         -- Even after the Special Cap (9%), Hit is still valuable, just LESS valuable.
-         
          local hitRating = GetCombatRating(6)
          local specialCap = baseCap - talentBonus
+         if specialCap < 0 then specialCap = 0 end
          
-         -- Hysteresis Buffer: 20 Rating (Wider buffer for DW)
          if hitRating >= (specialCap + 20) then
-             -- Safely past Special Cap. Lower weight for "White Hit only"
              weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
              table.insert(activeCaps, "Yellow Hit")
-             
          elseif hitRating >= specialCap then
-             -- Twilight Zone. We are technically capped on specials, 
-             -- but removing an item might drop us below.
-             -- Use a mid-point weight.
              weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
              table.insert(activeCaps, "Y-Hit (Soft)")
          end
@@ -411,6 +401,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     elseif weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
          local hitRating = GetCombatRating(6)
          local cap = baseCap - talentBonus
+         if cap < 0 then cap = 0 end
          
          if hitRating >= (cap + 15) then
              weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
@@ -424,11 +415,13 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- C. SPELL HIT (Elemental)
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
          local hitRating = GetCombatRating(8)
-         -- Elemental Hit Cap is 164 (12.6%) because Totem of Wrath gives 3% + 3% Talents
          local spellCap = 164 
-         if Rank("ELEMENTAL_MASTERY") > 0 then spellCap = 76 end -- Deep Ele (likely has Totem)
+         if Rank("ELEMENTAL_MASTERY") > 0 then spellCap = 76 end 
          
-         -- Hysteresis Buffer: 15 Rating
+         -- Draenei Spell Hit
+         if race == "Draenei" then spellCap = spellCap - 12.6 end
+         if spellCap < 0 then spellCap = 0 end
+         
          if hitRating >= (spellCap + 15) then
              weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
              table.insert(activeCaps, "Spell Hit")
@@ -450,9 +443,8 @@ function Shaman:GetWeaponBonus(itemLink)
     local bonus = 0
     local _, race = UnitRace("player")
 
-    -- Racial: Orc (Axe/Fist) -> TBC Orcs have axe expertise, not Fist? Checking...
-    -- Correct: Orcs get Axe (1H/2H). Trolls get Bow/Thrown.
-    if race == "Orc" and (subClassID == 0 or subClassID == 1) then bonus = bonus + 40 end
+    -- Racial: Orc (Axe/Fist)
+    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then bonus = bonus + 40 end
     
     return bonus
 end
@@ -461,18 +453,36 @@ end
 -- CLASS SPECIFIC ITEMS (Totems)
 -- =============================================================
 Shaman.Relics = {
-    -- [Totem of the Void] (Chamber of Aspects): Lightning Bolt +55
-    [28248] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 55 },
-    -- [Totem of Healing Rains] (Kara): Chain Heal +87
-    [28523] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
-    -- [Totem of the Astral Winds] (Sethekk): Earth Shock +80
-    [27815] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 40 }, -- Average value
-}
+    -- [[ CLASSIC / LEVELING (1-60) ]]
+    [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 },
+    [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 30 },
+    [22394] = { ITEM_MOD_HEALING_POWER_SHORT = 80 },
+    [22393] = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 },
+    [23200] = { ITEM_MOD_MANA_REGENERATION_SHORT = 0 },
 
-if MSC.RelicDB then
-    for id, stats in pairs(Shaman.Relics) do
-        MSC.RelicDB[id] = stats
-    end
-end
+    -- [[ TBC LEVELING / DUNGEON (60-70) ]]
+    [25645] = { ITEM_MOD_SPELL_POWER_SHORT = 30 },
+    [27949] = { ITEM_MOD_SPELL_POWER_SHORT = 48 },
+    [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 46 },
+    [27523] = { ITEM_MOD_HEALING_POWER_SHORT = 88 },
+    [28248] = { ITEM_MOD_SPELL_POWER_SHORT = 55 },
+
+    -- [[ TBC RAID ]]
+    [27815] = { ITEM_MOD_ATTACK_POWER_SHORT = 80 },
+    [33507] = { ITEM_MOD_ATTACK_POWER_SHORT = 40 }, 
+    [34072] = { ITEM_MOD_ATTACK_POWER_SHORT = 100 },
+    [33506] = { ITEM_MOD_HASTE_RATING_SHORT = 101 },
+    [32330] = { ITEM_MOD_SPELL_POWER_SHORT = 85 },
+    [34539] = { ITEM_MOD_SPELL_POWER_SHORT = 60 },
+    [28227] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
+    [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 20 },
+
+    -- [[ PVP TOTEMS ]]
+    [28359] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
+    [33078] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
+    [33838] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
+    [35022] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
+    [38367] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 40 }, 
+}
 
 MSC.RegisterModule("SHAMAN", Shaman)

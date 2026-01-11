@@ -1,6 +1,7 @@
 local addonName, MSC = ...
 local Rogue = {}
 Rogue.Name = "ROGUE"
+
 -- =============================================================
 -- ENDGAME STAT WEIGHTS
 -- =============================================================
@@ -214,8 +215,8 @@ Rogue.PrettyNames = {
     ["RAID_COMBAT"]     = "Raid: Combat (Swords/Maces)",
     ["RAID_MUTILATE"]   = "Raid: Mutilate (Daggers)",
     ["PVP_SUBTLETY"]    = "PvP: Shadowstep / Hemo",
-	
-	-- Leveling Brackets
+    
+    -- Leveling Brackets
     ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_41_51"] = "Standard Leveling (41-51)",
@@ -226,7 +227,7 @@ Rogue.PrettyNames = {
     ["Leveling_Dagger_21_40"] = "Dagger/Ambush (21-40)",
     ["Leveling_Dagger_41_51"] = "Dagger/Ambush (41-51)",
     ["Leveling_Dagger_52_59"] = "Dagger/Ambush (52-59)",
-    ["Leveling_Dagger_60_70"] = "Dagger/Ambush (Outland)",      
+    ["Leveling_Dagger_60_70"] = "Dagger/Ambush (Outland)",          
     
     ["Leveling_Hemo_1_20"]    = "Hemorrhage (1-20)",
     ["Leveling_Hemo_21_40"]   = "Hemorrhage (21-40)",
@@ -265,7 +266,7 @@ Rogue.Talents = {
     ["FIST_SPEC"]       = "Fist Weapon Specialization",
     ["SWORD_SPEC"]      = "Sword Specialization",
     ["MACE_SPEC"]       = "Mace Specialization",
-    ["WEAPON_EXPERTISE"]= "Weapon Expertise" -- Added for Cap Check
+    ["WEAPON_EXPERTISE"]= "Weapon Expertise" 
 }
 
 -- =============================================================
@@ -338,6 +339,8 @@ function Rogue:ApplyScalers(weights, currentSpec)
         local talentBonus = Rank("PRECISION") * 15.8 
         local finalCap = baseCap - talentBonus
         
+        if finalCap < 0 then finalCap = 0 end
+
         -- Hysteresis Buffer: 15 Rating
         if hitRating >= (finalCap + 15) then
             -- Safely Capped
@@ -363,10 +366,11 @@ function Rogue:ApplyScalers(weights, currentSpec)
         local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
         
         -- Cap is ~103 rating. Buffer of 10.
-        if (expRating + humanBonus + talentBonus) >= (103 + 10) then
+        local totalExp = expRating + humanBonus + talentBonus
+        if totalExp >= (103 + 10) then
              weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
              table.insert(activeCaps, "Exp")
-        elseif (expRating + humanBonus + talentBonus) >= 103 then
+        elseif totalExp >= 103 then
              weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
              table.insert(activeCaps, "Exp (Soft)")
         end
@@ -385,9 +389,11 @@ function Rogue:GetWeaponBonus(itemLink)
     local _, race = UnitRace("player")
 
     -- Racial: Human (Sword/Mace)
-    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then 
+    -- Only check 1H versions (7=Sword, 4=Mace). 2H is invalid for Rogues.
+    if race == "Human" and (subClassID == 7 or subClassID == 4) then 
         bonus = bonus + 40 
     end
+    
     -- Racial: Troll (Bow/Thrown)
     if race == "Troll" and (subClassID == 2 or subClassID == 16) then
         bonus = bonus + 35
@@ -402,8 +408,8 @@ function Rogue:GetWeaponBonus(itemLink)
     
     if subClassID == 15 and Rank("DAGGER_SPEC") > 0 then bonus = bonus + (Rank("DAGGER_SPEC") * 35.0) end
     if subClassID == 13 and Rank("FIST_SPEC") > 0 then bonus = bonus + (Rank("FIST_SPEC") * 35.0) end
-    if (subClassID == 7 or subClassID == 8) and Rank("SWORD_SPEC") > 0 then bonus = bonus + (Rank("SWORD_SPEC") * 35.0) end
-    if (subClassID == 4 or subClassID == 5) and Rank("MACE_SPEC") > 0 then bonus = bonus + (Rank("MACE_SPEC") * 25.0) end
+    if subClassID == 7 and Rank("SWORD_SPEC") > 0 then bonus = bonus + (Rank("SWORD_SPEC") * 35.0) end
+    if subClassID == 4 and Rank("MACE_SPEC") > 0 then bonus = bonus + (Rank("MACE_SPEC") * 25.0) end
 
     return bonus
 end
