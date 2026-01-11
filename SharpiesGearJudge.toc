@@ -1,15 +1,26 @@
-## Interface: 11508
-## Title: |cff00ccffSharpie's Gear Judge|r
-## Notes: The Final Verdict on your gear. (Features Complete)
-## Author: SuperSharpie
-## Version: 1.9.1
+## Interface: 11506
+## Title: |cff00ccffSharpie's Gear Judge|r (Classic Era)
+## Notes: In-game gear scoring, stat weights, and upgrade analyzer for Vanilla WoW.
+## Author: Supersharpie
+## Version: 2.2.0-Era
 ## SavedVariables: SGJ_Settings, SGJ_History
 
-Helpers.lua
-Database.lua
-Leveling_Engine.lua
-Dynamic_Engine.lua
-UI_Menus.lua
-UI_Lab.lua
-ConflictManager.lua
+Core\Init.lua
 Core.lua
+Database.lua
+Helpers.lua
+ConflictManager.lua
+Evaluator.lua
+Dynamic_Engine.lua
+
+Classes\Druid.lua
+Classes\Hunter.lua
+Classes\Mage.lua
+Classes\Paladin.lua
+Classes\Priest.lua
+Classes\Rogue.lua
+Classes\Shaman.lua
+Classes\Warlock.lua
+Classes\Warrior.lua
+
+Interface.lua

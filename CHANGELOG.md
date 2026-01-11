@@ -1,4 +1,32 @@
 # Sharpie's Gear Judge - Version History
+Sharpie's Gear Judge - Version 1.10.0 (Classic Era Edition)
+========================================================================
+
+ARCHITECTURAL OVERHAUL:
+- The "TBC Engine" (v3.0.0 Architecture) has been successfully backported to Classic Era.
+- This brings the stability, modularity, and speed of the TBC version to Vanilla.
+
+NEW FEATURES:
+- Projected Enchants: The addon can now calculate the "Potential Score" of an item if it were properly enchanted, allowing for fair comparisons between un-enchanted upgrades and fully maxed current gear.
+- The Laboratory: A new "Sim Interface" (accessible via /sgj lab) allows you to compare Main Hand + Off Hand combos against 2-Handed weapons side-by-side.
+- Gear Receipt: Inspect any player to generate a detailed "Bill of Materials" showing their total score, missing enchants, and stat breakdown.
+
+CLASSIC ERA SPECIFICS:
+- Weapon Skill Logic: The scoring engine now heavily prioritizes Weapon Skill (e.g., +5 Swords) for Melee classes to account for Glancing Blow penalties on Level 63 bosses.
+- Hit Cap Hysteresis: Updated Hit Cap logic to distinguishing between "Yellow Hit" (Abilities) and "White Hit" (Auto-attacks).
+- Spell Parsing: The scanner now correctly differentiates between "Damage and Healing" (Spell Power) and "Healing Done" (Healing Power), which is critical for Era itemization.
+- Percent Parsing: Fixed issues where "1% Crit" was being ignored or miscalculated by TBC-era rating scanners.
+
+OPTIMIZATIONS:
+- Consolidated Database: Merged ItemSets, Enchants, and Overrides into a single `Database.lua` for faster load times.
+- Memory Recycling: Implemented table recycling in the Tooltip engine to prevent garbage collection stutters during raids.
+- Stat Consolidation: Tooltips now intelligently group derived stats (e.g., "Health (from Stamina)") to reduce visual clutter.
+
+REMOVED (TBC Clean-up):
+- Removed Gem/Socket logic (Jewelcrafting does not exist in Era).
+- Removed Resilience/Expertise Rating stats.
+- Removed Meta Gem activation requirements.
+
 ## v1.9.1
 * ** restored the correct UI_Lab file. I should properly delete the old one --( >*_*<)--
 ------------------------------------------------------------------------------------------------

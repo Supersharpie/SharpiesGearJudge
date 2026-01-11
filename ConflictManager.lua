@@ -35,6 +35,9 @@ StaticPopupDialogs["SGJ_DISABLE_PAWN_TIPS"] = {
 }
 
 local function CheckForConflicts()
+    -- [NEW] Respect the Menu Setting
+    if SGJ_Settings and SGJ_Settings.DisableConflictCheck then return end
+
     if C_AddOns.IsAddOnLoaded("RestedXP") or C_AddOns.IsAddOnLoaded("RXPGuides") then
         if RXPSettings and RXPSettings.profileKeys then
             local myKey = UnitName("player") .. " - " .. GetRealmName()

@@ -1,44 +1,82 @@
-local _, MSC = ... 
+local addonName, MSC = ...
 
 -- =============================================================
--- 1. INITIALIZATION
+-- 1. INITIALIZATION & EVENTS
 -- =============================================================
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE") 
-eventFrame:RegisterEvent("PLAYER_LEVEL_UP") 
+local EventFrame = CreateFrame("Frame")
+EventFrame:RegisterEvent("ADDON_LOADED")
+EventFrame:RegisterEvent("PLAYER_LOGIN")
+EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+EventFrame:RegisterEvent("CHARACTER_POINTS_CHANGED") -- Era specific talent event
+EventFrame:RegisterEvent("PLAYER_LEVEL_UP")
 
-eventFrame:SetScript("OnEvent", function(self, event, arg1)
+MSC.Modules = {}
+MSC.PlayerStats = {
+    Level = 0, Class = nil, Spec = "Default",
+    Hit = 0, Crit = 0, SpellHit = 0, SpellCrit = 0
+}
+
+EventFrame:SetScript("OnEvent", function(self, event, arg1)
     
     -- LOAD LOGIC
-    if event == "ADDON_LOADED" and arg1 == "SharpiesGearJudge" then
-        if not SGJ_Settings then SGJ_Settings = { Mode = "Auto", MinimapPos = 45, IncludeEnchants = false, ProjectEnchants = true } end
-        if not SGJ_History then SGJ_History = {} end 
-        if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
-
-        -- [[ NOTE: Leveling Protection Override REMOVED ]] --
-        -- Dynamic_Engine.lua now handles traffic control between Leveling and Endgame.
-        
-        print("|cff00ccffSharpie's Gear Judge|r loaded!")
-    end
-
-    -- SPEC SWAP LOGIC
-    if event == "PLAYER_TALENT_UPDATE" then
-        local _, newSpecName = MSC.GetCurrentWeights()
-        if MSC.LastActiveSpec and MSC.LastActiveSpec ~= newSpecName then
-             print("|cff00ccffSharpie's Gear Judge:|r Spec change detected. Active Profile: |cff00ff00" .. newSpecName .. "|r")
+    if event == "ADDON_LOADED" and arg1 == addonName then
+        if not SGJ_Settings then 
+            SGJ_Settings = { 
+                Mode = "Auto", 
+                MinimapPos = 45, 
+                IncludeEnchants = true, 
+                ProjectEnchants = true 
+            } 
         end
-        MSC.LastActiveSpec = newSpecName
-        if MSCLabFrame and MSCLabFrame:IsShown() then MSC.UpdateLabCalc() end
-    end
+        if not SGJ_History then SGJ_History = {} end
+        
+        if MSC.UpdateMinimapPosition then MSC.UpdateMinimapPosition() end
+        print("|cff00ccffSharpie's Gear Judge|r (Classic Era) loaded!")
+        
+        local _, englishClass = UnitClass("player")
+        MSC.PlayerStats.Class = englishClass
 
-    -- [[ LEVEL UP SNAPSHOT ]] --
-    if event == "PLAYER_LEVEL_UP" then
-        local newLevel = arg1
-        C_Timer.After(2, function() 
-            MSC.RecordSnapshot("Level " .. newLevel)
-            if MSCLabFrame and MSCLabFrame:IsShown() then MSC.UpdateLabCalc() end
-        end)
+    elseif event == "PLAYER_LOGIN" then
+        -- Conflict Checks (Good practice from TBC version)
+        local IsLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
+        if not SGJ_Settings.DisableConflictCheck and IsLoaded then
+            if IsLoaded("Pawn") then print("|cffffd100SGJ Warning:|r 'Pawn' is loaded. Tooltips may look cluttered.") end
+            if IsLoaded("ZygorGuidesViewer") then print("|cffffd100SGJ Warning:|r 'Zygor' detected. Ensure its item scoring is disabled.") end
+        end
+        
+        local _, startSpec = MSC.GetCurrentWeights()
+        MSC.LastActiveSpec = startSpec
+
+    -- SPEC / LEVEL UPDATE
+    elseif event == "PLAYER_ENTERING_WORLD" or event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_LEVEL_UP" then
+        MSC.CachedWeights = nil -- Reset cache
+        MSC.TalentCache = {}    -- Reset talents on change
+
+        -- 1. Update Basic Stats
+        MSC.PlayerStats.Level = UnitLevel("player")
+        
+        -- 2. Update Spec (using Class Module)
+        local className = MSC.PlayerStats.Class
+        if className and MSC.Modules[className] then
+            MSC.CurrentClass = MSC.Modules[className] -- Set global reference
+            local newSpec = MSC.Modules[className]:GetSpec()
+            
+            if MSC.PlayerStats.Spec ~= newSpec then
+                local displayName = newSpec
+                if MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[newSpec] then
+                     displayName = MSC.CurrentClass.PrettyNames[newSpec]
+                end
+                print("|cff00ccffSGJ:|r Profile Active: |cff00ff00" .. (displayName or "Default") .. "|r")
+                MSC.PlayerStats.Spec = newSpec
+                MSC.StatCache = {} 
+            end
+        end
+
+        -- 3. Update Scan Stats (Hit/Crit totals for Cap logic)
+        MSC.PlayerStats.Hit = GetHitModifier and GetHitModifier() or 0
+        MSC.PlayerStats.SpellHit = GetSpellHitModifier and GetSpellHitModifier() or 0
+        
+        if MSCLabFrame and MSCLabFrame:IsShown() then MSC.UpdateLabCalc() end
     end
 end)
 
@@ -52,521 +90,386 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
     cmd = cmd:lower()
     
     if cmd == "options" or cmd == "config" then 
-        MSC.CreateOptionsFrame() 
+        if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end
     elseif cmd == "history" then 
-        MSC.ShowHistory()
+        if MSC.ShowHistory then MSC.ShowHistory() end
     elseif cmd == "save" or cmd == "snapshot" then
-        local label = (arg and arg ~= "") and arg or "Manual Save"
-        MSC.RecordSnapshot(label)
-        MSC.ShowHistory()
+        if MSC.RecordSnapshot then
+            local label = (arg and arg ~= "") and arg or "Manual Save"
+            MSC.RecordSnapshot(label)
+            MSC.ShowHistory()
+        end
     else 
-        MSC.CreateLabFrame() 
+        -- Default to Main Menu / Lab
+        if MSC.ToggleMainMenu then MSC.ToggleMainMenu() end 
     end 
 end
 
 -- =============================================================
--- 3. TOOLTIP LOGIC 
+-- 3. MODULE REGISTRATION
 -- =============================================================
-function MSC.MergeStats(t1, t2)
-    local out = {}
-    if t1 then for k,v in pairs(t1) do out[k] = v end end
-    if t2 then for k,v in pairs(t2) do out[k] = (out[k] or 0) + v end end
-    return out
+function MSC.RegisterModule(name, moduleTable)
+    if not MSC.Modules then MSC.Modules = {} end
+    MSC.Modules[name] = moduleTable
 end
 
-function MSC.UpdateTooltip(tooltip)
-    if SGJ_Settings.HideTooltips then return end 
-    if not tooltip.GetItem then return end
-
-    local _, link = tooltip:GetItem()
-    if not link then return end
-    
-    if not MSC.IsItemUsable(link) then 
-        tooltip:AddLine(" "); tooltip:AddLine("|cffff0000Sharpie's Verdict: CLASS UNUSABLE|r"); tooltip:Show(); return 
-    end
-
-    local _, _, _, _, dbMinLevel = GetItemInfo(link)
-    local myLevel = UnitLevel("player")
-    local isFutureItem = false
-    local finalMinLevel = 0
-
-    if dbMinLevel and dbMinLevel > myLevel then
-        isFutureItem = true; finalMinLevel = dbMinLevel
-    end
-
-    -- Parse Tooltip for dynamic level requirements (classic era quirk)
-    if not isFutureItem then
-        local lineCount = tooltip:NumLines()
-        for i = 2, math.min(lineCount, 10) do
-            local lineObj = _G[tooltip:GetName() .. "TextLeft" .. i]
-            if lineObj then
-                local text = lineObj:GetText()
-                if text and text:find(ITEM_MIN_LEVEL:gsub("%%d", "")) then
-                    local levelFound = text:match("(%d+)")
-                    if levelFound and tonumber(levelFound) > myLevel then
-                        isFutureItem = true; finalMinLevel = tonumber(levelFound); break
-                    end
+-- =============================================================
+-- 4. TALENT CACHE (Era 3-Tab System)
+-- =============================================================
+MSC.TalentCache = {}
+function MSC:GetTalentRank(talentName)
+    if not talentName then return 0 end
+    -- Lazy Cache: Only scan if we haven't found it yet
+    if not MSC.TalentCache[talentName] then
+        for tab = 1, 3 do
+            local numTalents = GetNumTalents(tab)
+            for i = 1, numTalents do
+                local name, _, _, _, rank = GetTalentInfo(tab, i)
+                if name then 
+                    -- Store uppercase keys to match consistently
+                    MSC.TalentCache[name] = rank 
+                    MSC.TalentCache[name:upper()] = rank
+                    -- Also handle spaces vs underscores
+                    local key = name:upper():gsub(" ", "_"):gsub("'", "")
+                    MSC.TalentCache[key] = rank
                 end
             end
         end
     end
+    -- Try exact name, then normalized key
+    local key = talentName:upper():gsub(" ", "_"):gsub("'", "")
+    return MSC.TalentCache[talentName] or MSC.TalentCache[key] or 0
+end
 
-    local itemEquipLoc = select(9, GetItemInfo(link))
-    local slotId = MSC.SlotMap[itemEquipLoc] 
-    if not slotId then return end
-    
-    local currentWeights, specName = MSC.GetCurrentWeights()
-    local equippedMH = GetInventoryItemLink("player", 16)
-    local equippedOH = GetInventoryItemLink("player", 17)
-    local equippedMHLoc = equippedMH and select(9, GetItemInfo(equippedMH))
-    
-    local oldScore, newScore = 0, 0
-    local oldStats, newStats = {}, {}
-    local noteText, partnerItemLink = nil, nil
-    local isBestInBag, isEquipped = false, false
+-- =============================================================
+-- 5. WEIGHT DISPATCHER
+-- =============================================================
+MSC.CachedWeights = nil
+MSC.CachedProfile = nil
+MSC.CachedCapText = nil
 
-    -- COMPARISON LOGIC (Dual Wield vs 2H vs Rings)
-    if itemEquipLoc == "INVTYPE_2HWEAPON" then
-        newStats = MSC.SafeGetItemStats(link, 16)
-        newScore = MSC.GetItemScore(newStats, currentWeights, specName, 16)
-        local mhLink, ohLink = equippedMH, equippedOH
-        local filledFromBag = false
-        if equippedMHLoc ~= "INVTYPE_2HWEAPON" then
-            if not mhLink then mhLink = MSC.FindBestMainHand(currentWeights, specName); filledFromBag = true end
-            if not ohLink then ohLink = MSC.FindBestOffhand(currentWeights, specName); filledFromBag = true end
+function MSC.GetCurrentWeights()
+    if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" and MSC.ManualSpec ~= "Auto" then
+        if MSC.CurrentClass then
+            if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[MSC.ManualSpec] then
+                return MSC.CurrentClass.Weights[MSC.ManualSpec], MSC.ManualSpec, nil
+            elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[MSC.ManualSpec] then
+                return MSC.CurrentClass.LevelingWeights[MSC.ManualSpec], MSC.ManualSpec, nil
+            end
         end
-        local mhStats = MSC.SafeGetItemStats(mhLink, 16); local ohStats = MSC.SafeGetItemStats(ohLink, 17)
-        oldStats = MSC.MergeStats(mhStats, ohStats)
-        oldScore = MSC.GetItemScore(mhStats, currentWeights, specName, 16) + MSC.GetItemScore(ohStats, currentWeights, specName, 17)
-        if filledFromBag or (equippedMHLoc ~= "INVTYPE_2HWEAPON" and equippedOH) then noteText = "Comparing vs: " .. (mhLink or "Empty") .. " + " .. (ohLink or "Empty") end
-        if link == equippedMH then isEquipped = true end
-
-    elseif (itemEquipLoc == "INVTYPE_WEAPON" or itemEquipLoc == "INVTYPE_WEAPONMAINHAND") and equippedMHLoc == "INVTYPE_2HWEAPON" then
-        local bestOHLink, bestOHScore, bestOHStats = MSC.FindBestOffhand(currentWeights, specName)
-        local mhStats = MSC.SafeGetItemStats(link, 16)
-        local mhScore = MSC.GetItemScore(mhStats, currentWeights, specName, 16)
-        if bestOHLink then newStats = MSC.MergeStats(mhStats, bestOHStats); newScore = mhScore + bestOHScore; partnerItemLink = bestOHLink
-        else newStats = mhStats; newScore = mhScore; noteText = "|cffff0000(No Offhand found)|r" end
-        oldStats = MSC.SafeGetItemStats(equippedMH, 16); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, 16)
-
-    elseif (itemEquipLoc == "INVTYPE_SHIELD" or itemEquipLoc == "INVTYPE_HOLDABLE" or itemEquipLoc == "INVTYPE_WEAPONOFFHAND") and equippedMHLoc == "INVTYPE_2HWEAPON" then
-        local bestMHLink, bestMHScore, bestMHStats = MSC.FindBestMainHand(currentWeights, specName)
-        local ohStats = MSC.SafeGetItemStats(link, 17); local ohScore = MSC.GetItemScore(ohStats, currentWeights, specName, 17)
-        if bestMHLink then newStats = MSC.MergeStats(bestMHStats, ohStats); newScore = bestMHScore + ohScore; partnerItemLink = bestMHLink
-        else newStats = ohStats; newScore = ohScore; noteText = "|cffff0000(No Mainhand found)|r" end
-        oldStats = MSC.SafeGetItemStats(equippedMH, 16); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, 16)
-
-    elseif itemEquipLoc == "INVTYPE_FINGER" or itemEquipLoc == "INVTYPE_TRINKET" then
-        local s1, s2 = 11, 12; if itemEquipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
-        local l1, l2 = GetInventoryItemLink("player", s1), GetInventoryItemLink("player", s2)
-        local st1 = l1 and MSC.SafeGetItemStats(l1, s1) or {}
-        local st2 = l2 and MSC.SafeGetItemStats(l2, s2) or {}
-        local sc1 = MSC.GetItemScore(st1, currentWeights, specName, s1)
-        local sc2 = MSC.GetItemScore(st2, currentWeights, specName, s2)
-        local targetSlot, targetLink, otherLink = s1, l1, l2
-        if (not l1) then targetSlot = s1; targetLink = nil; otherLink = l2
-        elseif (not l2) then targetSlot = s2; targetLink = nil; otherLink = l1
-        elseif sc2 < sc1 then targetSlot = s2; targetLink = l2; otherLink = l1 end
-        if link == l1 then isEquipped = true; targetSlot = s1; targetLink = l1; otherLink = l2
-        elseif link == l2 then isEquipped = true; targetSlot = s2; targetLink = l2; otherLink = l1 end
-        partnerItemLink = otherLink 
-        if not targetLink and not isEquipped then oldStats = {}; oldScore = 0; noteText = "|cff00ff00++ FILLING EMPTY SLOT ++|r"
-        else oldStats = MSC.SafeGetItemStats(targetLink, targetSlot); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, targetSlot) end
-        newStats = MSC.SafeGetItemStats(link, targetSlot); newScore = MSC.GetItemScore(newStats, currentWeights, specName, targetSlot)
-        if not isEquipped and targetLink then noteText = "Comparing vs: " .. targetLink .. " (Weakest)" end
-
-    else
-        local compLink = GetInventoryItemLink("player", slotId)
-        if link == compLink then isEquipped = true end
-        if not compLink then
-            if slotId == 17 then local bag = MSC.FindBestOffhand(currentWeights, specName); if bag then compLink = bag; noteText = "Comparing vs: " .. compLink; if link == bag then isBestInBag = true end end
-            elseif slotId == 16 then local bag = MSC.FindBestMainHand(currentWeights, specName); if bag then compLink = bag; noteText = "Comparing vs: " .. compLink; if link == bag then isBestInBag = true end end end
-        end
-        if slotId == 16 then partnerItemLink = GetInventoryItemLink("player", 17) elseif slotId == 17 then partnerItemLink = GetInventoryItemLink("player", 16) end
-        if not compLink then oldStats = {}; oldScore = 0; noteText = "|cff00ff00++ FILLING EMPTY SLOT ++|r"
-        else oldStats = MSC.SafeGetItemStats(compLink, slotId); oldScore = MSC.GetItemScore(oldStats, currentWeights, specName, slotId) end
-        newStats = MSC.SafeGetItemStats(link, slotId); newScore = MSC.GetItemScore(newStats, currentWeights, specName, slotId)
     end
 
-    local scoreDiff = newScore - oldScore
-    tooltip:AddLine(" ")
-    tooltip:AddDoubleLine("|cff00ccffSharpie's Verdict:|r", "|cffffffff" .. specName .. "|r")
-    
-    if newStats.estimate and MSC.ItemOverrides then
-        local itemID = tonumber(string.match(link, "item:(%d+)"))
-        local bonusData = MSC.ItemOverrides[itemID]
+    if MSC.CachedWeights then return MSC.CachedWeights, MSC.CachedProfile, MSC.CachedCapText end
+
+    if MSC.CurrentClass then
+        local specKey = MSC.CurrentClass:GetSpec()
+        local weights = nil
         
-        if bonusData then
-            local bonusScore = MSC.GetItemScore(bonusData, currentWeights, specName, slotId)
-            local baseScore = newScore - bonusScore
+        if MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
+            weights = MSC.CurrentClass.LevelingWeights[specKey]
+        elseif MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
+            weights = MSC.CurrentClass.Weights[specKey]
+        end
+        
+        local capText = nil
+        if weights and MSC.CurrentClass.ApplyScalers then
+            weights = MSC:SafeCopy(weights) 
+            weights, capText = MSC.CurrentClass:ApplyScalers(weights, specKey)
+        end
+        
+        if weights then
+            MSC.CachedWeights = weights
+            MSC.CachedProfile = specKey
+            MSC.CachedCapText = capText
+            return weights, specKey, capText
+        end
+    end
+    return {}, "Unknown", nil
+end
+
+-- =============================================================
+-- 6. SMART SLOT LOGIC (Era Adjusted)
+-- =============================================================
+function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
+    local defaultSlot = MSC.SlotMap and MSC.SlotMap[equipLoc] or nil
+    if not defaultSlot then return nil end
+
+    if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
+        local s1, s2 = 11, 12
+        if equipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
+        
+        local l1 = GetInventoryItemLink("player", s1)
+        local l2 = GetInventoryItemLink("player", s2)
+        
+        if not l1 then return s1 end
+        if not l2 then return s2 end
+        
+        if itemLink == l1 then return s2 end
+        if itemLink == l2 then return s1 end
+
+        local stats1 = MSC.SafeGetItemStats(l1, s1, weights, specName)
+        local stats2 = MSC.SafeGetItemStats(l2, s2, weights, specName)
+        local score1 = MSC.GetItemScore(stats1, weights, specName, s1)
+        local score2 = MSC.GetItemScore(stats2, weights, specName, s2)
+        
+        return (score2 < score1) and s2 or s1
+    end
+
+    if equipLoc == "INVTYPE_WEAPON" then
+        local _, class = UnitClass("player")
+        -- Note: Shaman CANNOT Dual Wield in Era/Vanilla. Removed from check.
+        local canDW = (class == "WARRIOR" or class == "ROGUE" or class == "HUNTER")
+        
+        if canDW then
+            local l1 = GetInventoryItemLink("player", 16)
+            local l2 = GetInventoryItemLink("player", 17)
             
-            if baseScore < 1 then
-                 tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", "~" .. string.format("%.1f", newScore), 1, 1, 1, 0, 1, 0)
-            else
-                 tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", string.format("%.1f", baseScore) .. " |cff00ff00(+~" .. string.format("%.1f", bonusScore) .. ")|r")
-            end
-        else
-             tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", "~" .. string.format("%.1f", newScore), 1, 1, 1, 0, 1, 0)
-        end
-    else
-        tooltip:AddDoubleLine("|cff00ccffSharpie's Score:|r", string.format("%.1f", newScore), 1, 1, 1, 1, 1, 1)
-    end
-
-    if noteText and not isBestInBag then tooltip:AddLine(noteText, 0.7, 0.7, 0.7) end
-    if newStats.IS_PROJECTED then 
-        local enchantText = MSC.GetEnchantString(slotId)
-        if enchantText and enchantText ~= "" then tooltip:AddLine("(Projecting: " .. enchantText .. ")", 0, 1, 1) end 
-    end
-
-    if isEquipped then
-        if partnerItemLink then tooltip:AddLine("|cff777777(Baseline | w/ " .. partnerItemLink .. ")|r")
-        else tooltip:AddLine("|cff777777(Baseline)|r") end
-    else
-        if partnerItemLink then tooltip:AddLine("|cff00ff00*** BEST PAIR WITH: " .. partnerItemLink .. " ***|r") end
-        local bestText = isBestInBag and " (Best in Bag)" or ""
-        local capNote = ""
-        if specName and specName:find("Capped") then capNote = " (Cap Adjusted)" end
-        
-        local tilde = newStats.estimate and "~" or ""
-        
-        if scoreDiff > 0 then
-            if isFutureItem then tooltip:AddLine("|cffFF55FF*** FUTURE UPGRADE (+" .. tilde .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. capNote .. " ***|r"); tooltip:AddLine("|cffFF55FF(Requires Level " .. finalMinLevel .. ")|r")
-            else tooltip:AddLine("|cff00ff00*** UPGRADE (+" .. tilde .. string.format("%.1f", scoreDiff) .. ")" .. bestText .. capNote .. " ***|r") end
-        elseif scoreDiff < 0 then 
-            tooltip:AddLine("|cffff0000*** DOWNGRADE (" .. tilde .. string.format("%.1f", scoreDiff) .. ")" .. capNote .. " ***|r")
-        else 
-            tooltip:AddLine("|cffffffff*** EQUAL STATS ***|r") 
-        end
-    end
-
-    local oldExpanded = MSC.ExpandDerivedStats(oldStats, (isEquipped and link or nil)) 
-    local newExpanded = MSC.ExpandDerivedStats(newStats, link)
-    local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded)
-    local sortedDiffs = MSC.SortStatDiffs(diffs)
-    local diffMap = {}
-    for _, d in ipairs(diffs) do diffMap[d.key] = d.val end
-    local handledStats = {}
-
-    local function GetFormattedStatValue(statKey)
-        local newVal = newExpanded[statKey] or 0
-        local diffVal = diffMap[statKey] or 0
-        if newVal == 0 and diffVal == 0 then return nil, 1, 1, 1 end 
-        local newStr = (newVal % 1 == 0) and string.format("%d", newVal) or string.format("%.1f", newVal)
-        local diffStr = (diffVal % 1 == 0) and string.format("%d", diffVal) or string.format("%.1f", diffVal)
-        if diffVal > 0 then diffStr = "+" .. diffStr end
-        
-        local finalStr = ""
-        local r, g, b = 1, 1, 1
-        
-        if diffVal > 0 then 
-            finalStr = "|cffffffff" .. newStr .. "|r |cff00ff00(" .. diffStr .. ")|r"
-            r, g, b = 0, 1, 0 
-        elseif diffVal < 0 then 
-            finalStr = "|cffffffff" .. newStr .. "|r |cffff0000(" .. diffStr .. ")|r"
-            r, g, b = 1, 0.2, 0.2 
-        elseif isEquipped then 
-            finalStr = "|cff00ff00" .. newStr .. "|r"
-            r, g, b = 1, 0.82, 0 
-        else 
-            finalStr = "|cffffffff" .. newStr .. "|r |cff777777(+0)|r" 
-        end
-        
-        return finalStr, r, g, b
-    end
-
-    local statPairs = {
-        { prim = "ITEM_MOD_STAMINA_SHORT", der = "ITEM_MOD_HEALTH_SHORT", primLabel = "Stamina", derLabel = "Health (from Stam)" },
-        { prim = "ITEM_MOD_INTELLECT_SHORT", der = "ITEM_MOD_MANA_SHORT", primLabel = "Intellect", derLabel = "Mana (from Int)" },
-        { prim = "ITEM_MOD_SPIRIT_SHORT", der = "ITEM_MOD_MANA_REGENERATION_SHORT", primLabel = "Spirit", derLabel = "Mana Regen (from Spt)" },
-        { prim = "ITEM_MOD_STRENGTH_SHORT", der = "ITEM_MOD_ATTACK_POWER_SHORT", primLabel = "Strength", derLabel = "Atk Power (from Str)" },
-        { prim = "ITEM_MOD_STRENGTH_SHORT", der = "ITEM_MOD_BLOCK_VALUE_SHORT", primLabel = "Strength", derLabel = "Block Val (from Str)" },
-        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", primLabel = "Agility", derLabel = "Ranged AP (from Agi)" },
-        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_DODGE_RATING_SHORT", primLabel = "Agility", derLabel = "Dodge (from Agi)" },
-        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_CRIT_FROM_STATS_SHORT", primLabel = "Agility", derLabel = "Crit (from Agi)" },
-        { prim = "ITEM_MOD_AGILITY_SHORT", der = "ITEM_MOD_ARMOR_SHORT", primLabel = "Agility", derLabel = "Armor (from Agi)" },
-    }
-    for _, pair in ipairs(statPairs) do
-        local isDerRelevant = (currentWeights and currentWeights[pair.der] and currentWeights[pair.der] > 0)
-        if pair.der == "ITEM_MOD_HEALTH_SHORT" or pair.der == "ITEM_MOD_MANA_SHORT" then isDerRelevant = true end
-        if isDerRelevant and not handledStats[pair.prim] and not handledStats[pair.der] then
-            local primStr, pr, pg, pb = GetFormattedStatValue(pair.prim)
-            local derStr, dr, dg, db = GetFormattedStatValue(pair.der)
-            if primStr and derStr then
-                local combinedRight = primStr .. "   |cffcccccc" .. pair.derLabel .. "|r " .. derStr
-                tooltip:AddDoubleLine(pair.primLabel, combinedRight, pr, pg, pb)
-                handledStats[pair.prim] = true; handledStats[pair.der] = true
+            if l1 and l2 then
+                local _,_,_,_,_,_,_,_, loc2 = GetItemInfo(l2)
+                if loc2 == "INVTYPE_WEAPON" or loc2 == "INVTYPE_WEAPONOFFHAND" then
+                    local stats1 = MSC.SafeGetItemStats(l1, 16, weights, specName)
+                    local stats2 = MSC.SafeGetItemStats(l2, 17, weights, specName)
+                    local score1 = MSC.GetItemScore(stats1, weights, specName, 16)
+                    local score2 = MSC.GetItemScore(stats2, weights, specName, 17)
+                    
+                    return (score2 < score1) and 17 or 16
+                end
             end
         end
     end
-    for _, entry in ipairs(sortedDiffs) do
-        if not handledStats[entry.key] and entry.key ~= "IS_PROJECTED" then
-            local isRelevant = (currentWeights and currentWeights[entry.key] and currentWeights[entry.key] > 0)
-            if entry.key == "ITEM_MOD_HEALTH_SHORT" or entry.key == "ITEM_MOD_MANA_SHORT" then isRelevant = true end
-            if isRelevant then
-                local valStr, r, g, b = GetFormattedStatValue(entry.key)
-                if valStr then
-                    local cleanName = MSC.GetCleanStatName(entry.key)
-                    if entry.key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then
-                        local rawVal = newStats["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] or 0
-                        if rawVal == 0 then cleanName = "Wpn Skill (Racial)" end
+
+    return defaultSlot
+end
+
+-- =============================================================
+-- 7. STAT CALCULATOR (Era / Vanilla Rules)
+-- =============================================================
+function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
+    wipe(outTable or {})
+    local dest = outTable or {}
+    
+    -- 1. Copy raw stats
+    for k, v in pairs(baseStats) do dest[k] = v end
+
+    local _, class = UnitClass("player")
+    local function Rank(name) return MSC:GetTalentRank(name) end
+
+    -- === A. STAMINA -> HEALTH ===
+    local stam = dest["ITEM_MOD_STAMINA_SHORT"] or 0
+    if stam > 0 then
+        local hpPerStam = 10; if class == "TAUREN" then hpPerStam = 10.5 end
+        if class == "DRUID" then local r = Rank("Heart of the Wild"); if r > 0 then hpPerStam = hpPerStam * (1 + (0.04 * r)) end end
+        if class == "WARLOCK" then local r = Rank("Demonic Embrace"); if r > 0 then hpPerStam = hpPerStam * (1 + (0.03 * r)) end end
+        dest["ITEM_MOD_HEALTH_SHORT"] = (dest["ITEM_MOD_HEALTH_SHORT"] or 0) + (stam * hpPerStam)
+    end
+
+    -- === B. INTELLECT -> MANA, SP, SPELL CRIT ===
+    local int = dest["ITEM_MOD_INTELLECT_SHORT"] or 0
+    if int > 0 then
+        -- 1. Mana
+        local manaPerInt = 15; if class == "GNOME" then manaPerInt = 15.75 end
+        if class == "DRUID" then local r = Rank("Heart of the Wild"); if r > 0 then manaPerInt = manaPerInt * (1 + (0.04 * r)) end end
+        if class == "SHAMAN" then local r = Rank("Ancestral Knowledge"); if r > 0 then manaPerInt = manaPerInt * (1 + (0.01 * r)) end end
+        dest["ITEM_MOD_MANA_SHORT"] = (dest["ITEM_MOD_MANA_SHORT"] or 0) + (int * manaPerInt)
+
+        -- 2. Spell Power (Vanilla Talents)
+        if class == "PALADIN" then local r=Rank("Holy Guidance"); if r>0 then dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+(int*(0.07*r)) end end
+        if class == "SHAMAN" then local r=Rank("Nature's Blessing"); if r>0 then local b=int*(0.10*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_HEALING_POWER_SHORT"]=(dest["ITEM_MOD_HEALING_POWER_SHORT"] or 0)+b end end
+        -- Note: TBC "Lunar Guidance" and "Mind Mastery" removed for Era
+
+        -- 3. Spell Crit % (Vanilla approximations)
+        -- In Era, 1.0 value = 1% Crit. 
+        local div = 59.5 -- Generic Average
+        if class == "DRUID" then div = 60 
+        elseif class == "MAGE" then div = 59.5 
+        elseif class == "PRIEST" then div = 59.5 
+        elseif class == "PALADIN" then div = 29.5 
+        elseif class == "SHAMAN" then div = 59.5 
+        elseif class == "WARLOCK" then div = 60.6 
+        end
+        dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) + (int / div)
+    end
+
+    -- === C. AGILITY -> CRIT, DODGE, ARMOR ===
+    local agi = dest["ITEM_MOD_AGILITY_SHORT"] or 0
+    if agi > 0 then
+        -- 1. Crit % (Physical)
+        -- In Era, 1.0 value = 1% Crit
+        local critDiv = 20 -- Warrior/Rogue default-ish
+        if class == "HUNTER" then critDiv = 53
+        elseif class == "ROGUE" then critDiv = 29
+        elseif class == "WARRIOR" then critDiv = 20
+        elseif class == "DRUID" then critDiv = 20
+        elseif class == "PALADIN" then critDiv = 20
+        elseif class == "SHAMAN" then critDiv = 20
+        end
+        dest["ITEM_MOD_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_CRIT_RATING_SHORT"] or 0) + (agi / critDiv)
+
+        -- 2. Dodge %
+        local dodgeDiv = 20
+        if class == "HUNTER" then dodgeDiv = 26.5 elseif class == "ROGUE" then dodgeDiv = 14.5 elseif class == "DRUID" then dodgeDiv = 20 end
+        dest["ITEM_MOD_DODGE_RATING_SHORT"] = (dest["ITEM_MOD_DODGE_RATING_SHORT"] or 0) + (agi / dodgeDiv)
+        
+        -- 3. Armor (2 Armor per Agi)
+        dest["ITEM_MOD_ARMOR_SHORT"] = (dest["ITEM_MOD_ARMOR_SHORT"] or 0) + (agi * 2)
+    end
+
+    -- === D. STRENGTH -> BLOCK VALUE / AP ===
+    local str = dest["ITEM_MOD_STRENGTH_SHORT"] or 0
+    if str > 0 then 
+        if class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" then
+             dest["ITEM_MOD_BLOCK_VALUE_SHORT"] = (dest["ITEM_MOD_BLOCK_VALUE_SHORT"] or 0) + (str * 0.5)
+        end
+        -- AP (Str)
+        local apPerStr = 2 -- Pal/War/Sham/Druid
+        if class == "HUNTER" or class == "ROGUE" then apPerStr = 1 end
+        dest["ITEM_MOD_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + (str * apPerStr)
+    end
+
+    -- === E. SPIRIT -> SPELL POWER ===
+    local spt = dest["ITEM_MOD_SPIRIT_SHORT"] or 0
+    if spt > 0 then
+        if class == "PRIEST" then local r=Rank("Spiritual Guidance"); if r>0 then local b=spt*(0.05*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_HEALING_POWER_SHORT"]=(dest["ITEM_MOD_HEALING_POWER_SHORT"] or 0)+b end end
+    end
+
+    return dest
+end
+
+-- =============================================================
+-- 8. TOOLTIP ENGINE (Era Version - No Gems)
+-- =============================================================
+MSC.IsCalculating = false
+local Scratch_Tooltip_New = {}
+local Scratch_Tooltip_Old = {}
+local Scratch_Tooltip_Diffs = {}
+local TEX_UP = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png:14:14:0:-2|t"
+local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png:14:14:0:-2|t"
+
+-- CONFIG: Which stats to hide because they are merged into others?
+local STAT_CONSOLIDATION_MAP = {
+    ["ITEM_MOD_STAMINA_SHORT"] = "ITEM_MOD_HEALTH_SHORT",
+    ["ITEM_MOD_INTELLECT_SHORT"] = "ITEM_MOD_MANA_SHORT", 
+    ["ITEM_MOD_STRENGTH_SHORT"] = "ITEM_MOD_ATTACK_POWER_SHORT", 
+}
+
+local function OnTooltipSetItem(tooltip)
+    if MSC.IsCalculating then return end
+    if tooltip:GetName() and string.find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
+    if SGJ_Settings and SGJ_Settings.HideTooltips then return end
+    local _, link = nil, nil
+    if tooltip.GetItem then _, link = tooltip:GetItem() end
+    if not link or not IsEquippableItem(link) then return end
+
+    MSC.IsCalculating = true
+    local _, playerClass = UnitClass("player")
+    -- Ensure Class Module Loaded
+    if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
+        -- This relies on Init, but redundant safety check is okay
+        MSC.CachedWeights = nil
+    end
+
+    local status, err = pcall(function()
+        local weights, specName = MSC.GetCurrentWeights()
+        if not weights or not next(weights) then return end
+        local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+        
+        local slotId = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+        if not slotId then return end
+
+        local newScore, oldScore, newStats, oldStats = MSC:EvaluateUpgrade(link, slotId, weights, specName)
+        local delta = newScore - oldScore
+        local isEquipped = (GetInventoryItemLink("player", slotId) == link)
+
+        -- Header
+        tooltip:AddLine(" ")
+        local scoreLabel = "Judge's Score:"
+        if newStats.Context then scoreLabel = scoreLabel .. " " .. newStats.Context end
+        tooltip:AddDoubleLine(scoreLabel, string.format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
+        
+        local displayName = specName
+        if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName] then displayName = MSC.CurrentClass.PrettyNames[specName] end
+        local _, _, capInfo = MSC.GetCurrentWeights()
+        if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " Capped)|r" end
+        tooltip:AddDoubleLine("Verdict Profile:", "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
+
+        if not isEquipped then
+            if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
+                local comparedItemLink = GetInventoryItemLink("player", slotId)
+                if comparedItemLink then tooltip:AddDoubleLine("vs.", comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end
+            end
+            local percentDiff = 0; if oldScore > 0 then percentDiff = ((newScore - oldScore) / oldScore) * 100 end
+            if delta > 0.1 then tooltip:AddLine(string.format("|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r", TEX_UP, delta, percentDiff))
+            elseif delta < -0.1 then tooltip:AddLine(string.format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
+            else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
+        else tooltip:AddLine("|cff00ffff*** CURRENTLY EQUIPPED ***|r") end
+
+        -- Projections (Enchants Only for Era)
+        if newStats.IS_PROJECTED then
+            tooltip:AddLine(" ")
+            if newStats.ENCHANT_TEXT then 
+                tooltip:AddDoubleLine("Projected Enchant:", "|cffffffff" .. newStats.ENCHANT_TEXT .. "|r", 0, 1, 1)
+            else 
+                tooltip:AddDoubleLine("Projected Enchant:", "|cffffffffBest Available|r", 0, 1, 1) 
+            end
+        end
+
+        -- STAT COMPARISON
+        if not isEquipped then
+            local newExpanded = MSC.ExpandDerivedStats(newStats, link, Scratch_Tooltip_New)
+            local oldExpanded = MSC.ExpandDerivedStats(oldStats or {}, nil, Scratch_Tooltip_Old)
+            local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
+
+            -- [[ CONSOLIDATION PASS ]]
+            local changedMap = {}; for i, d in ipairs(diffs) do changedMap[d.key] = i end
+            for source, result in pairs(STAT_CONSOLIDATION_MAP) do
+                local sIdx, rIdx = changedMap[source], changedMap[result]
+                if sIdx and rIdx and math.abs(diffs[sIdx].val)>0.1 and math.abs(diffs[rIdx].val)>0.1 then
+                    diffs[sIdx].val = 0 -- Hide Source
+                    local sName = MSC.GetCleanStatName(source) or "Stat"
+                    diffs[rIdx].nameSuffix = " |cff888888(inc. " .. sName .. ")|r"
+                end
+            end
+            
+            -- Special: Paladin SP/Int
+            if playerClass == "PALADIN" then 
+                local iIdx, sIdx = changedMap["ITEM_MOD_INTELLECT_SHORT"], changedMap["ITEM_MOD_SPELL_POWER_SHORT"]
+                if iIdx and sIdx and math.abs(diffs[iIdx].val)>0.1 and math.abs(diffs[sIdx].val)>0.1 then diffs[iIdx].val = 0 end 
+            end
+
+            local gains, losses = {}, {}
+            for _, d in ipairs(diffs) do
+                if math.abs(d.val) > 0.1 then
+                    local isRelevant = (weights[d.key] and weights[d.key] > 0) or (d.key == "ITEM_MOD_HEALTH_SHORT") or (d.key == "ITEM_MOD_MANA_SHORT") or (d.key == "ITEM_MOD_ATTACK_POWER_SHORT") or (d.key == "ITEM_MOD_SPELL_POWER_SHORT") or (d.key == "ITEM_MOD_HEALING_POWER_SHORT") or (d.key == "ITEM_MOD_CRIT_RATING_SHORT") or (d.key == "ITEM_MOD_SPELL_CRIT_RATING_SHORT") or (d.key == "ITEM_MOD_BLOCK_VALUE_SHORT")
+                    if isRelevant then if d.val > 0 then table.insert(gains, d) else table.insert(losses, d) end end
+                end
+            end
+
+            local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
+            table.sort(gains, StableSort); table.sort(losses, StableSort)
+
+            local function PrintList(label, list, cR, cG, cB)
+                local hp, lp = false, 0
+                for _, d in ipairs(list) do
+                    if lp < 6 then -- Show top 6 changes
+                        if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
+                        local name = (MSC.GetCleanStatName(d.key) or d.key) .. (d.nameSuffix or "")
+                        local valStr = (d.val%1==0) and string.format("%d", math.abs(d.val)) or string.format("%.1f", math.abs(d.val))
+                        if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
+                        tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)
+                        lp = lp + 1
                     end
-                    tooltip:AddDoubleLine(cleanName, valStr, r, g, b)
-                    handledStats[entry.key] = true
                 end
             end
+            PrintList("Gains:", gains, 0, 1, 0)
+            PrintList("Losses:", losses, 1, 0, 0)
         end
-    end
-    tooltip:Show()
+        tooltip:Show()
+    end)
+    MSC.IsCalculating = false
+    if not status then geterrorhandler()(err) end
 end
-
--- =============================================================
--- 4. APPLY HOOKS
--- =============================================================
-GameTooltip:HookScript("OnTooltipSetItem", MSC.UpdateTooltip)
-if ItemRefTooltip then ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
-if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
-if ShoppingTooltip2 then ShoppingTooltip2:HookScript("OnTooltipSetItem", MSC.UpdateTooltip) end
-
--- =============================================================
--- 5. EXPORT & HISTORY UTILITIES
--- =============================================================
-function MSC.ExportData(dataRows, score, unitName)
-    if not MSC.ExportFrame then
-        local f = CreateFrame("Frame", "MSC_ExportFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(400, 300); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:EnableMouse(true); 
-        f:SetMovable(true); f:RegisterForDrag("LeftButton") 
-        f:SetScript("OnDragStart", f.StartMoving)
-        f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleText:SetText("Export Data")
-        
-        local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
-        scroll:SetPoint("TOPLEFT", 10, -30); scroll:SetPoint("BOTTOMRIGHT", -30, 10)
-        local editBox = CreateFrame("EditBox", nil, scroll)
-        editBox:SetMultiLine(true); editBox:SetFontObject("ChatFontNormal"); editBox:SetWidth(360)
-        scroll:SetScrollChild(editBox); f.EditBox = editBox
-        MSC.ExportFrame = f
-    end
-    local dateStr = date("%Y-%m-%d")
-    local export = "**Sharpie's Gear Receipt** (" .. dateStr .. ")\nJudge: " .. unitName .. "\nScore: **" .. score .. "**\n----------------------------------\n"
-    for _, row in ipairs(dataRows) do export = export .. "*" .. row.slot .. "*: " .. row.link .. " (" .. row.score .. ")\n" end
-    MSC.ExportFrame.EditBox:SetText(export); MSC.ExportFrame.EditBox:HighlightText(); MSC.ExportFrame:Show()
-end
-
-local function CheckBagsForUpgrade(slotId, currentScore, weights, specName)
-    local bestBagItem, bestBagScore = nil, currentScore
-    for bag = 4, 0, -1 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link then
-                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                local itemSlotId = MSC.SlotMap[equipLoc]
-                local isMatch = false
-                if itemSlotId == slotId then isMatch = true end
-                if (slotId == 12 and itemSlotId == 11) then isMatch = true end
-                if (slotId == 14 and itemSlotId == 13) then isMatch = true end
-                if slotId == 16 and (equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND") then isMatch = true end
-                if slotId == 17 and (equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND") then isMatch = true end
-                
-                if isMatch and MSC.IsItemUsable(link) then
-                    local stats = MSC.SafeGetItemStats(link, slotId)
-                    if stats then
-                        local score = MSC.GetItemScore(stats, weights, specName, slotId)
-                        if score > bestBagScore + 0.1 then 
-                            bestBagScore = score
-                            bestBagItem = link
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return bestBagItem, bestBagScore
-end
-
-local function IsMissingEnchant(itemLink, slotId)
-    if not itemLink then return false end
-    local validSlots = { [15]=true, [5]=true, [9]=true, [10]=true, [8]=true, [16]=true, [17]=true }
-    if not validSlots[slotId] then return false end
-    if slotId == 17 then local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(itemLink); if equipLoc == "INVTYPE_HOLDABLE" then return false end end
-    local itemString = string.match(itemLink, "item[%-?%d:]+")
-    if not itemString then return false end
-    local _, _, enchantID = strsplit(":", itemString)
-    if not enchantID or enchantID == "" or enchantID == "0" then return true end
-    return false
-end
-
-function MSC.ShowReceipt(unitOverride, skipInspect)
-    local unit = unitOverride or "player"
-    local isPlayer = (unit == "player")
-    local unitName = UnitName(unit)
-    local _, unitClass = UnitClass(unit)
-    
-    local currentWeights, specName
-    if isPlayer then
-        currentWeights, specName = MSC.GetCurrentWeights()
-    else
-        local detectedSpec = MSC.GetInspectSpec(unit)
-        local profileName = detectedSpec
-        if not profileName or profileName == "Default" then profileName = "Default"; specName = unitClass .. " (Default)"
-        else specName = unitClass .. " (" .. profileName .. ")" end
-        if unitClass and MSC.WeightDB[unitClass] and MSC.WeightDB[unitClass][profileName] then currentWeights = MSC.WeightDB[unitClass][profileName]
-        elseif unitClass and MSC.WeightDB[unitClass] and MSC.WeightDB[unitClass]["Default"] then currentWeights = MSC.WeightDB[unitClass]["Default"]
-        else print("|cffff0000SGJ:|r Unsupported Class for Inspection."); return end
-    end
-
-    if not MSC.ReceiptFrame then
-        local f = CreateFrame("Frame", "SGJ_ReceiptFrame_v19", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(420, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleBg:SetHeight(30); f.TitleText:SetText("Sharpie's Gear Receipt")
-        local _, classFilename = UnitClass("player"); local color = RAID_CLASS_COLORS[classFilename]
-        if f.SetBorderColor then f:SetBorderColor(color.r, color.g, color.b) end 
-        if MSC.ApplyElvUISkin then MSC.ApplyElvUISkin(f) end
-
-        f:RegisterEvent("GET_ITEM_INFO_RECEIVED"); f:RegisterEvent("INSPECT_READY")
-        f:SetScript("OnEvent", function(self, event, ...)
-            local guid = ...
-            if event == "INSPECT_READY" and self.unitGUID and guid ~= self.unitGUID then return end
-            if self:IsVisible() and self.unitID then 
-                if not self.updatePending then
-                    self.updatePending = true
-                    C_Timer.After(0.2, function() if self:IsVisible() then MSC.ShowReceipt(self.unitID, true) end; self.updatePending = false end)
-                end
-            end
-        end)
-        MSC.ReceiptFrame = f
-        
-        f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
-        f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 185) 
-        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(380, 480); f.Scroll:SetScrollChild(f.Content)
-        
-        f.SummaryBox = CreateFrame("Frame", nil, f); f.SummaryBox:SetPoint("TOPLEFT", f.Scroll, "BOTTOMLEFT", 0, -5); f.SummaryBox:SetPoint("BOTTOMRIGHT", -10, 100) 
-        f.Separator = f.SummaryBox:CreateTexture(nil, "ARTWORK"); f.Separator:SetHeight(1); f.Separator:SetPoint("TOPLEFT", 10, 0); f.Separator:SetPoint("TOPRIGHT", -10, 0); f.Separator:SetColorTexture(1, 0.82, 0, 0.5) 
-        f.SummaryBg = f.SummaryBox:CreateTexture(nil, "BACKGROUND"); f.SummaryBg:SetPoint("TOPLEFT", 0, -5); f.SummaryBg:SetPoint("BOTTOMRIGHT", 0, 0); f.SummaryBg:SetColorTexture(0, 0, 0, 0.3)
-        f.SummaryTitle = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryTitle:SetPoint("TOP", 0, -12); f.SummaryTitle:SetText("COMBINED STATS FROM GEAR"); f.SummaryTitle:SetTextColor(1, 0.82, 0) 
-        
-        f.FooterBg = f:CreateTexture(nil, "BACKGROUND"); f.FooterBg:SetPoint("BOTTOMLEFT", 4, 4); f.FooterBg:SetPoint("BOTTOMRIGHT", -4, 4); f.FooterBg:SetHeight(90); f.FooterBg:SetColorTexture(0, 0, 0, 0.5) 
-        f.TotalText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.TotalText:SetPoint("BOTTOM", f, "BOTTOM", 0, 68); f.TotalText:SetTextColor(color.r, color.g, color.b) 
-        
-        f.SaveBox = CreateFrame("EditBox", nil, f, "InputBoxTemplate"); f.SaveBox:SetSize(160, 24); f.SaveBox:SetPoint("BOTTOMLEFT", 30, 38); f.SaveBox:SetAutoFocus(false); f.SaveBox:SetText("< set name here >"); f.SaveBox:SetCursorPosition(0)
-        f.SaveBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate"); f.SaveBtn:SetSize(80, 24); f.SaveBtn:SetPoint("LEFT", f.SaveBox, "RIGHT", 10, 0); f.SaveBtn:SetText("Save")
-        f.SaveBtn:SetScript("OnClick", function() local txt = f.SaveBox:GetText(); local label = (txt and txt ~= "" and txt ~= "< set name here >") and txt or "Manual Save"; MSC.RecordSnapshot(label); MSC.ShowHistory(); f.SaveBox:ClearFocus(); f.SaveBox:SetText("< set name here >") end)
-
-        local mathBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-        mathBtn:SetSize(100, 24)
-        mathBtn:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 10) 
-        mathBtn:SetText("MATH MODE")
-        mathBtn:SetScript("OnClick", function() 
-            if MSC.ShowMathBreakdown then MSC.ShowMathBreakdown() else print("|cffff0000Error:|r Breakdown module missing.") end
-        end)
-
-        local targetBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate"); targetBtn:SetSize(100, 24); targetBtn:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 10); targetBtn:SetText("Judge Target"); targetBtn:SetScript("OnClick", function() if UnitExists("target") and UnitIsPlayer("target") then MSC.ShowReceipt("target") else print("|cffff0000SGJ:|r Invalid Target.") end end)
-        local exportBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate"); exportBtn:SetSize(80, 24); exportBtn:SetPoint("BOTTOM", f, "BOTTOM", 0, 10); exportBtn:SetText("Export"); exportBtn:SetScript("OnClick", function() local data = f.printData; if not data then return end; MSC.ExportData(data.rows, data.score, f.unitName or "Player") end)
-
-        MSC.ReceiptRows = {}; MSC.SummaryRows = {}
-    end
-    
-    MSC.ReceiptFrame.unitName = unitName; MSC.ReceiptFrame.unitID = unit 
-    if not isPlayer then MSC.ReceiptFrame.unitGUID = UnitGUID(unit); if not skipInspect then NotifyInspect(unit) end; MSC.ReceiptFrame.SaveBox:Hide(); MSC.ReceiptFrame.SaveBtn:Hide() else MSC.ReceiptFrame.unitGUID = nil; MSC.ReceiptFrame.SaveBox:Show(); MSC.ReceiptFrame.SaveBtn:Show() end
-    if isPlayer then MSC.ReceiptFrame.TitleText:SetText("Sharpie's Gear Receipt") else MSC.ReceiptFrame.TitleText:SetText("Judge: " .. unitName .. " (" .. (MSC.GetInspectSpec(unit) or "?") .. ")") end
-    MSC.ReceiptFrame:Show()
-    
-    local slots = {{name="Head",id=1},{name="Neck",id=2},{name="Shoulder",id=3},{name="Back",id=15},{name="Chest",id=5},{name="Wrist",id=9},{name="Hands",id=10},{name="Waist",id=6},{name="Legs",id=7},{name="Feet",id=8},{name="Finger 1",id=11},{name="Finger 2",id=12},{name="Trinket 1",id=13},{name="Trinket 2",id=14},{name="Main Hand",id=16},{name="Off Hand",id=17},{name="Ranged",id=18}}
-    local totalScore = 0; local combinedStats = {}; local yOffset = 0; local maxItemScore = -1; local maxItemLink = nil; local missingSlots = {}; local exportRows = {} 
-    
-    for i, slot in ipairs(slots) do
-        if not MSC.ReceiptRows[i] then
-             local row = CreateFrame("Frame", nil, MSC.ReceiptFrame.Content); row:SetSize(380, 24); row.BG = row:CreateTexture(nil, "BACKGROUND"); row.BG:SetAllPoints(); row.Icon = row:CreateTexture(nil, "ARTWORK"); row.Icon:SetSize(20, 20); row.Icon:SetPoint("LEFT", 4, 0); row.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92); row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", row.Icon, "RIGHT", 8, 0); row.Label:SetWidth(65); row.Label:SetJustifyH("LEFT"); row.Label:SetTextColor(0.6, 0.6, 0.6); row.Score = row:CreateFontString(nil, "OVERLAY", "GameFontNormal"); row.Score:SetPoint("RIGHT", -5, 0); row.Score:SetWidth(60); row.Score:SetJustifyH("RIGHT"); row.Score:SetTextColor(0, 1, 0); row.Item = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Item:SetPoint("LEFT", row.Label, "RIGHT", 5, 0); row.Item:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Item:SetJustifyH("LEFT"); row.Alert = row:CreateTexture(nil, "OVERLAY"); row.Alert:SetSize(16, 16); row.Alert:SetPoint("RIGHT", row.Score, "LEFT", -5, 0); row.Alert:Hide(); row.AlertFrame = CreateFrame("Frame", nil, row); row.AlertFrame:SetAllPoints(row.Alert); row.AlertFrame:SetScript("OnEnter", function(self) if self.mode == "UPGRADE" and self.link then GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetHyperlink(self.link); GameTooltip:AddLine(" "); GameTooltip:AddLine("|cff00ff00BETTER ITEM IN BAGS!|r"); GameTooltip:Show() elseif self.mode == "ENCHANT" then GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText("|cffff0000MISSING ENCHANT!|r"); GameTooltip:AddLine("You are losing potential stats.", 1, 1, 1); GameTooltip:Show() end end); row.AlertFrame:SetScript("OnLeave", GameTooltip_Hide); MSC.ReceiptRows[i] = row
-        end
-        local row = MSC.ReceiptRows[i]; row:SetPoint("TOPLEFT", 0, yOffset)
-        local link = GetInventoryItemLink(unit, slot.id); local texture = GetInventoryItemTexture(unit, slot.id); local itemScore = 0; local itemText = "|cff444444(Empty)|r"
-        row.Alert:Hide(); row.AlertFrame.mode = nil; row.AlertFrame.link = nil
-
-        if link then
-            itemText = link; local stats = MSC.SafeGetItemStats(link, slot.id)
-            if stats then 
-                itemScore = MSC.GetItemScore(stats, currentWeights, specName, slot.id); 
-                for k, v in pairs(stats) do if type(v) == "number" then combinedStats[k] = (combinedStats[k] or 0) + v end end 
-                if itemScore > maxItemScore then maxItemScore = itemScore; maxItemLink = link end
-            end
-            if IsMissingEnchant(link, slot.id) then row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); row.Alert:Show(); row.AlertFrame.mode = "ENCHANT" end
-        else table.insert(missingSlots, slot.name) end
-        
-        if isPlayer then
-            local upgradeLink, upgradeScore = CheckBagsForUpgrade(slot.id, itemScore, currentWeights, specName)
-            if upgradeLink then row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); row.Alert:Show(); row.AlertFrame.mode = "UPGRADE"; row.AlertFrame.link = upgradeLink end
-        end
-        
-        totalScore = totalScore + itemScore; row.Label:SetText(slot.name); row.Item:SetText(itemText); row.Score:SetText(string.format("%.1f", itemScore))
-        if texture then row.Icon:SetTexture(texture); row.Icon:SetDesaturated(false) else row.Icon:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot"); row.Icon:SetDesaturated(true) end
-        if i % 2 == 0 then row.BG:SetColorTexture(1, 1, 1, 0.03) else row.BG:SetColorTexture(0, 0, 0, 0) end; yOffset = yOffset - 24
-        table.insert(exportRows, { slot = slot.name, link = (link or "(Empty)"), score = string.format("%.1f", itemScore) })
-    end
-    
-    MSC.ReceiptFrame.printData = { score = string.format("%.1f", totalScore), topLink = maxItemLink, missing = missingSlots, rows = exportRows }
-    
-    for _, line in pairs(MSC.SummaryRows) do line:Hide() end
-    local sortedStats = {}
-    for k, v in pairs(combinedStats) do
-        local weight = currentWeights[k] or 0; local alwaysShow = (k == "ITEM_MOD_STAMINA_SHORT") 
-        if (weight > 0 or alwaysShow) then local sortWeight = (weight > 0) and weight or 0.001; table.insert(sortedStats, { key=k, val=v, weight=sortWeight, realWeight=weight }) end
-    end
-    table.sort(sortedStats, function(a,b) return a.weight > b.weight end)
-    local col1X, col2X = 20, 210; local startY = -35
-    for i, data in ipairs(sortedStats) do
-        if i > 12 then break end 
-        if not MSC.SummaryRows[i] then
-            local f = CreateFrame("Frame", nil, MSC.ReceiptFrame.SummaryBox); f:SetSize(160, 16); f.Label = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.Label:SetPoint("LEFT", 0, 0); f.Value = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.Value:SetPoint("RIGHT", 0, 0); MSC.SummaryRows[i] = f
-        end
-        local row = MSC.SummaryRows[i]; row:Show()
-        local cleanName = MSC.GetCleanStatName(data.key); local labelColor = "|cff888888" 
-        if data.realWeight > 0 then labelColor = "|cff00ff00" end 
-        row.Label:SetText(labelColor .. cleanName .. ":|r"); row.Value:SetText(string.format("%.1f", data.val))
-        local isLeft = (i % 2 ~= 0); local rowIdx = math.ceil(i / 2) - 1; local yPos = startY - (rowIdx * 16)
-        if isLeft then row:SetPoint("TOPLEFT", col1X, yPos) else row:SetPoint("TOPLEFT", col2X, yPos) end
-    end
-    MSC.ReceiptFrame.TotalText:SetText("SCORE: " .. string.format("%.1f", totalScore))
-end
-
-function MSC.RecordSnapshot(eventLabel)
-    if not SGJ_History then SGJ_History = {} end
-    local key = UnitName("player") .. " - " .. GetRealmName()
-    if not SGJ_History[key] then SGJ_History[key] = {} end
-    local slots = {{id=1},{id=2},{id=3},{id=15},{id=5},{id=9},{id=10},{id=6},{id=7},{id=8},{id=11},{id=12},{id=13},{id=14},{id=16},{id=17},{id=18}}
-    local currentWeights, specName = MSC.GetCurrentWeights()
-    local totalScore = 0
-    for i, slot in ipairs(slots) do
-        local link = GetInventoryItemLink("player", slot.id)
-        if link then local stats = MSC.SafeGetItemStats(link, slot.id); if stats then totalScore = totalScore + MSC.GetItemScore(stats, currentWeights, specName, slot.id) end end
-    end
-    local entry = { date = date("%Y-%m-%d"), label = eventLabel or "Snapshot", score = string.format("%.1f", totalScore), spec = specName }
-    table.insert(SGJ_History[key], 1, entry) 
-    if #SGJ_History[key] > 20 then table.remove(SGJ_History[key], #SGJ_History[key]) end
-    print("|cff00ccffSharpie's Gear Judge:|r Snapshot recorded: |cff00ff00" .. (eventLabel or "Manual") .. "|r")
-end
-
-function MSC.ShowHistory()
-    local key = UnitName("player") .. " - " .. GetRealmName()
-    local charHistory = SGJ_History and SGJ_History[key]
-    if not charHistory or #charHistory == 0 then print("|cffff0000SGJ:|r No history recorded for " .. key); return end
-    if not MSC.HistoryFrame then
-        local f = CreateFrame("Frame", "MSC_HistoryFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(350, 400); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleBg:SetHeight(30); f.TitleText:SetText("History: " .. UnitName("player")) 
-        f.Scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate"); f.Scroll:SetPoint("TOPLEFT", 10, -30); f.Scroll:SetPoint("BOTTOMRIGHT", -30, 10)
-        f.Content = CreateFrame("Frame", nil, f.Scroll); f.Content:SetSize(310, 380); f.Scroll:SetScrollChild(f.Content)
-        f.Rows = {}; MSC.HistoryFrame = f
-    else MSC.HistoryFrame.TitleText:SetText("History: " .. UnitName("player")) end
-    for _, row in pairs(MSC.HistoryFrame.Rows) do row:SetText("") end
-    local yOffset = 0
-    for i, entry in ipairs(charHistory) do
-        if not MSC.HistoryFrame.Rows[i] then
-            local row = MSC.HistoryFrame.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row:SetPoint("TOPLEFT", 10, yOffset); row:SetWidth(300); row:SetJustifyH("LEFT"); MSC.HistoryFrame.Rows[i] = row
-        end
-        local color = "|cffffffff"; if entry.label:find("Level") then color = "|cff00ff00" end 
-        local text = color .. entry.date .. "|r - " .. entry.label .. ": |cff00ccff" .. entry.score .. "|r"
-        MSC.HistoryFrame.Rows[i]:SetText(text); yOffset = yOffset - 20
-    end
-    MSC.HistoryFrame:Show()
-end
+-- Hooks
+GameTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ItemRefTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+ShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem)

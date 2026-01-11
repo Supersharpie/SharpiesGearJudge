@@ -1,83 +1,55 @@
-# Sharpie's Gear Judge (v1.9.0)
-### The Final Verdict on your Gear for WoW Classic Era
+# Sharpie's Gear Judge (Anniversary Edition)
 
-**Sharpie's Gear Judge** takes the guesswork out of loot. It doesn't just look at one item; it looks at your entire loadout, your class, your spec, **your talents**, and **your exact level** to render a final verdict: **UPGRADE** or **DOWNGRADE**.
+**"The Final Verdict on your gear."**
 
----
+Sharpie's Gear Judge (SGJ) is a highly advanced, lightweight gear scoring addon designed for **World of Warcraft: The Burning Crusade (Anniversary / Classic)**. 
 
-## 🌟 New in v1.9.0: "The Engine Rebuild"
-We have completely rewritten the core logic from a monolithic script into a professional, modular architecture. The Judge now has **Two Brains**:
+Unlike standard "BiS Lists" or heavy simulation addons, SGJ analyzes your **current** talents, level, and race to generate a dynamic "Score" for every item in the game. It tells you exactly what is an upgrade *right now*, removing the guesswork from loot decisions.
 
-1.  **The Leveling Engine:** A dedicated system for character growth. It understands that a Level 25 Mage needs different stats than a Level 59 Mage. It features **30+ new leveling profiles** and specific logic for **Pre-BiS farming** (Levels 52-59).
-2.  **The Dynamic Engine:** A high-level traffic controller that takes over at Level 60 (or when you force it). It handles complex End-Game logic, Hit Caps, and Raid-Specific builds.
+## ✨ Key Features
 
-### Other v1.9.0 Highlights:
-* **"Green Item" Fix:** A new **Heavy Duty Text Scanner** now correctly reads and scores "Random Enchantment" items (e.g., *"...of the Owl"* or *"...of the Eagle"*) that the standard WoW API often ignores.
-* **Conflict Manager (The Peacekeeper):** The Judge now automatically detects conflicting tooltips from **RestedXP**, **Zygor**, and **Pawn**, offering to auto-disable them to keep your interface clean.
-* **Manual Override:** You can now force the Judge to use a specific profile (e.g., force "Pre-BiS Farming" logic while still Level 58) via the Minimap menu.
+### 🧠 Dynamic "Plugin" Architecture
+SGJ uses a modern **Core + Plugin** system. It detects your class on login and loads a specialized mathematical model tailored specifically for you.
+* **Covariance:** The addon understands stat synergy. As your Attack Power grows, the value of Crit Rating rises to match it.
+* **Cap Guardian:** It knows your Hit, Defense, and Expertise caps. If you are over the cap, it lowers the value of that stat. If you are under, it raises it.
+* **Hysteresis:** Includes "Anti-Loop" logic to prevent the addon from telling you to break your caps.
 
----
+### ⚖️ The Verdict (Tooltip)
+Hover over any item to see:
+* **Sharpie's Verdict:** A clear `Upgrade` or `Downgrade` message with a precise score difference.
+* **Smart Projection:** The score includes the potential value of the **Best Gems** and **Best Enchants** available to you, so you can compare an unenchanted drop against your fully geared main piece fairly.
+* **Proc Valuation:** "Use" and "Proc" effects (like *Dragonspine Trophy* or *Bloodlust Brooch*) are mathematically converted into passive stats for accurate scoring.
 
-## 🧠 The Dynamic Brain (Endgame)
-The Judge thinks like a theorycrafter. It calculates stat weights in **Real-Time** every time you hover over an item:
+### 📜 The Ledger (History)
+Type `/sgj history` to open your Gear Receipt.
+* **Full Breakdown:** See exactly how your score is calculated.
+* **Bag Scanner:** A **Yellow Exclamation Mark (!)** appears on slots where you have a better item sitting in your bags.
+* **Enchant Alert:** A **Red Alert Icon** warns you if you are missing an enchant or gem.
 
-* **🚫 Hit Cap Awareness:** If you reach the Hit Cap (e.g., 9% for Melee, 16% for Spells), the addon instantly detects it and devalues Hit Rating to **0.01** on the next tooltip. No more wasted stats.
-* **⚡ Talent Scaling:** The addon reads your Talent Tree. If you have *Divine Strength* (+10% Str) or *Heart of the Wild* (+20% Int), the addon automatically increases the score of items with those stats to reflect their *true* value to you.
-* **📉 Diminishing Returns:** Automatically adjusts weights as you approach caps, ensuring you never "overpay" for a stat you don't need.
+### ⚔️ Hybrid Class Support
+SGJ fully supports complex hybrid mechanics:
+* **Druids:** Correctly parses "Feral Attack Power" on weapons.
+* **Warriors:** Enforces 2H priority for Arms and DW priority for Fury.
+* **Paladins/Shamans:** Scores Relics, Totems, and Librams based on their specific spell bonuses.
 
-## 📈 The Leveling Brain (Growth)
-The addon evolves with you as you grow using **Smart Brackets**:
+## 🛠️ Installation & Usage
 
-* **Levels 1-20:** Scores items based on Survival & Regeneration (Spirit/Stamina).
-* **Levels 21-40:** Shifts focus to Raw Power & Talent scaling.
-* **Levels 41-51:** Prioritizes efficiency and kill speed.
-* **Levels 52-59 (Pre-BiS Mode):** Automatically switches to "Pre-Raid" weights (Hit/Crit) to help you farm your Level 60 gear before you even ding.
-* **Dungeon Smart:** If you are spec'd as a Tank or Healer, the addon automatically switches to "Dungeon Mode" weights so you can gear for your role, not just for solo questing.
+1.  Download the latest release.
+2.  Extract `SharpiesGearJudge` to your `Interface\AddOns\` folder.
+3.  **Login and Play!** No setup required. The Judge automatically detects your spec.
 
----
+**Commands:**
+* `/sgj` - Open the Laboratory (Compare items manually).
+* `/sgj config` - Open Settings (Toggle Minimap button, Auto-Sell junk).
+* `/sgj history` - Open the Ledger.
 
-## ⚖️ Key Features
+## 🤝 Compatibility
+* **Conflict Manager:** SGJ automatically detects other tooltip addons (Pawn, Zygor, RXP) and can disable their scoring lines to keep your tooltips clean.
+* **TBC Phase 5:** Fully updated for Sunwell Plateau itemization.
 
-### ⚔️ The Verdict Tooltip (Context-Aware Scoring)
-Hover over any item to see an instant, intelligent comparison against your equipped gear.
-* **Enchant Projection:** Toggle "Potential Mode" to virtually apply your current enchant onto new loot to see if it's *actually* an upgrade once fully set up.
-* **Active Item Estimator:** Estimates the average combat value of On-Use trinkets (e.g., *Earthstrike*, *Diamond Flask*) and marks them with a Tilde (**~**).
-* **Smart Pairing:** If you compare a 2-Hander while dual-wielding, it automatically finds the best combination in your bags to calculate the **net** gain/loss.
-
-### 🧾 The Gear Receipt (Audit)
-Type `/sgjreceipt` to open your **Character Audit**.
-* **⚠️ Return Policy (Bag Scanning):** The Receipt scans your bags. If you have an item in your bag that is better than what you are wearing, a **Yellow Alert** icon will appear to warn you!
-* **💸 Tax Collector (Enchant Check):** Detects unenchanted gear. If an item is missing an enchant, a **Red Alert** icon will flag it as a "Missed Opportunity."
-* **Export:** Generate a text string of your gear and score to paste into Discord or spreadsheets.
-
-### 🧪 The Judge's Lab (/sgj)
-A custom visual interface for advanced theorycrafting.
-* **Gap Filling:** Drag items into empty slots to simulate future loadouts.
-* **Math Breakdown:** Click "MATH MODE" to see exactly *why* the Judge gave a score. It breaks down your Talent Multipliers, Hit Cap status, and Profile logic in plain English.
-
----
-
-## ⚙️ Configuration
-* **Strict Mode:** Compare items exactly as they drop.
-* **Potential Mode:** Compare items as if they were fully enchanted.
-* **Profile:** Auto-detects your spec/level, or **Force Manual Mode** via the Minimap button (Right-Click).
-* **Conflict Manager:** Auto-resolves tooltip overlaps with other addons.
-
-## 🛠 Installation
-1.  **Delete** any old `SharpiesGearJudge` folder from your AddOns directory (Critical for v1.9.0!).
-2.  Extract the new folder into `_classic_era_\Interface\AddOns\`.
-3.  Launch WoW Classic.
-
-## 🎮 Commands
-* `/sgj` or `/judge` - Open "The Judge's Lab".
-* `/sgjreceipt` - Open the Gear Receipt (Audit).
-* `/sgj history` - View your Level-Up history log.
-* `/sgj options` - Open the Configuration Panel.
-
-**Minimap Button:**
-* **Left-Click:** Toggle Judge's Lab.
-* **Right-Click:** Open Settings / Manual Override.
-
----
-**Author:** Supersharpie  
-**Version:** 1.9.0
+## Credits
+* **Author:** SuperSharpie
+* **Version:** 2.1.0 (TBC)
+* **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
+* **Feedback:** Found a weight that feels off? Open an issue on GitHub!
+* **Discord:** https://discord.gg/yTSX8Us6WE
