@@ -6,55 +6,87 @@ Rogue.Name = "ROGUE"
 -- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
 -- =============================================================
 Rogue.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["MSC_HIT_PERCENT"]=18.0, ["MSC_CRIT_PERCENT"]=25.0
-    },
-    ["RAID_COMBAT"] = {
-        ["MSC_WEAPON_SKILL"]=40.0, -- Massive weight until +5 skill
-        ["MSC_HIT_PERCENT"]=22.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["MSC_CRIT_PERCENT"]=28.0 
-    },
-    ["RAID_DAGGER"] = {
-        ["MSC_WEAPON_SKILL"]=35.0, 
-        ["MSC_CRIT_PERCENT"]=30.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
-        ["MSC_HIT_PERCENT"]=20.0, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["PVP_ERA"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-        ["MSC_CRIT_PERCENT"]=20.0, 
-        ["MSC_HIT_PERCENT"]=12.0 
+        ["Default"] = {
+			["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0 },
+        ["RAID_COMBAT_SWORDS"] = {
+			["ITEM_MOD_HIT_RATING_SHORT"]=22.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0 },
+        ["RAID_COMBAT_DAGGERS"] = {
+			["ITEM_MOD_CRIT_RATING_SHORT"]=28.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0 },
+        ["RAID_SEAL_FATE"] = {
+			["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=18.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 },
+        ["PVP_HEMO"] = {
+			["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0 },
+        ["PVP_CB_DAGGER"] = {
+			["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["PVP_MACE"] = {
+			["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=1.8 },
     }
-}
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
 Rogue.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["MSC_CRIT_PERCENT"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["MSC_HIT_PERCENT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["MSC_HIT_PERCENT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["MSC_WEAPON_SKILL"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 }
-}
+        -- Combat Swords/Maces
+        ["Leveling_1_20"]  = { ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
+        ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
+        ["Leveling_52_59"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
+
+        -- [NEW] Dagger Leveling (Ambush/Backstab) - Needs Crit & Dagger Skill
+        ["Leveling_Dagger_21_40"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
+        ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0 },
+        ["Leveling_Dagger_52_59"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
+
+        -- [NEW] Hemo Leveling (Subtlety) - Needs Stamina & AP
+        ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
+        ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0 },
+        ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
+    }
+
+-- =============================================================
+-- DISPLAY NAMES (For Options Menu)
+-- =============================================================
+Rogue.PrettyNames = {
+        -- Endgame
+        ["RAID_COMBAT_SWORDS"]  = "Raid: Combat Swords",
+        ["RAID_COMBAT_DAGGERS"] = "Raid: Combat Daggers",
+        ["RAID_SEAL_FATE"]      = "Raid: Seal Fate (Crit)",
+        ["PVP_MACE"]            = "PvP: Mace Specialization",
+        ["PVP_HEMO"]            = "PvP: Hemo Control",
+        ["PVP_CB_DAGGER"]       = "PvP: Cold Blood Burst",
+        
+        -- Leveling
+        ["Leveling_1_20"]       = "Leveling (1-20)",
+        ["Leveling_21_40"]      = "Leveling: Combat (21-40)",
+        ["Leveling_41_51"]      = "Leveling: Combat (41-51)",
+        ["Leveling_52_59"]      = "Leveling: Pre-BiS Combat (52-59)",
+        
+        ["Leveling_Dagger_21_40"] = "Leveling: Daggers (21-40)",
+        ["Leveling_Dagger_41_51"] = "Leveling: Daggers (41-51)",
+        ["Leveling_Dagger_52_59"] = "Leveling: Daggers (52-59)",
+        
+        ["Leveling_Hemo_21_40"]   = "Leveling: Hemo (21-40)",
+        ["Leveling_Hemo_41_51"]   = "Leveling: Hemo (41-51)",
+        ["Leveling_Hemo_52_59"]   = "Leveling: Hemo (52-59)",
+    }
 
 -- =============================================================
 -- ERA TALENTS (Vanilla 31-Point Tree)
 -- =============================================================
 Rogue.Talents = { 
-    ["PRECISION"]       = "Precision",        -- 5% Hit
-    ["ADRENALINE_RUSH"] = "Adrenaline Rush",  -- Combat 31
-    ["COLD_BLOOD"]      = "Cold Blood",       -- Assa 21
-    ["PREPARATION"]     = "Preparation",      -- Sub 21
-    ["HEMORRHAGE"]      = "Hemorrhage",       -- Sub 31
-    ["WEAP_EXPERTISE"]  = "Weapon Expertise", -- +5 Skill
-    ["SWORD_SPEC"]      = "Sword Specialization"
-}
+        ["SEAL_FATE"]       = "Seal Fate",
+        ["COLD_BLOOD"]      = "Cold Blood",
+        ["ADRENALINE_RUSH"] = "Adrenaline Rush",
+        ["SWORD_SPEC"]      = "Sword Specialization",
+        ["DAGGER_SPEC"]     = "Dagger Specialization",
+        ["MACE_SPEC"]       = "Mace Specialization",
+        ["RIPOSTE"]         = "Riposte",
+        ["HEMORRHAGE"]      = "Hemorrhage",
+        ["PREPARATION"]     = "Preparation",
+        ["LETHALITY"]       = "Lethality",
+        ["PRECISION"]       = "Precision",
+        ["WEAP_EXPERTISE"]  = "Weapon Expertise",
+    }
 
 -- =============================================================
 -- LOGIC
@@ -73,39 +105,40 @@ function Rogue:GetSpec()
         return "Leveling" .. suffix
     end
 
-    -- Endgame detection
-    if Rank("ADRENALINE_RUSH") > 0 then return "RAID_COMBAT" end
-    if Rank("HEMORRHAGE") > 0 or Rank("PREPARATION") > 0 then return "PVP_ERA" end
-    
-    return "Default"
+    if Rank("HEMORRHAGE") > 0 and Rank("PREPARATION") > 0 then return "PVP_HEMO" end
+    if Rank("COLD_BLOOD") > 0 and Rank("PREPARATION") > 0 and Rank("HEMORRHAGE") == 0 then return "PVP_CB_DAGGER" end
+    if Rank("MACE_SPEC") > 0 then return "PVP_MACE" end
+    if Rank("SEAL_FATE") > 0 then return "RAID_SEAL_FATE" end
+    if Rank("ADRENALINE_RUSH") > 0 and Rank("SWORD_SPEC") > 0 then return "RAID_COMBAT_SWORDS" end
+    if Rank("DAGGER_SPEC") > 0 then return "RAID_COMBAT_DAGGERS" end
+    return "RAID_COMBAT_SWORDS"
 end
 
 function Rogue:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- 1. Yellow Hit Cap Logic (Classic Era: 9% vs 63 bosses, 6% with +5 Skill)
-    if weights["MSC_HIT_PERCENT"] then
+    -- 1. Yellow Hit Cap (9% base, 6% with +5 Skill)
+    -- FIX: Changed MSC_HIT_PERCENT -> ITEM_MOD_HIT_RATING_SHORT
+    if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         local currentHit = MSC.PlayerStats.Hit or 0
         local talentHit = Rank("PRECISION") -- 1% per rank
         local totalHit = currentHit + talentHit
         
-        -- Determine cap based on weapon skill
-        local weaponSkillBonus = Rank("WEAP_EXPERTISE") * 2.5 -- +5 skill at rank 2
+        local weaponSkillBonus = Rank("WEAP_EXPERTISE") * 2.5
         local _, race = UnitRace("player")
         if race == "Human" then weaponSkillBonus = weaponSkillBonus + 5 end
 
         local yellowCap = (weaponSkillBonus >= 5) and 6 or 9
         
         if totalHit >= yellowCap then
-            -- We are yellow capped. White hits still benefit, but less so.
-            weights["MSC_HIT_PERCENT"] = weights["MSC_HIT_PERCENT"] * 0.4
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
             table.insert(activeCaps, "Yellow Hit (" .. yellowCap .. "%)")
         end
     end
 
-    -- 2. Weapon Skill Cap (Soft Cap at +5)
-    if weights["MSC_WEAPON_SKILL"] then
+    -- 2. Weapon Skill Cap (+5)
+    if weights["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] then
         local raceBonus = 0
         local _, race = UnitRace("player")
         if race == "Human" then raceBonus = 5 end
@@ -114,7 +147,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
         local totalSkillExtra = raceBonus + skillFromTalents
         
         if totalSkillExtra >= 5 then
-            weights["MSC_WEAPON_SKILL"] = 5.0 -- Significantly lower weight after Glancing penalty is minimized
+            weights["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 5.0
             table.insert(activeCaps, "Skill (+5)")
         end
     end

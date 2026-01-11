@@ -37,8 +37,8 @@ MSC.StatShortNames = {
     ["ITEM_MOD_INTELLECT_SHORT"] = "Int",
     ["ITEM_MOD_AGILITY_SHORT"] = "Agi",
     ["ITEM_MOD_STRENGTH_SHORT"] = "Str",
-    ["ITEM_MOD_SPIRIT_SHORT"] = "Spt",
-    ["ITEM_MOD_SPELL_POWER_SHORT"] = "SP",
+    ["ITEM_MOD_SPIRIT_SHORT"] = "Spirit",
+    ["ITEM_MOD_SPELL_POWER_SHORT"] = "Spell Power",
     ["ITEM_MOD_HEALING_POWER_SHORT"] = "Heal",
     ["ITEM_MOD_MANA_REGENERATION_SHORT"] = "Mp5",
     ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = "Hp5",
@@ -86,39 +86,76 @@ end
 
 function MSC.IsItemUsable(link)
     if not link then return false end
-    -- GetItemInfo for Era:
-    -- Name, Link, Quality, iLvl, ReqLvl, Type, SubType, Stack, EquipLoc, Tex, Price, ClassID, SubClassID
-    local _, _, _, _, _, _, subType, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
-    local _, playerClass = UnitClass("player")
     
-    if equipLoc == "INVTYPE_RELIC" then
-        if playerClass == "DRUID" or playerClass == "PALADIN" or playerClass == "SHAMAN" then
-            if subType then
-                if playerClass == "DRUID" and (subType == "Totem" or subType == "Libram") then return false end
-                if playerClass == "PALADIN" and (subType == "Totem" or subType == "Idol") then return false end
-                if playerClass == "SHAMAN" and (subType == "Libram" or subType == "Idol") then return false end
-            end
-            return true
-        end
-        return false
-    end
-    if equipLoc == "INVTYPE_THROWN" then return (playerClass == "WARRIOR" or playerClass == "ROGUE" or playerClass == "HUNTER") end
+    -- 1. HARD API CHECKS (Armor/Weapon Types)
+    local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
+    local locClass, playerClass = UnitClass("player")
+    local locRace, playerRace = UnitRace("player")
     
-    if classID == 4 then -- Armor
+    -- Check Armor Types (ClassID 4)
+    if classID == 4 then 
         if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then 
-            if subclassID and subclassID > 1 then return false end 
+            if subclassID and subclassID > 1 then return false end -- Cloth only
         elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
-            if subclassID and subclassID > 2 then return false end 
-        elseif playerClass == "HUNTER" then 
-            if subclassID and subclassID > 3 then return false end 
-        elseif playerClass == "SHAMAN" then
-            if subclassID and subclassID > 3 and subclassID ~= 6 then return false end 
+            if subclassID and subclassID > 2 then return false end -- Leather/Cloth
+        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
+            -- Mail (3), Leather (2), Cloth (1). 
+            -- Shields (6) are "Armor", so we must explicitly block them for Hunter.
+            if subclassID == 6 and playerClass == "HUNTER" then return false end
+            if subclassID > 3 and subclassID ~= 6 then return false end -- Block Plate (4)
         end
     end
     
+    -- Check Weapon Types (ClassID 2) via Module
     if classID == 2 and MSC.CurrentClass and MSC.CurrentClass.ValidWeapons then
         if subclassID and not MSC.CurrentClass.ValidWeapons[subclassID] then return false end
     end
+    
+    -- Check Relics/Thrown
+    if equipLoc == "INVTYPE_RELIC" then
+        if playerClass == "DRUID" or playerClass == "PALADIN" or playerClass == "SHAMAN" then
+            -- These classes use Relics, but we need to check if it's the RIGHT relic (Idol vs Totem) via tooltip below
+        else
+            return false -- Other classes can't use relics
+        end
+    end
+    if equipLoc == "INVTYPE_THROWN" and (playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" or playerClass == "PALADIN" or playerClass == "DRUID" or playerClass == "SHAMAN") then
+        return false
+    end
+
+    -- 2. TOOLTIP SCAN (For "Classes: Mage" or "Races: Gnome")
+    -- We need to check specific restrictions that aren't in the ClassID/SubClassID
+    local tipName = "MSC_RestrictionScanner"
+    local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
+    tip:ClearLines()
+    tip:SetHyperlink(link)
+    
+    for i = 1, tip:NumLines() do
+        local line = _G[tipName.."TextLeft"..i]
+        local text = line and line:GetText()
+        if text then
+            -- Check Class Restriction (e.g. "Classes: Mage, Warlock")
+            -- We search for our LOCALIZED class name (e.g. "Warlock") in the text line
+            if (text:find(ITEM_CLASSES_ALLOWED) or text:find("Classes:")) then
+                if not text:find(locClass) then return false end
+            end
+            
+            -- Check Race Restriction
+            if (text:find(ITEM_RACES_ALLOWED) or text:find("Races:")) then
+                if not text:find(locRace) then return false end
+            end
+            
+            -- Check Specific Relic Types (Totem vs Idol vs Libram)
+            -- These appear as the "Type" line in the tooltip, usually line 2 or 3
+            if equipLoc == "INVTYPE_RELIC" then
+                if playerClass == "DRUID" and (text:find("Totem") or text:find("Libram")) then return false end
+                if playerClass == "PALADIN" and (text:find("Totem") or text:find("Idol")) then return false end
+                if playerClass == "SHAMAN" and (text:find("Libram") or text:find("Idol")) then return false end
+            end
+        end
+    end
+
     return true
 end
 

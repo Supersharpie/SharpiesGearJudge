@@ -6,45 +6,74 @@ Priest.Name = "PRIEST"
 -- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
 -- =============================================================
 Priest.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0 
-    },
-    ["HOLY_RAID"] = {
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, -- Higher weight for Spiritual Guidance
-        ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
-    },
-    ["DISC_PI"] = {
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.5, ["ITEM_MOD_HEALING_POWER_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 
-    },
-    ["SHADOW_PVE"] = {
-        ["MSC_SPELL_HIT_PERCENT"]=20.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+        ["Default"] = {
+			["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 },
+        ["HOLY_DEEP"] = {
+			["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 },
+        ["DISC_PI_SUPPORT"] = {
+			["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.5, ["ITEM_MOD_HEALING_POWER_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.6 },
+        ["SHADOW_PVE"] = {
+			["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 },
+        ["SHADOW_PVP"] = {
+			["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0 },
+        ["HYBRID_POWER_WEAVING"] = {
+			["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
     }
-}
 
 -- =============================================================
 -- LEVELING WEIGHTS (Spirit is King)
 -- =============================================================
 Priest.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["MSC_WAND_DPS"]=6.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_SPIRIT_SHORT"]=2.5, ["MSC_WAND_DPS"]=4.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["MSC_SPELL_HIT_PERCENT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-    
-    ["Leveling_Smite_21_59"] = { ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["MSC_SPELL_CRIT_PERCENT"]=10.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 }
-}
+        ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5 },
+        ["Leveling_21_40"] = { ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.6 },
+        ["Leveling_41_51"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+        ["Leveling_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_Healer_52_59"] = { ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
+        -- Smite
+        ["Leveling_Smite_21_40"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.0 },
+        ["Leveling_Smite_41_51"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
+        ["Leveling_Smite_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+    }
+
+-- =============================================================
+-- DISPLAY NAMES (For Options Menu)
+-- =============================================================
+Priest.PrettyNames = {
+        -- Endgame
+        ["HOLY_DEEP"]          = "Healer: Deep Holy",
+        ["DISC_PI_SUPPORT"]    = "Healer: Disc (Power Infusion)",
+        ["SHADOW_PVE"]         = "DPS: Shadow (PvE)",
+        ["SHADOW_PVP"]         = "PvP: Shadow (Blackout)",
+        ["HYBRID_POWER_WEAVING"] = "Support: Power Weaving",
+        
+        -- Leveling
+        ["Leveling_1_20"]       = "Leveling (1-20)",
+        ["Leveling_21_40"]      = "Leveling: Shadow/Wand (21-40)",
+        ["Leveling_41_51"]      = "Leveling: Shadow (41-51)",
+        ["Leveling_52_59"]      = "Leveling: Pre-BiS Shadow (52-59)",
+        
+        ["Leveling_Smite_21_40"] = "Leveling: Smite/Holy (21-40)",
+        ["Leveling_Smite_41_51"] = "Leveling: Smite/Holy (41-51)",
+        ["Leveling_Smite_52_59"] = "Leveling: Smite/Holy (52-59)",
+        
+        ["Leveling_Healer_41_51"] = "Leveling: Dungeon Healer (41-51)",
+        ["Leveling_Healer_52_59"] = "Leveling: Pre-BiS Healer (52-59)",
+    }
 
 -- =============================================================
 -- ERA TALENTS (Vanilla 31-Point Tree)
 -- =============================================================
 Priest.Talents = { 
-    ["POWER_INFUSION"]  = "Power Infusion", 
-    ["SPIRIT_GUIDANCE"] = "Spiritual Guidance", 
-    ["SPIRIT_REDEMPT"]  = "Spirit of Redemption",
-    ["SHADOWFORM"]      = "Shadowform", 
-    ["SHADOW_FOCUS"]    = "Shadow Focus",
-    ["WAND_SPEC"]       = "Wand Specialization",
-    ["DARKNESS"]        = "Darkness"
-}
+        ["SHADOWFORM"]      = "Shadowform",
+        ["POWER_INFUSION"]  = "Power Infusion",
+        ["SPIRIT_GUIDANCE"] = "Spiritual Guidance",
+        ["SHADOW_WEAVING"]  = "Shadow Weaving",
+        ["BLACKOUT"]        = "Blackout",
+        ["WAND_SPEC"]       = "Wand Specialization",
+        ["SPIRIT_TAP"]      = "Spirit Tap",
+        ["MENTAL_STRENGTH"] = "Mental Strength",
+        ["DIVINE_FURY"]     = "Divine Fury",
+    }
 
 -- =============================================================
 -- LOGIC
@@ -66,11 +95,12 @@ function Priest:GetSpec()
     end
 
     -- Endgame
-    if Rank("SHADOWFORM") > 0 then return "SHADOW_PVE" end
-    if Rank("SPIRIT_REDEMPT") > 0 then return "HOLY_RAID" end
-    if Rank("POWER_INFUSION") > 0 then return "DISC_PI" end
-    
-    return "Default"
+    if Rank("SHADOWFORM") > 0 and Rank("SHADOW_WEAVING") > 0 then return "SHADOW_PVE" end
+    if Rank("SHADOWFORM") > 0 and Rank("BLACKOUT") > 0 then return "SHADOW_PVP" end
+    if Rank("POWER_INFUSION") > 0 and Rank("SHADOW_WEAVING") > 0 then return "HYBRID_POWER_WEAVING" end
+    if Rank("POWER_INFUSION") > 0 then return "DISC_PI_SUPPORT" end
+    if Rank("SPIRIT_GUIDANCE") > 0 then return "HOLY_DEEP" end
+    return "HOLY_DEEP"
 end
 
 function Priest:ApplyScalers(weights, currentSpec)
@@ -80,8 +110,6 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- 1. Spiritual Guidance (Spirit -> Spell Power)
     local rSG = Rank("SPIRIT_GUIDANCE")
     if rSG > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
-        -- 1 Spirit gives 0.25 SP at rank 5. 
-        -- We add 25% of the Spell Power weight to the Spirit weight.
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0
         weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (spWeight * (rSG * 0.05))
     end
@@ -90,20 +118,20 @@ function Priest:ApplyScalers(weights, currentSpec)
     if currentSpec:find("HOLY") or currentSpec:find("DISC") then
         local healPower = MSC.PlayerStats.HealingPower or 0
         if healPower > 600 then
-            -- High heal power makes Spirit regen more valuable for longevity
             local hScaler = 1 + ((healPower - 600) / 6000)
             weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler
         end
     end
 
-    -- 3. Shadow Hit Cap (16% in Era)
-    if currentSpec:find("SHADOW") and weights["MSC_SPELL_HIT_PERCENT"] then
+    -- 3. Shadow Hit Cap (16%)
+    -- FIX: Changed MSC_SPELL_HIT_PERCENT -> ITEM_MOD_HIT_SPELL_RATING_SHORT
+    if currentSpec:find("SHADOW") and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
         local gearHit = MSC.PlayerStats.SpellHit or 0
         local talentHit = Rank("SHADOW_FOCUS") * 2 -- 2% per rank in Era
         local totalHit = gearHit + talentHit
         
         if totalHit >= 16 then
-            weights["MSC_SPELL_HIT_PERCENT"] = 1.0 -- Cap reached
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0 -- Cap reached
             table.insert(activeCaps, "Hit (16%)")
         end
     end

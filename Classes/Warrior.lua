@@ -6,54 +6,85 @@ Warrior.Name = "WARRIOR"
 -- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
 -- =============================================================
 Warrior.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5
-    },
-    ["RAID_FURY_DW"] = {
-        ["MSC_WEAPON_SKILL"]=45.0, -- Priority #1 until +5
-        ["MSC_HIT_PERCENT"]=18.0,  -- High value until 6% or 9%
-        ["MSC_CRIT_PERCENT"]=30.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=1.4
-    },
-    ["RAID_ARMS_2H"] = {
-        ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=8.5, 
-        ["MSC_CRIT_PERCENT"]=28.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-        ["MSC_HIT_PERCENT"]=15.0,
-        ["ITEM_MOD_AGILITY_SHORT"]=1.2
-    },
-    ["DEEP_PROT_ERA"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["MSC_DEFENSE_SKILL"]=1.5, 
-        ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, 
-        ["MSC_HIT_PERCENT"]=12.0, 
-        ["MSC_PARRY_PERCENT"]=15.0, 
-        ["MSC_DODGE_PERCENT"]=15.0
+        ["Default"] = {
+			["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.3, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+        ["FURY_2H"] = {
+			["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 7.5, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.3, ["ITEM_MOD_CRIT_RATING_SHORT"] = 28.0, ["ITEM_MOD_HIT_RATING_SHORT"] = 12.0, ["ITEM_MOD_STAMINA_SHORT"] = 0.5 },
+        ["FURY_DW"] = {
+			["ITEM_MOD_HIT_RATING_SHORT"] = 22.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 18.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 30.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 0.5 },
+        ["ARMS_MS"] = {
+			["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 8.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 28.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.2, ["ITEM_MOD_STAMINA_SHORT"] = 1.5 },
+        ["DEEP_PROT"] = {
+			["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.6, ["ITEM_MOD_HIT_RATING_SHORT"] = 10.0, ["ITEM_MOD_DODGE_RATING_SHORT"] = 12.0, ["ITEM_MOD_PARRY_RATING_SHORT"] = 12.0, ["ITEM_MOD_STRENGTH_SHORT"] = 0.5 },
+        ["FURY_PROT"] = {
+			["ITEM_MOD_HIT_RATING_SHORT"] = 22.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.5 },
+        ["ARMS_PROT"] = {
+			["ITEM_MOD_STAMINA_SHORT"] = 1.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8, ["ITEM_MOD_PARRY_RATING_SHORT"] = 10.0 },
     }
-}
 
 -- =============================================================
 -- LEVELING WEIGHTS (The Spirit Meta)
 -- =============================================================
 Warrior.LevelingWeights = {
-    ["Leveling_1_30"]  = { ["ITEM_MOD_SPIRIT_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
-    ["Leveling_31_50"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["MSC_CRIT_PERCENT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5 },
-    ["Leveling_51_60"] = { ["MSC_HIT_PERCENT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["MSC_WEAPON_SKILL"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
-}
+        -- Standard Arms/2H Fury
+        ["Leveling_1_20"]  = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
+        ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.2 },
+        
+        -- [NEW] Dual Wield Fury Leveling (Needs Hit!)
+        ["Leveling_DW_21_40"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
+        ["Leveling_DW_41_51"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_DW_52_59"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
+
+        -- Tank Leveling (Dungeon Grinding)
+        ["Leveling_Tank_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
+        ["Leveling_Tank_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, ["ITEM_MOD_HIT_RATING_SHORT"]=5.0 },
+        ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=10.0 },
+    }
+
+-- =============================================================
+-- DISPLAY NAMES (For Options Menu)
+-- =============================================================
+Warrior.PrettyNames = {
+        -- Endgame
+        ["FURY_DW"]         = "Raid: Fury (Dual Wield)",
+        ["FURY_2H"]         = "Raid: Fury (2H Slam)",
+        ["ARMS_MS"]         = "PvP: Arms (Mortal Strike)",
+        ["DEEP_PROT"]       = "Tank: Deep Protection",
+        ["FURY_PROT"]       = "Tank: Fury-Prot (Threat)",
+        ["ARMS_PROT"]       = "Tank: Arms (Dungeon Hybrid)",
+        
+        -- Leveling
+        ["Leveling_1_20"]       = "Leveling (1-20)",
+        ["Leveling_21_40"]      = "Leveling: Arms/Fury (21-40)",
+        ["Leveling_41_51"]      = "Leveling: Arms/Fury (41-51)",
+        ["Leveling_52_59"]      = "Leveling: Pre-BiS Fury (52-59)",
+        
+        ["Leveling_DW_21_40"]   = "Leveling: Dual Wield (21-40)",
+        ["Leveling_DW_41_51"]   = "Leveling: Dual Wield (41-51)",
+        ["Leveling_DW_52_59"]   = "Leveling: Dual Wield (52-59)",
+        
+        ["Leveling_Tank_21_40"] = "Leveling: Tank (21-40)",
+        ["Leveling_Tank_41_51"] = "Leveling: Tank (41-51)",
+        ["Leveling_Tank_52_59"] = "Leveling: Tank (52-59)",
+    }
 
 -- =============================================================
 -- ERA TALENTS (Vanilla 31-Point Tree)
 -- =============================================================
 Warrior.Talents = { 
-    ["MORTAL_STRIKE"]   = "Mortal Strike", 
-    ["BLOODTHIRST"]     = "Bloodthirst", 
-    ["SHIELD_SLAM"]     = "Shield Slam",
-    ["PIERCING_HOWL"]   = "Piercing Howl",
-    ["WEAP_MASTERY"]    = "Weapon Mastery", -- SoD or Era Specifics
-    ["DUAL_WIELD_SPEC"] = "Dual Wield Specialization"
-}
+        ["MORTAL_STRIKE"]    = "Mortal Strike",
+        ["BLOODTHIRST"]      = "Bloodthirst",
+        ["SHIELD_SLAM"]      = "Shield Slam",
+        ["DEFIANCE"]         = "Defiance",
+        ["IMP_SLAM"]         = "Improved Slam",
+        ["DW_SPEC"]          = "Dual Wield Specialization",
+        ["TACTICAL_MASTERY"] = "Tactical Mastery",
+        ["IMPALE"]           = "Impale",
+        ["CRUELTY"]          = "Cruelty",
+        ["FLURRY"]           = "Flurry",
+    }
 
 -- =============================================================
 -- LOGIC
@@ -70,44 +101,46 @@ function Warrior:GetSpec()
     end
 
     -- Endgame Spec detection
-    if Rank("SHIELD_SLAM") > 0 then return "DEEP_PROT_ERA" end
-    if Rank("BLOODTHIRST") > 0 then return "RAID_FURY_DW" end
-    if Rank("MORTAL_STRIKE") > 0 then return "RAID_ARMS_2H" end
-    
-    return "Default"
+    if Rank("SHIELD_SLAM") > 0 then return "DEEP_PROT" end
+    if Rank("BLOODTHIRST") > 0 and Rank("DEFIANCE") > 0 then return "FURY_PROT" end
+    if Rank("TACTICAL_MASTERY") > 0 and Rank("DEFIANCE") > 0 then return "ARMS_PROT" end
+    if Rank("BLOODTHIRST") > 0 and Rank("IMP_SLAM") > 0 then return "FURY_2H" end
+    if Rank("BLOODTHIRST") > 0 then return "FURY_DW" end
+    if Rank("MORTAL_STRIKE") > 0 then return "ARMS_MS" end
+    return "FURY_DW"
 end
 
 function Warrior:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- 1. Yellow Hit Cap (Classic Era: 9% base, 6% with +5 Skill)
-    if weights["MSC_HIT_PERCENT"] then
+    -- 1. Yellow Hit Cap (9% base, 6% with +5 Skill)
+    -- FIX: Changed MSC_HIT_PERCENT -> ITEM_MOD_HIT_RATING_SHORT
+    if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         local currentHit = MSC.PlayerStats.Hit or 0
         
-        -- Detect Weapon Skill (Racial + Gear)
+        -- Detect Weapon Skill (Racial)
         local _, race = UnitRace("player")
         local skillBonus = 0
         if race == "Human" or race == "Orc" then skillBonus = 5 end
-        -- (Add logic here to check gear-based skill like Edgemaster's if your MSC scanner supports it)
 
         local yellowCap = (skillBonus >= 5) and 6 or 9
         
         if currentHit >= yellowCap then
             -- Hit is still good for DW (White hits), but weight drops for 2H
             local mult = (currentSpec:find("DW")) and 0.5 or 0.1
-            weights["MSC_HIT_PERCENT"] = weights["MSC_HIT_PERCENT"] * mult
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * mult
             table.insert(activeCaps, "Yellow Hit ("..yellowCap.."%)")
         end
     end
 
     -- 2. Weapon Skill Cap (+5 is the breakpoint)
-    if weights["MSC_WEAPON_SKILL"] then
+    if weights["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] then
         local _, race = UnitRace("player")
         local skillBonus = (race == "Human" or race == "Orc") and 5 or 0
         
         if skillBonus >= 5 then
-            weights["MSC_WEAPON_SKILL"] = 8.0 -- Drop from 45.0
+            weights["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 8.0 -- Drop value
             table.insert(activeCaps, "Skill (+5)")
         end
     end

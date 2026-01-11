@@ -142,35 +142,64 @@ function MSC:GetTalentRank(talentName)
 end
 
 -- =============================================================
--- 5. WEIGHT DISPATCHER
+-- 5. WEIGHT DISPATCHER (Fixed Leveling Logic)
 -- =============================================================
 MSC.CachedWeights = nil
 MSC.CachedProfile = nil
 MSC.CachedCapText = nil
+MSC.CachedIsLeveling = false
 
 function MSC.GetCurrentWeights()
+    -- 1. MANUAL OVERRIDE
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" and MSC.ManualSpec ~= "Auto" then
         if MSC.CurrentClass then
-            if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[MSC.ManualSpec] then
-                return MSC.CurrentClass.Weights[MSC.ManualSpec], MSC.ManualSpec, nil
-            elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[MSC.ManualSpec] then
-                return MSC.CurrentClass.LevelingWeights[MSC.ManualSpec], MSC.ManualSpec, nil
+            -- Check if the manual key exists in Leveling or Endgame
+            -- We assume manual selection wants the specific table provided
+            if MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[MSC.ManualSpec] then
+                return MSC.CurrentClass.LevelingWeights[MSC.ManualSpec], MSC.ManualSpec, nil, true
+            elseif MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[MSC.ManualSpec] then
+                return MSC.CurrentClass.Weights[MSC.ManualSpec], MSC.ManualSpec, nil, false
             end
         end
     end
 
-    if MSC.CachedWeights then return MSC.CachedWeights, MSC.CachedProfile, MSC.CachedCapText end
+    -- 2. CACHED RESULT
+    if MSC.CachedWeights then 
+        return MSC.CachedWeights, MSC.CachedProfile, MSC.CachedCapText, MSC.CachedIsLeveling 
+    end
 
+    -- 3. AUTO-DETECT
     if MSC.CurrentClass then
         local specKey = MSC.CurrentClass:GetSpec()
         local weights = nil
-        
-        if MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
-            weights = MSC.CurrentClass.LevelingWeights[specKey]
-        elseif MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
-            weights = MSC.CurrentClass.Weights[specKey]
+        local isLeveling = false
+        local level = UnitLevel("player")
+
+        -- A. Try Leveling Weights FIRST if under 60
+        if level < 60 and MSC.CurrentClass.LevelingWeights then
+            if MSC.CurrentClass.LevelingWeights[specKey] then
+                weights = MSC.CurrentClass.LevelingWeights[specKey]
+                isLeveling = true
+            elseif MSC.CurrentClass.LevelingWeights["Default"] then
+                weights = MSC.CurrentClass.LevelingWeights["Default"]
+                specKey = "Default"
+                isLeveling = true
+            end
+        end
+
+        -- B. Fallback to Endgame Weights (if 60 OR if no leveling weights found)
+        if not weights and MSC.CurrentClass.Weights then
+            if MSC.CurrentClass.Weights[specKey] then
+                weights = MSC.CurrentClass.Weights[specKey]
+                isLeveling = false
+            elseif MSC.CurrentClass.Weights["Default"] then
+                weights = MSC.CurrentClass.Weights["Default"]
+                specKey = "Default"
+                isLeveling = false
+            end
         end
         
+        -- C. Apply Scalers (Hit Caps/etc)
         local capText = nil
         if weights and MSC.CurrentClass.ApplyScalers then
             weights = MSC:SafeCopy(weights) 
@@ -181,10 +210,11 @@ function MSC.GetCurrentWeights()
             MSC.CachedWeights = weights
             MSC.CachedProfile = specKey
             MSC.CachedCapText = capText
-            return weights, specKey, capText
+            MSC.CachedIsLeveling = isLeveling
+            return weights, specKey, capText, isLeveling
         end
     end
-    return {}, "Unknown", nil
+    return {}, "Unknown", nil, false
 end
 
 -- =============================================================
@@ -359,8 +389,9 @@ local function OnTooltipSetItem(tooltip)
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
     if not link or not IsEquippableItem(link) then return end
-
-    MSC.IsCalculating = true
+	if not MSC.IsItemUsable(link) then return end
+    
+	MSC.IsCalculating = true
     local _, playerClass = UnitClass("player")
     -- Ensure Class Module Loaded
     if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then

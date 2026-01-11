@@ -14,23 +14,25 @@ MSC.SlotMap = {
 }
 
 -- =============================================================
--- 2. ENCHANTS (Vanilla / Era)
+-- 2. ENCHANT DEFINITIONS (The Master List)
 -- =============================================================
 MSC.EnchantDB = {
-    -- [[ WEAPON ]]
-    [2621] = { name = "Crusader", stats = { ITEM_MOD_STRENGTH_SHORT = 60, ITEM_MOD_HEALING_POWER_SHORT = -10 } }, -- Pseudo-stat for str proc
-    [803]  = { name = "Fiery Weapon", stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 4 } }, 
-    [1897] = { name = "Weapon Dmg +5", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, 
+    -- [[ WEAPON - HIGH END ]]
+    [2621] = { name = "Crusader", stats = { ITEM_MOD_STRENGTH_SHORT = 60, ITEM_MOD_HEALING_POWER_SHORT = -10 } }, 
     [2504] = { name = "Spellpower +30", stats = { ITEM_MOD_SPELL_POWER_SHORT = 30 } },
     [2505] = { name = "Healing +55", stats = { ITEM_MOD_HEALING_POWER_SHORT = 55 } },
-    [1900] = { name = "Unholy Weapon", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 4 } }, 
     [2563] = { name = "Major Strength (+15)", stats = { ITEM_MOD_STRENGTH_SHORT = 15 } },
-    [1898] = { name = "Lifestealing", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 3 } },
-    [943]  = { name = "Lesser Striking", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } },
-    [1894] = { name = "Icy Chill", stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 4 } },
     [2564] = { name = "Agility +15", stats = { ITEM_MOD_AGILITY_SHORT = 15 } },
-    [2565] = { name = "Intellect +22", stats = { ITEM_MOD_INTELLECT_SHORT = 22 } }, -- 2H Only
-    [2566] = { name = "Spirit +20", stats = { ITEM_MOD_SPIRIT_SHORT = 20 } }, -- 2H Only
+    [2565] = { name = "Intellect +22", stats = { ITEM_MOD_INTELLECT_SHORT = 22 } }, -- 2H
+    [2566] = { name = "Spirit +20", stats = { ITEM_MOD_SPIRIT_SHORT = 20 } }, -- 2H
+    [1898] = { name = "Lifestealing", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 3 } },
+    [1894] = { name = "Icy Chill", stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 4 } },
+    [803]  = { name = "Fiery Weapon", stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 4 } }, 
+
+    -- [[ WEAPON - BUDGET / LEVELING ]]
+    [1897] = { name = "Weapon Dmg +5", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, 
+    [943]  = { name = "Lesser Striking", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } },
+    [1900] = { name = "Unholy Weapon", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 4 } }, -- Cheap early game
 
     -- [[ ZUL'GURUB (Head/Legs/Shoulder) ]]
     [2603] = { name = "Might of the Scourge", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26, MSC_CRIT_PERCENT = 1 } }, 
@@ -42,7 +44,10 @@ MSC.EnchantDB = {
     [2587] = { name = "ZG Spell/Hit", stats = { ITEM_MOD_SPELL_POWER_SHORT = 18, MSC_SPELL_HIT_PERCENT = 1 } },
     [2588] = { name = "ZG Spell/Stam", stats = { ITEM_MOD_SPELL_POWER_SHORT = 18, ITEM_MOD_STAMINA_SHORT = 10 } },
     [2585] = { name = "ZG AP/Dodge", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 28, MSC_DODGE_PERCENT = 1 } },
-    [2586] = { name = "Biznicks Scope", isScope = true, stats = { ITEM_MOD_HIT_RATING_SHORT = 3 } }, -- Era: 3% Hit
+    
+    -- [[ SCOPES ]]
+    [2586] = { name = "Biznicks Scope", isScope = true, stats = { ITEM_MOD_HIT_RATING_SHORT = 3 } }, 
+    [664]  = { name = "Sniper Scope (+7)", isScope = true, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, -- Cheap alternative
 
     -- [[ LIBRAMS (Head/Legs) ]]
     [2284] = { name = "Arcanum of Focus (+8 SP)", stats = { ITEM_MOD_SPELL_POWER_SHORT = 8 } },
@@ -58,7 +63,7 @@ MSC.EnchantDB = {
     [2486] = { name = "+8 Intellect", stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
     [2487] = { name = "+8 Spirit", stats = { ITEM_MOD_SPIRIT_SHORT = 8 } },
 
-    -- [[ STANDARD SLOTS ]]
+    -- [[ STANDARD SLOTS (High End) ]]
     [2653] = { name = "Major Health (+150)", stats = { ITEM_MOD_HEALTH_SHORT = 150 } },
     [1891] = { name = "Greater Stats (+4)", stats = { ITEM_MOD_STATS_ALL_SHORT = 4 } },
     [1883] = { name = "Intellect +7", stats = { ITEM_MOD_INTELLECT_SHORT = 7 } },
@@ -72,18 +77,25 @@ MSC.EnchantDB = {
     [910]  = { name = "Minor Speed", stats = { MSC_SPEED_BONUS = 8 } },
     [2502] = { name = "Greater Resistance", stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 5 } },
     [849]  = { name = "Lesser Agility (+3)", stats = { ITEM_MOD_AGILITY_SHORT = 3 } },
+    
+    -- [[ STANDARD SLOTS (Leveling/Budget) ]]
+    [866]  = { name = "+100 Health", stats = { ITEM_MOD_HEALTH_SHORT = 100 } }, -- Chest
+    [249]  = { name = "+3 All Stats", stats = { ITEM_MOD_STATS_ALL_SHORT = 3 } }, -- Chest
+    [1887] = { name = "+7 Agility", stats = { ITEM_MOD_AGILITY_SHORT = 7 } }, -- Gloves (Mid range)
+    [857]  = { name = "+7 Strength", stats = { ITEM_MOD_STRENGTH_SHORT = 7 } }, -- Gloves
+    [1704] = { name = "+7 Stamina", stats = { ITEM_MOD_STAMINA_SHORT = 7 } }, -- Wrist
+    [1119] = { name = "+7 Intellect", stats = { ITEM_MOD_INTELLECT_SHORT = 7 } }, -- Wrist
 }
 
 -- =============================================================
--- 3. CANDIDATE LISTS (THE MISSING LINK!)
+-- 3. ENDGAME CANDIDATES (Level 60+)
 -- =============================================================
--- This table tells Helpers.lua which enchants go in which slot.
 MSC.EnchantCandidates = {
-    -- HEAD (1) & LEGS (7)
+    -- HEAD (1) & LEGS (7) - Endgame Only (ZG/Librams)
     [1] = { 2603, 2604, 2605, 2606, 2284, 2283, 2285, 2543, 2544, 2545, 2488, 2483, 2484, 2485, 2486, 2487 },
     [7] = { 2603, 2604, 2605, 2606, 2284, 2283, 2285, 2543, 2544, 2545, 2488, 2483, 2484, 2485, 2486, 2487 },
 
-    -- SHOULDERS (3) - ZG
+    -- SHOULDERS (3) - ZG Only
     [3] = { 2583, 2584, 2587, 2588, 2585 },
 
     -- BACK (15)
@@ -102,18 +114,46 @@ MSC.EnchantCandidates = {
     [8] = { 2939, 910, 911 },
 
     -- WEAPON (16) & OFFHAND (17)
-    [16] = { 2621, 2504, 2505, 2563, 2564, 1897, 1898, 1900, 1894, 803, 2565, 2566 },
-    [17] = { 2621, 2504, 2505, 2563, 2564, 1897, 1898, 1900, 1894, 803 }, -- (No 2H enchants on OH)
+    [16] = { 2621, 2504, 2505, 2563, 2564, 1898, 1900, 1894, 803, 2565, 2566 },
+    [17] = { 2621, 2504, 2505, 2563, 2564, 1898, 1900, 1894, 803 }, 
 
     -- RANGED (18)
-    [18] = { 2586 }
+    [18] = { 2586, 664 }
 }
 
--- For Era, we can just reuse the main list for leveling, or filter it later.
-MSC.EnchantCandidates_Leveling = MSC.EnchantCandidates
+-- =============================================================
+-- 4. LEVELING CANDIDATES (Level < 60)
+-- =============================================================
+-- This list removes expensive/unattainable enchants
+MSC.EnchantCandidates_Leveling = {
+    -- HEAD/LEGS/SHOULDER: None accessible while leveling
+    [1] = {}, [3] = {}, [7] = {},
+
+    -- BACK: Lesser Agi is cheap
+    [15] = { 849 }, 
+
+    -- CHEST: Stats +3 or Health +100 are reasonable
+    [5] = { 249, 866 },
+
+    -- WRIST: Stamina/Int +7
+    [9] = { 1704, 1119 },
+
+    -- HANDS: Agi/Str +7
+    [10] = { 1887, 857 },
+
+    -- FEET: Minor Speed (Mandatory) or Minor Agi
+    [8] = { 910, 911 },
+
+    -- WEAPON: Fiery (Expensive but used), Dmg +5, Striking, Unholy
+    [16] = { 803, 1897, 943, 1900 },
+    [17] = { 803, 1897, 943, 1900 },
+
+    -- RANGED: Sniper Scope
+    [18] = { 664 }
+}
 
 -- =============================================================
--- 4. ITEM OVERRIDES (Classic Era Specifics)
+-- 5. ITEM OVERRIDES (Classic Era Specifics)
 -- =============================================================
 MSC.ItemOverrides = {
     -- [[ TRINKETS ]]
@@ -150,7 +190,7 @@ MSC.ItemOverrides = {
 }
 
 -- =============================================================
--- 5. ITEM SETS
+-- 6. ITEM SETS
 -- =============================================================
 MSC.ItemSetMap = {} 
 MSC.RawSetData = {
@@ -200,7 +240,7 @@ MSC.RawSetData = {
 }
 
 -- =============================================================
--- 6. INITIALIZATION
+-- 7. INITIALIZATION
 -- =============================================================
 function MSC:BuildDatabase()
     for setID, data in pairs(MSC.RawSetData) do

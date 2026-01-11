@@ -6,42 +6,78 @@ Hunter.Name = "HUNTER"
 -- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
 -- =============================================================
 Hunter.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["MSC_CRIT_PERCENT"]=25.0, ["MSC_HIT_PERCENT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 
-    },
-    ["RAID_MM"] = {
-        ["MSC_HIT_PERCENT"]=30.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["MSC_CRIT_PERCENT"]=28.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.4 
-    },
-    ["RAID_SURV"] = {
-        -- Survival in Era is all about the Agility 
-        ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["MSC_CRIT_PERCENT"]=25.0, ["MSC_HIT_PERCENT"]=25.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["PVP_ERA"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["MSC_CRIT_PERCENT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
+        ["Default"] = {
+			["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_HIT_RATING_SHORT"]=32.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+        ["RAID_MM_STANDARD"] = {
+			["ITEM_MOD_HIT_RATING_SHORT"]=32.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0 },
+        ["RAID_MM_STARTER"] = {
+			["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 },
+        ["RAID_SURV_DEEP"] = {
+			["ITEM_MOD_AGILITY_SHORT"]=3.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_HIT_RATING_SHORT"]=30.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 },
+        ["PVP_MM_UTIL"] = {
+			["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 },
+        ["PVP_SURV_TANK"] = {
+			["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 },
+        ["MELEE_NIGHTFALL"] = {
+			["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
+        ["SOLO_DME_TRIBUTE"] = {
+			["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 },
     }
-}
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
 Hunter.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["MSC_CRIT_PERCENT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["MSC_HIT_PERCENT"]=10.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
-    ["Leveling_52_59"] = { ["MSC_HIT_PERCENT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["MSC_CRIT_PERCENT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
-}
+        ["Leveling_1_20"]  = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 },
+        ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 },
+        ["Leveling_52_59"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+        -- Melee Hunter
+        ["Leveling_Melee_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=2.0 },
+        ["Leveling_Melee_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
+        ["Leveling_Melee_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 },
+    }
+
+-- =============================================================
+-- DISPLAY NAMES (For Options Menu)
+-- =============================================================
+Hunter.PrettyNames = {
+        -- Endgame
+        ["RAID_MM_STANDARD"] = "Raid: Marksmanship (Standard)",
+        ["RAID_MM_STARTER"]  = "Raid: MM (Surefooted)",
+        ["RAID_SURV_DEEP"]   = "Raid: Deep Survival (Agi)",
+        ["PVP_MM_UTIL"]      = "PvP: Marksmanship Utility",
+        ["PVP_SURV_TANK"]    = "PvP: Survival Tank",
+        ["MELEE_NIGHTFALL"]  = "Support: Nightfall (Melee)",
+        ["SOLO_DME_TRIBUTE"] = "Farming: DM North Solo",
+        
+        -- Leveling
+        ["Leveling_1_20"]       = "Leveling (1-20)",
+        ["Leveling_21_40"]      = "Leveling: Beast Mastery (21-40)",
+        ["Leveling_41_51"]      = "Leveling: Beast Mastery (41-51)",
+        ["Leveling_52_59"]      = "Leveling: Pre-BiS Hunter (52-59)",
+        
+        ["Leveling_Melee_21_40"] = "Leveling: Melee/Survival (21-40)",
+        ["Leveling_Melee_41_51"] = "Leveling: Melee/Survival (41-51)",
+        ["Leveling_Melee_52_59"] = "Leveling: Melee/Survival (52-59)",
+    }
 
 -- =============================================================
 -- ERA TALENTS (Vanilla 31-Point Tree)
 -- =============================================================
 Hunter.Talents = { 
-    ["SUREFOOTED"]      = "Surefooted",       -- 3% Hit
-    ["BESTIAL_WRATH"]   = "Bestial Wrath",    -- BM 31
-    ["TRUESHOT_AURA"]   = "Trueshot Aura",    -- MM 31
-    ["WYVERN_STING"]    = "Wyvern Sting",     -- Surv 31
-    ["LIGHTNING_REFL"]  = "Lightning Reflexes", -- 15% Agi
-    ["RANGED_WEAP_SPEC"]= "Ranged Weapon Specialization"
-}
+        ["BESTIAL_WRATH"]   = "Bestial Wrath",
+        ["UNLEASHED_FURY"]  = "Unleashed Fury",
+        ["TRUESHOT_AURA"]   = "Trueshot Aura",
+        ["AIMED_SHOT"]      = "Aimed Shot",
+        ["WYVERN_STING"]    = "Wyvern Sting",
+        ["COUNTERATTACK"]   = "Counterattack",
+        ["DETERRENCE"]      = "Deterrence",
+        ["SUREFOOTED"]      = "Surefooted",
+        ["LIGHTNING_REF"]   = "Lightning Reflexes",
+        ["MORTAL_SHOTS"]    = "Mortal Shots",
+        ["SURVIVALIST"]     = "Survivalist",
+    }
 
 -- =============================================================
 -- LOGIC
@@ -59,43 +95,52 @@ function Hunter:GetSpec()
         else suffix = "_52_59" end
         return "Leveling" .. suffix
     end
+	
+    local _, _, _, _, mmPoints = GetTalentTabInfo(2); mmPoints = mmPoints or 0
+    local _, _, _, _, survPoints = GetTalentTabInfo(3); survPoints = survPoints or 0
 
     -- Endgame
-    if Rank("WYVERN_STING") > 0 or Rank("LIGHTNING_REFL") > 0 then return "RAID_SURV" end
-    if Rank("TRUESHOT_AURA") > 0 then return "RAID_MM" end
-    
-    return "Default"
+    if Rank("COUNTERATTACK") > 0 then return "MELEE_NIGHTFALL" end
+    if Rank("TRUESHOT_AURA") > 0 and Rank("UNLEASHED_FURY") > 0 then return "RAID_MM_STANDARD" end
+    if Rank("TRUESHOT_AURA") > 0 and Rank("SUREFOOTED") > 0 then return "RAID_MM_STARTER" end
+    if Rank("LIGHTNING_REF") == 5 and Rank("WYVERN_STING") > 0 then return "RAID_SURV_DEEP" end
+    if Rank("TRUESHOT_AURA") > 0 and Rank("DETERRENCE") > 0 then return "PVP_MM_UTIL" end
+    if (Rank("WYVERN_STING") > 0 and Rank("SUREFOOTED") > 0) then return "PVP_SURV_TANK" end
+    if mmPoints >= 30 then return "RAID_MM_STANDARD" end
+    return "RAID_MM_STANDARD"
 end
 
 function Hunter:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- 1. Lightning Reflexes (Agi Scaling) - The Era "Expose Weakness"
-    local rLR = Rank("LIGHTNING_REFL")
+    -- 1. Lightning Reflexes (Agi Scaling)
+    local rLR = Rank("LIGHTNING_REF")
     if rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then 
         weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.03)) 
     end
     
     -- 2. Covariance (Crit scales with RAP)
-    if weights["MSC_CRIT_PERCENT"] then
+    -- FIX: Changed MSC_CRIT_PERCENT -> ITEM_MOD_CRIT_RATING_SHORT
+    if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
         local base, pos, neg = UnitRangedAttackPower("player")
         local totalRAP = base + pos + neg
         if totalRAP > 1500 then
             local rapScaler = 1 + ((totalRAP - 1500) / 10000)
             if rapScaler > 1.2 then rapScaler = 1.2 end
-            weights["MSC_CRIT_PERCENT"] = weights["MSC_CRIT_PERCENT"] * rapScaler
+            weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * rapScaler
         end
     end
 
-    -- 3. Hit Cap (9% for Era)
-    if weights["MSC_HIT_PERCENT"] then
+    -- 3. Hit Cap (9%)
+    -- FIX: Changed MSC_HIT_PERCENT -> ITEM_MOD_HIT_RATING_SHORT
+    if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         local currentHit = MSC.PlayerStats.Hit or 0
         local talentHit = Rank("SUREFOOTED") -- 1% per rank
         local totalHit = currentHit + talentHit
 
         if totalHit >= 9 then
-            weights["MSC_HIT_PERCENT"] = 2.0 -- Cap reached
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = 2.0 -- Cap reached
             table.insert(activeCaps, "Hit (9%)")
         end
     end

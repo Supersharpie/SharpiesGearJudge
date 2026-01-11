@@ -175,7 +175,7 @@ function MSC.CreateOptionsFrame()
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f.TitleText:SetText("Configuration")
 
-    local function GetDisplayName(specKey)
+local function GetDisplayName(specKey)
         if specKey == "AUTO" or specKey == "Auto" then return "Auto-Detect" end
         if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specKey] then return MSC.CurrentClass.PrettyNames[specKey] end
         if MSC.PrettyNames and MSC.PrettyNames[specKey] then return MSC.PrettyNames[specKey] end
@@ -259,26 +259,46 @@ function MSC.CreateOptionsFrame()
     
     -- [GEMS REMOVED FOR ERA]
 
-    -- SECTION 2: PROFILE
+-- SECTION 2: PROFILE
     local header2 = CreateHeader("Character Profile", dd1, -20)
     local specOptions = {}; table.insert(specOptions, { text = "Auto-Detect", val = "AUTO" })
+    
     if MSC.CurrentClass then
+        -- 1. Endgame Profiles
         if MSC.CurrentClass.Weights then
             local sorted = {}; for k in pairs(MSC.CurrentClass.Weights) do table.insert(sorted, k) end; table.sort(sorted)
-            for _, k in ipairs(sorted) do table.insert(specOptions, { text = GetDisplayName(k), val = k }) end
+            for _, k in ipairs(sorted) do 
+                table.insert(specOptions, { text = GetDisplayName(k), val = k }) 
+            end
         end
+        
+        -- 2. Leveling Profiles (Add Visual Tag)
         if MSC.CurrentClass.LevelingWeights then
             local sorted = {}; for k in pairs(MSC.CurrentClass.LevelingWeights) do table.insert(sorted, k) end; table.sort(sorted)
-            for _, k in ipairs(sorted) do table.insert(specOptions, { text = GetDisplayName(k), val = k }) end
+            for _, k in ipairs(sorted) do 
+                -- Check if this key ALSO exists in standard weights to avoid duplicate keys in the dropdown logic
+                -- If the keys are identical, the addon might get confused manually. 
+                -- Ideally, Class Modules should use distinct keys (e.g. "Leveling_Arms").
+                -- For now, we just label it clearly.
+                table.insert(specOptions, { text = GetDisplayName(k) .. " |cff00ff00(Leveling)|r", val = k }) 
+            end
         end
     end
 
     local function UpdateDropDownText()
         if not f.ProfileDD then return end
+        
+        -- Get current state
+        local _, detectedKey, _, isLeveling = MSC.GetCurrentWeights()
+        local name = GetDisplayName(detectedKey)
+        if isLeveling then name = name .. " |cff00ff00(Leveling)|r" end
+
         if SGJ_Settings.Mode == "AUTO" or SGJ_Settings.Mode == "Auto" then
-             local _, detectedKey = MSC.GetCurrentWeights()
-             UIDropDownMenu_SetText(f.ProfileDD, "Auto: " .. GetDisplayName(detectedKey))
+             UIDropDownMenu_SetText(f.ProfileDD, "Auto: " .. name)
         else
+             -- If manual, we display what they selected
+             -- Note: If keys are duplicates (Arms vs Arms), manual selection will default to Endgame in the Logic
+             -- unless you rename the keys in your class files.
              UIDropDownMenu_SetText(f.ProfileDD, "Manual: " .. GetDisplayName(SGJ_Settings.Mode))
         end
     end
