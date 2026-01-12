@@ -160,7 +160,7 @@ end
 
 
 -- =============================================================
--- 3. SETTINGS WINDOW & QUICK DROP SLOT
+-- 3. SETTINGS WINDOW (Cleaned Up)
 -- =============================================================
 function MSC.CreateOptionsFrame()
     if MyStatCompareFrame then 
@@ -169,13 +169,13 @@ function MSC.CreateOptionsFrame()
     end
     
     local f = CreateFrame("Frame", "MyStatCompareFrame", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(380, 400) -- Shorter than TBC version (no gems)
+    f:SetSize(380, 420) -- Resized to fit content without the drop slot
     f:SetPoint("CENTER")
     f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f.TitleText:SetText("Configuration")
 
-local function GetDisplayName(specKey)
+    local function GetDisplayName(specKey)
         if specKey == "AUTO" or specKey == "Auto" then return "Auto-Detect" end
         if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specKey] then return MSC.CurrentClass.PrettyNames[specKey] end
         if MSC.PrettyNames and MSC.PrettyNames[specKey] then return MSC.PrettyNames[specKey] end
@@ -257,9 +257,7 @@ local function GetDisplayName(specKey)
         { text = "Project Best (Sim)", val = 3 } 
     }, header1, -10)
     
-    -- [GEMS REMOVED FOR ERA]
-
--- SECTION 2: PROFILE
+    -- SECTION 2: PROFILE
     local header2 = CreateHeader("Character Profile", dd1, -20)
     local specOptions = {}; table.insert(specOptions, { text = "Auto-Detect", val = "AUTO" })
     
@@ -272,23 +270,23 @@ local function GetDisplayName(specKey)
             end
         end
         
-        -- 2. Leveling Profiles (Add Visual Tag)
+        -- 2. Leveling Profiles
         if MSC.CurrentClass.LevelingWeights then
             local sorted = {}; for k in pairs(MSC.CurrentClass.LevelingWeights) do table.insert(sorted, k) end; table.sort(sorted)
             for _, k in ipairs(sorted) do 
-                -- Check if this key ALSO exists in standard weights to avoid duplicate keys in the dropdown logic
-                -- If the keys are identical, the addon might get confused manually. 
-                -- Ideally, Class Modules should use distinct keys (e.g. "Leveling_Arms").
-                -- For now, we just label it clearly.
                 table.insert(specOptions, { text = GetDisplayName(k) .. " |cff00ff00(Leveling)|r", val = k }) 
             end
+        end
+        
+        -- 3. Custom Import
+        if MSC.CurrentClass.Weights["Custom"] then
+             table.insert(specOptions, { text = GetDisplayName("Custom"), val = "Custom" })
         end
     end
 
     local function UpdateDropDownText()
         if not f.ProfileDD then return end
         
-        -- Get current state
         local _, detectedKey, _, isLeveling = MSC.GetCurrentWeights()
         local name = GetDisplayName(detectedKey)
         if isLeveling then name = name .. " |cff00ff00(Leveling)|r" end
@@ -296,9 +294,6 @@ local function GetDisplayName(specKey)
         if SGJ_Settings.Mode == "AUTO" or SGJ_Settings.Mode == "Auto" then
              UIDropDownMenu_SetText(f.ProfileDD, "Auto: " .. name)
         else
-             -- If manual, we display what they selected
-             -- Note: If keys are duplicates (Arms vs Arms), manual selection will default to Endgame in the Logic
-             -- unless you rename the keys in your class files.
              UIDropDownMenu_SetText(f.ProfileDD, "Manual: " .. GetDisplayName(SGJ_Settings.Mode))
         end
     end
@@ -311,43 +306,43 @@ local function GetDisplayName(specKey)
     local cb3 = CreateCheck("Mute Lab Errors", "MuteSounds", "Stops the error sound when clicking invalid items.", header3, -100, -50)
     local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", header3, 80, -50)
     
-    -- QUICK TEST DROP SLOT
-    local dropBtn = CreateFrame("Button", "SGJ_DropSlot", f, "ItemButtonTemplate")
-    dropBtn:SetPoint("BOTTOMLEFT", 40, 40)
+    -- SECTION 4: IMPORT (The new feature)
+    local headerImport = CreateHeader("Import Pawn String", header3, -80)
     
-    dropBtn.bg = dropBtn:CreateTexture(nil, "BACKGROUND")
-    dropBtn.bg:SetAllPoints()
-    dropBtn.bg:SetTexture("Interface\\Paperdoll\\UI-Backpack-EmptySlot")
-    dropBtn.bg:SetAlpha(0.6)
-
-    dropBtn.lbl = dropBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    dropBtn.lbl:SetPoint("BOTTOM", dropBtn, "TOP", 0, 4)
-    dropBtn.lbl:SetText("Check Settings")
-
-    f.res1 = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.res1:SetPoint("LEFT", dropBtn, "RIGHT", 15, 10)
-    f.res2 = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.res2:SetPoint("LEFT", dropBtn, "RIGHT", 15, -5)
-    f.res3 = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.res3:SetPoint("LEFT", dropBtn, "RIGHT", 15, -20)
+    local importBox = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
+    importBox:SetSize(260, 30)
+    importBox:SetPoint("TOPLEFT", headerImport, "BOTTOMLEFT", 5, -10)
+    importBox:SetAutoFocus(false)
+    importBox:SetTextInsets(5, 5, 0, 0)
     
-    dropBtn:SetScript("OnClick", function()
-        local type, _, link = GetCursorInfo()
-        if type == "item" then
-            ClearCursor()
-            local weights, spec = MSC.GetCurrentWeights()
-            local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-            local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc] or 1
-            
-            local nScore, oScore, nStats, oStats = MSC:EvaluateUpgrade(link, slotId, weights, spec)
-            
-            f.res1:SetText("Score: " .. nScore)
-            if nStats.ENCHANT_TEXT then 
-                 f.res2:SetText(nStats.ENCHANT_TEXT) 
-            else 
-                 f.res2:SetText("") 
-            end
-            f.res3:SetText("") -- No Meta Gem Status in Era
-            SetItemButtonTexture(dropBtn, GetItemIcon(link))
+    local importBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    importBtn:SetPoint("LEFT", importBox, "RIGHT", 5, 0)
+    importBtn:SetSize(70, 24)
+    importBtn:SetText("Import")
+    
+    local function DoImport()
+        local str = importBox:GetText()
+        if MSC.ParsePawnString then
+             local weights, name = MSC:ParsePawnString(str)
+             if weights then
+                 MSC:ApplyCustomWeights(name, weights)
+                 importBox:SetText("")
+                 importBox:ClearFocus()
+                 -- Force UI Refresh
+                 f:Hide(); f:Show()
+             else
+                 print("|cffff0000[SGJ]|r Import Failed: " .. (name or "Invalid String"))
+             end
         end
-    end)
+    end
+
+    importBox:SetScript("OnEnterPressed", DoImport)
+    importBtn:SetScript("OnClick", DoImport)
+
+    local importLabel = f:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    importLabel:SetPoint("TOPLEFT", importBox, "BOTTOMLEFT", 0, -5)
+    importLabel:SetText("Paste string from WowSims.io or Pawn.")
+    importLabel:SetTextColor(0.5, 0.5, 0.5)
 
     f:SetScript("OnShow", function(self)
         UpdateDropDownText()

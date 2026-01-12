@@ -177,13 +177,13 @@ end
 -- IDOLS (Classic Era)
 -- =============================================================
 Druid.Relics = {
-    [22398] = { ["MSC_FERAL_AP"] = 20 },      -- Idol of Brutality
-    [22396] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 30 }, -- Idol of Health
-    [23197] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 33 },   -- Idol of the Moon
-	[22398] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true }, -- Idol of Rejuvenation
-    [22399] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 50, estimate = true, replace = true }, -- Idol of Health 
-    [23198] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40, estimate = true, replace = true },  -- Idol of Brutality
-    [22394] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50, estimate = true, replace = true },  -- Idol of Ferocity
+    [22398] = { ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 20 }, -- Idol of Brutality
+    [22396] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 30 }, 	  -- Idol of Health
+    [23197] = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 33 },	      -- Idol of the Moon
+    [22398] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 40, estimate = true, replace = true },
+    [22399] = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 50, estimate = true, replace = true },
+    [23198] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40, estimate = true, replace = true },
+    [22394] = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 50, estimate = true, replace = true },
 }
 
 MSC.RegisterModule("DRUID", Druid)

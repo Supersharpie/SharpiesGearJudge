@@ -127,15 +127,12 @@ function Mage:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- 1. Arcane Mind (Int Scaling)
-    -- FIX: Changed 0.02 -> 0.03 (Vanilla is 15% total, not 10%)
     local rAM = Rank("ARCANE_MIND")
     if rAM > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAM * 0.03)) 
     end
     
-    -- 2. Covariance (Crit Value scales with Spell Power)
-    -- FIX: Changed MSC_SPELL_CRIT_PERCENT -> ITEM_MOD_SPELL_CRIT_RATING_SHORT
+    -- FIX: Key Match
     if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         local sp = MSC.PlayerStats.SpellPower or 0
         if sp > 400 then
@@ -144,25 +141,20 @@ function Mage:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- 3. Spell Hit Cap (16%)
-    -- FIX: Changed MSC_SPELL_HIT_PERCENT -> ITEM_MOD_HIT_SPELL_RATING_SHORT
+    -- FIX: Key Match
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
         local currentHit = MSC.PlayerStats.SpellHit or 0
         local talentHit = 0
-        
         if currentSpec:find("FIRE") or currentSpec:find("FROST") then
-            talentHit = Rank("ELE_PRECISION") * 2
-        elseif currentSpec:find("ARCANE") then
-            talentHit = Rank("ARCANE_FOCUS") * 2
+            talentHit = Rank("ELEMENTAL_PRECISION") * 2
         end
         
         local totalHit = currentHit + talentHit
         if totalHit >= 16 then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0 
             table.insert(activeCaps, "Hit (16%)")
         end
     end
-
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
