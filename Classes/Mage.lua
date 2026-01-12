@@ -122,9 +122,6 @@ function Mage:GetSpec()
     if Rank("ICE_BARRIER") > 0 then return "FROST_PVP" end
     return "FROST_AP"
 end
-    
-    return "Default"
-end
 
 function Mage:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
