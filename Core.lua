@@ -388,16 +388,14 @@ local function OnTooltipSetItem(tooltip)
     if SGJ_Settings and SGJ_Settings.HideTooltips then return end
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
-    if not link or not IsEquippableItem(link) then return end
-	if not MSC.IsItemUsable(link) then return end
     
-	MSC.IsCalculating = true
+    if not link or not IsEquippableItem(link) then return end
+    if not MSC.IsItemUsable(link) then return end 
+
+    MSC.IsCalculating = true
     local _, playerClass = UnitClass("player")
-    -- Ensure Class Module Loaded
-    if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
-        -- This relies on Init, but redundant safety check is okay
-        MSC.CachedWeights = nil
-    end
+    -- Check for class module update
+    if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then MSC.CachedWeights = nil end
 
     local status, err = pcall(function()
         local weights, specName = MSC.GetCurrentWeights()
@@ -411,9 +409,10 @@ local function OnTooltipSetItem(tooltip)
         local delta = newScore - oldScore
         local isEquipped = (GetInventoryItemLink("player", slotId) == link)
 
-        -- Header
+        -- HEADER
         tooltip:AddLine(" ")
         local scoreLabel = "Judge's Score:"
+        -- We append context (e.g. "Cap Reached") but NOT the paired item text here anymore
         if newStats.Context then scoreLabel = scoreLabel .. " " .. newStats.Context end
         tooltip:AddDoubleLine(scoreLabel, string.format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
         
@@ -422,6 +421,12 @@ local function OnTooltipSetItem(tooltip)
         local _, _, capInfo = MSC.GetCurrentWeights()
         if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " Capped)|r" end
         tooltip:AddDoubleLine("Verdict Profile:", "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
+
+        -- PAIRED ITEM DISPLAY (The Fix)
+        if newStats.PAIRED_ITEM then
+            local src = (newStats.PAIRED_SOURCE == "Bag") and "|cff00ff00(Best in Bag)|r" or "|cff888888(Equipped)|r"
+            tooltip:AddDoubleLine("Paired with:", newStats.PAIRED_ITEM .. " " .. src, 1, 1, 1)
+        end
 
         if not isEquipped then
             if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
@@ -434,7 +439,7 @@ local function OnTooltipSetItem(tooltip)
             else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
         else tooltip:AddLine("|cff00ffff*** CURRENTLY EQUIPPED ***|r") end
 
-        -- Projections (Enchants Only for Era)
+        -- PROJECTIONS
         if newStats.IS_PROJECTED then
             tooltip:AddLine(" ")
             if newStats.ENCHANT_TEXT then 
@@ -450,18 +455,16 @@ local function OnTooltipSetItem(tooltip)
             local oldExpanded = MSC.ExpandDerivedStats(oldStats or {}, nil, Scratch_Tooltip_Old)
             local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
 
-            -- [[ CONSOLIDATION PASS ]]
             local changedMap = {}; for i, d in ipairs(diffs) do changedMap[d.key] = i end
             for source, result in pairs(STAT_CONSOLIDATION_MAP) do
                 local sIdx, rIdx = changedMap[source], changedMap[result]
                 if sIdx and rIdx and math.abs(diffs[sIdx].val)>0.1 and math.abs(diffs[rIdx].val)>0.1 then
-                    diffs[sIdx].val = 0 -- Hide Source
+                    diffs[sIdx].val = 0 
                     local sName = MSC.GetCleanStatName(source) or "Stat"
                     diffs[rIdx].nameSuffix = " |cff888888(inc. " .. sName .. ")|r"
                 end
             end
             
-            -- Special: Paladin SP/Int
             if playerClass == "PALADIN" then 
                 local iIdx, sIdx = changedMap["ITEM_MOD_INTELLECT_SHORT"], changedMap["ITEM_MOD_SPELL_POWER_SHORT"]
                 if iIdx and sIdx and math.abs(diffs[iIdx].val)>0.1 and math.abs(diffs[sIdx].val)>0.1 then diffs[iIdx].val = 0 end 
@@ -481,7 +484,7 @@ local function OnTooltipSetItem(tooltip)
             local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
                 for _, d in ipairs(list) do
-                    if lp < 6 then -- Show top 6 changes
+                    if lp < 6 then 
                         if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
                         local name = (MSC.GetCleanStatName(d.key) or d.key) .. (d.nameSuffix or "")
                         local valStr = (d.val%1==0) and string.format("%d", math.abs(d.val)) or string.format("%.1f", math.abs(d.val))
