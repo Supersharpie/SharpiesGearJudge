@@ -57,7 +57,7 @@ Paladin.Weights = {
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 2.2, 
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.2, 
         ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.6,
-        ["ITEM_MOD_STAMINA_SHORT"].         = 1.5,
+		["ITEM_MOD_STAMINA_SHORT"]			= 1.5,
         ["ITEM_MOD_AGILITY_SHORT"]          = 1.4, 
         ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.5,
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
@@ -186,6 +186,13 @@ Paladin.Talents = {
     ["DIVINE_INT"]      = "Divine Intellect", 
     ["COMBAT_EXPERTISE"]= "Combat Expertise",
     ["SACRED_DUTY"]     = "Sacred Duty"
+}
+
+Paladin.ValidWeapons = {
+    [0]=true, [1]=true,   -- 1H/2H Axes
+    [4]=true, [5]=true,   -- 1H/2H Maces
+    [7]=true, [8]=true,   -- 1H/2H Swords
+    [6]=true              -- Polearms
 }
 
 Paladin.StatToCritMatrix = { 

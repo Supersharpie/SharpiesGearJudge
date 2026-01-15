@@ -102,6 +102,13 @@ Mage.Talents = {
 -- =============================================================
 -- LOGIC
 -- =============================================================
+Mage.ValidWeapons = {
+    [7]=true,             -- 1H Swords
+    [15]=true,            -- Daggers
+    [10]=true,            -- Staves
+    [19]=true             -- Wands
+}
+
 function Mage:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")

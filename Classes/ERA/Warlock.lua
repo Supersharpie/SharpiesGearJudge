@@ -98,6 +98,13 @@ Warlock.Talents = {
 -- =============================================================
 -- LOGIC
 -- =============================================================
+Warlock.ValidWeapons = {
+    [7]=true,             -- 1H Swords
+    [15]=true,            -- Daggers
+    [10]=true,            -- Staves
+    [19]=true             -- Wands
+}
+
 function Warlock:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")

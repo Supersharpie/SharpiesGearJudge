@@ -97,6 +97,13 @@ Rogue.Talents = {
 -- =============================================================
 -- LOGIC
 -- =============================================================
+Rogue.ValidWeapons = {
+    [4]=true,             -- 1H Maces
+    [7]=true,             -- 1H Swords
+    [13]=true, [15]=true, -- Fists, Daggers
+    [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Crossbow, Thrown
+}
+
 function Rogue:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")

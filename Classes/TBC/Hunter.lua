@@ -204,11 +204,12 @@ Hunter.SpeedChecks = {
 }
 
 Hunter.ValidWeapons = {
-    [0]=true, [1]=true,   -- Axes
-    [7]=true, [8]=true,   -- Swords
-    [6]=true, [10]=true,  -- Polearm, Staff
-    [13]=true, [15]=true, -- Fist, Dagger
-    [2]=true, [3]=true, [18]=true, [16]=true, -- Bow, Gun, Xbow, Thrown
+    [0]=true, [1]=true,   -- 1H/2H Axes
+    [7]=true, [8]=true,   -- 1H/2H Swords
+    [6]=true,             -- Polearms
+    [10]=true,            -- Staves
+    [13]=true, [15]=true, -- Fists, Daggers
+    [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Crossbow, Thrown
 }
 
 Hunter.StatToCritMatrix = { 

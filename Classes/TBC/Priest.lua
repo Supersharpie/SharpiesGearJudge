@@ -253,7 +253,10 @@ Priest.PrettyNames = {
 Priest.SpeedChecks = { ["Default"]={} }
 
 Priest.ValidWeapons = {
-    [4]=true, [10]=true, [15]=true, [19]=true -- 1H Mace, Staff, Dagger, Wand
+    [4]=true,             -- 1H Maces
+    [15]=true,            -- Daggers
+    [10]=true,            -- Staves
+    [19]=true             -- Wands
 }
 
 Priest.StatToCritMatrix = { 

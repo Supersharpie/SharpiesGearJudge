@@ -276,7 +276,10 @@ Warlock.PrettyNames = {
 Warlock.SpeedChecks = { ["Default"]={} }
 
 Warlock.ValidWeapons = {
-    [7]=true, [10]=true, [15]=true, [19]=true -- 1H Sword, Staff, Dagger, Wand
+    [7]=true,             -- 1H Swords
+    [15]=true,            -- Daggers
+    [10]=true,            -- Staves
+    [19]=true             -- Wands
 }
 
 Warlock.StatToCritMatrix = { 

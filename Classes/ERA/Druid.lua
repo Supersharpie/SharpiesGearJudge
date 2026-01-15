@@ -102,6 +102,13 @@ Druid.Talents = {
 -- =============================================================
 -- LOGIC
 -- =============================================================
+Druid.ValidWeapons = {
+    [4]=true, [5]=true,   -- 1H/2H Maces
+    [10]=true,            -- Staves
+    [13]=true,            -- Fist Weapons
+    [15]=true             -- Daggers
+}
+
 function Druid:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")

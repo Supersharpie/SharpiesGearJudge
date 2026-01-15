@@ -89,6 +89,15 @@ Hunter.Talents = {
 -- =============================================================
 -- LOGIC
 -- =============================================================
+Hunter.ValidWeapons = {
+    [0]=true, [1]=true,   -- 1H/2H Axes
+    [7]=true, [8]=true,   -- 1H/2H Swords
+    [6]=true,             -- Polearms
+    [10]=true,            -- Staves
+    [13]=true, [15]=true, -- Fists, Daggers
+    [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Crossbow, Thrown
+}
+
 function Hunter:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")

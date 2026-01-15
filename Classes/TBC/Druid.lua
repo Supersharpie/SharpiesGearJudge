@@ -274,8 +274,10 @@ Druid.SpeedChecks = {
 }
 
 Druid.ValidWeapons = {
-    [4]=true, [5]=true,   -- Maces (1H/2H)
-    [10]=true, [15]=true  -- Staff, Dagger
+    [4]=true, [5]=true,   -- 1H/2H Maces
+    [10]=true,            -- Staves
+    [13]=true,            -- Fist Weapons
+    [15]=true             -- Daggers
 }
 
 Druid.StatToCritMatrix = { 

@@ -269,9 +269,11 @@ Shaman.SpeedChecks = {
 }
 
 Shaman.ValidWeapons = {
-    [0]=true, [1]=true,   -- Axes (1H/2H)
-    [4]=true, [5]=true,   -- Maces (1H/2H)
-    [10]=true, [13]=true, [15]=true -- Staff, Fist, Dagger
+    [0]=true, [1]=true,   -- 1H/2H Axes (2H via Talent)
+    [4]=true, [5]=true,   -- 1H/2H Maces (2H via Talent)
+    [10]=true,            -- Staves
+    [13]=true, [15]=true, -- Fists, Daggers
+    [6]=true              -- Shields (Technically Armor, but useful to track context)
 }
 
 Shaman.StatToCritMatrix = { 

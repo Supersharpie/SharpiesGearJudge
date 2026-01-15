@@ -79,7 +79,6 @@ function MSC.IsItemUsable(itemLink)
     return true
 end
 
-
 -- =============================================================
 -- 2. API SHIMS (THE ERA / TBC BRIDGE)
 -- =============================================================

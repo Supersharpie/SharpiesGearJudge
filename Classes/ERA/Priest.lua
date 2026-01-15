@@ -86,6 +86,13 @@ Priest.Talents = {
 -- =============================================================
 -- LOGIC
 -- =============================================================
+Priest.ValidWeapons = {
+    [4]=true,             -- 1H Maces
+    [15]=true,            -- Daggers
+    [10]=true,            -- Staves
+    [19]=true             -- Wands
+}
+
 function Priest:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
