@@ -81,7 +81,7 @@ Power user? You can import custom weights from **SimC** or **WowSims**.
 
 ## Credits
 * **Author:** SuperSharpie
-* **Version:** 2.1.0 (TBC)
+* **Version:** 2.1.1 (TBC)
 * **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 * **Feedback:** Found a weight that feels off? Open an issue on GitHub!
 * **Discord:** https://discord.gg/yTSX8Us6WEEnough

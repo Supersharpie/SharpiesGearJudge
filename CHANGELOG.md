@@ -1,5 +1,8 @@
 # Sharpie's Gear Judge - Version History
 
+## v2.1.1 - Valid weapons
+* **Small fix to restore valid weapoons check - no more seeing scores on items you can't use!!
+
 ## v2.1.0 - The "Anniversary" Update (Core + Plugins)
 **Major Architecture Overhaul & TBC Readiness**
 

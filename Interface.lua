@@ -156,7 +156,7 @@ function MSC.ToggleMainMenu()
     CreateMenuButton("Settings", "Interface\\Icons\\INV_Gizmo_02", -290, function() MSC.CreateOptionsFrame() end, "Configure modes and display.")
 
     local footer = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    footer:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); footer:SetText("v2.1.0 - TBC Edition"); footer:SetTextColor(0.5, 0.5, 0.5)
+    footer:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); footer:SetText("v2.1.1 - TBC Edition"); footer:SetTextColor(0.5, 0.5, 0.5)
     
     MSC.SkinFrame(f)
     MSC.MainMenuFrame = f; f:Show()
