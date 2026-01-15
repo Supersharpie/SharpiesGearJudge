@@ -19,10 +19,66 @@ end
 
 function MSC.IsItemUsable(itemLink)
     if not itemLink then return false end
-    -- Note: Advanced class checks are handled by specific module logic.
-    -- This basic check returns true to allow scanning.
+    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
+    local localizedClass, playerClass = UnitClass("player")
+
+    -- 1. WEAPON CHECK (Hard Restriction)
+    -- Relies on the "ValidWeapons" table defined in your Class File (e.g. Druid.lua)
+    if classID == 2 then 
+        if MSC.CurrentClass and MSC.CurrentClass.ValidWeapons then
+            -- If the table exists but this ID isn't in it, you can't use it.
+            if not MSC.CurrentClass.ValidWeapons[subClassID] then return false end
+        end
+    end
+
+    -- 2. ARMOR CHECK (Hard Restriction)
+    if classID == 4 then 
+        -- Cloth=1, Leather=2, Mail=3, Plate=4, Shield=6
+        local maxArmor = 1 -- Default Cloth
+        if playerClass == "WARRIOR" or playerClass == "PALADIN" then maxArmor = 4
+        elseif playerClass == "SHAMAN" or playerClass == "HUNTER" then maxArmor = 3
+        elseif playerClass == "ROGUE" or playerClass == "DRUID" then maxArmor = 2 
+        end
+        
+        -- Shield Check
+        if subClassID == 6 then 
+            if playerClass ~= "WARRIOR" and playerClass ~= "PALADIN" and playerClass ~= "SHAMAN" then return false end
+        -- Normal Armor Check (exclude misc/cosmetic)
+        elseif subClassID > 0 and subClassID <= 4 then 
+             if subClassID > maxArmor then return false end
+        end
+    end
+
+    -- 3. CLASS/RACE RESTRICTION SCAN (e.g., "Classes: Rogue")
+    -- We scan the tooltip for red text or "Classes:" lines.
+    local tip = _G["MSC_ScannerTooltip"] or CreateFrame("GameTooltip", "MSC_ScannerTooltip", nil, "GameTooltipTemplate")
+    tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
+    local status = pcall(function() tip:SetHyperlink(itemLink) end)
+    
+    if status then
+        for i = 2, tip:NumLines() do
+            local line = _G["MSC_ScannerTooltipTextLeft"..i]
+            local text = line and line:GetText()
+            if text then
+                -- Check for Class Restrictions
+                if text:find("Classes:") or (ITEM_CLASSES_ALLOWED and text:find(ITEM_CLASSES_ALLOWED:gsub("%%s", ""))) then
+                    if not text:find(localizedClass) then 
+                        return false 
+                    end
+                end
+                
+                -- Check for Race Restrictions
+                if text:find("Races:") or (ITEM_RACES_ALLOWED and text:find(ITEM_RACES_ALLOWED:gsub("%%s", ""))) then
+                     local localizedRace = UnitRace("player")
+                     if not text:find(localizedRace) then return false end
+                end
+            end
+        end
+    end
+
     return true
 end
+
 
 -- =============================================================
 -- 2. API SHIMS (THE ERA / TBC BRIDGE)
