@@ -1,55 +1,87 @@
-# Sharpie's Gear Judge (Anniversary Edition)
+# Sharpie's Gear Judge (Era & TBC Edition)
 
-**"The Final Verdict on your gear."**
+**The Final Verdict on your gear.**
 
-Sharpie's Gear Judge (SGJ) is a highly advanced, lightweight gear scoring addon designed for **World of Warcraft: The Burning Crusade (Anniversary / Classic)**. 
+**Sharpie's Gear Judge (SGJ)** is not just a stat calculator—it is a real-time **theorycrafting engine** built for **World of Warcraft: Classic Era** and **The Burning Crusade**.
 
-Unlike standard "BiS Lists" or heavy simulation addons, SGJ analyzes your **current** talents, level, and race to generate a dynamic "Score" for every item in the game. It tells you exactly what is an upgrade *right now*, removing the guesswork from loot decisions.
+Unlike standard addons that assign static points to items (e.g., "Hit = 10 pts"), SGJ understands **context**. It knows if you are Hit Capped, it knows if equipping that helm will break your Meta Gem requirements, and it can simulate the best possible Gems and Enchants for an item before you even equip it.
 
-## ✨ Key Features
+## 🚀 Key Features
 
-### 🧠 Dynamic "Plugin" Architecture
-SGJ uses a modern **Core + Plugin** system. It detects your class on login and loads a specialized mathematical model tailored specifically for you.
-* **Covariance:** The addon understands stat synergy. As your Attack Power grows, the value of Crit Rating rises to match it.
-* **Cap Guardian:** It knows your Hit, Defense, and Expertise caps. If you are over the cap, it lowers the value of that stat. If you are under, it raises it.
-* **Hysteresis:** Includes "Anti-Loop" logic to prevent the addon from telling you to break your caps.
+### 🧠 Dynamic "Cap Guardian" Engine
+The Judge watches your stats in real-time.
+* **Hit Cap Awareness:** If you are already Hit Capped, the addon dynamically reduces the value of Hit Rating on new items to prevent "fake upgrades."
+* **Tank Defense Protocol:** For tanks, it enforces the **490 Defense Cap** (TBC) or **440 Skill** (Era). It applies massive score penalties if swapping an item would drop you below critical immunity thresholds.
 
-### ⚖️ The Verdict (Tooltip)
-Hover over any item to see:
-* **Sharpie's Verdict:** A clear `Upgrade` or `Downgrade` message with a precise score difference.
-* **Smart Projection:** The score includes the potential value of the **Best Gems** and **Best Enchants** available to you, so you can compare an unenchanted drop against your fully geared main piece fairly.
-* **Proc Valuation:** "Use" and "Proc" effects (like *Dragonspine Trophy* or *Bloodlust Brooch*) are mathematically converted into passive stats for accurate scoring.
+### 🔬 The Laboratory
+Stop guessing if breaking your set bonus is worth it.
+* **Virtual Paperdoll:** Drag and drop items from chat or your bags into **The Laboratory** to test loadouts without equipping them.
+* **2H vs. Dual Wield:** Directly compare a Two-Handed Weapon against a Main Hand + Off-Hand combo side-by-side.
 
-### 📜 The Ledger (History)
-Type `/sgj history` to open your Gear Receipt.
-* **Full Breakdown:** See exactly how your score is calculated.
-* **Bag Scanner:** A **Yellow Exclamation Mark (!)** appears on slots where you have a better item sitting in your bags.
-* **Enchant Alert:** A **Red Alert Icon** warns you if you are missing an enchant or gem.
+### 🔮 Smart Projection (SimC-Lite)
+* **Gem Simulator (TBC):** The addon doesn't just read the gems currently in an item. It simulates **Strategy A (Match Socket Colors)** vs. **Strategy B (Pure Stats)** and projects the highest possible score for that item, ensuring you don't trash a powerful off-color item.
+* **Enchant Projector:** Compares items as if they had the best possible enchant for your level and spec.
 
-### ⚔️ Hybrid Class Support
-SGJ fully supports complex hybrid mechanics:
-* **Druids:** Correctly parses "Feral Attack Power" on weapons.
-* **Warriors:** Enforces 2H priority for Arms and DW priority for Fury.
-* **Paladins/Shamans:** Scores Relics, Totems, and Librams based on their specific spell bonuses.
+### 🧾 The Gear Receipt
+An auditing tool for your character.
+* **Bag Scanning:** Checks your inventory for items that score higher than what you currently have equipped.
+* **Enchant Police:** Flags any equipped items that are missing enchants.
+* **PVP Tax:** Identifies items with "wasted" PvP stats (Resilience) when you are using a PvE profile.
 
-## 🛠️ Installation & Usage
+### ⚖️ Transparent Math
+* **No Black Boxes:** The **"Stat Logic"** window breaks down exactly how your score was calculated (e.g., *"20 Agility = 0.8% Crit = 15.2 Points"*).
+* **Meta Gem Enforcement:** Automatically detects if a gear swap will deactivate your Meta Gem and adjusts the score accordingly.
 
-1.  Download the latest release.
-2.  Extract `SharpiesGearJudge` to your `Interface\AddOns\` folder.
-3.  **Login and Play!** No setup required. The Judge automatically detects your spec.
+---
 
-**Commands:**
-* `/sgj` - Open the Laboratory (Compare items manually).
-* `/sgj config` - Open Settings (Toggle Minimap button, Auto-Sell junk).
-* `/sgj history` - Open the Ledger.
+## 🎮 Supported Versions
 
-## 🤝 Compatibility
-* **Conflict Manager:** SGJ automatically detects other tooltip addons (Pawn, Zygor, RXP) and can disable their scoring lines to keep your tooltips clean.
-* **TBC Phase 5:** Fully updated for Sunwell Plateau itemization.
+This addon features a unified codebase that automatically detects your game client:
+
+* **Classic Era (1.15.x):** Full support for Vanilla stat logic (Hit %, Defense Skill, Set Bonuses T0-T3).
+* **Burning Crusade Classic (2.5.x):** Full support for Rating logic, Gems, Meta Gems, and TBC-specific caps.
+
+---
+
+## 💻 Slash Commands
+
+* `/sgj` or `/judge` — Open the **Main Menu**.
+* `/sgj config` — Open **Settings** (Gem modes, Enchant modes, Minimap toggle).
+* `/sgj import` — Open the **Pawn String Import** window.
+
+---
+
+## ⚙️ Usage Guide
+
+### 1. Auto-Spec Detection
+SGJ automatically detects your class and spec to assign default stat weights (e.g., "Warrior: Fury" or "Mage: Frost").
+* *Manual Override:* You can force a specific profile via **Settings** -> **Scoring Profile**.
+
+### 2. Tooltip Integration
+Simply hover over any item.
+* **Judge's Score:** The calculated power of the item.
+* **Verdict:** Displays if the item is an **Upgrade** or **Downgrade**, including the % difference.
+* **Context:** If an item pushes you over a cap (e.g., Hit Cap), the tooltip will tag it: `(Cap 0.5% Over)`.
+
+### 3. Importing Custom Weights
+Power user? You can import custom weights from **SimC** or **WowSims**.
+1. Copy your Pawn string from the simulator.
+2. Type `/sgj import` in-game.
+3. Paste the string. The addon will create a new `[Import]` profile for you.
+
+---
+
+## 📥 Installation
+
+1. Download the latest release.
+2. Extract the `SharpiesGearJudge` folder.
+3. Place it in your `World of Warcraft/_classic_era_/Interface/AddOns` (for Vanilla) or `_classic_/Interface/AddOns` (for TBC) folder.
+
+---
 
 ## Credits
 * **Author:** SuperSharpie
 * **Version:** 2.1.0 (TBC)
 * **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 * **Feedback:** Found a weight that feels off? Open an issue on GitHub!
-* **Discord:** https://discord.gg/yTSX8Us6WE
+* **Discord:** https://discord.gg/yTSX8Us6WEEnough

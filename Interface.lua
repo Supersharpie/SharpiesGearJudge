@@ -27,7 +27,7 @@ function MSC.SkinFrame(f)
         f.border:SetBackdropBorderColor(c.r, c.g, c.b, 1)
     end
 
-    -- 3. Header Texture (Small Watermark)
+    -- 3. Header Texture (Small Watermark for most windows)
     if not f.headerArt then
         local _, class = UnitClass("player")
         if class then
@@ -127,7 +127,8 @@ function MSC.ToggleMainMenu()
     end
 
     local f = CreateFrame("Frame", "SGJ_MainMenu", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(225, 315); f:SetPoint("CENTER")
+    f:SetSize(225, 355) 
+    f:SetPoint("CENTER")
     f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f.TitleText:SetText("Sharpie's Gear Judge")
@@ -148,11 +149,14 @@ function MSC.ToggleMainMenu()
     CreateMenuButton("The Laboratory", "Interface\\Icons\\INV_Misc_EngGizmos_17", -40, function() MSC.CreateLabFrame() end, "Compare items side-by-side.")
     CreateMenuButton("Gear Receipt", "Interface\\Icons\\INV_Scroll_03", -90, function() MSC.ShowReceipt() end, "Inspect current gear score.")
     CreateMenuButton("Stat Logic", "Interface\\Icons\\INV_Misc_Book_09", -140, function() MSC.ShowMathBreakdown() end, "See stat weights and caps.")
-    CreateMenuButton("History & Export", "Interface\\Icons\\INV_Letter_15", -190, function() MSC.ShowHistory() end, "View snapshots and export.")
-    CreateMenuButton("Settings", "Interface\\Icons\\INV_Gizmo_02", -240, function() MSC.CreateOptionsFrame() end, "Configure modes and display.")
+    
+    CreateMenuButton("Export Data", "Interface\\Icons\\INV_Letter_15", -190, function() MSC.ShowHistory() end, "View snapshots and export to Discord.")
+    CreateMenuButton("Import Pawn", "Interface\\Icons\\INV_Scroll_06", -240, function() MSC.ShowImportWindow() end, "Import weights from Pawn/SimC.")
+    
+    CreateMenuButton("Settings", "Interface\\Icons\\INV_Gizmo_02", -290, function() MSC.CreateOptionsFrame() end, "Configure modes and display.")
 
     local footer = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    footer:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); footer:SetText("v2.2.0 - Classic Era"); footer:SetTextColor(0.5, 0.5, 0.5)
+    footer:SetPoint("BOTTOM", f, "BOTTOM", 0, 15); footer:SetText("v2.1.0 - TBC Edition"); footer:SetTextColor(0.5, 0.5, 0.5)
     
     MSC.SkinFrame(f)
     MSC.MainMenuFrame = f; f:Show()
@@ -160,7 +164,7 @@ end
 
 
 -- =============================================================
--- 3. SETTINGS WINDOW (Cleaned Up)
+-- 3. SETTINGS WINDOW & QUICK DROP SLOT
 -- =============================================================
 function MSC.CreateOptionsFrame()
     if MyStatCompareFrame then 
@@ -169,7 +173,7 @@ function MSC.CreateOptionsFrame()
     end
     
     local f = CreateFrame("Frame", "MyStatCompareFrame", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(380, 420) -- Resized to fit content without the drop slot
+    f:SetSize(380, 480) 
     f:SetPoint("CENTER")
     f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
@@ -257,42 +261,36 @@ function MSC.CreateOptionsFrame()
         { text = "Project Best (Sim)", val = 3 } 
     }, header1, -10)
     
+    local dd2 = CreateDropdown("Gem Socket Logic:", "GemMode", { 
+        { text = "The Skeptic (Current Stats)", val = 1 }, 
+        { text = "The Casual (Fill Empty)", val = 2 }, 
+        { text = "The Pro (Perfect Setup)", val = 3 } 
+    }, dd1, -15) 
+
+    local metaWarn = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    metaWarn:SetPoint("TOP", dd2, "BOTTOM", 0, -2)
+    metaWarn:SetWidth(240); metaWarn:SetJustifyH("CENTER")
+    metaWarn:SetText("|cff888888(Note: Meta Gem activation depends\non your total equipped colors.)|r")
+
     -- SECTION 2: PROFILE
-    local header2 = CreateHeader("Character Profile", dd1, -20)
+    local header2 = CreateHeader("Character Profile", metaWarn, -20)
     local specOptions = {}; table.insert(specOptions, { text = "Auto-Detect", val = "AUTO" })
-    
     if MSC.CurrentClass then
-        -- 1. Endgame Profiles
         if MSC.CurrentClass.Weights then
             local sorted = {}; for k in pairs(MSC.CurrentClass.Weights) do table.insert(sorted, k) end; table.sort(sorted)
-            for _, k in ipairs(sorted) do 
-                table.insert(specOptions, { text = GetDisplayName(k), val = k }) 
-            end
+            for _, k in ipairs(sorted) do table.insert(specOptions, { text = GetDisplayName(k), val = k }) end
         end
-        
-        -- 2. Leveling Profiles
         if MSC.CurrentClass.LevelingWeights then
             local sorted = {}; for k in pairs(MSC.CurrentClass.LevelingWeights) do table.insert(sorted, k) end; table.sort(sorted)
-            for _, k in ipairs(sorted) do 
-                table.insert(specOptions, { text = GetDisplayName(k) .. " |cff00ff00(Leveling)|r", val = k }) 
-            end
-        end
-        
-        -- 3. Custom Import
-        if MSC.CurrentClass.Weights["Custom"] then
-             table.insert(specOptions, { text = GetDisplayName("Custom"), val = "Custom" })
+            for _, k in ipairs(sorted) do table.insert(specOptions, { text = GetDisplayName(k), val = k }) end
         end
     end
 
     local function UpdateDropDownText()
         if not f.ProfileDD then return end
-        
-        local _, detectedKey, _, isLeveling = MSC.GetCurrentWeights()
-        local name = GetDisplayName(detectedKey)
-        if isLeveling then name = name .. " |cff00ff00(Leveling)|r" end
-
         if SGJ_Settings.Mode == "AUTO" or SGJ_Settings.Mode == "Auto" then
-             UIDropDownMenu_SetText(f.ProfileDD, "Auto: " .. name)
+             local _, detectedKey = MSC.GetCurrentWeights()
+             UIDropDownMenu_SetText(f.ProfileDD, "Auto: " .. GetDisplayName(detectedKey))
         else
              UIDropDownMenu_SetText(f.ProfileDD, "Manual: " .. GetDisplayName(SGJ_Settings.Mode))
         end
@@ -306,46 +304,50 @@ function MSC.CreateOptionsFrame()
     local cb3 = CreateCheck("Mute Lab Errors", "MuteSounds", "Stops the error sound when clicking invalid items.", header3, -100, -50)
     local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", header3, 80, -50)
     
-    -- SECTION 4: IMPORT (The new feature)
-    local headerImport = CreateHeader("Import Pawn String", header3, -80)
+-- QUICK TEST DROP SLOT
+    local dropBtn = CreateFrame("Button", "SGJ_DropSlot", f, "ItemButtonTemplate")
+    -- FIX: Moved to TOPLEFT to sit under the title bar
+    dropBtn:SetPoint("TOPLEFT", 30, -45)
     
-    local importBox = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
-    importBox:SetSize(260, 30)
-    importBox:SetPoint("TOPLEFT", headerImport, "BOTTOMLEFT", 5, -10)
-    importBox:SetAutoFocus(false)
-    importBox:SetTextInsets(5, 5, 0, 0)
+    dropBtn.bg = dropBtn:CreateTexture(nil, "BACKGROUND")
+    dropBtn.bg:SetAllPoints()
+    dropBtn.bg:SetTexture("Interface\\Paperdoll\\UI-Backpack-EmptySlot")
+    dropBtn.bg:SetAlpha(0.6)
+
+    dropBtn.lbl = dropBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    dropBtn.lbl:SetPoint("BOTTOM", dropBtn, "TOP", 0, 4)
+    dropBtn.lbl:SetText("Check Settings")
+
+    -- Result Text anchors to the RIGHT of the button
+    f.res1 = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.res1:SetPoint("LEFT", dropBtn, "RIGHT", 15, 10)
+    f.res2 = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.res2:SetPoint("LEFT", dropBtn, "RIGHT", 15, -5)
+    f.res3 = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.res3:SetPoint("LEFT", dropBtn, "RIGHT", 15, -20)
     
-    local importBtn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-    importBtn:SetPoint("LEFT", importBox, "RIGHT", 5, 0)
-    importBtn:SetSize(70, 24)
-    importBtn:SetText("Import")
-    
-    local function DoImport()
-        local str = importBox:GetText()
-        if MSC.ParsePawnString then
-             local weights, name = MSC:ParsePawnString(str)
-             if weights then
-                 MSC:ApplyCustomWeights(name, weights)
-                 importBox:SetText("")
-                 importBox:ClearFocus()
-                 -- Force UI Refresh
-                 f:Hide(); f:Show()
-             else
-                 print("|cffff0000[SGJ]|r Import Failed: " .. (name or "Invalid String"))
-             end
+    dropBtn:SetScript("OnClick", function()
+        local type, _, link = GetCursorInfo()
+        if type == "item" then
+            ClearCursor()
+            local weights, spec = MSC.GetCurrentWeights()
+            local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+            local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc] or 1
+            
+            local nScore, oScore, nStats, oStats, nColors = MSC:EvaluateUpgrade(link, slotId, weights, spec)
+            
+            f.res1:SetText("Score: " .. nScore)
+            if nStats.GEM_TEXT then f.res2:SetText(nStats.GEM_TEXT) else f.res2:SetText("") end
+            
+            -- Version Safe Meta Check
+            if not MSC.IsEra and nStats.META_ID and MSC.CheckMetaRequirements and nColors then
+                if MSC:CheckMetaRequirements(nStats.META_ID, nColors) then
+                    f.res3:SetText("|cff00ff00Meta Active|r")
+                else
+                    f.res3:SetText("|cffff0000Meta Inactive|r")
+                end
+            else
+                f.res3:SetText("")
+            end
+            SetItemButtonTexture(dropBtn, GetItemIcon(link))
         end
-    end
-
-    importBox:SetScript("OnEnterPressed", DoImport)
-    importBtn:SetScript("OnClick", DoImport)
-
-    local importLabel = f:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    importLabel:SetPoint("TOPLEFT", importBox, "BOTTOMLEFT", 0, -5)
-    importLabel:SetText("Paste string from WowSims.io or Pawn.")
-    importLabel:SetTextColor(0.5, 0.5, 0.5)
-
-    f:SetScript("OnShow", function(self)
-        UpdateDropDownText()
     end)
     
     MSC.SkinFrame(f)
@@ -353,7 +355,7 @@ function MSC.CreateOptionsFrame()
 end
 
 -- =============================================================
--- 4. THE LABORATORY (Era Version)
+-- 4. THE LABORATORY
 -- =============================================================
 local LabFrame = nil
 local LabMH, LabOH, Lab2H = nil, nil, nil
@@ -380,20 +382,17 @@ function MSC.UpdateLabCalc()
         return
     end
 
-    local currentGear = {}
-    -- In Era, we grab directly from equipment (no gem processing)
-    for i=1,18 do currentGear[i] = GetInventoryItemLink("player", i) end
-    
-    local currentScore, currentStats = MSC:GetTotalCharacterScore(currentGear, weights, rawProfileName)
+    local currentGear = MSC:GetEquippedGear() 
+    local currentScore, currentStats, currentColors = MSC:GetTotalCharacterScore(currentGear, weights, rawProfileName)
 
     local scoreA, statsA = 0, {}
-    local scoreB, statsB = 0, {}
+    local scoreB, statsB, colorsB = 0, {}, {}
 
     if (LabMH.link or LabOH.link) and Lab2H.link then
         local setDW = MSC:SafeCopy(currentGear); setDW[16] = LabMH.link; setDW[17] = LabOH.link 
         local set2H = MSC:SafeCopy(currentGear); set2H[16] = Lab2H.link; set2H[17] = nil 
         scoreA, statsA, _ = MSC:GetTotalCharacterScore(setDW, weights, rawProfileName)
-        scoreB, statsB, _ = MSC:GetTotalCharacterScore(set2H, weights, rawProfileName) 
+        scoreB, statsB, colorsB = MSC:GetTotalCharacterScore(set2H, weights, rawProfileName) 
 
         LabFrame.ScoreCurrent:SetText(string.format("Dual Wield: %.1f", scoreA))
         LabFrame.ScoreNew:SetText(string.format("2-Hander: %.1f", scoreB))
@@ -408,7 +407,7 @@ function MSC.UpdateLabCalc()
         else if LabMH.link then setCustom[16] = LabMH.link end; if LabOH.link then setCustom[17] = LabOH.link end end
         
         scoreA, statsA = currentScore, currentStats
-        scoreB, statsB = MSC:GetTotalCharacterScore(setCustom, weights, rawProfileName)
+        scoreB, statsB, colorsB = MSC:GetTotalCharacterScore(setCustom, weights, rawProfileName)
         
         LabFrame.ScoreCurrent:SetText(string.format("Current: %.1f", scoreA))
         LabFrame.ScoreNew:SetText(string.format("Custom: %.1f", scoreB))
@@ -419,12 +418,21 @@ function MSC.UpdateLabCalc()
         else LabFrame.Result:SetText("|cffaaaaaaSidegrade (0.0)|r") end
     end
 
-    local hiddenKeys = { ["IS_PROJECTED"] = true, ["ENCHANT_TEXT"] = true, ["estimate"] = true }
+    local hiddenKeys = { ["IS_PROJECTED"] = true, ["GEMS_PROJECTED"] = true, ["BONUS_PROJECTED"] = true, ["GEM_TEXT"] = true, ["ENCHANT_TEXT"] = true, ["estimate"] = true }
     
     local diffs = MSC.GetStatDifferences(statsB, statsA, nil)
     local sorted = MSC.SortStatDiffs(diffs)
     local lines = ""
     
+    -- TBC Only: Meta Check
+    if not MSC.IsEra and statsB.META_ID and MSC.CheckMetaRequirements and colorsB then
+        if MSC:CheckMetaRequirements(statsB.META_ID, colorsB) then
+            lines = lines .. "|cff00ff00[Meta Gem Active]|r\n"
+        else
+            lines = lines .. "|cffff0000[Meta Gem Inactive]|r\n"
+        end
+    end
+
     local c = 0
     for _, e in ipairs(sorted) do
         if c >= 10 then break end
@@ -500,6 +508,7 @@ function MSC.CreateLabFrame()
     
     MSC.SkinFrame(f)
     
+    -- FIX: Restore Original Lab Crest (Big Center) and Hide Small Watermark
     if f.headerArt then f.headerArt:Hide() end
     local _, class = UnitClass("player")
     if class then
@@ -695,13 +704,26 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         row.Alert:Hide(); row.link = link; row.AlertFrame.mode = nil
 
         if link then
+            row.Item:SetText(link)
+            if texture then row.Icon:SetTexture(texture) else row.Icon:SetTexture(GetItemIcon(link)) end
+            
+            -- [[ SAFE STAT CALCULATION ]]
             local stats = MSC.SafeGetItemStats(link, slot.id, currentWeights, specName)
+            
             if stats then 
                 itemScore = MSC.GetItemScore(stats, currentWeights, specName, slot.id)
                 for k, v in pairs(stats) do if type(v) == "number" then combinedStats[k] = (combinedStats[k] or 0) + v end end
+                
+                -- [[ PVP TAX VISUAL CHECK (NOW SAFE) ]]
+                local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
+                if resVal > 0 and (currentWeights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0) <= 0.05 then
+                    row.Label:SetText("|cffcc0000PvP|r " .. slot.name)
+                else
+                    row.Label:SetText(slot.name) -- Reset label if not PvP
+                end
+            else
+                row.Label:SetText(slot.name)
             end
-            row.Item:SetText(link)
-            if texture then row.Icon:SetTexture(texture) else row.Icon:SetTexture(GetItemIcon(link)) end
             
             if IsMissingEnchant(link, slot.id) then
                 row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther")
@@ -710,6 +732,7 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
         else
             row.Item:SetText("|cff444444(Empty)|r")
             row.Icon:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot")
+            row.Label:SetText(slot.name)
         end
         
         if isPlayer and link then
@@ -720,13 +743,14 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
                  if slot.id == 13 or slot.id == 14 then if cachedItem.slotId == 13 then isMatch = true end end
                  if isMatch and cachedItem.score > bestBagScore + 0.1 then foundUpgrade = true; bestBagScore = cachedItem.score; upLink = cachedItem.link end
              end
+             
              if foundUpgrade then 
                  row.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew")
                  row.Alert:Show(); row.AlertFrame.mode = "UPGRADE"; row.AlertFrame.link = upLink; row.AlertFrame.diff = bestBagScore - itemScore
              end
         end
         
-        row.Label:SetText(slot.name); row.Score:SetText(string.format("%.1f", itemScore))
+        row.Score:SetText(string.format("%.1f", itemScore))
         yOffset = yOffset - 24
     end
     
@@ -735,7 +759,7 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
     for _, line in pairs(MSC.SummaryRows) do line:Hide() end
     local sortedStats = {}
     for k, v in pairs(combinedStats) do
-        if k ~= "IS_PROJECTED" and k ~= "ENCHANT_TEXT" and v > 0 then
+        if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and v > 0 then
             local weight = currentWeights[k] or 0
             if weight > 0 then table.insert(sortedStats, { key=k, val=v, weight=weight, realWeight=weight }) end
         end
@@ -760,15 +784,19 @@ function MSC.ShowReceipt(unitOverride, skipInspect)
 end
 
 -- =============================================================
--- 6. MATH BREAKDOWN (Era Adjusted)
+-- 6. MATH BREAKDOWN
 -- =============================================================
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
     if stat:find("HIT") then return "Reduces Chance to Miss" end
+    if stat:find("HASTE") then return "Increases Speed" end
     if stat:find("CRIT") and not stat:find("FROM_STATS") then 
         if profileName:find("HOLY") or profileName:find("RESTO") then return "Crit Heals & Mana Refund" end
         return "Higher Critical Strike Chance" 
     end
+    if stat:find("EXPERTISE") then return "Reduces Dodge/Parry" end
+    if stat:find("RESILIENCE") then return "Crit Immunity & DMG Reduction" end
+    if stat:find("ARMOR_PEN") then return "Ignores Enemy Armor" end
     if stat:find("DEFENSE") then return "Avoidance & Crit Immunity" end
     if stat:find("SPELL_POWER") then return "Raw Spell Scaling" end
     if stat:find("HEALING") then return "Raw Healing Output" end
@@ -845,14 +873,19 @@ function MSC.ShowMathBreakdown()
     local currentGear = MSC:GetEquippedGear() 
     local totalScore, playerStats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
     
-    add("=== HIT CAP ANALYSIS (Vanilla) ===", true)
+    add("=== HIT CAP ANALYSIS ===", true)
     local isSpell = (detectedKey:find("MAGE") or detectedKey:find("WARLOCK") or detectedKey:find("PRIEST") or detectedKey:find("ELE") or detectedKey:find("BALANCE"))
+    local hitRating = isSpell and (playerStats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (playerStats["ITEM_MOD_HIT_RATING_SHORT"] or 0)
     
-    -- In Era, we use percentages directly (1.0 = 1%)
-    local hitPct = isSpell and (playerStats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (playerStats["ITEM_MOD_HIT_RATING_SHORT"] or 0)
-    local capPct = isSpell and 16 or 9 
-    
-    add(string.format("Current Hit: %.1f%% | Soft Cap: %d%%", hitPct, capPct))
+    -- Version-Aware Hit Display
+    if MSC.IsEra then
+        add(string.format("Current Hit: %d%%", hitRating))
+    else
+        local conversion = isSpell and 12.6 or 15.8
+        local curHitPct = hitRating / conversion
+        local capPct = isSpell and 16 or 9 
+        add(string.format("Current Hit: %d Rating (%.1f%%) | Cap: %d%%", hitRating, curHitPct, capPct))
+    end
     
     local hitWeight = isSpell and (weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0) or (weights["ITEM_MOD_HIT_RATING_SHORT"] or 0)
     if hitWeight > 0.1 then
@@ -861,35 +894,36 @@ function MSC.ShowMathBreakdown()
         add(" Status: |cffff0000HIT CAPPED|r (Value reduced)")
     end
 
-    -- 3. TANK LOGIC (Era / Vanilla)
+    -- 3. TANK LOGIC
     if detectedKey:find("PROT") or detectedKey:find("TANK") or detectedKey:find("BEAR") then
         add("=== TANK SURVIVABILITY ===", true)
         
         local baseDef, posBuff = UnitDefense("player")
         local totalDef = (baseDef or 0) + (posBuff or 0)
         
-        -- Level 63 Boss Cap: 440 Defense (300 base + 140 from gear)
-        local defRequired = 440
-        local currentDef = totalDef
-        local gap = defRequired - currentDef
+        if not MSC.IsEra then
+            -- TBC Crit Immunity Logic
+            local resil = GetCombatRating(15) or 0
+            local defCritReduc = math.max(0, (totalDef - 350) * 0.04)
+            local resilCritReduc = resil / 39.423
+            local talentReduc = (detectedKey:find("BEAR")) and 3.0 or 0.0
+            local totalReduc = defCritReduc + resilCritReduc + talentReduc
+            local critGap = 5.6 - totalReduc
 
-        if gap <= 0 then 
-             add("Defense Cap (440): |cff00ff00REACHED|r")
+            if critGap <= 0.01 then 
+                 add("Crit Immunity: |cff00ff00YES|r (Over by " .. string.format("%.2f%%", math.abs(critGap)) .. ")")
+            else
+                 add("Crit Immunity: |cffff0000NO|r (Need " .. string.format("%.2f%%", critGap) .. " more)")
+            end
+            add(string.format("   Def: %.2f%% | Resil: %.2f%% | Talents: %.1f%%", defCritReduc, resilCritReduc, talentReduc))
         else
-             add("Defense Cap (440): |cffff0000NO|r (Need " .. gap .. " more)")
-        end
-        add(string.format("   Current Defense: %d", currentDef))
-
-        if not detectedKey:find("BEAR") then
-            local dodge = GetDodgeChance()
-            local parry = GetParryChance()
-            local block = GetBlockChance()
-            local activeBlock = (class == "PALADIN") and 30 or 0
-            -- Defense > 300 adds 0.04% miss per point
-            local miss = 5 + math.max(0, (totalDef - 300) * 0.04) 
-            local avoid = dodge + parry + block + miss + activeBlock
-            
-            add(string.format("   Total Avoidance (inc Miss): %.2f%%", avoid))
+            -- Vanilla Crit Immunity Logic (Defense Only)
+            add("Defense Skill: " .. totalDef)
+            if totalDef >= 440 then -- 440 Def = Crit Immune in Vanilla vs Boss
+                 add("Crit Immunity: |cff00ff00YES|r")
+            else
+                 add("Crit Immunity: |cffff0000NO|r (Need " .. (440 - totalDef) .. " more)")
+            end
         end
     end
 
@@ -912,7 +946,7 @@ function MSC.ShowMathBreakdown()
             local prettyName = MSC.GetCleanStatName(data.k)
             local reason = GetStatReason(data.k, class, detectedKey)
             
-            local line = string.format("%s: |cffffffff%.1f|r x |cff00ccff%.2f|r = |cff00ff00%.1f|r", 
+            local line = string.format("%s: |cffffffff%.0f|r x |cff00ccff%.2f|r = |cff00ff00%.1f|r", 
                 prettyName, data.amt, data.w, data.score)
                 
             if reason then
@@ -930,7 +964,7 @@ function MSC.ShowMathBreakdown()
 end
 
 -- =============================================================
--- 7. EXPORT WINDOW (Discord Pro Format)
+-- 7. EXPORT WINDOW
 -- =============================================================
 function MSC.ShowHistory()
     if not MSC.ExportFrame then
@@ -1012,4 +1046,78 @@ function MSC.ShowHistory()
     MSC.ExportFrame.EditBox:SetText(text)
     MSC.ExportFrame.EditBox:HighlightText()
     MSC.ExportFrame.EditBox:SetFocus()
+end
+
+-- =============================================================
+-- 8. PAWN IMPORT GUI
+-- =============================================================
+function MSC.ShowImportWindow()
+    if MSC.ImportFrame then MSC.ImportFrame:Show(); return end
+    
+    local f = CreateFrame("Frame", "SGJ_ImportFrame", UIParent, "BasicFrameTemplateWithInset")
+    f:SetSize(400, 320)
+    f:SetPoint("CENTER")
+    f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    
+    f.TitleText:SetText("Import Pawn String")
+
+    MSC.SkinFrame(f)
+    MSC.ImportFrame = f
+
+    local desc = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    desc:SetPoint("TOPLEFT", 20, -35)
+    desc:SetPoint("TOPRIGHT", -20, -35)
+    desc:SetJustifyH("CENTER")
+    desc:SetText("Paste your Pawn string below (Ctrl+V) and click Import.\nThis will create a new profile named '[Import] ProfileName'.")
+
+    local sf = CreateFrame("ScrollFrame", "SGJ_ImportScroll", f, "UIPanelScrollFrameTemplate")
+    sf:SetPoint("TOPLEFT", 20, -70)
+    sf:SetPoint("BOTTOMRIGHT", -40, 50)
+    
+    local eb = CreateFrame("EditBox", nil, sf)
+    eb:SetMultiLine(true)
+    eb:SetFontObject(ChatFontNormal)
+    eb:SetWidth(320)
+    sf:SetScrollChild(eb)
+    eb:SetAutoFocus(true)
+    eb:SetScript("OnEscapePressed", function() f:Hide() end)
+
+    local bImp = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    bImp:SetPoint("BOTTOMLEFT", 20, 15)
+    bImp:SetSize(120, 25)
+    bImp:SetText("Import Weights")
+    bImp:SetScript("OnClick", function()
+        local txt = eb:GetText()
+        local weights, name = MSC:ParsePawnString(txt)
+        
+        if weights then
+            if not SGJ_Settings.CustomProfiles then SGJ_Settings.CustomProfiles = {} end
+            SGJ_Settings.CustomProfiles["Imported"] = weights
+            
+            if MSC.CurrentClass then
+                if not MSC.CurrentClass.Weights then MSC.CurrentClass.Weights = {} end
+                MSC.CurrentClass.Weights["Imported"] = weights
+                if MSC.CurrentClass.Profiles then MSC.CurrentClass.Profiles["Imported"] = weights end
+                if MSC.CurrentClass.PrettyNames then MSC.CurrentClass.PrettyNames["Imported"] = "|cff00ff00[Import]|r " .. name end
+            end
+            
+            MSC.ManualSpec = "Imported"
+            MSC.CachedWeights = nil 
+            SGJ_Settings.Mode = "Imported" 
+            
+            if MSC.UpdateLabCalc then MSC.UpdateLabCalc() end
+            
+            print("|cff00ccffSGJ:|r Imported profile '"..name.."' and activated it.")
+            f:Hide()
+        else
+            print("|cffff0000SGJ Import Error:|r " .. (name or "Invalid String"))
+        end
+    end)
+    
+    local bClose = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    bClose:SetPoint("BOTTOMRIGHT", -20, 15)
+    bClose:SetSize(100, 25)
+    bClose:SetText("Cancel")
+    bClose:SetScript("OnClick", function() f:Hide() end)
 end

@@ -1,0 +1,26 @@
+## Interface: 11508
+## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
+## Notes: The Final Verdict on your gear.
+## Author: SuperSharpie
+## Version: 2.1.0-Era
+## SavedVariables: SGJ_Settings, SGJ_History
+
+Init.lua
+Database.lua
+Data_Sets.lua
+Helpers.lua
+Dynamic_Engine.lua
+Evaluator.lua
+
+Classes\ERA\Warrior.lua
+Classes\ERA\Paladin.lua
+Classes\ERA\Rogue.lua
+Classes\ERA\Mage.lua
+Classes\ERA\Warlock.lua
+Classes\ERA\Priest.lua
+Classes\ERA\Shaman.lua
+Classes\ERA\Hunter.lua
+Classes\ERA\Druid.lua
+
+Interface.lua
+Judge.lua

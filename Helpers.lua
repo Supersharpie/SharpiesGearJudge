@@ -1,76 +1,202 @@
 local addonName, MSC = ...
 
 -- =============================================================
--- 1. UTILITIES
+-- 1. UTILITY FUNCTIONS
 -- =============================================================
-function MSC:SafeCopy(orig, dest)
-    wipe(dest or {})
-    local copy = dest or {}
-    if not orig then return copy end
-    for k,v in pairs(orig) do copy[k] = v end
+function MSC:SafeCopy(orig)
+    local original_type = type(orig)
+    local copy
+    if original_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in pairs(orig) do
+            copy[orig_key] = orig_value
+        end
+    else
+        copy = orig
+    end
     return copy
 end
 
-function MSC.GetBaseLink(itemLink)
-    if not itemLink then return nil end
-    -- In Era, we don't have gem IDs in the link string, but we strip enchants
-    local id = itemLink:match("item:(%d+)")
-    if id then
-        return "item:" .. id .. ":0:0:0:0:0:0:0:0"
-    end
-    return itemLink
+function MSC.IsItemUsable(itemLink)
+    if not itemLink then return false end
+    -- Note: Advanced class checks are handled by specific module logic.
+    -- This basic check returns true to allow scanning.
+    return true
 end
 
 -- =============================================================
--- 2. CONSTANTS & CACHE
+-- 2. API SHIMS (THE ERA / TBC BRIDGE)
 -- =============================================================
-MSC.StatCache = {} 
+function MSC:GetPlayerStat(statType)
+    if MSC.IsEra then
+        -- [[ VANILLA LOGIC ]]
+        if statType == "HIT" then return GetHitModifier() or 0
+        elseif statType == "SPELL_HIT" then return GetSpellHitModifier() or 0
+        elseif statType == "CRIT" then return GetCritChance()
+        elseif statType == "SPELL_CRIT" then return GetSpellCritChance(2)
+        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); return b + m
+        elseif statType == "HEALING" then return GetSpellBonusHealing()
+        elseif statType == "SPELL_POWER" then return GetSpellBonusDamage(2)
+        end
+    else
+        -- [[ TBC LOGIC ]]
+        if statType == "HIT" then return GetCombatRating(6)
+        elseif statType == "SPELL_HIT" then return GetCombatRating(8)
+        elseif statType == "CRIT" then return GetCombatRating(9)
+        elseif statType == "SPELL_CRIT" then return GetCombatRating(11)
+        elseif statType == "DEFENSE" then return GetCombatRating(2)
+        elseif statType == "HEALING" then return GetSpellBonusHealing()
+        elseif statType == "SPELL_POWER" then return GetSpellBonusDamage(2)
+        end
+    end
+    return 0
+end
 
--- RECYCLING BIN (Scratchpads)
--- (Gem Scratchpads removed for Era)
+function MSC:GetSpiritValueInMP5(level, spirit)
+    if not MSC.BaseRegenTable then return 0 end
+    local _, class = UnitClass("player")
+    if MSC.IsEra then
+        if class == "PRIEST" or class == "MAGE" then return (spirit / 4) + 12.5 end
+        return (spirit / 5) + 15
+    else
+        if not level or level > 70 then level = 70 end
+        local base = MSC.BaseRegenTable[level] or 0.009327
+        local intel = UnitStat("player", 4) or 100
+        return 5 * (base * math.sqrt(intel))
+    end
+end
+
+function MSC:GetTalentRank(talentNameKey)
+    if not MSC.CurrentClass or not MSC.CurrentClass.Talents then return 0 end
+    local searchName = MSC.CurrentClass.Talents[talentNameKey]
+    if not searchName then return 0 end
+    for tab = 1, 3 do
+        local numTalents = GetNumTalents(tab)
+        for i = 1, numTalents do
+            local name, icon, tier, column, rank = GetTalentInfo(tab, i)
+            if name == searchName then return rank end
+        end
+    end
+    return 0
+end
+
+-- =============================================================
+-- 3. COMPARISON MATH (SAFE VERSION)
+-- =============================================================
+function MSC.GetStatDifferences(newStats, oldStats, outTable)
+    if not outTable then outTable = {} end
+    wipe(outTable)
+    
+    local ignoreKeys = {
+        ["IS_PROJECTED"] = true, ["GEMS_PROJECTED"] = true, ["BONUS_PROJECTED"] = true,
+        ["GEM_TEXT"] = true, ["ENCHANT_TEXT"] = true, ["PROJECTED_GEM_IDS"] = true,
+        ["META_ID"] = true, ["COLORS"] = true, ["_BONUS_STATS"] = true, ["_AUTO_PROC"] = true
+    }
+
+    local processed = {}
+
+    -- LOOP 1: Compare NEW vs OLD
+    for k, valNew in pairs(newStats) do
+        -- SAFETY 1: Check if 'valNew' is a number
+        if not ignoreKeys[k] and type(valNew) == "number" then
+            
+            local valOld = oldStats[k]
+            
+            -- SAFETY 2: If 'valOld' is nil or boolean (true/false), force it to 0
+            if type(valOld) ~= "number" then 
+                valOld = 0 
+            end
+            
+            local diff = valNew - valOld
+            
+            if math.abs(diff) > 0.01 then
+                table.insert(outTable, { key = k, val = diff })
+            end
+            
+            processed[k] = true
+        end
+    end
+
+    -- LOOP 2: Compare OLD vs NEW
+    for k, valOld in pairs(oldStats) do
+        if not processed[k] and not ignoreKeys[k] and type(valOld) == "number" then
+            local diff = 0 - valOld
+            if math.abs(diff) > 0.01 then
+                table.insert(outTable, { key = k, val = diff })
+            end
+        end
+    end
+
+    return outTable
+end
+
+function MSC.SortStatDiffs(diffs)
+    table.sort(diffs, function(a,b) return a.val > b.val end)
+    return diffs
+end
+
+function MSC.GetCleanStatName(key)
+    if MSC.ShortNames and MSC.ShortNames[key] then return MSC.ShortNames[key] end
+    local s = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " ")
+    return string.lower(s):gsub("^%l", string.upper)
+end
+
+-- =============================================================
+-- 4. PAWN STRING PARSER
+-- =============================================================
+MSC.PawnStatMap = {
+    ["Strength"] = "ITEM_MOD_STRENGTH_SHORT", ["Agility"] = "ITEM_MOD_AGILITY_SHORT",
+    ["Stamina"] = "ITEM_MOD_STAMINA_SHORT", ["Intellect"] = "ITEM_MOD_INTELLECT_SHORT",
+    ["Spirit"] = "ITEM_MOD_SPIRIT_SHORT", ["CritRating"] = "ITEM_MOD_CRIT_RATING_SHORT",
+    ["HitRating"] = "ITEM_MOD_HIT_RATING_SHORT", ["HasteRating"] = "ITEM_MOD_HASTE_RATING_SHORT",
+    ["ResilienceRating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT", ["ArmorPenetration"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
+    ["SpellPower"] = "ITEM_MOD_SPELL_POWER_SHORT", ["Healing"] = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["SpellCritRating"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", ["SpellHitRating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    ["SpellHasteRating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT", ["Mp5"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    ["DefenseRating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", ["DodgeRating"] = "ITEM_MOD_DODGE_RATING_SHORT",
+    ["ParryRating"] = "ITEM_MOD_PARRY_RATING_SHORT", ["BlockRating"] = "ITEM_MOD_BLOCK_RATING_SHORT",
+    ["BlockValue"] = "ITEM_MOD_BLOCK_VALUE_SHORT", ["Dps"] = "MSC_WEAPON_DPS", ["Speed"] = "MSC_WEAPON_SPEED",
+}
+
+function MSC:ParsePawnString(pawnString)
+    if not pawnString then return nil, "No string" end
+    local name = string.match(pawnString, '"([^"]+)"') or "Imported"
+    local weights = {}
+    for k, v in string.gmatch(pawnString, "([%a%d]+)=([%d%.]+)") do
+        local mappedKey = MSC.PawnStatMap and MSC.PawnStatMap[k]
+        if mappedKey then weights[mappedKey] = tonumber(v) end
+    end
+    if not next(weights) then return nil, "No stats" end
+    return weights, name
+end
+
+-- =============================================================
+-- 5. CACHE & CONSTANTS
+-- =============================================================
+MSC.StatCache = {}
+local Scratch_MatchGems = {}
+local Scratch_PureGems = {}
+local Scratch_GemTextParts = {}
+local Scratch_ProjectedIDs = {}
+local Scratch_ProjectedColors = { RED=0, YELLOW=0, BLUE=0 }
 
 MSC.StatShortNames = {
-    ["MSC_WAND_DPS"] = "Wand DPS",
-    ["MSC_WEAPON_DPS"] = "Weapon DPS",
-    ["MSC_WEAPON_SPEED"] = "Speed",
-    ["ITEM_MOD_STAMINA_SHORT"] = "Stam",
-    ["ITEM_MOD_INTELLECT_SHORT"] = "Int",
-    ["ITEM_MOD_AGILITY_SHORT"] = "Agi",
-    ["ITEM_MOD_STRENGTH_SHORT"] = "Str",
-    ["ITEM_MOD_SPIRIT_SHORT"] = "Spirit",
-    ["ITEM_MOD_SPELL_POWER_SHORT"] = "Spell Power",
-    ["ITEM_MOD_HEALING_POWER_SHORT"] = "Heal",
-    ["ITEM_MOD_MANA_REGENERATION_SHORT"] = "Mp5",
-    ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = "Hp5",
-    ["ITEM_MOD_ATTACK_POWER_SHORT"] = "AP",
-    ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = "Feral AP",
-    ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = "Ranged AP",
-    -- Era uses % for Hit/Crit, not Ratings, but we map them to the same internal keys for scoring
-    ["ITEM_MOD_CRIT_RATING_SHORT"] = "Crit %", 
-    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = "Spell Crit %",
-    ["ITEM_MOD_HIT_RATING_SHORT"] = "Hit %",
-    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = "Spell Hit %",
-    
-    -- TBC Stats removed (Resil, Haste, ArP, Exp)
-    
-    ["ITEM_MOD_BLOCK_VALUE_SHORT"] = "BlockVal",
-    ["ITEM_MOD_BLOCK_RATING_SHORT"] = "Block %",
-    ["ITEM_MOD_DODGE_RATING_SHORT"] = "Dodge %",
-    ["ITEM_MOD_PARRY_RATING_SHORT"] = "Parry %",
-    ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = "Def", -- Defense Skill still exists
-    
-    ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = "Shadow",
-    ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = "Fire",
-    ["ITEM_MOD_FROST_DAMAGE_SHORT"] = "Frost",
-    ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = "Arcane",
-    ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = "Nature",
-    ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = "Holy",
-    ["ITEM_MOD_CONDITIONAL_AP_SHORT"] = "AP (Conditional)",
-    ["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = "Crit (from Agi/Int)",
-    ["ITEM_MOD_STATS_ALL_SHORT"] = "All Stats",
-    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "Dmg",
-    ["ITEM_MOD_ARMOR_SHORT"] = "Armor",
-    ["MSC_PVP_UTILITY"] = "PvP Utility"
+    ["MSC_WAND_DPS"] = "Wand DPS", ["MSC_WEAPON_DPS"] = "Weapon DPS", ["MSC_WEAPON_SPEED"] = "Speed",
+    ["ITEM_MOD_STAMINA_SHORT"] = "Stam", ["ITEM_MOD_INTELLECT_SHORT"] = "Int",
+    ["ITEM_MOD_AGILITY_SHORT"] = "Agi", ["ITEM_MOD_STRENGTH_SHORT"] = "Str",
+    ["ITEM_MOD_SPIRIT_SHORT"] = "Spt", ["ITEM_MOD_SPELL_POWER_SHORT"] = "SP",
+    ["ITEM_MOD_HEALING_POWER_SHORT"] = "Heal", ["ITEM_MOD_MANA_REGENERATION_SHORT"] = "Mp5",
+    ["ITEM_MOD_ATTACK_POWER_SHORT"] = "AP", ["ITEM_MOD_CRIT_RATING_SHORT"] = "Crit",
+    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = "Spell Crit", ["ITEM_MOD_HIT_RATING_SHORT"] = "Hit",
+    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = "Spell Hit", ["ITEM_MOD_HASTE_RATING_SHORT"] = "Haste",
+    ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = "Exp", ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = "Def",
+    ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = "Resil", ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = "ArP",
+    ["ITEM_MOD_BLOCK_VALUE_SHORT"] = "BlockVal", ["ITEM_MOD_BLOCK_RATING_SHORT"] = "Block",
+    ["ITEM_MOD_DODGE_RATING_SHORT"] = "Dodge", ["ITEM_MOD_PARRY_RATING_SHORT"] = "Parry",
+    ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = "Shadow", ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = "Fire",
+    ["ITEM_MOD_FROST_DAMAGE_SHORT"] = "Frost", ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = "Arcane",
+    ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = "Nature", ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = "Holy",
+    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "Dmg", ["ITEM_MOD_ARMOR_SHORT"] = "Armor"
 }
 
 function MSC.Round(num, numDecimalPlaces)
@@ -78,253 +204,78 @@ function MSC.Round(num, numDecimalPlaces)
     return math.floor(num * mult + 0.5) / mult
 end
 
-function MSC.GetCleanStatName(key)
-    if MSC.StatShortNames and MSC.StatShortNames[key] then return MSC.StatShortNames[key] end
-    local clean = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower()
-    return clean:gsub("^%l", string.upper)
-end
-
-function MSC.IsItemUsable(link)
-    if not link then return false end
-    
-    -- 1. HARD API CHECKS (Armor/Weapon Types)
-    local _, _, _, _, _, _, _, _, equipLoc, _, _, classID, subclassID = GetItemInfo(link)
-    local locClass, playerClass = UnitClass("player")
-    local locRace, playerRace = UnitRace("player")
-    
-    -- Check Armor Types (ClassID 4)
-    if classID == 4 then 
-        if playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" then 
-            if subclassID and subclassID > 1 then return false end -- Cloth only
-        elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
-            if subclassID and subclassID > 2 then return false end -- Leather/Cloth
-        elseif playerClass == "HUNTER" or playerClass == "SHAMAN" then 
-            -- Mail (3), Leather (2), Cloth (1). 
-            -- Shields (6) are "Armor", so we must explicitly block them for Hunter.
-            if subclassID == 6 and playerClass == "HUNTER" then return false end
-            if subclassID > 3 and subclassID ~= 6 then return false end -- Block Plate (4)
-        end
-    end
-    
-    -- Check Weapon Types (ClassID 2) via Module
-    if classID == 2 and MSC.CurrentClass and MSC.CurrentClass.ValidWeapons then
-        if subclassID and not MSC.CurrentClass.ValidWeapons[subclassID] then return false end
-    end
-    
-    -- Check Relics/Thrown
-    if equipLoc == "INVTYPE_RELIC" then
-        if playerClass == "DRUID" or playerClass == "PALADIN" or playerClass == "SHAMAN" then
-            -- These classes use Relics, but we need to check if it's the RIGHT relic (Idol vs Totem) via tooltip below
-        else
-            return false -- Other classes can't use relics
-        end
-    end
-    if equipLoc == "INVTYPE_THROWN" and (playerClass == "MAGE" or playerClass == "WARLOCK" or playerClass == "PRIEST" or playerClass == "PALADIN" or playerClass == "DRUID" or playerClass == "SHAMAN") then
-        return false
-    end
-
-    -- 2. TOOLTIP SCAN (For "Classes: Mage" or "Races: Gnome")
-    -- We need to check specific restrictions that aren't in the ClassID/SubClassID
-    local tipName = "MSC_RestrictionScanner"
-    local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE")
-    tip:ClearLines()
-    tip:SetHyperlink(link)
-    
-    for i = 1, tip:NumLines() do
-        local line = _G[tipName.."TextLeft"..i]
-        local text = line and line:GetText()
-        if text then
-            -- Check Class Restriction (e.g. "Classes: Mage, Warlock")
-            -- We search for our LOCALIZED class name (e.g. "Warlock") in the text line
-            if (text:find(ITEM_CLASSES_ALLOWED) or text:find("Classes:")) then
-                if not text:find(locClass) then return false end
-            end
-            
-            -- Check Race Restriction
-            if (text:find(ITEM_RACES_ALLOWED) or text:find("Races:")) then
-                if not text:find(locRace) then return false end
-            end
-            
-            -- Check Specific Relic Types (Totem vs Idol vs Libram)
-            -- These appear as the "Type" line in the tooltip, usually line 2 or 3
-            if equipLoc == "INVTYPE_RELIC" then
-                if playerClass == "DRUID" and (text:find("Totem") or text:find("Libram")) then return false end
-                if playerClass == "PALADIN" and (text:find("Totem") or text:find("Idol")) then return false end
-                if playerClass == "SHAMAN" and (text:find("Libram") or text:find("Idol")) then return false end
-            end
-        end
-    end
-
-    return true
-end
-
-function MSC:GetValidEnchantType(itemLink)
-    if not itemLink then return nil end
-    local _, _, _, _, _, _, _, _, itemEquipLoc, _, _, classID, subClassID = GetItemInfo(itemLink)
-    
-    if not classID then return nil end 
-
-    if itemEquipLoc == "INVTYPE_RANGED" or itemEquipLoc == "INVTYPE_RANGEDRIGHT" then
-        if subClassID == 2 or subClassID == 3 or subClassID == 18 then return "SCOPE" end
-        return nil 
-    end
-    
-    if classID == 2 then 
-        if itemEquipLoc == "INVTYPE_2HWEAPON" then return "2H_WEAPON" end
-        return "WEAPON"
-    end
-    
-    if classID == 4 then 
-        if subClassID == 6 or itemEquipLoc == "INVTYPE_SHIELD" then return "SHIELD" end
-        if subClassID == 0 and (itemEquipLoc == "INVTYPE_HOLDABLE" or itemEquipLoc == "INVTYPE_WEAPONOFFHAND") then return nil end
-        if itemEquipLoc == "INVTYPE_HOLDABLE" then return nil end
-        return "ARMOR"
-    end
-    
-    return nil
-end
-
 -- =============================================================
--- 3. DATABASE LOOKUPS (Restored & Adapted for Era)
--- =============================================================
-
-function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
-    local bestScore, bestID = 0, nil
-    
-    -- In Era, we assume just one main EnchantDB, or we treat "Leveling" as < 60
-    if not MSC.EnchantDB or not weights then return nil end
-
-    local candidates = (level >= 60) and MSC.EnchantCandidates or MSC.EnchantCandidates_Leveling
-    -- Fallback if leveling candidates aren't defined
-    if not candidates then candidates = MSC.EnchantCandidates end
-    
-    if not candidates then return nil end
-    local slotList = candidates[slotId]
-    if not slotList then return nil end
-
-    for _, eID in ipairs(slotList) do
-        local data = MSC.EnchantDB[eID]
-        if data then
-            local isValid = true
-            if enchantType == "SCOPE" and not data.isScope then isValid = false
-            elseif enchantType == "SHIELD" and not data.isShield then isValid = false
-            elseif (enchantType == "WEAPON" or enchantType == "2H_WEAPON") and (data.isShield or data.isScope) then isValid = false
-            end
-            
-            if isValid then
-                local score = MSC.GetItemScore(data.stats, weights, specName)
-                if score > bestScore then
-                    bestScore = score
-                    bestID = eID
-                end
-            end
-        end
-    end
-    return bestID
-end
-
--- [Gems Removed for Era]
-
--- =============================================================
--- 4. SCANNING & PARSING
+-- 6. SCANNING
 -- =============================================================
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0, false end
     if text:find("Set:") and not text:find("ff00ff00") then return nil, 0, false end
     
-    -- Era has no socket bonuses
-    local isSocketBonus = false 
-
-    text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-    if text:find("^Use:") or text:find("^Chance on hit:") or text:find("when fighting") then return nil, 0, false end
-    
     local patterns = {
-        -- [[ FIX: FERAL AP MUST BE FIRST ]]
-        { p = "attack power by (%d+) in Cat", s = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-        { p = "attack power by (%d+) in Bear", s = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-
-        -- [[ ERA / VANILLA STATS ]]
-        { p = "Increases defense by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" }, -- Defense Skill
-        { p = "Increases defense %+(%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { p = "%+(%d+) Defense", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-
-        -- Percentages (Era style)
-        { p = "Increases your chance to parry an attack by (%d+)%%", s = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { p = "Increases your chance to dodge an attack by (%d+)%%", s = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { p = "Increases your chance to block an attack by (%d+)%%", s = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { p = "Increases your chance to hit by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
-        { p = "Increases your chance to hit with spells by (%d+)%%", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { p = "Increases your chance to get a critical strike by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { p = "Increases your chance to get a critical strike with spells by (%d+)%%", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-        
-        -- Block Value
-        { p = "Increases the block value of your shield by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
-        
-        -- Attack Power
+        { p = "Increases defense rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { p = "Increases your parry rating by (%d+)", s = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { p = "Increases your dodge rating by (%d+)", s = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { p = "Increases your block rating by (%d+)", s = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { p = "Increases your shield block value by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+        { p = "Increases your hit rating by (%d+)", s = "ITEM_MOD_HIT_RATING_SHORT" },
+        { p = "Increases your spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { p = "Increases your critical strike rating by (%d+)", s = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { p = "Increases your spell critical strike rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+        { p = "Increases your resilience rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+        { p = "Increases your haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
+        { p = "Increases your expertise rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
         { p = "Increases attack power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
-        { p = "%+(%d+) Attack Power", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
-
-        -- Weapon Speed
         { p = "Speed (%d+%.%d+)", s = "MSC_WEAPON_SPEED" },
-        
-        -- Spell Damage / Healing (Era specific phrasing)
         { p = "damage done by Shadow.-up to (%d+)", s = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
         { p = "damage done by Fire.-up to (%d+)", s = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
         { p = "damage done by Frost.-up to (%d+)", s = "ITEM_MOD_FROST_DAMAGE_SHORT" },
         { p = "damage done by Arcane.-up to (%d+)", s = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
         { p = "damage done by Nature.-up to (%d+)", s = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
         { p = "damage done by Holy.-up to (%d+)", s = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-        
         { p = "Shadow damage.-up to (%d+)", s = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
         { p = "Fire damage.-up to (%d+)", s = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
         { p = "Frost damage.-up to (%d+)", s = "ITEM_MOD_FROST_DAMAGE_SHORT" },
         { p = "Arcane damage.-up to (%d+)", s = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
         { p = "Nature damage.-up to (%d+)", s = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
         { p = "Holy damage.-up to (%d+)", s = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-        
         { p = "damage and healing.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "healing done.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
         { p = "spells and effects.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
         { p = "Increases spell power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" }, 
-        
-        -- Regen
+        { p = "critical strike.-spells.-(%d+)%%", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, 
+        { p = "critical strike.-(%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
+        { p = "spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { p = "(%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-        { p = "(%d+) health per 5 sec", s = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-        { p = "Restores (%d+) health", s = "ITEM_MOD_HEALTH_REGENERATION_SHORT" }, 
-        { p = "Restores (%d+) mana", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-
-        -- Primary Stats
+        { p = "%+(%d+) Attack Power", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
         { p = "%+(%d+) Stamina", s = "ITEM_MOD_STAMINA_SHORT" },
         { p = "%+(%d+) Intellect", s = "ITEM_MOD_INTELLECT_SHORT" },
         { p = "%+(%d+) Spirit", s = "ITEM_MOD_SPIRIT_SHORT" },
         { p = "%+(%d+) Strength", s = "ITEM_MOD_STRENGTH_SHORT" },
         { p = "%+(%d+) Agility", s = "ITEM_MOD_AGILITY_SHORT" },
-        { p = "%+(%d+) Health", s = "ITEM_MOD_HEALTH_SHORT" },
-        { p = "Health %+(%d+)", s = "ITEM_MOD_HEALTH_SHORT" },
         { p = "%+(%d+) Mana", s = "ITEM_MOD_MANA_SHORT" },
         { p = "Mana %+(%d+)", s = "ITEM_MOD_MANA_SHORT" },
-        
-        -- Misc
         { p = "%+(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" }, 
         { p = "Armor %+(%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
         { p = "%+(%d+) Block", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
         { p = "%+(%d+) Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
         { p = "%+(%d+) Weapon Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
-        { p = "%+(%d+) All Stats", s = "ITEM_MOD_STATS_ALL_SHORT" },
+        { p = "%+(%d+) Defense", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
         { p = "up to (%d+)%.?$", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "^(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" },
         { p = "Armor (%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
         { p = "^(%d+) Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
         { p = "(%d+%.%d+) Damage Per Second", s = "MSC_WEAPON_DPS" },
+        -- Era Fallbacks
+        { p = "Increases your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
+        { p = "Increases your chance to critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { p = "Increases your chance to parry.-by (%d+)%%", s = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { p = "Increases your chance to dodge.-by (%d+)%%", s = "ITEM_MOD_DODGE_RATING_SHORT" },
     }
 
     for _, d in ipairs(patterns) do
         local val = text:match(d.p)
-        if val then
-            return d.s, tonumber(val), isSocketBonus
-        end
+        if val then return d.s, tonumber(val), text:find("Socket Bonus:") end
     end
     return nil, 0, false
 end
@@ -336,76 +287,34 @@ function MSC:ParseProcText(text, itemID)
     local duration = tonumber(text:match("for (%d+) sec"))
     if not duration then return nil, 0 end
 
-    local cooldownSecs = nil
+    local cooldownSecs = 0
     local cdMin = tonumber(text:match("%((%d+) Min.-Cooldown%)"))
-    if cdMin then 
-        cooldownSecs = cdMin * 60 
-        local extraSec = tonumber(text:match("Min (%d+) Sec"))
-        if extraSec then cooldownSecs = cooldownSecs + extraSec end
-    end
-    if not cooldownSecs then
-        local cdSec = tonumber(text:match("%((%d+) Sec.-Cooldown%)"))
-        if cdSec then cooldownSecs = cdSec end
-    end
-    if not cooldownSecs or cooldownSecs == 0 then return nil, 0 end
+    if cdMin then cooldownSecs = cdMin * 60 end
+    local cdSec = tonumber(text:match("%((%d+) Sec.-Cooldown%)"))
+    if cdSec then cooldownSecs = (cooldownSecs or 0) + cdSec end
+    
+    if cooldownSecs == 0 then return nil, 0 end
 
     local statName = nil
-    if text:find("Strength") then statName = "ITEM_MOD_STRENGTH_SHORT"
+    if text:find("Haste") then statName = "ITEM_MOD_HASTE_RATING_SHORT"
+    elseif text:find("Strength") then statName = "ITEM_MOD_STRENGTH_SHORT"
     elseif text:find("Agility") then statName = "ITEM_MOD_AGILITY_SHORT"
     elseif text:find("Intellect") then statName = "ITEM_MOD_INTELLECT_SHORT"
     elseif text:find("Attack Power") then statName = "ITEM_MOD_ATTACK_POWER_SHORT"
     elseif text:find("Spell Power") then statName = "ITEM_MOD_SPELL_POWER_SHORT"
-    elseif text:find("Block") then statName = "ITEM_MOD_BLOCK_RATING_SHORT" 
-    elseif text:find("Dodge") then statName = "ITEM_MOD_DODGE_RATING_SHORT" 
-    elseif text:find("Defense") then statName = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"
     end
     
     if not statName then return nil, 0 end
-    local averageValue = (amount * duration) / cooldownSecs
-    return statName, averageValue
+    return statName, (amount * duration) / cooldownSecs
 end
 
--- =============================================================
--- 5. RAW SCANNER
--- =============================================================
 function MSC.GetRawItemStats(itemLink)
     if not itemLink then return {} end
     if MSC.StatCache[itemLink] then return MSC.StatCache[itemLink] end
 
     local finalStats = {}; local bonusStats = {}
     local id = tonumber(itemLink:match("item:(%d+)"))
-    local _, _, _, _, _, classID, subclassID = GetItemInfo(itemLink)
-    local isWand = (classID == 2 and subclassID == 19)
-
-    local forcedOverride = false
-    if id then
-        -- 1. Check Global Overrides (Database.lua)
-        if MSC.ItemOverrides and MSC.ItemOverrides[id] then
-            local override = MSC.ItemOverrides[id]
-            if not override.estimate then forcedOverride = true end 
-            for k, v in pairs(override) do 
-                if k ~= "estimate" and k ~= "replace" then 
-                    finalStats[k] = (finalStats[k] or 0) + v 
-                end 
-            end
-        end
-
-        -- 2. Check Class-Specific Relics
-        if MSC.CurrentClass and MSC.CurrentClass.Relics and MSC.CurrentClass.Relics[id] then
-            forcedOverride = true 
-            local rData = MSC.CurrentClass.Relics[id]
-            for k, v in pairs(rData) do 
-                finalStats[k] = (finalStats[k] or 0) + v 
-            end
-        end
-    end
-
-    if forcedOverride then
-        MSC.StatCache[itemLink] = finalStats
-        return finalStats
-    end
-
-    -- (Standard Scanner continues below...)
+    
     local stats = GetItemStats(itemLink) or {}
     for k, v in pairs(stats) do
         if MSC.StatShortNames[k] or k:find("SPELL") then 
@@ -415,161 +324,202 @@ function MSC.GetRawItemStats(itemLink)
         end
     end
     
-    local tipName = "MSC_ScannerTooltip"
-    local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
+    local tip = _G["MSC_ScannerTooltip"] or CreateFrame("GameTooltip", "MSC_ScannerTooltip", nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
     local status = pcall(function() tip:SetHyperlink(itemLink) end)
     
     if status then
         for i = 2, tip:NumLines() do
-            local line = _G[tipName.."TextLeft"..i]
+            local line = _G["MSC_ScannerTooltipTextLeft"..i]
             local text = line and line:GetText()
             local r, g, b = line and line:GetTextColor() or 1, 1, 1
             if text then
                 local isGreen = (g > 0.9 and r < 0.9 and b < 0.9)
                 local s, v, isBonus = MSC.ParseTooltipLine(text)
                 if s and v then
-                    if isBonus then 
-                        -- No bonuses in Era, but kept for safety
-                        bonusStats[s] = (bonusStats[s] or 0) + v
-                    elseif isGreen or not finalStats[s] then
-                        finalStats[s] = (finalStats[s] or 0) + v
-                    end
+                    if isBonus then bonusStats[s] = (bonusStats[s] or 0) + v
+                    elseif isGreen or not finalStats[s] then finalStats[s] = (finalStats[s] or 0) + v end
                 end
-                
                 if id then
                     local pStat, pVal = MSC:ParseProcText(text, id)
                     if pStat and pVal > 0 then 
                         finalStats._AUTO_PROC = { stat=pStat, val=pVal } 
+                        finalStats[pStat] = (finalStats[pStat] or 0) + pVal
                     end
                 end
             end
         end
     end
-
-    if isWand and finalStats["MSC_WEAPON_DPS"] then
-        finalStats["MSC_WAND_DPS"] = finalStats["MSC_WEAPON_DPS"]
-        finalStats["MSC_WEAPON_DPS"] = nil
-    end
     
-    -- Remove bonus stats return (Gems don't exist)
+    finalStats._BONUS_STATS = bonusStats
     MSC.StatCache[itemLink] = finalStats
     return finalStats
 end
 
 -- =============================================================
--- 6. THE ITEM EVALUATOR (Safe Version for Era)
+-- 7. THE SMART GEM AUDITOR (MODE 3) - SAFE VERSION + TBC LOGIC
 -- =============================================================
 function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
     if not itemLink then return {} end
-    
-    local finalStats = MSC.GetRawItemStats(itemLink) or {}
-    -- We work on a copy to avoid polluting cache with Projected Enchants
-    finalStats = MSC:SafeCopy(finalStats)
+    local rawStats = MSC.GetRawItemStats(itemLink)
+    local finalStats = {} 
+    for k,v in pairs(rawStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
+    local bonusStats = rawStats._BONUS_STATS or {}
 
     if not weights then return finalStats end
-
     local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 3
+    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local level = UnitLevel("player")
 
-    -- [[ ENCHANTS (Only logic left in Era) ]]
+    -- Enchants
     if enchantMode == 3 and slotId then
-        -- 1. Remove Existing Enchant Stats
         local currentEnchantID = tonumber(itemLink:match("item:%d+:(%d+):"))
         if currentEnchantID and currentEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[currentEnchantID] then
             local eStats = MSC.EnchantDB[currentEnchantID].stats or MSC.EnchantDB[currentEnchantID]
             if eStats then
                 for k, v in pairs(eStats) do 
-                    if type(v) == "number" then 
-                        finalStats[k] = (finalStats[k] or 0) - v
-                        if finalStats[k] < 0 then finalStats[k] = 0 end 
-                    end
+                    if type(v) == "number" then finalStats[k] = math.max(0, (finalStats[k] or 0) - v) end
                 end
             end
         end
-
-        -- 2. Add Projected Best Enchant
         local enchantType = MSC:GetValidEnchantType(itemLink)
         if enchantType then
             local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
-            if bestID and MSC.EnchantDB and MSC.EnchantDB[bestID] then
+            if bestID and MSC.EnchantDB[bestID] then
                 local eStats = MSC.EnchantDB[bestID].stats or MSC.EnchantDB[bestID]
-                if eStats then 
-                    for k, v in pairs(eStats) do 
-                        if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end 
-                    end 
-                end
+                if eStats then for k, v in pairs(eStats) do if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end end end
                 finalStats.IS_PROJECTED = true
                 finalStats.ENCHANT_TEXT = MSC.EnchantDB[bestID].name
             end
         end
     end
 
-    -- [[ GEMS REMOVED ]]
+    -- Gems (Era Skips this, TBC Uses it)
+    if not MSC.IsEra then
+        wipe(Scratch_GemTextParts)
+        wipe(Scratch_ProjectedIDs)
+        wipe(Scratch_ProjectedColors); Scratch_ProjectedColors.RED=0; Scratch_ProjectedColors.YELLOW=0; Scratch_ProjectedColors.BLUE=0
+        local projectedMeta = nil
+
+        if gemMode == 1 then
+            for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
+        else
+            -- TBC ADVANCED LOGIC (Restored)
+            local currentGems = { itemLink:match("item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)") }
+            if gemMode == 3 then
+                for _, gID in ipairs(currentGems) do
+                    local id = tonumber(gID)
+                    if id and id > 0 then
+                        local gData = MSC.GetGemStatsByID(id)
+                        if gData then
+                            if gData.stat then finalStats[gData.stat] = math.max(0, (finalStats[gData.stat] or 0) - (gData.val or 0)) end
+                            if gData.stat2 then finalStats[gData.stat2] = math.max(0, (finalStats[gData.stat2] or 0) - (gData.val2 or 0)) end
+                        end
+                    end
+                end
+            end
+
+            -- Start Projection
+            wipe(Scratch_MatchGems); wipe(Scratch_PureGems)
+            local matchScore = 0; local pureScore = 0
+            
+            -- Get Sockets from Base Item
+            local baseLink = MSC.GetBaseLink(itemLink)
+            local rawForSockets = GetItemStats(baseLink) or {}
+            local socketKeys = {"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}
+
+            -- Calc MATCH Strategy
+            if next(bonusStats) then
+                for k,v in pairs(bonusStats) do 
+                    if weights[k] then matchScore = matchScore + (v * weights[k]) end 
+                end
+            end
+            for _, colorKey in ipairs(socketKeys) do
+                local count = rawForSockets[colorKey] or 0
+                for i=1, count do
+                    local bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights)
+                    if bestGem then 
+                        matchScore = matchScore + score
+                        table.insert(Scratch_MatchGems, bestGem)
+                    end
+                end
+            end
+
+            -- Calc PURE Strategy (Ignore colors)
+            for _, colorKey in ipairs(socketKeys) do
+                local count = rawForSockets[colorKey] or 0
+                for i=1, count do
+                    local searchKey = (colorKey == "EMPTY_SOCKET_META") and "EMPTY_SOCKET_META" or "ANY"
+                    local bestGem, score = MSC.GetBestGemForSocket(searchKey, level, weights)
+                    if bestGem then 
+                        pureScore = pureScore + score
+                        table.insert(Scratch_PureGems, bestGem)
+                    end
+                end
+            end
+
+            local chosenGems = (matchScore >= pureScore) and Scratch_MatchGems or Scratch_PureGems
+            local useBonus = (matchScore >= pureScore) and next(bonusStats)
+
+            for _, gem in ipairs(chosenGems) do
+                if gem.stat then finalStats[gem.stat] = (finalStats[gem.stat] or 0) + gem.val end
+                if gem.stat2 then finalStats[gem.stat2] = (finalStats[gem.stat2] or 0) + gem.val2 end
+                if gem.isMeta then projectedMeta = gem.id end
+                
+                table.insert(Scratch_ProjectedIDs, gem.id)
+                table.insert(Scratch_GemTextParts, "1x " .. (MSC.StatShortNames[gem.stat] or "Gem"))
+            end
+            
+            if useBonus then
+                for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
+                finalStats.BONUS_PROJECTED = true
+            end
+            
+            finalStats.GEMS_PROJECTED = #Scratch_GemTextParts
+            finalStats.META_ID = projectedMeta
+            if #Scratch_GemTextParts > 0 then finalStats.GEM_TEXT = table.concat(Scratch_GemTextParts, ", ") end
+        end
+    end
     return finalStats
 end
 
 -- =============================================================
--- 7. SCORING WRAPPER
+-- 8. SCORING
 -- =============================================================
 function MSC.GetItemScore(stats, weights, specName, slotId)
     if not stats or not weights then return 0 end
     local score = 0
-    
     for stat, val in pairs(stats) do
-        -- 1. DETERMINE THE CORRECT WEIGHT KEY
         local weightKey = stat
-        
         if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
-            if weights["MSC_WEAPON_DPS_OH"] then
-                weightKey = "MSC_WEAPON_DPS_OH"
-            end
+            if weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH" end
         end
-
-        -- 2. APPLY WEIGHT
         if weights[weightKey] and type(val) == "number" then 
             local finalVal = val
             local w = weights[weightKey]
-            
-            -- 3. STANDARD OFFHAND PENALTY
-            if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
-                 finalVal = val * 0.5 
-            end
-            
+            if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
             score = score + (finalVal * w) 
         end
     end
     
-    -- Era doesn't have Resilience tax logic needed.
-    
-    -- 4. Weapon Speed Logic
-    if stats.MSC_WEAPON_SPEED and MSC.CurrentClass and MSC.CurrentClass.SpeedChecks then
-        local pref = MSC.CurrentClass.SpeedChecks[specName] or MSC.CurrentClass.SpeedChecks["Default"]
-        if pref then
-            local speed = stats.MSC_WEAPON_SPEED; local bonus = 20 
-            if slotId == 16 then
-                if pref.MH_Slow and speed >= 2.6 then score = score + bonus end
-                if pref.MH_Fast and speed <= 1.6 then score = score + bonus end
-            end
-            if slotId == 17 then
-                if pref.OH_Fast and speed <= 1.7 then score = score + bonus end
-                if pref.OH_Slow and speed >= 2.4 then score = score + bonus end
-            end
-            if slotId == 18 and pref.Ranged_Slow and speed >= 2.8 then score = score + bonus end
-        end
+    if not MSC.IsEra and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
+        local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"]
+        local resWeight = weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
+        if resVal > 0 and resWeight <= 0.05 then score = score - (resVal * 1.5) end
     end
     
-    -- 5. Poison Stat Penalty
     local penalty = 0
-    local poisonCandidates = { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT", "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_SHADOW_DAMAGE_SHORT", "ITEM_MOD_FIRE_DAMAGE_SHORT", "ITEM_MOD_FROST_DAMAGE_SHORT", "ITEM_MOD_ARCANE_DAMAGE_SHORT", "ITEM_MOD_NATURE_DAMAGE_SHORT", "ITEM_MOD_HOLY_DAMAGE_SHORT", "MSC_WAND_DPS" }
+    local poisonCandidates = { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" }
     for _, statKey in ipairs(poisonCandidates) do
         if (stats[statKey] or 0) > 0 and (weights[statKey] or 0) <= 0.01 then penalty = penalty + 10 end
     end
     score = score - penalty
-    
     return math.max(0, MSC.Round(score, 1))
 end
 
+-- =============================================================
+-- 9. RECYCLABLE HELPERS
+-- =============================================================
 function MSC.GetInterpolatedRatio(table, level)
     if not table then return nil end
     if level <= table[1][1] then return table[1][2] end
@@ -584,97 +534,28 @@ function MSC.GetInterpolatedRatio(table, level)
     return table[count][2]
 end
 
--- *** OPTIMIZED: RECYCLABLE DISPLAY FUNCTIONS ***
-
 function MSC.ExpandDerivedStats(stats, itemLink, dest)
     if not dest then dest = {} end
     wipe(dest)
     if not stats then return dest end
-    
     for k, v in pairs(stats) do dest[k] = v end
-    local _, class = UnitClass("player"); local _, race = UnitRace("player"); local powerType = UnitPowerType("player")
-    if itemLink and MSC.RacialTraits and MSC.RacialTraits[race] then
-        local _, _, _, _, _, _, _, _, _, _, _, _, subclassID = GetItemInfo(itemLink)
-        if subclassID and MSC.RacialTraits[race][subclassID] then
-            local val = MSC.RacialTraits[race][subclassID]
-            if type(val) == "number" then
-                -- Era Logic: Weapon Skill (subclassID checks)
-                if subclassID == 2 or subclassID == 3 or subclassID == 18 then 
-                    -- Weapon Skill isn't strictly "Crit Rating", but for scoring we might treat it as a bonus
-                    -- Leaving this as generic hook for now
-                end
-            elseif type(val) == "table" and val.stat then dest[val.stat] = (dest[val.stat] or 0) + val.val end
-        end
-    end
-    if dest["ITEM_MOD_STAMINA_SHORT"] then dest["ITEM_MOD_HEALTH_SHORT"] = (dest["ITEM_MOD_HEALTH_SHORT"] or 0) + (dest["ITEM_MOD_STAMINA_SHORT"] * 10) end
-    if powerType == 0 and dest["ITEM_MOD_INTELLECT_SHORT"] then dest["ITEM_MOD_MANA_SHORT"] = (dest["ITEM_MOD_MANA_SHORT"] or 0) + (dest["ITEM_MOD_INTELLECT_SHORT"] * 15) end
-    
-    local ratioTable = nil
-    if MSC.CurrentClass and MSC.CurrentClass.StatToCritMatrix then ratioTable = MSC.CurrentClass.StatToCritMatrix end
-    local myLevel = UnitLevel("player")
-    if ratioTable then
-        if ratioTable.Agi and dest["ITEM_MOD_AGILITY_SHORT"] then
-            local ratio = MSC.GetInterpolatedRatio(ratioTable.Agi, myLevel)
-            if ratio and ratio > 0 then dest["ITEM_MOD_CRIT_FROM_STATS_SHORT"] = (dest["ITEM_MOD_CRIT_FROM_STATS_SHORT"] or 0) + (dest["ITEM_MOD_AGILITY_SHORT"] / ratio) end
-        end
-        if ratioTable.Int and dest["ITEM_MOD_INTELLECT_SHORT"] then
-             local ratio = MSC.GetInterpolatedRatio(ratioTable.Int, myLevel)
-             if ratio and ratio > 0 then dest["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] = (dest["ITEM_MOD_SPELL_CRIT_FROM_STATS_SHORT"] or 0) + (dest["ITEM_MOD_INTELLECT_SHORT"] / ratio) end
-        end
-    end
     return dest
 end
 
-function MSC.GetStatDifferences(new, old, dest)
-    if not dest then dest = {} end
-    wipe(dest)
-    
-    local seen = {} 
-    for k, v in pairs(new) do 
-        if k ~= "IS_PROJECTED" and k ~= "ENCHANT_TEXT" and type(v) == "number" then
-            local d = v - (old[k] or 0); if d ~= 0 then table.insert(dest, { key=k, val=d }); seen[k] = true end
-        end
-    end
-    for k, v in pairs(old) do
-        if not seen[k] and k ~= "IS_PROJECTED" and k ~= "ENCHANT_TEXT" and type(v) == "number" then
-            local d = (new[k] or 0) - v; if d ~= 0 then table.insert(dest, { key=k, val=d }) end
-        end
-    end
-    return dest
+-- Get Base Link (Strip Gems/Enchants)
+function MSC.GetBaseLink(itemLink)
+    if not itemLink then return nil end
+    local id = itemLink:match("item:(%d+)")
+    if id then return "item:" .. id .. ":0:0:0:0:0:0:0:0" end
+    return itemLink
 end
 
-function MSC.SortStatDiffs(diffs)
-    table.sort(diffs, function(a,b) return a.val > b.val end)
-    return diffs
-end
-
--- =============================================================
--- 8. HELPERS FOR EVALUATOR
--- =============================================================
-function MSC:GetItemSetID(itemIDOrLink)
-    if not itemIDOrLink then return nil end
-    local name, link, quality, _, _, _, _, _, _, _, _, _, _, _, setID = GetItemInfo(itemIDOrLink)
-    if setID then return setID end
-
-    local tipName = "MSC_ScannerTooltip"
-    local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
-    local status = pcall(function() tip:SetHyperlink(link) end)
-    
-    if status then
-        for i = 2, tip:NumLines() do
-            local line = _G[tipName.."TextLeft"..i]
-            local text = line and line:GetText()
-            if text then
-                 if text:find("Set: ") then
-                     local setName = text:match("Set: (.*) %(")
-                     return setName
-                 end
-            end
-        end
-    end
-    return nil
-end
-
+function MSC:GetItemGems(itemLink) return {RED=0, YELLOW=0, BLUE=0}, nil, {} end
+function MSC:GetItemSetID(itemIDOrLink) return nil end
 function MSC.GetInspectSpec(unit) return "Default" end
+function MSC.GetValidEnchantType(itemLink) return nil end
+function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights) return nil end
+function MSC.GetBestGemForSocket(color, level, weights) return nil, 0 end
+function MSC.GetGemStatsByID(id) return nil end
+function MSC.GetGemColor(id) return nil end
 function MSC.ApplyElvUISkin(frame) end

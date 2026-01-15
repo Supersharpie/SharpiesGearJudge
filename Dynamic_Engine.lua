@@ -1,18 +1,19 @@
-local addonName, MSC = ...
+local _, MSC = ...
 
 -- =========================================================================
--- 1. TALENT CACHING SYSTEM (Era 3-Tab Support)
+-- 1. TALENT CACHING SYSTEM
 -- =========================================================================
 MSC.TalentCache = {}
 MSC.TalentCacheLoaded = false
 
--- Stores the final calculated weights to prevent frame lag
+-- Stores the final calculated weights to prevent lag
 MSC.CachedWeights = nil
 MSC.CachedSpecKey = nil
 
 -- Scans the player's talent tree once and saves it
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
+    -- Version Safe: GetNumTalentTabs works in Era and TBC
     local tabs = GetNumTalentTabs() or 0
     if tabs == 0 then return end
 
@@ -27,6 +28,7 @@ function MSC:BuildTalentCache()
 end
 
 -- Helper for Classes to check their talents
+-- NOTE: This accepts a KEY (e.g. "PRECISION") and looks up the Class Module's mapping
 function MSC:GetTalentRank(talentKey)
     -- Safety: If no class module is loaded, we can't look up talent names
     if not MSC.CurrentClass or not MSC.CurrentClass.Talents then return 0 end
@@ -36,57 +38,41 @@ function MSC:GetTalentRank(talentKey)
         if not MSC.TalentCacheLoaded then return 0 end
     end
 
-    -- Look up the English Name from the Class Module (e.g. "PRECISION" -> "Precision")
-    local englishName = MSC.CurrentClass.Talents[talentKey]
-    if not englishName then return 0 end
+    -- Look up the Localized Name from the Class Module (e.g. "PRECISION" -> "Precision" or "Präzision")
+    local localizedName = MSC.CurrentClass.Talents[talentKey]
+    if not localizedName then return 0 end
 
-    return MSC.TalentCache[englishName] or 0
+    return MSC.TalentCache[localizedName] or 0
 end
 
 -- =========================================================================
--- 2. STATE UPDATE (Critical for Era Caps)
+-- 2. WEIGHT DISPATCHER
 -- =========================================================================
-function MSC:UpdatePlayerState()
-    -- Update Hit/Crit snapshots so ApplyScalers knows if we are capped
-    -- Note: GetHitModifier() returns nil in some Era clients, default to 0
-    MSC.PlayerStats.Hit = GetHitModifier and GetHitModifier() or 0
-    MSC.PlayerStats.SpellHit = GetSpellHitModifier and GetSpellHitModifier() or 0
-    
-    -- Crit is complex in Era, often simpler to rely on scanner, but we grab base here
-    local _, int = UnitStat("player", 4)
-    local _, agi = UnitStat("player", 2)
-    MSC.PlayerStats.Intellect = int
-    MSC.PlayerStats.Agility = agi
-end
 
--- =========================================================================
--- 3. WEIGHT DISPATCHER
--- =========================================================================
 function MSC:ApplyDynamicAdjustments()
-    -- 1. Refresh State (Hit/Crit/Stats)
-    MSC:UpdatePlayerState()
-
+    local _, class = UnitClass("player")
     local specKey = "Default"
     local rawWeights = {}
 
-    -- 2. CHECK FOR MANUAL OVERRIDE
-    if SGJ_Settings and SGJ_Settings.Mode and SGJ_Settings.Mode ~= "AUTO" and SGJ_Settings.Mode ~= "Auto" then
-        specKey = SGJ_Settings.Mode
+    -- 1. CHECK FOR MANUAL OVERRIDE (User selected specific spec in menu)
+    if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
+        specKey = MSC.ManualSpec
         
-        -- Try to find this key in Endgame or Leveling tables
-        if MSC.CurrentClass then
-            if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
-                rawWeights = MSC.CurrentClass.Weights[specKey]
-            elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
-                rawWeights = MSC.CurrentClass.LevelingWeights[specKey]
-            end
+        -- Check Global Custom Profiles (Imports) first
+        if SGJ_Settings and SGJ_Settings.CustomProfiles and SGJ_Settings.CustomProfiles[specKey] then
+             rawWeights = SGJ_Settings.CustomProfiles[specKey]
+        -- Check Class Weights
+        elseif MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
+            rawWeights = MSC.CurrentClass.Weights[specKey]
+        elseif MSC.CurrentClass and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
+            rawWeights = MSC.CurrentClass.LevelingWeights[specKey]
         end
+        
     else
-        -- 3. AUTO-DETECT SPEC
+        -- 2. ASK THE CLASS MODULE FOR THE SPEC
         if MSC.CurrentClass and MSC.CurrentClass.GetSpec then
             specKey = MSC.CurrentClass:GetSpec()
             
-            -- Route to correct table
             if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
                 rawWeights = MSC.CurrentClass.Weights[specKey]
             elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
@@ -95,42 +81,36 @@ function MSC:ApplyDynamicAdjustments()
         end
     end
 
-    -- 4. DEEP COPY WEIGHTS (Don't mutate the Class Module directly)
+    -- 3. COPY WEIGHTS (Don't edit the originals!)
     local finalWeights = {}
     for k, v in pairs(rawWeights) do finalWeights[k] = v end
 
-    -- 5. APPLY SCALERS (Hit Caps / Weapon Skill Hysteresis)
-    local capText = nil
+    -- 4. APPLY SCALERS & HIT CAPS
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
-        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
+        finalWeights = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
     end
 
-    return finalWeights, specKey, capText
+    return finalWeights, specKey
 end
 
 -- [[ THE MASTER WRAPPER ]] --
 function MSC.GetCurrentWeights()
-    -- If cached, return instantly to save FPS
     if MSC.CachedWeights then
-        return MSC.CachedWeights, MSC.CachedSpecKey, MSC.CachedCapText
+        return MSC.CachedWeights, MSC.CachedSpecKey
     end
 
-    -- Heavy Calculation
-    local w, key, txt = MSC:ApplyDynamicAdjustments()
+    local w, key = MSC:ApplyDynamicAdjustments()
     
-    -- Cache Result
     MSC.CachedWeights = w
     MSC.CachedSpecKey = key
-    MSC.CachedCapText = txt
     
-    return w, key, txt
+    return w, key
 end
 
 -- =========================================================================
--- 4. WEAPON SPEC BONUS (Delegated)
+-- 3. WEAPON SPEC BONUS (Delegated)
 -- =========================================================================
-function MSC:GetWeaponSpecBonus(itemLink)
-    -- Racial bonuses (Orc Axe / Human Sword) are calculated in the Class Module
+function MSC:GetWeaponSpecBonus(itemLink, class, specKey)
     if MSC.CurrentClass and MSC.CurrentClass.GetWeaponBonus then
         return MSC.CurrentClass:GetWeaponBonus(itemLink)
     end
@@ -138,30 +118,36 @@ function MSC:GetWeaponSpecBonus(itemLink)
 end
 
 -- =========================================================================
--- 5. EVENT LISTENER (Cache Invalidation)
+-- 4. EVENT LISTENER (Cache Invalidation)
 -- =========================================================================
 local talentTracker = CreateFrame("Frame")
-talentTracker:RegisterEvent("CHARACTER_POINTS_CHANGED") -- Era Talents
-talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")     -- Retail/Cata compat
+talentTracker:RegisterEvent("CHARACTER_POINTS_CHANGED")
+talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")
 talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") -- Gear change affects Hit Cap status
+talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
 talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
 
 talentTracker:SetScript("OnEvent", function(self, event, unit)
     if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
 
-    -- Wipe Talent Cache only when talents change
     if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" then
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
     end
 
-    -- Wipe Weight Cache (Always wipe on gear change to recalc Caps)
     MSC.CachedWeights = nil
+    MSC.CachedSpecKey = nil
     
-    -- Update UI Dropdown text if options are open
-    if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MSC.OptionsFrame and MSC.OptionsFrame.ProfileDD then
+    -- [[ UI UPDATE FIX ]]
+    if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()
-        -- (Optional: Update dropdown text via UIDropDownMenu_SetText if needed)
+        
+        local displayName = detectedKey
+        if MSC.PrettyNames and MSC.PrettyNames[detectedKey] then
+            displayName = MSC.PrettyNames[detectedKey]
+        end
+        
+        -- Update the text on the dropdown button
+        UIDropDownMenu_SetText(MyStatCompareFrame.ProfileDD, "Auto: " .. displayName)
     end
 end)
