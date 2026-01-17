@@ -1,5 +1,12 @@
 # Sharpie's Gear Judge - Version History
 
+## V2.2.0🖥️ UI Overhaul: The Dashboard
+* **The Main Dashboard: Completely replaced the old options menu with a modern 4-Tab Interface (/sgj).
+* **Tab 1: The Laboratory: Added a new drag-and-drop simulator. You can now drag items from chat or bags into a "Virtual Paperdoll" to compare them against your equipped gear without binding them.
+* **Tab 2: The Receipt: The "Ledger" is now a full visual character sheet.
+* **Tab 3: Stat Logic: Added visual progress bars for critical caps (Hit Rating, Defense) and bar charts for your current stat weights.
+* **Tab 4: Protocol: Centralized settings, SimC/Pawn Import, and Data Export into a single configuration tab.
+
 ## v2.1.0 - The "Anniversary" Update (Core + Plugins)
 **Major Architecture Overhaul & TBC Readiness**
 
