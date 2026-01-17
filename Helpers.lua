@@ -604,13 +604,3 @@ function MSC.GetBaseLink(itemLink)
     if id then return "item:" .. id .. ":0:0:0:0:0:0:0:0" end
     return itemLink
 end
-
-function MSC:GetItemGems(itemLink) return {RED=0, YELLOW=0, BLUE=0}, nil, {} end
-function MSC:GetItemSetID(itemIDOrLink) return nil end
-function MSC.GetInspectSpec(unit) return "Default" end
-function MSC.GetValidEnchantType(itemLink) return nil end
-function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights) return nil end
-function MSC.GetBestGemForSocket(color, level, weights) return nil, 0 end
-function MSC.GetGemStatsByID(id) return nil end
-function MSC.GetGemColor(id) return nil end
-function MSC.ApplyElvUISkin(frame) end
