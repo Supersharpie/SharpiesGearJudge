@@ -116,7 +116,7 @@ MSC.EnchantDB = {
     [2667] = { name = "Savagery", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 70 } }, 
     [2668] = { name = "Major Agility", stats = { ITEM_MOD_AGILITY_SHORT = 20 } },
     [3222] = { name = "Greater Agility (2H)", stats = { ITEM_MOD_AGILITY_SHORT = 35 }, requires2H = true }, 
-    [2672] = { name = "Spell Surge", stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 } }, -- Approx value for party mana restore
+    [2672] = { name = "Spell Surge", stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 } },
     [2670] = { name = "Potency", stats = { ITEM_MOD_STRENGTH_SHORT = 20 } },
     [2621] = { name = "Crusader", stats = { ITEM_MOD_STRENGTH_SHORT = 60 } }, 
 
@@ -137,7 +137,7 @@ MSC.EnchantDB = {
     [249]  = { name = "Striking (+3)", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } },
     [250]  = { name = "Lesser Striking (+2)", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.7 } },
     [254]  = { name = "Minor Striking (+1)", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.3 } },
-    [912]  = { name = "Demonslaying", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 5 } }, -- Niche
+    [912]  = { name = "Demonslaying", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 5 } },
     [964]  = { name = "Lesser Beastslayer", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 3 } },
     [33]   = { name = "Minor Beastslayer", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 1 } },
 
@@ -162,19 +162,19 @@ MSC.EnchantDB = {
     [2746] = { name = "Mithril Shield Spike", slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 20 } },
     [2745] = { name = "Iron Shield Spike", slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 15 } },
 
-    -- [[ HEAD (Glyphs - TBC Only) ]]
-    [3012] = { name = "Glyph of Power (Sha'tar)", slot = 1, stats = { ITEM_MOD_SPELL_POWER_SHORT = 22, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } },
-    [3010] = { name = "Glyph of Ferocity (Cenarion)", slot = 1, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 34, ITEM_MOD_HIT_RATING_SHORT = 16 } },
-    [3013] = { name = "Glyph of the Defender (Keepers)", slot = 1, stats = { ITEM_MOD_DODGE_RATING_SHORT = 16, ITEM_MOD_BLOCK_VALUE_SHORT = 17 } },
-    [3011] = { name = "Glyph of Renewal (Honor Hold)", slot = 1, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35, ITEM_MOD_MANA_REGENERATION_SHORT = 7 } },
+    -- [[ HEAD ]]
+    [3012] = { name = "Glyph of Power", slot = 1, stats = { ITEM_MOD_SPELL_POWER_SHORT = 22, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } },
+    [3010] = { name = "Glyph of Ferocity", slot = 1, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 34, ITEM_MOD_HIT_RATING_SHORT = 16 } },
+    [3013] = { name = "Glyph of the Defender", slot = 1, stats = { ITEM_MOD_DODGE_RATING_SHORT = 16, ITEM_MOD_BLOCK_VALUE_SHORT = 17 } },
+    [3011] = { name = "Glyph of Renewal", slot = 1, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35, ITEM_MOD_MANA_REGENERATION_SHORT = 7 } },
     [3003] = { name = "Glyph of the Gladiator", slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 18, ITEM_MOD_RESILIENCE_RATING_SHORT = 20 } },
     [3002] = { name = "Glyph of the Outcast", slot = 1, stats = { ITEM_MOD_STRENGTH_SHORT = 17, ITEM_MOD_INTELLECT_SHORT = 16 } },
-    [2543] = { name = "Lesser Arcanum of Voracity (Agi)", slot = 1, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
-    [2544] = { name = "Lesser Arcanum of Voracity (Int)", slot = 1, stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
-    [2545] = { name = "Lesser Arcanum of Voracity (Str)", slot = 1, stats = { ITEM_MOD_STRENGTH_SHORT = 8 } },
-    [2588] = { name = "Syncretist's Sigil", slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 10, ITEM_MOD_ATTACK_POWER_SHORT = 20 } }, -- Actually Leg/Head in Classic, mostly ZG
+    [2543] = { name = "Lesser Arcanum (Agi)", slot = 1, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
+    [2544] = { name = "Lesser Arcanum (Int)", slot = 1, stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
+    [2545] = { name = "Lesser Arcanum (Str)", slot = 1, stats = { ITEM_MOD_STRENGTH_SHORT = 8 } },
+    [2588] = { name = "Syncretist's Sigil", slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 10, ITEM_MOD_ATTACK_POWER_SHORT = 20 } },
 
-    -- [[ SHOULDER (Inscriptions - TBC Only + ZG) ]]
+    -- [[ SHOULDER ]]
     [3004] = { name = "Greater Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [3007] = { name = "Greater Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
     [3009] = { name = "Greater Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } },
@@ -196,10 +196,10 @@ MSC.EnchantDB = {
     [2502] = { name = "Greater Resistance", slot = 15, stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 5 } },
     [1889] = { name = "Superior Defense (+70)", slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 70 } },
     [853]  = { name = "Greater Defense (+50)", slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 50 } },
-    [13421] = { name = "Minor Agility (+1)", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } }, -- Technically ID 250 in some DBs, putting both
+    [13421] = { name = "Minor Agility (+1)", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
     [250]   = { name = "Minor Agility (+1)", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
     [2521] = { name = "Subtlety (-2% Threat)", slot = 15, stats = { MSC_THREAT_MOD = -2 } },
-    [2622] = { name = "Dodge (+1%)", slot = 15, stats = { ITEM_MOD_DODGE_RATING_SHORT = 15 } }, -- 1% in Era, 15 rating TBC approx
+    [2622] = { name = "Dodge (+1%)", slot = 15, stats = { ITEM_MOD_DODGE_RATING_SHORT = 15 } },
     [3256] = { name = "Major Resistance (+7)", slot = 15, stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 7 } },
 
     -- [[ CHEST ]]
@@ -218,6 +218,8 @@ MSC.EnchantDB = {
     [248]  = { name = "Lesser Health (+15)", slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 15 } },
     [255]  = { name = "Health (+25)", slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 25 } },
     [856]  = { name = "Greater Health (+35)", slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 35 } },
+    [857]  = { name = "Mana (+50)", slot = 5, stats = { ITEM_MOD_MANA_SHORT = 50 } },
+    [244]  = { name = "Lesser Mana (+30)", slot = 5, stats = { ITEM_MOD_MANA_SHORT = 30 } },
 
     -- [[ WRIST ]]
     [2647] = { name = "Brawn (+12 Str)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, 
@@ -233,8 +235,8 @@ MSC.EnchantDB = {
     [1886] = { name = "Superior Stamina (+9)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 9 } },
     [1893] = { name = "Mana Regen (+4mp5)", slot = 9, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 4 } },
     [2508] = { name = "Healing Power (+24)", slot = 9, stats = { ITEM_MOD_HEALING_POWER_SHORT = 24 } },
-    [2793] = { name = "Major Strength (TBC +12)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, -- Alias for Brawn sometimes
-    [2794] = { name = "Major Intellect (TBC +12)", slot = 9, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
+    [2793] = { name = "Major Strength (+12)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } },
+    [2794] = { name = "Major Intellect (+12)", slot = 9, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
     [246]  = { name = "Minor Spirit (+1)", slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } },
     [256]  = { name = "Lesser Spirit (+3)", slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } },
     [262]  = { name = "Spirit (+5)", slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } },
@@ -243,7 +245,7 @@ MSC.EnchantDB = {
     [258]  = { name = "Lesser Stamina (+3)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 3 } },
     [265]  = { name = "Stamina (+5)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 5 } },
     [851]  = { name = "Greater Stamina (+7)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 7 } },
-    [263]  = { name = "Minor Agility (+1)", slot = 9, stats = { ITEM_MOD_AGILITY_SHORT = 1 } }, -- Wrist Agi is rare in Classic
+    [263]  = { name = "Minor Agility (+1)", slot = 9, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
 
     -- [[ HANDS ]]
     [2562] = { name = "Superior Agility (+15)", slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, 
@@ -262,8 +264,8 @@ MSC.EnchantDB = {
     [2614] = { name = "Shadow Power (+20)", slot = 10, stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 20 } },
     [2615] = { name = "Frost Power (+20)", slot = 10, stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 20 } },
     [2616] = { name = "Fire Power (+20)", slot = 10, stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 20 } },
-    [2617] = { name = "Healing Power (+30)", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, -- Classic Phase 5
-    [3231] = { name = "Precision (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 15 } }, -- TBC Phase 5 (Sunwell)
+    [2617] = { name = "Healing Power (+30)", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, 
+    [3231] = { name = "Precision (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 15 } },
     [3245] = { name = "Spell Strike (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 15 } },
 
     -- [[ LEGS ]]
@@ -271,16 +273,16 @@ MSC.EnchantDB = {
     [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_HEALING_POWER_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
     [2953] = { name = "Nethercobra Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [2952] = { name = "Nethercleft Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 40, ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2741] = { name = "Cobrahide Leg Armor (Cheap)", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 40, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
-    [2427] = { name = "Mystic Spellthread (Cheap)", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 25, ITEM_MOD_STAMINA_SHORT = 15 } },
-    [2743] = { name = "Clefthide Leg Armor (Cheap)", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } },
-    [2543] = { name = "Lesser Arcanum of Voracity (Agi)", slot = 7, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
-    [2544] = { name = "Lesser Arcanum of Voracity (Int)", slot = 7, stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
-    [2545] = { name = "Lesser Arcanum of Voracity (Str)", slot = 7, stats = { ITEM_MOD_STRENGTH_SHORT = 8 } },
-    [2588] = { name = "Syncretist's Sigil", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 10, ITEM_MOD_ATTACK_POWER_SHORT = 20 } }, -- ZG
+    [2741] = { name = "Cobrahide Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 40, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
+    [2427] = { name = "Mystic Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 25, ITEM_MOD_STAMINA_SHORT = 15 } },
+    [2743] = { name = "Clefthide Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } },
+    [2543] = { name = "Lesser Arcanum (Agi)", slot = 7, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
+    [2544] = { name = "Lesser Arcanum (Int)", slot = 7, stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
+    [2545] = { name = "Lesser Arcanum (Str)", slot = 7, stats = { ITEM_MOD_STRENGTH_SHORT = 8 } },
+    [2588] = { name = "Syncretist's Sigil", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 10, ITEM_MOD_ATTACK_POWER_SHORT = 20 } }, 
     [1503] = { name = "Lesser Arcanum of Rumination", slot = 7, stats = { ITEM_MOD_MANA_SHORT = 150 } },
     [1504] = { name = "Lesser Arcanum of Constitution", slot = 7, stats = { ITEM_MOD_HEALTH_SHORT = 100 } },
-    [3016] = { name = "Clefthide Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } }, -- Duplicate ID check?
+    [3016] = { name = "Clefthide Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } },
 
     -- [[ FEET ]]
     [2939] = { name = "Boar's Speed", slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 9, MSC_SPEED_BONUS = 8 } },
@@ -296,11 +298,11 @@ MSC.EnchantDB = {
     [845]  = { name = "Stamina (+5)", slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 5 } },
     [844]  = { name = "Lesser Stamina (+3)", slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 3 } },
     [274]  = { name = "Minor Stamina (+1)", slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 1 } },
-    [849]  = { name = "Agility (+5)", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, -- (Check ID overlap with Back?)
+    [849]  = { name = "Agility (+5)", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, 
     [842]  = { name = "Lesser Agility (+3)", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 3 } },
     [2654] = { name = "Fortitude (+12 Stam)", slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 12 } },
     [2657] = { name = "Dexterity (+12 Agi)", slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2658] = { name = "Surefooted (+5% Resist)", slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } }, -- TBC surefooted is different
+    [2658] = { name = "Surefooted (+5% Resist)", slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } },
 
     -- [[ RINGS ]]
     [2931] = { name = "Spellpower", slot = 11, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } }, 
