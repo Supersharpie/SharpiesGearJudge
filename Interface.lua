@@ -304,7 +304,7 @@ function MSC.CreateOptionsFrame()
     local cb3 = CreateCheck("Mute Lab Errors", "MuteSounds", "Stops the error sound when clicking invalid items.", header3, -100, -50)
     local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", header3, 80, -50)
     
--- QUICK TEST DROP SLOT
+    -- QUICK TEST DROP SLOT
     local dropBtn = CreateFrame("Button", "SGJ_DropSlot", f, "ItemButtonTemplate")
     -- FIX: Moved to TOPLEFT to sit under the title bar
     dropBtn:SetPoint("TOPLEFT", 30, -45)
@@ -348,6 +348,12 @@ function MSC.CreateOptionsFrame()
             end
             SetItemButtonTexture(dropBtn, GetItemIcon(link))
         end
+    end)
+    
+    -- [[ RESTORED LOGIC: UPDATE UI ON SHOW ]]
+    f:SetScript("OnShow", function(self)
+        if MSC.BuildTalentCache then MSC:BuildTalentCache() end
+        UpdateDropDownText()
     end)
     
     MSC.SkinFrame(f)
@@ -568,9 +574,9 @@ function MSC.PopulateBagCache(weights, specName)
                  local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
                  local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
                  if slotId then
-                      local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
-                      local score = MSC.GetItemScore(stats, weights, specName, slotId)
-                      table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
+                       local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
+                       local score = MSC.GetItemScore(stats, weights, specName, slotId)
+                       table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
                  end
             end
         end
@@ -924,6 +930,27 @@ function MSC.ShowMathBreakdown()
             else
                  add("Crit Immunity: |cffff0000NO|r (Need " .. (440 - totalDef) .. " more)")
             end
+        end
+        
+        -- [[ RESTORED: AVOIDANCE & UNCRUSHABLE CALC ]]
+        -- This was missing from your new file!
+        if not detectedKey:find("BEAR") and not MSC.IsEra then
+            local dodge = GetDodgeChance()
+            local parry = GetParryChance()
+            local block = GetBlockChance()
+            local miss = 5 + (totalDef - 350) * 0.04
+            local activeBlock = (class == "PALADIN") and 30 or 0
+            
+            -- Holy Shield / Shield Block calculation
+            local avoid = dodge + parry + block + miss + activeBlock
+            local crushGap = 102.4 - avoid
+            
+            if crushGap <= 0.01 then
+                add("Uncrushable (w/ Active): |cff00ff00YES|r")
+            else
+                add("Uncrushable (w/ Active): |cffff0000NO|r (Need " .. string.format("%.2f%%", crushGap) .. " more)")
+            end
+             add(string.format("   Total Avoidance: %.2f%%", avoid))
         end
     end
 

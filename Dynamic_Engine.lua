@@ -139,6 +139,7 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
     MSC.CachedSpecKey = nil
     
     -- [[ UI UPDATE FIX ]]
+    -- Refreshes the Settings Window Dropdown text if it's currently open
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()
         

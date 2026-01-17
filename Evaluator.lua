@@ -244,7 +244,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
 
     -- 1. SETUP & CURRENT SCORE
     MSC:GetEquippedGear(Scratch_Gear)
-    local currentScore, _ = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
+    
+    -- [FIX 1] Capture 'currentStatsTotal' here so we know the starting point of our GEAR
+    local currentScore, currentStatsTotal = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
     local originalItem = Scratch_Gear[targetSlotID]
     local originalMH   = Scratch_Gear[16]
@@ -348,7 +350,6 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         }
     else
         -- ERA CAPS (Percentage Based)
-        -- Note: Era caps are 9% (Yellow) generally.
         SAFETY_CAPS = {
             WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 } },
             ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 } },
@@ -365,13 +366,19 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
                 
-                -- 2. Get Current & Future Values (Shimmed)
-                -- In TBC, this returns 142. In Era, this returns 9.
+                -- 2. Get Current & Future Values (CORRECTED DELTA MATH)
+                -- We compare Player Total (Current) against Player Total (Future)
                 local currentVal = MSC:GetPlayerStat(rule.stat == "ITEM_MOD_HIT_RATING_SHORT" and "HIT" or "SPELL_HIT")
-                local futureVal = newStatsTotal[rule.stat] or 0
                 
-                -- Check for Break
-                if currentVal >= trueCap and futureVal < trueCap then
+                -- [FIX 2] Calculate the change in gear stats
+                local oldGearVal = currentStatsTotal[rule.stat] or 0
+                local newGearVal = newStatsTotal[rule.stat] or 0
+                local diff = newGearVal - oldGearVal
+                
+                local futureVal = currentVal + diff
+                
+                -- Check for Break (Allowing 0.1 tolerance for float errors)
+                if currentVal >= trueCap and futureVal < (trueCap - 0.1) then
                     newScore = newScore - rule.penalty
                     local deficit = futureVal - trueCap
                     local name = STAT_DISPLAY[rule.stat] or "Cap"
@@ -387,8 +394,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                 if defWeight > 0 then
                     local currentDef = MSC:GetPlayerStat("DEFENSE")
                     
-                    local oldDefRating = (finalOldStats and finalOldStats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]) or 0
-                    local newDefRating = (finalNewStats and finalNewStats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]) or 0
+                    -- [FIX 3] Use the same Delta Logic for Defense (Handles 2H swaps correctly)
+                    local oldDefRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
+                    local newDefRating = newStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     
                     local diffSkill = (newDefRating - oldDefRating) / 2.36
                     local futureDef = currentDef + diffSkill

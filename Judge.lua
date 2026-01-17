@@ -141,7 +141,6 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
         -- 3. Spell Crit (Version Branch)
         if MSC.IsEra then
             -- VANILLA: Roughly 59.5 Int = 1% Crit (Mage), others vary. Using ~60 as generic.
-            -- We add directly to CRIT_RATING key because Era uses % logic there.
             local critPercent = int / 60
             dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) + critPercent
         else
@@ -158,7 +157,6 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
         -- 1. Crit Rating (Physical)
         if MSC.IsEra then
             -- VANILLA: Hunter/Rogue 29/20 Agi = 1%. War/Pal 20 Agi = 1%.
-            -- We output % directly.
             local div = 20
             if class == "HUNTER" then div = 53 elseif class == "ROGUE" then div = 29 end
             local critPercent = agi / div
@@ -282,8 +280,6 @@ local function OnTooltipSetItem(tooltip)
             
             -- 2. GEM NAMES (TBC ONLY)
             if not MSC.IsEra and newStats.GEM_TEXT then
-                -- (Your Existing Gem Parsing Logic here - it's safe because newStats.GEM_TEXT is nil in Era)
-                -- ... [Condensed for brevity, same logic as before] ...
                 tooltip:AddDoubleLine("Projected Gems:", "|cffffffff" .. newStats.GEM_TEXT .. "|r", 0, 1, 1)
             end
 
