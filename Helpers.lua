@@ -597,6 +597,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 finalStats.GEMS_PROJECTED = #Scratch_GemTextParts
                 finalStats.META_ID = projectedMeta
                 if #Scratch_GemTextParts > 0 then finalStats.GEM_TEXT = table.concat(Scratch_GemTextParts, ", ") end
+				finalStats.COLORS = MSC:SafeCopy(Scratch_ProjectedColors)
             end
         end
     end

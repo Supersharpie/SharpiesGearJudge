@@ -1,11 +1,42 @@
-# Sharpie's Gear Judge (Era Edition)
+# Sharpie's Gear Judge - Version History
 
-## [v2.1.1](https://github.com/Supersharpie/SharpiesGearJudge/tree/v2.1.1) (2026-01-15)
-[Full Changelog](https://github.com/Supersharpie/SharpiesGearJudge/compare/v2.1.0...v2.1.1) 
+## v2.1.0 - The "Anniversary" Update (Core + Plugins)
+**Major Architecture Overhaul & TBC Readiness**
 
-- Version Updates  
-- Valid Weapons Fix  
-- Update Paladin.lua  
-    ret tweak  
-- Update Helpers.lua  
-    is item useable fix.  
+### 🏗️ The "Core + Plugin" Architecture
+* **Modular Class Design:** The addon has been completely restructured. The massive `Database.lua` has been split into individual Class Modules (`Classes/Warrior.lua`, `Classes/Mage.lua`, etc.).
+* **Memory Efficiency:** The addon now only loads the math logic for *your* specific class, significantly reducing memory usage.
+* **Extensibility:** This structure allows for easier updates to specific classes without breaking the entire addon.
+
+### ⚔️ TBC Phase 1–5 Complete
+* **Sunwell Ready:** Added support for Phase 5 items, including **Shattered Sun Pendants**, **Sunwell Badge Gear**, and the new **Epic Gems**.
+* **Trinket Overrides:** Added manual proc valuations for over 100+ TBC trinkets (e.g., *Dragonspine Trophy*, *Shard of Contempt*, *Blackened Naaru Sliver*). "Use" and "Proc" effects are now converted into passive stat averages for scoring.
+* **Relic Support:** Added specific stat mappings for **Idols, Librams, and Totems**. Items like *Idol of the Raven Goddess* or *Totem of the Void* now display correct scores instead of "0".
+
+### 🧠 Math 2.0: "Smart Scaling"
+* **Covariance Logic:** The Judge now understands synergy.
+    * *Example:* If your Attack Power is high, the value of Crit Rating automatically increases.
+    * *Example:* If your Spell Power is high, the value of Haste Rating increases.
+* **Hysteresis (Anti-Loop):** Fixed the "Equip/Unequip" loop bug. The addon now uses a "Buffer Zone" (15 rating) before telling you to drop Hit/Defense below the cap, ensuring you don't accidentally uncap yourself.
+* **Poison Protection:** Added a safety net (0.02 weight) to off-stats (e.g., Strength on a Mage item) to prevent them from showing a negative score due to internal penalties.
+
+### 🛡️ Spec-Specific Logic
+* **Warrior:** Added "Anti-Dual Wield" logic for Arms. The addon now explicitly sets Offhand DPS value to zero for Arms Warriors to enforce 2H dominance.
+* **Druid:** Fixed parsing for **"Feral Attack Power"**. The Judge now correctly distinguishes between generic AP and the massive Feral AP found on staves.
+* **Paladin/Shaman:** Added racial checks for Weapon Expertise (Human/Orc) and Hit (Draenei).
+* **Hunter:** Fixed Hit Cap logic to use **Ranged Hit** instead of Melee Hit.
+
+### 📜 UI & Tooltips
+* **The Ledger:** The "Receipt" window has been polished to show a cleaner breakdown of Active Stats vs. Capped Stats.
+* **Gem Projection:** Fixed a bug where the "Smart Gem" auditor would sometimes suggest Unique gems you already had equipped.
+
+---
+
+## v2.0.0 - The Burning Crusade Launch - IT NEVER WORKED :(
+* **Full TBC Conversion:** Updated engine for Patch 2.5.5.
+* **New Stats:** Added Resilience, Expertise, Armor Pen, and Spell Haste.
+* **Socket Logic:** Added smart gem projection and socket bonus calculations.
+
+## v1.9.0 - The Leveling Update
+* **Leveling Profiles:** Introduced distinct stat weights for Level 1-20, 21-40, etc.
+* **Green Item Fix:** Improved parsing for random enchantments ("...of the Whale").
