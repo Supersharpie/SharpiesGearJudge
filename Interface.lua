@@ -355,7 +355,7 @@ function MSC.InitReceiptView(parent)
     
     local pArmor = CreatePanel("ARMOR", 220, 240, "TOPLEFT", c, "TOPLEFT", 0, 0)
     local pJewel = CreatePanel("ACCESSORIES", 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 20, 0)
-    local pWeap  = CreatePanel("WEAPONS", 370, 75, "TOP", c, "TOP", 0, -260)
+    local pWeap  = CreatePanel("WEAPONS", 465, 75, "TOP", c, "TOP", 0, -260)
 
     local function CreateSlot(id, parentPanel, x, y, label)
         local btn = CreateFrame("Button", nil, f, "ItemButtonTemplate"); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
@@ -391,19 +391,45 @@ function MSC.UpdateReceipt()
     
     local unit = MSC.InspectUnit or "player"
     local weights, specName = MSC.GetCurrentWeights()
-    if unit ~= "player" then
-        local detected = (MSC.GetInspectSpec and MSC.GetInspectSpec(unit)) or "Default"
-        local prof = detected or "Default"; local _, cls = UnitClass(unit); specName = cls .. " (" .. prof .. ")"
-        if MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[prof] then weights = MSC.CurrentClass.Weights[prof]
-        elseif MSC.WeightDB and MSC.WeightDB[cls] then weights = MSC.WeightDB[cls][prof] or MSC.WeightDB[cls]["Default"] end
+    
+    -- [[ 1. Resolve Player Pretty Name ]]
+    local displayName = specName
+    if MSC.PrettyNames and MSC.PrettyNames[specName] then
+        displayName = MSC.PrettyNames[specName]
     end
 
-    local _, class = UnitClass(unit); MSC.ViewReceipt.Info:SetText(specName)
+    if unit ~= "player" then
+        local detected = (MSC.GetInspectSpec and MSC.GetInspectSpec(unit)) or "Default"
+        local prof = detected or "Default"
+        local _, cls = UnitClass(unit)
+        
+        -- [[ 2. Resolve Inspect Pretty Name ]]
+        if MSC.PrettyNames and MSC.PrettyNames[prof] then
+            displayName = cls .. ": " .. MSC.PrettyNames[prof]
+        else
+            displayName = cls .. " (" .. prof .. ")"
+        end
+
+        -- [[ 3. IMPORTANT: Update specName for the cache ]]
+        -- This ensures we don't save the target's item scores under YOUR spec key.
+        specName = displayName 
+
+        if MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[prof] then 
+            weights = MSC.CurrentClass.Weights[prof]
+        elseif MSC.WeightDB and MSC.WeightDB[cls] then 
+            weights = MSC.WeightDB[cls][prof] or MSC.WeightDB[cls]["Default"] 
+        end
+    end
+
+    local _, class = UnitClass(unit); 
+    MSC.ViewReceipt.Info:SetText(displayName)
+    
     local gearTable = {}; local combinedStats = {}
     for i=1, 18 do 
         local link = GetInventoryItemLink(unit, i)
         if link then 
             gearTable[i] = link 
+            -- Now safe to use specName (it's either your key OR the unique inspect name)
             local s = MSC.SafeGetItemStats(link, i, weights, specName)
             if s then for k, v in pairs(s) do if type(v)=="number" then combinedStats[k] = (combinedStats[k] or 0) + v end end end
         end
