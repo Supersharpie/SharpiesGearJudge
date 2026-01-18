@@ -511,19 +511,62 @@ end
 -- 4. ITEM OVERRIDES (Manual Stats for "Use" & "Proc" Items)
 -- ============================================================================
 MSC.ItemOverrides = {
+
+	-- [[ LEGENDARY ]]
+    [19019] = { ITEM_MOD_ATTACK_POWER_SHORT = 350, estimate = true }, -- Thunderfury (Proc: Slow + Nature Dmg + Res Debuff)
+
     -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
     [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
-    [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
+    [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 50, estimate = true }, 
     [28528] = { ITEM_MOD_DODGE_RATING_SHORT = 63 },
     [27529] = { ITEM_MOD_BLOCK_RATING_SHORT = 32, ITEM_MOD_STAMINA_SHORT = 20 },
     [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21 },
+	
+	-- [[ CLASSIC CASTER/HEALER TRINKETS ]]
+    [12930] = { ITEM_MOD_SPELL_POWER_SHORT = 20, estimate = true }, -- Briarwood Reed (Classic BiS)
+    [18820] = { ITEM_MOD_SPELL_POWER_SHORT = 35, estimate = true }, -- Talisman of Ephemeral Power (Use: SP)
+    [19950] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true }, -- Zandalarian Hero Charm (Use: SP)
+    [19339] = { ITEM_MOD_SPELL_HASTE_RATING_SHORT = 50, estimate = true }, -- Mind Quickening Gem (Mage Haste)
+    [19958] = { ITEM_MOD_MANA_REGENERATION_SHORT = 15, estimate = true }, -- Blue Dragon (Mana Proc)
+    [17780] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25, estimate = true }, -- Blade of Eternal Darkness (Proc: Mana on cast - HUGE for AoE)
+
+    -- [[ TBC CASTER/HEALER TRINKETS ]]
+    [30626] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true }, -- Sextant of Unstable Currents (Proc: SP)
+    [30720] = { ITEM_MOD_SPELL_POWER_SHORT = 35, estimate = true }, -- Quagmirran's Eye (Proc: Haste)
+    [28785] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true }, -- Lightning Capacitor (Proc: Bolt)
+    [30665] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25, estimate = true }, -- Earring of Soulful Meditation (Priest Use)
+    [32483] = { ITEM_MOD_SPELL_HASTE_RATING_SHORT = 50, estimate = true }, -- The Skull of Gul'dan (Use: Haste)
     
     -- [[ DARKMOON CARDS ]]
     [31856] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
     [31858] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_STRENGTH_SHORT = 25, estimate = true },
 
     -- [[ WEAPONS ]]
-    [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
+    [647]   = { ITEM_MOD_STRENGTH_SHORT = 35, estimate = true }, -- Destiny (200 Str Proc)
+    [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true }, --Ironfoe
+	[17705] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true }, -- Thrash Blade (Proc: Extra Attack)
+    [871]   = { ITEM_MOD_HASTE_RATING_SHORT = 35, estimate = true }, -- Flurry Axe (Proc: Extra Attack)
+    [19334] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true }, -- The Untamed Blade (Proc: +300 Str)
+    [17075] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true }, -- Vis'kag the Bloodletter (Proc: Fatal Wound)
+    [18816] = { ITEM_MOD_FIRE_DAMAGE_SHORT = 25, estimate = true },  -- Perdition's Blade (Proc: Fire Dmg)
+    [19334] = { ITEM_MOD_STRENGTH_SHORT = 40, estimate = true }, -- The Untamed Blade (Proc: +300 Str)
+    [17076] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 100, estimate = true }, -- Bonereaver's Edge (Proc: Ignore 700 Armor)
+    [17112] = { ITEM_MOD_HASTE_RATING_SHORT = 53, estimate = true }, -- Empyrean Demolisher (Proc: 20% Haste)
+    [17104] = { ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true }, -- Spinal Reaper (Proc: 20 Rage = ~Massive AP value)
+    [18203] = { ITEM_MOD_HASTE_RATING_SHORT = 25, estimate = true }, -- Eskhandar's Right Claw (Proc: 30% Attack Speed)
+    [13285] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true }, -- The Bog Smasher (Proc: +50 dmg ~ 30 AP)
+    [811]   = { ITEM_MOD_ATTACK_POWER_SHORT = 20, estimate = true }, -- Axe of the Deep Woods (Proc: Nature Dmg)
+    [1728]  = { ITEM_MOD_ATTACK_POWER_SHORT = 25, estimate = true }, -- Teebu's Blazing Longsword (Proc: Fire Dmg)
+
+    -- [[ TBC WEAPONS ]]
+    [28432] = { MSC_PVP_UTILITY = 80, estimate = true }, -- Deep Thunder (Proc: Stun - PvP God)
+    [28433] = { MSC_PVP_UTILITY = 100, estimate = true }, -- Stormherald (Proc: Stun - PvP God)
+    [28437] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true }, -- Drakefist Hammer (Proc: Haste)
+    [23541] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true }, -- Khorium Champion (Proc: Str)
+    [29996] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true }, -- Rod of the Sun King (Proc: Rage/Energy)
+    [30093] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true }, -- Greatsword of Forlorn Visions (Proc: Mana/Oil)
+    [28429] = { ITEM_MOD_STRENGTH_SHORT = 25, estimate = true }, -- Lionheart Champion (Proc: 100 Str)
+    [28430] = { ITEM_MOD_STRENGTH_SHORT = 35, estimate = true }, -- Lionheart Executioner (Proc: 100 Str)
     
     -- [[ TBC PHASE 1 ]]
     [29383] = { ITEM_MOD_ATTACK_POWER_SHORT = 46, estimate = true },
@@ -561,9 +604,11 @@ MSC.ItemOverrides = {
     [27922] = { ITEM_MOD_STAMINA_SHORT = 15, estimate = true },
     [28438] = { ITEM_MOD_HASTE_RATING_SHORT = 25, estimate = true }, 
     [28439] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true }, 
-    [28441] = { ITEM_MOD_CRIT_RATING_SHORT = 30, estimate = true }, 
+    [28441] = { ITEM_MOD_STRENGTH_SHORT = 30, estimate = true }, 
     [28442] = { ITEM_MOD_CRIT_RATING_SHORT = 45, estimate = true }, 
     [29993] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true },
+	[30620] = { ITEM_MOD_ATTACK_POWER_SHORT = 65, estimate = true }, -- Tsunami Talisman (Proc: AP)
+    [30637] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true }, -- Romulo's Poison Vial (Proc: Nature Dmg)
 
     -- [[ TBC PHASE 3 ]]
     [32505] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 60, estimate = true },
