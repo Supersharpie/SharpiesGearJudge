@@ -236,23 +236,69 @@ end
 -- =============================================================
 function MSC.ParseTooltipLine(text)
     if not text then return nil, 0, false end
+    -- Filter out Set bonuses (gray text) unless they are active (greenish code usually handled by scanner, but this check is standard)
     if text:find("Set:") and not text:find("ff00ff00") then return nil, 0, false end
     
     local patterns = {
-        { p = "Increases defense rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { p = "Increases your parry rating by (%d+)", s = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { p = "Increases your dodge rating by (%d+)", s = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { p = "Increases your block rating by (%d+)", s = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { p = "Increases your shield block value by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
-        { p = "Increases your hit rating by (%d+)", s = "ITEM_MOD_HIT_RATING_SHORT" },
-        { p = "Increases your spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { p = "Increases your critical strike rating by (%d+)", s = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { p = "Increases your spell critical strike rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-        { p = "Increases your resilience rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
-        { p = "Increases your haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
-        { p = "Increases your expertise rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
-        { p = "Increases attack power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        -- [[ 1. WEAPON DPS & SPEED (Critical Fixes) ]]
+        { p = "%((%d+%.%d+) damage per second%)", s = "MSC_WEAPON_DPS" },       -- Lowercase (TBC/Classic)
+        { p = "%((%d+%.%d+) Damage Per Second%)", s = "MSC_WEAPON_DPS" },       -- Title Case (Just in case)
         { p = "Speed (%d+%.%d+)", s = "MSC_WEAPON_SPEED" },
+        { p = "^(%d+) %- (%d+) Damage", s = "MSC_DAMAGE_RANGE" },
+
+        -- [[ 2. DEFENSIVE RATINGS (TBC Title Case Support) ]]
+        { p = "Increases defense rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },      -- Era/Old
+        { p = "Increases Defense Rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },      -- TBC/New
+        { p = "Increases your parry rating by (%d+)", s = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { p = "Increases your Parry Rating by (%d+)", s = "ITEM_MOD_PARRY_RATING_SHORT" },           -- TBC
+        { p = "Increases your dodge rating by (%d+)", s = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { p = "Increases your Dodge Rating by (%d+)", s = "ITEM_MOD_DODGE_RATING_SHORT" },           -- TBC
+        { p = "Increases your block rating by (%d+)", s = "ITEM_MOD_BLOCK_RATING_SHORT" },
+        { p = "Increases your Block Rating by (%d+)", s = "ITEM_MOD_BLOCK_RATING_SHORT" },           -- TBC
+        { p = "Increases your shield block value by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+        { p = "Increases your Shield Block Value by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },      -- TBC
+
+        -- [[ 3. OFFENSIVE RATINGS (Hit/Crit/Haste/Exp) ]]
+        { p = "Increases your hit rating by (%d+)", s = "ITEM_MOD_HIT_RATING_SHORT" },
+        { p = "Increases your Hit Rating by (%d+)", s = "ITEM_MOD_HIT_RATING_SHORT" },               -- TBC
+        { p = "Increases your critical strike rating by (%d+)", s = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { p = "Increases your Critical Strike Rating by (%d+)", s = "ITEM_MOD_CRIT_RATING_SHORT" },  -- TBC
+        { p = "Increases your spell critical strike rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+        { p = "Increases your Spell Critical Strike Rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, -- TBC
+        { p = "Increases your spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+        { p = "Increases your Spell Hit Rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },   -- TBC
+        
+        -- TBC Exclusive Stats (Haste/Expertise/ArPen/Resil)
+        { p = "Increases your haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
+        { p = "Increases your Haste Rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
+        { p = "Increases your expertise rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
+        { p = "Increases your Expertise Rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
+        { p = "Increases your armor penetration rating by (%d+)", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+        { p = "Increases your Armor Penetration Rating by (%d+)", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+        { p = "Increases your resilience rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+        { p = "Increases your Resilience Rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+
+        -- [[ 4. POWER & MP5 ]]
+        { p = "Increases attack power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { p = "Increases Attack Power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },                -- TBC
+        { p = "Increases spell power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "Increases Spell Power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "(%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { p = "(%d+) Mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },                      -- Capital 'M' fallback
+
+        -- [[ 5. ERA / LEGACY PERCENTAGES (Keep these for Era!) ]]
+        { p = "Increases your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
+        { p = "Increases your chance to critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
+        { p = "Increases your chance to parry.-by (%d+)%%", s = "ITEM_MOD_PARRY_RATING_SHORT" },
+        { p = "Increases your chance to dodge.-by (%d+)%%", s = "ITEM_MOD_DODGE_RATING_SHORT" },
+        { p = "critical strike.-spells.-(%d+)%%", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, 
+        { p = "critical strike.-(%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
+
+        -- [[ 6. SPELL DAMAGE (The old "Up To" format) ]]
+        { p = "damage and healing.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "healing done.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
+        { p = "spells and effects.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
         { p = "damage done by Shadow.-up to (%d+)", s = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
         { p = "damage done by Fire.-up to (%d+)", s = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
         { p = "damage done by Frost.-up to (%d+)", s = "ITEM_MOD_FROST_DAMAGE_SHORT" },
@@ -265,45 +311,49 @@ function MSC.ParseTooltipLine(text)
         { p = "Arcane damage.-up to (%d+)", s = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
         { p = "Nature damage.-up to (%d+)", s = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
         { p = "Holy damage.-up to (%d+)", s = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-        { p = "damage and healing.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "healing done.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
-        { p = "spells and effects.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
-        { p = "Increases spell power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" }, 
-        { p = "critical strike.-spells.-(%d+)%%", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, 
-        { p = "critical strike.-(%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
-        { p = "spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { p = "(%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { p = "up to (%d+)%.?$", s = "ITEM_MOD_SPELL_POWER_SHORT" }, -- Catch-all for "Up to 30"
+
+        -- [[ 7. STATS (Format: +10 Agility OR Agility +10) ]]
         { p = "%+(%d+) Attack Power", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { p = "Attack Power %+(%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
         { p = "%+(%d+) Stamina", s = "ITEM_MOD_STAMINA_SHORT" },
+        { p = "Stamina %+(%d+)", s = "ITEM_MOD_STAMINA_SHORT" },
         { p = "%+(%d+) Intellect", s = "ITEM_MOD_INTELLECT_SHORT" },
+        { p = "Intellect %+(%d+)", s = "ITEM_MOD_INTELLECT_SHORT" },
         { p = "%+(%d+) Spirit", s = "ITEM_MOD_SPIRIT_SHORT" },
+        { p = "Spirit %+(%d+)", s = "ITEM_MOD_SPIRIT_SHORT" },
         { p = "%+(%d+) Strength", s = "ITEM_MOD_STRENGTH_SHORT" },
+        { p = "Strength %+(%d+)", s = "ITEM_MOD_STRENGTH_SHORT" },
         { p = "%+(%d+) Agility", s = "ITEM_MOD_AGILITY_SHORT" },
+        { p = "Agility %+(%d+)", s = "ITEM_MOD_AGILITY_SHORT" },
         { p = "%+(%d+) Mana", s = "ITEM_MOD_MANA_SHORT" },
         { p = "Mana %+(%d+)", s = "ITEM_MOD_MANA_SHORT" },
         { p = "%+(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" }, 
         { p = "Armor %+(%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
+        { p = "^(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" },
+        { p = "Armor (%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
+
+        -- [[ 8. MISC ]]
         { p = "%+(%d+) Block", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
         { p = "%+(%d+) Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
         { p = "%+(%d+) Weapon Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
         { p = "%+(%d+) Defense", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-        { p = "up to (%d+)%.?$", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "^(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" },
-        { p = "Armor (%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
-        { p = "^(%d+) Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
-        { p = "(%d+%.%d+) Damage Per Second", s = "MSC_WEAPON_DPS" },
-        { p = "Increases your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
-        { p = "Increases your chance to critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { p = "Increases your chance to parry.-by (%d+)%%", s = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { p = "Increases your chance to dodge.-by (%d+)%%", s = "ITEM_MOD_DODGE_RATING_SHORT" },
     }
 
-    for _, d in ipairs(patterns) do
-        local val = text:match(d.p)
-        if val then return d.s, tonumber(val), text:find("Socket Bonus:") end
-    end
-    return nil, 0, false
+	for _, d in ipairs(patterns) do
+			-- [[ NEW: Special handling for Range (2 variables) ]]
+			if d.s == "MSC_DAMAGE_RANGE" then
+				local minD, maxD = text:match(d.p)
+				if minD and maxD then 
+					return "MSC_DAMAGE_RANGE", {tonumber(minD), tonumber(maxD)}, false 
+				end
+			else
+				-- Existing logic for normal stats
+				local val = text:match(d.p)
+				if val then return d.s, tonumber(val), text:find("Socket Bonus:") end
+			end
+		end
+		return nil, 0, false
 end
 
 function MSC:ParseProcText(text, itemID)
@@ -362,10 +412,22 @@ function MSC.GetRawItemStats(itemLink)
             if text then
                 local isGreen = (g > 0.9 and r < 0.9 and b < 0.9)
                 local s, v, isBonus = MSC.ParseTooltipLine(text)
+                
                 if s and v then
-                    if isBonus then bonusStats[s] = (bonusStats[s] or 0) + v
-                    elseif isGreen or not finalStats[s] then finalStats[s] = (finalStats[s] or 0) + v end
+                    -- [[ CRITICAL FIX: Check if v is a table (Range) or Number (Stat) ]]
+                    if type(v) == "table" then
+                        -- It's the Damage Range {min, max}, just store it, don't add it
+                        finalStats[s] = v 
+                    else
+                        -- It's a normal number (Str/Stam/etc), do math as usual
+                        if isBonus then 
+                            bonusStats[s] = (bonusStats[s] or 0) + v
+                        elseif isGreen or not finalStats[s] then 
+                            finalStats[s] = (finalStats[s] or 0) + v 
+                        end
+                    end
                 end
+
                 if id then
                     local pStat, pVal = MSC:ParseProcText(text, id)
                     if pStat and pVal > 0 then 
@@ -376,6 +438,27 @@ function MSC.GetRawItemStats(itemLink)
             end
         end
     end
+	
+	if finalStats["MSC_WEAPON_SPEED"] and not finalStats["MSC_WEAPON_DPS"] then
+        
+        -- Check if we captured the Damage Range from Step 1
+        if finalStats["MSC_DAMAGE_RANGE"] then
+             local minD = finalStats["MSC_DAMAGE_RANGE"][1]
+             local maxD = finalStats["MSC_DAMAGE_RANGE"][2]
+             local speed = finalStats["MSC_WEAPON_SPEED"]
+             
+             if minD and maxD and speed and speed > 0 then
+                 -- The Magic Formula: (AvgDmg / Speed)
+                 local avgDmg = (minD + maxD) / 2
+                 local calculatedDPS = avgDmg / speed
+                 
+                 -- Round to 1 decimal place to match Blizzard (e.g. 53.8)
+                 finalStats["MSC_WEAPON_DPS"] = MSC.Round(calculatedDPS, 1)
+             end
+        end
+    end
+    -- Clean up the temporary range data so it doesn't clutter the debug/UI
+    finalStats["MSC_DAMAGE_RANGE"] = nil
     
     finalStats._BONUS_STATS = bonusStats
     MSC.StatCache[itemLink] = finalStats
