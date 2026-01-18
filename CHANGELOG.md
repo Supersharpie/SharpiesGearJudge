@@ -7,6 +7,25 @@
 * **Tab 3: Stat Logic: Added visual progress bars for critical caps (Hit Rating, Defense) and bar charts for your current stat weights.
 * **Tab 4: Protocol: Centralized settings, SimC/Pawn Import, and Data Export into a single configuration tab.
 
+### **New Features**
+* **"Hybrid Display" for Ratings:** Tooltips now intelligently display both the Rating *and* the calculated Percentage for your specific level.
+    * *Example:* Instead of just `+14 Crit Rating`, you will now see `+14 Crit Rating (0.64%)`.
+    * This uses a new, high-precision "Truth Table" containing exact scalar values for every level from 1 to 70.
+* **Classic Era Compatibility:** Restored full support for Vanilla phrasing ("Improves your chance to..."), ensuring Level 60 raid gear scans correctly on the Anniversary server.
+* **Net Gain Calculation:** The "Gains" list in the tooltip now strictly displays the mathematical difference between your equipped item and the new item, eliminating confusion about total stats versus upgrade stats.
+
+### **Bug Fixes**
+* **Fixed "Double Dip" Visuals:** Resolved a visual issue where derived stats (e.g., Crit from Agility) appeared to be counted twice in the tooltip list. The math was always correct, but the display is now cleaner.
+* **Fixed Feral Attack Power:** The scanner now correctly identifies "Attack Power in Cat/Bear forms" (e.g., *Ursol's Claw*). These items no longer show false high scores for Warriors, Rogues, or Hunters.
+* **Fixed Weapon DPS Scanning:** Adjusted patterns to correctly read "Damage Per Second" regardless of capitalization (Title Case vs. Lowercase), fixing issues with items like *Destiny*.
+* **Fixed Shield Scanning:** The scanner now properly reads "Block Value" from the white text at the top of shields, which was previously being ignored.
+
+### **Database Updates**
+* **Proc Weapon Overrides:** Added manual stat estimates for dozens of "Chance on Hit" items that scanners cannot read.
+    * *Added/Updated:* Destiny, Ironfoe, Thrash Blade, The Untamed Blade, Bonereaver's Edge, Spinal Reaper, Thunderfury, and more.
+* **Trinket Overrides:** Added scoring logic for complex TBC and Classic trinkets, including *Tsunami Talisman*, *Dragonspine Trophy*, and *Hand of Justice*.
+* **Terminology Update:** Renamed UI labels from "Crit/Hit" to "Crit Rating/Hit Rating" to better align with TBC standards.
+
 ## v2.1.0 - The "Anniversary" Update (Core + Plugins)
 **Major Architecture Overhaul & TBC Readiness**
 
