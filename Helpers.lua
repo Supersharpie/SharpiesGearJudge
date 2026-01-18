@@ -232,6 +232,30 @@ function MSC.Round(num, numDecimalPlaces)
 end
 
 -- =============================================================
+-- RATING CONVERTER (Uses the Truth Table in Database.lua)
+-- =============================================================
+function MSC:GetRatingPercent(statKey, ratingVal, level)
+    if not MSC.CombatRatingScalars or not MSC.RatingIndexMap then return nil end
+    
+    -- 1. Identify which column this stat belongs to (e.g. Crit = 7)
+    local idx = MSC.RatingIndexMap[statKey]
+    if not idx then return nil end
+
+    -- 2. Get the scalar row for the player's level
+    local levelData = MSC.CombatRatingScalars[level]
+    if not levelData then 
+        -- Fallback: Clamp to 60 or 70 if the player is outside the TBC range
+        if level < 60 then levelData = MSC.CombatRatingScalars[60] 
+        elseif level > 70 then levelData = MSC.CombatRatingScalars[70] end
+    end
+    
+    if not levelData or not levelData[idx] then return nil end
+
+    -- 3. Calculate % (Rating / Scalar = Percent)
+    return ratingVal / levelData[idx]
+end
+
+-- =============================================================
 -- 6. SCANNING
 -- =============================================================
 function MSC.ParseTooltipLine(text)
@@ -245,7 +269,7 @@ function MSC.ParseTooltipLine(text)
         { p = "%((%d+%.%d+) Damage Per Second%)", s = "MSC_WEAPON_DPS" },       -- Title Case (Just in case)
         { p = "Speed (%d+%.%d+)", s = "MSC_WEAPON_SPEED" },
         { p = "^(%d+) %- (%d+) Damage", s = "MSC_DAMAGE_RANGE" },
-
+  
         -- [[ 2. DEFENSIVE RATINGS (TBC Title Case Support) ]]
         { p = "Increases defense rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },      -- Era/Old
         { p = "Increases Defense Rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },      -- TBC/New
@@ -267,8 +291,12 @@ function MSC.ParseTooltipLine(text)
         { p = "Increases your Spell Critical Strike Rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, -- TBC
         { p = "Increases your spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
         { p = "Increases your Spell Hit Rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },   -- TBC
-        
+		{ p = "%+(%d+)%%? Hit", s = "ITEM_MOD_HIT_RATING_SHORT" },   
+        { p = "%+(%d+)%%? Crit", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
+
         -- TBC Exclusive Stats (Haste/Expertise/ArPen/Resil)
+		{ p = "Increases your spell haste rating by (%d+)", s = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
+		{ p = "Increases your Spell Haste Rating by (%d+)", s = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
         { p = "Increases your haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
         { p = "Increases your Haste Rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
         { p = "Increases your expertise rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
@@ -277,28 +305,38 @@ function MSC.ParseTooltipLine(text)
         { p = "Increases your Armor Penetration Rating by (%d+)", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
         { p = "Increases your resilience rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
         { p = "Increases your Resilience Rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+	    { p = "Improves haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },   	
+	    { p = "Ignores (%d+) armor", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" }, 	
 
         -- [[ 4. POWER & MP5 ]]
+		{ p = "Increases attack power by (%d+) in", s = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, 
         { p = "Increases attack power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
         { p = "Increases Attack Power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },                -- TBC
         { p = "Increases spell power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "Increases Spell Power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "(%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
         { p = "(%d+) Mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },                      -- Capital 'M' fallback
+		{ p = "Restores (%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
 
         -- [[ 5. ERA / LEGACY PERCENTAGES (Keep these for Era!) ]]
         { p = "Increases your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
         { p = "Increases your chance to critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
         { p = "Increases your chance to parry.-by (%d+)%%", s = "ITEM_MOD_PARRY_RATING_SHORT" },
         { p = "Increases your chance to dodge.-by (%d+)%%", s = "ITEM_MOD_DODGE_RATING_SHORT" },
+		{ p = "Improves your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
+        { p = "Improves your chance to get a critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
         { p = "critical strike.-spells.-(%d+)%%", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, 
         { p = "critical strike.-(%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
 
         -- [[ 6. SPELL DAMAGE (The old "Up To" format) ]]
         { p = "damage and healing.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
+		{ p = "damage done by magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
         { p = "healing done.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
-        { p = "spells and effects.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
+        { p = "spells and effects.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },		        
+        { p = "Increases healing.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
+        { p = "%+(%d+) Healing Spells", s = "ITEM_MOD_HEALING_POWER_SHORT" },
+		{ p = "%+(%d+) Spell Damage", s = "ITEM_MOD_SPELL_POWER_SHORT" }, 
         { p = "damage done by Shadow.-up to (%d+)", s = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
         { p = "damage done by Fire.-up to (%d+)", s = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
         { p = "damage done by Frost.-up to (%d+)", s = "ITEM_MOD_FROST_DAMAGE_SHORT" },

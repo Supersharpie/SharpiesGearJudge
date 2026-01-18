@@ -322,21 +322,40 @@ local function OnTooltipSetItem(tooltip)
             local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
             table.sort(gains, StableSort); table.sort(losses, StableSort)
 
-            local function PrintList(label, list, cR, cG, cB)
+local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
                 for _, d in ipairs(list) do
-                    if lp < 5 then
+                    if lp < 8 then 
                         if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
-                        local name = (MSC.GetCleanStatName(d.key) or d.key) .. (d.nameSuffix or "")
+                        
+                        -- [[ 1. CLEAN NAME ]]
+                        local name = (MSC.GetCleanStatName(d.key) or d.key)
+                        
+                        -- [[ 2. APPEND PERCENTAGE (NEW LOGIC) ]]
+                        local level = UnitLevel("player")
+                        if MSC.GetRatingPercent then
+                             local percentVal = MSC:GetRatingPercent(d.key, math.abs(d.val), level)
+                             if percentVal and percentVal > 0.01 then
+                                 name = name .. string.format(" |cff888888(%.2f%%)|r", percentVal)
+                             end
+                        end
+
+                        -- [[ 3. APPEND SUFFIX ]]
+                        name = name .. (d.nameSuffix or "")
+                        
+                        -- [[ 4. FORMAT VALUE ]]
                         local valStr = (d.val%1==0) and string.format("%d", math.abs(d.val)) or string.format("%.1f", math.abs(d.val))
                         if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
+                        
                         tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)
                         lp = lp + 1
                     end
                 end
             end
+
             PrintList("Gains:", gains, 0, 1, 0)
             PrintList("Losses:", losses, 1, 0, 0)
+
         end
         tooltip:Show()
     end)
