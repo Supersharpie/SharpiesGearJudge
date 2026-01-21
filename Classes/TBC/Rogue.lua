@@ -75,98 +75,140 @@ Rogue.LevelingWeights = {}
 -- DYNAMIC LEVELING BRACKETS (The Interpolation System)
 -- =============================================================
 Rogue.LevelingBrackets = {
-    -- [[ 1. STANDARD COMBAT (Swords/Maces) ]]
+    -- [[ 1. STANDARD COMBAT (Swords/Maces/Fists) ]]
+    -- Meta: Slow MH (Sinister Strike) / Fast OH (Poisons/Combat Potency)
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+            ["MSC_WEAPON_DPS"]=10.0, 
+            ["MSC_WEAPON_SPEED"]=1.0, -- Prefer Slow MH early for big SS hits
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.8, -- 1 Str = 1 AP. Agi is way better.
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 
+            ["MSC_WEAPON_DPS"]=10.0, 
+            ["MSC_WEAPON_SPEED"]=1.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=1.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=6.5, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
+            ["MSC_WEAPON_DPS"]=12.0, 
+            ["MSC_WEAPON_SPEED"]=2.0, 
+            ["MSC_OH_WEAPON_SPEED"]=-2.0, -- Start looking for Fast OH (Poisons)
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 
         }
     },
-    ["Leveling_41_51"] = { 
+    ["Leveling_41_51"] = { -- Combat Potency Era (Fast OH is mandatory)
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"]=6.5, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 
+            ["MSC_WEAPON_DPS"]=12.0, 
+            ["MSC_WEAPON_SPEED"]=2.0, ["MSC_OH_WEAPON_SPEED"]=-2.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
+            ["MSC_WEAPON_DPS"]=14.0, 
+            ["MSC_WEAPON_SPEED"]=2.5, ["MSC_OH_WEAPON_SPEED"]=-2.5, -- Strong Fast OH preference
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8,
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
         }
     },
     ["Leveling_52_59"] = { 
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+            ["MSC_WEAPON_DPS"]=14.0, 
+            ["MSC_WEAPON_SPEED"]=2.5, ["MSC_OH_WEAPON_SPEED"]=-2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["MSC_WEAPON_DPS"]=15.0, 
+            ["MSC_WEAPON_SPEED"]=3.0, ["MSC_OH_WEAPON_SPEED"]=-3.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0 
         }
     },
     ["Leveling_60_70"] = { 
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5 
+            ["MSC_WEAPON_DPS"]=15.0, 
+            ["MSC_WEAPON_SPEED"]=3.0, ["MSC_OH_WEAPON_SPEED"]=-3.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8 
+            ["MSC_WEAPON_DPS"]=18.0, -- Weapon DPS is king for SS
+            ["MSC_WEAPON_SPEED"]=4.0, ["MSC_OH_WEAPON_SPEED"]=-4.0, -- Max Speed Logic
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.5, -- Combat loves Hit past cap (White dmg)
+            ["ITEM_MOD_AGILITY_SHORT"]=3.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.5 
         }
     },
 
     -- [[ 2. DAGGERS (Assassination) ]]
+    -- Speed doesn't matter (Daggers are always fast). Focus on Crit/Dagger Skill.
     ["Leveling_Dagger_21_40"] = { 
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 },
-        End = { ["MSC_WEAPON_DPS"]=7.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 }
+        Start = { ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 },
+        End = { ["MSC_WEAPON_DPS"]=12.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.8 }
     },
     ["Leveling_Dagger_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=7.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
-        End = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 }
+        Start = { ["MSC_WEAPON_DPS"]=12.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
+        End = { ["MSC_WEAPON_DPS"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 }
     },
     ["Leveling_Dagger_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
-        End = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 }
+        Start = { ["MSC_WEAPON_DPS"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
+        End = { ["MSC_WEAPON_DPS"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 }
     },
     ["Leveling_Dagger_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
-        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
+        Start = { ["MSC_WEAPON_DPS"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=3.0 },
+        End = { ["MSC_WEAPON_DPS"]=18.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=3.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 }
     },
 
     -- [[ 3. HEMO (Subtlety) ]]
+    -- Slow MH (Hemo hits harder). OH Speed less important than Combat, but Fast usually better for poisons.
     ["Leveling_Hemo_21_40"] = { 
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
-        End = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=10.0, 
+            ["MSC_WEAPON_SPEED"]=1.5, -- Hemo likes Slow
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=12.0, 
+            ["MSC_WEAPON_SPEED"]=2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2 
+        }
     },
     ["Leveling_Hemo_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0 },
-        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 }
+        Start = { ["MSC_WEAPON_DPS"]=12.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
+        End = { ["MSC_WEAPON_DPS"]=14.0, ["MSC_WEAPON_SPEED"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 }
     },
     ["Leveling_Hemo_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2 },
-        End = { ["MSC_WEAPON_DPS"]=4.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 }
+        Start = { ["MSC_WEAPON_DPS"]=15.0, ["MSC_WEAPON_SPEED"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=18.0, ["MSC_WEAPON_SPEED"]=3.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+        }
     },
 }
 
@@ -298,6 +340,21 @@ function Rogue:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
+    -- [[ 1. DUAL WIELD SCALING ]]
+    if currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling") then
+        -- Default OH penalty is 0.5. Talent adds 10-50%.
+        -- 5/5 DW Spec = 50% * 1.5 = 75% Damage.
+        local dwTalent = Rank("DUAL_WIELD_SPEC") or 0 -- Need to add DUAL_WIELD_SPEC to Rogue.Talents
+        local ohMult = 0.5 + (dwTalent * 0.05) -- 0.5 to 0.75
+        weights["MSC_WEAPON_DPS_OH"] = ohMult
+
+        -- [[ 2. AUTO-SPEED LOGIC ]]
+        -- If we want Slow MH (Positive), force Fast OH (Negative)
+        if not weights["MSC_OH_WEAPON_SPEED"] and weights["MSC_WEAPON_SPEED"] and weights["MSC_WEAPON_SPEED"] > 0 then
+             weights["MSC_OH_WEAPON_SPEED"] = -1 * weights["MSC_WEAPON_SPEED"]
+        end
+    end
+
     -- [[ 0. ARPEN SCALING ]]
     if weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
         local arPen = GetCombatRating(25)
@@ -342,10 +399,10 @@ function Rogue:ApplyScalers(weights, currentSpec)
 
         -- Hysteresis Buffer: 15 Rating
         if hitRating >= (finalCap + 15) then
-            -- Safely Capped
-            if currentSpec:find("COMBAT") or currentSpec:find("Default") then
-                -- Combat still wants hit for White Damage, but less
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
+            -- Safely Capped (Yellow)
+            if currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling") then
+                -- Combat still wants hit for White Damage (Dual Wield Cap is 28%)
+                weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.0 
                 table.insert(activeCaps, "Yellow Hit")
             else
                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
@@ -353,7 +410,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
             end
         elseif hitRating >= finalCap then
             -- "Twilight Zone" (Softened Weight)
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.8
             table.insert(activeCaps, "Hit (Soft)")
         end
     end

@@ -105,67 +105,151 @@ Warlock.Weights = {
 -- =============================================================
 Warlock.LevelingBrackets = {
     -- [[ STANDARD AFFLICTION (1-20) ]]
+    -- Wand is God. Spirit/Stam for Life Tap sustainability.
     ["Leveling_1_20"] = {
         min = 1, max = 20,
-        Start = { ["MSC_WAND_DPS"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
-        End = { ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 }
+        Start = { 
+            ["MSC_WAND_DPS"]=2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, -- Spirit good for Regen early
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
+        },
+        End = { 
+            ["MSC_WAND_DPS"]=2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+        }
     },
     ["Leveling_21_40"] = {
         min = 21, max = 40,
         Start = { ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
-        End = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
+        End = { 
+            ["MSC_WAND_DPS"]=1.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8 
+        }
     },
-    ["Leveling_41_51"] = {
+    ["Leveling_41_51"] = { -- Dark Pact era (Mana from Pet). Spirit value drops.
         min = 41, max = 51,
         Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5 },
-        End = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
+        End = { 
+            ["MSC_WAND_DPS"]=0.8, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, -- Buffed
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, -- Nerfed (Kill > Survive)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+        }
     },
     ["Leveling_52_59"] = {
         min = 52, max = 59,
-        Start = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8 },
-        End = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 }
+        Start = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.4, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5, -- Buffed
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, -- Suppression helps, but gear helps too
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+        }
     },
-    ["Leveling_60_70"] = {
+    ["Leveling_60_70"] = { -- Outland Drain Tanking
         min = 60, max = 70,
-        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 },
-        End = { ["MSC_WAND_DPS"]=0.1, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.2 }
+        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=3.2, -- Shadow Dmg is King
+            ["ITEM_MOD_STAMINA_SHORT"]=2.2, -- High, but not higher than SP
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 -- Fel Armor makes this roughly ~0.65 total value in logic
+        }
     },
+
     -- [[ DESTRUCTION (FIRE) ]]
+    -- Focus: Crit / Fire Dmg / Int (Mana hungry).
     ["Leveling_Fire_21_40"] = {
         min = 21, max = 40,
-        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0 },
-        End = { ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
+        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2 },
+        End = { 
+            ["MSC_WAND_DPS"]=1.2, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, -- Destro OOMs fast
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+        }
     },
     ["Leveling_Fire_41_51"] = {
         min = 41, max = 51,
-        Start = { ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2 },
-        End = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
+        Start = { ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.8, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5 
+        }
     },
     ["Leveling_Fire_60_70"] = {
         min = 60, max = 70,
-        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8 },
-        End = { ["MSC_WAND_DPS"]=0.1, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
+        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.5 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.1, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.5, -- Nuke Harder
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.5, -- No Suppression talent for Fire spells
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+        }
     },
+
     -- [[ DEMO LEVELING ]]
- ["Leveling_Demo_21_40"] = {
+    -- Focus: Stamina (Pet Scaling) / SP.
+    -- Adjusted to ensure SP > Stamina eventually.
+    ["Leveling_Demo_21_40"] = {
         min = 21, max = 40,
-        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=2.0 },
-        End = { ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
+        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.8 },
+        End = { 
+            ["MSC_WAND_DPS"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, -- Pet gets Int too
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+        }
     },
-    ["Leveling_Demo_41_51"] = {
+    ["Leveling_Demo_41_51"] = { -- Felguard Era
         min = 41, max = 51,
-        Start = { ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5 },
-        End = { ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0 }
+        Start = { ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.2 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.6, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5 
+        }
     },
     ["Leveling_Demo_52_59"] = {
         min = 52, max = 59,
-        Start = { ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=3.0 },
-        End = { ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
+        Start = { ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=2.5 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5 
+        }
     },
     ["Leveling_Demo_60_70"] = {
         min = 60, max = 70,
-        Start = { ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=3.5 },
-        End = { ["MSC_WAND_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 }
+        Start = { ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=2.8 },
+        End = { 
+            ["MSC_WAND_DPS"]=0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, -- SP finally overtakes Stam
+            ["ITEM_MOD_STAMINA_SHORT"]=2.8, -- Still very high for Demonic Knowledge
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5 
+        }
     },
 }
 
@@ -236,7 +320,7 @@ function Warlock:GetSpec()
     local level = UnitLevel("player")
     
     -- [[ ENDGAME DETECTION ]]
-    if level >= 60 then
+    if level == 70 then
         if Rank("SHADOW_MASTERY") > 0 then return "AFFLICTION_RAID" end
         if Rank("RUIN") > 0 then return "DESTRUCTION_RAID" end
         return "AFFLICTION_RAID"
@@ -351,9 +435,9 @@ function Warlock:ApplyScalers(weights, currentSpec)
         local talentBonus = 0
         -- Suppression Logic: Only applies to Affliction spells. 
         -- If we are Destro, we IGNORE Suppression for the cap because our nuke (Shadow Bolt) doesn't get it.
-        if currentSpec:find("AFFLICTION") or currentSpec:find("Leveling") then
-             talentBonus = Rank("SUPPRESSION") * 25.2 
-        end
+        if (currentSpec:find("AFFLICTION") or currentSpec:find("Leveling")) and not currentSpec:find("Fire") then
+		 talentBonus = Rank("SUPPRESSION") * 25.2 
+		end
         
         local finalCap = baseCap - talentBonus
 
