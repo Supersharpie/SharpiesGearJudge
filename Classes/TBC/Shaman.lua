@@ -97,141 +97,85 @@ Shaman.Weights = {
 }
 
 -- =============================================================
--- LEVELING WEIGHTS
+-- DYNAMIC LEVELING BRACKETS (Shaman Part 1: Melee & Caster)
 -- =============================================================
-Shaman.LevelingWeights = {
+Shaman.LevelingBrackets = {
+    -- [[ STANDARD MELEE (1-20) ]]
     ["Leveling_1_20"] = { 
-        ["MSC_WEAPON_DPS"]=8.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+        min = 1, max = 20,
+        Start = { ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+        End = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 }
     },
     ["Leveling_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=6.0,
-        ["MSC_WEAPON_SPEED"]=2.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+        min = 21, max = 40,
+        Start = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+        End = { ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0 }
     },
     ["Leveling_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=5.5,
-        ["MSC_WEAPON_SPEED"]=2.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.1, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+        min = 41, max = 51,
+        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        End = { ["MSC_WEAPON_DPS"]=5.5, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.1, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
     },
     ["Leveling_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=5.0,
-        ["MSC_WEAPON_SPEED"]=2.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.1, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.1 },
+        End = { ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_INTELLECT_SHORT"]=1.1, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 }
     },
     ["Leveling_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=5.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-        ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.1, 
-        ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.1 },
+        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.1, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8 }
     },
+
+    -- [[ ELEMENTAL CASTER ]]
     ["Leveling_Caster_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
     },
     ["Leveling_Caster_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4,
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
     },
-    ["Leveling_Healer_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.2,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02
+
+-- [[ SHAMAN TANK (Warden) ]]
+    ["Leveling_Tank_1_20"] = {
+        min = 1, max = 20,
+        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.3 },
+        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 }
     },
-    ["Leveling_Healer_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_Tank_21_40"] = {
+        min = 21, max = 40,
+        Start = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5 },
+        End = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8 }
     },
-    ["Leveling_Tank_1_20"] = { 
-        ["MSC_WEAPON_DPS"]=5.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
-        ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-        ["ITEM_MOD_ARMOR_SHORT"]=0.5, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.0
+    ["Leveling_Tank_41_51"] = {
+        min = 41, max = 51,
+        Start = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5 },
+        End = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 }
     },
-    ["Leveling_Tank_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=4.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-        ["ITEM_MOD_ARMOR_SHORT"]=0.5, 
-        ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
-        ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8
+    ["Leveling_Tank_52_59"] = {
+        min = 52, max = 59,
+        Start = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0 },
+        End = { ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
     },
-    ["Leveling_Tank_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=4.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-        ["ITEM_MOD_ARMOR_SHORT"]=0.5, 
-        ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, 
-        ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8
+    ["Leveling_Tank_60_70"] = {
+        min = 60, max = 70,
+        Start = { ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5 },
+        End = { ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 }
     },
-    ["Leveling_Tank_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=3.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-        ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, 
-        ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0
+
+    -- [[ RESTO HEALER ]]
+    ["Leveling_Healer_52_59"] = {
+        min = 52, max = 59,
+        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=0.02 }
     },
-    ["Leveling_Tank_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=3.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-        ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
-        ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5
+    ["Leveling_Healer_60_70"] = {
+        min = 60, max = 70,
+        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 },
+        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.02, ["ITEM_MOD_AGILITY_SHORT"]=0.02 }
     },
 }
 
@@ -305,16 +249,16 @@ function Shaman:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
+    -- [[ ENDGAME DETECTION ]]
     if level >= 60 then
-        if Rank("TOTEM_OF_WRATH") > 0 then return "ELE_PVE" end
-        if Rank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVP" end
-        if Rank("LIGHTNING_MASTERY") > 0 then return "ELE_PVE" end
+        if Rank("TOTEM_OF_WRATH") > 0 or Rank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVE" end
         if Rank("SHAMANISTIC_RAGE") > 0 or Rank("STORMSTRIKE") > 0 then return "ENH_PVE" end
         if Rank("EARTH_SHIELD") > 0 or Rank("MANA_TIDE") > 0 then return "RESTO_PVE" end
         if Rank("SHIELD_SPEC") > 0 and Rank("ANTICIPATION") > 0 then return "SHAMAN_TANK" end
         return "RESTO_PVE"
     end
 
+    -- [[ LEVELING BRACKET CALCULATION ]]
     local suffix = ""
     if level <= 20 then suffix = "_1_20"
     elseif level <= 40 then suffix = "_21_40"
@@ -329,8 +273,29 @@ function Shaman:GetSpec()
     end 
 
     local specificKey = role .. suffix
-    if Shaman.LevelingWeights[specificKey] then return specificKey end
+    if Shaman.LevelingBrackets and Shaman.LevelingBrackets[specificKey] then return specificKey end
     return "Leveling" .. suffix
+end
+
+function Shaman:GetDynamicWeights()
+    local level = UnitLevel("player")
+    local specKey = self:GetSpec()
+
+    if self.LevelingBrackets and self.LevelingBrackets[specKey] then
+        local bracket = self.LevelingBrackets[specKey]
+        local progress = (level - bracket.min) / (bracket.max - bracket.min)
+        progress = math.max(0, math.min(1, progress))
+
+        local dynamicWeights = {}
+        for stat, endValue in pairs(bracket.End) do
+            local startValue = bracket.Start[stat] or 0
+            dynamicWeights[stat] = startValue + ((endValue - startValue) * progress)
+        end
+        return dynamicWeights, specKey
+    end
+
+    if self.Weights and self.Weights[specKey] then return self.Weights[specKey], specKey end
+    return self.Weights["Default"], specKey
 end
 
 function Shaman:ApplyScalers(weights, currentSpec)
@@ -508,6 +473,10 @@ Shaman.Relics = {
 -- =============================================================
 Shaman.Profiles = {}
 for k, v in pairs(Shaman.Weights) do Shaman.Profiles[k] = v end
-for k, v in pairs(Shaman.LevelingWeights) do Shaman.Profiles[k] = v end
-
+if Shaman.LevelingBrackets then
+    for k, v in pairs(Shaman.LevelingBrackets) do Shaman.Profiles[k] = v.End end
+end
+if Shaman.LevelingWeights then
+    for k, v in pairs(Shaman.LevelingWeights) do Shaman.Profiles[k] = v end
+end
 MSC.RegisterModule("SHAMAN", Shaman)

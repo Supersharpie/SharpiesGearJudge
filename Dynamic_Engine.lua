@@ -69,8 +69,22 @@ function MSC:ApplyDynamicAdjustments()
         end
         
     else
-        -- 2. ASK THE CLASS MODULE FOR THE SPEC
-        if MSC.CurrentClass and MSC.CurrentClass.GetSpec then
+        -- [[ NEW LOGIC START ]]
+        -- 2. PRIORITY: ASK FOR DYNAMIC WEIGHTS
+        -- This supports the new Interpolation system we built for Warriors.
+        -- If the class module has this function, it returns the EXACT calculated table for your level.
+        if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
+            local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights()
+            if dynWeights then
+                rawWeights = dynWeights
+                specKey = dynKey
+            end
+        end
+        -- [[ NEW LOGIC END ]]
+
+        -- 3. FALLBACK: STATIC LOOKUP
+        -- If Dynamic didn't return anything (or class doesn't support it yet), use the old method.
+        if (not rawWeights or not next(rawWeights)) and MSC.CurrentClass and MSC.CurrentClass.GetSpec then
             specKey = MSC.CurrentClass:GetSpec()
             
             if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
@@ -81,13 +95,17 @@ function MSC:ApplyDynamicAdjustments()
         end
     end
 
-    -- 3. COPY WEIGHTS (Don't edit the originals!)
+    -- 4. COPY WEIGHTS (Don't edit the originals!)
     local finalWeights = {}
-    for k, v in pairs(rawWeights) do finalWeights[k] = v end
+    if rawWeights then
+        for k, v in pairs(rawWeights) do finalWeights[k] = v end
+    end
 
-    -- 4. APPLY SCALERS & HIT CAPS
+    -- 5. APPLY SCALERS & HIT CAPS
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
-        finalWeights = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
+        local capText
+        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
+        -- (Optional: You might want to store 'capText' somewhere to display it later)
     end
 
     return finalWeights, specKey

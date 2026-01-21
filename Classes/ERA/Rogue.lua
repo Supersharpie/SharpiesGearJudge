@@ -70,9 +70,9 @@ Rogue.PrettyNames = {
     ["Leveling_Dagger_41_51"] = "Leveling: Daggers (41-51)",
     ["Leveling_Dagger_52_59"] = "Leveling: Daggers (52-59)",
     
-    ["Leveling_Hemo_21_40"]   = "Leveling: Hemo (21-40)",
-    ["Leveling_Hemo_41_51"]   = "Leveling: Hemo (41-51)",
-    ["Leveling_Hemo_52_59"]   = "Leveling: Hemo (52-59)",
+    ["Leveling_Hemo_21_40"]    = "Leveling: Hemo (21-40)",
+    ["Leveling_Hemo_41_51"]    = "Leveling: Hemo (41-51)",
+    ["Leveling_Hemo_52_59"]    = "Leveling: Hemo (52-59)",
 }
 
 -- =============================================================

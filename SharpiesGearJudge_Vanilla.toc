@@ -6,6 +6,7 @@
 ## SavedVariables: SGJ_Settings, SGJ_History
 
 Init.lua
+ConflictManager.lua
 Database.lua
 Data_Sets.lua
 Helpers.lua

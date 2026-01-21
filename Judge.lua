@@ -203,12 +203,9 @@ local Scratch_Tooltip_Diffs = {}
 local TEX_UP = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png:14:14:0:-2|t"
 local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png:14:14:0:-2|t"
 
--- CONFIG: Which stats to hide because they are merged into others?
-local STAT_CONSOLIDATION_MAP = {
-    ["ITEM_MOD_STAMINA_SHORT"] = "ITEM_MOD_HEALTH_SHORT",
-    ["ITEM_MOD_INTELLECT_SHORT"] = "ITEM_MOD_MANA_SHORT", 
-    ["ITEM_MOD_STRENGTH_SHORT"] = "ITEM_MOD_ATTACK_POWER_SHORT", 
-}
+-- [[ CONFIG: CONSOLIDATION DISABLED ]]
+-- We purposefully empty this table so the Bouncer can see the raw stats
+local STAT_CONSOLIDATION_MAP = {} 
 
 local function OnTooltipSetItem(tooltip)
     if MSC.IsCalculating then return end
@@ -301,28 +298,24 @@ local function OnTooltipSetItem(tooltip)
             local oldExpanded = MSC.ExpandDerivedStats(oldStats or {}, nil, Scratch_Tooltip_Old)
             local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
 
-            -- [[ CONSOLIDATION PASS ]]
-            local changedMap = {}; for i, d in ipairs(diffs) do changedMap[d.key] = i end
-            for source, result in pairs(STAT_CONSOLIDATION_MAP) do
-                local sIdx, rIdx = changedMap[source], changedMap[result]
-                if sIdx and rIdx and math.abs(diffs[sIdx].val)>0.1 and math.abs(diffs[rIdx].val)>0.1 then
-                    diffs[sIdx].val = 0 -- Hide Source
-                    local sName = MSC.GetCleanStatName(source) or "Stat"
-                    diffs[rIdx].nameSuffix = " |cff888888(inc. " .. sName .. ")|r"
-                end
-            end
+            -- [[ CONSOLIDATION PASS SKIPPED ]]
             
             local gains, losses = {}, {}
             for _, d in ipairs(diffs) do
                 if math.abs(d.val) > 0.1 then
-                    if d.val > 0 then table.insert(gains, d) else table.insert(losses, d) end 
+                    -- [[ THE BOUNCER ]]
+                    -- This ensures we only see stats that actually matter to our score
+                    local w = weights[d.key] or 0
+                    if w > 0.02 then
+                        if d.val > 0 then table.insert(gains, d) else table.insert(losses, d) end 
+                    end
                 end
             end
 
             local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
             table.sort(gains, StableSort); table.sort(losses, StableSort)
 
-local function PrintList(label, list, cR, cG, cB)
+            local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
                 for _, d in ipairs(list) do
                     if lp < 8 then 
@@ -331,7 +324,7 @@ local function PrintList(label, list, cR, cG, cB)
                         -- [[ 1. CLEAN NAME ]]
                         local name = (MSC.GetCleanStatName(d.key) or d.key)
                         
-                        -- [[ 2. APPEND PERCENTAGE (NEW LOGIC) ]]
+                        -- [[ 2. APPEND PERCENTAGE ]]
                         local level = UnitLevel("player")
                         if MSC.GetRatingPercent then
                              local percentVal = MSC:GetRatingPercent(d.key, math.abs(d.val), level)

@@ -3,7 +3,7 @@ local Priest = {}
 Priest.Name = "PRIEST"
 
 -- =============================================================
--- ENDGAME STAT WEIGHTS
+-- ENDGAME STAT WEIGHTS (Static Profiles)
 -- =============================================================
 Priest.Weights = {
     ["Default"] = { 
@@ -61,7 +61,7 @@ Priest.Weights = {
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.5,
         
         -- POISON PROTECTION
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.1, -- Avoid penalty
+        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.1, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
     },
@@ -96,132 +96,127 @@ Priest.Weights = {
     },
 }
 
+-- Safety Init
+Priest.LevelingWeights = {}
+
 -- =============================================================
--- LEVELING WEIGHTS
+-- DYNAMIC LEVELING BRACKETS (The Interpolation System)
 -- =============================================================
-Priest.LevelingWeights = {
-    -- [[ 1. SHADOW / SPIRIT TAP ]]
+Priest.LevelingBrackets = {
+    -- [[ 1. SHADOW / SPIRIT TAP (1-20) ]]
     ["Leveling_1_20"] = { 
-        ["MSC_WEAPON_DPS"]=2.5,  -- High value for Wands
-        ["ITEM_MOD_SPIRIT_SHORT"]=2.5, -- Spirit Tap
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 1, max = 20,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_SPIRIT_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.5
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=2.5, ["ITEM_MOD_SPIRIT_SHORT"]=2.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.5
+        }
     },
+    -- [[ 2. SHADOW / SPIRIT TAP (21-40) ]]
     ["Leveling_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=2.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=2.2, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 21, max = 40,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=2.5, ["ITEM_MOD_SPIRIT_SHORT"]=2.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.8
+        }
     },
+    -- [[ 3. SHADOW / SPIRIT TAP (41-51) ]]
     ["Leveling_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=1.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 41, max = 51,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.2
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+        }
     },
+    -- [[ 4. SHADOW / SPIRIT TAP (52-59) ]]
     ["Leveling_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=1.0,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5
+        }
     },
+    -- [[ 5. SHADOW / SPIRIT TAP (60-70) ]]
     ["Leveling_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8 
+        }
     },
 
-    -- [[ 2. SMITE PRIEST ]]
+    -- [[ SMITE PRIEST BRACKETS ]]
     ["Leveling_Smite_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=1.5,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 21, max = 40,
+        Start = { ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.8 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0
+        }
     },
     ["Leveling_Smite_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=1.2,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.2,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 41, max = 51,
+        Start = { ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2
+        }
     },
     ["Leveling_Smite_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.8,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { ["MSC_WEAPON_DPS"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0
+        }
     },
     ["Leveling_Smite_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.4,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+        }
     },
 
-    -- [[ 3. HEALER ]]
+    -- [[ HEALER BRACKETS ]]
     ["Leveling_Healer_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-        ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-        ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8
+        }
     },
     ["Leveling_Healer_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
-        ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+        }
     },
-}
-
--- =============================================================
--- RELIC / LIBRAM OVERRIDES (Placeholders - See Helpers.lua logic)
--- =============================================================
-Priest.Relics = {
-    -- Relics are usually blank in standard DBs. Override here if needed.
-    -- Example: [12345] = { ITEM_MOD_SPELL_POWER_SHORT = 20 }
 }
 
 -- =============================================================
@@ -235,12 +230,13 @@ Priest.PrettyNames = {
     ["SMITE_DPS"]       = "DPS: Smite (Holy Fire)",
     ["SHADOW_PVE"]      = "DPS: Shadow (Mana Battery)",
     ["SHADOW_PVP"]      = "PvP: Shadow",
-    -- Leveling Brackets
+    
     ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_41_51"] = "Standard Leveling (41-51)",
     ["Leveling_52_59"] = "Standard Leveling (52-59)",
     ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    
     ["Leveling_Smite_21_40"] = "Smite DPS (21-40)",
     ["Leveling_Smite_41_51"] = "Smite DPS (41-51)",
     ["Leveling_Smite_52_59"] = "Smite DPS (52-59)",
@@ -284,6 +280,7 @@ function Priest:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
+    -- [[ ENDGAME DETECTION ]]
     if level >= 60 then
         if Rank("VAMPIRIC_TOUCH") > 0 or Rank("SHADOWFORM") > 0 then return "SHADOW_PVE" end
         if Rank("CIRCLE_HEALING") > 0 or Rank("SPIRIT_OF_REDEMPTION") > 0 then return "HOLY_DEEP" end
@@ -292,6 +289,7 @@ function Priest:GetSpec()
         return "HOLY_DEEP"
     end
 
+    -- [[ LEVELING BRACKET CALCULATION ]]
     local suffix = ""
     if level <= 20 then suffix = "_1_20"
     elseif level <= 40 then suffix = "_21_40"
@@ -299,121 +297,138 @@ function Priest:GetSpec()
     elseif level < 60 then suffix = "_52_59" 
     else suffix = "_60_70" end
 
-    local role = "Leveling" -- Default Shadow
+    local role = "Leveling" 
     if Rank("SEARING_LIGHT") > 0 then role = "Leveling_Smite"
     elseif Rank("CIRCLE_HEALING") > 0 or Rank("SPIRIT_OF_REDEMPTION") > 0 then role = "Leveling_Healer"
     end 
 
     local specificKey = role .. suffix
+    if Priest.LevelingBrackets and Priest.LevelingBrackets[specificKey] then return specificKey end
     if Priest.LevelingWeights[specificKey] then return specificKey end
     return "Leveling" .. suffix
 end
 
+function Priest:GetDynamicWeights()
+    local level = UnitLevel("player")
+    local specKey = self:GetSpec()
+
+    -- 1. Dynamic Bracket Interpolation
+    if Priest.LevelingBrackets and Priest.LevelingBrackets[specKey] then
+        local bracket = Priest.LevelingBrackets[specKey]
+        local progress = (level - bracket.min) / (bracket.max - bracket.min)
+        if progress < 0 then progress = 0 end
+        if progress > 1 then progress = 1 end
+
+        local dynamicWeights = {}
+        for stat, endValue in pairs(bracket.End) do
+            local startValue = bracket.Start[stat] or 0
+            dynamicWeights[stat] = startValue + ((endValue - startValue) * progress)
+        end
+        return dynamicWeights, specKey
+    end
+
+    -- 2. Fallback to Static
+    if Priest.Weights and Priest.Weights[specKey] then return Priest.Weights[specKey], specKey
+    elseif Priest.LevelingWeights and Priest.LevelingWeights[specKey] then return Priest.LevelingWeights[specKey], specKey
+    end
+    return nil, specKey
+end
+
 function Priest:ApplyScalers(weights, currentSpec)
+    -- [[ SAFETY COPY ]]
+    local w = {}
+    for k, v in pairs(weights) do w[k] = v end
+
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
     -- [[ 0. SMART SPIRIT SCALING ]]
-    -- We calculate the exact MP5 value of Spirit based on Intellect
-    if weights["ITEM_MOD_SPIRIT_SHORT"] and (currentSpec:find("HOLY") or currentSpec:find("DISC") or currentSpec:find("Healer")) then
+    if w["ITEM_MOD_SPIRIT_SHORT"] and (currentSpec:find("HOLY") or currentSpec:find("DISC") or currentSpec:find("Healer")) then
         local level = UnitLevel("player")
-        local intellect = UnitStat("player", 4) -- Stat 4 = Intellect
+        local intellect = UnitStat("player", 4) 
         
-        -- 1. Get raw MP5 gained from 1 Spirit (using the helper)
         local mp5Value = MSC:GetSpiritValueInMP5(level, intellect)
-        
-        -- 2. Combat Regeneration Uptime (Meditation)
-        -- Holy (30% casting regen) + time spent not casting. Approx 65% effective.
-        -- Disc is slightly lower reliance.
         local combatMult = 0.65
         if currentSpec:find("DISC") then combatMult = 0.60 end
+        local mp5Weight = w["ITEM_MOD_MANA_REGENERATION_SHORT"] or 2.5
         
-        -- 3. Get the weight of MP5 (Default to 2.5 if not set)
-        local mp5Weight = weights["ITEM_MOD_MANA_REGENERATION_SHORT"] or 2.5
-        
-        -- 4. Set the BASE Spirit weight (Overwrites static database value)
-        weights["ITEM_MOD_SPIRIT_SHORT"] = mp5Value * mp5Weight * combatMult
+        w["ITEM_MOD_SPIRIT_SHORT"] = mp5Value * mp5Weight * combatMult
     end
     
     -- [[ 1. EXISTING TALENT SCALING ]]
-    -- Enlightenment (Stam/Int/Spirit)
     local rEnlight = Rank("ENLIGHTENMENT")
     if rEnlight > 0 then
         local mult = 1 + (rEnlight * 0.01)
-        if weights["ITEM_MOD_INTELLECT_SHORT"] then weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * mult end
-        -- Note: This correctly multiplies the "Smart Spirit" weight calculated above
-        if weights["ITEM_MOD_SPIRIT_SHORT"] then weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * mult end
-        if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * mult end
+        if w["ITEM_MOD_INTELLECT_SHORT"] then w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * mult end
+        if w["ITEM_MOD_SPIRIT_SHORT"] then w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * mult end
+        if w["ITEM_MOD_STAMINA_SHORT"] then w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * mult end
     end
 
-    -- Spiritual Guidance (Spirit -> SP)
     local rSpiritGuide = Rank("SPIRIT_GUIDANCE")
-    if rSpiritGuide > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
-        -- This ADDS the Spell Power value on top of the Regen value we calculated in Step 0.
+    if rSpiritGuide > 0 and w["ITEM_MOD_SPIRIT_SHORT"] then
         local bonus = rSpiritGuide * 0.05
-        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (bonus * (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
+        w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] + (bonus * (w["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
     end
     
-    -- [[ 2. COVARIANCE (Synergy) ]]
+    -- [[ 2. COVARIANCE ]]
     if currentSpec:find("SHADOW") or currentSpec:find("SMITE") then
-        -- DPS PRIEST: Haste/Crit scales with Spell Power
-        if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] or weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+        if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] or w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             local spellPower = 0
-            if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) -- Shadow
-            else spellPower = GetSpellBonusDamage(2) end -- Holy (Smite)
+            if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3)
+            else spellPower = GetSpellBonusDamage(2) end 
             
             if spellPower > 700 then
                  local spScaler = 1 + ((spellPower - 700) / 10000)
-                 if spScaler > 1.2 then spScaler = 1.2 end -- Cap at 20% boost
+                 if spScaler > 1.2 then spScaler = 1.2 end 
                  
-                 if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
-                     weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * spScaler
+                 if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
+                     w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * spScaler
                  end
-                 if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-                     weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * spScaler
+                 if w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+                     w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * spScaler
                  end
             end
         end
     end
     
-    -- [[ 3. HIT CAP with HYSTERESIS ]]
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) -- Spell Hit
+    -- [[ 3. HIT CAP ]]
+    if w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+        local hitRating = GetCombatRating(8) 
         local baseCap = 202 
         local talentBonus = 0
-        
         if currentSpec:find("SHADOW") then
-             talentBonus = Rank("SHADOW_FOCUS") * 25.2 -- 2% per rank
+             talentBonus = Rank("SHADOW_FOCUS") * 25.2
         end
-        
         local finalCap = baseCap - talentBonus
-
-        -- Check Draenei
         local _, race = UnitRace("player")
         if race == "Draenei" then finalCap = finalCap - 12.6 end
-
         if finalCap < 0 then finalCap = 0 end
         
         if hitRating >= (finalCap + 15) then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
+            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, "Hit")
         elseif hitRating >= finalCap then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
             table.insert(activeCaps, "Hit (Soft)")
         end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
-    return weights, capText
+    return w, capText
 end
 
 function Priest:GetWeaponBonus(itemLink) return 0 end
 
 -- =============================================================
--- REGISTER PROFILES FOR INIT (UI LIST ONLY)
+-- REGISTER PROFILES
 -- =============================================================
 Priest.Profiles = {}
 for k, v in pairs(Priest.Weights) do Priest.Profiles[k] = v end
-for k, v in pairs(Priest.LevelingWeights) do Priest.Profiles[k] = v end
+if Priest.LevelingBrackets then
+    for k, v in pairs(Priest.LevelingBrackets) do Priest.Profiles[k] = v.End end
+end
+if Priest.LevelingWeights then
+    for k, v in pairs(Priest.LevelingWeights) do Priest.Profiles[k] = v end
+end
 
 MSC.RegisterModule("PRIEST", Priest)

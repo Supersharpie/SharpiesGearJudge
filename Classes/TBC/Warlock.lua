@@ -101,147 +101,71 @@ Warlock.Weights = {
 }
 
 -- =============================================================
--- LEVELING WEIGHTS
+-- DYNAMIC LEVELING BRACKETS (Warlock Part 1)
 -- =============================================================
-Warlock.LevelingWeights = {
-    ["Leveling_1_20"] = { 
-        ["MSC_WEAPON_DPS"]=0.0, 
-        ["MSC_WAND_DPS"]=2.0, -- Wand is primary DPS
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+Warlock.LevelingBrackets = {
+    -- [[ STANDARD AFFLICTION (1-20) ]]
+    ["Leveling_1_20"] = {
+        min = 1, max = 20,
+        Start = { ["MSC_WAND_DPS"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
+        End = { ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 }
     },
-    ["Leveling_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=1.5, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_21_40"] = {
+        min = 21, max = 40,
+        Start = { ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
+        End = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
     },
-    ["Leveling_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.8, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_41_51"] = {
+        min = 41, max = 51,
+        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5 },
+        End = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
     },
-    ["Leveling_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.4,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_52_59"] = {
+        min = 52, max = 59,
+        Start = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8 },
+        End = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 }
     },
-    ["Leveling_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.1, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.2,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_60_70"] = {
+        min = 60, max = 70,
+        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5 },
+        End = { ["MSC_WAND_DPS"]=0.1, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.2 }
     },
-    -- [[ DESTRUCTION LEVELING ]]
-    ["Leveling_Fire_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=1.2, 
-        ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    -- [[ DESTRUCTION (FIRE) ]]
+    ["Leveling_Fire_21_40"] = {
+        min = 21, max = 40,
+        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0 },
+        End = { ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
     },
-    ["Leveling_Fire_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.8,
-        ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_Fire_41_51"] = {
+        min = 41, max = 51,
+        Start = { ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2 },
+        End = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
     },
-    ["Leveling_Fire_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.4,
-        ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
-    },
-    ["Leveling_Fire_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.1,
-        ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_Fire_60_70"] = {
+        min = 60, max = 70,
+        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8 },
+        End = { ["MSC_WAND_DPS"]=0.1, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
     },
     -- [[ DEMO LEVELING ]]
-    ["Leveling_Demo_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=1.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+ ["Leveling_Demo_21_40"] = {
+        min = 21, max = 40,
+        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=2.0 },
+        End = { ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
     },
-    ["Leveling_Demo_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.6,
-        ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-        ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_Demo_41_51"] = {
+        min = 41, max = 51,
+        Start = { ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5 },
+        End = { ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0 }
     },
-    ["Leveling_Demo_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.2,
-        ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_Demo_52_59"] = {
+        min = 52, max = 59,
+        Start = { ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=3.0 },
+        End = { ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
     },
-    ["Leveling_Demo_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=0.0,
-        ["MSC_WAND_DPS"]=0.1,
-        ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0,
-        ["ITEM_MOD_STRENGTH_SHORT"]=0.02,
-        ["ITEM_MOD_AGILITY_SHORT"]=0.02
+    ["Leveling_Demo_60_70"] = {
+        min = 60, max = 70,
+        Start = { ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=3.5 },
+        End = { ["MSC_WAND_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 }
     },
 }
 
@@ -300,6 +224,7 @@ Warlock.Talents = {
     ["FEL_INTELLECT"]   = "Fel Intellect",
     ["EMBERSTORM"]      = "Emberstorm",
     ["SUPPRESSION"]     = "Suppression",
+	["DEMONIC_AEGIS"]     = "Demonic Aegis",
     ["DEMONIC_KNOWLEDGE"] = "Demonic Knowledge" -- Added for Logic
 }
 
@@ -310,15 +235,14 @@ function Warlock:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
+    -- [[ ENDGAME DETECTION ]]
     if level >= 60 then
-        if Rank("SUMMON_FELGUARD") > 0 then return "DEMO_PVE" end
-        if Rank("SIPHON_LIFE") > 0 and Rank("SOUL_LINK") > 0 then return "PVP_SL_SL" end
-        if Rank("UNSTABLE_AFF") > 0 or Rank("DARK_PACT") > 0 then return "RAID_AFFLICTION" end
-        if Rank("EMBERSTORM") > 0 or Rank("CONFLAGRATE") > 0 then return "DESTRUCT_FIRE" end
-        if Rank("RUIN") > 0 or Rank("SHADOWFURY") > 0 then return "DESTRUCT_SHADOW" end
-        return "Default"
+        if Rank("SHADOW_MASTERY") > 0 then return "AFFLICTION_RAID" end
+        if Rank("RUIN") > 0 then return "DESTRUCTION_RAID" end
+        return "AFFLICTION_RAID"
     end
 
+    -- [[ LEVELING BRACKET CALCULATION ]]
     local suffix = ""
     if level <= 20 then suffix = "_1_20"
     elseif level <= 40 then suffix = "_21_40"
@@ -326,18 +250,37 @@ function Warlock:GetSpec()
     elseif level < 60 then suffix = "_52_59" 
     else suffix = "_60_70" end
 
-    local role = "Leveling" -- Affliction
-    if Rank("CONFLAGRATE") > 0 or Rank("SHADOWFURY") > 0 then role = "Leveling_Fire"
-    elseif Rank("SUMMON_FELGUARD") > 0 or Rank("SOUL_LINK") > 0 then role = "Leveling_Demo"
+    local role = "Leveling" 
+    if Rank("CONFLAGRATE") > 0 or Rank("SHADOWBURN") > 0 then role = "Leveling_Fire"
+    elseif Rank("SOUL_LINK") > 0 or Rank("FEL_DOMINATION") > 0 then role = "Leveling_Demo"
     end 
 
     local specificKey = role .. suffix
-    if Warlock.LevelingWeights[specificKey] then return specificKey end
+    if Warlock.LevelingBrackets and Warlock.LevelingBrackets[specificKey] then return specificKey end
     return "Leveling" .. suffix
+end
+
+function Warlock:GetDynamicWeights()
+    local level = UnitLevel("player")
+    local specKey = self:GetSpec()
+
+    if self.LevelingBrackets and self.LevelingBrackets[specKey] then
+        local b = self.LevelingBrackets[specKey]
+        local p = math.max(0, math.min(1, (level - b.min) / (b.max - b.min)))
+        local dw = {}
+        for s, ev in pairs(b.End) do
+            dw[s] = (b.Start[s] or 0) + ((ev - (b.Start[s] or 0)) * p)
+        end
+        return dw, specKey
+    end
+
+    if self.Weights and self.Weights[specKey] then return self.Weights[specKey], specKey end
+    return self.Weights["Default"], specKey
 end
 
 function Warlock:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
+    local level = UnitLevel("player")
     local activeCaps = {}
     
     -- [[ 1. EXISTING TALENTS ]]
@@ -351,11 +294,25 @@ function Warlock:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rFel * 0.01)) 
     end
 
-    -- [[ 2. DEMONIC KNOWLEDGE ]]
-    -- Demo Locks gain SP from Stamina/Int. We boost their value if this talent is taken.
+	-- [[ 2. FEL ARMOR & DEMONIC KNOWLEDGE ]]
+    if level >= 62 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+        local spiritConversion = 0.3 -- Base Fel Armor (30%)
+        
+        -- Now this will work because we added it to Warlock.Talents
+        local rDemonicAegis = Rank("DEMONIC_AEGIS") 
+        
+        if rDemonicAegis > 0 then
+            -- 10% boost per rank (30% becomes 33%, 36%, 39%)
+            spiritConversion = spiritConversion * (1 + (rDemonicAegis * 0.10)) 
+        end
+        
+        -- Add the Spell Power value of Spirit to the Spirit Weight
+        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (spiritConversion * (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
+    end
+
+    -- Demonic Knowledge (Stam/Int -> SP)
     local rDemoKnow = Rank("DEMONIC_KNOWLEDGE")
     if rDemoKnow > 0 then
-        -- Approx 5% value boost to Stam/Int per rank (converting pet stats to master SP)
         local boost = rDemoKnow * 0.05
         if weights["ITEM_MOD_STAMINA_SHORT"] then 
             weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] + boost
@@ -371,10 +328,10 @@ function Warlock:ApplyScalers(weights, currentSpec)
         if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) 
         else spellPower = GetSpellBonusDamage(2) end
         
-        if spellPower > 800 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-            -- Boost Crit/Haste value as SP climbs
-            local scaler = 1 + ((spellPower - 800) / 10000)
-            if scaler > 1.15 then scaler = 1.15 end
+        -- Lowered threshold slightly for TBC leveling/early heroics
+        if spellPower > 600 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+            local scaler = 1 + ((spellPower - 600) / 10000)
+            if scaler > 1.2 then scaler = 1.2 end -- Capped at 20% bonus
             weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * scaler
             if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
                  weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] * scaler
@@ -385,35 +342,33 @@ function Warlock:ApplyScalers(weights, currentSpec)
     -- [[ 4. HIT CAP with HYSTERESIS ]]
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(8) 
-        local baseCap = 202 -- PvE Default
-        if currentSpec:find("PVP") then
-            baseCap = 50 -- ~4% for PvP
-        end
-        local talentBonus = 0
+        local baseCap = 202 -- TBC Standard (16% * 12.6)
         
-		-- Suppression: 2% per rank (Affliction Spells ONLY)
-        -- WARNING: Shadow Bolt is Destruction, so it does NOT benefit from Suppression.
-        -- We only apply this bonus for Leveling (where DoTs kill mobs) 
-        -- or PvP (where Instant Casts matter more). 
-        -- For Raiding, we ignore it so the Warlock caps their Shadow Bolt.
-        if currentSpec:find("Leveling") or currentSpec:find("PVP") then
+        if currentSpec:find("PVP") then
+            baseCap = 51 -- ~4% PvP (3% base + buffer)
+        end
+        
+        local talentBonus = 0
+        -- Suppression Logic: Only applies to Affliction spells. 
+        -- If we are Destro, we IGNORE Suppression for the cap because our nuke (Shadow Bolt) doesn't get it.
+        if currentSpec:find("AFFLICTION") or currentSpec:find("Leveling") then
              talentBonus = Rank("SUPPRESSION") * 25.2 
         end
         
         local finalCap = baseCap - talentBonus
 
-        -- Check Draenei
+        -- Check Draenei (Heroic Presence: +1% hit)
         local _, race = UnitRace("player")
         if race == "Draenei" then finalCap = finalCap - 12.6 end
 
         if finalCap < 0 then finalCap = 0 end
         
         -- BUFFER LOGIC
-        if hitRating >= (finalCap + 15) then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, "Hit")
+        if hitRating >= (finalCap + 10) then
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 -- Never go strictly 0, keep it minimal
+            table.insert(activeCaps, "Hit (Capped)")
         elseif hitRating >= finalCap then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.2
             table.insert(activeCaps, "Hit (Soft)")
         end
     end
@@ -421,13 +376,23 @@ function Warlock:ApplyScalers(weights, currentSpec)
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
     return weights, capText
 end
+
 function Warlock:GetWeaponBonus(itemLink) return 0 end
 
 -- =============================================================
 -- REGISTER PROFILES FOR INIT (UI LIST ONLY)
 -- =============================================================
 Warlock.Profiles = {}
-for k, v in pairs(Warlock.Weights) do Warlock.Profiles[k] = v end
-for k, v in pairs(Warlock.LevelingWeights) do Warlock.Profiles[k] = v end
+
+-- 1. Register Static Weights
+for k, v in pairs(Warlock.Weights) do 
+    Warlock.Profiles[k] = v 
+end
+
+if Warlock.LevelingBrackets then
+    for k, v in pairs(Warlock.LevelingBrackets) do 
+        Warlock.Profiles[k] = v.End 
+    end
+end
 
 MSC.RegisterModule("WARLOCK", Warlock)

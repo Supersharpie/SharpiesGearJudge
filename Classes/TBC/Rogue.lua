@@ -15,18 +15,19 @@ Rogue.Weights = {
         ["MSC_WEAPON_DPS"]=3.0 
     },
 
-    -- [[ 1. COMBAT (Swords/Maces/Fists) ]]
+    -- [[ 1. COMBAT (Swords/Maces/Fists) - The PvE King ]]
     ["RAID_COMBAT"] = { 
-        ["MSC_WEAPON_DPS"]                  = 6.0, -- King
-        ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.9, -- Yellow Cap is #1
-        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.1, 
+        ["MSC_WEAPON_DPS"]                  = 6.5, -- Massive weight for Main Hand
+        ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.9, -- Yellow Cap is priority #1
+        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.1, -- Dodge reduction is massive DPS gain
         ["ITEM_MOD_AGILITY_SHORT"]          = 2.2, 
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
         ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.3, 
-        ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.4, 
+        ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.4, -- DST / Haste Pot meta
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.35,
         ["ITEM_MOD_STRENGTH_SHORT"]         = 1.1, 
-        -- POISON
+        
+        -- TRACE VALUES
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.02, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.02,
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
@@ -36,173 +37,136 @@ Rogue.Weights = {
     -- [[ 2. MUTILATE (Daggers) ]]
     ["RAID_MUTILATE"] = { 
         ["MSC_WEAPON_DPS"]                  = 5.0, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.4, -- Seal Fate
+        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.6, -- Seal Fate relies on Crit
         ["ITEM_MOD_AGILITY_SHORT"]          = 2.1, 
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.7, 
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.8, 
         ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.2, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 1.0,
-        -- POISON
+        
+        -- TRACE VALUES
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.02,
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.02,
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
     },
 
-    -- [[ 3. SUBTLETY (PvP) ]]
+    -- [[ 3. SUBTLETY (PvP / Hemo) ]]
     ["PVP_SUBTLETY"] = { 
-        ["MSC_WEAPON_DPS"]                  = 3.0, 
-        ["ITEM_MOD_RESILIENCE_RATING_SHORT"]= 1.5, 
-        ["ITEM_MOD_STAMINA_SHORT"]          = 1.2, 
-        ["ITEM_MOD_AGILITY_SHORT"]          = 2.4, -- Sinister Calling
+        ["MSC_WEAPON_DPS"]                  = 3.0, -- Lower priority in PvP than stats
+        ["ITEM_MOD_RESILIENCE_RATING_SHORT"]= 1.8, 
+        ["ITEM_MOD_STAMINA_SHORT"]          = 1.5, 
+        ["ITEM_MOD_AGILITY_SHORT"]          = 2.4, -- Sinister Calling = Agi King
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]       = 0.5, -- 5% Cap
+        ["ITEM_MOD_HIT_RATING_SHORT"]       = 0.5, -- Only need 5% cap
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.3, 
-        -- POISON
+        
+        -- TRACE VALUES
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.02,
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.02,
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
     },
 }
 
+-- Safety Init
+Rogue.LevelingWeights = {}
+
 -- =============================================================
--- LEVELING WEIGHTS
+-- DYNAMIC LEVELING BRACKETS (The Interpolation System)
 -- =============================================================
-Rogue.LevelingWeights = {
-    -- [[ 1. STANDARD COMBAT ]]
-    ["Leveling_1_20"]  = { 
-        ["MSC_WEAPON_DPS"]=8.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.8, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=0.5, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=0.5,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+Rogue.LevelingBrackets = {
+    -- [[ 1. STANDARD COMBAT (Swords/Maces) ]]
+    ["Leveling_1_20"] = { 
+        min = 1, max = 20,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 
+        }
     },
     ["Leveling_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=6.5, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.3, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.1, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 21, max = 40,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=6.5, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
+        }
     },
     ["Leveling_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=6.0,
-        ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 41, max = 51,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=6.5, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
+        }
     },
     ["Leveling_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=5.5,
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.5,
-        ["ITEM_MOD_STAMINA_SHORT"]=1.2,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+        }
     },
     ["Leveling_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=5.0,
-        ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8 
+        }
     },
 
-    -- [[ 2. DAGGERS ]]
-    ["Leveling_Dagger_1_20"] = { 
-        ["MSC_WEAPON_DPS"]=8.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
-    },
+    -- [[ 2. DAGGERS (Assassination) ]]
     ["Leveling_Dagger_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=7.0,
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=0.8,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 21, max = 40,
+        Start = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 },
+        End = { ["MSC_WEAPON_DPS"]=7.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 }
     },
     ["Leveling_Dagger_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=6.0,
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 41, max = 51,
+        Start = { ["MSC_WEAPON_DPS"]=7.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
+        End = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 }
     },
     ["Leveling_Dagger_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=5.5,
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 52, max = 59,
+        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
+        End = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 }
     },
     ["Leveling_Dagger_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=5.0,
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
+        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
     },
 
-    -- [[ 3. HEMO ]]
-    ["Leveling_Hemo_1_20"]    = { 
-        ["MSC_WEAPON_DPS"]=6.0,
-        ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
-    },
+    -- [[ 3. HEMO (Subtlety) ]]
     ["Leveling_Hemo_21_40"] = { 
-        ["MSC_WEAPON_DPS"]=5.5,
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 21, max = 40,
+        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
+        End = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2 }
     },
     ["Leveling_Hemo_41_51"] = { 
-        ["MSC_WEAPON_DPS"]=5.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
-    },
-    ["Leveling_Hemo_52_59"] = { 
-        ["MSC_WEAPON_DPS"]=5.0,
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 41, max = 51,
+        Start = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0 },
+        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 }
     },
     ["Leveling_Hemo_60_70"] = { 
-        ["MSC_WEAPON_DPS"]=4.5,
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-        ["ITEM_MOD_STAMINA_SHORT"]=2.2, 
-        ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, 
-        ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
-        ["ITEM_MOD_INTELLECT_SHORT"]=0.02
+        min = 60, max = 70,
+        Start = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2 },
+        End = { ["MSC_WEAPON_DPS"]=4.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 }
     },
 }
 
@@ -227,7 +191,7 @@ Rogue.PrettyNames = {
     ["Leveling_Dagger_21_40"] = "Dagger/Ambush (21-40)",
     ["Leveling_Dagger_41_51"] = "Dagger/Ambush (41-51)",
     ["Leveling_Dagger_52_59"] = "Dagger/Ambush (52-59)",
-    ["Leveling_Dagger_60_70"] = "Dagger/Ambush (Outland)",          
+    ["Leveling_Dagger_60_70"] = "Dagger/Ambush (Outland)",              
     
     ["Leveling_Hemo_1_20"]    = "Hemorrhage (1-20)",
     ["Leveling_Hemo_21_40"]   = "Hemorrhage (21-40)",
@@ -276,6 +240,7 @@ function Rogue:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
+    -- [[ ENDGAME DETECTION ]]
     if level >= 60 then
         if Rank("SHADOWSTEP") > 0 or Rank("CHEAT_DEATH") > 0 then return "PVP_SUBTLETY" end
         if Rank("HEMORRHAGE") > 0 and Rank("ADRENALINE_RUSH") == 0 then return "PVP_SUBTLETY" end
@@ -284,6 +249,7 @@ function Rogue:GetSpec()
         return "RAID_COMBAT"
     end
 
+    -- [[ LEVELING BRACKET CALCULATION ]]
     local suffix = ""
     if level <= 20 then suffix = "_1_20"
     elseif level <= 40 then suffix = "_21_40"
@@ -297,45 +263,67 @@ function Rogue:GetSpec()
     end
 
     local specificKey = role .. suffix
-    if Rogue.LevelingWeights[specificKey] then return specificKey end
+    
+    -- [[ BRACKET CHECK ]]
+    if Rogue.LevelingBrackets and Rogue.LevelingBrackets[specificKey] then return specificKey end
+    
+    -- [[ FALLBACK TO STATIC ]]
+    if Rogue.LevelingWeights and Rogue.LevelingWeights[specificKey] then return specificKey end
     
     return "Leveling" .. suffix
+end
+
+function Rogue:GetDynamicWeights()
+    local level = UnitLevel("player")
+    local specKey = self:GetSpec()
+
+    if self.LevelingBrackets and self.LevelingBrackets[specKey] then
+        local bracket = self.LevelingBrackets[specKey]
+        local progress = (level - bracket.min) / (bracket.max - bracket.min)
+        progress = math.max(0, math.min(1, progress))
+
+        local dynamicWeights = {}
+        for stat, endValue in pairs(bracket.End) do
+            local startValue = bracket.Start[stat] or 0
+            dynamicWeights[stat] = startValue + ((endValue - startValue) * progress)
+        end
+        return dynamicWeights, specKey
+    end
+
+    if self.Weights and self.Weights[specKey] then return self.Weights[specKey], specKey end
+    return self.Weights["Default"], specKey
 end
 
 function Rogue:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-	-- [[ 0. ARPEN SCALING ]]
+    -- [[ 0. ARPEN SCALING ]]
     if weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
         local arPen = GetCombatRating(25)
         if arPen > 100 then
-            -- Boost ArPen value as you stack it
             local scaler = 1 + (arPen / 1000)
             if scaler > 1.4 then scaler = 1.4 end
             weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] * scaler
         end
     end
-	
-    -- 1. TALENT: Vitality (Agility)
+    
+    -- [[ 1. TALENT SCALERS ]]
     local rVit = Rank("VITALITY")
     if rVit > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then 
         weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rVit * 0.01)) 
     end
     
-    -- 2. TALENT: Sinister Calling (Agility)
     local rSin = Rank("SINISTER_CALLING")
     if rSin > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then 
         weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rSin * 0.03)) 
     end
 
-    -- [[ 2. NEW: COVARIANCE (Crit scales with AP) ]]
+    -- [[ 2. COVARIANCE (Crit scales with AP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
         local base, pos, neg = UnitAttackPower("player")
         local totalAP = base + pos + neg
         
-        -- Rogues scale very well with AP.
-        -- If AP > 1000, boost Crit value up to 15%
         if totalAP > 1000 then
             local apScaler = 1 + ((totalAP - 1000) / 20000)
             if apScaler > 1.15 then apScaler = 1.15 end
@@ -343,7 +331,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- [[ 3. HIT CAP (Updated with Hysteresis) ]]
+    -- [[ 3. HIT CAP (With Hysteresis) ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(6) 
         local baseCap = 142
@@ -356,6 +344,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
         if hitRating >= (finalCap + 15) then
             -- Safely Capped
             if currentSpec:find("COMBAT") or currentSpec:find("Default") then
+                -- Combat still wants hit for White Damage, but less
                 weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
                 table.insert(activeCaps, "Yellow Hit")
             else
@@ -369,15 +358,26 @@ function Rogue:ApplyScalers(weights, currentSpec)
         end
     end
     
-    -- [[ 4. EXPERTISE CAP (Updated with Hysteresis) ]]
+    -- [[ 4. EXPERTISE CAP ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24)
         local _, race = UnitRace("player")
-        local humanBonus = (race == "Human") and 20 or 0 
-        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
         
-        -- Cap is ~103 rating. Buffer of 10.
+        -- Check if we are using a Racial weapon
+        local humanBonus = 0
+        if race == "Human" then
+             local itemLink = GetInventoryItemLink("player", 16)
+             if itemLink then
+                 local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
+                 if classID == 2 and (subClassID == 7 or subClassID == 4) then -- Sword/Mace
+                     humanBonus = 20
+                 end
+             end
+        end
+        
+        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
         local totalExp = expRating + humanBonus + talentBonus
+        
         if totalExp >= (103 + 10) then
              weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
              table.insert(activeCaps, "Exp")
@@ -400,7 +400,6 @@ function Rogue:GetWeaponBonus(itemLink)
     local _, race = UnitRace("player")
 
     -- Racial: Human (Sword/Mace)
-    -- Only check 1H versions (7=Sword, 4=Mace). 2H is invalid for Rogues.
     if race == "Human" and (subClassID == 7 or subClassID == 4) then 
         bonus = bonus + 40 
     end
@@ -426,10 +425,15 @@ function Rogue:GetWeaponBonus(itemLink)
 end
 
 -- =============================================================
--- REGISTER PROFILES FOR INIT (UI LIST ONLY)
+-- REGISTER PROFILES
 -- =============================================================
 Rogue.Profiles = {}
 for k, v in pairs(Rogue.Weights) do Rogue.Profiles[k] = v end
-for k, v in pairs(Rogue.LevelingWeights) do Rogue.Profiles[k] = v end
+if Rogue.LevelingBrackets then
+    for k, v in pairs(Rogue.LevelingBrackets) do Rogue.Profiles[k] = v.End end
+end
+if Rogue.LevelingWeights then
+    for k, v in pairs(Rogue.LevelingWeights) do Rogue.Profiles[k] = v end
+end
 
 MSC.RegisterModule("ROGUE", Rogue)
