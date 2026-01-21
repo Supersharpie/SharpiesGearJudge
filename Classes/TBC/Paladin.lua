@@ -725,6 +725,10 @@ function Paladin:ApplyScalers(weights, currentSpec)
             table.insert(activeCaps, "Exp")
         end
     end
+	
+	local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
+    return weights, capText
+end
 
 function Paladin:GetWeaponBonus(itemLink)
     if not itemLink then return 0 end
