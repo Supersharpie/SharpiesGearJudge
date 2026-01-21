@@ -1,5 +1,36 @@
 # Sharpie's Gear Judge - Version History
 
+## V2.2.1 🖥️UI + Dynamic Leveling
+* **This update introduces a fundamental shift in how the addon handles features and UI, moving toward a modular Plugin Engine and a more responsive dashboard.
+* **Major Features
+* **Dynamic Plugin Engine: Implemented a new tab registry system (MSC.RegisteredTabs), allowing for cleaner code and easier expansion of addon features.
+	* *The Laboratory - (Still Experimenting) New Plugin not yet released.
+* **Dynamic Sidebar: The sidebar now renders buttons based on registered plugins, complete with improved hover effects and tooltips.
+
+### CORE ENGINE
+* **Standardized Module Architecture: All class modules have been refactored to use unified template.
+* **Dynamic Leveling Brackets: Replaced static leveling lists with a Start/End interpolation system. The addon now calculates the exact value of a stat based on your specific level within a bracket (e.g., Strength value now climbs smoothly from level 21 to 40 instead of jumping at the finish line).
+* **New Math Engine: Implemented GetDynamicWeights in all modules. This function handles the real-time math for leveling interpolation and spec fallbacks.
+* **Data Integrity (Safety Copy): Added a "Safety Copy" protocol to ApplyScalers. The engine now creates a local instance of your weights before applying caps or talents, ensuring the master database is never accidentally corrupted by temporary buffs.
+* **TBC Spirit Helper: Integrated MSC:GetSpiritValueInMP5 to handle the complex Intellect/Spirit relationship for Priests, Druids, and Shamans.
+
+### INTERFACE & UI
+* **Bug Fix (Crash): Fixed a critical "nil value" error when clicking the Export Data button. The function ShowHistory is now properly defined.
+* **Bug Fix (Crash): Fixed a potential crash when opening the Import Pawn String window.
+* **Frame Strata Optimization: Tool windows (Import/Export) now use the DIALOG strata, ensuring they appear on top of the main dashboard rather than behind it.
+* **Dynamic Logic View: The Stat Logic tab now displays live, interpolated stat weights, showing users exactly how the math scales as they level.
+* **Receipt Tab Overhaul: Standardized the Receipt view to use the new dynamic engine for both the player and inspected targets.
+* **Class Art Engine: Restored class-specific backgrounds with a new dark-tinted overlay for better text readability.
+
+### CLASS SPECIFIC UPDATES 
+* **Paladin: Added dynamic Haste scaling for Seal of Blood (Horde) vs. Seal of Command (Alliance) meta.
+* **Warlock: Introduced Life Tap Synergy. Stamina weight now dynamically increases as your Spell Power grows, reflecting the increased mana-conversion efficiency.
+* **Shaman: Implemented a dual-hit cap system. Enhancement correctly tracks Melee Hit (6), while Elemental tracks Spell Hit (8) with Totem of Wrath detection.
+* **Hunter: Fixed a core bug where Hunters were tracking Melee Hit instead of Ranged Hit.
+* **Druid: Added Crit Immunity detection for Bears. The addon will now pivot stat weight from Defense/Resilience to Stamina/Armor automatically once you are safely "un-crittable."
+* **Rogue: Optimized Armor Penetration scaling; as you stack more ArPen, its weight value increases to reflect the non-linear benefit of the stat in TBC.
+
+
 ## V2.2.0🖥️ UI Overhaul: The Dashboard
 * **The Main Dashboard: Completely replaced the old options menu with a modern 4-Tab Interface (/sgj).
 * **Tab 1: (not active yet )The Laboratory: Added a new drag-and-drop simulator. You can now drag items from chat or bags into a "Virtual Paperdoll" to compare them against your equipped gear without binding them.
