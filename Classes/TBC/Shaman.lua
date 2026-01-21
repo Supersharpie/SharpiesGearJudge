@@ -100,82 +100,266 @@ Shaman.Weights = {
 -- DYNAMIC LEVELING BRACKETS (Shaman Part 1: Melee & Caster)
 -- =============================================================
 Shaman.LevelingBrackets = {
-    -- [[ STANDARD MELEE (1-20) ]]
+    -- [[ STANDARD MELEE (1-39) ]]
+    -- 2H Axes/Maces/Staves. Windfury unlocks at Lvl 30.
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
-        Start = { ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
-        End = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=0.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, -- 1 Str = 2 AP
+            ["ITEM_MOD_AGILITY_SHORT"]=1.0, -- 1 Agi = Crit + Armor (No AP in TBC?) *Check below
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, -- Mana for shocks
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2, -- Garbage stat
+            ["ITEM_MOD_MANA_SHORT"]=0.02 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_MANA_SHORT"]=0.02 
+        }
     },
-    ["Leveling_21_40"] = { 
+    ["Leveling_21_40"] = { -- Windfury Era (Lvl 30)
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
-        End = { ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=2.0, -- Windfury demands SLOW weapons
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=2.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, -- Flurry uptime
+            ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_MANA_SHORT"]=0.02 
+        }
     },
+
+    -- [[ ENHANCEMENT DUAL WIELD (40-70) ]]
+    -- Meta: Slow MH / Slow OH (for Stormstrike). 
+    -- Mental Dexterity: Int provides AP.
     ["Leveling_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-        End = { ["MSC_WEAPON_DPS"]=5.5, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.1, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=10.0, 
+            ["MSC_WEAPON_SPEED"]=2.5, -- Slow MH
+            ["MSC_OH_WEAPON_SPEED"]=2.5, -- Slow OH (Positive weight!)
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0, -- Crits proc Flurry (30% Haste)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, -- Mental Dexterity starts kicking in
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, -- DW Penalty
+            ["ITEM_MOD_MANA_SHORT"]=0.02 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=12.0, 
+            ["MSC_WEAPON_SPEED"]=2.8, 
+            ["MSC_OH_WEAPON_SPEED"]=2.8,
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
+        }
     },
     ["Leveling_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=5.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.1 },
-        End = { ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_INTELLECT_SHORT"]=1.1, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=12.0, 
+            ["MSC_WEAPON_SPEED"]=2.8, ["MSC_OH_WEAPON_SPEED"]=2.8,
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=14.0, 
+            ["MSC_WEAPON_SPEED"]=3.0, ["MSC_OH_WEAPON_SPEED"]=3.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=3.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.4, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.0, -- Int is now a major DPS stat
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.4, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.5 
+        }
     },
     ["Leveling_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.1 },
-        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.1, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.8 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=14.0, ["MSC_WEAPON_SPEED"]=3.0, ["MSC_OH_WEAPON_SPEED"]=3.0,
+            ["ITEM_MOD_STRENGTH_SHORT"]=3.2, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.5, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=16.0, 
+            ["MSC_WEAPON_SPEED"]=3.5, ["MSC_OH_WEAPON_SPEED"]=3.5, -- Max priority on Slow/Slow
+            ["ITEM_MOD_STRENGTH_SHORT"]=3.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=3.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=3.0 
+        }
     },
 
     -- [[ ELEMENTAL CASTER ]]
+    -- Spell Power > Hit > Crit > Int. Spirit is dead.
     ["Leveling_Caster_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1, -- Useless
+            ["ITEM_MOD_MANA_SHORT"]=0.02 
+        },
+        End = { 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.8,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+        }
     },
     ["Leveling_Caster_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+        },
+        End = { 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.5,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0, -- Cap is crucial for raid prep
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 -- Mp5 has some value for sustain
+        }
     },
 
--- [[ SHAMAN TANK (Warden) ]]
-    ["Leveling_Tank_1_20"] = {
-        min = 1, max = 20,
-        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.3 },
-        End = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 }
-    },
+    -- [[ SHAMAN TANK (Warden) ]]
+    -- High Stamina + Block + Agility (Dodge). Weapon Speed = Fast (Threat application).
     ["Leveling_Tank_21_40"] = {
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5 },
-        End = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=5.0, 
+            ["MSC_WEAPON_SPEED"]=-1.0, -- Fast Dagger/Mace for Rockbiter/Frostbrand spam
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, -- Shocks are expensive
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=-1.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.8,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8 
+        }
     },
     ["Leveling_Tank_41_51"] = {
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5 },
-        End = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=-1.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=2.8, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0 -- Earth Shock scales on SP
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=5.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5 
+        }
     },
     ["Leveling_Tank_52_59"] = {
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0 },
-        End = { ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=-1.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=5.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- Need to hit to taunt
+        }
     },
     ["Leveling_Tank_60_70"] = {
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5 },
-        End = { ["MSC_WEAPON_DPS"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=-1.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=1.8,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=6.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=4.0, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=2.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 -- Crit dampening
+        }
     },
 
     -- [[ RESTO HEALER ]]
+    -- Healing Power > Mp5 > Int. Spirit is garbage.
     ["Leveling_Healer_52_59"] = {
         min = 52, max = 59,
-        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=0.02 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.0,
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, -- Mp5 is life
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2, -- Nerfed
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.0 
+        },
+        End = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5 
+        }
     },
     ["Leveling_Healer_60_70"] = {
         min = 60, max = 70,
-        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 },
-        End = { ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.02, ["ITEM_MOD_AGILITY_SHORT"]=0.02 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.0,
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+        },
+        End = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=2.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8 
+        }
     },
 }
 
@@ -250,7 +434,7 @@ function Shaman:GetSpec()
     local level = UnitLevel("player")
     
     -- [[ ENDGAME DETECTION ]]
-    if level >= 60 then
+    if level == 70 then
         if Rank("TOTEM_OF_WRATH") > 0 or Rank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVE" end
         if Rank("SHAMANISTIC_RAGE") > 0 or Rank("STORMSTRIKE") > 0 then return "ENH_PVE" end
         if Rank("EARTH_SHIELD") > 0 or Rank("MANA_TIDE") > 0 then return "RESTO_PVE" end
@@ -302,18 +486,28 @@ function Shaman:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- [[ 1. EXISTING TALENTS ]]
+    -- [[ 1. DUAL WIELD DPS FIX ]]
+    -- Ensure Enhancement Shamans get credit for their DW Spec talent (+25% OH Dmg)
+    if currentSpec:find("ENH") or (Rank("DUAL_WIELD_SPEC") > 0) then
+        if not weights["MSC_WEAPON_DPS_OH"] then
+            weights["MSC_WEAPON_DPS_OH"] = 0.625 -- 50% Base * 1.25 Talent
+        end
+    end
+
+    -- [[ 2. EXISTING TALENTS ]]
     local rAnc = Rank("ANCESTRAL_KNOW")
     if rAnc > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAnc * 0.01)) 
     end
     
+    -- [[ 3. MENTAL QUICKNESS (AP -> SP Conversion Value) ]]
+    -- We buff AP weight here because it provides SP via the talent.
     local rMent = Rank("MENTAL_QUICKNESS")
     if rMent > 0 and weights["ITEM_MOD_ATTACK_POWER_SHORT"] then 
         weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * 1.1 
     end
 
-    -- [[ 2. COVARIANCE (Synergy) ]]
+    -- [[ 4. COVARIANCE (Synergy) ]]
     if currentSpec:find("ENH") or currentSpec:find("Tank") then
         if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
             local base, pos, neg = UnitAttackPower("player")
@@ -346,7 +540,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
         end
     end
     
-    -- [[ 3. CAPS with HYSTERESIS ]]
+    -- [[ 5. CAPS with HYSTERESIS ]]
     local baseCap = 142 
     local talentBonus = Rank("NATURE_GUIDANCE") * 15.8
     
@@ -383,7 +577,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
          end
     end
     
-	-- C. SPELL HIT (Elemental)
+    -- C. SPELL HIT (Elemental)
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
          local hitRating = GetCombatRating(8)
          local baseCap = 202 
@@ -395,9 +589,9 @@ function Shaman:ApplyScalers(weights, currentSpec)
          
          local spellCap = baseCap - precisionBonus - guidanceBonus
          
-         -- Totem of Wrath Check (If we have it, we assume we use it -> 3% hit)
+         -- Totem of Wrath Check
          if Rank("TOTEM_OF_WRATH") > 0 then
-             spellCap = spellCap - 37.8 -- 3% * 12.6
+             spellCap = spellCap - 37.8 -- 3%
          end
 
          -- Draenei Racial

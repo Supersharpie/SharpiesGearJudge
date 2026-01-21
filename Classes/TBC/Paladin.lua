@@ -509,7 +509,7 @@ function Paladin:GetSpec()
     local level = UnitLevel("player")
     
     -- [[ ENDGAME DETECTION ]]
-    if level >= 60 then
+    if level == 70 then
         if Rank("AVENGERS_SHIELD") > 0 or Rank("HOLY_SHIELD") > 0 then return "PROT_DEEP" end
         if Rank("CRUSADER_STRIKE") > 0 or Rank("REPENTANCE") > 0 then return "RET_STANDARD" end
         
@@ -551,7 +551,6 @@ function Paladin:GetSpec()
 
     local specificKey = role .. suffix
     
-    -- [[ YOUR MISSING CODE ]]
     -- Check BRACKETS first (New System)
     if Paladin.LevelingBrackets and Paladin.LevelingBrackets[specificKey] then return specificKey end
     
