@@ -309,6 +309,22 @@ MSC.EnchantDB = {
     [2933] = { name = "Healing Power", slot = 11, stats = { ITEM_MOD_HEALING_POWER_SHORT = 20 } }, 
     [2934] = { name = "Stats", slot = 11, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } }, 
     [2629] = { name = "Striking", slot = 11, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } },
+
+	-- [[ MISSING LOW-LEVEL / TWINK ENCHANTS ]] --
+    -- [[ GLOVES ]]
+    -- Highly valued by twinks/levelers for the cheap Haste
+    [931]  = { name = "Minor Haste", stats = { ITEM_MOD_HASTE_RATING_SHORT = 10 } }, -- ~1% Haste
+
+    -- [[ WEAPON (CASTER / SPIRIT) ]]
+    -- Great budget options for Level 40-60 casters
+    [2443] = { name = "Winter's Might (+7 SP)", stats = { ITEM_MOD_SPELL_POWER_SHORT = 7, ITEM_MOD_FROST_DAMAGE_SHORT = 7 } },
+    [804]  = { name = "Lesser Intellect (+6)", stats = { ITEM_MOD_INTELLECT_SHORT = 6 } },
+    [2566] = { name = "Major Intellect (+22)", stats = { ITEM_MOD_INTELLECT_SHORT = 22 } }, -- Classic Endgame
+    [2565] = { name = "Major Spirit (+20)", stats = { ITEM_MOD_SPIRIT_SHORT = 20 } },    -- Classic Endgame
+    -- [[ 2H WEAPON ]]
+    [1899] = { name = "Impact (+5 Dmg)", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.4 }, requires2H = true },   
+    -- [[ CHEST ]]
+    [1951] = { name = "Lesser Absorption", stats = { MSC_EHP_MOD = 5 } }, -- (Abstracted value for proc)
 }
 
 -- ============================================================================
@@ -349,12 +365,12 @@ MSC.EnchantCandidates_Leveling = {
     [1] = {}, [3] = {}, 
     [5] = { 1891, 1892, 843, 850, 243, 248, 255, 2653 }, 
     [9] = { 2655, 1885, 1883, 1884, 905, 246, 256, 262, 279, 258, 265, 263 }, 
-    [10] = { 2562, 1886, 1888, 847, 848, 930 }, 
+    [10] = { 2562, 1886, 1888, 847, 848, 930, 931 },
     [6] = {},
     [7] = { 2741, 2743, 2427 }, -- (Armor Kits usually)
     [8] = { 910, 2564, 911, 273, 845, 844, 274, 842 }, 
     [15] = { 849, 1889, 250 }, 
-    [16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897, 2563, 1894, 2564, 249, 250, 254, 912, 964, 33 }, 
+	[16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897, 2563, 1894, 2564, 249, 250, 254, 912, 964, 33, 2443, 804, 2566, 2565, 1899 },
     [17] = { 2621, 803, 1900, 1898, 2655, 1071, 2747, 2746, 2745 }, 
     [11] = {}, [12] = {},
     [18] = { 10548, 33, 664 } 
