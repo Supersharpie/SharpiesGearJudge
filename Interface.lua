@@ -419,24 +419,119 @@ function MSC.UpdateReceipt()
     end
 end
 
--- [[ VIEW 3: STAT LOGIC ]]
+-- =============================================================
+-- VIEW 3: STAT LOGIC (Custom TGA Rings)
+-- =============================================================
+
+-- [[ 1. STAT REASONING ]]
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
-    if stat:find("HIT") then return "Reduces Miss Chance" end
-    if stat:find("HASTE") then return "Increases Speed" end
-    if stat:find("CRIT") and not stat:find("FROM_STATS") then return "Crit Chance" end
-    if stat:find("DEFENSE") then return "Crit Immunity / Avoidance" end
-    if stat:find("SPELL_POWER") then return "Spell Scaling" end
-    if stat:find("HEALING") then return "Healing Output" end
-    if stat:find("ATTACK_POWER") then return "Raw Damage" end
-    if stat:find("MANA_REG") then return "Sustain (Mp5)" end
-    if stat:find("STAMINA") then return "Health Pool" end
-    if stat:find("INTELLECT") then return "Mana & Crit" end
-    if stat:find("AGILITY") then return "Crit & Dodge" end
-    if stat:find("STRENGTH") then return "Attack Power" end
+    if stat:find("STRENGTH") then return "Increases Attack Power and Block Value" end
+    if stat:find("AGILITY") then return "Increases Crit Chance, Dodge, and Armor" end
+    if stat:find("STAMINA") then return "Increases total Health Pool" end
+    if stat:find("INTELLECT") then return "Increases Mana Pool and Spell Crit" end
+    if stat:find("SPIRIT") then return "Increases Out-of-Combat and Spell5 Regen" end
+    if stat:find("ATTACK_POWER") then return "Increases Raw Physical Damage Output" end
+    if stat:find("EXPERTISE") then return "Reduces chance Target Parries or Dodges" end
+    if stat:find("ARMOR_PENETRATION") then return "Ignores a portion of Target's Armor" end
+    if stat:find("MELEE_HIT") or stat:find("RANGED_HIT") or (stat:find("HIT") and not stat:find("SPELL")) then return "Reduces chance to Miss Physical attacks" end
+    if stat:find("SPELL_POWER") then return "Increases Scaling Damage of Spells" end
+    if stat:find("HEALING") then return "Increases Potency of Healing spells" end
+    if stat:find("SPELL_HIT") then return "Reduces chance for Spells to Resist/Miss" end
+    if stat:find("MANA_REG") or stat:find("MP5") then return "Constant Mana Sustain (Mp5)" end
+    if stat:find("CRIT") and not stat:find("FROM_STATS") then return "Chance for Extra Critical Damage/Healing" end
+    if stat:find("HASTE") then return "Increases Attack/Casting Speed" end
+    if stat:find("DEFENSE") then return "Reduces chance to be Crit and Hit" end
+    if stat:find("DODGE") then return "Chance to completely Avoid Physical attacks" end
+    if stat:find("PARRY") then return "Chance to Deflect front-facing attacks" end
+    if stat:find("BLOCK_VALUE") then return "Increases Damage mitigated by Shield" end
+    if stat:find("BLOCK_RATING") then return "Chance to Mitigate damage with Shield" end
+    if stat:find("RESILIENCE") then return "Reduces Crit Damage and Chance (PvP)" end
+    if stat:find("ARMOR") and not stat:find("PENETRATION") then return "Reduces Incoming Physical Damage" end
     return nil
 end
 
+-- [[ 2. RING RENDERER (Force-Circle Masking) ]]
+local function CreateStatRing(parent, x, y, size, label, current, cap)
+    local f = CreateFrame("Frame", nil, parent)
+    f:SetSize(size, size); f:SetPoint("TOPLEFT", x, y)
+    
+    -- 1. Create the "Cookie Cutter" (A guaranteed solid circle mask)
+    local mask = f:CreateMaskTexture()
+    mask:SetTexture("Interface\\Minimap\\UI-Minimap-Background") -- Universal circular mask
+    mask:SetAllPoints(f)
+    
+    -- 2. Background Ring
+    f.bg = f:CreateTexture(nil, "BACKGROUND")
+    -- Make sure this matches your file path exactly
+    f.bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_BG.tga") 
+    f.bg:SetAllPoints()
+    f.bg:SetVertexColor(1, 1, 1, 0.4) -- Low opacity for the "empty" track
+    f.bg:SetBlendMode("BLEND")
+    -- Apply the mask (Cuts the square corners off)
+    f.bg:AddMaskTexture(mask)
+
+    -- 3. Progress Fill
+    f.fill = f:CreateTexture(nil, "ARTWORK")
+    f.fill:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Fill.tga")
+    f.fill:SetAllPoints()
+    f.fill:SetBlendMode("BLEND")
+    -- Apply the mask here too
+    f.fill:AddMaskTexture(mask)
+    
+    local pct = 0
+    if cap > 0 then pct = math.min(100, (current / cap) * 100) end
+    
+    -- Color Logic (Red -> Yellow -> Green)
+    if pct >= 100 then f.fill:SetVertexColor(0, 1, 0) -- Green
+    elseif pct > 80 then f.fill:SetVertexColor(1, 0.82, 0) -- Yellow
+    else f.fill:SetVertexColor(1, 0.2, 0.2) -- Red
+    end
+
+    -- 4. Text Overlay
+    f.val = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+    f.val:SetPoint("CENTER", 0, 0); f.val:SetText(math.floor(pct) .. "%")
+    
+    f.lbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    f.lbl:SetPoint("TOP", f, "BOTTOM", 0, -5); f.lbl:SetText(label); f.lbl:SetTextColor(0.7, 0.7, 0.7)
+    
+    return f
+end
+
+-- [[ 3. CLASS LOGIC ]]
+local function GetClassRings(class, stats, weights)
+    local rings = {}
+    local hit = stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HIT_RATING_SHORT"] or 0
+    local def = stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
+    local exp = stats["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0
+    local crit = stats["ITEM_MOD_CRIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_CRIT_MELEE_RATING_SHORT"] or 0
+    local haste = stats["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HASTE_MELEE_RATING_SHORT"] or 0
+    
+    local caps = { MeleeHit=142, SpellHit=202, Def=140, Exp=103, CritGoal=660, HasteGoal=315 }
+
+    if class == "WARRIOR" or class == "PALADIN" or class == "DRUID" then
+        if (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 1 then
+             table.insert(rings, { l="Def Cap", v=def, m=caps.Def })
+             table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit })
+             table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
+        else
+             table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit })
+             table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal })
+             table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
+        end
+    elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" or class == "SHAMAN" then
+        table.insert(rings, { l="Spell Hit", v=hit, m=caps.SpellHit })
+        table.insert(rings, { l="Spell Crit", v=crit, m=caps.CritGoal })
+        table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
+    else
+        table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit })
+        table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal })
+        table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
+    end
+    return rings
+end
+
+-- [[ 4. INIT & UPDATE ]]
 function MSC.InitLogicView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
@@ -449,35 +544,32 @@ end
 function MSC.UpdateLogic()
     if not MSC.ViewLogic or not MSC.ViewLogic:IsShown() then return end
     local content = MSC.ViewLogic.Content
-    if content.children then for _, c in ipairs(content.children) do c:Hide() end end
+    
+    if content.children then for _, c in ipairs(content.children) do c:Hide(); c:SetParent(nil) end end
     content.children = {}
     
     local weights, detectedKey = MSC.GetCurrentWeights()
     local _, class = UnitClass("player")
-    local yOff = -10
-    
-    local function AddText(t, isHeader)
-        local fs = content:CreateFontString(nil, "OVERLAY", isHeader and "GameFontNormalLarge" or "GameFontHighlight")
-        fs:SetPoint("TOPLEFT", 10, yOff); fs:SetText(t); if isHeader then fs:SetTextColor(1, 0.82, 0) end
-        yOff = yOff - 20; table.insert(content.children, fs)
-    end
-    
-    AddText("Stat Caps", true)
     local currentGear = MSC:GetEquippedGear()
     local _, stats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
-    local hit = stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HIT_RATING_SHORT"] or 0
-    if hit > 0 then
-        local cap = (class == "WARLOCK" or class == "MAGE") and 202 or 142
-        local pct = math.min(100, (hit / cap) * 100)
-        local bar = CreateFrame("StatusBar", nil, content, "BackdropTemplate")
-        bar:SetSize(300, 16); bar:SetPoint("TOPLEFT", 10, yOff); bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"}); bar:SetBackdropColor(0.2,0.2,0.2,1)
-        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar"); bar:SetMinMaxValues(0, 100); bar:SetValue(pct)
-        if pct >= 100 then bar:SetStatusBarColor(0,1,0) elseif pct > 80 then bar:SetStatusBarColor(1,1,0) else bar:SetStatusBarColor(1,0,0) end
-        local txt = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline"); txt:SetPoint("CENTER"); txt:SetText("Hit Rating: " .. hit .. " / " .. cap .. " ("..string.format("%.0f", pct).."%)")
-        yOff = yOff - 25; table.insert(content.children, bar)
-    end
     
-    AddText("Stat Priority (Weights)", true)
+    -- [[ RENDER RINGS ]]
+    local rings = GetClassRings(class, stats, weights)
+    local startX = 60
+    for i, ring in ipairs(rings) do
+        local xPos = startX + ((i-1) * 140)
+        table.insert(content.children, (CreateStatRing(content, xPos, -20, 75, ring.l, ring.v, ring.m)))
+    end
+
+    local yOff = -130 
+    
+    -- [[ RENDER PRIORITY LIST ]]
+    local header = content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    header:SetPoint("TOPLEFT", 15, yOff); header:SetText("Stat Priority Weights"); header:SetTextColor(1, 0.82, 0)
+    table.insert(content.children, header)
+    
+    yOff = yOff - 35
+    
     local maxW = 0; local sorted = {}
     for k, v in pairs(weights) do if v > 0 then table.insert(sorted, {k=k, v=v}); if v > maxW then maxW = v end end end
     table.sort(sorted, function(a,b) return a.v > b.v end)
@@ -485,18 +577,30 @@ function MSC.UpdateLogic()
     for _, s in ipairs(sorted) do
         local name = MSC.GetCleanStatName(s.k)
         local reason = GetStatReason(s.k, class, detectedKey)
+        
         local bar = CreateFrame("StatusBar", nil, content, "BackdropTemplate")
-        bar:SetSize(300, 24); bar:SetPoint("TOPLEFT", 10, yOff); bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"}); bar:SetBackdropColor(0.1,0.1,0.1,0.5)
-        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar"); bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v); bar:SetStatusBarColor(0.0, 0.7, 1.0, 0.8)
-        local leftT = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); leftT:SetPoint("LEFT", 5, 0); leftT:SetText(name:gsub("Rating", ""))
-        local rightT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); rightT:SetPoint("RIGHT", -5, 0); rightT:SetText(string.format("%.2f", s.v))
-        if reason then local sub = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); sub:SetPoint("LEFT", leftT, "RIGHT", 5, 0); sub:SetText("("..reason..")"); sub:SetTextColor(0.6, 0.6, 0.6) end
-        yOff = yOff - 28; table.insert(content.children, bar)
+        bar:SetSize(450, 32); bar:SetPoint("TOPLEFT", 15, yOff)
+        bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"}); bar:SetBackdropColor(0, 0, 0, 0.5)
+        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar"); bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v)
+        bar:SetStatusBarColor(0.0, 0.7, 1.0, 0.5)
+        
+        local leftT = bar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        leftT:SetPoint("TOPLEFT", 10, -4); leftT:SetText(name:gsub("Rating", ""))
+        
+        local rightT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        rightT:SetPoint("TOPRIGHT", -10, -4); rightT:SetText(string.format("%.2f", s.v))
+        
+        if reason then 
+            local sub = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            sub:SetPoint("BOTTOMLEFT", 10, 4); sub:SetText(reason); sub:SetTextColor(0.6, 0.6, 0.6) 
+        end
+        
+        yOff = yOff - 38; table.insert(content.children, bar)
     end
     content:SetHeight(math.abs(yOff) + 50)
 end
 
--- [[ VIEW 4: SETTINGS ]]
+-- [[ VIEW 4: SETTINGS
 function MSC.InitSettingsView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     local function CreateHeader(text, relTo, yOff)
@@ -515,10 +619,20 @@ function MSC.InitSettingsView(parent)
         UIDropDownMenu_SetText(dd, currentText); if key == "Mode" then f.ProfileDD = dd end
         return frame
     end
-    
+    local function CreateCheck(label, key, tooltip, relTo, xOff, yOff)
+        local cb = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff); cb.Text:SetText(label); cb.Text:SetTextColor(0.9, 0.9, 0.9); cb:SetChecked(SGJ_Settings[key])
+        cb:SetScript("OnClick", function(self) SGJ_Settings[key] = self:GetChecked(); if key == "HideMinimap" then MSC.UpdateMinimapPosition() end end)
+        if tooltip then cb:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tooltip, nil, nil, nil, nil, true); GameTooltip:Show() end); cb:SetScript("OnLeave", GameTooltip_Hide) end
+        return cb
+    end
+
+    -- 1. Comparison Logic
     local h1 = CreateHeader("Comparison Logic", nil, 0)
     local ddEnchant = CreateDropdown("Enchant Mode", "EnchantMode", {{ text = "Off (Raw Stats)", val = 1 }, { text = "Current Only (Equipped)", val = 2 }, { text = "Project Best (Simulator)", val = 3 }}, h1, -10)
-    local h2 = CreateHeader("Character Profile", ddEnchant, -20)
+    local ddGem = CreateDropdown("Gemming Logic", "GemMode", {{ text = "The Skeptic (As Is)", val = 1 }, { text = "The Casual (Fill Empty)", val = 2 }, { text = "The Pro (Perfect Setup)", val = 3 }}, ddEnchant, -5)
+
+    -- 2. Character Profile
+    local h2 = CreateHeader("Character Profile", ddGem, -20)
     local specOptions = { { text = "Auto-Detect", val = "AUTO" } }; local seen = { ["AUTO"] = true }
     if MSC.CurrentClass then
         local function AddList(listSource)
@@ -529,12 +643,21 @@ function MSC.InitSettingsView(parent)
         AddList(MSC.CurrentClass.Weights); AddList(MSC.CurrentClass.LevelingWeights); AddList(MSC.CurrentClass.Profiles)
     end
     local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10)
-    MSC.ViewSettings = f
     
+    -- 3. Interface Options
+    local h3 = CreateHeader("Interface Options", ddProfile, -20)
+    local cb1 = CreateCheck("Hide Minimap Button", "HideMinimap", "Hides the circular button on your minimap.", h3, 0, -10)
+    local cb2 = CreateCheck("Hide Tooltip Verdict", "HideTooltips", "Stops the addon from adding scores to item tooltips.", cb1, 0, -5)
+    local cb3 = CreateCheck("Mute Error Sounds", "MuteSounds", "Stops the error sound when clicking invalid items.", cb2, 0, -5)
+    local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", cb3, 0, -5)
+
+    -- 4. Utility Buttons
     local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40); bImp:SetText("Import Pawn String")
     bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
     local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40); bExport:SetText("Export Data")
     bExport:SetScript("OnClick", function() MSC.ShowHistory() end)
+    
+    MSC.ViewSettings = f
 end
 
 -- =============================================================
