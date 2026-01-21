@@ -96,177 +96,210 @@ Warrior.LevelingWeights = {}
 -- DYNAMIC LEVELING BRACKETS
 -- =============================================================
 Warrior.LevelingBrackets = {
-    ["Leveling_1_20"] = {
+["Leveling_1_20"] = {
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 0.0,
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 1.0, -- NERFED from 4.0 to prevent bad suggestions
-            ["ITEM_MOD_SPIRIT_SHORT"] = 2.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1, ["ITEM_MOD_AGILITY_SHORT"] = 0.5,
+            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, -- Buffed (King)
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, -- BUFFED: High scaling at low lvl (Crit/Dodge/Armor)
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.2, -- Nerfed below Str
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, -- Nerfed. You don't need much HP in Durotar/Elwynn.
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.1, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 0.2,
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, ["ITEM_MOD_SPIRIT_SHORT"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1, ["ITEM_MOD_AGILITY_SHORT"] = 1.0,
+            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.4, -- Still very strong
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.1, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_2H_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, ["ITEM_MOD_SPIRIT_SHORT"] = 1.5,
+            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 1.5, -- Ramping for WW (Lvl 36)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 2.0, -- Lowered speed priority slightly
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["MSC_WEAPON_DPS"] = 13.0, ["MSC_WEAPON_SPEED"] = 2.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
-    ["Leveling_2H_41_51"] = {
+    ["Leveling_2H_41_51"] = { -- The Mortal Strike Era
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 2.0,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.4, ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["MSC_WEAPON_DPS"] = 13.0, ["MSC_WEAPON_SPEED"] = 2.5, -- JUMP: MS unlocked. Fast weapons are now bad.
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 2.2,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["MSC_WEAPON_DPS"] = 14.0, ["MSC_WEAPON_SPEED"] = 2.8,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_2H_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 2.2,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0,
+            ["MSC_WEAPON_DPS"] = 14.0, ["MSC_WEAPON_SPEED"] = 2.8, -- Fixed logic dip
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.4, ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 2.0,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
+            ["MSC_WEAPON_DPS"] = 15.0, ["MSC_WEAPON_SPEED"] = 3.0, -- Preparing for Outland
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, ["ITEM_MOD_STAMINA_SHORT"] = 1.8,
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.6,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.3,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_2H_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 2.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2,
+            ["MSC_WEAPON_DPS"] = 15.0, ["MSC_WEAPON_SPEED"] = 3.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 2.0,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 15.0, ["MSC_WEAPON_SPEED"] = 2.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5,
+            ["MSC_WEAPON_DPS"] = 16.0, ["MSC_WEAPON_SPEED"] = 3.5, -- BUFFED: Slow weapons are critical for Arms
+            ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, -- BUFFED: Better ratio vs Weapon DPS (1 DPS ~= 4 Str)
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.8,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, -- NERFED: Kill speed > Survival
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
-    },      
-    ["Leveling_DW_21_40"] = {
+    },     
+["Leveling_DW_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 1.5,
+            ["MSC_WEAPON_DPS"] = 10.0, 
+            ["MSC_WEAPON_SPEED"] = 1.0,     -- Likes Slow MH slightly
+            ["MSC_OH_WEAPON_SPEED"] = -1.0, -- Likes FAST OH (Negative weight favors lower numbers)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 1.0,
+            ["MSC_WEAPON_DPS"] = 11.0, 
+            ["MSC_WEAPON_SPEED"] = 1.2, 
+            ["MSC_OH_WEAPON_SPEED"] = -1.2,
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_DW_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
+            ["MSC_WEAPON_DPS"] = 11.0, 
+            ["MSC_WEAPON_SPEED"] = 1.5,     -- MH Priority increases (Whirlwind)
+            ["MSC_OH_WEAPON_SPEED"] = -1.5, -- OH Priority increases (Flurry/Rage)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
+            ["MSC_WEAPON_DPS"] = 12.0, 
+            ["MSC_WEAPON_SPEED"] = 1.8, 
+            ["MSC_OH_WEAPON_SPEED"] = -1.8, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.6,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_DW_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 1.2,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
+            ["MSC_WEAPON_DPS"] = 12.0, 
+            ["MSC_WEAPON_SPEED"] = 2.0, 
+            ["MSC_OH_WEAPON_SPEED"] = -2.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.4, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.4, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.2,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, ["ITEM_MOD_AGILITY_SHORT"] = 1.6,
+            ["MSC_WEAPON_DPS"] = 13.0, 
+            ["MSC_WEAPON_SPEED"] = 2.2, 
+            ["MSC_OH_WEAPON_SPEED"] = -2.2,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.6, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.2,
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_DW_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.4, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0, ["ITEM_MOD_STAMINA_SHORT"] = 2.0,
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
+            ["MSC_WEAPON_DPS"] = 14.0, 
+            ["MSC_WEAPON_SPEED"] = 2.5, 
+            ["MSC_OH_WEAPON_SPEED"] = -2.5,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.8, ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.5, ["ITEM_MOD_STAMINA_SHORT"] = 2.2,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 15.0, ["MSC_WEAPON_SPEED"] = 1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.2, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
+            ["MSC_WEAPON_DPS"] = 15.0, 
+            ["MSC_WEAPON_SPEED"] = 3.0,     -- Heavy pref for Slow MH
+            ["MSC_OH_WEAPON_SPEED"] = -3.0, -- Heavy pref for Fast OH
+            ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.5, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.0,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_Tank_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 8.0, ["MSC_WEAPON_SPEED"] = 0.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 2.5, ["ITEM_MOD_STRENGTH_SHORT"] = 1.5,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.0,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.5,
+            ["MSC_WEAPON_DPS"] = 8.0, 
+            ["MSC_WEAPON_SPEED"] = -1.0, -- Prefer Fast for Rage/Heroic Strike
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, -- Buffed slightly (Survival is key)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.8, -- Buffed (Threat)
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, -- Good mitigation
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.0, -- Start valuing this early
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 6.0, ["MSC_WEAPON_SPEED"] = -1.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
+            ["MSC_WEAPON_DPS"] = 8.0, 
+            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, -- Shield Slam unlocked (Lvl 40)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
@@ -274,51 +307,64 @@ Warrior.LevelingBrackets = {
     ["Leveling_Tank_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 5.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.8,
+            ["MSC_WEAPON_DPS"] = 8.0, -- 5.0 is too low for soloing. 8.0 is a safer balance.
+            ["MSC_WEAPON_SPEED"] = -1.5, -- Added: Fast weapons still king for HS queueing
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.8,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, -- Kept relevant for AP/BlockValue
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, -- Added back
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 5.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
+            ["MSC_WEAPON_DPS"] = 9.0,
+            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 4.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.2,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_Tank_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 5.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.0,
+            ["MSC_WEAPON_DPS"] = 9.0,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- Keep speed relevant
+            ["ITEM_MOD_STAMINA_SHORT"] = 4.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 5.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 3.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5,
+            ["MSC_WEAPON_DPS"] = 10.0,
+            ["MSC_WEAPON_SPEED"] = 0.0, -- Begin normalizing speed as we approach Devastate 5-stack era
+            ["ITEM_MOD_STAMINA_SHORT"] = 4.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.8, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
     ["Leveling_Tank_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 8.0, ["MSC_WEAPON_SPEED"] = 0.0,
-            ["ITEM_MOD_STAMINA_SHORT"] = 4.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.2, 
+            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 0.0, -- Speed neutral (Devastate)
+            ["ITEM_MOD_STAMINA_SHORT"] = 5.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, -- Resilience works for Crit Cap in TBC Dungeons
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, ["ITEM_MOD_STAMINA_SHORT"] = 4.5,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 4.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5,
+            ["MSC_WEAPON_DPS"] = 14.0, ["ITEM_MOD_STAMINA_SHORT"] = 6.0,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 4.0, -- Push for Cap (490)
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5, -- Parry Haste death is real in Heroics
             ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.5, ["ITEM_MOD_PARRY_RATING_SHORT"] = 2.5,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     }
@@ -369,7 +415,7 @@ function Warrior:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
-    if level >= 60 then
+    if level == 70 then
         if Rank("DEVASTATE") > 0 or Rank("SHIELD_SLAM") > 0 then return "DEEP_PROT" end
         if Rank("RAMPAGE") > 0 or Rank("BLOODTHIRST") > 0 then return "FURY_DW" end
         if Rank("MORTAL_STRIKE") > 0 then
@@ -440,11 +486,20 @@ function Warrior:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- [[ OFFHAND FIX ]]
-    -- Don't completely nuke OH value for 2H specs, just lower it significantly 
-    -- so players can still see if an item is "Good for DW switch"
+    -- [[ OFFHAND & FURY HANDLING ]]
     if currentSpec and (currentSpec:find("ARMS") or currentSpec:find("2H")) then
-        weights["MSC_WEAPON_DPS_OH"] = 0.5 -- Was 0. Now allows comparison.
+        -- 2H Spec looking at 1H weapons
+        weights["MSC_WEAPON_DPS_OH"] = 0.5 
+    elseif currentSpec and (currentSpec:find("FURY") or currentSpec:find("DW")) then
+        -- Fury/DW Spec
+        weights["MSC_WEAPON_DPS_OH"] = 0.625 -- 50% Base + 25% Talent = 62.5% effective DPS
+        
+        -- [[ SPEED TRICK INJECTION ]]
+        -- If we haven't defined a specific OH Speed weight, create one by inverting MH speed.
+        -- This ensures Fast OH is preferred even if the bracket doesn't have the key.
+        if not weights["MSC_OH_WEAPON_SPEED"] and weights["MSC_WEAPON_SPEED"] then
+            weights["MSC_OH_WEAPON_SPEED"] = -1 * math.abs(weights["MSC_WEAPON_SPEED"])
+        end
     end
 
     if weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then

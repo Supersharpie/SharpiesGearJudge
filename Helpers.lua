@@ -208,7 +208,7 @@ local Scratch_ProjectedIDs = {}
 local Scratch_ProjectedColors = { RED=0, YELLOW=0, BLUE=0 }
 
 MSC.StatShortNames = {
-    ["MSC_WAND_DPS"] = "Wand DPS", ["MSC_WEAPON_DPS"] = "Weapon DPS", ["MSC_WEAPON_SPEED"] = "Speed",
+    ["MSC_WAND_DPS"] = "Wand DPS", ["MSC_WEAPON_DPS"] = "Weapon DPS", ["MSC_WEAPON_SPEED"] = "Speed", ["MSC_OH_WEAPON_SPEED"] = "OH Speed",
     ["ITEM_MOD_STAMINA_SHORT"] = "Stam", ["ITEM_MOD_INTELLECT_SHORT"] = "Int",
     ["ITEM_MOD_AGILITY_SHORT"] = "Agi", ["ITEM_MOD_STRENGTH_SHORT"] = "Str",
     ["ITEM_MOD_SPIRIT_SHORT"] = "Spt", ["ITEM_MOD_SPELL_POWER_SHORT"] = "SP",
@@ -880,9 +880,17 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
     for stat, val in pairs(stats) do
         local weightKey = stat
         
+        -- [[ EXISTING LOGIC: Swap DPS key for Offhand ]]
         if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
             if weights["MSC_WEAPON_DPS_OH"] then 
                 weightKey = "MSC_WEAPON_DPS_OH" 
+            end
+        end
+
+        -- [[ NEW LOGIC: Swap SPEED key for Offhand ]]
+        if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
+            if weights["MSC_OH_WEAPON_SPEED"] then
+                weightKey = "MSC_OH_WEAPON_SPEED"
             end
         end
         
