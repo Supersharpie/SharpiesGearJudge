@@ -535,17 +535,17 @@ function Paladin:GetSpec()
     local role = "Leveling_Ret" -- Default
     
     if Rank("HOLY_SHIELD") > 0 or Rank("AVENGERS_SHIELD") > 0 then 
-        role = "Leveling_Prot_AOE" -- Changed to match your keys
+        role = "Leveling_PROT_AOE" -- Changed to match your keys
     elseif Rank("DIVINE_ILLUM") > 0 or Rank("HOLY_SHOCK") > 0 then 
-        role = "Leveling_Holy_Dungeon"
+        role = "Leveling_HOLY_DUNGEON"
     else
         -- Fallback: Check Point Distribution
         local holyPts = GetNumTalentPoints(1)
         local protPts = GetNumTalentPoints(2)
         local retPts  = GetNumTalentPoints(3)
         
-        if protPts > (holyPts + retPts) then role = "Leveling_Prot_Dungeon"
-        elseif holyPts > (protPts + retPts) then role = "Leveling_Holy_Dungeon"
+        if protPts > (holyPts + retPts) then role = "Leveling_PROT_DUNGEON"
+        elseif holyPts > (protPts + retPts) then role = "Leveling_HOLY_DUNGEON"
         end
     end
 
@@ -558,7 +558,7 @@ function Paladin:GetSpec()
     if Paladin.LevelingWeights[specificKey] then return specificKey end
     if Paladin.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix end
 
-    return "Leveling_Ret" .. suffix
+    return "Leveling_RET" .. suffix
 end
 
 function Paladin:GetDynamicWeights()
