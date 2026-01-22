@@ -91,120 +91,220 @@ Hunter.LevelingWeights = {}
 -- =============================================================
 Hunter.LevelingBrackets = {
     -- [[ 1. STANDARD RANGED (1-20) ]]
+    -- Pre-Viper. Spirit is okay for regen.
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=1.0, -- Slow Bows preferred
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2, -- Good before Lvl 20
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
-        }
-    },
-    -- [[ 2. STANDARD RANGED (21-40) ]]
-    ["Leveling_21_40"] = { 
-        min = 21, max = 40,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0
-        }
-    },
-    -- [[ 3. STANDARD RANGED (41-51) ]]
-    ["Leveling_41_51"] = { 
-        min = 41, max = 51,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.3
-        }
-    },
-    -- [[ 4. STANDARD RANGED (52-59) ]]
-    ["Leveling_52_59"] = { 
-        min = 52, max = 59,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=1.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0
-        }
-    },
-    -- [[ 5. STANDARD RANGED (60-70) ]]
-    ["Leveling_60_70"] = { 
-        min = 60, max = 70,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.6, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.4
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=0.4
+            ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=1.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
         }
     },
     
-    -- [[ MELEE SURVIVAL BRACKETS ]]
+    -- [[ 2. STANDARD RANGED (21-40) ]]
+    -- Aspect of the Viper (Lvl 20): Int now provides Mana Regen. Spirit value drops.
+    ["Leveling_21_40"] = { 
+        min = 21, max = 40,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, -- Buffed: Viper Regen
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+        }
+    },
+    
+    -- [[ 3. BEAST MASTERY / MARKSMANSHIP (41-70) ]]
+    ["Leveling_41_51"] = { 
+        min = 41, max = 51,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=8.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+        }
+    },
+    ["Leveling_52_59"] = { 
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=9.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+        }
+    },
+    ["Leveling_60_70"] = { 
+        min = 60, max = 70,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=3.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=10.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, -- Larger mana pool for rotations
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=1.5 
+        }
+    },
+	-- [[ MELEE HUNTER (The "Drizzt" Build) ]]
+    -- Triggered ONLY if they take "Savage Strikes" talent.
+    -- Focus: Slow 2H Weapon, Agility (Crit/Dodge/Armor), Strength (Melee AP), Stamina.
     ["Leveling_Melee_21_40"] = { 
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=4.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=5.0, -- Melee Weapon DPS is King here
+            ["MSC_WEAPON_SPEED"]=2.0, -- Slow 2H for big Raptor Strikes
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0, -- Crit + Dodge + Armor + 1 RAP (Hybrid)
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, -- 1 Str = 1 Melee AP
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, -- You are in melee range, you need HP
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.0 -- Useful for Mongoose Bite proc
         }
     },
     ["Leveling_Melee_41_51"] = { 
         min = 41, max = 51,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5
-        },
+        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2 },
         End = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.4, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5
+            ["MSC_WEAPON_DPS"]=7.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, -- Mongoose Bite fuel
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0 
         }
     },
     ["Leveling_Melee_52_59"] = { 
         min = 52, max = 59,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2
-        },
+        Start = { ["MSC_WEAPON_DPS"]=7.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
         End = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.8
+            ["MSC_WEAPON_DPS"]=8.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.2 
         }
     },
     ["Leveling_Melee_60_70"] = { 
         min = 60, max = 70,
+        Start = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
+        End = { 
+            ["MSC_WEAPON_DPS"]=10.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
+        }
+    },
+    
+-- [[ SURVIVAL (Ranged Stat Stick Build) ]]
+    -- Focus: Massive Agility (Expose Weakness), Stamina (Survivalist), and Intellect (Efficiency).
+    ["Leveling_Survival_21_40"] = { 
+        min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.8
+            ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
+            ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.2,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 
+        }
+    },
+    ["Leveling_Survival_41_51"] = { 
+        min = 41, max = 51,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=8.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0 
+        }
+    },
+    ["Leveling_Survival_52_59"] = { 
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=2.5,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=9.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=3.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+        }
+    },
+    ["Leveling_Survival_60_70"] = { 
+        min = 60, max = 70,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=2.8,
+            ["ITEM_MOD_AGILITY_SHORT"]=3.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=3.0,
+            ["ITEM_MOD_AGILITY_SHORT"]=4.0, -- Massive bias for Expose Weakness
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
         }
     },
 }
-
 -- =============================================================
 -- CLASS METADATA
 -- =============================================================
@@ -226,6 +326,11 @@ Hunter.PrettyNames = {
     ["Leveling_Melee_41_51"] = "Survival Melee (41-51)",
     ["Leveling_Melee_52_59"] = "Survival Melee (52-59)",
     ["Leveling_Melee_60_70"] = "Survival Melee (Outland)",
+	
+	["Leveling_Survival_21_40"] = "Survival Leveling (21-40)",
+    ["Leveling_Survival_41_51"] = "Survival Leveling (41-51)",
+    ["Leveling_Survival_52_59"] = "Survival Leveling (52-59)",
+    ["Leveling_Survival_60_70"] = "Survival Leveling (Outland)",
 }
 
 Hunter.SpeedChecks = { 
@@ -256,6 +361,7 @@ Hunter.Talents = {
     ["READYNESS"]="Readiness", 
     ["EXPOSE_WEAKNESS"]="Expose Weakness", 
     ["CAREFUL_AIM"]="Careful Aim", 
+	["SAVAGE_STRIKES"] = "Savage Strikes",
     ["SURVIVAL_INST"]="Survival Instincts" 
 }
 
@@ -321,66 +427,80 @@ function Hunter:GetDynamicWeights()
     return nil, specKey
 end
 
+function Hunter:GetSpec()
+    local function Rank(k) return MSC:GetTalentRank(k) end
+    local level = UnitLevel("player")
+    
+    -- [[ ENDGAME DETECTION ]]
+    if level >= 60 then
+        if Rank("BEAST_WITHIN") > 0 or Rank("BESTIAL_WRATH") > 0 then return "RAID_BM" end
+        if Rank("EXPOSE_WEAKNESS") > 0 then return "RAID_SURV" end -- Simplified
+        if Rank("TRUESHOT_AURA") > 0 then return "RAID_MM" end
+        return "RAID_BM"
+    end
+
+    -- [[ LEVELING BRACKET CALCULATION ]]
+    local suffix = ""
+    if level <= 20 then suffix = "_1_20"
+    elseif level <= 40 then suffix = "_21_40"
+    elseif level < 52 then suffix = "_41_51"
+    elseif level < 60 then suffix = "_52_59" 
+    else suffix = "_60_70" end
+
+	local role = "Leveling"   
+    -- 1. Check for Intentional Melee Build (Savage Strikes)
+    if Rank("SAVAGE_STRIKES") > 0 then
+        role = "Leveling_Melee"
+    -- 2. Check for Standard Ranged Survival (Expose Weakness / Surv Instincts)
+    elseif Rank("SURVIVAL_INST") > 0 or Rank("EXPOSE_WEAKNESS") > 0 then 
+        role = "Leveling_Survival" 
+        if level > 40 then suffix = "_41_70" end
+    end 
+
+    local specificKey = role .. suffix
+    if Hunter.LevelingBrackets and Hunter.LevelingBrackets[specificKey] then return specificKey end
+    return "Leveling" .. suffix
+end
+
 function Hunter:ApplyScalers(weights, currentSpec)
-    -- [[ SAFETY COPY ]]
     local w = {}
     for k, v in pairs(weights) do w[k] = v end
-
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     
-    -- [[ 0. ARPEN SCALING ]]
-    if w["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
-        local arPen = GetCombatRating(25)
-        if arPen > 100 then
-            local scaler = 1 + (arPen / 1000)
-            if scaler > 1.4 then scaler = 1.4 end
-            w["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = w["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] * scaler
-        end
+    -- [[ 1. CAREFUL AIM (Int -> RAP) ]]
+    local rCare = Rank("CAREFUL_AIM")
+    if rCare > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
+        -- Careful Aim: 1 Int = 1 RAP. 
+        -- If AP weight is 1.0, Int gets +1.0 value.
+        local apWeight = w["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0
+        local conversionRatio = rCare * 0.33 -- 33%, 66%, 100%
+        w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + (conversionRatio * apWeight)
     end
     
-    -- [[ 1. EXISTING SCALERS ]]
-    -- Expose Weakness (Agi Scaling)
+    -- [[ 2. EXPOSE WEAKNESS (Agi Scaling) ]]
     if Rank("EXPOSE_WEAKNESS") > 0 and w["ITEM_MOD_AGILITY_SHORT"] then 
         w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * 1.2 
     end
-    
-    -- Careful Aim (Int -> RAP)
-    local rCare = Rank("CAREFUL_AIM")
-    if rCare > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
-        -- 1 Int gives 1 RAP (approx value for this calculation)
-        w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + 0.45
-    end
-    
-    -- [[ 2. COVARIANCE (Crit scales with AP) ]]
-    if w["ITEM_MOD_CRIT_RATING_SHORT"] then
-        local base, pos, neg = UnitAttackPower("player")
-        local totalAP = base + pos + neg
-        
-        if totalAP > 1000 then
-            local apScaler = 1 + ((totalAP - 1000) / 20000)
-            if apScaler > 1.15 then apScaler = 1.15 end
-            w["ITEM_MOD_CRIT_RATING_SHORT"] = w["ITEM_MOD_CRIT_RATING_SHORT"] * apScaler
-        end
-    end
 
-    -- [[ 3. HIT CAP (Uses Ranged Hit 7, not Melee 6) ]]
+    -- [[ 3. HIT CAP (Uses Ranged Hit) ]]
     if w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        -- FIX: GetCombatRating(7) is Ranged Hit.
-        local hitRating = GetCombatRating(7) 
-        local baseCap = 142 -- 9%
+        local hitRating = GetCombatRating(7) -- Ranged Hit
         
-        -- Surefooted (Survival): 1% Hit per rank
+        -- Leveling Cap: 5% (~79 Rating)
+        -- Raid Cap: 9% (~142 Rating)
+        local baseCap = 142 
+        if currentSpec:find("Leveling") then baseCap = 79 end
+        
         local talentBonus = Rank("SUREFOOTED") * 15.8 
         local finalCap = baseCap - talentBonus
         
-        -- Check Draenei Racial
         local _, race = UnitRace("player")
-        if race == "Draenei" then finalCap = finalCap - 15.8 end
+        if race == "Draenei" then finalCap = finalCap - 15.8 end -- Heroic Presence applies to self
+        if race == "Troll" and IsEquippedItemType("Bow") then finalCap = finalCap - 15.8 end -- Bow Spec (Hidden hit bonus)
         
         if finalCap < 0 then finalCap = 0 end
 
-        -- Hysteresis Buffer
         if hitRating >= (finalCap + 15) then
             w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
             table.insert(activeCaps, "Hit")

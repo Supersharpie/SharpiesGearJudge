@@ -272,7 +272,8 @@ Rogue.Talents = {
     ["FIST_SPEC"]       = "Fist Weapon Specialization",
     ["SWORD_SPEC"]      = "Sword Specialization",
     ["MACE_SPEC"]       = "Mace Specialization",
-    ["WEAPON_EXPERTISE"]= "Weapon Expertise" 
+    ["WEAPON_EXPERTISE"]= "Weapon Expertise",
+	["DUAL_WIELD_SPEC"] = "Dual Wield Specialization"	
 }
 
 -- =============================================================
@@ -283,7 +284,7 @@ function Rogue:GetSpec()
     local level = UnitLevel("player")
     
     -- [[ ENDGAME DETECTION ]]
-    if level >= 60 then
+    if level == 70 then
         if Rank("SHADOWSTEP") > 0 or Rank("CHEAT_DEATH") > 0 then return "PVP_SUBTLETY" end
         if Rank("HEMORRHAGE") > 0 and Rank("ADRENALINE_RUSH") == 0 then return "PVP_SUBTLETY" end
         if Rank("MUTILATE") > 0 then return "RAID_MUTILATE" end

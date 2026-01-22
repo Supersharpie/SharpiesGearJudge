@@ -111,167 +111,250 @@ Druid.LevelingBrackets = {
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.8,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"]=0.0, -- Useless
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, -- 2 AP
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, -- 1 AP + Crit + Dodge (Buffed from 1.0)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.8
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5
         }
     },
+    
     -- [[ FERAL CAT LEVELING ]]
+    -- Focus: Str (Raw AP) > Agi (Crit/AP). 
+    -- Feral AP appears on weapons in Outland.
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8 -- Omen of Clarity helps mana issues
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=1.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         }
     },
     ["Leveling_41_51"] = { 
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=1.4, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2
         }
     },
     ["Leveling_52_59"] = { 
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5
         }
     },
     ["Leveling_60_70"] = { 
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, -- Crucial for Outland Weapons
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, -- 1 Str = 2 AP
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0 
         }
     },
     
     -- [[ FERAL BEAR LEVELING ]]
+    -- Agility Buffed: It gives Armor/Dodge/Crit/AP. It is better than Str for Tanks.
     ["Leveling_Bear_21_40"] = { 
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, -- Bonus Armor is HUGE
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.2, -- Buffed from 0.8
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5, -- Agi > Str
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2 
         }
     },
     ["Leveling_Bear_41_51"] = { 
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.8, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5
         }
     },
     ["Leveling_Bear_52_59"] = { 
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.8,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_ARMOR_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5
         }
     },
     ["Leveling_Bear_60_70"] = { 
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.2 
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=4.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=2.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.5, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 
         }
     },
     
     -- [[ BOOMKIN LEVELING ]]
+    -- Int is King (Lunar Guidance + Dreamstate).
     ["Leveling_Caster_41_51"] = { 
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, -- Buffed for Lunar Guidance
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.2
         }
     },
     ["Leveling_Caster_52_59"] = { 
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2
         }
     },
     ["Leveling_Caster_60_70"] = { 
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.5, -- Int is massive for Boomkin sustain/dmg
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
         }
     },
     
-    -- [[ HEALER LEVELING ]]
+    -- [[ HEALER LEVELING (Dungeon Spam) ]]
+    ["Leveling_Healer_21_40"] = { 
+        min = 21, max = 40,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, -- Mana Pool is vital early
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, -- High regen
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, -- "of Healing" greens start appearing
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 
+        }
+    },
+    ["Leveling_Healer_41_51"] = { 
+        min = 41, max = 51,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 
+        }
+    },
     ["Leveling_Healer_52_59"] = { 
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.0, -- Spirit > Mp5 for Druids (Tree/Intensity)
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5
         }
     },
     ["Leveling_Healer_60_70"] = { 
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=3.0, -- Tree of Life Aura makes Spirit God Tier
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.2
         }
     },
 }
@@ -301,7 +384,9 @@ Druid.PrettyNames = {
     ["Leveling_Caster_41_51"] = "Balance (41-51)",
     ["Leveling_Caster_52_59"] = "Balance (52-59)",
     ["Leveling_Caster_60_70"] = "Balance (Outland)",
-    
+	
+	["Leveling_Healer_21_40"] = "Resto Dungeon (21-40)",
+    ["Leveling_Healer_41_51"] = "Resto Dungeon (41-51)",
     ["Leveling_Healer_52_59"] = "Resto Dungeon (52-59)",
     ["Leveling_Healer_60_70"] = "Resto Dungeon (Outland)",
 }
@@ -337,7 +422,9 @@ Druid.Talents = {
     ["BALANCE_OF_POWER"] = "Balance of Power",  
     ["THICK_HIDE"]="Thick Hide",
     ["SURVIVAL_OF_FITTEST"] = "Survival of the Fittest",
-    ["FERAL_CHARGE"]="Feral Charge"
+    ["FERAL_CHARGE"]="Feral Charge",
+	["INSECT_SWARM"]="Insect Swarm",
+	["LUNAR_GUIDANCE"]="Lunar Guidance"
 }
 
 -- =============================================================
@@ -369,7 +456,9 @@ function Druid:GetSpec()
     -- Determine Role
     local role = "Leveling" 
     if Rank("MOONKIN_FORM") > 0 then role = "Leveling_Caster"
-    elseif Rank("TREE_OF_LIFE") > 0 then role = "Leveling_Healer"
+    -- FIX: Check for Tree (50+) OR Nature's Swiftness (21+) OR Insect Swarm (21+)
+    elseif Rank("TREE_OF_LIFE") > 0 or Rank("NATURES_SWIFTNESS") > 0 or Rank("INSECT_SWARM") > 0 then 
+        role = "Leveling_Healer"
     elseif Rank("FERAL_CHARGE") > 0 or Rank("THICK_HIDE") >= 3 then role = "Leveling_Bear"
     end 
 
@@ -408,7 +497,7 @@ function Druid:GetDynamicWeights()
 end
 
 function Druid:ApplyScalers(weights, currentSpec)
-    -- [[ SAFETY COPY: PREVENT SAVED VARIABLE CORRUPTION ]]
+    -- [[ SAFETY COPY ]]
     local w = {}
     for k, v in pairs(weights) do w[k] = v end
 
@@ -422,10 +511,19 @@ function Druid:ApplyScalers(weights, currentSpec)
         w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.04)) 
     end
     
-    -- Living Spirit (Spirit)
+    -- Living Spirit (Spirit) - FIX: 5% per rank, not 3%
     local rLiv = Rank("LIVING_SPIRIT")
     if rLiv > 0 and w["ITEM_MOD_SPIRIT_SHORT"] then 
-        w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.03)) 
+        w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.05)) 
+    end
+
+    -- [[ LUNAR GUIDANCE (Int -> SP) ]]
+    local rLunar = Rank("LUNAR_GUIDANCE") -- You need to add this to Druid.Talents!
+    if rLunar > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
+        -- 8/16/25% of Int converted to Spell Damage
+        local ratio = rLunar * 0.083 -- Approx 8.3% per rank
+        local spWeight = w["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0
+        w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + (ratio * spWeight)
     end
 
     -- [[ 2. COVARIANCE (Synergy) ]]

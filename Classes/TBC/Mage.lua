@@ -108,157 +108,123 @@ Mage.LevelingWeights = {}
 -- DYNAMIC LEVELING BRACKETS (The Interpolation System)
 -- =============================================================
 Mage.LevelingBrackets = {
-    -- [[ 1. STANDARD FROST (1-20) ]]
+    -- [[ 1. STANDARD FROST (Single Target) ]]
+    -- Wand DPS is king early.
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"]=2.0, -- Wanding is vital
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, -- Mana > Health for single target
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         }
     },
-    -- [[ 2. STANDARD FROST (21-40) ]]
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8
-        },
+        Start = { ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5
+            ["MSC_WEAPON_DPS"]=0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2 
         }
     },
-    -- [[ 3. STANDARD FROST (41-51) ]]
     ["Leveling_41_51"] = { 
         min = 41, max = 51,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.6, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.6, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.2 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.1
+            ["MSC_WEAPON_DPS"]=0.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
-    -- [[ 4. STANDARD FROST (52-59) ]]
     ["Leveling_52_59"] = { 
         min = 52, max = 59,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
-    -- [[ 5. STANDARD FROST (60-70) ]]
     ["Leveling_60_70"] = { 
         min = 60, max = 70,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, -- Kill speed is defense
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8 -- Shatter Cap makes Crit less valuable
         }
     },
 
     -- [[ 6. FIRE LEVELING ]]
-    ["Leveling_Fire_21_40"] = { 
-        min = 21, max = 40,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=1.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5
-        }
-    },
+    -- Crit is vital for Master of Elements (Mana Sustain).
     ["Leveling_Fire_41_51"] = { 
         min = 41, max = 51,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0
-        }
-    },
-    ["Leveling_Fire_52_59"] = { 
-        min = 52, max = 59,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.5, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- High Crit Priority
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2 
         }
     },
     ["Leveling_Fire_60_70"] = { 
         min = 60, max = 70,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
 
     -- [[ 7. AOE BLIZZARD LEVELING ]]
-    ["Leveling_AoE_21_40"] = { 
-        min = 21, max = 40,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2
-        }
-    },
+    -- Stamina (Don't Die) > Int (Don't OOM) > SP (Kill).
     ["Leveling_AoE_41_51"] = { 
         min = 41, max = 51,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.8 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         }
     },
     ["Leveling_AoE_52_59"] = { 
         min = 52, max = 59,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=2.0 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         }
     },
     ["Leveling_AoE_60_70"] = { 
         min = 60, max = 70,
-        Start = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8
-        },
+        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.5 },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=2.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"]=3.5, -- Effective Health is King
+            ["ITEM_MOD_INTELLECT_SHORT"]=3.0, -- Mana Pool is Queen
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, -- Spell Power is just a nice bonus
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
         }
     },
 }
@@ -399,14 +365,12 @@ function Mage:ApplyScalers(weights, currentSpec)
     local activeCaps = {}
     
     -- [[ 1. MIND MASTERY / ARCANE MIND ]]
-    -- Mind Mastery (Deep Arcane): 25% of Int -> SP (5 ranks, 5% each)
     local rMindMastery = Rank("MIND_MASTERY")
     if rMindMastery > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
         local bonusRatio = rMindMastery * 0.05 
         w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + (bonusRatio * (w["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
     end
 
-    -- Arcane Mind (Arcane Tree): Int +15%
     local rArcaneMind = Rank("ARCANE_MIND")
     if rArcaneMind > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then 
         w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rArcaneMind * 0.03)) 
@@ -414,10 +378,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     
     -- [[ 2. COVARIANCE ]]
     if w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-        -- TBC: GetSpellBonusDamage returns single value per school. Using 2 (Frost) as proxy.
-        local spellPower = GetSpellBonusDamage(2) 
-        
-        -- If Spell Power > 500, boost Crit value up to 15%
+        local spellPower = GetSpellBonusDamage(2) -- Frost
         if spellPower > 500 then
             local spScaler = 1 + ((spellPower - 500) / 2000)
             if spScaler > 1.15 then spScaler = 1.15 end
@@ -425,29 +386,38 @@ function Mage:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- [[ 3. HIT CAP ]]
+    -- [[ 3. HIT CAP (Smart Leveling Detection) ]]
     if w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local spellHitRating = GetCombatRating(8) 
-        local hitCapNeeded = 202 -- 16% (Standard Raid Boss Cap)
         
-        -- Robust Cap Logic: 
-        -- Mages have two hit talents. We simply subtract the larger one active.
-        -- This covers Arcane Leveling or Hybrid builds safely.
-        local arcaneBonus = Rank("ARCANE_FOCUS") * 25.2    -- 2% per rank
-        local frostFireBonus = Rank("ELEMENTAL_PRECISION") * 12.6 -- 1% per rank
+        -- Default to Raid Cap (16% ~ 202 Rating)
+        local hitCapNeeded = 202 
         
-        hitCapNeeded = hitCapNeeded - math.max(arcaneBonus, frostFireBonus)
-        
-        local _, race = UnitRace("player")
-        if race == "Draenei" then hitCapNeeded = hitCapNeeded - 12.6 end
+        -- [[ LEVELING ADJUSTMENT ]]
+        -- If we are in a Leveling bracket, we only need ~6% hit (Level + 2 mobs max)
+        -- 6% Hit * 12.6 Rating = ~76 Rating
+        if currentSpec:find("Leveling") then
+            hitCapNeeded = 76
+        end
         
         -- PvP Adjustment
         if currentSpec:find("PVP") then hitCapNeeded = 50 end -- ~4%
         
+        -- Talent Reductions
+        local arcaneBonus = Rank("ARCANE_FOCUS") * 25.2    -- 2% per rank
+        local frostFireBonus = Rank("ELEMENTAL_PRECISION") * 12.6 -- 1% per rank
+        
+        -- Subtract the best active talent (usually don't have both active for main nuke)
+        hitCapNeeded = hitCapNeeded - math.max(arcaneBonus, frostFireBonus)
+        
+        -- Draenei Racial
+        local _, race = UnitRace("player")
+        if race == "Draenei" then hitCapNeeded = hitCapNeeded - 12.6 end
+        
         if hitCapNeeded < 0 then hitCapNeeded = 0 end
 
         if spellHitRating >= (hitCapNeeded + 15) then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 -- Very low value
+            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
             table.insert(activeCaps, "Hit")
         elseif spellHitRating >= hitCapNeeded then
             w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
