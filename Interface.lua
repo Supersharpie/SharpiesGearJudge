@@ -1,5 +1,5 @@
 local addonName, MSC = ...
-_G.MSC = MSC -- [[ CRITICAL: Expose MSC to Plugins ]]
+_G.MSC = MSC 
 
 -- =============================================================
 -- 0. THEME & COLORS
@@ -10,16 +10,30 @@ MSC.Colors = {
     BarHigh   = {0.0, 0.8, 1.0, 1.0} 
 }
 
--- [[ DATA TABLES ]]
+-- [[ ROLE COLORS (NEON BRIGHT) ]]
+MSC.RoleColors = {
+    TANK   = {r=0.0, g=0.8, b=1.0}, -- Neon Blue
+    HEALER = {r=0.0, g=1.0, b=0.4}, -- Neon Green
+    CASTER = {r=0.8, g=0.4, b=1.0}, -- Neon Purple
+    MELEE  = {r=1.0, g=0.3, b=0.1}, -- Neon Orange
+    DEFAULT= {r=0.0, g=0.9, b=1.0}  -- Cyan
+}
+
 MSC.ReceiptSlots = {} 
 MSC.BagCache = {}
 MSC.BagCacheDirty = true
 MSC.SummaryRows = {} 
 
--- [[ SAFEGUARDS ]]
 if not MSC.GetInspectSpec then function MSC.GetInspectSpec(unit) return "Default" end end
 
--- [[ EVENT LISTENERS ]]
+-- [[ HELPER: Safe Table Copy ]]
+local function CopyTable(src)
+    if not src then return {} end
+    local dest = {}
+    for k, v in pairs(src) do dest[k] = v end
+    return dest
+end
+
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("BAG_UPDATE")
 eventFrame:SetScript("OnEvent", function(self, event, arg1) 
@@ -43,156 +57,109 @@ function MSC.CreateModernBorder(f, thickness)
 end
 
 -- =============================================================
--- 1. THE TAB REGISTRY (Future-Proofing Engine)
+-- 1. TAB REGISTRY
 -- =============================================================
--- Internal Tabs are defined here. 
--- Your external "Builder" plugin will append itself to this list automatically.
 MSC.RegisteredTabs = {
-    -- ID 1 is reserved for your Plugin (if you want it at the top), or we can start with Receipt.
-    { id=1, icon="Interface\\Icons\\INV_Misc_Note_02", name="Receipt", funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
-    { id=2, icon="Interface\\Icons\\Spell_Holy_MindVision", name="Stat Logic", funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
-    { id=3, icon="Interface\\Icons\\INV_Gizmo_02", name="Protocol", funcName="InitSettingsView", view="ViewSettings" }
+    { id=1, icon="Interface\\Icons\\INV_Sword_04", name="The Laboratory", funcName="InitLabView", view="ViewLab", update="UpdateLabCalc" },
+    { id=2, icon="Interface\\Icons\\INV_Misc_Note_02", name="Receipt", funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
+    { id=3, icon="Interface\\Icons\\Spell_Holy_MindVision", name="Stat Logic", funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
+    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name="Protocol", funcName="InitSettingsView", view="ViewSettings" }
 }
 
--- [[ PLUGIN API ]]
--- Call this from any other file to add a tab!
 function MSC.RegisterPluginTab(name, icon, initFunc, viewKey, updateFuncKey)
     local newID = #MSC.RegisteredTabs + 1
     table.insert(MSC.RegisteredTabs, {
-        id = newID,
-        name = name,
-        icon = icon,
-        directFunc = initFunc, -- Pass the function itself
-        view = viewKey,        -- String name of the frame key (e.g. "ViewBuilder")
-        update = updateFuncKey -- String name of update function (optional)
+        id = newID, name = name, icon = icon,
+        directFunc = initFunc, view = viewKey, update = updateFuncKey
     })
-    
-    -- If the window is already open, redraw the buttons immediately
-    if MSC.MainFrame and MSC.MainFrame:IsShown() then 
-        MSC.RenderSidebarButtons() 
-    end
+    if MSC.MainFrame and MSC.MainFrame:IsShown() then MSC.RenderSidebarButtons() end
     return newID
 end
 
 -- =============================================================
--- 2. DYNAMIC SIDEBAR RENDERER
+-- 2. DASHBOARD FRAME
 -- =============================================================
 function MSC.RenderSidebarButtons()
     if not MSC.MainFrame then return end
-    
-    -- Clear existing buttons
     if MSC.NavButtons then for _, btn in ipairs(MSC.NavButtons) do btn:Hide() end end
     MSC.NavButtons = {}
 
-    -- Loop through the Registry and create a button for everything found
     for idx, tab in ipairs(MSC.RegisteredTabs) do
         local btn = CreateFrame("Button", nil, MSC.MainFrame.Sidebar)
         btn:SetSize(50, 50); btn:SetPoint("TOP", 0, -20 - ((idx-1)*65))
-        
         btn.Bg = btn:CreateTexture(nil, "BACKGROUND"); btn.Bg:SetAllPoints(); btn.Bg:SetColorTexture(1, 1, 1, 0.05); btn.Bg:SetAlpha(0)
         btn.Icon = btn:CreateTexture(nil, "ARTWORK"); btn.Icon:SetSize(32, 32); btn.Icon:SetPoint("CENTER"); btn.Icon:SetTexture(tab.icon); btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6)
         btn.SelectBar = btn:CreateTexture(nil, "OVERLAY"); btn.SelectBar:SetColorTexture(0, 0.8, 1, 1); btn.SelectBar:SetSize(4, 50); btn.SelectBar:SetPoint("LEFT", 0, 0); btn.SelectBar:Hide()
-        
         btn:SetScript("OnEnter", function(self) self.Icon:SetVertexColor(1,1,1); self.Bg:SetAlpha(0.1); GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tab.name); GameTooltip:Show() end)
         btn:SetScript("OnLeave", function(self) self.Bg:SetAlpha(0); if self.ID ~= MSC.ActiveTab then self.Icon:SetVertexColor(0.6, 0.6, 0.6) end GameTooltip:Hide() end)
-        
-        -- The Magic Switcher
         btn:SetScript("OnClick", function(self) MSC.SwitchTab(self.ID) end)
-        btn.ID = idx -- Bind the index to the button
-        
-        table.insert(MSC.NavButtons, btn)
+        btn.ID = idx; table.insert(MSC.NavButtons, btn)
     end
-    
-    -- Refresh current tab selection state
     if MSC.ActiveTab then MSC.SwitchTab(MSC.ActiveTab) end
 end
 
--- =============================================================
--- 3. MAIN DASHBOARD FRAME
--- =============================================================
 function MSC.ToggleMainMenu()
-    if MSC.MainFrame then
-        if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end
-        return
-    end
-
+    if MSC.MainFrame then if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end return end
     local f = CreateFrame("Frame", "SGJ_MainFrame", UIParent, "BackdropTemplate")
-    f:SetSize(650, 600); f:SetPoint("CENTER")
-    f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-    f:SetFrameStrata("HIGH")
+    f:SetSize(650, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    
+    f:SetScript("OnHide", function() 
+        if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end 
+    end)
+    
+    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing); f:SetFrameStrata("HIGH")
     MSC.CreateModernBorder(f, 1)
     
-    -- HEADER & BACKGROUND
-    f.Header = CreateFrame("Frame", nil, f)
-    f.Header:SetPoint("TOPLEFT", 70, 0); f.Header:SetPoint("TOPRIGHT", 0, 0); f.Header:SetHeight(60); f.Header:EnableMouse(true)
-    f.Header:SetScript("OnMouseWheel", function(self, delta)
-        local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end
-        if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur)
-    end)
-
-    f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8); f.Bg:SetAllPoints()
-    local _, class = UnitClass("player")
-    local fixedClass = class:sub(1,1)..class:sub(2):lower()
+    f.Header = CreateFrame("Frame", nil, f); f.Header:SetPoint("TOPLEFT", 70, 0); f.Header:SetPoint("TOPRIGHT", 0, 0); f.Header:SetHeight(60); f.Header:EnableMouse(true)
+    f.Header:SetScript("OnMouseWheel", function(self, delta) local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end; if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur) end)
+    f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8); f.Bg:SetAllPoints(); local _, class = UnitClass("player"); local fixedClass = class:sub(1,1)..class:sub(2):lower()
     pcall(function() f.Bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga") end)
     f.Bg:SetTexCoord(0, 1, 0.1, 0.9); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 1) 
-    
     f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7); f.Overlay:SetAllPoints(); f.Overlay:SetColorTexture(0.08, 0.08, 0.10, 0.90) 
     f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND"); f.Header.Grad:SetAllPoints(); f.Header.Grad:SetColorTexture(0, 0, 0, 0.5); f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
-
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v3.0.0 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.1 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
-    f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0); f.ScaleHint:SetText("Scroll to Scale"); f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
+    
+    f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0)
+    f.ScaleHint:SetText("Scroll to Scale")
+    f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
 
-    -- SIDEBAR
     f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
     f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
     f.Sidebar.Line = f.Sidebar:CreateTexture(nil, "OVERLAY"); f.Sidebar.Line:SetColorTexture(0, 0, 0, 1); f.Sidebar.Line:SetWidth(1); f.Sidebar.Line:SetPoint("TOPRIGHT", 0, 0); f.Sidebar.Line:SetPoint("BOTTOMRIGHT", 0, 0)
-    f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.MoveHint:SetPoint("BOTTOM", 0, 15); f.MoveHint:SetText("Hold\nto Move"); f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
-
+    
+    f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    f.MoveHint:SetPoint("BOTTOM", 0, 15)
+    f.MoveHint:SetText("Hold\nto Move")
+    f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
+    
     f.Content = CreateFrame("Frame", nil, f); f.Content:SetPoint("TOPLEFT", f.Sidebar, "TOPRIGHT", 0, -60); f.Content:SetPoint("BOTTOMRIGHT", 0, 0)
     MSC.MainFrame = f
     
-    -- INIT Internal Views
-    MSC.InitReceiptView(f.Content)
-    MSC.InitLogicView(f.Content)
-    MSC.InitSettingsView(f.Content)
-    
-    -- Render Sidebar
-    MSC.RenderSidebarButtons()
-    MSC.SwitchTab(1)
+    MSC.InitLabView(f.Content); MSC.InitReceiptView(f.Content); MSC.InitLogicView(f.Content); MSC.InitSettingsView(f.Content)
+    MSC.RenderSidebarButtons(); MSC.SwitchTab(1)
     f:Show()
 end
 
 function MSC.SwitchTab(id)
     MSC.ActiveTab = id
-    
-    -- Update Sidebar Visuals
+    if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end
     if MSC.NavButtons then
         for i, btn in ipairs(MSC.NavButtons) do
             if i == id then btn.Icon:SetDesaturated(false); btn.Icon:SetVertexColor(1, 1, 1); btn.SelectBar:Show(); btn.Bg:SetAlpha(0.05)
             else btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6); btn.SelectBar:Hide(); btn.Bg:SetAlpha(0) end
         end
     end
-    
-    -- Hide ALL registered views
-    for _, tab in ipairs(MSC.RegisteredTabs) do
-        if MSC[tab.view] then MSC[tab.view]:Hide() end
-    end
-    
-    -- Show SELECTED view
+    for _, tab in ipairs(MSC.RegisteredTabs) do if MSC[tab.view] then MSC[tab.view]:Hide() end end
     local tab = MSC.RegisteredTabs[id]
     if tab then
-        -- Init if not created yet
         local init = tab.directFunc or (tab.funcName and MSC[tab.funcName])
         if not MSC[tab.view] and init then init(MSC.MainFrame.Content) end
-        
-        -- Show and Update
         if MSC[tab.view] then 
             MSC[tab.view]:Show()
-            local updateFunc = tab.update and MSC[tab.update]
-            if updateFunc then updateFunc() end
+            if tab.update and MSC[tab.update] then MSC[tab.update]() end
         end
     end
 end
@@ -203,39 +170,30 @@ end
 function MSC.ShowHistory()
     if not MSC.ExportFrame then
         local f = CreateFrame("Frame", "SGJ_ExportFrame", UIParent, "BackdropTemplate")
-        f:SetSize(500, 400); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-        f:SetFrameStrata("DIALOG") 
+        f:SetSize(500, 400); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton"); f:SetFrameStrata("DIALOG") 
         f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
         MSC.CreateModernBorder(f, 1)
         f.Bg = f:CreateTexture(nil, "BACKGROUND"); f.Bg:SetAllPoints(); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
         f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOP", 0, -10); f.Title:SetText("Export Data")
         f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
-        
-        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
-        sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 20)
-        f.EditBox = CreateFrame("EditBox", nil, sf); f.EditBox:SetMultiLine(true); f.EditBox:SetFontObject(ChatFontNormal); f.EditBox:SetWidth(440); sf:SetScrollChild(f.EditBox)
-        f.EditBox:SetScript("OnEscapePressed", function() f:Hide() end)
+        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate"); sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 20)
+        f.EditBox = CreateFrame("EditBox", nil, sf); f.EditBox:SetMultiLine(true); f.EditBox:SetFontObject(ChatFontNormal); f.EditBox:SetWidth(440); sf:SetScrollChild(f.EditBox); f.EditBox:SetScript("OnEscapePressed", function() f:Hide() end)
         MSC.ExportFrame = f
     end
     
     local weights, profileName = MSC.GetCurrentWeights()
-    local unit = "player"
-    local currentGear = MSC:GetEquippedGear()
+    local unit = "player"; local currentGear = MSC:GetEquippedGear()
     local totalScore = MSC:GetTotalCharacterScore(currentGear, weights, profileName)
-    local dateStr = date("%Y-%m-%d")
-    local _, class = UnitClass("player")
-    
+    local dateStr = date("%Y-%m-%d"); local _, class = UnitClass("player")
     if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[profileName] then profileName = MSC.CurrentClass.PrettyNames[profileName] end
     profileName = profileName:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
 
     local text = "```yaml\nSharpies_Gear_Judge_Report:\n  Player: " .. UnitName(unit) .. " (" .. class .. ")\n  Spec:    " .. profileName .. "\n  Date:    " .. dateStr .. "\n  Total_Score: " .. string.format("%.1f", totalScore) .. "\n========================================\n"
     local slots = {{name="Head",id=1},{name="Neck",id=2},{name="Shoulder",id=3},{name="Back",id=15},{name="Chest",id=5},{name="Wrist",id=9},{name="Hands",id=10},{name="Waist",id=6},{name="Legs",id=7},{name="Feet",id=8},{name="Finger 1",id=11},{name="Finger 2",id=12},{name="Trinket 1",id=13},{name="Trinket 2",id=14},{name="Main Hand",id=16},{name="Off Hand",id=17},{name="Ranged",id=18}}
     for _, slot in ipairs(slots) do
-        local link = GetInventoryItemLink(unit, slot.id)
-        local itemName, itemScore = "[Empty]", 0
+        local link = GetInventoryItemLink(unit, slot.id); local itemName, itemScore = "[Empty]", 0
         if link then
-            itemName = GetItemInfo(link) or "Unknown Item"
-            local stats = MSC.SafeGetItemStats(link, slot.id, weights, profileName)
+            itemName = GetItemInfo(link) or "Unknown Item"; local stats = MSC.SafeGetItemStats(link, slot.id, weights, profileName)
             if stats then itemScore = MSC.GetItemScore(stats, weights, profileName, slot.id) end
         end
         local slotPadding = 10 - string.len(slot.name); local space1 = string.rep(" ", slotPadding > 0 and slotPadding or 1)
@@ -248,22 +206,15 @@ end
 function MSC.ShowImportWindow()
     if MSC.ImportFrame then MSC.ImportFrame:Show(); return end
     local f = CreateFrame("Frame", "SGJ_ImportFrame", UIParent, "BackdropTemplate")
-    f:SetSize(400, 320); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-    f:SetFrameStrata("DIALOG")
-    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    f:SetSize(400, 320); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton"); f:SetFrameStrata("DIALOG"); f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
     MSC.CreateModernBorder(f, 1)
     f.Bg = f:CreateTexture(nil, "BACKGROUND"); f.Bg:SetAllPoints(); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
     f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOP", 0, -10); f.Title:SetText("Import Pawn String")
-    
-    local sf = CreateFrame("ScrollFrame", "SGJ_ImportScroll", f, "UIPanelScrollFrameTemplate")
-    sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 50)
-    local eb = CreateFrame("EditBox", nil, sf); eb:SetMultiLine(true); eb:SetFontObject(ChatFontNormal); eb:SetWidth(320); sf:SetScrollChild(eb); eb:SetAutoFocus(true)
-    eb:SetScript("OnEscapePressed", function() f:Hide() end)
-
+    local sf = CreateFrame("ScrollFrame", "SGJ_ImportScroll", f, "UIPanelScrollFrameTemplate"); sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 50)
+    local eb = CreateFrame("EditBox", nil, sf); eb:SetMultiLine(true); eb:SetFontObject(ChatFontNormal); eb:SetWidth(320); sf:SetScrollChild(eb); eb:SetAutoFocus(true); eb:SetScript("OnEscapePressed", function() f:Hide() end)
     local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetPoint("BOTTOMLEFT", 20, 15); bImp:SetSize(120, 25); bImp:SetText("Import")
     bImp:SetScript("OnClick", function()
-        local txt = eb:GetText()
-        local weights, name = MSC:ParsePawnString(txt)
+        local txt = eb:GetText(); local weights, name = MSC:ParsePawnString(txt)
         if weights then
             if not SGJ_Settings.CustomProfiles then SGJ_Settings.CustomProfiles = {} end
             SGJ_Settings.CustomProfiles["Imported"] = weights
@@ -274,11 +225,8 @@ function MSC.ShowImportWindow()
                 if MSC.CurrentClass.PrettyNames then MSC.CurrentClass.PrettyNames["Imported"] = "|cff00ff00[Import]|r " .. name end
             end
             MSC.ManualSpec = "Imported"; MSC.CachedWeights = nil; SGJ_Settings.Mode = "Imported"
-            if MSC.UpdateLabCalc then MSC.UpdateLabCalc() end
-            if MSC.UpdateReceipt then MSC.UpdateReceipt() end
-            if MSC.UpdateLogic then MSC.UpdateLogic() end 
-            print("|cff00ccffSGJ:|r Imported profile '"..name.."' and activated it.")
-            f:Hide()
+            if MSC.UpdateLabCalc then MSC.UpdateLabCalc() end; if MSC.UpdateReceipt then MSC.UpdateReceipt() end; if MSC.UpdateLogic then MSC.UpdateLogic() end 
+            print("|cff00ccffSGJ:|r Imported profile '"..name.."' and activated it."); f:Hide()
         else print("|cffff0000SGJ Import Error:|r " .. (name or "Invalid String")) end
     end)
     local bClose = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bClose:SetPoint("BOTTOMRIGHT", -20, 15); bClose:SetSize(100, 25); bClose:SetText("Cancel"); bClose:SetScript("OnClick", function() f:Hide() end)
@@ -286,53 +234,175 @@ function MSC.ShowImportWindow()
 end
 
 -- =============================================================
--- VIEW 2: THE RECEIPT (Player Only)
+-- FEATURE: SCORE BREAKDOWN WINDOW
 -- =============================================================
-function MSC.PopulateBagCache(weights, specName)
-    if not MSC.BagCacheDirty then return end
-    MSC.BagCache = {}
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then
-                 local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                 local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
-                 if slotId then
-                       local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
-                       local score = MSC.GetItemScore(stats, weights, specName, slotId)
-                       table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
-                 end
-            end
+function MSC.ShowScoreBreakdown(itemLink, slotID)
+    if not itemLink then return end
+    
+    if not MSC.BreakdownFrame then
+        local f = CreateFrame("Frame", "SGJ_Breakdown", UIParent, "BackdropTemplate")
+        f:SetSize(300, 100); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:EnableMouse(true); f:SetMovable(true); f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        MSC.CreateModernBorder(f, 1)
+        f.Bg = f:CreateTexture(nil, "BACKGROUND"); f.Bg:SetAllPoints(); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
+        
+        f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOP", 0, -10); f.Title:SetText("Analysis")
+        f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
+        
+        f.ItemName = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.ItemName:SetPoint("TOP", f.Title, "BOTTOM", 0, -10)
+        f.TotalScore = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.TotalScore:SetPoint("TOP", f.ItemName, "BOTTOM", 0, -5); f.TotalScore:SetTextColor(0, 1, 0)
+        
+        f.Lines = {}
+        for i=1, 15 do 
+            local l = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            l:SetPoint("TOPLEFT", 20, -70 - ((i-1)*18)); l:SetJustifyH("LEFT")
+            table.insert(f.Lines, l)
+        end
+        MSC.BreakdownFrame = f
+    end
+    
+    local f = MSC.BreakdownFrame
+    local weights, specName = MSC.GetCurrentWeights()
+    local stats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
+    local score = MSC.GetItemScore(stats, weights, specName, slotID)
+    
+    f.ItemName:SetText(itemLink)
+    f.TotalScore:SetText(string.format("%.1f", score))
+    
+    for _, l in ipairs(f.Lines) do l:SetText("") end
+    
+    local breakdown = {}
+    for k, v in pairs(stats) do
+        if weights[k] and weights[k] > 0 and v > 0 then
+            table.insert(breakdown, { name = MSC.GetCleanStatName(k), val = v, weight = weights[k], total = v * weights[k] })
         end
     end
-    MSC.BagCacheDirty = false
+    table.sort(breakdown, function(a,b) return a.total > b.total end)
+    
+    local count = 0
+    for i, data in ipairs(breakdown) do
+        if f.Lines[i] then
+            count = count + 1
+            local text = string.format("|cffffffff%s:|r |cff00ccff%.1f|r x %.1f = |cff00ff00%.1f|r", data.name:gsub("Rating",""), data.val, data.weight, data.total)
+            f.Lines[i]:SetText(text)
+        end
+    end
+    
+    local newHeight = 80 + (math.max(1, count) * 18) + 20
+    f:SetHeight(newHeight)
+    f:Show()
 end
 
+-- =============================================================
+-- VIEW 1: THE LABORATORY
+-- =============================================================
+function MSC.InitLabView(parent)
+    local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
+    local help = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); help:SetPoint("TOP", 0, -20); help:SetText("Drag & Drop items here to compare against equipped gear."); help:SetTextColor(0.6, 0.6, 0.6)
+
+    local function CreateLabSlot(name, x, y, icon, label)
+        local btn = CreateFrame("Button", name, f, "ItemButtonTemplate")
+        btn:SetSize(45, 45); btn:SetPoint("TOP", x, y)
+        btn.Bg = btn:CreateTexture(nil, "BACKGROUND"); btn.Bg:SetAllPoints(); btn.Bg:SetTexture(icon); btn.Bg:SetAlpha(0.3); btn.Bg:SetDesaturated(true)
+        btn.Lbl = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); btn.Lbl:SetPoint("TOP", btn, "BOTTOM", 0, -5); btn.Lbl:SetText(label)
+        btn:RegisterForClicks("AnyUp")
+        btn:SetScript("OnClick", function(self)
+            local type, _, link = GetCursorInfo()
+            if type == "item" then 
+                self.link = link; SetItemButtonTexture(self, GetItemIcon(link)); self.Bg:Hide(); ClearCursor()
+                MSC.UpdateLabCalc()
+                if MSC.UpdateLogic then MSC.UpdateLogic() end 
+            elseif IsShiftKeyDown() then 
+                self.link = nil; SetItemButtonTexture(self, nil); self.Bg:Show()
+                MSC.UpdateLabCalc()
+                if MSC.UpdateLogic then MSC.UpdateLogic() end
+            end
+        end)
+        btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label); GameTooltip:AddLine("Drag item here", 1,1,1) end GameTooltip:Show() end)
+        btn:SetScript("OnLeave", GameTooltip_Hide)
+        return btn
+    end
+
+    f.MH = CreateLabSlot("SGJ_LabMH", -70, -60, "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand", "Main Hand")
+    f.OH = CreateLabSlot("SGJ_LabOH", 70, -60, "Interface\\Paperdoll\\UI-PaperDoll-Slot-SecondaryHand", "Off Hand")
+    f.TwoH = CreateLabSlot("SGJ_Lab2H", 0, -135, "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand", "Two-Hand / Custom")
+
+    local vs = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); vs:SetPoint("CENTER", f.MH, "CENTER", 70, 0); vs:SetText("VS"); vs:SetTextColor(1, 1, 1, 0.2)
+
+    local resBox = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    resBox:SetSize(450, 160); resBox:SetPoint("BOTTOM", 0, 20)
+    resBox:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+    resBox:SetBackdropColor(0, 0, 0, 0.3); resBox:SetBackdropBorderColor(0, 0, 0, 1)
+
+    f.ResultText = resBox:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("TOP", 0, -15); f.ResultText:SetText("Ready to Judge")
+    f.ScoreDiff = resBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.ScoreDiff:SetPoint("TOP", f.ResultText, "BOTTOM", 0, -5); f.ScoreDiff:SetText("")
+    f.DetailText = resBox:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.DetailText:SetPoint("TOP", f.ScoreDiff, "BOTTOM", 0, -15); f.DetailText:SetWidth(400); f.DetailText:SetJustifyH("CENTER"); f.DetailText:SetSpacing(4)
+    MSC.ViewLab = f
+end
+
+function MSC.UpdateLabCalc()
+    local f = MSC.ViewLab
+    if not f or not f:IsShown() then return end
+    if not f.MH.link and not f.OH.link and not f.TwoH.link then f.ResultText:SetText("Ready to Judge"); f.ResultText:SetTextColor(1, 0.82, 0); f.ScoreDiff:SetText(""); f.DetailText:SetText(""); return end
+
+    local weights, profileName = MSC.GetCurrentWeights()
+    if not weights then return end 
+
+    local currentGear = MSC:GetEquippedGear() or {}
+    local currentScore, currentStats = MSC:GetTotalCharacterScore(currentGear, weights, profileName)
+    
+    local newGear = CopyTable(currentGear)
+    if f.TwoH.link then newGear[16] = f.TwoH.link; newGear[17] = nil
+    else if f.MH.link then newGear[16] = f.MH.link end; if f.OH.link then newGear[17] = f.OH.link end end
+    
+    local newScore, newStats, newColors = MSC:GetTotalCharacterScore(newGear, weights, profileName)
+    local diff = newScore - currentScore
+    
+    if diff > 0.1 then f.ResultText:SetText("UPGRADE"); f.ResultText:SetTextColor(0, 1, 0); f.ScoreDiff:SetText("+" .. string.format("%.1f", diff))
+    elseif diff < -0.1 then f.ResultText:SetText("DOWNGRADE"); f.ResultText:SetTextColor(1, 0, 0); f.ScoreDiff:SetText(string.format("%.1f", diff))
+    else f.ResultText:SetText("SIDEGRADE"); f.ResultText:SetTextColor(0.6, 0.6, 0.6); f.ScoreDiff:SetText("0.0") end
+
+    local lines = ""
+    local diffs = MSC.GetStatDifferences(newStats, currentStats); local sorted = MSC.SortStatDiffs(diffs); local count = 0
+    for _, e in ipairs(sorted) do
+        if count < 6 and math.abs(e.val) > 0.1 then
+            local color = (e.val > 0) and "|cff00ff00+" or "|cffff0000"
+            lines = lines .. color .. string.format("%.1f", e.val) .. " " .. MSC.GetCleanStatName(e.key) .. "|r   "
+            count = count + 1; if count % 2 == 0 then lines = lines .. "\n" end
+        end
+    end
+    f.DetailText:SetText(lines)
+end
+
+-- =============================================================
+-- VIEW 2: RECEIPT
+-- =============================================================
 function MSC.InitReceiptView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     f.Info = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Info:SetPoint("TOPLEFT", 40, -10)
     f.Score = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Score:SetPoint("TOPRIGHT", -40, -10)
-    local sep = f:CreateTexture(nil, "OVERLAY"); sep:SetHeight(1); sep:SetColorTexture(1,1,1,0.2); sep:SetPoint("TOPLEFT", 20, -40); sep:SetPoint("TOPRIGHT", -20, -40)
-
     local c = CreateFrame("Frame", nil, f); c:SetSize(400, 340); c:SetPoint("TOP", 0, -60)
     local function CreatePanel(name, w, h, point, relTo, relPoint, x, y)
         local p = CreateFrame("Frame", nil, c, "BackdropTemplate"); p:SetSize(w, h); p:SetPoint(point, relTo, relPoint, x, y)
         p:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1}); p:SetBackdropColor(unpack(MSC.Colors.BgPanel)); p:SetBackdropBorderColor(0,0,0,0.5)
         local lbl = p:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); lbl:SetPoint("BOTTOMLEFT", p, "TOPLEFT", 0, 4); lbl:SetText(name); lbl:SetTextColor(0.7, 0.7, 0.7); return p
     end
-    
     local pArmor = CreatePanel("ARMOR", 220, 240, "TOPLEFT", c, "TOPLEFT", 0, 0)
     local pJewel = CreatePanel("ACCESSORIES", 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 20, 0)
     local pWeap  = CreatePanel("WEAPONS", 465, 75, "TOP", c, "TOP", 0, -260)
 
     local function CreateSlot(id, parentPanel, x, y, label)
         local btn = CreateFrame("Button", nil, f, "ItemButtonTemplate"); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
-        btn.ScoreFrame = CreateFrame("Frame", nil, btn, "BackdropTemplate")
-        btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
+        btn.ScoreFrame = CreateFrame("Frame", nil, btn, "BackdropTemplate"); btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
         btn.ScoreFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"}); btn.ScoreFrame:SetBackdropColor(0,0,0,0.5)
         btn.ScoreText = btn.ScoreFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); btn.ScoreText:SetPoint("CENTER"); btn.ScoreText:SetTextColor(1, 0.9, 0)
         btn.Alert = btn:CreateTexture(nil, "OVERLAY"); btn.Alert:SetSize(16, 16); btn.Alert:SetPoint("LEFT", btn.ScoreFrame, "RIGHT", 2, 0); btn.Alert:Hide()
         btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label, 1, 1, 1) end if self.AlertMode then GameTooltip:AddLine(" "); GameTooltip:AddLine(self.AlertText or "Alert", 1, 0, 0) end GameTooltip:Show() end); btn:SetScript("OnLeave", GameTooltip_Hide)
+        
+        -- Click to Analyze
+        btn:RegisterForClicks("AnyUp")
+        btn:SetScript("OnClick", function(self) if self.link then MSC.ShowScoreBreakdown(self.link, self.SlotID) end end)
+        
         btn.SlotID = id; table.insert(MSC.ReceiptSlots, btn)
     end
 
@@ -355,32 +425,39 @@ end
 
 function MSC.UpdateReceipt()
     if not MSC.ViewReceipt or not MSC.ViewReceipt:IsShown() then return end
-    
-    local unit = "player" 
-    local weights, specName = MSC.GetCurrentWeights()
-    
-    local displayName = specName
-    if MSC.PrettyNames and MSC.PrettyNames[specName] then
-        displayName = MSC.PrettyNames[specName]
-    end
+    local unit = "player"; local weights, specName = MSC.GetCurrentWeights()
+    if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then specName, weights = next(MSC.CurrentClass.Weights) end
+    if not weights then return end
 
+    local displayName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName
     MSC.ViewReceipt.Info:SetText(displayName)
     
     local gearTable = {}; local combinedStats = {}
     for i=1, 18 do 
         local link = GetInventoryItemLink(unit, i)
         if link then 
-            gearTable[i] = link 
-            local s = MSC.SafeGetItemStats(link, i, weights, specName)
+            gearTable[i] = link; local s = MSC.SafeGetItemStats(link, i, weights, specName)
             if s then for k, v in pairs(s) do if type(v)=="number" then combinedStats[k] = (combinedStats[k] or 0) + v end end end
         end
     end
-    
     local totalScore = MSC:GetTotalCharacterScore(gearTable, weights, specName)
     MSC.ViewReceipt.Score:SetText("Score: " .. string.format("|cff00ff00%.1f|r", totalScore))
     
-    MSC.PopulateBagCache(weights, specName)
-    if not MSC.ReceiptSlots then return end
+    MSC.BagCache = {}
+    for bag = 0, 4 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local link = C_Container.GetContainerItemLink(bag, slot)
+            if link and MSC.IsItemUsable(link) then
+                 local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                 local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
+                 if slotId then
+                       local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
+                       local score = MSC.GetItemScore(stats, weights, specName, slotId)
+                       table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
+                 end
+            end
+        end
+    end
 
     for _, btn in ipairs(MSC.ReceiptSlots) do
         local link = GetInventoryItemLink(unit, btn.SlotID)
@@ -393,16 +470,11 @@ function MSC.UpdateReceipt()
             
             local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
             if equipLoc ~= "INVTYPE_HOLDABLE" and equipLoc ~= "INVTYPE_TABARD" and equipLoc ~= "INVTYPE_BODY" then
-                 local enchantID = link:match("item:%d+:(%d+)")
-                 local validSlots = {[1]=true,[3]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[15]=true,[16]=true,[17]=true}
-                 if validSlots[btn.SlotID] and (not enchantID or enchantID == "0") then 
-                    btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); btn.Alert:Show(); btn.AlertMode = "Enchant"; btn.AlertText = "Missing Enchant!"
-                 end
+                 local enchantID = link:match("item:%d+:(%d+)"); local validSlots = {[1]=true,[3]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[15]=true,[16]=true,[17]=true}
+                 if validSlots[btn.SlotID] and (not enchantID or enchantID == "0") then btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); btn.Alert:Show(); btn.AlertMode = "Enchant"; btn.AlertText = "Missing Enchant!" end
             end
-            
-            -- Upgrade Logic
             local bestBagScore = score; local foundUpgrade = false
-            for _, cachedItem in ipairs(MSC.BagCache or {}) do
+            for _, cachedItem in ipairs(MSC.BagCache) do
                local isMatch = (cachedItem.slotId == btn.SlotID)
                if btn.SlotID == 11 or btn.SlotID == 12 then if cachedItem.slotId == 11 then isMatch = true end end
                if btn.SlotID == 13 or btn.SlotID == 14 then if cachedItem.slotId == 13 then isMatch = true end end
@@ -417,12 +489,10 @@ function MSC.UpdateReceipt()
     local sortedStats = {}
     for k, v in pairs(combinedStats) do
         if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and v > 0 then
-            local weight = weights[k] or 0
-            if weight > 0 then table.insert(sortedStats, { key=k, val=v, weight=weight }) end
+            local weight = weights[k] or 0; if weight > 0 then table.insert(sortedStats, { key=k, val=v, weight=weight }) end
         end
     end
     table.sort(sortedStats, function(a,b) return a.weight > b.weight end)
-    
     for i, row in ipairs(MSC.SummaryRows) do
         if sortedStats[i] then
             row:Show(); local clean = MSC.GetCleanStatName(sortedStats[i].key)
@@ -434,9 +504,7 @@ function MSC.UpdateReceipt()
     end
 end
 
--- =============================================================
--- VIEW 3: STAT LOGIC (Fixed Rings)
--- =============================================================
+-- [[ VIEW 3: STAT LOGIC (FINAL VISUAL POLISH) ]]
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
     if stat:find("STRENGTH") then return "Increases Attack Power and Block Value" end
@@ -464,108 +532,66 @@ local function GetStatReason(stat, class, profileName)
     return nil
 end
 
--- =============================================================
--- VISUAL ENGINE: RADIAL FILL RINGS (WeakAura Style)
--- =============================================================
-
--- 1. Helper: Smooth Color Transition
-local function GetProgressColor(percent)
-    if percent >= 100 then return 0, 1, 1 -- Cyan
-    elseif percent >= 50 then
-        local p = (percent - 50) / 50
-        return 1 - p, 1, 0 
-    else
-        local p = percent / 50
-        return 1, p, 0
+local function GetProgressColor(percent, roleColor)
+    if percent >= 100 then return 0, 1, 1 
+    else 
+        if roleColor then return roleColor.r, roleColor.g, roleColor.b 
+        else local p = percent / 100; return 1, p, 0 end
     end
 end
 
--- 2. New "Radial Fill" Renderer
-local function CreateStatRing(parent, x, y, size, label, current, cap)
+-- [[ FIXED ANIMATION RENDERER: TEXT ON TOP + CIRCLE TEXTURE + BRIGHT TRACK + GLOW ]]
+local function CreateStatRing(parent, x, y, size, label)
     local f = CreateFrame("Frame", nil, parent)
     f:SetSize(size, size); f:SetPoint("TOPLEFT", x, y)
-    
-    -- [[ 1. MASK (The Cookie Cutter) ]]
-    -- We mask everything to ensure it stays a perfect circle
     local mask = f:CreateMaskTexture()
-    mask:SetTexture("Interface\\Minimap\\UI-Minimap-Background") 
-    mask:SetAllPoints(f)
-
-    -- [[ 2. BACKGROUND TRACK (Dark Ring) ]]
+    mask:SetTexture("Interface\\Minimap\\UI-Minimap-Background"); mask:SetAllPoints(f)
+    
+    -- Background Track (BRIGHT GRAY)
     f.bg = f:CreateTexture(nil, "BACKGROUND")
     f.bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_BG.tga") 
-    f.bg:SetAllPoints()
-    f.bg:SetVertexColor(0.1, 0.1, 0.1, 1) -- Solid dark grey
-    f.bg:SetBlendMode("BLEND")
-    f.bg:AddMaskTexture(mask)
-
-    -- [[ 3. THE FILLER (Cooldown Frame Engine) ]]
-    -- We use a Cooldown Frame because it natively handles "Clockwise Filling"
+    f.bg:SetAllPoints(); f.bg:SetVertexColor(0.6, 0.6, 0.6, 1); f.bg:SetBlendMode("BLEND"); f.bg:AddMaskTexture(mask)
+    
+    -- Swipe (Perfect Circle + GLOW MODE)
     f.cooldown = CreateFrame("Cooldown", nil, f, "CooldownFrameTemplate")
     f.cooldown:SetAllPoints()
-    f.cooldown:SetSwipeTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Fill.tga")
-    f.cooldown:SetHideCountdownNumbers(true) -- Hide the blizzard numbers
-    f.cooldown:SetDrawEdge(false) -- Hide the moving spark line
-    f.cooldown:SetReverse(true) -- True = Fill UP, False = Drain DOWN
-    
-    -- Apply Mask to the cooldown so it keeps the ring shape
-    -- Note: Some game clients struggle masking Cooldowns. If this fails, the hole punch covers it anyway.
+    f.cooldown:SetSwipeTexture("Interface\\Minimap\\UI-Minimap-Background")
+    f.cooldown:SetHideCountdownNumbers(true); f.cooldown:SetDrawEdge(false); f.cooldown:SetReverse(true)
+    f.cooldown:SetUseCircularEdge(true) 
     if f.cooldown.AddMaskTexture then f.cooldown:AddMaskTexture(mask) end
-
-    -- Store values for the Update function
-    f.current = current
-    f.cap = cap
-
-    -- [[ 4. THE HOLE PUNCH (Makes it a Ring) ]]
-    -- A black circle on top to hide the center
+    
+    -- Hole Punch (Donut)
     f.hole = f:CreateTexture(nil, "OVERLAY", nil, 1)
     f.hole:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-    f.hole:SetSize(size * 0.70, size * 0.70) -- 70% Hole = Nice thin ring
-    f.hole:SetPoint("CENTER")
-    f.hole:SetVertexColor(0, 0, 0, 1) -- Pure Black
-
-    -- [[ 5. TEXT (Floating on top) ]]
-    f.val = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge") 
-    f.val:SetPoint("CENTER", 0, 0)
-    f.val:SetTextColor(1, 1, 1)
-    f.val:SetDrawLayer("OVERLAY", 7) 
+    f.hole:SetSize(size * 0.70, size * 0.70); f.hole:SetPoint("CENTER"); f.hole:SetVertexColor(0, 0, 0, 1)
     
-    f.lbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.lbl:SetPoint("TOP", f, "BOTTOM", 0, -5)
-    f.lbl:SetText(label:upper())
-    f.lbl:SetTextColor(0.6, 0.6, 0.6)
+    -- Text Frame (HIGHEST LAYER)
+    f.TextFrame = CreateFrame("Frame", nil, f)
+    f.TextFrame:SetAllPoints(); f.TextFrame:SetFrameLevel(f:GetFrameLevel() + 10)
+
+    f.val = f.TextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.val:SetPoint("CENTER", 0, 0); f.val:SetTextColor(1, 1, 1)
+    f.lbl = f.TextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.lbl:SetPoint("TOP", f, "BOTTOM", 0, -5); f.lbl:SetText(label:upper()); f.lbl:SetTextColor(0.6, 0.6, 0.6)
     
     return f
 end
 
 local function GetClassRings(class, stats, weights)
-    local rings = {}
-    local hit = stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HIT_RATING_SHORT"] or 0
-    local def = stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
-    local exp = stats["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0
+    local rings = {}; local hit = stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HIT_RATING_SHORT"] or 0
+    local def = stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0; local exp = stats["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0
     local crit = stats["ITEM_MOD_CRIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_CRIT_MELEE_RATING_SHORT"] or 0
     local haste = stats["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HASTE_MELEE_RATING_SHORT"] or 0
-    
     local caps = { MeleeHit=142, SpellHit=202, Def=140, Exp=103, CritGoal=660, HasteGoal=315 }
 
     if class == "WARRIOR" or class == "PALADIN" or class == "DRUID" then
         if (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 1 then
-             table.insert(rings, { l="Def Cap", v=def, m=caps.Def })
-             table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit })
-             table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
+             table.insert(rings, { l="Def Cap", v=def, m=caps.Def }); table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit }); table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
         else
-             table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit })
-             table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal })
-             table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
+             table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit }); table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal }); table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
         end
     elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" or class == "SHAMAN" then
-        table.insert(rings, { l="Spell Hit", v=hit, m=caps.SpellHit })
-        table.insert(rings, { l="Spell Crit", v=crit, m=caps.CritGoal })
-        table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
+        table.insert(rings, { l="Spell Hit", v=hit, m=caps.SpellHit }); table.insert(rings, { l="Spell Crit", v=crit, m=caps.CritGoal }); table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
     else
-        table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit })
-        table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal })
-        table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
+        table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit }); table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal }); table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
     end
     return rings
 end
@@ -586,47 +612,51 @@ function MSC.UpdateLogic()
     content.children = {}
     
     local weights, detectedKey = MSC.GetCurrentWeights()
+    if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then detectedKey, weights = next(MSC.CurrentClass.Weights) end
     if not weights then return end
 
+    local roleColor = MSC.RoleColors.DEFAULT
+    local spec = detectedKey:upper()
+    if spec:find("PROT") or spec:find("DEF") or spec:find("TANK") then roleColor = MSC.RoleColors.TANK
+    elseif spec:find("HOLY") or spec:find("RESTO") or spec:find("HEAL") then roleColor = MSC.RoleColors.HEALER
+    elseif spec:find("MAGE") or spec:find("WARLOCK") or spec:find("SHADOW") or spec:find("ELE") or spec:find("BAL") then roleColor = MSC.RoleColors.CASTER
+    elseif spec:find("RET") or spec:find("ROGUE") or spec:find("WARRIOR") or spec:find("HUNTER") or spec:find("ENH") or spec:find("CAT") then roleColor = MSC.RoleColors.MELEE
+    end
+
     local _, class = UnitClass("player")
-    local currentGear = MSC:GetEquippedGear()
+    local currentGear = MSC:GetEquippedGear() or {}
+    
+    if MSC.ViewLab and MSC.ViewLab.MH and MSC.ViewLab.MH.link then
+        currentGear = CopyTable(currentGear) 
+        currentGear[16] = MSC.ViewLab.MH.link
+        if MSC.ViewLab.OH.link then currentGear[17] = MSC.ViewLab.OH.link end
+    end
+    
     local _, stats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
-    
     local rings = GetClassRings(class, stats, weights)
-    local startX = 60
     
-    -- Render Rings
     for i, ring in ipairs(rings) do
-        local xPos = startX + ((i-1) * 140)
-        local f = CreateStatRing(content, xPos, -20, 80, ring.l, ring.v, ring.m)
+        local xPos = 60 + ((i-1) * 140)
+        local f = CreateStatRing(content, xPos, -20, 80, ring.l)
         table.insert(content.children, f)
         
-        -- [[ ANIMATE THE RING ]]
-        local pct = 0
-        if ring.m > 0 then pct = math.min(100, (ring.v / ring.m) * 100) end
+        local pct = 0; if ring.m > 0 then pct = math.min(100, (ring.v / ring.m) * 100) end
         
-        -- Color Math
-        local r, g, b = GetProgressColor(pct)
+        local useRole = true
+        if ring.l:find("Cap") or ring.l:find("Hit") or ring.l:find("Def") then useRole = false end
+        local r, g, b = GetProgressColor(pct, useRole and roleColor or nil)
+        
+        -- [[ ANIMATION RENDERER: GLOW MODE RESTORED ]]
         f.cooldown:SetSwipeColor(r, g, b)
+        f.val:SetText(math.floor(pct) .. "%"); f.val:SetTextColor(r, g, b)
         
-        -- Text
-        f.val:SetText(math.floor(pct) .. "%")
-        f.val:SetTextColor(r, g, b) -- Tint the text too for style
-        
-        -- The "Fill" Trick
-        -- SetCooldown(start, duration). 
-        -- To show a static filled wedge, we "freeze" the animation.
-        -- We set the duration to 1000s, and the start time such that we are 'pct' through it.
         local now = GetTime()
-        if pct >= 100 then
-             f.cooldown:SetCooldown(now - 1000, 1000) -- Full
-        elseif pct <= 0 then
-             f.cooldown:SetCooldown(0, 0) -- Empty
-        else
-             -- Example: 50% fill. Duration 1000. We want to be at 500s elapsed.
-             -- StartTime = Now - (1000 * 0.50)
-             f.cooldown:SetCooldown(now - (1000 * (pct/100)), 1000)
-             f.cooldown:Pause() -- Freeze it instantly so it doesn't tick
+        if pct >= 100 then f.cooldown:SetCooldown(now - 10000, 10000) 
+        elseif pct <= 0 then f.cooldown:SetCooldown(0, 0)
+        else 
+            local dur = 100000
+            f.cooldown:SetCooldown(now - (dur * (pct/100)), dur)
+            f.cooldown:Pause()
         end
     end
 
@@ -647,28 +677,33 @@ function MSC.UpdateLogic()
             if clean then name = clean end
         end
         
+        -- [[ BARS HALVED IN HEIGHT & TIGHTENED ]]
+        local reason = GetStatReason(tostring(s.k):upper(), class, detectedKey)
         local bar = CreateFrame("StatusBar", nil, content, "BackdropTemplate")
-        bar:SetSize(450, 28)
+        bar:SetSize(450, 24); -- Height changed from 42 to 24
         bar:SetPoint("TOPLEFT", 15, yOff)
         bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"}); bar:SetBackdropColor(0, 0, 0, 0.4)
-        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar") 
-        bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v)
-        bar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(0, 0.5, 1, 0.8), CreateColor(0, 0.9, 1, 0.8))
+        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar"); bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v)
+        bar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(roleColor.r*0.5, roleColor.g*0.5, roleColor.b*0.5, 0.8), CreateColor(roleColor.r, roleColor.g, roleColor.b, 0.9))
         
-        local leftT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        leftT:SetPoint("LEFT", 10, 0); leftT:SetText(name:gsub("Rating", ""))
+        -- Adjusted text anchors for tighter space
+        local leftT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); leftT:SetPoint("TOPLEFT", 10, -2); leftT:SetText(name:gsub("Rating", ""))
+        local rightT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); rightT:SetPoint("TOPRIGHT", -10, -2); rightT:SetText(string.format("%.2f", s.v))
         
-        local rightT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        rightT:SetPoint("RIGHT", -10, 0); rightT:SetText(string.format("%.2f", s.v))
+        if reason then
+            local sub = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            sub:SetPoint("BOTTOMLEFT", 10, 2) -- Tighter anchor
+            sub:SetText(reason)
+            sub:SetTextColor(0.6, 0.6, 0.6)
+        end
         
-        yOff = yOff - 32; table.insert(content.children, bar)
+        yOff = yOff - 30; -- Reduced spacing from 48 to 30
+        table.insert(content.children, bar)
     end
     content:SetHeight(math.abs(yOff) + 50)
 end
 
--- =============================================================
--- VIEW 4: PROTOCOL (Settings - The Fix)
--- =============================================================
+-- [[ VIEW 4: SETTINGS (NO RELOAD BUTTON) ]]
 function MSC.InitSettingsView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     local function CreateHeader(text, relTo, yOff)
@@ -680,26 +715,16 @@ function MSC.InitSettingsView(parent)
         local frame = CreateFrame("Frame", nil, f); frame:SetSize(200, 50); frame:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff)
         local lbl = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); lbl:SetPoint("TOPLEFT", 0, 0); lbl:SetText(label); lbl:SetTextColor(0.6, 0.6, 0.6)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
-        
         local function OnClick(self) 
-            UIDropDownMenu_SetSelectedID(dd, self:GetID())
-            SGJ_Settings[key] = self.value
-            
+            UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
             if key == "Mode" then 
-                MSC.ManualSpec = self.value
-                MSC.CachedWeights = nil
-                -- FORCE REFRESH ALL TABS
-                if MSC.UpdateReceipt then MSC.UpdateReceipt() end
-                if MSC.UpdateLabCalc then MSC.UpdateLabCalc() end
-                if MSC.UpdateLogic then MSC.UpdateLogic() end 
+                MSC.ManualSpec = self.value; MSC.CachedWeights = nil
+                if MSC.UpdateReceipt then MSC.UpdateReceipt() end; if MSC.UpdateLabCalc then MSC.UpdateLabCalc() end; if MSC.UpdateLogic then MSC.UpdateLogic() end 
             end 
         end
-        
         local function Init(self, level) 
             for _, opt in ipairs(options) do 
-                local info = UIDropDownMenu_CreateInfo()
-                info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val)
-                UIDropDownMenu_AddButton(info, level) 
+                local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val); UIDropDownMenu_AddButton(info, level) 
             end 
         end
         UIDropDownMenu_Initialize(dd, Init)
@@ -713,13 +738,11 @@ function MSC.InitSettingsView(parent)
         if tooltip then cb:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tooltip, nil, nil, nil, nil, true); GameTooltip:Show() end); cb:SetScript("OnLeave", GameTooltip_Hide) end
         return cb
     end
-
-    -- 1. Comparison Logic
+    
     local h1 = CreateHeader("Comparison Logic", nil, 0)
-    local ddEnchant = CreateDropdown("Enchant Mode", "EnchantMode", {{ text = "Off (Raw Stats)", val = 1 }, { text = "Current Only (Equipped)", val = 2 }, { text = "Project Best (Simulator)", val = 3 }}, h1, -10)
-    local ddGem = CreateDropdown("Gemming Logic", "GemMode", {{ text = "The Skeptic (As Is)", val = 1 }, { text = "The Casual (Fill Empty)", val = 2 }, { text = "The Pro (Perfect Setup)", val = 3 }}, ddEnchant, -5)
+    local ddEnchant = CreateDropdown("Enchant Mode", "EnchantMode", {{ text = "Off (Raw Stats)", val = 1 }, { text = "Current Only", val = 2 }, { text = "Project Best", val = 3 }}, h1, -10)
+    local ddGem = CreateDropdown("Gemming Logic", "GemMode", {{ text = "The Skeptic", val = 1 }, { text = "The Casual", val = 2 }, { text = "The Pro", val = 3 }}, ddEnchant, -5)
 
-    -- 2. Character Profile
     local h2 = CreateHeader("Character Profile", ddGem, -20)
     local specOptions = { { text = "Auto-Detect", val = "AUTO" } }; local seen = { ["AUTO"] = true }
     if MSC.CurrentClass then
@@ -732,14 +755,12 @@ function MSC.InitSettingsView(parent)
     end
     local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10)
     
-    -- 3. Interface Options
     local h3 = CreateHeader("Interface Options", ddProfile, -20)
     local cb1 = CreateCheck("Hide Minimap Button", "HideMinimap", "Hides the circular button on your minimap.", h3, 0, -10)
     local cb2 = CreateCheck("Hide Tooltip Verdict", "HideTooltips", "Stops the addon from adding scores to item tooltips.", cb1, 0, -5)
     local cb3 = CreateCheck("Mute Error Sounds", "MuteSounds", "Stops the error sound when clicking invalid items.", cb2, 0, -5)
     local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", cb3, 0, -5)
 
-    -- 4. Utility Buttons
     local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40); bImp:SetText("Import Pawn String")
     bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
     local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40); bExport:SetText("Export Data")
@@ -748,10 +769,16 @@ function MSC.InitSettingsView(parent)
     MSC.ViewSettings = f
 end
 
--- =============================================================
--- 5. MINIMAP BUTTON
--- =============================================================
+function MSC.UpdateMinimapPosition()
+    if not MSC_Minimap then return end
+    if SGJ_Settings and SGJ_Settings.HideMinimap then MSC_Minimap:Hide() else MSC_Minimap:Show() end
+end
+
 local mb = CreateFrame("Button", "MSC_Minimap", Minimap); mb:SetSize(32,32); mb:SetFrameLevel(8); mb:SetPoint("CENTER", -60, -60)
 mb.icon = mb:CreateTexture(nil,"BACKGROUND"); mb.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02"); mb.icon:SetSize(20,20); mb.icon:SetPoint("CENTER")
 mb.border = mb:CreateTexture(nil,"OVERLAY"); mb.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder"); mb.border:SetSize(54,54); mb.border:SetPoint("TOPLEFT")
 mb:RegisterForClicks("AnyUp"); mb:SetScript("OnClick", MSC.ToggleMainMenu)
+
+local f = CreateFrame("Frame")
+f:RegisterEvent("PLAYER_LOGIN")
+f:SetScript("OnEvent", function() MSC.UpdateMinimapPosition() end)
