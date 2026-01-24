@@ -157,14 +157,18 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=0.8 -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=0.8,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0, -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5   -- RESTORED (Fading out)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.4, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, -- RESTORED
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2   -- RESTORED (Practically dead)
         }
     },
     ["Leveling_52_59"] = { 
@@ -174,35 +178,41 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"]=2.4, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2   -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- RESTORED
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5   -- RESTORED
         }
     },
     ["Leveling_60_70"] = { 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"]=0.0, 
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, -- Crucial for Outland Weapons
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched End)
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5   -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, -- 1 Str = 2 AP
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5 -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- RESTORED
         }
     },
     
@@ -234,9 +244,10 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"]=0.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.5,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.8, -- ADDED (Progression to 1.0)
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2,         -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5    -- ADDED (Matched End)
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.8, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
@@ -245,7 +256,8 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, 
             ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5,
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5 -- ADDED (Matched Start)
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0 -- RESTORED
         }
     },
     ["Leveling_Bear_52_59"] = { 
@@ -256,7 +268,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.8,
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2 -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,       -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5  -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
@@ -264,7 +278,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_AGILITY_SHORT"]=1.8 -- ADDED (Matched Start)
+            ["ITEM_MOD_AGILITY_SHORT"]=1.8,
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,       -- RESTORED
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.5  -- RESTORED
         }
     },
     ["Leveling_Bear_60_70"] = { 
@@ -275,8 +291,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8,
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,      -- ADDED (Progression to 2.0)
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.0  -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
@@ -285,7 +302,8 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"]=2.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- RESTORED
         }
     },
     
@@ -315,14 +333,18 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, -- RESTORED
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 -- RESTORED
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8, -- RESTORED
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 -- RESTORED
         }
     },
     ["Leveling_Caster_60_70"] = { 
@@ -372,14 +394,16 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0 -- RESTORED
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.0, 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0 -- RESTORED
         }
     },
     ["Leveling_Healer_52_59"] = { 
@@ -405,15 +429,17 @@ Druid.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.0, 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=3.0, -- Tree of Life Aura makes Spirit God Tier
+            ["ITEM_MOD_SPIRIT_SHORT"]=3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5 -- RESTORED
         }
     },
 }
