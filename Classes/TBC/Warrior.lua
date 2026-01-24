@@ -284,24 +284,26 @@ Warrior.LevelingBrackets = {
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
-            ["MSC_WEAPON_SPEED"] = -1.0, -- Prefer Fast for Rage/Heroic Strike
-            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, -- Buffed slightly (Survival is key)
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.8, -- Buffed (Threat)
+            ["MSC_WEAPON_SPEED"] = -1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.8, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, -- Good mitigation
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.0, -- Start valuing this early
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.1, -- ADDED (Start low, progress to 1.5)
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1, -- ADDED (Start low, progress to 1.2)
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
             ["MSC_WEAPON_SPEED"] = -1.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, -- Shield Slam unlocked (Lvl 40)
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, -- FIXED: Added missing armor to prevent drop-off
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
@@ -351,17 +353,19 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
-    ["Leveling_Tank_60_70"] = {
+   ["Leveling_Tank_60_70"] = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
-            ["MSC_WEAPON_SPEED"] = 0.0, -- Speed neutral (Devastate)
+            ["MSC_WEAPON_SPEED"] = 0.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 5.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, -- Resilience works for Crit Cap in TBC Dungeons
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.8, -- ADDED (Matches prev bracket end)
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.8, -- ADDED (Matches prev bracket end)
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, 
@@ -371,12 +375,12 @@ Warrior.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
-            ["MSC_WEAPON_SPEED"] = 0.0, -- FIXED: Added missing speed to prevent drop-off
+            ["MSC_WEAPON_SPEED"] = 0.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 6.0,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 4.0, -- Push for Cap (490)
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5, -- Parry Haste death is real in Heroics
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 4.0, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, -- FIXED: Added missing resilience
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 2.5,
