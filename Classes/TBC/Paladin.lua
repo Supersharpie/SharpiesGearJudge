@@ -104,262 +104,354 @@ Paladin.LevelingBrackets = {
     ["Leveling_1_20"] = {
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=0.5, -- Slight pref for slow (Seal of Command at 20)
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, -- Spirit bad
-            ["ITEM_MOD_ARMOR_SHORT"]=0.01,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"] = 7.0, 
+            ["MSC_WEAPON_SPEED"] = 0.5, -- Slight pref for slow (Seal of Command at 20)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.01,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_AGILITY_SHORT"] = 0.5, -- Added for Sync (Crit/Dodge)
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5 -- Added for Sync
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_ARMOR_SHORT"]=0.01 -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"] = 8.0, 
+            ["MSC_WEAPON_SPEED"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.8, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.01,
+            ["ITEM_MOD_AGILITY_SHORT"] = 0.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.8
         }
     },
 
     -- [[ RETRIBUTION LEVELING ]]
-    -- Focus: Slow 2H Weapon + Strength (AP -> SP conversion) + Crit
+    -- Focus: Slow 2H Weapon + Strength + Crit.
     ["Leveling_RET_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=8.0, 
-            ["MSC_WEAPON_SPEED"]=2.0, -- Seal of Command unlocked. Slow is REQUIRED.
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, -- Need mana for judging
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.2, -- Useless
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"] = 8.0, 
+            ["MSC_WEAPON_SPEED"] = 2.0, -- Seal of Command unlocked. Slow is REQUIRED.
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.8, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2 -- Added for Sync
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=2.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, -- ADDED (Progression to 2.0)
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched Start)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,      -- ADDED (Matched Start)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1        -- ADDED (Reduced value)
+            ["MSC_WEAPON_DPS"] = 9.0, 
+            ["MSC_WEAPON_SPEED"] = 2.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2
         }
     },
     ["Leveling_RET_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"]=9.0, 
-            ["MSC_WEAPON_SPEED"]=2.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, -- Vengeance uptime
-            ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"] = 9.0, 
+            ["MSC_WEAPON_SPEED"] = 2.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, -- Added for Sync
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, -- Added for Sync
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2 -- Added for Sync
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=10.0, 
-            ["MSC_WEAPON_SPEED"]=3.0, -- Crusader Strike (Lvl 50) hits based on weapon dmg. SLOW IS KING.
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched Start)
-            ["ITEM_MOD_AGILITY_SHORT"]=1.1,      -- ADDED (Progression to 1.1)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1        -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"] = 10.0, 
+            ["MSC_WEAPON_SPEED"] = 3.0, -- Crusader Strike (Lvl 50) hits based on weapon dmg. SLOW IS KING.
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.4, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.1, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5 -- Ret starts getting some SP from gear
         }
     },
     ["Leveling_RET_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=3.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=2.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.1, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 -- RESTORED (Bridge Gap)
+            ["MSC_WEAPON_DPS"] = 10.0, 
+            ["MSC_WEAPON_SPEED"] = 3.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.1, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.3, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5 -- Added for Sync
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=12.0, ["MSC_WEAPON_SPEED"]=3.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=3.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2 -- RESTORED (Bridge Gap)
+            ["MSC_WEAPON_DPS"] = 12.0, 
+            ["MSC_WEAPON_SPEED"] = 3.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0
         }
     },
     ["Leveling_RET_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=12.0, ["MSC_WEAPON_SPEED"]=3.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]=3.2, -- Sheath of Light makes Str giving SP too.
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, -- Dedicated Ret gear has SP now
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"] = 12.0, 
+            ["MSC_WEAPON_SPEED"] = 3.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.02, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0, -- Added for Sync
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5 -- TBC Stat
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=15.0, 
-            ["MSC_WEAPON_SPEED"]=4.0, -- Maximum Slow Priority
-            ["ITEM_MOD_STRENGTH_SHORT"]=3.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.1,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,        -- ADDED (Matched Start)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8,        -- ADDED (Matched Start)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,    -- ADDED (Progression to 1.0)
-            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.02  -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"] = 15.0, 
+            ["MSC_WEAPON_SPEED"] = 4.0, -- Maximum Slow Priority
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.0, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.1,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.02,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.0,
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.0
         }
     },
 
     -- [[ PROT AOE GRINDING ]]
-    -- Focus: Spell Power weapon + Stamina + Block Value (Reflective Damage)
+    -- Focus: Spell Power weapon + Stamina + Block Value.
     ["Leveling_PROT_AOE_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.5, -- Weapon DPS is IRRELEVANT. You want a mage sword.
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, -- Holy Shield Damage
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, -- Consecration Damage
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, -- Mana for pulls
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"] = 0.5, -- Weapon DPS is IRRELEVANT. You want a mage sword.
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, -- Holy Shield Damage
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, -- Consecration Damage
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5 -- Added for Sync
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5,         -- ADDED (Matched Start)
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.5              -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"] = 0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.8, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8
         }
     },
     ["Leveling_PROT_AOE_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.8, 
-            ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["MSC_WEAPON_DPS"] = 0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.8, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8, -- Added for Sync
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8 -- Added for Sync
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8, -- ADDED (Progression to 1.8)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5,         -- ADDED (Matched Start)
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.5              -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"] = 0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.0
         }
     },
     ["Leveling_PROT_AOE_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.5,     -- RESTORED (From 59 End)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5  -- RESTORED (From 59 End)
+            ["MSC_WEAPON_DPS"] = 1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=2.0, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.4, ["ITEM_MOD_STAMINA_SHORT"]=4.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]=0.5,     -- RESTORED
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5  -- RESTORED
+            ["MSC_WEAPON_DPS"] = 2.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.4, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 4.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 3.0,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5
         }
     },
 
     -- [[ HOLY DUNGEON LEVELING ]]
-    -- Focus: +Healing > Int > Mp5. Spirit is dead.
+    -- Focus: +Healing > Int > Mp5.
     ["Leveling_HOLY_DUNGEON_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5 -- Added for Sync
         },
         End = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,    -- ADDED (Reduced value)
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,   -- ADDED (Matched Start)
-            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0   -- ADDED (Matched Start)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0
         }
     },
     ["Leveling_HOLY_DUNGEON_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2, -- Illumination Talent (Crit = Mana)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, -- Added for Sync
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0 -- Added for Sync
         },
         End = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, -- ADDED (Matched Start)
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1             -- ADDED (Matched Start)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0
         }
     },
     ["Leveling_HOLY_DUNGEON_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5 -- ADDED (Matched End approx)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, -- Added for Sync
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0 -- Added for Sync
         },
         End = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, -- ADDED (Matched Start)
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1             -- ADDED (Matched Start)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0
         }
     },
     ["Leveling_HOLY_DUNGEON_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.0, -- Illumination is key in TBC
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, -- Added for Sync
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, -- Added for Sync
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
         },
         End = { 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, -- ADDED (Matched Start)
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.2            -- ADDED (Matched Start)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0,
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
         }
     },
 
@@ -368,98 +460,128 @@ Paladin.LevelingBrackets = {
     ["Leveling_PROT_DUNGEON_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["ITEM_MOD_STAMINA_SHORT"]= 1.8, ["ITEM_MOD_STRENGTH_SHORT"]= 1.2, 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 0.8, ["ITEM_MOD_INTELLECT_SHORT"]= 0.8, 
-            ["MSC_WEAPON_DPS"]= 1.5, ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+            ["MSC_WEAPON_DPS"] = 1.5, 
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5 -- Added for Sync
         },
         End = { 
-            ["ITEM_MOD_STAMINA_SHORT"]= 2.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 0.9,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,  -- ADDED (Progression to 1.0)
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8, -- ADDED (Matched Start)
-            ["MSC_WEAPON_DPS"]= 1.5            -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.9,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+            ["MSC_WEAPON_DPS"] = 1.5,
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8
         }
     },
     ["Leveling_PROT_DUNGEON_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["ITEM_MOD_STAMINA_SHORT"]= 2.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8, 
-            ["MSC_WEAPON_DPS"]= 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8, 
+            ["MSC_WEAPON_DPS"] = 1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8 -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8, -- Added for Sync
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8, -- Added for Sync
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.8 -- Added for Sync
         },
         End = { 
-            ["ITEM_MOD_STAMINA_SHORT"]= 2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.4, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8, 
-            ["MSC_WEAPON_DPS"]= 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.4, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8, 
+            ["MSC_WEAPON_DPS"] = 1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8 -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.2
         }
     },
     ["Leveling_PROT_DUNGEON_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["ITEM_MOD_STAMINA_SHORT"]= 2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.2, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2, 
-            ["MSC_WEAPON_DPS"]= 1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2, 
+            ["MSC_WEAPON_DPS"] = 1.2, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,     -- RESTORED (Bridge Gap)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8, -- RESTORED (Bridge Gap)
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8     -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8
         },
         End = { 
-            ["ITEM_MOD_STAMINA_SHORT"]= 3.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, 
-            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2, 
-            ["MSC_WEAPON_DPS"]= 1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2, 
+            ["MSC_WEAPON_DPS"] = 1.2, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,     -- RESTORED (Bridge Gap)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.0, -- RESTORED (Bridge Gap)
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8     -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8
         }
     },
     ["Leveling_PROT_DUNGEON_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 2.0, ["ITEM_MOD_STAMINA_SHORT"]= 3.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"]= 0.8, ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.5, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.8, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["MSC_WEAPON_DPS"]= 1.2,            -- RESTORED (From 59 End)
-            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, -- RESTORED (From 59 End)
-            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2  -- RESTORED (From 59 End)
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["MSC_WEAPON_DPS"] = 1.2, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5 -- Added for Sync
         },
         End = { 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]= 3.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]= 2.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 0.8, 
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.5, 
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.5, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 3.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.0,
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.8, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
-            ["MSC_WEAPON_DPS"]= 1.2,            -- RESTORED
-            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, -- RESTORED
-            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2  -- RESTORED
+            ["MSC_WEAPON_DPS"] = 1.2, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.0
         }
     }
-}	
+}
 
 -- =============================================================
 -- CLASS METADATA

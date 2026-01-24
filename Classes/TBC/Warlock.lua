@@ -109,90 +109,138 @@ Warlock.LevelingBrackets = {
     ["Leveling_1_20"] = {
         min = 1, max = 20,
         Start = { 
-            ["MSC_WAND_DPS"]=2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, -- Spirit good for Regen early
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.5 -- ADDED (Progression to 1.2)
+            ["MSC_WAND_DPS"] = 2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, -- Nice for Life Tap offset
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.1,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
+            ["MSC_WAND_DPS"] = 2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.4,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2, -- Low priority early
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         }
     },
     ["Leveling_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,   -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,     -- ADDED (Matched End)
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.0         -- ADDED (Progression to 0.8)
+            ["MSC_WAND_DPS"] = 2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2,   
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,     
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.4,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         },
         End = { 
-            ["MSC_WAND_DPS"]=1.5, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8 
+            ["MSC_WAND_DPS"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         }
     },
     ["Leveling_41_51"] = { -- Dark Pact era (Mana from Pet). Spirit value drops.
         min = 41, max = 51,
         Start = { 
-            ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, -- ADDED (Progression to 2.0)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5,     -- ADDED (Matched End)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,      -- ADDED (Progression to 0.5)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0    -- ADDED (Matched End)
+            ["MSC_WAND_DPS"] = 1.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,     
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,      
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.8, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, -- Buffed
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, -- Nerfed (Kill > Survive)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["MSC_WAND_DPS"] = 0.8, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         }
     },
     ["Leveling_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 -- RESTORED (Bridge Gap)
+            ["MSC_WAND_DPS"] = 0.8, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.4, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 -- RESTORED (Bridge Gap)
+            ["MSC_WAND_DPS"] = 0.4, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5
         }
     },
     ["Leveling_60_70"] = { -- Outland Drain Tanking
         min = 60, max = 70,
         Start = { 
-            ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5,   -- ADDED (Progression to 3.2)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8,         -- ADDED (Progression to 2.2)
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, -- ADDED (Progression to 2.0)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,       -- ADDED (Progression to 1.2)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5           -- ADDED (Matched End)
+            ["MSC_WAND_DPS"] = 0.4, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5,   
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8,         
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,       
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- Added TBC Stat
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.1, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=3.2, -- Shadow Dmg is King
-            ["ITEM_MOD_STAMINA_SHORT"]=2.2, -- High, but not higher than SP
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 -- Fel Armor makes this roughly ~0.65 total value in logic
+            ["MSC_WAND_DPS"] = 0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 3.2, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 3.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.2, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
         }
     },
 
@@ -201,130 +249,200 @@ Warlock.LevelingBrackets = {
     ["Leveling_Fire_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,   -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0,     -- ADDED (Matched End)
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8       -- ADDED (Progression to 0.5)
+            ["MSC_WAND_DPS"] = 1.5, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,   
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,     
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2, -- Added for Sync
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=1.2, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, -- Destro OOMs fast
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+            ["MSC_WAND_DPS"] = 1.2, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
     ["Leveling_Fire_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 -- RESTORED (Bridge Gap)
+            ["MSC_WAND_DPS"] = 1.2, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.8, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 -- RESTORED (Progression to 1.2)
+            ["MSC_WAND_DPS"] = 0.8, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 2.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
     ["Leveling_Fire_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5,       -- ADDED (Progression to 3.5)
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5,  -- ADDED (Progression to 2.5)
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- ADDED (Progression to 2.5)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2            -- ADDED (Progression to 1.5)
+            ["MSC_WAND_DPS"] = 0.4, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 2.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5,        
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,   
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, -- Added for Sync
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4, -- Added for Sync
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- Added TBC Stat
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.1, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.5, -- Nuke Harder
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.5, -- No Suppression talent for Fire spells
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+            ["MSC_WAND_DPS"] = 0.1, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 3.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 3.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
 
-   -- [[ DEMO LEVELING ]]
+    -- [[ DEMO LEVELING ]]
     -- Focus: Stamina (Pet Scaling) / SP.
-    -- Updated: Shadow Damage now fades out slowly rather than dropping to 0 at lvl 52.
     ["Leveling_Demo_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.8,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,   
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.8       
+            ["MSC_WAND_DPS"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,   
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.8, -- Added for Sync
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.1,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.1,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.4,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+            ["MSC_WAND_DPS"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
     ["Leveling_Demo_41_51"] = { -- Felguard Era
         min = 41, max = 51,
         Start = { 
-            ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.2,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,   
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,     
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0  
+            ["MSC_WAND_DPS"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2,   
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,     
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2, -- Added for Sync
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2, -- Added for Sync
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.6, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5 -- Passes 1.5 to next bracket
+            ["MSC_WAND_DPS"] = 0.6, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
     ["Leveling_Demo_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=2.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8,       
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5 -- ADDED (Matches Prev End)
+            ["MSC_WAND_DPS"] = 0.6, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8,        
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0 -- ADDED (Fading out)
+            ["MSC_WAND_DPS"] = 0.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
     ["Leveling_Demo_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=2.8,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5,        
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2,   
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,          
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0  -- ADDED (Matches Prev End)
+            ["MSC_WAND_DPS"] = 0.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5,        
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,   
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,          
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- Added TBC Stat
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
         End = { 
-            ["MSC_WAND_DPS"]=0.1, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=2.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.5 -- ADDED (Low value, but not zero)
+            ["MSC_WAND_DPS"] = 0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 3.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 2.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
 }
-
 -- =============================================================
 -- CLASS METADATA
 -- =============================================================
