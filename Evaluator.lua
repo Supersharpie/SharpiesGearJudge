@@ -116,19 +116,37 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                 end
             end
             
-            -- [[ 6. HANDLE PROCS & SET COUNTS ]]
+            -- [[ 6. HANDLE PROCS, SETS & HYBRID SCORING ]]
             local itemID = GetItemInfoInstant(itemLink)
             if itemID then
+                -- A. HANDLE SETS
                 if MSC.GetItemSetID then
                     local setID = MSC:GetItemSetID(itemLink) 
                     if setID then Scratch_SetCounts[setID] = (Scratch_SetCounts[setID] or 0) + 1 end
                 end
                 
+                -- B. HANDLE SPECIAL EFFECTS (The Hybrid Check)
                 if stats._AUTO_PROC then
+                    -- PRIORITY 1: MANUAL OVERRIDE (From Data_Sets.lua)
                     local p = stats._AUTO_PROC
                     Scratch_Accumulator[p.stat] = (Scratch_Accumulator[p.stat] or 0) + p.val
                     if weights[p.stat] and weights[p.stat] > 0 then
                         totalScore = totalScore + (p.val * weights[p.stat])
+                    end
+
+                elseif stats.UseEffects then
+                    -- PRIORITY 2: PARSER FALLBACK (From Parse.lua)
+                    -- Only runs if there is NO manual override (_AUTO_PROC is nil)
+                    for _, effect in ipairs(stats.UseEffects) do
+                        if effect.statKey and effect.averageVal then
+                            -- Add to Accumulator (for Tooltip display)
+                            Scratch_Accumulator[effect.statKey] = (Scratch_Accumulator[effect.statKey] or 0) + effect.averageVal
+                            
+                            -- Add to Total Score
+                            if weights[effect.statKey] then
+                                totalScore = totalScore + (effect.averageVal * weights[effect.statKey])
+                            end
+                        end
                     end
                 end
             end
