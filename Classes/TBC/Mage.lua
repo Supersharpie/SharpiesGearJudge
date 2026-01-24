@@ -152,15 +152,17 @@ Mage.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.6, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0       -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 -- RESTORED (Fading out)
         }
     },
     ["Leveling_52_59"] = { 
@@ -169,15 +171,17 @@ Mage.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.2)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2           -- ADDED (Matched End)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5 -- RESTORED
         }
     },
     ["Leveling_60_70"] = { 
@@ -186,17 +190,19 @@ Mage.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,          -- ADDED (Matched End)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2,            -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5   -- ADDED (Progression to 0.8)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, -- Kill speed is defense
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8 -- Shatter Cap makes Crit less valuable
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.2 -- RESTORED
         }
     },
 
@@ -217,6 +223,25 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- High Crit Priority
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2 
+        }
+    },
+	["Leveling_Fire_52_59"] = { 
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.5, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=0.5 -- ADDED (Starting fade in)
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=0.2, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, -- Scaling up
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- Scaling down to match lvl 60 start
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0 -- Matches lvl 60 start
         }
     },
     ["Leveling_Fire_60_70"] = { 
