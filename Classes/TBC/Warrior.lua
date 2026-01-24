@@ -96,15 +96,15 @@ Warrior.LevelingWeights = {}
 -- DYNAMIC LEVELING BRACKETS
 -- =============================================================
 Warrior.LevelingBrackets = {
-["Leveling_1_20"] = {
+    ["Leveling_1_20"] = {
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, ["MSC_WEAPON_SPEED"] = 0.5,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, -- Buffed (King)
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, -- BUFFED: High scaling at low lvl (Crit/Dodge/Armor)
-            ["ITEM_MOD_SPIRIT_SHORT"] = 1.2, -- Nerfed below Str
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, -- Nerfed. You don't need much HP in Durotar/Elwynn.
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.1, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
@@ -112,7 +112,7 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 1.0,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.4, -- Still very strong
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.4, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_ARMOR_SHORT"] = 0.1, 
@@ -122,7 +122,7 @@ Warrior.LevelingBrackets = {
     ["Leveling_2H_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 1.5, -- Ramping for WW (Lvl 36)
+            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 1.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,
@@ -136,10 +136,10 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
-    ["Leveling_2H_41_51"] = { -- The Mortal Strike Era
+    ["Leveling_2H_41_51"] = { 
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 13.0, ["MSC_WEAPON_SPEED"] = 2.5, -- JUMP: MS unlocked. Fast weapons are now bad.
+            ["MSC_WEAPON_DPS"] = 13.0, ["MSC_WEAPON_SPEED"] = 2.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5, ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
@@ -156,17 +156,17 @@ Warrior.LevelingBrackets = {
     ["Leveling_2H_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 14.0, ["MSC_WEAPON_SPEED"] = 2.8, -- Fixed logic dip
+            ["MSC_WEAPON_DPS"] = 14.0, ["MSC_WEAPON_SPEED"] = 2.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4, ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 15.0, ["MSC_WEAPON_SPEED"] = 3.0, -- Preparing for Outland
+            ["MSC_WEAPON_DPS"] = 15.0, ["MSC_WEAPON_SPEED"] = 3.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, ["ITEM_MOD_STAMINA_SHORT"] = 1.8,
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.3,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.3, ["ITEM_MOD_SPIRIT_SHORT"] = 0, -- FIXED: Added missing end value
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
@@ -181,24 +181,24 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 16.0, ["MSC_WEAPON_SPEED"] = 3.5, -- BUFFED: Slow weapons are critical for Arms
-            ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, -- BUFFED: Better ratio vs Weapon DPS (1 DPS ~= 4 Str)
+            ["MSC_WEAPON_DPS"] = 16.0, ["MSC_WEAPON_SPEED"] = 3.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.8,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, -- NERFED: Kill speed > Survival
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
-    },     
-["Leveling_DW_21_40"] = {
+    },      
+    ["Leveling_DW_21_40"] = {
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
             ["MSC_WEAPON_SPEED"] = 1.0,     -- Likes Slow MH slightly
             ["MSC_OH_WEAPON_SPEED"] = -1.0, -- Likes FAST OH (Negative weight favors lower numbers)
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.2, ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
@@ -301,6 +301,7 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, -- FIXED: Added missing armor to prevent drop-off
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
@@ -323,6 +324,8 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.2,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, -- FIXED: Added missing dodge
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2, -- FIXED: Added missing parry
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     },
@@ -343,6 +346,7 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 4.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.8, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.8, -- FIXED: Added missing parry (interpolating to 1.8)
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
@@ -350,25 +354,42 @@ Warrior.LevelingBrackets = {
     ["Leveling_Tank_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 12.0, ["MSC_WEAPON_SPEED"] = 0.0, -- Speed neutral (Devastate)
-            ["ITEM_MOD_STAMINA_SHORT"] = 5.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5, 
+            ["MSC_WEAPON_DPS"] = 12.0, 
+            ["MSC_WEAPON_SPEED"] = 0.0, -- Speed neutral (Devastate)
+            ["ITEM_MOD_STAMINA_SHORT"] = 5.0, 
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, -- Resilience works for Crit Cap in TBC Dungeons
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8, ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, 
+            ["ITEM_MOD_MANA_SHORT"]=0, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 14.0, ["ITEM_MOD_STAMINA_SHORT"] = 6.0,
+            ["MSC_WEAPON_DPS"] = 14.0, 
+            ["MSC_WEAPON_SPEED"] = 0.0, -- FIXED: Added missing speed to prevent drop-off
+            ["ITEM_MOD_STAMINA_SHORT"] = 6.0,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 4.0, -- Push for Cap (490)
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5, -- Parry Haste death is real in Heroics
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.5,
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.5, ["ITEM_MOD_PARRY_RATING_SHORT"] = 2.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5, -- FIXED: Added missing resilience
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.5,
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 2.5,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, 
+            ["ITEM_MOD_MANA_SHORT"]=0, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
         }
     }
 }
+
 
 Warrior.Specs = { [1]="Arms", [2]="Fury", [3]="Protection" }
 
@@ -378,7 +399,7 @@ Warrior.PrettyNames = {
     ["ARMS_PVP"]            = "PvP: Arms (Mortal Strike)",
     ["ARMS_PVE"]            = "Raid: Arms (Blood Frenzy)",
     ["DEEP_PROT"]           = "Tank: Deep Protection",
-    ["Leveling_2H_1_20"]  = "Starter (1-20)",
+    ["Leveling_1_20"]  = "Starter (1-20)",
     ["Leveling_2H_21_40"] = "Standard Leveling (21-40)",
     ["Leveling_2H_41_51"] = "Standard Leveling (41-51)",
     ["Leveling_2H_52_59"] = "Standard Leveling (52-59)",
@@ -458,27 +479,73 @@ function Warrior:GetSpec()
     return "Leveling_2H" .. suffix
 end
 
-function Warrior:GetDynamicWeights()
-    local level = UnitLevel("player")
-    local specKey = self:GetSpec()
+function Warrior:GetDynamicWeights(forceKey)
+    -- [[ FIX 1: TRANSLATOR ]]
+    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
+    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    if forceKey and not Warrior.LevelingBrackets[forceKey] and not Warrior.Weights[forceKey] then
+        if Warrior.PrettyNames then
+            for key, name in pairs(Warrior.PrettyNames) do
+                if name == forceKey then
+                    forceKey = key
+                    break
+                end
+            end
+        end
+    end
 
+    local level = UnitLevel("player")
+    local specKey = forceKey or self:GetSpec() 
+
+    -- 1. Check Leveling Brackets
     if Warrior.LevelingBrackets and Warrior.LevelingBrackets[specKey] then
         local bracket = Warrior.LevelingBrackets[specKey]
+        
+        -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
-        if progress < 0 then progress = 0 end
-        if progress > 1 then progress = 1 end
+        
+        -- [[ FIX 2: PREVIEW CLAMPING ]]
+        -- If previewing a different level bracket, force progress to 0 or 1 
+        -- to prevent "Negative Stats" from vanishing.
+        if forceKey then
+            if level < bracket.min then progress = 0 end -- Show Start weights
+            if level > bracket.max then progress = 1 end -- Show End weights
+        else
+            -- Normal play strict clamping
+            if progress < 0 then progress = 0 end
+            if progress > 1 then progress = 1 end
+        end
 
         local dynamicWeights = {}
-        for stat, endValue in pairs(bracket.End) do
-            local startValue = bracket.Start[stat] or 0
-            dynamicWeights[stat] = startValue + ((endValue - startValue) * progress)
+        
+        -- [[ FIX 3: ROBUSTNESS ]]
+        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
+        local allStats = {}
+        if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
+        if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
+
+        for stat, _ in pairs(allStats) do
+            local startValue = (bracket.Start and bracket.Start[stat]) or 0
+            local endValue = (bracket.End and bracket.End[stat]) or 0
+            
+            local result = startValue + ((endValue - startValue) * progress)
+            
+            -- Safety: Never return negative weight
+            if result < 0 then result = 0 end
+            
+            dynamicWeights[stat] = result
         end
+        
         return dynamicWeights, specKey
     end
 
-    if Warrior.Weights and Warrior.Weights[specKey] then return Warrior.Weights[specKey], specKey
-    elseif Warrior.LevelingWeights and Warrior.LevelingWeights[specKey] then return Warrior.LevelingWeights[specKey], specKey
+    -- 2. Static Weights Fallback
+    if Warrior.Weights and Warrior.Weights[specKey] then 
+        return Warrior.Weights[specKey], specKey
+    elseif Warrior.LevelingWeights and Warrior.LevelingWeights[specKey] then 
+        return Warrior.LevelingWeights[specKey], specKey
     end
+
     return nil, specKey
 end
 

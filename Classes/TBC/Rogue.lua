@@ -316,25 +316,74 @@ function Rogue:GetSpec()
     return "Leveling" .. suffix
 end
 
-function Rogue:GetDynamicWeights()
-    local level = UnitLevel("player")
-    local specKey = self:GetSpec()
+function Rogue:GetDynamicWeights(forceKey)
+    -- [[ FIX 1: TRANSLATOR ]]
+    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
+    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    if forceKey and not Rogue.LevelingBrackets[forceKey] and not Rogue.Weights[forceKey] then
+        if Rogue.PrettyNames then
+            for key, name in pairs(Rogue.PrettyNames) do
+                if name == forceKey then
+                    forceKey = key
+                    break
+                end
+            end
+        end
+    end
 
-    if self.LevelingBrackets and self.LevelingBrackets[specKey] then
-        local bracket = self.LevelingBrackets[specKey]
+    local level = UnitLevel("player")
+    local specKey = forceKey or self:GetSpec() 
+
+    -- 1. Check Leveling Brackets
+    if Rogue.LevelingBrackets and Rogue.LevelingBrackets[specKey] then
+        local bracket = Rogue.LevelingBrackets[specKey]
+        
+        -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
-        progress = math.max(0, math.min(1, progress))
+        
+        -- [[ FIX 2: PREVIEW CLAMPING ]]
+        -- If previewing a different level bracket, force progress to 0 or 1 
+        -- to prevent "Negative Stats" from vanishing.
+        if forceKey then
+            if level < bracket.min then progress = 0 end -- Show Start weights
+            if level > bracket.max then progress = 1 end -- Show End weights
+        else
+            -- Normal play strict clamping
+            if progress < 0 then progress = 0 end
+            if progress > 1 then progress = 1 end
+        end
 
         local dynamicWeights = {}
-        for stat, endValue in pairs(bracket.End) do
-            local startValue = bracket.Start[stat] or 0
-            dynamicWeights[stat] = startValue + ((endValue - startValue) * progress)
+        
+        -- [[ FIX 3: ROBUSTNESS ]]
+        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
+        local allStats = {}
+        if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
+        if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
+
+        for stat, _ in pairs(allStats) do
+            local startValue = (bracket.Start and bracket.Start[stat]) or 0
+            local endValue = (bracket.End and bracket.End[stat]) or 0
+            
+            local result = startValue + ((endValue - startValue) * progress)
+            
+            -- Safety: Never return negative weight
+            if result < 0 then result = 0 end
+            
+            dynamicWeights[stat] = result
         end
+        
         return dynamicWeights, specKey
     end
 
-    if self.Weights and self.Weights[specKey] then return self.Weights[specKey], specKey end
-    return self.Weights["Default"], specKey
+    -- 2. Static Weights Fallback
+    if Rogue.Weights and Rogue.Weights[specKey] then 
+        return Rogue.Weights[specKey], specKey
+    elseif Rogue.LevelingWeights and Rogue.LevelingWeights[specKey] then 
+        return Rogue.LevelingWeights[specKey], specKey
+    end
+
+    return nil, specKey
 end
 
 function Rogue:ApplyScalers(weights, currentSpec)

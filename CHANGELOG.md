@@ -1,5 +1,23 @@
 # Sharpie's Gear Judge - Version History
 
+## V2.2.2 Weapon Thunderdome
+### Core Engine
+* **Fixed Manual Profile Selection: Updated Dynamic_Engine.lua to correctly route manual dropdown selections through the dynamic calculation engine. This fixes the issue where selecting a specific profile (e.g., "Leveling 60-70") would return empty results or only "Off-Hand DPS".
+* **Added Preview Clamping: Implemented logic to clamp leveling progress to 0% or 100% when manually previewing a bracket outside the player's current level. This prevents "Negative Stat Weights" from breaking the display when a low-level character previews endgame weights.
+### Class Modules (Warrior, Mage, Rogue, etc.)
+* **Robust Weight Interpolation: Rewrote GetDynamicWeights across all classes to merge Start and End table keys. This prevents stats from disappearing during leveling if they were missing from one side of the bracket definition.
+* **Pretty Name Translator: Added a reverse-lookup mechanism to GetDynamicWeights that translates human-readable dropdown names (e.g., "Standard Leveling (21-40)") back to internal code keys (e.g., Leveling_2H_21_40), resolving the "Silent Nil" error.
+* **Data Integrity: Fixed missing commas and key mismatches in the LevelingBrackets data tables for Warrior (and applied standardization to other classes) to ensure smooth transitions between level ranges.
+### The Dashboard
+* **Tab 1: The Laboratory: Renamed - "Weapon Thunderdome"
+* **New Feature: The 6-Way Thunderdome
+* **Dual-Column Layout: The Laboratory is now split into Set 1 (Left) and Set 2 (Right), allowing for side-by-side comparison of two completely different loadouts.
+* **3-Option Blocks: Each Set now contains three distinct configuration blocks:
+	* *Option A: Two-Hander
+	* *Option B: Main Hand + Shield/Off-Hand
+	* *Option C: Dual Wield (Main Hand + One-Hander)
+	* *Winner Detection: The addon calculates scores for all 6 blocks simultaneously. The block with the highest score lights up with a Green "WINNER" Border, while losing blocks are dimmed.
+
 ## V2.2.1 🖥️UI + Dynamic Leveling
 * **This update introduces a fundamental shift in how the addon handles features and UI, moving toward a modular Plugin Engine and a more responsive dashboard.
 * **Major Features

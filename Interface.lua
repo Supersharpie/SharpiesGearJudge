@@ -2,7 +2,7 @@ local addonName, MSC = ...
 _G.MSC = MSC 
 
 -- =============================================================
--- 0. THEME & COLORS
+-- 1. THEME, COLORS & HELPERS
 -- =============================================================
 MSC.Colors = { 
     BgSidebar = {0.05, 0.05, 0.05, 1.00}, 
@@ -23,6 +23,15 @@ MSC.ReceiptSlots = {}
 MSC.BagCache = {}
 MSC.BagCacheDirty = true
 MSC.SummaryRows = {} 
+MSC.LabBlocks = {} 
+
+-- [[ TAB REGISTRY ]]
+MSC.RegisteredTabs = {
+    { id=1, icon="Interface\\Icons\\INV_Sword_04", name="Weapon Thunderdome", funcName="InitLabView", view="ViewLab", update="UpdateLabCalc" },
+    { id=2, icon="Interface\\Icons\\INV_Misc_Note_02", name="Receipt", funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
+    { id=3, icon="Interface\\Icons\\Spell_Holy_MindVision", name="Stat Logic", funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
+    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name="Protocol", funcName="InitSettingsView", view="ViewSettings" }
+}
 
 if not MSC.GetInspectSpec then function MSC.GetInspectSpec(unit) return "Default" end end
 
@@ -57,326 +66,137 @@ function MSC.CreateModernBorder(f, thickness)
 end
 
 -- =============================================================
--- 1. TAB REGISTRY
+-- 2. VIEW DEFINITIONS (Must be defined BEFORE Dashboard)
 -- =============================================================
-MSC.RegisteredTabs = {
-    { id=1, icon="Interface\\Icons\\INV_Sword_04", name="The Laboratory", funcName="InitLabView", view="ViewLab", update="UpdateLabCalc" },
-    { id=2, icon="Interface\\Icons\\INV_Misc_Note_02", name="Receipt", funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
-    { id=3, icon="Interface\\Icons\\Spell_Holy_MindVision", name="Stat Logic", funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
-    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name="Protocol", funcName="InitSettingsView", view="ViewSettings" }
-}
 
-function MSC.RegisterPluginTab(name, icon, initFunc, viewKey, updateFuncKey)
-    local newID = #MSC.RegisteredTabs + 1
-    table.insert(MSC.RegisteredTabs, {
-        id = newID, name = name, icon = icon,
-        directFunc = initFunc, view = viewKey, update = updateFuncKey
-    })
-    if MSC.MainFrame and MSC.MainFrame:IsShown() then MSC.RenderSidebarButtons() end
-    return newID
-end
-
--- =============================================================
--- 2. DASHBOARD FRAME
--- =============================================================
-function MSC.RenderSidebarButtons()
-    if not MSC.MainFrame then return end
-    if MSC.NavButtons then for _, btn in ipairs(MSC.NavButtons) do btn:Hide() end end
-    MSC.NavButtons = {}
-
-    for idx, tab in ipairs(MSC.RegisteredTabs) do
-        local btn = CreateFrame("Button", nil, MSC.MainFrame.Sidebar)
-        btn:SetSize(50, 50); btn:SetPoint("TOP", 0, -20 - ((idx-1)*65))
-        btn.Bg = btn:CreateTexture(nil, "BACKGROUND"); btn.Bg:SetAllPoints(); btn.Bg:SetColorTexture(1, 1, 1, 0.05); btn.Bg:SetAlpha(0)
-        btn.Icon = btn:CreateTexture(nil, "ARTWORK"); btn.Icon:SetSize(32, 32); btn.Icon:SetPoint("CENTER"); btn.Icon:SetTexture(tab.icon); btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6)
-        btn.SelectBar = btn:CreateTexture(nil, "OVERLAY"); btn.SelectBar:SetColorTexture(0, 0.8, 1, 1); btn.SelectBar:SetSize(4, 50); btn.SelectBar:SetPoint("LEFT", 0, 0); btn.SelectBar:Hide()
-        btn:SetScript("OnEnter", function(self) self.Icon:SetVertexColor(1,1,1); self.Bg:SetAlpha(0.1); GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tab.name); GameTooltip:Show() end)
-        btn:SetScript("OnLeave", function(self) self.Bg:SetAlpha(0); if self.ID ~= MSC.ActiveTab then self.Icon:SetVertexColor(0.6, 0.6, 0.6) end GameTooltip:Hide() end)
-        btn:SetScript("OnClick", function(self) MSC.SwitchTab(self.ID) end)
-        btn.ID = idx; table.insert(MSC.NavButtons, btn)
-    end
-    if MSC.ActiveTab then MSC.SwitchTab(MSC.ActiveTab) end
-end
-
-function MSC.ToggleMainMenu()
-    if MSC.MainFrame then if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end return end
-    local f = CreateFrame("Frame", "SGJ_MainFrame", UIParent, "BackdropTemplate")
-    f:SetSize(650, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-    
-    f:SetScript("OnHide", function() 
-        if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end 
-    end)
-    
-    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing); f:SetFrameStrata("HIGH")
-    MSC.CreateModernBorder(f, 1)
-    
-    f.Header = CreateFrame("Frame", nil, f); f.Header:SetPoint("TOPLEFT", 70, 0); f.Header:SetPoint("TOPRIGHT", 0, 0); f.Header:SetHeight(60); f.Header:EnableMouse(true)
-    f.Header:SetScript("OnMouseWheel", function(self, delta) local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end; if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur) end)
-    f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8); f.Bg:SetAllPoints(); local _, class = UnitClass("player"); local fixedClass = class:sub(1,1)..class:sub(2):lower()
-    pcall(function() f.Bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga") end)
-    f.Bg:SetTexCoord(0, 1, 0.1, 0.9); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 1) 
-    f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7); f.Overlay:SetAllPoints(); f.Overlay:SetColorTexture(0.08, 0.08, 0.10, 0.90) 
-    f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND"); f.Header.Grad:SetAllPoints(); f.Header.Grad:SetColorTexture(0, 0, 0, 0.5); f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
-    f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.1 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
-    f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
-    
-    f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0)
-    f.ScaleHint:SetText("Scroll to Scale")
-    f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
-
-    f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
-    f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
-    f.Sidebar.Line = f.Sidebar:CreateTexture(nil, "OVERLAY"); f.Sidebar.Line:SetColorTexture(0, 0, 0, 1); f.Sidebar.Line:SetWidth(1); f.Sidebar.Line:SetPoint("TOPRIGHT", 0, 0); f.Sidebar.Line:SetPoint("BOTTOMRIGHT", 0, 0)
-    
-    f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.MoveHint:SetPoint("BOTTOM", 0, 15)
-    f.MoveHint:SetText("Hold\nto Move")
-    f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
-    
-    f.Content = CreateFrame("Frame", nil, f); f.Content:SetPoint("TOPLEFT", f.Sidebar, "TOPRIGHT", 0, -60); f.Content:SetPoint("BOTTOMRIGHT", 0, 0)
-    MSC.MainFrame = f
-    
-    MSC.InitLabView(f.Content); MSC.InitReceiptView(f.Content); MSC.InitLogicView(f.Content); MSC.InitSettingsView(f.Content)
-    MSC.RenderSidebarButtons(); MSC.SwitchTab(1)
-    f:Show()
-end
-
-function MSC.SwitchTab(id)
-    MSC.ActiveTab = id
-    if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end
-    if MSC.NavButtons then
-        for i, btn in ipairs(MSC.NavButtons) do
-            if i == id then btn.Icon:SetDesaturated(false); btn.Icon:SetVertexColor(1, 1, 1); btn.SelectBar:Show(); btn.Bg:SetAlpha(0.05)
-            else btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6); btn.SelectBar:Hide(); btn.Bg:SetAlpha(0) end
-        end
-    end
-    for _, tab in ipairs(MSC.RegisteredTabs) do if MSC[tab.view] then MSC[tab.view]:Hide() end end
-    local tab = MSC.RegisteredTabs[id]
-    if tab then
-        local init = tab.directFunc or (tab.funcName and MSC[tab.funcName])
-        if not MSC[tab.view] and init then init(MSC.MainFrame.Content) end
-        if MSC[tab.view] then 
-            MSC[tab.view]:Show()
-            if tab.update and MSC[tab.update] then MSC[tab.update]() end
-        end
-    end
-end
-
--- =============================================================
--- TOOLS: IMPORT & EXPORT
--- =============================================================
-function MSC.ShowHistory()
-    if not MSC.ExportFrame then
-        local f = CreateFrame("Frame", "SGJ_ExportFrame", UIParent, "BackdropTemplate")
-        f:SetSize(500, 400); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton"); f:SetFrameStrata("DIALOG") 
-        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        MSC.CreateModernBorder(f, 1)
-        f.Bg = f:CreateTexture(nil, "BACKGROUND"); f.Bg:SetAllPoints(); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
-        f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOP", 0, -10); f.Title:SetText("Export Data")
-        f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
-        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate"); sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 20)
-        f.EditBox = CreateFrame("EditBox", nil, sf); f.EditBox:SetMultiLine(true); f.EditBox:SetFontObject(ChatFontNormal); f.EditBox:SetWidth(440); sf:SetScrollChild(f.EditBox); f.EditBox:SetScript("OnEscapePressed", function() f:Hide() end)
-        MSC.ExportFrame = f
-    end
-    
-    local weights, profileName = MSC.GetCurrentWeights()
-    local unit = "player"; local currentGear = MSC:GetEquippedGear()
-    local totalScore = MSC:GetTotalCharacterScore(currentGear, weights, profileName)
-    local dateStr = date("%Y-%m-%d"); local _, class = UnitClass("player")
-    if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[profileName] then profileName = MSC.CurrentClass.PrettyNames[profileName] end
-    profileName = profileName:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-
-    local text = "```yaml\nSharpies_Gear_Judge_Report:\n  Player: " .. UnitName(unit) .. " (" .. class .. ")\n  Spec:    " .. profileName .. "\n  Date:    " .. dateStr .. "\n  Total_Score: " .. string.format("%.1f", totalScore) .. "\n========================================\n"
-    local slots = {{name="Head",id=1},{name="Neck",id=2},{name="Shoulder",id=3},{name="Back",id=15},{name="Chest",id=5},{name="Wrist",id=9},{name="Hands",id=10},{name="Waist",id=6},{name="Legs",id=7},{name="Feet",id=8},{name="Finger 1",id=11},{name="Finger 2",id=12},{name="Trinket 1",id=13},{name="Trinket 2",id=14},{name="Main Hand",id=16},{name="Off Hand",id=17},{name="Ranged",id=18}}
-    for _, slot in ipairs(slots) do
-        local link = GetInventoryItemLink(unit, slot.id); local itemName, itemScore = "[Empty]", 0
-        if link then
-            itemName = GetItemInfo(link) or "Unknown Item"; local stats = MSC.SafeGetItemStats(link, slot.id, weights, profileName)
-            if stats then itemScore = MSC.GetItemScore(stats, weights, profileName, slot.id) end
-        end
-        local slotPadding = 10 - string.len(slot.name); local space1 = string.rep(" ", slotPadding > 0 and slotPadding or 1)
-        text = text .. slot.name .. ":" .. space1 .. "[" .. itemName .. "] " .. string.format("%4.1f", itemScore) .. "\n"
-    end
-    text = text .. "```"
-    MSC.ExportFrame:Show(); MSC.ExportFrame.EditBox:SetText(text); MSC.ExportFrame.EditBox:HighlightText(); MSC.ExportFrame.EditBox:SetFocus()
-end
-
-function MSC.ShowImportWindow()
-    if MSC.ImportFrame then MSC.ImportFrame:Show(); return end
-    local f = CreateFrame("Frame", "SGJ_ImportFrame", UIParent, "BackdropTemplate")
-    f:SetSize(400, 320); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton"); f:SetFrameStrata("DIALOG"); f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-    MSC.CreateModernBorder(f, 1)
-    f.Bg = f:CreateTexture(nil, "BACKGROUND"); f.Bg:SetAllPoints(); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
-    f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOP", 0, -10); f.Title:SetText("Import Pawn String")
-    local sf = CreateFrame("ScrollFrame", "SGJ_ImportScroll", f, "UIPanelScrollFrameTemplate"); sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 50)
-    local eb = CreateFrame("EditBox", nil, sf); eb:SetMultiLine(true); eb:SetFontObject(ChatFontNormal); eb:SetWidth(320); sf:SetScrollChild(eb); eb:SetAutoFocus(true); eb:SetScript("OnEscapePressed", function() f:Hide() end)
-    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetPoint("BOTTOMLEFT", 20, 15); bImp:SetSize(120, 25); bImp:SetText("Import")
-    bImp:SetScript("OnClick", function()
-        local txt = eb:GetText(); local weights, name = MSC:ParsePawnString(txt)
-        if weights then
-            if not SGJ_Settings.CustomProfiles then SGJ_Settings.CustomProfiles = {} end
-            SGJ_Settings.CustomProfiles["Imported"] = weights
-            if MSC.CurrentClass then
-                if not MSC.CurrentClass.Weights then MSC.CurrentClass.Weights = {} end
-                MSC.CurrentClass.Weights["Imported"] = weights
-                if MSC.CurrentClass.Profiles then MSC.CurrentClass.Profiles["Imported"] = weights end
-                if MSC.CurrentClass.PrettyNames then MSC.CurrentClass.PrettyNames["Imported"] = "|cff00ff00[Import]|r " .. name end
-            end
-            MSC.ManualSpec = "Imported"; MSC.CachedWeights = nil; SGJ_Settings.Mode = "Imported"
-            if MSC.UpdateLabCalc then MSC.UpdateLabCalc() end; if MSC.UpdateReceipt then MSC.UpdateReceipt() end; if MSC.UpdateLogic then MSC.UpdateLogic() end 
-            print("|cff00ccffSGJ:|r Imported profile '"..name.."' and activated it."); f:Hide()
-        else print("|cffff0000SGJ Import Error:|r " .. (name or "Invalid String")) end
-    end)
-    local bClose = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bClose:SetPoint("BOTTOMRIGHT", -20, 15); bClose:SetSize(100, 25); bClose:SetText("Cancel"); bClose:SetScript("OnClick", function() f:Hide() end)
-    MSC.ImportFrame = f
-end
-
--- =============================================================
--- FEATURE: SCORE BREAKDOWN WINDOW
--- =============================================================
-function MSC.ShowScoreBreakdown(itemLink, slotID)
-    if not itemLink then return end
-    
-    if not MSC.BreakdownFrame then
-        local f = CreateFrame("Frame", "SGJ_Breakdown", UIParent, "BackdropTemplate")
-        f:SetSize(300, 100); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG"); f:EnableMouse(true); f:SetMovable(true); f:RegisterForDrag("LeftButton")
-        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        MSC.CreateModernBorder(f, 1)
-        f.Bg = f:CreateTexture(nil, "BACKGROUND"); f.Bg:SetAllPoints(); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
-        
-        f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOP", 0, -10); f.Title:SetText("Analysis")
-        f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
-        
-        f.ItemName = f:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.ItemName:SetPoint("TOP", f.Title, "BOTTOM", 0, -10)
-        f.TotalScore = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.TotalScore:SetPoint("TOP", f.ItemName, "BOTTOM", 0, -5); f.TotalScore:SetTextColor(0, 1, 0)
-        
-        f.Lines = {}
-        for i=1, 15 do 
-            local l = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            l:SetPoint("TOPLEFT", 20, -70 - ((i-1)*18)); l:SetJustifyH("LEFT")
-            table.insert(f.Lines, l)
-        end
-        MSC.BreakdownFrame = f
-    end
-    
-    local f = MSC.BreakdownFrame
-    local weights, specName = MSC.GetCurrentWeights()
-    local stats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
-    local score = MSC.GetItemScore(stats, weights, specName, slotID)
-    
-    f.ItemName:SetText(itemLink)
-    f.TotalScore:SetText(string.format("%.1f", score))
-    
-    for _, l in ipairs(f.Lines) do l:SetText("") end
-    
-    local breakdown = {}
-    for k, v in pairs(stats) do
-        if weights[k] and weights[k] > 0 and v > 0 then
-            table.insert(breakdown, { name = MSC.GetCleanStatName(k), val = v, weight = weights[k], total = v * weights[k] })
-        end
-    end
-    table.sort(breakdown, function(a,b) return a.total > b.total end)
-    
-    local count = 0
-    for i, data in ipairs(breakdown) do
-        if f.Lines[i] then
-            count = count + 1
-            local text = string.format("|cffffffff%s:|r |cff00ccff%.1f|r x %.1f = |cff00ff00%.1f|r", data.name:gsub("Rating",""), data.val, data.weight, data.total)
-            f.Lines[i]:SetText(text)
-        end
-    end
-    
-    local newHeight = 80 + (math.max(1, count) * 18) + 20
-    f:SetHeight(newHeight)
-    f:Show()
-end
-
--- =============================================================
--- VIEW 1: THE LABORATORY
--- =============================================================
+-- [[ VIEW 1: THE LABORATORY (6-BLOCK THUNDERDOME) ]]
 function MSC.InitLabView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
-    local help = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); help:SetPoint("TOP", 0, -20); help:SetText("Drag & Drop items here to compare against equipped gear."); help:SetTextColor(0.6, 0.6, 0.6)
+    local help = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); help:SetPoint("TOP", 0, -20); help:SetText("Drag (Shift/Ctrl+Click) items to compare. 6 Sets Enter, 1 Set Wins!"); help:SetTextColor(0.6, 0.6, 0.6)
 
-    local function CreateLabSlot(name, x, y, icon, label)
-        local btn = CreateFrame("Button", name, f, "ItemButtonTemplate")
-        btn:SetSize(45, 45); btn:SetPoint("TOP", x, y)
-        btn.Bg = btn:CreateTexture(nil, "BACKGROUND"); btn.Bg:SetAllPoints(); btn.Bg:SetTexture(icon); btn.Bg:SetAlpha(0.3); btn.Bg:SetDesaturated(true)
-        btn.Lbl = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); btn.Lbl:SetPoint("TOP", btn, "BOTTOM", 0, -5); btn.Lbl:SetText(label)
-        btn:RegisterForClicks("AnyUp")
-        btn:SetScript("OnClick", function(self)
-            local type, _, link = GetCursorInfo()
-            if type == "item" then 
-                self.link = link; SetItemButtonTexture(self, GetItemIcon(link)); self.Bg:Hide(); ClearCursor()
+    MSC.LabBlocks = {}
+
+    local function CreateBlock(id, title, numSlots, x, y)
+        local frame = CreateFrame("Frame", nil, f, "BackdropTemplate")
+        frame:SetSize(275, 90); frame:SetPoint("TOPLEFT", x, y)
+        frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
+        frame:SetBackdropColor(0, 0, 0, 0.3); frame:SetBackdropBorderColor(0, 0, 0, 1)
+        
+        frame.Title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal"); frame.Title:SetPoint("TOPLEFT", 10, -5); frame.Title:SetText(title)
+        frame.Score = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); frame.Score:SetPoint("TOPRIGHT", -10, -5); frame.Score:SetText("")
+        
+        frame.Slots = {}
+        for i=1, numSlots do
+            local btn = CreateFrame("Button", nil, frame, "ItemButtonTemplate")
+            btn:SetSize(35, 35)
+            local totalW = (numSlots * 40)
+            local startX = (275 - totalW) / 2
+            btn:SetPoint("LEFT", startX + ((i-1)*45), -10)
+            
+            btn:RegisterForClicks("AnyUp")
+            btn:SetScript("OnClick", function(self)
+                local type, _, link = GetCursorInfo()
+                if type == "item" then 
+                    self.link = link; SetItemButtonTexture(self, GetItemIcon(link)); ClearCursor()
+                elseif IsShiftKeyDown() then 
+                    self.link = nil; SetItemButtonTexture(self, nil)
+                end
                 MSC.UpdateLabCalc()
-                if MSC.UpdateLogic then MSC.UpdateLogic() end 
-            elseif IsShiftKeyDown() then 
-                self.link = nil; SetItemButtonTexture(self, nil); self.Bg:Show()
-                MSC.UpdateLabCalc()
-                if MSC.UpdateLogic then MSC.UpdateLogic() end
-            end
-        end)
-        btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label); GameTooltip:AddLine("Drag item here", 1,1,1) end GameTooltip:Show() end)
-        btn:SetScript("OnLeave", GameTooltip_Hide)
-        return btn
+            end)
+            btn:SetScript("OnEnter", function(self) 
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
+                if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText("Empty Slot", 1,1,1) end 
+                GameTooltip:Show() 
+            end)
+            btn:SetScript("OnLeave", GameTooltip_Hide)
+            table.insert(frame.Slots, btn)
+        end
+        MSC.LabBlocks[id] = frame
     end
 
-    f.MH = CreateLabSlot("SGJ_LabMH", -70, -60, "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand", "Main Hand")
-    f.OH = CreateLabSlot("SGJ_LabOH", 70, -60, "Interface\\Paperdoll\\UI-PaperDoll-Slot-SecondaryHand", "Off Hand")
-    f.TwoH = CreateLabSlot("SGJ_Lab2H", 0, -135, "Interface\\Paperdoll\\UI-PaperDoll-Slot-MainHand", "Two-Hand / Custom")
+    -- SET 1 (LEFT COLUMN)
+    CreateBlock(1, "Option A1: Two-Hander", 1, 10, -50)
+    CreateBlock(2, "Option B1: 1H + Shield/OH", 2, 10, -150)
+    CreateBlock(3, "Option C1: Dual Wield", 2, 10, -250)
 
-    local vs = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); vs:SetPoint("CENTER", f.MH, "CENTER", 70, 0); vs:SetText("VS"); vs:SetTextColor(1, 1, 1, 0.2)
+    -- SET 2 (RIGHT COLUMN)
+    CreateBlock(4, "Option A2: Two-Hander", 1, 300, -50)
+    CreateBlock(5, "Option B2: 1H + Shield/OH", 2, 300, -150)
+    CreateBlock(6, "Option C2: Dual Wield", 2, 300, -250)
 
-    local resBox = CreateFrame("Frame", nil, f, "BackdropTemplate")
-    resBox:SetSize(450, 160); resBox:SetPoint("BOTTOM", 0, 20)
-    resBox:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
-    resBox:SetBackdropColor(0, 0, 0, 0.3); resBox:SetBackdropBorderColor(0, 0, 0, 1)
-
-    f.ResultText = resBox:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("TOP", 0, -15); f.ResultText:SetText("Ready to Judge")
-    f.ScoreDiff = resBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.ScoreDiff:SetPoint("TOP", f.ResultText, "BOTTOM", 0, -5); f.ScoreDiff:SetText("")
-    f.DetailText = resBox:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.DetailText:SetPoint("TOP", f.ScoreDiff, "BOTTOM", 0, -15); f.DetailText:SetWidth(400); f.DetailText:SetJustifyH("CENTER"); f.DetailText:SetSpacing(4)
+    f.ResultText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("BOTTOM", 0, 60); f.ResultText:SetText("Waiting for Items...")
+    
     MSC.ViewLab = f
 end
 
 function MSC.UpdateLabCalc()
-    local f = MSC.ViewLab
-    if not f or not f:IsShown() then return end
-    if not f.MH.link and not f.OH.link and not f.TwoH.link then f.ResultText:SetText("Ready to Judge"); f.ResultText:SetTextColor(1, 0.82, 0); f.ScoreDiff:SetText(""); f.DetailText:SetText(""); return end
-
+    if not MSC.ViewLab or not MSC.ViewLab:IsShown() then return end
+    
     local weights, profileName = MSC.GetCurrentWeights()
     if not weights then return end 
+    
+    local bestScore = -1
+    local winnerIndex = 0
+    local hasItems = false
 
-    local currentGear = MSC:GetEquippedGear() or {}
-    local currentScore, currentStats = MSC:GetTotalCharacterScore(currentGear, weights, profileName)
-    
-    local newGear = CopyTable(currentGear)
-    if f.TwoH.link then newGear[16] = f.TwoH.link; newGear[17] = nil
-    else if f.MH.link then newGear[16] = f.MH.link end; if f.OH.link then newGear[17] = f.OH.link end end
-    
-    local newScore, newStats, newColors = MSC:GetTotalCharacterScore(newGear, weights, profileName)
-    local diff = newScore - currentScore
-    
-    if diff > 0.1 then f.ResultText:SetText("UPGRADE"); f.ResultText:SetTextColor(0, 1, 0); f.ScoreDiff:SetText("+" .. string.format("%.1f", diff))
-    elseif diff < -0.1 then f.ResultText:SetText("DOWNGRADE"); f.ResultText:SetTextColor(1, 0, 0); f.ScoreDiff:SetText(string.format("%.1f", diff))
-    else f.ResultText:SetText("SIDEGRADE"); f.ResultText:SetTextColor(0.6, 0.6, 0.6); f.ScoreDiff:SetText("0.0") end
-
-    local lines = ""
-    local diffs = MSC.GetStatDifferences(newStats, currentStats); local sorted = MSC.SortStatDiffs(diffs); local count = 0
-    for _, e in ipairs(sorted) do
-        if count < 6 and math.abs(e.val) > 0.1 then
-            local color = (e.val > 0) and "|cff00ff00+" or "|cffff0000"
-            lines = lines .. color .. string.format("%.1f", e.val) .. " " .. MSC.GetCleanStatName(e.key) .. "|r   "
-            count = count + 1; if count % 2 == 0 then lines = lines .. "\n" end
+    -- Calculate Scores
+    for id, block in pairs(MSC.LabBlocks) do
+        local blockScore = 0
+        local itemsFound = false
+        
+        for i, btn in ipairs(block.Slots) do
+            if btn.link then
+                itemsFound = true
+                -- Slot 1 is always Main Hand (16), Slot 2 is always Off Hand (17)
+                local slotID = (i == 1) and 16 or 17
+                local stats = MSC.SafeGetItemStats(btn.link, slotID, weights, profileName)
+                local score = MSC.GetItemScore(stats, weights, profileName, slotID)
+                blockScore = blockScore + score
+            end
+        end
+        
+        if itemsFound then
+            hasItems = true
+            block.Score:SetText(string.format("%.1f", blockScore))
+            block.finalScore = blockScore
+            if blockScore > bestScore then
+                bestScore = blockScore
+                winnerIndex = id
+            end
+        else
+            block.Score:SetText("")
+            block.finalScore = -1
         end
     end
-    f.DetailText:SetText(lines)
+    
+    -- Visual Feedback
+    for id, block in pairs(MSC.LabBlocks) do
+        if not hasItems then
+            block:SetBackdropBorderColor(0,0,0,1); block:SetAlpha(1)
+            MSC.ViewLab.ResultText:SetText("Waiting for Items...")
+            MSC.ViewLab.ResultText:SetTextColor(1, 0.82, 0)
+        elseif id == winnerIndex then
+            block:SetBackdropBorderColor(0, 1, 0, 1); block:SetAlpha(1)
+            block.Score:SetTextColor(0, 1, 0)
+        else
+            block:SetBackdropBorderColor(0,0,0,1); block:SetAlpha(0.4)
+            block.Score:SetTextColor(0.5, 0.5, 0.5)
+        end
+    end
+    
+    if hasItems then
+        local names = {
+            "Option A1 (2H)", "Option B1 (1H+OH)", "Option C1 (DW)",
+            "Option A2 (2H)", "Option B2 (1H+OH)", "Option C2 (DW)"
+        }
+        MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins!")
+        MSC.ViewLab.ResultText:SetTextColor(0, 1, 0)
+        
+        if MSC.UpdateLogic then MSC.UpdateLogic() end
+    end
 end
 
--- =============================================================
--- VIEW 2: RECEIPT
--- =============================================================
+-- [[ VIEW 2: RECEIPT ]]
 function MSC.InitReceiptView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     f.Info = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Info:SetPoint("TOPLEFT", 40, -10)
@@ -626,10 +446,39 @@ function MSC.UpdateLogic()
     local _, class = UnitClass("player")
     local currentGear = MSC:GetEquippedGear() or {}
     
-    if MSC.ViewLab and MSC.ViewLab.MH and MSC.ViewLab.MH.link then
-        currentGear = CopyTable(currentGear) 
-        currentGear[16] = MSC.ViewLab.MH.link
-        if MSC.ViewLab.OH.link then currentGear[17] = MSC.ViewLab.OH.link end
+    -- [[ LOGIC 3 UPDATE: PROJECTION ]]
+    -- If Lab is active and has a winner, visualize the stats of the WINNING SET
+    if MSC.LabBlocks then
+        local winnerScore = -1
+        local winnerIndex = 0
+        for id, block in pairs(MSC.LabBlocks) do
+            if block.finalScore and block.finalScore > winnerScore then
+                winnerScore = block.finalScore
+                winnerIndex = id
+            end
+        end
+        
+        if winnerIndex > 0 then
+            -- Simulate the winning set
+            local block = MSC.LabBlocks[winnerIndex]
+            if winnerIndex == 1 then -- Set 1: 2H
+                currentGear[16] = block.Slots[1].link; currentGear[17] = nil
+            elseif winnerIndex == 2 then -- Set 1: 1H+OH
+                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
+                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
+            elseif winnerIndex == 3 then -- Set 1: DW
+                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
+                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
+            elseif winnerIndex == 4 then -- Set 2: 2H
+                currentGear[16] = block.Slots[1].link; currentGear[17] = nil
+            elseif winnerIndex == 5 then -- Set 2: 1H+OH
+                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
+                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
+            elseif winnerIndex == 6 then -- Set 2: DW
+                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
+                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
+            end
+        end
     end
     
     local _, stats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
@@ -769,11 +618,118 @@ function MSC.InitSettingsView(parent)
     MSC.ViewSettings = f
 end
 
+function MSC.RegisterPluginTab(name, icon, initFunc, viewKey, updateFuncKey)
+    local newID = #MSC.RegisteredTabs + 1
+    table.insert(MSC.RegisteredTabs, {
+        id = newID, name = name, icon = icon,
+        directFunc = initFunc, view = viewKey, update = updateFuncKey
+    })
+    if MSC.MainFrame and MSC.MainFrame:IsShown() then MSC.RenderSidebarButtons() end
+    return newID
+end
+
+-- =============================================================
+-- 3. MAIN DASHBOARD FRAME (Must be defined AFTER Views)
+-- =============================================================
+function MSC.RenderSidebarButtons()
+    if not MSC.MainFrame then return end
+    if MSC.NavButtons then for _, btn in ipairs(MSC.NavButtons) do btn:Hide() end end
+    MSC.NavButtons = {}
+
+    for idx, tab in ipairs(MSC.RegisteredTabs) do
+        local btn = CreateFrame("Button", nil, MSC.MainFrame.Sidebar)
+        btn:SetSize(50, 50); btn:SetPoint("TOP", 0, -20 - ((idx-1)*65))
+        btn.Bg = btn:CreateTexture(nil, "BACKGROUND"); btn.Bg:SetAllPoints(); btn.Bg:SetColorTexture(1, 1, 1, 0.05); btn.Bg:SetAlpha(0)
+        btn.Icon = btn:CreateTexture(nil, "ARTWORK"); btn.Icon:SetSize(32, 32); btn.Icon:SetPoint("CENTER"); btn.Icon:SetTexture(tab.icon); btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6)
+        btn.SelectBar = btn:CreateTexture(nil, "OVERLAY"); btn.SelectBar:SetColorTexture(0, 0.8, 1, 1); btn.SelectBar:SetSize(4, 50); btn.SelectBar:SetPoint("LEFT", 0, 0); btn.SelectBar:Hide()
+        btn:SetScript("OnEnter", function(self) self.Icon:SetVertexColor(1,1,1); self.Bg:SetAlpha(0.1); GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tab.name); GameTooltip:Show() end)
+        btn:SetScript("OnLeave", function(self) self.Bg:SetAlpha(0); if self.ID ~= MSC.ActiveTab then self.Icon:SetVertexColor(0.6, 0.6, 0.6) end GameTooltip:Hide() end)
+        btn:SetScript("OnClick", function(self) MSC.SwitchTab(self.ID) end)
+        btn.ID = idx; table.insert(MSC.NavButtons, btn)
+    end
+    if MSC.ActiveTab then MSC.SwitchTab(MSC.ActiveTab) end
+end
+
+function MSC.ToggleMainMenu()
+    if MSC.MainFrame then if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end return end
+    local f = CreateFrame("Frame", "SGJ_MainFrame", UIParent, "BackdropTemplate")
+    f:SetSize(650, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    
+    f:SetScript("OnHide", function() 
+        if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end 
+    end)
+    
+    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing); f:SetFrameStrata("HIGH")
+    MSC.CreateModernBorder(f, 1)
+    
+    f.Header = CreateFrame("Frame", nil, f); f.Header:SetPoint("TOPLEFT", 70, 0); f.Header:SetPoint("TOPRIGHT", 0, 0); f.Header:SetHeight(60); f.Header:EnableMouse(true)
+    f.Header:SetScript("OnMouseWheel", function(self, delta) local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end; if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur) end)
+    f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8); f.Bg:SetAllPoints(); local _, class = UnitClass("player"); local fixedClass = class:sub(1,1)..class:sub(2):lower()
+    pcall(function() f.Bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga") end)
+    f.Bg:SetTexCoord(0, 1, 0.1, 0.9); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 1) 
+    f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7); f.Overlay:SetAllPoints(); f.Overlay:SetColorTexture(0.08, 0.08, 0.10, 0.90) 
+    f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND"); f.Header.Grad:SetAllPoints(); f.Header.Grad:SetColorTexture(0, 0, 0, 0.5); f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
+    f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.2 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
+    
+    f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0)
+    f.ScaleHint:SetText("Scroll to Scale")
+    f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
+
+    f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
+    f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
+    f.Sidebar.Line = f.Sidebar:CreateTexture(nil, "OVERLAY"); f.Sidebar.Line:SetColorTexture(0, 0, 0, 1); f.Sidebar.Line:SetWidth(1); f.Sidebar.Line:SetPoint("TOPRIGHT", 0, 0); f.Sidebar.Line:SetPoint("BOTTOMRIGHT", 0, 0)
+    
+    f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    f.MoveHint:SetPoint("BOTTOM", 0, 15)
+    f.MoveHint:SetText("Hold\nto Move")
+    f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
+    
+    f.Content = CreateFrame("Frame", nil, f); f.Content:SetPoint("TOPLEFT", f.Sidebar, "TOPRIGHT", 0, -60); f.Content:SetPoint("BOTTOMRIGHT", 0, 0)
+    MSC.MainFrame = f
+    
+    -- [[ INIT ALL VIEWS HERE ]]
+    MSC.InitLabView(f.Content)
+    MSC.InitReceiptView(f.Content)
+    MSC.InitLogicView(f.Content)
+    MSC.InitSettingsView(f.Content)
+    
+    MSC.RenderSidebarButtons()
+    MSC.SwitchTab(1)
+    f:Show()
+end
+
+function MSC.SwitchTab(id)
+    MSC.ActiveTab = id
+    if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end
+    if MSC.NavButtons then
+        for i, btn in ipairs(MSC.NavButtons) do
+            if i == id then btn.Icon:SetDesaturated(false); btn.Icon:SetVertexColor(1, 1, 1); btn.SelectBar:Show(); btn.Bg:SetAlpha(0.05)
+            else btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6); btn.SelectBar:Hide(); btn.Bg:SetAlpha(0.05) end
+        end
+    end
+    for _, tab in ipairs(MSC.RegisteredTabs) do if MSC[tab.view] then MSC[tab.view]:Hide() end end
+    local tab = MSC.RegisteredTabs[id]
+    if tab then
+        local init = tab.directFunc or (tab.funcName and MSC[tab.funcName])
+        if not MSC[tab.view] and init then init(MSC.MainFrame.Content) end
+        if MSC[tab.view] then 
+            MSC[tab.view]:Show()
+            if tab.update and MSC[tab.update] then MSC[tab.update]() end
+        end
+    end
+end
+
 function MSC.UpdateMinimapPosition()
     if not MSC_Minimap then return end
     if SGJ_Settings and SGJ_Settings.HideMinimap then MSC_Minimap:Hide() else MSC_Minimap:Show() end
 end
 
+-- =============================================================
+-- 4. EVENTS & HOOKS (Bottom of File)
+-- =============================================================
 local mb = CreateFrame("Button", "MSC_Minimap", Minimap); mb:SetSize(32,32); mb:SetFrameLevel(8); mb:SetPoint("CENTER", -60, -60)
 mb.icon = mb:CreateTexture(nil,"BACKGROUND"); mb.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02"); mb.icon:SetSize(20,20); mb.icon:SetPoint("CENTER")
 mb.border = mb:CreateTexture(nil,"OVERLAY"); mb.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder"); mb.border:SetSize(54,54); mb.border:SetPoint("TOPLEFT")
@@ -782,3 +738,73 @@ mb:RegisterForClicks("AnyUp"); mb:SetScript("OnClick", MSC.ToggleMainMenu)
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function() MSC.UpdateMinimapPosition() end)
+
+-- [[ FINAL FIX: UNIVERSAL LINK CATCHER (SMART DUAL WIELD NO SYNC) ]]
+function MSC.OnItemLinkClick(link)
+    if not MSC.ViewLab or not MSC.ViewLab:IsShown() then return end
+    
+    local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+    
+    -- Smart Sorting
+    if equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_STAFF" or equipLoc == "INVTYPE_POLEARM" then
+        -- Check Set 1 -> Set 2
+        local btn1 = MSC.LabBlocks[1].Slots[1]
+        local btn2 = MSC.LabBlocks[4].Slots[1]
+        if not btn1.link then 
+            btn1.link = link; SetItemButtonTexture(btn1, GetItemIcon(link))
+        else
+            btn2.link = link; SetItemButtonTexture(btn2, GetItemIcon(link))
+        end
+        
+    elseif equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" then
+        -- Check Set 1 OH -> Set 2 OH
+        local btn1 = MSC.LabBlocks[2].Slots[2]
+        local btn2 = MSC.LabBlocks[5].Slots[2]
+        if not btn1.link then
+            btn1.link = link; SetItemButtonTexture(btn1, GetItemIcon(link))
+        else
+            btn2.link = link; SetItemButtonTexture(btn2, GetItemIcon(link))
+        end
+        
+    elseif equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND" then
+        -- FIXED DUAL WIELD LOGIC: NO SYNCING, FILL FIRST EMPTY SLOT IN PRIORITY ORDER
+        
+        local targets = {
+            MSC.LabBlocks[2].Slots[1], -- Set 1: 1H+Shield MH
+            MSC.LabBlocks[3].Slots[1], -- Set 1: DW MH
+            MSC.LabBlocks[3].Slots[2], -- Set 1: DW OH (Conditional)
+            MSC.LabBlocks[5].Slots[1], -- Set 2: 1H+Shield MH
+            MSC.LabBlocks[6].Slots[1], -- Set 2: DW MH
+            MSC.LabBlocks[6].Slots[2]  -- Set 2: DW OH (Conditional)
+        }
+        
+        for i, btn in ipairs(targets) do
+            -- Skip OH slots if item is Main-Hand only
+            local isOHSlot = (i == 3 or i == 6)
+            local canEquip = true
+            if isOHSlot and equipLoc == "INVTYPE_WEAPONMAINHAND" then canEquip = false end
+            
+            if canEquip and not btn.link then
+                btn.link = link; SetItemButtonTexture(btn, GetItemIcon(link))
+                break -- Found a home, stop looking
+            end
+        end
+    end
+    
+    MSC.UpdateLabCalc()
+end
+
+-- Hook Shift-Click
+hooksecurefunc("HandleModifiedItemClick", function(link)
+    if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end
+end)
+
+-- Hook Chat Links (Shift-Click for AtlasLoot when Chat Open)
+hooksecurefunc("ChatEdit_InsertLink", function(link)
+    if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end
+end)
+
+-- Hook Ctrl-Click (Dressing Room - For AtlasLoot when Chat Closed)
+hooksecurefunc("DressUpItemLink", function(link)
+    if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end
+end)

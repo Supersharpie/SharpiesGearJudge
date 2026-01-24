@@ -344,22 +344,74 @@ function Warlock:GetSpec()
     return "Leveling" .. suffix
 end
 
-function Warlock:GetDynamicWeights()
-    local level = UnitLevel("player")
-    local specKey = self:GetSpec()
-
-    if self.LevelingBrackets and self.LevelingBrackets[specKey] then
-        local b = self.LevelingBrackets[specKey]
-        local p = math.max(0, math.min(1, (level - b.min) / (b.max - b.min)))
-        local dw = {}
-        for s, ev in pairs(b.End) do
-            dw[s] = (b.Start[s] or 0) + ((ev - (b.Start[s] or 0)) * p)
+function Warlock:GetDynamicWeights(forceKey)
+    -- [[ FIX 1: TRANSLATOR ]]
+    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
+    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    if forceKey and not Warlock.LevelingBrackets[forceKey] and not Warlock.Weights[forceKey] then
+        if Warlock.PrettyNames then
+            for key, name in pairs(Warlock.PrettyNames) do
+                if name == forceKey then
+                    forceKey = key
+                    break
+                end
+            end
         end
-        return dw, specKey
     end
 
-    if self.Weights and self.Weights[specKey] then return self.Weights[specKey], specKey end
-    return self.Weights["Default"], specKey
+    local level = UnitLevel("player")
+    local specKey = forceKey or self:GetSpec() 
+
+    -- 1. Check Leveling Brackets
+    if Warlock.LevelingBrackets and Warlock.LevelingBrackets[specKey] then
+        local bracket = Warlock.LevelingBrackets[specKey]
+        
+        -- Calculate progress
+        local progress = (level - bracket.min) / (bracket.max - bracket.min)
+        
+        -- [[ FIX 2: PREVIEW CLAMPING ]]
+        -- If previewing a different level bracket, force progress to 0 or 1 
+        -- to prevent "Negative Stats" from vanishing.
+        if forceKey then
+            if level < bracket.min then progress = 0 end -- Show Start weights
+            if level > bracket.max then progress = 1 end -- Show End weights
+        else
+            -- Normal play strict clamping
+            if progress < 0 then progress = 0 end
+            if progress > 1 then progress = 1 end
+        end
+
+        local dynamicWeights = {}
+        
+        -- [[ FIX 3: ROBUSTNESS ]]
+        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
+        local allStats = {}
+        if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
+        if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
+
+        for stat, _ in pairs(allStats) do
+            local startValue = (bracket.Start and bracket.Start[stat]) or 0
+            local endValue = (bracket.End and bracket.End[stat]) or 0
+            
+            local result = startValue + ((endValue - startValue) * progress)
+            
+            -- Safety: Never return negative weight
+            if result < 0 then result = 0 end
+            
+            dynamicWeights[stat] = result
+        end
+        
+        return dynamicWeights, specKey
+    end
+
+    -- 2. Static Weights Fallback
+    if Warlock.Weights and Warlock.Weights[specKey] then 
+        return Warlock.Weights[specKey], specKey
+    elseif Warlock.LevelingWeights and Warlock.LevelingWeights[specKey] then 
+        return Warlock.LevelingWeights[specKey], specKey
+    end
+
+    return nil, specKey
 end
 
 function Warlock:ApplyScalers(weights, currentSpec)

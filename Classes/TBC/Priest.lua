@@ -333,29 +333,73 @@ function Priest:GetSpec()
     return "Leveling" .. suffix
 end
 
-function Priest:GetDynamicWeights()
-    local level = UnitLevel("player")
-    local specKey = self:GetSpec()
+function Priest:GetDynamicWeights(forceKey)
+    -- [[ FIX 1: TRANSLATOR ]]
+    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
+    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    if forceKey and not Priest.LevelingBrackets[forceKey] and not Priest.Weights[forceKey] then
+        if Priest.PrettyNames then
+            for key, name in pairs(Priest.PrettyNames) do
+                if name == forceKey then
+                    forceKey = key
+                    break
+                end
+            end
+        end
+    end
 
-    -- 1. Dynamic Bracket Interpolation
+    local level = UnitLevel("player")
+    local specKey = forceKey or self:GetSpec() 
+
+    -- 1. Check Leveling Brackets
     if Priest.LevelingBrackets and Priest.LevelingBrackets[specKey] then
         local bracket = Priest.LevelingBrackets[specKey]
+        
+        -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
-        if progress < 0 then progress = 0 end
-        if progress > 1 then progress = 1 end
+        
+        -- [[ FIX 2: PREVIEW CLAMPING ]]
+        -- If previewing a different level bracket, force progress to 0 or 1 
+        -- to prevent "Negative Stats" from vanishing.
+        if forceKey then
+            if level < bracket.min then progress = 0 end -- Show Start weights
+            if level > bracket.max then progress = 1 end -- Show End weights
+        else
+            -- Normal play strict clamping
+            if progress < 0 then progress = 0 end
+            if progress > 1 then progress = 1 end
+        end
 
         local dynamicWeights = {}
-        for stat, endValue in pairs(bracket.End) do
-            local startValue = bracket.Start[stat] or 0
-            dynamicWeights[stat] = startValue + ((endValue - startValue) * progress)
+        
+        -- [[ FIX 3: ROBUSTNESS ]]
+        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
+        local allStats = {}
+        if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
+        if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
+
+        for stat, _ in pairs(allStats) do
+            local startValue = (bracket.Start and bracket.Start[stat]) or 0
+            local endValue = (bracket.End and bracket.End[stat]) or 0
+            
+            local result = startValue + ((endValue - startValue) * progress)
+            
+            -- Safety: Never return negative weight
+            if result < 0 then result = 0 end
+            
+            dynamicWeights[stat] = result
         end
+        
         return dynamicWeights, specKey
     end
 
-    -- 2. Fallback to Static
-    if Priest.Weights and Priest.Weights[specKey] then return Priest.Weights[specKey], specKey
-    elseif Priest.LevelingWeights and Priest.LevelingWeights[specKey] then return Priest.LevelingWeights[specKey], specKey
+    -- 2. Static Weights Fallback
+    if Priest.Weights and Priest.Weights[specKey] then 
+        return Priest.Weights[specKey], specKey
+    elseif Priest.LevelingWeights and Priest.LevelingWeights[specKey] then 
+        return Priest.LevelingWeights[specKey], specKey
     end
+
     return nil, specKey
 end
 

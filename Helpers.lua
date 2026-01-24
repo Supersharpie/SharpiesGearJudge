@@ -70,6 +70,13 @@ end
 -- =============================================================
 -- 2. API SHIMS
 -- =============================================================
+function MSC.getItemID(bagID, slotID)
+    if not bagID or not slotID then return nil end
+    local itemInfo = C_Container.GetContainerItemInfo(bagID, slotID)
+    if itemInfo then return itemInfo.itemID end
+    return nil
+end
+
 function MSC:GetPlayerStat(statType)
     if MSC.IsEra then
         if statType == "HIT" then return GetHitModifier() or 0
@@ -201,6 +208,7 @@ end
 -- 5. CACHE & CONSTANTS
 -- =============================================================
 MSC.StatCache = {}
+-- Scratch tables for gem calculations
 local Scratch_MatchGems = {}
 local Scratch_PureGems = {}
 local Scratch_GemTextParts = {}
@@ -236,275 +244,61 @@ end
 -- =============================================================
 function MSC:GetRatingPercent(statKey, ratingVal, level)
     if not MSC.CombatRatingScalars or not MSC.RatingIndexMap then return nil end
-    
-    -- 1. Identify which column this stat belongs to (e.g. Crit = 7)
     local idx = MSC.RatingIndexMap[statKey]
     if not idx then return nil end
-
-    -- 2. Get the scalar row for the player's level
     local levelData = MSC.CombatRatingScalars[level]
     if not levelData then 
-        -- Fallback: Clamp to 60 or 70 if the player is outside the TBC range
         if level < 60 then levelData = MSC.CombatRatingScalars[60] 
         elseif level > 70 then levelData = MSC.CombatRatingScalars[70] end
     end
-    
     if not levelData or not levelData[idx] then return nil end
-
-    -- 3. Calculate % (Rating / Scalar = Percent)
     return ratingVal / levelData[idx]
 end
 
 -- =============================================================
--- 6. SCANNING
+-- 6. SCANNING (THE NEW INTEGRATION)
 -- =============================================================
-function MSC.ParseTooltipLine(text)
-    if not text then return nil, 0, false end
-    -- Filter out Set bonuses (gray text) unless they are active (greenish code usually handled by scanner, but this check is standard)
-    if text:find("Set:") and not text:find("ff00ff00") then return nil, 0, false end
-    
-    local patterns = {
-        -- [[ 1. WEAPON DPS & SPEED (Critical Fixes) ]]
-        { p = "%((%d+%.%d+) damage per second%)", s = "MSC_WEAPON_DPS" },       -- Lowercase (TBC/Classic)
-        { p = "%((%d+%.%d+) Damage Per Second%)", s = "MSC_WEAPON_DPS" },       -- Title Case (Just in case)
-        { p = "Speed (%d+%.%d+)", s = "MSC_WEAPON_SPEED" },
-        { p = "^(%d+) %- (%d+) Damage", s = "MSC_DAMAGE_RANGE" },
-  
-        -- [[ 2. DEFENSIVE RATINGS (TBC Title Case Support) ]]
-        { p = "Increases defense rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },      -- Era/Old
-        { p = "Increases Defense Rating by (%d+)", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },      -- TBC/New
-        { p = "Increases your parry rating by (%d+)", s = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { p = "Increases your Parry Rating by (%d+)", s = "ITEM_MOD_PARRY_RATING_SHORT" },           -- TBC
-        { p = "Increases your dodge rating by (%d+)", s = "ITEM_MOD_DODGE_RATING_SHORT" },
-        { p = "Increases your Dodge Rating by (%d+)", s = "ITEM_MOD_DODGE_RATING_SHORT" },           -- TBC
-        { p = "Increases your block rating by (%d+)", s = "ITEM_MOD_BLOCK_RATING_SHORT" },
-        { p = "Increases your Block Rating by (%d+)", s = "ITEM_MOD_BLOCK_RATING_SHORT" },           -- TBC
-        { p = "Increases your shield block value by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
-        { p = "Increases your Shield Block Value by (%d+)", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },      -- TBC
-
-        -- [[ 3. OFFENSIVE RATINGS (Hit/Crit/Haste/Exp) ]]
-        { p = "Increases your hit rating by (%d+)", s = "ITEM_MOD_HIT_RATING_SHORT" },
-        { p = "Increases your Hit Rating by (%d+)", s = "ITEM_MOD_HIT_RATING_SHORT" },               -- TBC
-        { p = "Increases your critical strike rating by (%d+)", s = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { p = "Increases your Critical Strike Rating by (%d+)", s = "ITEM_MOD_CRIT_RATING_SHORT" },  -- TBC
-        { p = "Increases your spell critical strike rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-        { p = "Increases your Spell Critical Strike Rating by (%d+)", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, -- TBC
-        { p = "Increases your spell hit rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-        { p = "Increases your Spell Hit Rating by (%d+)", s = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },   -- TBC
-		{ p = "%+(%d+)%%? Hit", s = "ITEM_MOD_HIT_RATING_SHORT" },   
-        { p = "%+(%d+)%%? Crit", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
-
-        -- TBC Exclusive Stats (Haste/Expertise/ArPen/Resil)
-		{ p = "Increases your spell haste rating by (%d+)", s = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
-		{ p = "Increases your Spell Haste Rating by (%d+)", s = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
-        { p = "Increases your haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
-        { p = "Increases your Haste Rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },
-        { p = "Increases your expertise rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
-        { p = "Increases your Expertise Rating by (%d+)", s = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
-        { p = "Increases your armor penetration rating by (%d+)", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-        { p = "Increases your Armor Penetration Rating by (%d+)", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-        { p = "Increases your resilience rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
-        { p = "Increases your Resilience Rating by (%d+)", s = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
-	    { p = "Improves haste rating by (%d+)", s = "ITEM_MOD_HASTE_RATING_SHORT" },   	
-	    { p = "Ignores (%d+) armor", s = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" }, 	
-
-        -- [[ 4. POWER & MP5 ]]
-		{ p = "Increases attack power by (%d+) in", s = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, 
-        { p = "Increases attack power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
-        { p = "Increases Attack Power by (%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },                -- TBC
-        { p = "Increases spell power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "Increases Spell Power by (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "(%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-        { p = "(%d+) Mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },                      -- Capital 'M' fallback
-		{ p = "Restores (%d+) mana per 5 sec", s = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-
-        -- [[ 5. ERA / LEGACY PERCENTAGES (Keep these for Era!) ]]
-        { p = "Increases your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
-        { p = "Increases your chance to critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { p = "Increases your chance to parry.-by (%d+)%%", s = "ITEM_MOD_PARRY_RATING_SHORT" },
-        { p = "Increases your chance to dodge.-by (%d+)%%", s = "ITEM_MOD_DODGE_RATING_SHORT" },
-		{ p = "Improves your chance to hit.-by (%d+)%%", s = "ITEM_MOD_HIT_RATING_SHORT" },
-        { p = "Improves your chance to get a critical strike.-by (%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" },
-        { p = "critical strike.-spells.-(%d+)%%", s = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, 
-        { p = "critical strike.-(%d+)%%", s = "ITEM_MOD_CRIT_RATING_SHORT" }, 
-
-        -- [[ 6. SPELL DAMAGE (The old "Up To" format) ]]
-        { p = "damage and healing.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-		{ p = "damage done by magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "magical spells.-up to (%d+)", s = "ITEM_MOD_SPELL_POWER_SHORT" },
-        { p = "healing done.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
-        { p = "spells and effects.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },		        
-        { p = "Increases healing.-up to (%d+)", s = "ITEM_MOD_HEALING_POWER_SHORT" },
-        { p = "%+(%d+) Healing Spells", s = "ITEM_MOD_HEALING_POWER_SHORT" },
-		{ p = "%+(%d+) Spell Damage", s = "ITEM_MOD_SPELL_POWER_SHORT" }, 
-        { p = "damage done by Shadow.-up to (%d+)", s = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-        { p = "damage done by Fire.-up to (%d+)", s = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-        { p = "damage done by Frost.-up to (%d+)", s = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-        { p = "damage done by Arcane.-up to (%d+)", s = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-        { p = "damage done by Nature.-up to (%d+)", s = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-        { p = "damage done by Holy.-up to (%d+)", s = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-        { p = "Shadow damage.-up to (%d+)", s = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-        { p = "Fire damage.-up to (%d+)", s = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-        { p = "Frost damage.-up to (%d+)", s = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-        { p = "Arcane damage.-up to (%d+)", s = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-        { p = "Nature damage.-up to (%d+)", s = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-        { p = "Holy damage.-up to (%d+)", s = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
-        { p = "up to (%d+)%.?$", s = "ITEM_MOD_SPELL_POWER_SHORT" }, -- Catch-all for "Up to 30"
-
-        -- [[ 7. STATS (Format: +10 Agility OR Agility +10) ]]
-        { p = "%+(%d+) Attack Power", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
-        { p = "Attack Power %+(%d+)", s = "ITEM_MOD_ATTACK_POWER_SHORT" },
-        { p = "%+(%d+) Stamina", s = "ITEM_MOD_STAMINA_SHORT" },
-        { p = "Stamina %+(%d+)", s = "ITEM_MOD_STAMINA_SHORT" },
-        { p = "%+(%d+) Intellect", s = "ITEM_MOD_INTELLECT_SHORT" },
-        { p = "Intellect %+(%d+)", s = "ITEM_MOD_INTELLECT_SHORT" },
-        { p = "%+(%d+) Spirit", s = "ITEM_MOD_SPIRIT_SHORT" },
-        { p = "Spirit %+(%d+)", s = "ITEM_MOD_SPIRIT_SHORT" },
-        { p = "%+(%d+) Strength", s = "ITEM_MOD_STRENGTH_SHORT" },
-        { p = "Strength %+(%d+)", s = "ITEM_MOD_STRENGTH_SHORT" },
-        { p = "%+(%d+) Agility", s = "ITEM_MOD_AGILITY_SHORT" },
-        { p = "Agility %+(%d+)", s = "ITEM_MOD_AGILITY_SHORT" },
-        { p = "%+(%d+) Mana", s = "ITEM_MOD_MANA_SHORT" },
-        { p = "Mana %+(%d+)", s = "ITEM_MOD_MANA_SHORT" },
-        { p = "%+(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" }, 
-        { p = "Armor %+(%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
-        { p = "^(%d+) Armor", s = "ITEM_MOD_ARMOR_SHORT" },
-        { p = "Armor (%d+)", s = "ITEM_MOD_ARMOR_SHORT" },
-
-        -- [[ 8. MISC ]]
-        { p = "%+(%d+) Block", s = "ITEM_MOD_BLOCK_VALUE_SHORT" },
-        { p = "%+(%d+) Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
-        { p = "%+(%d+) Weapon Damage", s = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
-        { p = "%+(%d+) Defense", s = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-    }
-
-	for _, d in ipairs(patterns) do
-			-- [[ NEW: Special handling for Range (2 variables) ]]
-			if d.s == "MSC_DAMAGE_RANGE" then
-				local minD, maxD = text:match(d.p)
-				if minD and maxD then 
-					return "MSC_DAMAGE_RANGE", {tonumber(minD), tonumber(maxD)}, false 
-				end
-			else
-				-- Existing logic for normal stats
-				local val = text:match(d.p)
-				if val then return d.s, tonumber(val), text:find("Socket Bonus:") end
-			end
-		end
-		return nil, 0, false
-end
-
-function MSC:ParseProcText(text, itemID)
-    if not text or not text:find("^Use:") then return nil, 0 end
-    local amount = tonumber(text:match("by (%d+)")) or tonumber(text:match("cost.-by (%d+)"))
-    if not amount then return nil, 0 end
-    local duration = tonumber(text:match("for (%d+) sec"))
-    if not duration then return nil, 0 end
-
-    local cooldownSecs = 0
-    local cdMin = tonumber(text:match("%((%d+) Min.-Cooldown%)"))
-    if cdMin then cooldownSecs = cdMin * 60 end
-    local cdSec = tonumber(text:match("%((%d+) Sec.-Cooldown%)"))
-    if cdSec then cooldownSecs = (cooldownSecs or 0) + cdSec end
-    
-    if cooldownSecs == 0 then return nil, 0 end
-
-    local statName = nil
-    if text:find("Haste") then statName = "ITEM_MOD_HASTE_RATING_SHORT"
-    elseif text:find("Strength") then statName = "ITEM_MOD_STRENGTH_SHORT"
-    elseif text:find("Agility") then statName = "ITEM_MOD_AGILITY_SHORT"
-    elseif text:find("Intellect") then statName = "ITEM_MOD_INTELLECT_SHORT"
-    elseif text:find("Attack Power") then statName = "ITEM_MOD_ATTACK_POWER_SHORT"
-    elseif text:find("Spell Power") then statName = "ITEM_MOD_SPELL_POWER_SHORT"
-    end
-    
-    if not statName then return nil, 0 end
-    return statName, (amount * duration) / cooldownSecs
-end
 
 function MSC.GetRawItemStats(itemLink)
     if not itemLink then return {} end
     if MSC.StatCache[itemLink] then return MSC.StatCache[itemLink] end
 
-    local finalStats = {}; local bonusStats = {}
-    local id = tonumber(itemLink:match("item:(%d+)"))
+    -- 1. EXECUTE SCANNER
+    local scanData = MSC.Scanner.Scan(itemLink)
     
-    local stats = GetItemStats(itemLink) or {}
-    for k, v in pairs(stats) do
-        if MSC.StatShortNames[k] or k:find("SPELL") then 
-            if k == "ITEM_MOD_SPELL_HEALING_DONE" then finalStats["ITEM_MOD_HEALING_POWER_SHORT"] = (finalStats["ITEM_MOD_HEALING_POWER_SHORT"] or 0) + v
-            elseif k == "ITEM_MOD_SPELL_DAMAGE_DONE" then finalStats["ITEM_MOD_SPELL_POWER_SHORT"] = (finalStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + v
-            else finalStats[k] = v end
-        end
-    end
-    
-    local tip = _G["MSC_ScannerTooltip"] or CreateFrame("GameTooltip", "MSC_ScannerTooltip", nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
-    local status = pcall(function() tip:SetHyperlink(itemLink) end)
-    
-    if status then
-        for i = 2, tip:NumLines() do
-            local line = _G["MSC_ScannerTooltipTextLeft"..i]
-            local text = line and line:GetText()
-            local r, g, b = line and line:GetTextColor() or 1, 1, 1
-            if text then
-                local isGreen = (g > 0.9 and r < 0.9 and b < 0.9)
-                local s, v, isBonus = MSC.ParseTooltipLine(text)
-                
-                if s and v then
-                    -- [[ CRITICAL FIX: Check if v is a table (Range) or Number (Stat) ]]
-                    if type(v) == "table" then
-                        -- It's the Damage Range {min, max}, just store it, don't add it
-                        finalStats[s] = v 
-                    else
-                        -- It's a normal number (Str/Stam/etc), do math as usual
-                        if isBonus then 
-                            bonusStats[s] = (bonusStats[s] or 0) + v
-                        elseif isGreen or not finalStats[s] then 
-                            finalStats[s] = (finalStats[s] or 0) + v 
-                        end
-                    end
-                end
+    -- 2. FLATTEN STATS
+    local finalStats = scanData.Stats or {}
+    local bonusStats = {}
 
-                if id then
-                    local pStat, pVal = MSC:ParseProcText(text, id)
-                    if pStat and pVal > 0 then 
-                        finalStats._AUTO_PROC = { stat=pStat, val=pVal } 
-                        finalStats[pStat] = (finalStats[pStat] or 0) + pVal
-                    end
-                end
-            end
-        end
-    end
-	
-	if finalStats["MSC_WEAPON_SPEED"] and not finalStats["MSC_WEAPON_DPS"] then
-        
-        -- Check if we captured the Damage Range from Step 1
-        if finalStats["MSC_DAMAGE_RANGE"] then
-             local minD = finalStats["MSC_DAMAGE_RANGE"][1]
-             local maxD = finalStats["MSC_DAMAGE_RANGE"][2]
-             local speed = finalStats["MSC_WEAPON_SPEED"]
+    -- 3. INTEGRATE USE EFFECTS (Averaged Values)
+    for _, effect in ipairs(scanData.UseEffects) do
+        if effect.statKey and effect.averageVal and effect.averageVal > 0 then
+             -- Add the average value to the total score
+             finalStats[effect.statKey] = (finalStats[effect.statKey] or 0) + effect.averageVal
              
-             if minD and maxD and speed and speed > 0 then
-                 -- The Magic Formula: (AvgDmg / Speed)
-                 local avgDmg = (minD + maxD) / 2
-                 local calculatedDPS = avgDmg / speed
-                 
-                 -- Round to 1 decimal place to match Blizzard (e.g. 53.8)
-                 finalStats["MSC_WEAPON_DPS"] = MSC.Round(calculatedDPS, 1)
+             -- Keep a record for UI display (Evaluator uses _AUTO_PROC to show "Effective: X")
+             if not finalStats._AUTO_PROC then
+                 finalStats._AUTO_PROC = { stat=effect.statKey, val=effect.averageVal }
              end
         end
     end
-    -- Clean up the temporary range data so it doesn't clutter the debug/UI
-    finalStats["MSC_DAMAGE_RANGE"] = nil
-    
+
+    -- 4. HANDLE SOCKET BONUSES (Separation Logic)
+    -- We moved these to Meta.BonusStats in Parse.lua so we can strip them easily
+    if scanData.Meta and scanData.Meta.BonusStats then
+        bonusStats = scanData.Meta.BonusStats
+    end
+
+    -- 5. ATTACH BONUS TABLE
+    -- This allows SafeGetItemStats to ignore these bonuses when calculating "Best Gems"
     finalStats._BONUS_STATS = bonusStats
+    
     MSC.StatCache[itemLink] = finalStats
     return finalStats
 end
 
 -- =============================================================
--- 7. ENCHANT & GEM ENGINE
+-- 7. ENCHANT & GEM ENGINE (Unchanged but vital)
 -- =============================================================
 
 function MSC:GetValidEnchantType(itemLink)
@@ -667,8 +461,6 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
         end
 
         -- B. STRIP PHYSICAL ENCHANT (Reset to Naked)
-        -- We do this for ALL modes (1, 2, 3) to ensure a clean slate.
-        -- OFF: Ignores it. CURRENT: Replaces it. BEST: Replaces it.
         if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
             local pData = MSC.EnchantDB[physicalEnchantID]
             if pData.stats then

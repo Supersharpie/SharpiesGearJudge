@@ -2,13 +2,14 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 2.2.1-Era
+## Version: 2.2.2-Era
 ## SavedVariables: SGJ_Settings, SGJ_History
 
 Init.lua
 ConflictManager.lua
 Database.lua
 Data_Sets.lua
+Parse.lua
 Helpers.lua
 Dynamic_Engine.lua
 Evaluator.lua

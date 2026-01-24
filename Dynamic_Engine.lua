@@ -58,10 +58,19 @@ function MSC:ApplyDynamicAdjustments()
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
         specKey = MSC.ManualSpec
         
-        -- Check Global Custom Profiles (Imports) first
+        -- [[ FIX: FORCE DYNAMIC CALCULATION FOR MANUAL SELECTION ]]
+        -- If the class supports dynamic weights, ask it to calculate this specific key first.
+        -- This ensures Leveling Previews (e.g. Level 60 weights at Level 22) work correctly.
+        if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
+            local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights(specKey)
+            if dynWeights then
+                return dynWeights, dynKey -- Return immediately if found
+            end
+        end
+
+        -- Fallback: Check Static Tables (Custom Profiles or Old Class Modules)
         if SGJ_Settings and SGJ_Settings.CustomProfiles and SGJ_Settings.CustomProfiles[specKey] then
              rawWeights = SGJ_Settings.CustomProfiles[specKey]
-        -- Check Class Weights
         elseif MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
             rawWeights = MSC.CurrentClass.Weights[specKey]
         elseif MSC.CurrentClass and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
@@ -69,10 +78,7 @@ function MSC:ApplyDynamicAdjustments()
         end
         
     else
-        -- [[ NEW LOGIC START ]]
-        -- 2. PRIORITY: ASK FOR DYNAMIC WEIGHTS
-        -- This supports the new Interpolation system we built for Warriors.
-        -- If the class module has this function, it returns the EXACT calculated table for your level.
+        -- 2. AUTO-DETECT MODE
         if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
             local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights()
             if dynWeights then
@@ -80,10 +86,8 @@ function MSC:ApplyDynamicAdjustments()
                 specKey = dynKey
             end
         end
-        -- [[ NEW LOGIC END ]]
 
         -- 3. FALLBACK: STATIC LOOKUP
-        -- If Dynamic didn't return anything (or class doesn't support it yet), use the old method.
         if (not rawWeights or not next(rawWeights)) and MSC.CurrentClass and MSC.CurrentClass.GetSpec then
             specKey = MSC.CurrentClass:GetSpec()
             
@@ -105,7 +109,6 @@ function MSC:ApplyDynamicAdjustments()
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
         local capText
         finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
-        -- (Optional: You might want to store 'capText' somewhere to display it later)
     end
 
     return finalWeights, specKey
