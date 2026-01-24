@@ -101,7 +101,7 @@ Warlock.Weights = {
 }
 
 -- =============================================================
--- DYNAMIC LEVELING BRACKETS (Warlock Part 1)
+-- DYNAMIC LEVELING BRACKETS
 -- =============================================================
 Warlock.LevelingBrackets = {
     -- [[ STANDARD AFFLICTION (1-20) ]]
@@ -166,8 +166,8 @@ Warlock.LevelingBrackets = {
             ["MSC_WAND_DPS"] = 1.5, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5,
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,     
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,      
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5,      
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,       
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
@@ -219,10 +219,10 @@ Warlock.LevelingBrackets = {
         Start = { 
             ["MSC_WAND_DPS"] = 0.4, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5,   
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.8,         
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5,    
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.8,          
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,       
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,        
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
@@ -252,8 +252,8 @@ Warlock.LevelingBrackets = {
             ["MSC_WAND_DPS"] = 1.5, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.2,
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,   
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,     
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,    
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,      
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2, -- Added for Sync
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, -- Added for Sync
@@ -295,6 +295,33 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        }
+    },
+    ["Leveling_Fire_52_59"] = { -- FIXED: Added missing bracket!
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WAND_DPS"] = 0.8, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 2.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        },
+        End = { 
+            ["MSC_WAND_DPS"] = 0.4, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
@@ -391,7 +418,7 @@ Warlock.LevelingBrackets = {
         Start = { 
             ["MSC_WAND_DPS"] = 0.6, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8,        
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8,       
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5,

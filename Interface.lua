@@ -440,8 +440,9 @@ local function CreateStatRing(parent, x, y, size, label)
     
     -- 1. Dark Background (Stationary)
     f.bg = f:CreateTexture(nil, "BACKGROUND", nil, -1)
-	  f.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-	f.bg:SetVertexColor(0.1, 0.1, 0.1, 0.6) -- Dark semi-transparent circle
+    -- Use the cleaner minimap circle we discussed
+    f.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+    f.bg:SetAllPoints(); f.bg:SetVertexColor(0.1, 0.1, 0.1, 0.6)
 
     -- 2. SPIN FRAME
     f.SpinFrame = CreateFrame("Frame", nil, f)
@@ -453,23 +454,27 @@ local function CreateStatRing(parent, x, y, size, label)
     f.Energy:SetBlendMode("ADD")
     f.Energy:SetAlpha(1.0)
     
-    -- [[ FIX 1: ZOOM IN ]]
-    -- Cut off the outer 10% of the image edges so the "box" lines are gone.
+    -- ZOOM IN (Fixes box edges)
     f.Energy:SetTexCoord(0.1, 0.9, 0.1, 0.9) 
 
-    -- [[ FIX 2: THE MASK ]]
-    -- Force the remaining image into a perfect circle.
+    -- MASK (Fixes box corners)
     local mask = f.SpinFrame:CreateMaskTexture()
     mask:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-    mask:SetSize(size * 0.9, size * 0.9) -- Mask is slightly smaller than the frame to hide edges
+    mask:SetSize(size * 0.9, size * 0.9) 
     mask:SetPoint("CENTER")
     f.Energy:AddMaskTexture(mask)
 
-    -- 3. ANIMATION 
+    -- 3. ANIMATION GROUP
     f.AnimGroup = f.SpinFrame:CreateAnimationGroup()
     f.AnimGroup:SetLooping("REPEAT")
+    
     f.Spin = f.AnimGroup:CreateAnimation("Rotation")
     f.Spin:SetOrder(1)
+
+    -- [[ MISSING PULSE ADDED HERE ]]
+    f.Pulse = f.AnimGroup:CreateAnimation("Scale")
+    f.Pulse:SetOrder(1)
+    -- [[ END FIX ]]
     
     -- 4. TEXT FRAME
     f.TextFrame = CreateFrame("Frame", nil, f)
@@ -502,37 +507,40 @@ function MSC.ApplyRingArt(f, statType)
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Rune.tga") 
          f.Spin:SetDegrees(360); f.Spin:SetDuration(60); f.AnimGroup:Play()
 
-    elseif statType:find("Hit") then
-         -- BOTH SPELL AND MELEE HIT USE SWIRLS
+    elseif statType:find("Hit") or statType:find("Haste") then
+         -- [[ FIX: HASTE IS NOW INCLUDED HERE ]]
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Swirl.tga")
          f.Spin:SetDegrees(-360); f.Spin:SetDuration(30); f.AnimGroup:Play()
          
-         -- IF SPELL HIT: Tint it slightly Teal/Blue to differentiate from Melee Green
-         if statType:find("Spell") then 
+         -- Color Logic
+         if statType:find("Haste") then
+            -- HASTE: Gold
+            f.Energy:SetVertexColor(1.0, 0.8, 0.0, 1)
+         elseif statType:find("Spell") then 
+            -- SPELL HIT: Teal/Cyan
             f.Energy:SetVertexColor(0.2, 1.0, 0.8, 1) 
          else
+            -- MELEE HIT: Green
             f.Energy:SetVertexColor(0.2, 1.0, 0.2, 1)
          end
 
     elseif statType == "Expertise" then
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
-         f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1)
+         f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) -- Orange
 
     elseif statType:find("Crit") then
-         -- USE SPIKES FOR CRIT
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
          f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
          f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
          f.AnimGroup:Play()
          
-         -- IF SPELL CRIT: Make it Purple/Pink
          if statType:find("Spell") then
-             f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1) 
+             f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1) -- Purple for Spells
          else
-             -- MELEE CRIT: Make it Red
-             f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1) 
+             f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1) -- Red for Melee
          end
     else
+         -- Fallback (Grey ring)
          f.Energy:SetTexture("Interface\\Common\\RingBorder")
     end
 end

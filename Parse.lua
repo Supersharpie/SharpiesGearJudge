@@ -44,6 +44,14 @@ MSC.Scanner.BaseStatMap = {
     ["nature damage"]  = "ITEM_MOD_NATURE_DAMAGE_SHORT",
     ["holy damage"]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     
+	-- "Spell Damage" Variants (Crucial for TBC Random Enchants)
+    ["shadow spell damage"]  = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    ["fire spell damage"]    = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    ["frost spell damage"]   = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    ["arcane spell damage"]  = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    ["nature spell damage"]  = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    ["holy spell damage"]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+	
     -- [[ RESOURCES ]]
     ["mana"]   = "ITEM_MOD_MANA_SHORT",
     ["health"] = "ITEM_MOD_HEALTH_SHORT",
