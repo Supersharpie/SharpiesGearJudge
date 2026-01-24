@@ -272,7 +272,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2,
+			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -283,7 +284,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         }
     },
     ["Leveling_Caster_52_59"] = { 
@@ -297,7 +299,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
-            ["ITEM_MOD_MANA_SHORT"] = 0.02
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -308,7 +311,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
-            ["ITEM_MOD_MANA_SHORT"] = 0.02
+            ["ITEM_MOD_MANA_SHORT"] = 0.02,
+			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         }
     },
     ["Leveling_Caster_60_70"] = { 
@@ -324,7 +328,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- TBC Stat
+			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -337,7 +342,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         }
     },
 

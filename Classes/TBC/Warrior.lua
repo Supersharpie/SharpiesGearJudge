@@ -96,31 +96,33 @@ Warrior.LevelingWeights = {}
 -- DYNAMIC LEVELING BRACKETS
 -- =============================================================
 Warrior.LevelingBrackets = {
+
+    -- [[ 1. ARMS / 2H LEVELING ]]
     ["Leveling_1_20"] = {
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
             ["MSC_WEAPON_SPEED"] = 0.5,
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Added (1 Str = 2 AP)
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, -- Buffed for TBC leveling
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.1, 
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.1, -- Added (low value start)
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 1.0,
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.25, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.2,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.1, 
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5, -- Matches next bracket start
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5
         }
     },
     ["Leveling_2H_21_40"] = {
@@ -129,25 +131,27 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 1.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.25, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 13.0, 
             ["MSC_WEAPON_SPEED"] = 2.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.4, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0, -- Ramps up
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, -- Ramps up
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
     ["Leveling_2H_41_51"] = { 
@@ -156,25 +160,27 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 13.0, 
             ["MSC_WEAPON_SPEED"] = 2.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
             ["MSC_WEAPON_SPEED"] = 2.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.6, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
     ["Leveling_2H_52_59"] = {
@@ -183,27 +189,27 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 14.0, 
             ["MSC_WEAPON_SPEED"] = 2.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.6, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, -- Added for sync
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Prepare for AP gear
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
             ["MSC_WEAPON_SPEED"] = 3.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.75, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.8,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.3, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0, -- Added for sync
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
     ["Leveling_2H_60_70"] = {
@@ -212,21 +218,21 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 15.0, 
             ["MSC_WEAPON_SPEED"] = 3.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.75, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5, -- TBC stat
-            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5, -- TBC stat
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 16.0, 
             ["MSC_WEAPON_SPEED"] = 3.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.8,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 2.0, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.0, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
@@ -234,9 +240,11 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },      
+
+    -- [[ 2. FURY / DUAL WIELD ]]
     ["Leveling_DW_21_40"] = {
         min = 21, max = 40,
         Start = { 
@@ -244,26 +252,28 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_SPEED"] = 1.0, 
             ["MSC_OH_WEAPON_SPEED"] = -1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.2, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 11.0, 
             ["MSC_WEAPON_SPEED"] = 1.2, 
             ["MSC_OH_WEAPON_SPEED"] = -1.2,
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.25, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
     ["Leveling_DW_41_51"] = {
@@ -273,24 +283,26 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_SPEED"] = 1.5, 
             ["MSC_OH_WEAPON_SPEED"] = -1.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 1.8, 
             ["MSC_OH_WEAPON_SPEED"] = -1.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.6, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.6,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.8,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
     ["Leveling_DW_52_59"] = {
@@ -300,26 +312,26 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_SPEED"] = 2.0, 
             ["MSC_OH_WEAPON_SPEED"] = -2.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.6, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.4, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 13.0, 
             ["MSC_WEAPON_SPEED"] = 2.2, 
             ["MSC_OH_WEAPON_SPEED"] = -2.2,
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.75, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.6, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.2,
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.4,
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
     ["Leveling_DW_60_70"] = {
@@ -329,22 +341,22 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_SPEED"] = 2.5, 
             ["MSC_OH_WEAPON_SPEED"] = -2.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.75, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.8, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.2,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.0, -- TBC Stat
-            ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.0, -- TBC Stat
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.0,
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
             ["MSC_WEAPON_SPEED"] = 3.0, 
             ["MSC_OH_WEAPON_SPEED"] = -3.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, 
-            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.8,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 2.0, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.5, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.5,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 3.0, 
@@ -352,9 +364,11 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 1.0,
             ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_HASTE_RATING_SHORT"] = 2.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
+
+    -- [[ 3. PROT / TANK ]]
     ["Leveling_Tank_21_40"] = {
         min = 21, max = 40,
         Start = { 
@@ -362,14 +376,14 @@ Warrior.LevelingBrackets = {
             ["MSC_WEAPON_SPEED"] = -1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.8, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 0.9, -- Added
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.1,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1,
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.1, -- Added for sync
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.1, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.1, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.1
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -377,13 +391,13 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5,
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5
         }
     },
     ["Leveling_Tank_41_51"] = {
@@ -394,13 +408,13 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 9.0,
@@ -410,11 +424,11 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.2,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.1, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         }
     },
     ["Leveling_Tank_52_59"] = {
@@ -429,9 +443,9 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.1, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 10.0,
@@ -443,9 +457,9 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.25, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         }
     },
     ["Leveling_Tank_60_70"] = {
@@ -462,10 +476,10 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.25, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 2.0, -- TBC CRITICAL
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -479,10 +493,10 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 2.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
-            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 3.0, -- TBC CRITICAL
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 3.0, 
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         }
     }
 }

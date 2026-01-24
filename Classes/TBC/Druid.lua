@@ -107,6 +107,7 @@ Druid.LevelingWeights = {}
 -- DYNAMIC LEVELING BRACKETS (The Interpolation System)
 -- =============================================================
 Druid.LevelingBrackets = {
+
     -- [[ GENERIC / FERAL START ]]
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
@@ -360,7 +361,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, -- Added for Sync
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Boomkin needs MP5
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5, -- Boomkin needs MP5
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -370,7 +373,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
         }
     },
     ["Leveling_Caster_52_59"] = { 
@@ -383,7 +388,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5, -- Added for Sync
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -393,7 +400,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
         }
     },
     ["Leveling_Caster_60_70"] = { 
@@ -407,7 +416,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- TBC Stat
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -418,7 +429,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.8,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
         }
     },
     

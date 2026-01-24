@@ -88,7 +88,8 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 0.8,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.2 -- Added for Sync
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.2, -- Added for Sync
+			["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Early game dodge reduction
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -99,7 +100,8 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,
+			["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Early game dodge reduction
         }
     },
     ["Leveling_21_40"] = { 
@@ -114,7 +116,8 @@ Rogue.LevelingBrackets = {
             ["MSC_OH_WEAPON_SPEED"] = -1.5,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, -- Added for Sync
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1 -- Added for Sync
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, -- Added for Sync
+			["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Early game dodge reduction
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -126,7 +129,8 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.5,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
+			["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Early game dodge reduction
         }
     },
     ["Leveling_41_51"] = { -- Combat Potency Era (Fast OH is mandatory)

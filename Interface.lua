@@ -24,6 +24,26 @@ MSC.BagCache = {}
 MSC.BagCacheDirty = true
 MSC.SummaryRows = {} 
 MSC.LabBlocks = {} 
+-- [[ FRAME POOL REGISTRY ]]
+MSC.Pools = {
+    Bars = {},
+    Rings = {},
+    Headers = {}
+}
+
+function MSC.GetFromPool(poolType, parent, creatorFunc)
+    if not MSC.Pools[poolType] then MSC.Pools[poolType] = {} end
+    for _, frame in ipairs(MSC.Pools[poolType]) do
+        if not frame:IsShown() then
+            frame:SetParent(parent)
+            frame:Show()
+            return frame
+        end
+    end
+    local newFrame = creatorFunc(parent)
+    table.insert(MSC.Pools[poolType], newFrame)
+    return newFrame
+end
 
 -- [[ TAB REGISTRY ]]
 MSC.RegisteredTabs = {
@@ -66,10 +86,10 @@ function MSC.CreateModernBorder(f, thickness)
 end
 
 -- =============================================================
--- 2. VIEW DEFINITIONS (Must be defined BEFORE Dashboard)
+-- 2. VIEW DEFINITIONS
 -- =============================================================
 
--- [[ VIEW 1: THE LABORATORY (6-BLOCK THUNDERDOME) ]]
+-- [[ VIEW 1: THE LABORATORY ]]
 function MSC.InitLabView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     local help = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); help:SetPoint("TOP", 0, -20); help:SetText("Drag (Shift/Ctrl+Click) items to compare. 6 Sets Enter, 1 Set Wins!"); help:SetTextColor(0.6, 0.6, 0.6)
@@ -114,17 +134,31 @@ function MSC.InitLabView(parent)
         MSC.LabBlocks[id] = frame
     end
 
-    -- SET 1 (LEFT COLUMN)
     CreateBlock(1, "Option A1: Two-Hander", 1, 10, -50)
     CreateBlock(2, "Option B1: 1H + Shield/OH", 2, 10, -150)
     CreateBlock(3, "Option C1: Dual Wield", 2, 10, -250)
-
-    -- SET 2 (RIGHT COLUMN)
     CreateBlock(4, "Option A2: Two-Hander", 1, 300, -50)
     CreateBlock(5, "Option B2: 1H + Shield/OH", 2, 300, -150)
     CreateBlock(6, "Option C2: Dual Wield", 2, 300, -250)
 
     f.ResultText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("BOTTOM", 0, 60); f.ResultText:SetText("Waiting for Items...")
+    
+    -- CLEAR BUTTON
+    local bClear = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    bClear:SetSize(24, 24)
+    bClear:SetPoint("TOPRIGHT", -5, -5)
+    bClear:SetScript("OnClick", function()
+        for _, block in pairs(MSC.LabBlocks) do
+            for _, btn in ipairs(block.Slots) do
+                btn.link = nil
+                SetItemButtonTexture(btn, nil)
+            end
+        end
+        MSC.UpdateLabCalc()
+    end)
+    bClear:SetNormalTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+    bClear:SetHighlightTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Highlight")
+    bClear:SetPushedTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Down")
     
     MSC.ViewLab = f
 end
@@ -139,7 +173,11 @@ function MSC.UpdateLabCalc()
     local winnerIndex = 0
     local hasItems = false
 
-    -- Calculate Scores
+    local names = {
+        "Option A1 (2H)", "Option B1 (1H+OH)", "Option C1 (DW)",
+        "Option A2 (2H)", "Option B2 (1H+OH)", "Option C2 (DW)"
+    }
+
     for id, block in pairs(MSC.LabBlocks) do
         local blockScore = 0
         local itemsFound = false
@@ -147,7 +185,6 @@ function MSC.UpdateLabCalc()
         for i, btn in ipairs(block.Slots) do
             if btn.link then
                 itemsFound = true
-                -- Slot 1 is always Main Hand (16), Slot 2 is always Off Hand (17)
                 local slotID = (i == 1) and 16 or 17
                 local stats = MSC.SafeGetItemStats(btn.link, slotID, weights, profileName)
                 local score = MSC.GetItemScore(stats, weights, profileName, slotID)
@@ -169,7 +206,6 @@ function MSC.UpdateLabCalc()
         end
     end
     
-    -- Visual Feedback
     for id, block in pairs(MSC.LabBlocks) do
         if not hasItems then
             block:SetBackdropBorderColor(0,0,0,1); block:SetAlpha(1)
@@ -185,14 +221,17 @@ function MSC.UpdateLabCalc()
     end
     
     if hasItems then
-        local names = {
-            "Option A1 (2H)", "Option B1 (1H+OH)", "Option C1 (DW)",
-            "Option A2 (2H)", "Option B2 (1H+OH)", "Option C2 (DW)"
-        }
-        MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins!")
+        local delta = bestScore
+        local runnerUpScore = 0
+        for id, block in pairs(MSC.LabBlocks) do
+            if id ~= winnerIndex and block.finalScore > runnerUpScore then runnerUpScore = block.finalScore end
+        end
+        if runnerUpScore > 0 then delta = bestScore - runnerUpScore end
+        
+        MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins! (+" .. string.format("%.1f", delta) .. ")")
         MSC.ViewLab.ResultText:SetTextColor(0, 1, 0)
         
-        if MSC.UpdateLogic then MSC.UpdateLogic() end
+        -- Stat Logic is now decoupled, so we don't call UpdateLogic here anymore.
     end
 end
 
@@ -240,6 +279,9 @@ function MSC.InitReceiptView(parent)
         row.Value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Value:SetPoint("RIGHT", 0, 0)
         table.insert(MSC.SummaryRows, row)
     end
+    
+    -- [[ FORCE UPDATE ON SHOW ]]
+    f:SetScript("OnShow", function() MSC.UpdateReceipt() end)
     MSC.ViewReceipt = f
 end
 
@@ -271,9 +313,9 @@ function MSC.UpdateReceipt()
                  local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
                  local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
                  if slotId then
-                       local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
-                       local score = MSC.GetItemScore(stats, weights, specName, slotId)
-                       table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
+                        local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
+                        local score = MSC.GetItemScore(stats, weights, specName, slotId)
+                        table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
                  end
             end
         end
@@ -290,8 +332,12 @@ function MSC.UpdateReceipt()
             
             local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
             if equipLoc ~= "INVTYPE_HOLDABLE" and equipLoc ~= "INVTYPE_TABARD" and equipLoc ~= "INVTYPE_BODY" then
-                 local enchantID = link:match("item:%d+:(%d+)"); local validSlots = {[1]=true,[3]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[15]=true,[16]=true,[17]=true}
-                 if validSlots[btn.SlotID] and (not enchantID or enchantID == "0") then btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); btn.Alert:Show(); btn.AlertMode = "Enchant"; btn.AlertText = "Missing Enchant!" end
+                 local enchantID = link:match("item:%d+:(%d+)")
+                 local validSlots = {[1]=true,[3]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[15]=true,[16]=true,[17]=true}
+                 if validSlots[btn.SlotID] and (not enchantID or enchantID == "0") then 
+                    btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); btn.Alert:Show()
+                    btn.AlertMode = "Enchant"; btn.AlertText = "Missing Enchant!" 
+                 end
             end
             local bestBagScore = score; local foundUpgrade = false
             for _, cachedItem in ipairs(MSC.BagCache) do
@@ -300,7 +346,10 @@ function MSC.UpdateReceipt()
                if btn.SlotID == 13 or btn.SlotID == 14 then if cachedItem.slotId == 13 then isMatch = true end end
                if isMatch and cachedItem.score > bestBagScore + 0.1 then foundUpgrade = true end
             end
-            if foundUpgrade then btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); btn.Alert:Show(); btn.AlertMode = "Upgrade"; btn.AlertText = "Better item in bags!" end
+            if foundUpgrade then 
+                btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); btn.Alert:Show()
+                btn.AlertMode = "Upgrade"; btn.AlertText = "Better item in bags!" 
+            end
         else
             SetItemButtonTexture(btn, "Interface\\PaperDoll\\UI-Backpack-EmptySlot"); btn.ScoreText:SetText("")
         end
@@ -324,7 +373,7 @@ function MSC.UpdateReceipt()
     end
 end
 
--- [[ VIEW 3: STAT LOGIC (FINAL VISUAL POLISH) ]]
+-- [[ VIEW 3: STAT LOGIC ]]
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
     if stat:find("STRENGTH") then return "Increases Attack Power and Block Value" end
@@ -360,19 +409,16 @@ local function GetProgressColor(percent, roleColor)
     end
 end
 
--- [[ FIXED ANIMATION RENDERER: TEXT ON TOP + CIRCLE TEXTURE + BRIGHT TRACK + GLOW ]]
 local function CreateStatRing(parent, x, y, size, label)
     local f = CreateFrame("Frame", nil, parent)
     f:SetSize(size, size); f:SetPoint("TOPLEFT", x, y)
     local mask = f:CreateMaskTexture()
     mask:SetTexture("Interface\\Minimap\\UI-Minimap-Background"); mask:SetAllPoints(f)
     
-    -- Background Track (BRIGHT GRAY)
     f.bg = f:CreateTexture(nil, "BACKGROUND")
     f.bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_BG.tga") 
     f.bg:SetAllPoints(); f.bg:SetVertexColor(0.6, 0.6, 0.6, 1); f.bg:SetBlendMode("BLEND"); f.bg:AddMaskTexture(mask)
     
-    -- Swipe (Perfect Circle + GLOW MODE)
     f.cooldown = CreateFrame("Cooldown", nil, f, "CooldownFrameTemplate")
     f.cooldown:SetAllPoints()
     f.cooldown:SetSwipeTexture("Interface\\Minimap\\UI-Minimap-Background")
@@ -380,12 +426,10 @@ local function CreateStatRing(parent, x, y, size, label)
     f.cooldown:SetUseCircularEdge(true) 
     if f.cooldown.AddMaskTexture then f.cooldown:AddMaskTexture(mask) end
     
-    -- Hole Punch (Donut)
     f.hole = f:CreateTexture(nil, "OVERLAY", nil, 1)
     f.hole:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
     f.hole:SetSize(size * 0.70, size * 0.70); f.hole:SetPoint("CENTER"); f.hole:SetVertexColor(0, 0, 0, 1)
     
-    -- Text Frame (HIGHEST LAYER)
     f.TextFrame = CreateFrame("Frame", nil, f)
     f.TextFrame:SetAllPoints(); f.TextFrame:SetFrameLevel(f:GetFrameLevel() + 10)
 
@@ -396,22 +440,64 @@ local function CreateStatRing(parent, x, y, size, label)
 end
 
 local function GetClassRings(class, stats, weights)
-    local rings = {}; local hit = stats["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HIT_RATING_SHORT"] or 0
-    local def = stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0; local exp = stats["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0
-    local crit = stats["ITEM_MOD_CRIT_SPELL_RATING_SHORT"] or stats["ITEM_MOD_CRIT_MELEE_RATING_SHORT"] or 0
-    local haste = stats["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] or stats["ITEM_MOD_HASTE_MELEE_RATING_SHORT"] or 0
-    local caps = { MeleeHit=142, SpellHit=202, Def=140, Exp=103, CritGoal=660, HasteGoal=315 }
-
-    if class == "WARRIOR" or class == "PALADIN" or class == "DRUID" then
-        if (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 1 then
-             table.insert(rings, { l="Def Cap", v=def, m=caps.Def }); table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit }); table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
+    local rings = {}
+    local CAP_HIT_MELEE = 9; local CAP_HIT_SPELL = 16; local CAP_EXP = 26; local CAP_DEF = 490
+    
+    local function AddRing(label, statKey, capTarget, formatStr, isSkill)
+        local val = stats[statKey] or 0
+        local level = UnitLevel("player"); if level > 70 then level = 70 end
+        local scalar = 0
+        if label == "Expertise" then
+            scalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]) and MSC.CombatRatingScalars[level][1] or 3.94
+        elseif label == "Def Cap" then
+            scalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]) and MSC.CombatRatingScalars[level][2] or 2.37
         else
-             table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit }); table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal }); table.insert(rings, { l="Expertise", v=exp, m=caps.Exp })
+            local idx = MSC.RatingIndexMap and MSC.RatingIndexMap[statKey]
+            if idx and MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] then scalar = MSC.CombatRatingScalars[level][idx] else scalar = 15.8 end
         end
-    elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" or class == "SHAMAN" then
-        table.insert(rings, { l="Spell Hit", v=hit, m=caps.SpellHit }); table.insert(rings, { l="Spell Crit", v=crit, m=caps.CritGoal }); table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
-    else
-        table.insert(rings, { l="Hit Cap", v=hit, m=caps.MeleeHit }); table.insert(rings, { l="Crit", v=crit, m=caps.CritGoal }); table.insert(rings, { l="Haste", v=haste, m=caps.HasteGoal })
+
+        local currentDisplay = 0; local capRating = 0
+        if isSkill then
+            if label == "Def Cap" then
+                local skillAdded = math.floor(val / scalar); currentDisplay = 350 + skillAdded; capRating = (capTarget - 350) * scalar
+            else
+                currentDisplay = math.floor(val / scalar); capRating = capTarget * scalar
+            end
+        else
+            currentDisplay = val / scalar; capRating = capTarget * scalar
+        end
+        table.insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar })
+    end
+
+    if class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" then
+        if class == "WARRIOR" and (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5 then
+            AddRing("Def Cap", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
+            AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
+            AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
+        else
+            AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
+            AddRing("Crit", "ITEM_MOD_CRIT_RATING_SHORT", 35, "%.1f%%") 
+            AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
+        end
+    elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" then
+        AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
+        AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%") 
+        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")    
+    elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
+        local isTank = (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5
+        local isCaster = (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
+        if isTank then
+            AddRing("Def Cap", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
+            if isCaster and class == "PALADIN" then AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%") else AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%") end
+            AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
+        elseif isCaster then
+            AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
+            AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%")
+        else
+            AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
+            AddRing("Crit", "ITEM_MOD_CRIT_RATING_SHORT", 35, "%.1f%%")
+            AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
+        end
     end
     return rings
 end
@@ -422,137 +508,151 @@ function MSC.InitLogicView(parent)
     scroll:SetPoint("TOPLEFT", 20, -20); scroll:SetPoint("BOTTOMRIGHT", -40, 20)
     local content = CreateFrame("Frame", nil, scroll); content:SetSize(400, 800); scroll:SetScrollChild(content)
     f.Content = content
+    
+    -- [[ FORCE UPDATE ON SHOW ]]
+    f:SetScript("OnShow", function() MSC.UpdateLogic() end)
+    
     MSC.ViewLogic = f
 end
 
 function MSC.UpdateLogic()
     if not MSC.ViewLogic or not MSC.ViewLogic:IsShown() then return end
     local content = MSC.ViewLogic.Content
-    if content.children then for _, c in ipairs(content.children) do c:Hide(); c:SetParent(nil) end end
+    
+    if content.children then for _, c in ipairs(content.children) do c:Hide() end end
     content.children = {}
-    
+
     local weights, detectedKey = MSC.GetCurrentWeights()
-    if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then detectedKey, weights = next(MSC.CurrentClass.Weights) end
+    if not weights and MSC.CurrentClass then detectedKey, weights = next(MSC.CurrentClass.Weights) end
     if not weights then return end
-
-    local roleColor = MSC.RoleColors.DEFAULT
-    local spec = detectedKey:upper()
-    if spec:find("PROT") or spec:find("DEF") or spec:find("TANK") then roleColor = MSC.RoleColors.TANK
-    elseif spec:find("HOLY") or spec:find("RESTO") or spec:find("HEAL") then roleColor = MSC.RoleColors.HEALER
-    elseif spec:find("MAGE") or spec:find("WARLOCK") or spec:find("SHADOW") or spec:find("ELE") or spec:find("BAL") then roleColor = MSC.RoleColors.CASTER
-    elseif spec:find("RET") or spec:find("ROGUE") or spec:find("WARRIOR") or spec:find("HUNTER") or spec:find("ENH") or spec:find("CAT") then roleColor = MSC.RoleColors.MELEE
-    end
-
-    local _, class = UnitClass("player")
-    local currentGear = MSC:GetEquippedGear() or {}
     
-    -- [[ LOGIC 3 UPDATE: PROJECTION ]]
-    -- If Lab is active and has a winner, visualize the stats of the WINNING SET
-    if MSC.LabBlocks then
-        local winnerScore = -1
-        local winnerIndex = 0
-        for id, block in pairs(MSC.LabBlocks) do
-            if block.finalScore and block.finalScore > winnerScore then
-                winnerScore = block.finalScore
-                winnerIndex = id
-            end
-        end
-        
-        if winnerIndex > 0 then
-            -- Simulate the winning set
-            local block = MSC.LabBlocks[winnerIndex]
-            if winnerIndex == 1 then -- Set 1: 2H
-                currentGear[16] = block.Slots[1].link; currentGear[17] = nil
-            elseif winnerIndex == 2 then -- Set 1: 1H+OH
-                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
-                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
-            elseif winnerIndex == 3 then -- Set 1: DW
-                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
-                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
-            elseif winnerIndex == 4 then -- Set 2: 2H
-                currentGear[16] = block.Slots[1].link; currentGear[17] = nil
-            elseif winnerIndex == 5 then -- Set 2: 1H+OH
-                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
-                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
-            elseif winnerIndex == 6 then -- Set 2: DW
-                if block.Slots[1].link then currentGear[16] = block.Slots[1].link end
-                if block.Slots[2].link then currentGear[17] = block.Slots[2].link end
-            end
-        end
-    end
+    -- [[ 1. FETCH PLAYER GEAR DIRECTLY (Ignoring Lab Simulation) ]]
+    local currentGear = {}
+    for i=1, 18 do currentGear[i] = GetInventoryItemLink("player", i) end
+    
+    -- Note: Removed Lab Projection logic block here.
     
     local _, stats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
-    local rings = GetClassRings(class, stats, weights)
+    local rings = GetClassRings(select(2, UnitClass("player")), stats, weights)
     
     for i, ring in ipairs(rings) do
-        local xPos = 60 + ((i-1) * 140)
-        local f = CreateStatRing(content, xPos, -20, 80, ring.l)
-        table.insert(content.children, f)
-        
-        local pct = 0; if ring.m > 0 then pct = math.min(100, (ring.v / ring.m) * 100) end
-        
-        local useRole = true
-        if ring.l:find("Cap") or ring.l:find("Hit") or ring.l:find("Def") then useRole = false end
-        local r, g, b = GetProgressColor(pct, useRole and roleColor or nil)
-        
-        -- [[ ANIMATION RENDERER: GLOW MODE RESTORED ]]
-        f.cooldown:SetSwipeColor(r, g, b)
-        f.val:SetText(math.floor(pct) .. "%"); f.val:SetTextColor(r, g, b)
-        
-        local now = GetTime()
-        if pct >= 100 then f.cooldown:SetCooldown(now - 10000, 10000) 
-        elseif pct <= 0 then f.cooldown:SetCooldown(0, 0)
-        else 
+        if i <= 3 then
+            local xPos = 60 + ((i-1) * 140)
+            local f = MSC.GetFromPool("Rings", content, function(p) return CreateStatRing(p, 0, 0, 80, "TEMP") end)
+            f:ClearAllPoints(); f:SetPoint("TOPLEFT", xPos, -20)
+            f.lbl:SetText(ring.l:upper())
+            f.val:SetText(string.format(ring.fmt, ring.v))
+            
+            local fillPct = 0
+            if ring.m > 0 then fillPct = math.min(100, (ring.v / ring.m) * 100) end
+            
+            local r,g,b = 0, 0.8, 1
+            if ring.l:find("Cap") or ring.l:find("Hit") or ring.l:find("Expertise") or ring.l:find("Def") then
+                if fillPct >= 100 then r,g,b = 0, 1, 0 end
+            end
+            
+            f.cooldown:SetSwipeColor(r,g,b)
+            f.val:SetTextColor(r,g,b)
+            
             local dur = 100000
-            f.cooldown:SetCooldown(now - (dur * (pct/100)), dur)
+            f.cooldown:SetCooldown(GetTime() - (dur * (fillPct/100)), dur)
             f.cooldown:Pause()
+            
+            f:EnableMouse(true)
+            f:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(ring.l, 1, 1, 1)
+                GameTooltip:AddLine(" ")
+                if ring.rawVal and ring.rawCap and ring.rawCap > 0 then
+                    GameTooltip:AddDoubleLine("Rating:", string.format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
+                    local diff = ring.rawCap - ring.rawVal
+                    if diff > 0 then GameTooltip:AddLine(string.format("Need %d more rating to cap.", diff), 1, 0.5, 0.5) else GameTooltip:AddLine("Cap reached!", 0, 1, 0) end
+                else
+                    GameTooltip:AddDoubleLine("Current Rating:", string.format("%d", ring.rawVal), 1, 0.82, 0, 1, 1, 1)
+                end
+                if ring.scalar then GameTooltip:AddLine(" "); GameTooltip:AddLine(string.format("1%% requires %.2f Rating", ring.scalar), 0.6, 0.6, 0.6) end
+                GameTooltip:Show(); self:SetAlpha(1)
+            end)
+            f:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(1) end)
+            table.insert(content.children, f)
         end
     end
 
     local yOff = -135
-    local header = content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    header:SetPoint("TOPLEFT", 15, yOff); header:SetText("Stat Priority"); header:SetTextColor(1, 0.82, 0)
-    table.insert(content.children, header)
-    yOff = yOff - 35
-    
-    local maxW = 0; local sorted = {}
+    local sorted = {}
+    local maxW = 0
     for k, v in pairs(weights) do if v > 0 then table.insert(sorted, {k=k, v=v}); if v > maxW then maxW = v end end end
     table.sort(sorted, function(a,b) return a.v > b.v end)
-    
+
     for _, s in ipairs(sorted) do
-        local name = s.k
-        if MSC.GetCleanStatName then
-            local clean = MSC.GetCleanStatName(s.k)
-            if clean then name = clean end
-        end
+        local bar = MSC.GetFromPool("Bars", content, function(p)
+             local b = CreateFrame("StatusBar", nil, p, "BackdropTemplate")
+             b:SetSize(450, 32)
+             b:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"}); b:SetBackdropColor(0, 0, 0, 0.4)
+             b:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+             
+             b:EnableMouse(true)
+             b:SetScript("OnEnter", function(self)
+                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                 GameTooltip:SetText(self.StatName, 1, 1, 1)
+                 if self.CurrentVal > 0 then
+                     GameTooltip:AddLine(" ")
+                     local scoreContrib = self.Weight * self.CurrentVal
+                     GameTooltip:AddDoubleLine("Gear Contribution:", string.format("%.1f", self.CurrentVal), 1, 1, 1, 1, 1, 1)
+                     if self.RealTotal and self.RealTotal > 0 then
+                         if math.abs(self.RealTotal - self.CurrentVal) > 1 then
+                             GameTooltip:AddDoubleLine("Character Sheet:", string.format("%d (Includes Base/Enchants)", self.RealTotal), 0.6, 0.6, 0.6, 0.6, 0.6, 0.6)
+                         end
+                     end
+                     GameTooltip:AddLine(" ")
+                     GameTooltip:AddDoubleLine("Score Calculation:", " ", 1, 0.82, 0)
+                     GameTooltip:AddLine(string.format("%.2f (Weight) x %.1f (Gear)", self.Weight, self.CurrentVal), 1, 1, 1)
+                     GameTooltip:AddDoubleLine("= Score:", string.format("%.1f", scoreContrib), nil, nil, nil, 0, 1, 0)
+                 else
+                     GameTooltip:AddDoubleLine("Stat Weight:", string.format("%.2f", self.Weight), nil,nil,nil, 0, 1, 0)
+                     GameTooltip:AddLine("You currently have 0 of this stat from gear.", 0.6, 0.6, 0.6)
+                 end
+                 if self.Reason then GameTooltip:AddLine(" "); GameTooltip:AddLine(self.Reason, 0.6, 0.6, 0.6, true) end
+                 GameTooltip:Show(); self:SetAlpha(1)
+             end)
+             b:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(0.8) end)
+             
+             b.leftT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.leftT:SetPoint("TOPLEFT", 10, -5)
+             b.rightT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.rightT:SetPoint("TOPRIGHT", -10, -5)
+             b.sub = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); b.sub:SetPoint("BOTTOMLEFT", 10, 5)
+             return b
+        end)
         
-        -- [[ BARS HALVED IN HEIGHT & TIGHTENED ]]
+        local name = (MSC.GetCleanStatName and MSC.GetCleanStatName(s.k)) or s.k
         local reason = GetStatReason(tostring(s.k):upper(), class, detectedKey)
-        local bar = CreateFrame("StatusBar", nil, content, "BackdropTemplate")
-        bar:SetSize(450, 24); -- Height changed from 42 to 24
-        bar:SetPoint("TOPLEFT", 15, yOff)
-        bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"}); bar:SetBackdropColor(0, 0, 0, 0.4)
-        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar"); bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v)
-        bar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(roleColor.r*0.5, roleColor.g*0.5, roleColor.b*0.5, 0.8), CreateColor(roleColor.r, roleColor.g, roleColor.b, 0.9))
-        
-        -- Adjusted text anchors for tighter space
-        local leftT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); leftT:SetPoint("TOPLEFT", 10, -2); leftT:SetText(name:gsub("Rating", ""))
-        local rightT = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); rightT:SetPoint("TOPRIGHT", -10, -2); rightT:SetText(string.format("%.2f", s.v))
-        
-        if reason then
-            local sub = bar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-            sub:SetPoint("BOTTOMLEFT", 10, 2) -- Tighter anchor
-            sub:SetText(reason)
-            sub:SetTextColor(0.6, 0.6, 0.6)
+        local currentVal = stats[s.k] or 0
+        local realTotal = 0
+        if s.k == "ITEM_MOD_STRENGTH_SHORT" then _, realTotal = UnitStat("player", 1)
+        elseif s.k == "ITEM_MOD_AGILITY_SHORT" then _, realTotal = UnitStat("player", 2)
+        elseif s.k == "ITEM_MOD_STAMINA_SHORT" then _, realTotal = UnitStat("player", 3)
+        elseif s.k == "ITEM_MOD_INTELLECT_SHORT" then _, realTotal = UnitStat("player", 4)
+        elseif s.k == "ITEM_MOD_SPIRIT_SHORT" then _, realTotal = UnitStat("player", 5)
+        elseif s.k == "ITEM_MOD_ARMOR_SHORT" then local _, eff = UnitArmor("player"); realTotal = eff
+        elseif s.k == "ITEM_MOD_ATTACK_POWER_SHORT" then local base, pos, neg = UnitAttackPower("player"); realTotal = base + pos + neg
         end
+
+        bar.StatName = name; bar.Weight = s.v; bar.Reason = reason; bar.CurrentVal = currentVal; bar.RealTotal = realTotal
+
+        bar:ClearAllPoints(); bar:SetPoint("TOPLEFT", 15, yOff)
+        bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v); bar:SetAlpha(0.8)
         
-        yOff = yOff - 30; -- Reduced spacing from 48 to 30
+        local cR, cG, cB = MSC.GetClassColor()
+        bar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(cR*0.2, cG*0.2, cB*0.2, 0.9), CreateColor(cR, cG, cB, 1))
+
+        bar.leftT:SetText(name:gsub("Rating", "")); bar.rightT:SetText(string.format("%.2f", s.v))
+        if reason then bar.sub:SetText(reason); bar.sub:SetTextColor(0.6, 0.6, 0.6); bar.sub:Show() else bar.sub:Hide() end
+        yOff = yOff - 38
         table.insert(content.children, bar)
     end
     content:SetHeight(math.abs(yOff) + 50)
 end
 
--- [[ VIEW 4: SETTINGS (NO RELOAD BUTTON) ]]
+-- [[ VIEW 4: SETTINGS ]]
 function MSC.InitSettingsView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     local function CreateHeader(text, relTo, yOff)
@@ -629,7 +729,7 @@ function MSC.RegisterPluginTab(name, icon, initFunc, viewKey, updateFuncKey)
 end
 
 -- =============================================================
--- 3. MAIN DASHBOARD FRAME (Must be defined AFTER Views)
+-- 3. MAIN DASHBOARD FRAME
 -- =============================================================
 function MSC.RenderSidebarButtons()
     if not MSC.MainFrame then return end
@@ -670,7 +770,7 @@ function MSC.ToggleMainMenu()
     f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7); f.Overlay:SetAllPoints(); f.Overlay:SetColorTexture(0.08, 0.08, 0.10, 0.90) 
     f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND"); f.Header.Grad:SetAllPoints(); f.Header.Grad:SetColorTexture(0, 0, 0, 0.5); f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.2 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.3 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -728,7 +828,7 @@ function MSC.UpdateMinimapPosition()
 end
 
 -- =============================================================
--- 4. EVENTS & HOOKS (Bottom of File)
+-- 4. EVENTS & HOOKS
 -- =============================================================
 local mb = CreateFrame("Button", "MSC_Minimap", Minimap); mb:SetSize(32,32); mb:SetFrameLevel(8); mb:SetPoint("CENTER", -60, -60)
 mb.icon = mb:CreateTexture(nil,"BACKGROUND"); mb.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02"); mb.icon:SetSize(20,20); mb.icon:SetPoint("CENTER")
@@ -737,74 +837,148 @@ mb:RegisterForClicks("AnyUp"); mb:SetScript("OnClick", MSC.ToggleMainMenu)
 
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
-f:SetScript("OnEvent", function() MSC.UpdateMinimapPosition() end)
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+f:RegisterEvent("PLAYER_TALENT_UPDATE")
 
--- [[ FINAL FIX: UNIVERSAL LINK CATCHER (SMART DUAL WIELD NO SYNC) ]]
+f:SetScript("OnEvent", function(self, event) 
+    if event == "PLAYER_LOGIN" then 
+        MSC.UpdateMinimapPosition() 
+    else
+        -- Force update on EnterWorld, Equip change, or Talent change
+        if MSC.UpdateReceipt then MSC.UpdateReceipt() end
+        if MSC.UpdateLogic then MSC.UpdateLogic() end
+    end
+end)
+
 function MSC.OnItemLinkClick(link)
     if not MSC.ViewLab or not MSC.ViewLab:IsShown() then return end
     
     local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-    
-    -- Smart Sorting
     if equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_STAFF" or equipLoc == "INVTYPE_POLEARM" then
-        -- Check Set 1 -> Set 2
-        local btn1 = MSC.LabBlocks[1].Slots[1]
-        local btn2 = MSC.LabBlocks[4].Slots[1]
-        if not btn1.link then 
-            btn1.link = link; SetItemButtonTexture(btn1, GetItemIcon(link))
-        else
-            btn2.link = link; SetItemButtonTexture(btn2, GetItemIcon(link))
-        end
-        
+        local btn1 = MSC.LabBlocks[1].Slots[1]; local btn2 = MSC.LabBlocks[4].Slots[1]
+        if not btn1.link then btn1.link = link; SetItemButtonTexture(btn1, GetItemIcon(link))
+        else btn2.link = link; SetItemButtonTexture(btn2, GetItemIcon(link)) end
     elseif equipLoc == "INVTYPE_SHIELD" or equipLoc == "INVTYPE_HOLDABLE" or equipLoc == "INVTYPE_WEAPONOFFHAND" then
-        -- Check Set 1 OH -> Set 2 OH
-        local btn1 = MSC.LabBlocks[2].Slots[2]
-        local btn2 = MSC.LabBlocks[5].Slots[2]
-        if not btn1.link then
-            btn1.link = link; SetItemButtonTexture(btn1, GetItemIcon(link))
-        else
-            btn2.link = link; SetItemButtonTexture(btn2, GetItemIcon(link))
-        end
-        
+        local btn1 = MSC.LabBlocks[2].Slots[2]; local btn2 = MSC.LabBlocks[5].Slots[2]
+        if not btn1.link then btn1.link = link; SetItemButtonTexture(btn1, GetItemIcon(link))
+        else btn2.link = link; SetItemButtonTexture(btn2, GetItemIcon(link)) end
     elseif equipLoc == "INVTYPE_WEAPON" or equipLoc == "INVTYPE_WEAPONMAINHAND" then
-        -- FIXED DUAL WIELD LOGIC: NO SYNCING, FILL FIRST EMPTY SLOT IN PRIORITY ORDER
-        
-        local targets = {
-            MSC.LabBlocks[2].Slots[1], -- Set 1: 1H+Shield MH
-            MSC.LabBlocks[3].Slots[1], -- Set 1: DW MH
-            MSC.LabBlocks[3].Slots[2], -- Set 1: DW OH (Conditional)
-            MSC.LabBlocks[5].Slots[1], -- Set 2: 1H+Shield MH
-            MSC.LabBlocks[6].Slots[1], -- Set 2: DW MH
-            MSC.LabBlocks[6].Slots[2]  -- Set 2: DW OH (Conditional)
-        }
-        
+        local targets = { MSC.LabBlocks[2].Slots[1], MSC.LabBlocks[3].Slots[1], MSC.LabBlocks[3].Slots[2], MSC.LabBlocks[5].Slots[1], MSC.LabBlocks[6].Slots[1], MSC.LabBlocks[6].Slots[2] }
         for i, btn in ipairs(targets) do
-            -- Skip OH slots if item is Main-Hand only
-            local isOHSlot = (i == 3 or i == 6)
-            local canEquip = true
+            local isOHSlot = (i == 3 or i == 6); local canEquip = true
             if isOHSlot and equipLoc == "INVTYPE_WEAPONMAINHAND" then canEquip = false end
-            
-            if canEquip and not btn.link then
-                btn.link = link; SetItemButtonTexture(btn, GetItemIcon(link))
-                break -- Found a home, stop looking
-            end
+            if canEquip and not btn.link then btn.link = link; SetItemButtonTexture(btn, GetItemIcon(link)); break end
         end
     end
-    
     MSC.UpdateLabCalc()
 end
 
--- Hook Shift-Click
-hooksecurefunc("HandleModifiedItemClick", function(link)
-    if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end
-end)
+hooksecurefunc("HandleModifiedItemClick", function(link) if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
+hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
+hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
 
--- Hook Chat Links (Shift-Click for AtlasLoot when Chat Open)
-hooksecurefunc("ChatEdit_InsertLink", function(link)
-    if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end
-end)
+-- =============================================================
+-- 5. POPUP WINDOWS
+-- =============================================================
+function MSC.CreatePopupFrame(title)
+    local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    f:SetSize(500, 400); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG")
+    f:EnableMouse(true); f:SetMovable(true); f:RegisterForDrag("LeftButton")
+    f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+    
+    f:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        tile = true, tileSize = 32, edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    
+    f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    f.Title:SetPoint("TOP", 0, -15); f.Title:SetText(title)
+    
+    f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    f.Close:SetPoint("TOPRIGHT", -5, -5)
+    
+    local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+    sf:SetPoint("TOPLEFT", 20, -40); sf:SetPoint("BOTTOMRIGHT", -40, 50)
+    
+    local eb = CreateFrame("EditBox", nil, sf)
+    eb:SetMultiLine(true); eb:SetSize(440, 350); eb:SetFontObject("ChatFontNormal")
+    eb:SetAutoFocus(false)
+    sf:SetScrollChild(eb)
+    
+    f.EditBox = eb
+    return f
+end
 
--- Hook Ctrl-Click (Dressing Room - For AtlasLoot when Chat Closed)
-hooksecurefunc("DressUpItemLink", function(link)
-    if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end
-end)
+function MSC.ShowImportWindow()
+    if MSC.ImportFrame then MSC.ImportFrame:Show(); return end
+    
+    local f = MSC.CreatePopupFrame("Import Pawn String")
+    f.EditBox:SetText("Paste Pawn string here...")
+    f.EditBox:HighlightText()
+    
+    local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    b:SetSize(120, 25); b:SetPoint("BOTTOM", 0, 15); b:SetText("Import")
+    b:SetScript("OnClick", function()
+        local text = f.EditBox:GetText()
+        print("|cff00ff00SGJ:|r Import received: " .. string.sub(text, 1, 20) .. "...")
+        f:Hide()
+    end)
+    
+    MSC.ImportFrame = f
+end
+
+function MSC.ShowHistory()
+    if MSC.ExportFrame then MSC.ExportFrame:Show(); MSC.ExportFrame.EditBox:HighlightText(); return end
+    
+    local f = MSC.CreatePopupFrame("Export Data (Discord Ready)")
+    local unit = "player"
+    local name = UnitName(unit)
+    local realm = GetRealmName()
+    local lvl = UnitLevel(unit)
+    local _, class = UnitClass(unit)
+    
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then 
+        specName, weights = next(MSC.CurrentClass.Weights) 
+    end
+    local profileName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName or "Unknown"
+
+    local gearTable = {}
+    for i=1, 18 do gearTable[i] = GetInventoryItemLink(unit, i) end
+    local totalScore = MSC:GetTotalCharacterScore(gearTable, weights, specName)
+
+    local exportStr = string.format("```ini\n[ %s - %s (Lvl %d %s) ]\n", name, realm, lvl, class)
+    exportStr = exportStr .. string.format("Profile    = %s\n", profileName)
+    exportStr = exportStr .. string.format("TotalScore = %.1f\n\n", totalScore)
+    exportStr = exportStr .. "[ Equipment ]\n"
+
+    local slots = {
+        {1, "Head"}, {2, "Neck"}, {3, "Shoulder"}, {15, "Back"}, {5, "Chest"}, 
+        {9, "Wrist"}, {10, "Hands"}, {6, "Waist"}, {7, "Legs"}, {8, "Feet"}, 
+        {11, "Ring1"}, {12, "Ring2"}, {13, "Trinket1"}, {14, "Trinket2"}, 
+        {16, "MainHand"}, {17, "OffHand"}, {18, "Ranged"}
+    }
+    
+    for _, info in ipairs(slots) do
+        local slotID, label = unpack(info)
+        local link = gearTable[slotID]
+        if link then
+            local itemName = GetItemInfo(link) or "Unknown Item"
+            local stats = MSC.SafeGetItemStats(link, slotID, weights, specName)
+            local score = MSC.GetItemScore(stats, weights, specName, slotID)
+            exportStr = exportStr .. string.format("%-10s = %s (%.1f)\n", label, itemName, score)
+        else
+            exportStr = exportStr .. string.format("%-10s = (Empty)\n", label)
+        end
+    end
+    exportStr = exportStr .. "```"
+
+    f.EditBox:SetText(exportStr)
+    f.EditBox:HighlightText()
+    f.EditBox:SetScript("OnEscapePressed", function() f:Hide() end)
+    
+    MSC.ExportFrame = f
+end

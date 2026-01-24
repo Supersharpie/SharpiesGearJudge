@@ -111,26 +111,28 @@ Mage.LevelingBrackets = {
     -- [[ 1. STANDARD FROST (Single Target) ]]
     -- Wand DPS is king early.
     ["Leveling_1_20"] = { 
-        min = 1, max = 20,
-        Start = { 
-            ["MSC_WEAPON_DPS"] = 2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, -- Mana > Health for single target
-            ["ITEM_MOD_STAMINA_SHORT"] = 0.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"] = 1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"] = 0.8,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
-        }
-    },
+		min = 1, max = 20,
+		Start = { 
+			["MSC_WAND_DPS"] = 3.0, -- CRITICAL FIX: Wand, not Melee
+			["MSC_WEAPON_DPS"] = 0.1, -- Melee is useless
+			["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
+			["ITEM_MOD_SPIRIT_SHORT"] = 0.8, -- Buffed: Spirit = uptime
+			["ITEM_MOD_STAMINA_SHORT"] = 0.8, 
+			["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
+			["ITEM_MOD_FROST_DAMAGE_SHORT"] = 0.5,
+			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+		},
+		End = { 
+			["MSC_WAND_DPS"] = 2.0, 
+			["MSC_WEAPON_DPS"] = 0.1,
+			["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
+			["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
+			["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+			["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
+			["ITEM_MOD_FROST_DAMAGE_SHORT"] = 0.8,
+			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+		}
+	},
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
         Start = { 

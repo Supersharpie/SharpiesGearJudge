@@ -1,13 +1,33 @@
 # Sharpie's Gear Judge - Version History
 
+## v2.2.3 Changelog
+
+### New Features
+* **Math Tooltips: Hovering over any stat bar now displays the exact equation used: Weight × Amount = Score.
+* **Character vs. Gear: The tooltip now explicitly compares "Gear Contribution" (what the addon sees) vs. "Character Total" (what the game sees), making it easy to spot missing enchants or base stat discrepancies.
+
+### Core Engine Updates (Parser)
+* **"Bulletproof" Stat Parsing: Completely rewrote Parse.lua to use a fuzzy-matching, case-insensitive engine.
+* **Suffix Items Fixed: Random enchant items (e.g., ...of the Bear, ...of the Whale) are now correctly scored, fixing the issue where they previously showed 0.0.
+* **Format Agnostic: Now correctly reads all variations of stat text, including +10 Strength, Strength +10, 10 Strength, and Strength 10.
+* **Edge Case Support: Added explicit support for "Feral Attack Power" (e.g., Earthwarden) and Classic Era long-form text ("Increases damage and healing done by...").
+
+### Bug Fixes & Polish
+* **Live Refresh: Fixed an issue where the interface wouldn't update immediately after changing gear or logging in. The addon now forces a recalculation on PLAYER_ENTERING_WORLD and PLAYER_EQUIPMENT_CHANGED.
+
+------------------------------------------------------------------------------------------------
+
 ## V2.2.2 Weapon Thunderdome
+
 ### Core Engine
 * **Fixed Manual Profile Selection: Updated Dynamic_Engine.lua to correctly route manual dropdown selections through the dynamic calculation engine. This fixes the issue where selecting a specific profile (e.g., "Leveling 60-70") would return empty results or only "Off-Hand DPS".
 * **Added Preview Clamping: Implemented logic to clamp leveling progress to 0% or 100% when manually previewing a bracket outside the player's current level. This prevents "Negative Stat Weights" from breaking the display when a low-level character previews endgame weights.
+
 ### Class Modules (Warrior, Mage, Rogue, etc.)
 * **Robust Weight Interpolation: Rewrote GetDynamicWeights across all classes to merge Start and End table keys. This prevents stats from disappearing during leveling if they were missing from one side of the bracket definition.
 * **Pretty Name Translator: Added a reverse-lookup mechanism to GetDynamicWeights that translates human-readable dropdown names (e.g., "Standard Leveling (21-40)") back to internal code keys (e.g., Leveling_2H_21_40), resolving the "Silent Nil" error.
 * **Data Integrity: Fixed missing commas and key mismatches in the LevelingBrackets data tables for Warrior (and applied standardization to other classes) to ensure smooth transitions between level ranges.
+
 ### The Dashboard
 * **Tab 1: The Laboratory: Renamed - "Weapon Thunderdome"
 * **New Feature: The 6-Way Thunderdome
@@ -18,7 +38,10 @@
 	* *Option C: Dual Wield (Main Hand + One-Hander)
 	* *Winner Detection: The addon calculates scores for all 6 blocks simultaneously. The block with the highest score lights up with a Green "WINNER" Border, while losing blocks are dimmed.
 
+------------------------------------------------------------------------------------------------
+
 ## V2.2.1 🖥️UI + Dynamic Leveling
+
 * **This update introduces a fundamental shift in how the addon handles features and UI, moving toward a modular Plugin Engine and a more responsive dashboard.
 * **Major Features
 * **Dynamic Plugin Engine: Implemented a new tab registry system (MSC.RegisteredTabs), allowing for cleaner code and easier expansion of addon features.
@@ -48,6 +71,7 @@
 * **Druid: Added Crit Immunity detection for Bears. The addon will now pivot stat weight from Defense/Resilience to Stamina/Armor automatically once you are safely "un-crittable."
 * **Rogue: Optimized Armor Penetration scaling; as you stack more ArPen, its weight value increases to reflect the non-linear benefit of the stat in TBC.
 
+------------------------------------------------------------------------------------------------
 
 ## V2.2.0🖥️ UI Overhaul: The Dashboard
 * **The Main Dashboard: Completely replaced the old options menu with a modern 4-Tab Interface (/sgj).
@@ -74,6 +98,8 @@
     * *Added/Updated:* Destiny, Ironfoe, Thrash Blade, The Untamed Blade, Bonereaver's Edge, Spinal Reaper, Thunderfury, and more.
 * **Trinket Overrides:** Added scoring logic for complex TBC and Classic trinkets, including *Tsunami Talisman*, *Dragonspine Trophy*, and *Hand of Justice*.
 * **Terminology Update:** Renamed UI labels from "Crit/Hit" to "Crit Rating/Hit Rating" to better align with TBC standards.
+
+------------------------------------------------------------------------------------------------
 
 ## v2.1.0 - The "Anniversary" Update (Core + Plugins)
 **Major Architecture Overhaul & TBC Readiness**
@@ -105,7 +131,7 @@
 * **The Ledger:** The "Receipt" window has been polished to show a cleaner breakdown of Active Stats vs. Capped Stats.
 * **Gem Projection:** Fixed a bug where the "Smart Gem" auditor would sometimes suggest Unique gems you already had equipped.
 
----
+------------------------------------------------------------------------------------------------
 
 ## v2.0.0 - The Burning Crusade Launch - IT NEVER WORKED :(
 * **Full TBC Conversion:** Updated engine for Patch 2.5.5.

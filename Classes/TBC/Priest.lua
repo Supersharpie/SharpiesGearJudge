@@ -106,26 +106,28 @@ Priest.LevelingBrackets = {
     -- [[ 1. SHADOW / SPIRIT TAP (1-20) ]]
     -- Wand is primary DPS source. Spirit is primary Mana source.
     ["Leveling_1_20"] = { 
-        min = 1, max = 20,
-        Start = { 
-            ["MSC_WEAPON_DPS"] = 3.0, -- Wand DPS is everything
-            ["ITEM_MOD_SPIRIT_SHORT"] = 3.0, -- Spirit Tap fuel
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 0.8,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1, -- Added for Sync
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.2 -- Added for Sync
-        },
-        End = { 
-            ["MSC_WEAPON_DPS"] = 2.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 2.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 0.8,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
-            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.5
-        }
-    },
+		min = 1, max = 20,
+		Start = { 
+			["MSC_WAND_DPS"] = 4.0, -- Priest 1-20 is 50% Wanding. Priority #1.
+			["MSC_WEAPON_DPS"] = 0.1,
+			["ITEM_MOD_SPIRIT_SHORT"] = 3.0, 
+			["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
+			["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+			["ITEM_MOD_STAMINA_SHORT"] = 0.8,
+			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+			["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.2
+		},
+		End = { 
+			["MSC_WAND_DPS"] = 3.0, 
+			["MSC_WEAPON_DPS"] = 0.1,
+			["ITEM_MOD_SPIRIT_SHORT"] = 2.5, 
+			["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
+			["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
+			["ITEM_MOD_STAMINA_SHORT"] = 0.8,
+			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
+			["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.5
+		}
+	},
     
     -- [[ 2. SHADOW / SPIRIT TAP (21-40) ]]
     ["Leveling_21_40"] = { 
