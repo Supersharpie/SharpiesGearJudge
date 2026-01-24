@@ -189,6 +189,45 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     if spt > 0 then
         if class == "PRIEST" then local r=Rank("SPIRITUAL_GUIDANCE"); if r>0 then local b=spt*(0.05*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_HEALING_POWER_SHORT"]=(dest["ITEM_MOD_HEALING_POWER_SHORT"] or 0)+b end end
     end
+	
+	-- === F. ATTACK POWER ===
+    local apFromStr = 0
+    local apFromAgi = 0
+    
+    -- 1. Strength -> AP
+    if class == "WARRIOR" or class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
+        apFromStr = str * 2 
+    elseif class == "ROGUE" or class == "HUNTER" then
+        apFromStr = str * 1
+    end
+
+    -- 2. Agility -> AP
+    if class == "ROGUE" or class == "HUNTER" or class == "DRUID" then
+        -- Note: Hunters get 1 Melee AP and 1 Ranged AP per Agi. 
+        -- We effectively just display "Attack Power" here to keep it simple.
+        apFromAgi = agi * 1
+    end
+    
+    -- 3. Apply
+    local totalAP = apFromStr + apFromAgi
+    if totalAP > 0 then
+        dest["ITEM_MOD_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + totalAP
+        
+        -- Special Case: Hunters also get Ranged AP from Agi/Int (Careful Aim)
+        if class == "HUNTER" then
+            dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0) + totalAP
+            
+            -- Careful Aim (Int -> RAP)
+            local r = Rank("CAREFUL_AIM")
+            if r > 0 then
+                local int = dest["ITEM_MOD_INTELLECT_SHORT"] or 0
+                if int > 0 then
+                    local rapFromInt = int * (0.15 * r) -- 15/30/45%
+                    dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] + rapFromInt
+                end
+            end
+        end
+    end
 
     return dest
 end
