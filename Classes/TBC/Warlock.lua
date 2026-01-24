@@ -112,7 +112,8 @@ Warlock.LevelingBrackets = {
             ["MSC_WAND_DPS"]=2.5, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, -- Spirit good for Regen early
             ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.5 -- ADDED (Progression to 1.2)
         },
         End = { 
             ["MSC_WAND_DPS"]=2.0, 
@@ -124,7 +125,13 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_21_40"] = {
         min = 21, max = 40,
-        Start = { ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
+        Start = { 
+            ["MSC_WAND_DPS"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,   -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,     -- ADDED (Matched End)
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.0         -- ADDED (Progression to 0.8)
+        },
         End = { 
             ["MSC_WAND_DPS"]=1.5, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
@@ -135,7 +142,13 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_41_51"] = { -- Dark Pact era (Mana from Pet). Spirit value drops.
         min = 41, max = 51,
-        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5 },
+        Start = { 
+            ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,     -- ADDED (Matched End)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8,      -- ADDED (Progression to 0.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0    -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.8, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, -- Buffed
@@ -146,7 +159,13 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_52_59"] = {
         min = 52, max = 59,
-        Start = { ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0 },
+        Start = { 
+            ["MSC_WAND_DPS"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0,    -- ADDED (Progression to 2.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,        -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0       -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.4, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5, -- Buffed
@@ -157,7 +176,14 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_60_70"] = { -- Outland Drain Tanking
         min = 60, max = 70,
-        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5 },
+        Start = { 
+            ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5,   -- ADDED (Progression to 3.2)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8,         -- ADDED (Progression to 2.2)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5, -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,       -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5           -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=3.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=3.2, -- Shadow Dmg is King
@@ -172,7 +198,13 @@ Warlock.LevelingBrackets = {
     -- Focus: Crit / Fire Dmg / Int (Mana hungry).
     ["Leveling_Fire_21_40"] = {
         min = 21, max = 40,
-        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,   -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,     -- ADDED (Matched End)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8       -- ADDED (Progression to 0.5)
+        },
         End = { 
             ["MSC_WAND_DPS"]=1.2, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
@@ -183,7 +215,12 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_Fire_41_51"] = {
         min = 41, max = 51,
-        Start = { ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5 },
+        Start = { 
+            ["MSC_WAND_DPS"]=1.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5,       -- ADDED (Progression to 2.2)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5          -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.8, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
@@ -193,7 +230,13 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_Fire_60_70"] = {
         min = 60, max = 70,
-        Start = { ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.5 },
+        Start = { 
+            ["MSC_WAND_DPS"]=0.4, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5,       -- ADDED (Progression to 3.5)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5,  -- ADDED (Progression to 2.5)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- ADDED (Progression to 2.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2            -- ADDED (Progression to 1.5)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.1, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.5, -- Nuke Harder
@@ -208,7 +251,12 @@ Warlock.LevelingBrackets = {
     -- Adjusted to ensure SP > Stamina eventually.
     ["Leveling_Demo_21_40"] = {
         min = 21, max = 40,
-        Start = { ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.8 },
+        Start = { 
+            ["MSC_WAND_DPS"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,   -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.8       -- ADDED (Progression to 0.5)
+        },
         End = { 
             ["MSC_WAND_DPS"]=1.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
@@ -219,7 +267,12 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_Demo_41_51"] = { -- Felguard Era
         min = 41, max = 51,
-        Start = { ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.2 },
+        Start = { 
+            ["MSC_WAND_DPS"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=2.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,   -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,     -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0  -- ADDED (Progression to 1.5)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.6, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
@@ -230,7 +283,12 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_Demo_52_59"] = {
         min = 52, max = 59,
-        Start = { ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=2.5 },
+        Start = { 
+            ["MSC_WAND_DPS"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=2.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8,      -- ADDED (Progression to 2.2)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5         -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.8, 
@@ -241,7 +299,13 @@ Warlock.LevelingBrackets = {
     },
     ["Leveling_Demo_60_70"] = {
         min = 60, max = 70,
-        Start = { ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=2.8 },
+        Start = { 
+            ["MSC_WAND_DPS"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=2.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5,       -- ADDED (Progression to 3.0)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2,  -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,         -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2  -- ADDED (Progression to 1.5)
+        },
         End = { 
             ["MSC_WAND_DPS"]=0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, -- SP finally overtakes Stam

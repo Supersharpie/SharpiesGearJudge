@@ -114,7 +114,8 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=1.0,
             ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_ARMOR_SHORT"]=0.01 -- ADDED (Matched Start)
         }
     },
 
@@ -136,7 +137,11 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=2.5, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,      -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1        -- ADDED (Reduced value)
         }
     },
     ["Leveling_RET_41_51"] = {
@@ -156,7 +161,11 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_SPEED"]=3.0, -- Crusader Strike (Lvl 50) hits based on weapon dmg. SLOW IS KING.
             ["ITEM_MOD_STRENGTH_SHORT"]=2.8, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched Start)
+            ["ITEM_MOD_AGILITY_SHORT"]=1.1,      -- ADDED (Progression to 1.1)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,      -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1        -- ADDED (Matched Start)
         }
     },
     ["Leveling_RET_52_59"] = {
@@ -175,7 +184,10 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"]=3.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_AGILITY_SHORT"]=1.0,      -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8,      -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8   -- ADDED (Progression to 0.8)
         }
     },
     ["Leveling_RET_60_70"] = {
@@ -196,7 +208,11 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"]=3.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.1,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_AGILITY_SHORT"]=1.0,        -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8,        -- ADDED (Matched Start)
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0,    -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=0.02  -- ADDED (Matched Start)
         }
     },
 
@@ -218,7 +234,10 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5,         -- ADDED (Matched Start)
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5              -- ADDED (Matched Start)
         }
     },
     ["Leveling_PROT_AOE_52_59"] = {
@@ -235,7 +254,10 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8, -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5,         -- ADDED (Matched Start)
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5              -- ADDED (Matched Start)
         }
     },
     ["Leveling_PROT_AOE_60_70"] = {
@@ -254,7 +276,12 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=2.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.4, ["ITEM_MOD_STAMINA_SHORT"]=4.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0,        -- ADDED (Matched Start)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,          -- ADDED (Matched Start)
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,       -- ADDED (Matched Start)
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5,       -- ADDED (Matched Start)
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5   -- ADDED (Matched Start)
         }
     },
 
@@ -266,12 +293,16 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- ADDED (Progression to 1.0)
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,    -- ADDED (Reduced value)
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,   -- ADDED (Matched Start)
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0   -- ADDED (Matched Start)
         }
     },
     ["Leveling_HOLY_DUNGEON_41_51"] = {
@@ -286,7 +317,9 @@ Paladin.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1             -- ADDED (Matched Start)
         }
     },
     ["Leveling_HOLY_DUNGEON_52_59"] = {
@@ -295,12 +328,15 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5 -- ADDED (Matched End approx)
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1             -- ADDED (Matched Start)
         }
     },
     ["Leveling_HOLY_DUNGEON_60_70"] = {
@@ -315,7 +351,9 @@ Paladin.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.5, 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2            -- ADDED (Matched Start)
         }
     },
 
@@ -332,7 +370,10 @@ Paladin.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"]= 2.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 0.9,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,  -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8, -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"]= 1.5            -- ADDED (Matched Start)
         }
     },
     ["Leveling_PROT_DUNGEON_41_51"] = {
@@ -348,7 +389,11 @@ Paladin.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"]= 2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.4, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,         -- ADDED (Matched Start)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8,     -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"]= 1.5,                  -- ADDED (Matched Start)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2 -- ADDED (Progression to 1.2)
         }
     },
     ["Leveling_PROT_DUNGEON_52_59"] = {
@@ -364,7 +409,12 @@ Paladin.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"]= 3.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5,       -- ADDED (Matched Start)
+            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2,      -- ADDED (Matched Start)
+            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2,      -- ADDED (Matched Start)
+            ["MSC_WEAPON_DPS"]= 1.2,                   -- ADDED (Matched Start)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5  -- ADDED (Progression to 1.5)
         }
     },
     ["Leveling_PROT_DUNGEON_60_70"] = {
@@ -381,7 +431,12 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 3.0, -- Push for cap
             ["ITEM_MOD_STAMINA_SHORT"]= 3.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 2.0,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"]= 0.8,          -- ADDED (Matched Start)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.5,      -- ADDED (Matched Start)
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5,       -- ADDED (Matched Start)
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.5,         -- ADDED (Matched Start)
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5  -- ADDED (Matched Start)
         }
     }
 }

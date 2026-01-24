@@ -85,7 +85,8 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5,
             ["ITEM_MOD_STRENGTH_SHORT"]=0.8, -- 1 Str = 1 AP. Agi is way better.
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.8 -- ADDED (Progression to 1.0)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=10.0, 
@@ -93,7 +94,8 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
             ["ITEM_MOD_STRENGTH_SHORT"]=1.0,
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2 -- ADDED (Reduced value)
         }
     },
     ["Leveling_21_40"] = { 
@@ -101,7 +103,9 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=1.5,
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0,
+            ["MSC_OH_WEAPON_SPEED"]=-1.5,       -- ADDED (Progression to -2.0)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.0  -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=12.0, 
@@ -109,7 +113,9 @@ Rogue.LevelingBrackets = {
             ["MSC_OH_WEAPON_SPEED"]=-2.0, -- Start looking for Fast OH (Poisons)
             ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0,    -- ADDED (Matched Start)
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 -- ADDED (Matched Start)
         }
     },
     ["Leveling_41_51"] = { -- Combat Potency Era (Fast OH is mandatory)
@@ -117,7 +123,9 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=12.0, 
             ["MSC_WEAPON_SPEED"]=2.0, ["MSC_OH_WEAPON_SPEED"]=-2.0,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched End)
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0      -- ADDED (Matched End)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=14.0, 
@@ -131,7 +139,9 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=14.0, 
             ["MSC_WEAPON_SPEED"]=2.5, ["MSC_OH_WEAPON_SPEED"]=-2.5,
-            ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=1.0 -- ADDED (Progression to 2.0)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=15.0, 
@@ -145,7 +155,11 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=15.0, 
             ["MSC_WEAPON_SPEED"]=3.0, ["MSC_OH_WEAPON_SPEED"]=-3.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2,    -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,         -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,     -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0 -- ADDED (Progression to 2.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=18.0, -- Weapon DPS is king for SS
@@ -161,23 +175,43 @@ Rogue.LevelingBrackets = {
     -- Speed doesn't matter (Daggers are always fast). Focus on Crit/Dagger Skill.
     ["Leveling_Dagger_21_40"] = { 
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 },
-        End = { ["MSC_WEAPON_DPS"]=12.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.8 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5 -- ADDED (Progression to 0.8)
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=12.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.8 
+        }
     },
     ["Leveling_Dagger_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=12.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
-        End = { ["MSC_WEAPON_DPS"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=12.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0 -- ADDED (Progression to 1.5)
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+        }
     },
     ["Leveling_Dagger_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
-        End = { ["MSC_WEAPON_DPS"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- ADDED (Progression to 1.8)
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 
+        }
     },
     ["Leveling_Dagger_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=3.0 },
-        End = { ["MSC_WEAPON_DPS"]=18.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=3.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=3.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 -- ADDED (Progression to 2.0)
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=18.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=3.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
+        }
     },
 
     -- [[ 3. HEMO (Subtlety) ]]
@@ -187,7 +221,8 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=10.0, 
             ["MSC_WEAPON_SPEED"]=1.5, -- Hemo likes Slow
-            ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 -- ADDED (Progression to 1.2)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=12.0, 
@@ -197,12 +232,24 @@ Rogue.LevelingBrackets = {
     },
     ["Leveling_Hemo_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=12.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
-        End = { ["MSC_WEAPON_DPS"]=14.0, ["MSC_WEAPON_SPEED"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 }
+        Start = { 
+            ["MSC_WEAPON_DPS"]=12.0, ["MSC_WEAPON_SPEED"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, -- ADDED (Matched End)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2   -- ADDED (Progression to 1.5)
+        },
+        End = { 
+            ["MSC_WEAPON_DPS"]=14.0, ["MSC_WEAPON_SPEED"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 
+        }
     },
     ["Leveling_Hemo_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=15.0, ["MSC_WEAPON_SPEED"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=15.0, ["MSC_WEAPON_SPEED"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=2.8,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8,     -- ADDED (Progression to 2.2)
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,  -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2    -- ADDED (Progression to 1.5)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=18.0, ["MSC_WEAPON_SPEED"]=3.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=3.5, 

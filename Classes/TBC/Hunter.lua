@@ -92,19 +92,20 @@ Hunter.LevelingWeights = {}
 Hunter.LevelingBrackets = {
     -- [[ 1. STANDARD RANGED (1-20) ]]
     -- Pre-Viper. Spirit is okay for regen.
-    ["Leveling_1_20"] = { 
+["Leveling_1_20"] = { 
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=1.0, -- Slow Bows preferred
+            ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=1.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2, -- Good before Lvl 20
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=1.5,
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched Start)
             ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
@@ -112,23 +113,25 @@ Hunter.LevelingBrackets = {
     },
     
     -- [[ 2. STANDARD RANGED (21-40) ]]
-    -- Aspect of the Viper (Lvl 20): Int now provides Mana Regen. Spirit value drops.
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.0,
             ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, -- Buffed: Viper Regen
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.5 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.0 -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.5,
             ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5      -- ADDED (Matched Start)
         }
     },
     
@@ -139,14 +142,17 @@ Hunter.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.5,
             ["ITEM_MOD_AGILITY_SHORT"]=2.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2       -- ADDED (Progression to 1.5)
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=8.0, 
+            ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=2.5, -- ADDED (Matched Start)
             ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- ADDED (Matched Start)
         }
     },
     ["Leveling_52_59"] = { 
@@ -154,13 +160,16 @@ Hunter.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=2.5,
             ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5, -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0    -- ADDED (Matched End)
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=9.0, 
+            ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=2.5, -- ADDED (Matched Start)
             ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8 -- ADDED (Matched Start)
         }
     },
     ["Leveling_60_70"] = { 
@@ -168,29 +177,35 @@ Hunter.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=3.0,
             ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,  -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,    -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=1.0 -- ADDED (Progression to 1.5)
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=10.0, 
+            ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=3.0, -- ADDED (Matched Start)
             ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, -- Larger mana pool for rotations
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 -- ADDED (Matched Start)
         }
     },
-	-- [[ MELEE HUNTER (The "Drizzt" Build) ]]
-    -- Triggered ONLY if they take "Savage Strikes" talent.
-    -- Focus: Slow 2H Weapon, Agility (Crit/Dodge/Armor), Strength (Melee AP), Stamina.
+
+    -- [[ MELEE HUNTER (The "Drizzt" Build) ]]
     ["Leveling_Melee_21_40"] = { 
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"]=5.0, -- Melee Weapon DPS is King here
-            ["MSC_WEAPON_SPEED"]=2.0, -- Slow 2H for big Raptor Strikes
-            ["ITEM_MOD_AGILITY_SHORT"]=2.0, -- Crit + Dodge + Armor + 1 RAP (Hybrid)
-            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, -- 1 Str = 1 Melee AP
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5, -- You are in melee range, you need HP
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
+            ["MSC_WEAPON_DPS"]=5.0, 
+            ["MSC_WEAPON_SPEED"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.0,  -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=0.5  -- ADDED (Progression to 1.0)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.5,
@@ -198,24 +213,38 @@ Hunter.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.0 -- Useful for Mongoose Bite proc
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5 -- ADDED (Matched Start)
         }
     },
     ["Leveling_Melee_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=6.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=6.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.8, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.2,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,  -- ADDED (Matched End approx)
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8       -- ADDED (Progression to 2.0)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=7.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=2.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, -- Mongoose Bite fuel
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.0 
         }
     },
     ["Leveling_Melee_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=7.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=7.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.0, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0     -- ADDED (Progression to 2.2)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=8.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
@@ -226,7 +255,15 @@ Hunter.LevelingBrackets = {
     },
     ["Leveling_Melee_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=8.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=2.8 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=8.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"]=2.2, 
+            ["ITEM_MOD_AGILITY_SHORT"]=2.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.8,  -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_STAMINA_SHORT"]=2.2,     -- ADDED (Progression to 2.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.5    -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=10.0, 
             ["ITEM_MOD_STRENGTH_SHORT"]=2.5, 
@@ -238,21 +275,22 @@ Hunter.LevelingBrackets = {
         }
     },
     
--- [[ SURVIVAL (Ranged Stat Stick Build) ]]
-    -- Focus: Massive Agility (Expose Weakness), Stamina (Survivalist), and Intellect (Efficiency).
+    -- [[ SURVIVAL (Ranged Stat Stick Build) ]]
     ["Leveling_Survival_21_40"] = { 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"]=6.0, ["MSC_WEAPON_SPEED"]=2.0,
             ["ITEM_MOD_AGILITY_SHORT"]=3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.5 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2 -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.2,
             ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2 -- ADDED (Matched Start)
         }
     },
     ["Leveling_Survival_41_51"] = { 
@@ -261,10 +299,11 @@ Hunter.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=7.0, ["MSC_WEAPON_SPEED"]=2.5,
             ["ITEM_MOD_AGILITY_SHORT"]=3.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.8,
-            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"]=0.8 -- ADDED (Progression to 1.0)
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=8.0, 
+            ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=2.5, -- ADDED (Matched Start)
             ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8,
@@ -277,10 +316,11 @@ Hunter.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=8.0, ["MSC_WEAPON_SPEED"]=2.5,
             ["ITEM_MOD_AGILITY_SHORT"]=3.5, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8 -- ADDED (Progression to 2.0)
         },
         End = { 
-            ["MSC_WEAPON_DPS"]=9.0, 
+            ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=2.5, -- ADDED (Matched Start)
             ["ITEM_MOD_AGILITY_SHORT"]=3.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.2, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0,
@@ -293,11 +333,13 @@ Hunter.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=9.0, ["MSC_WEAPON_SPEED"]=2.8,
             ["ITEM_MOD_AGILITY_SHORT"]=3.8, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.2,
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, -- ADDED (Progression to 2.2)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2    -- ADDED (Matched End)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=3.0,
-            ["ITEM_MOD_AGILITY_SHORT"]=4.0, -- Massive bias for Expose Weakness
+            ["ITEM_MOD_AGILITY_SHORT"]=4.0, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2,

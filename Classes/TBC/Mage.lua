@@ -129,35 +129,67 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,      -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.8, -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.3        -- ADDED (Progression to 0.2)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
-            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=0.2 
         }
     },
     ["Leveling_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=0.6, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.6, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0       -- ADDED (Progression to 1.2)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
     ["Leveling_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2           -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
     ["Leveling_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,          -- ADDED (Matched End)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,            -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5   -- ADDED (Progression to 0.8)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, -- Kill speed is defense
@@ -172,20 +204,35 @@ Mage.LevelingBrackets = {
     -- Crit is vital for Master of Elements (Mana Sustain).
     ["Leveling_Fire_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.8, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0          -- ADDED (Progression to 1.2)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.5, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, -- High Crit Priority
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2 
         }
     },
     ["Leveling_Fire_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=0.2, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.2, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, -- ADDED (Progression to 2.2)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2,   -- ADDED (Matched End)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0      -- ADDED (Progression to 1.2)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
-            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
+            ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2 
@@ -196,7 +243,13 @@ Mage.LevelingBrackets = {
     -- Stamina (Don't Die) > Int (Don't OOM) > SP (Kill).
     ["Leveling_AoE_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.8 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2, -- ADDED (Progression to 0.5)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5       -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
             ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
@@ -207,7 +260,13 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_AoE_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=2.0 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"]=2.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.0,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, -- ADDED (Progression to 0.8)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5       -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
             ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
@@ -218,7 +277,13 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_AoE_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.5 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.1, 
+            ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=2.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.5       -- ADDED (Matched End)
+        },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, -- Effective Health is King

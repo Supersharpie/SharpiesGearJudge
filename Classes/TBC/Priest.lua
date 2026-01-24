@@ -111,13 +111,15 @@ Priest.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=3.0, -- Wand DPS is everything
             ["ITEM_MOD_SPIRIT_SHORT"]=3.0, -- Spirit Tap fuel
             ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.8
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8
         },
         End = { 
             ["MSC_WEAPON_DPS"]=2.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.8
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8
         }
     },
     -- [[ 2. SHADOW / SPIRIT TAP (21-40) ]]
@@ -127,14 +129,17 @@ Priest.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=2.5, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8        -- ADDED (Progression to 1.0)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=2.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0
         }
     },
     -- [[ 3. SHADOWFORM ERA (41-59) ]]
@@ -142,30 +147,38 @@ Priest.LevelingBrackets = {
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"]=2.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.2
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.2,
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8, -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0    -- ADDED (Progression to 1.2)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=1.0, -- Spells taking over
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
     ["Leveling_52_59"] = { 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=2.0
+            ["ITEM_MOD_SPIRIT_SHORT"]=2.0,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 -- ADDED (Matched End)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.2, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8 
         }
     },
     -- [[ 5. OUTLAND SHADOW (60-70) ]]
@@ -174,13 +187,18 @@ Priest.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"]=0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5,
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8,          -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,          -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5 -- ADDED (Matched End)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.1, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=3.0, -- Frozen Shadoweave is BiS
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=3.0, -- Frozen Shadoweave is BiS
             ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0, 
@@ -193,52 +211,114 @@ Priest.LevelingBrackets = {
     -- Unlike Shadow, Smite DOES Crit. Keep Crit high here.
     ["Leveling_Smite_21_40"] = { 
         min = 21, max = 40,
-        Start = { ["MSC_WEAPON_DPS"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.8 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=2.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.0,      -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,        -- ADDED (Progression to 1.0)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8 -- ADDED (Progression to 1.0)
+        },
         End = { 
-            ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0
         }
     },
     ["Leveling_Smite_41_51"] = { 
         min = 41, max = 51,
-        Start = { ["MSC_WEAPON_DPS"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5       -- ADDED (Progression to 1.2)
+        },
         End = { 
-            ["MSC_WEAPON_DPS"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2
+            ["MSC_WEAPON_DPS"]=1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2 
         }
     },
     ["Leveling_Smite_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["MSC_WEAPON_DPS"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- ADDED (Progression to 1.4)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0          -- ADDED (Matched End)
+        },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
         }
     },
     ["Leveling_Smite_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["MSC_WEAPON_DPS"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2 },
+        Start = { 
+            ["MSC_WEAPON_DPS"]=0.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,         -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0            -- ADDED (Matched End)
+        },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.4, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.4, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
         }
     },
 
     -- [[ HEALER BRACKETS (Dungeon Grinding) ]]
     ["Leveling_Healer_52_59"] = { 
         min = 52, max = 59,
-        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+        Start = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0,
+            ["MSC_WEAPON_DPS"]=0.0,          -- ADDED (Matched End)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8    -- ADDED (Matched End)
+        },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"]=0.8 
         }
     },
     ["Leveling_Healer_60_70"] = { 
         min = 60, max = 70,
-        Start = { ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 },
+        Start = { 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5,
+            ["MSC_WEAPON_DPS"]=0.0,          -- ADDED (Matched End)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.2, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0    -- ADDED (Matched End)
+        },
         End = { 
-            ["MSC_WEAPON_DPS"]=0.0, ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0
+            ["MSC_WEAPON_DPS"]=0.0, 
+            ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
         }
     },
 }

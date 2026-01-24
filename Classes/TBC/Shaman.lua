@@ -119,7 +119,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"]=1.2,
             ["ITEM_MOD_STAMINA_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 -- ADDED (Reduced value)
         }
     },
     ["Leveling_21_40"] = { -- Windfury Era (Lvl 30)
@@ -130,7 +131,9 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"]=1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.2,
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.0, -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_MANA_SHORT"]=0.02        -- ADDED (Matched End)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=10.0, ["MSC_WEAPON_SPEED"]=2.5, 
@@ -138,7 +141,9 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, -- Flurry uptime
             ["ITEM_MOD_AGILITY_SHORT"]=1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,     -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1       -- ADDED (Matched Start)
         }
     },
 
@@ -156,7 +161,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5, -- Mental Dexterity starts kicking in
             ["ITEM_MOD_STAMINA_SHORT"]=1.2,
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, -- DW Penalty
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_CRIT_RATING_SHORT"]=1.5 -- ADDED (Progression to 2.0)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=12.0, 
@@ -166,7 +172,9 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"]=2.2, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.0, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0 
+            ["ITEM_MOD_HIT_RATING_SHORT"]=2.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,    -- ADDED (Matched Start)
+            ["ITEM_MOD_MANA_SHORT"]=0.02       -- ADDED (Matched Start)
         }
     },
     ["Leveling_52_59"] = { 
@@ -199,7 +207,8 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"]=2.2, 
             ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, 
             ["ITEM_MOD_HIT_RATING_SHORT"]=2.5, 
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=16.0, 
@@ -225,13 +234,18 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0,
             ["ITEM_MOD_STAMINA_SHORT"]=1.0,
             ["ITEM_MOD_SPIRIT_SHORT"]=0.1, -- Useless
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 -- ADDED (Progression to 1.2)
         },
         End = { 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.8,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["MSC_WEAPON_DPS"]=0.0,             -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,     -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,      -- ADDED (Matched Start)
+            ["ITEM_MOD_MANA_SHORT"]=0.02        -- ADDED (Matched Start)
         }
     },
     ["Leveling_Caster_60_70"] = { 
@@ -242,14 +256,17 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.5,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 -- ADDED (Progression to 1.0)
         },
         End = { 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.5,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=2.0, -- Cap is crucial for raid prep
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 -- Mp5 has some value for sustain
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0, -- Mp5 has some value for sustain
+            ["MSC_WEAPON_DPS"]=0.0,                   -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2            -- ADDED (Matched Start)
         }
     },
 
@@ -264,7 +281,9 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"]=1.0,
             ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.8, -- Shocks are expensive
-            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1,
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_STRENGTH_SHORT"]=1.0     -- ADDED (Progression to 1.2)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=-1.5,
@@ -272,7 +291,9 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.8,
             ["ITEM_MOD_STRENGTH_SHORT"]=1.2, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=0.8 
+            ["ITEM_MOD_INTELLECT_SHORT"]=0.8,
+            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"]=1.0, -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1               -- ADDED (Matched Start)
         }
     },
     ["Leveling_Tank_41_51"] = {
@@ -282,14 +303,18 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"]=2.8, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.5,
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0 -- Earth Shock scales on SP
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, -- Earth Shock scales on SP
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.0 -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=5.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=3.0, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
-            ["ITEM_MOD_AGILITY_SHORT"]=1.5 
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5,
+            ["MSC_WEAPON_SPEED"]=-1.5,        -- ADDED (Matched Start)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, -- ADDED (Matched Start)
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0 -- ADDED (Matched Start)
         }
     },
     ["Leveling_Tank_52_59"] = {
@@ -298,14 +323,19 @@ Shaman.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=5.0, ["MSC_WEAPON_SPEED"]=-1.5,
             ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.5, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.5,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, -- ADDED (Progression to 1.8)
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.0    -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=5.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
             ["ITEM_MOD_DODGE_RATING_SHORT"]=1.8, 
-            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5 -- Need to hit to taunt
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, -- Need to hit to taunt
+            ["MSC_WEAPON_SPEED"]=-1.5,         -- ADDED (Matched Start)
+            ["ITEM_MOD_AGILITY_SHORT"]=1.5,    -- ADDED (Matched Start)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0   -- ADDED (Matched Start)
         }
     },
     ["Leveling_Tank_60_70"] = {
@@ -315,7 +345,11 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5,
             ["ITEM_MOD_AGILITY_SHORT"]=1.8,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.8,      -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5,      -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_HIT_RATING_SHORT"]=1.5,        -- ADDED (Progression to 2.0)
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.0  -- ADDED (Progression to 1.5)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=6.0, 
@@ -324,7 +358,11 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"]=2.0, 
             ["ITEM_MOD_PARRY_RATING_SHORT"]=2.0,
             ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5 -- Crit dampening
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5, -- Crit dampening
+            ["MSC_WEAPON_SPEED"]=-1.5,                -- ADDED (Matched Start)
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, -- ADDED (Matched Start)
+            ["ITEM_MOD_AGILITY_SHORT"]=1.8,           -- ADDED (Matched Start)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0          -- ADDED (Matched Start)
         }
     },
 
@@ -343,7 +381,10 @@ Shaman.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.5 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.5,
+            ["MSC_WEAPON_DPS"]=0.0,        -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.2, -- ADDED (Matched Start)
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.0 -- ADDED (Matched Start)
         }
     },
     ["Leveling_Healer_60_70"] = {
@@ -353,12 +394,16 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_HEALING_POWER_SHORT"]=2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.2 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2,
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1 -- ADDED (Reduced value)
         },
         End = { 
             ["ITEM_MOD_HEALING_POWER_SHORT"]=2.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.8 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.8,
+            ["MSC_WEAPON_DPS"]=0.0,         -- ADDED (Matched Start)
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2, -- ADDED (Matched Start)
+            ["ITEM_MOD_SPIRIT_SHORT"]=0.1   -- ADDED (Matched Start)
         }
     },
 }
