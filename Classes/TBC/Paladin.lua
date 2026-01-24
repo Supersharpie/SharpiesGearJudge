@@ -176,8 +176,9 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.2, 
             ["ITEM_MOD_AGILITY_SHORT"]=1.1, 
             ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, -- Ret gets some scaling, but Str is better
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5, 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=12.0, ["MSC_WEAPON_SPEED"]=3.5, 
@@ -185,9 +186,10 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]=0.2,
             ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_AGILITY_SHORT"]=1.0,      -- ADDED (Progression to 1.0)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.8,      -- ADDED (Progression to 1.8)
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8   -- ADDED (Progression to 0.8)
+            ["ITEM_MOD_AGILITY_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8,
+            ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2 -- RESTORED (Bridge Gap)
         }
     },
     ["Leveling_RET_60_70"] = {
@@ -264,24 +266,28 @@ Paladin.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"]=1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, -- Aggressive SP scaling
+            ["ITEM_MOD_SPELL_POWER_SHORT"]=2.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
             ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.8, 
             ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5, 
             ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5,     -- RESTORED (From 59 End)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5  -- RESTORED (From 59 End)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=2.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.4, ["ITEM_MOD_STAMINA_SHORT"]=4.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0,
             ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0,        -- ADDED (Matched Start)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,          -- ADDED (Matched Start)
-            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5,       -- ADDED (Matched Start)
-            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5,       -- ADDED (Matched Start)
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5   -- ADDED (Matched Start)
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]=3.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5, 
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"]=1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]=0.5,     -- RESTORED
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]=1.5  -- RESTORED
         }
     },
 
@@ -383,17 +389,19 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"]= 1.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8, 
             ["MSC_WEAPON_DPS"]= 1.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, -- Added: Taunt uses Spell Hit
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"]= 2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.4, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.2,
             ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,         -- ADDED (Matched Start)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8,     -- ADDED (Matched Start)
-            ["MSC_WEAPON_DPS"]= 1.5,                  -- ADDED (Matched Start)
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2 -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8, 
+            ["MSC_WEAPON_DPS"]= 1.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8 -- RESTORED (Bridge Gap)
         }
     },
     ["Leveling_PROT_DUNGEON_52_59"] = {
@@ -404,17 +412,23 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2, 
             ["MSC_WEAPON_DPS"]= 1.2, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,     -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 0.8, -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8     -- RESTORED (Bridge Gap)
         },
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"]= 3.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.5,
             ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5,       -- ADDED (Matched Start)
-            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2,      -- ADDED (Matched Start)
-            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2,      -- ADDED (Matched Start)
-            ["MSC_WEAPON_DPS"]= 1.2,                   -- ADDED (Matched Start)
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5  -- ADDED (Progression to 1.5)
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2, 
+            ["MSC_WEAPON_DPS"]= 1.2, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_STRENGTH_SHORT"]= 1.0,     -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.0, -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.8     -- RESTORED (Bridge Gap)
         }
     },
     ["Leveling_PROT_DUNGEON_60_70"] = {
@@ -424,22 +438,28 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 1.5, 
             ["ITEM_MOD_STRENGTH_SHORT"]= 0.8, ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"]= 0.5, 
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, -- Vital for Dungeon Taunts
-            ["ITEM_MOD_MANA_SHORT"]=0.02 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_MANA_SHORT"]=0.02,
+            ["MSC_WEAPON_DPS"]= 1.2,            -- RESTORED (From 59 End)
+            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, -- RESTORED (From 59 End)
+            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2  -- RESTORED (From 59 End)
         },
         End = { 
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 3.0, -- Push for cap
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 3.0, 
             ["ITEM_MOD_STAMINA_SHORT"]= 3.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]= 2.0,
             ["ITEM_MOD_MANA_SHORT"]=0.02,
-            ["ITEM_MOD_STRENGTH_SHORT"]= 0.8,          -- ADDED (Matched Start)
-            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.5,      -- ADDED (Matched Start)
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5,       -- ADDED (Matched Start)
-            ["ITEM_MOD_INTELLECT_SHORT"]= 0.5,         -- ADDED (Matched Start)
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5  -- ADDED (Matched Start)
+            ["ITEM_MOD_STRENGTH_SHORT"]= 0.8, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"]= 1.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"]= 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"]= 0.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
+            ["MSC_WEAPON_DPS"]= 1.2,            -- RESTORED
+            ["ITEM_MOD_DODGE_RATING_SHORT"]= 1.2, -- RESTORED
+            ["ITEM_MOD_PARRY_RATING_SHORT"]= 1.2  -- RESTORED
         }
     }
-}
+}	
 
 -- =============================================================
 -- CLASS METADATA
