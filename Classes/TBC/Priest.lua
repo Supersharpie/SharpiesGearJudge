@@ -162,7 +162,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"]=1.2 
         }
     },
-    ["Leveling_52_59"] = { 
+   ["Leveling_52_59"] = { 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"]=1.0, 
@@ -170,7 +170,8 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.8,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"]=2.0,
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 -- ADDED (Matched End)
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.5, 
@@ -178,7 +179,8 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.8 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.8,
+            ["ITEM_MOD_STAMINA_SHORT"]=1.2 -- RESTORED
         }
     },
     -- [[ 5. OUTLAND SHADOW (60-70) ]]
@@ -234,15 +236,17 @@ Priest.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, -- ADDED (Progression to 1.5)
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.5       -- ADDED (Progression to 1.2)
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.5,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"]=1.2 
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 -- RESTORED
         }
     },
     ["Leveling_Smite_52_59"] = { 
@@ -251,15 +255,19 @@ Priest.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.0,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, -- ADDED (Progression to 1.4)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0          -- ADDED (Matched End)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, -- RESTORED (Bridge Gap)
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2        -- RESTORED (Bridge Gap)
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, 
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, -- RESTORED
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2        -- RESTORED
         }
     },
     ["Leveling_Smite_60_70"] = { 
@@ -268,9 +276,11 @@ Priest.LevelingBrackets = {
             ["MSC_WEAPON_DPS"]=0.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, -- ADDED (Progression to 1.8)
-            ["ITEM_MOD_INTELLECT_SHORT"]=1.0,         -- ADDED (Progression to 1.2)
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0            -- ADDED (Matched End)
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.4, 
+            ["ITEM_MOD_INTELLECT_SHORT"]=1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, -- RESTORED
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2        -- RESTORED
         },
         End = { 
             ["MSC_WEAPON_DPS"]=0.4, 
@@ -278,7 +288,9 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.4, 
             ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-            ["ITEM_MOD_STAMINA_SHORT"]=1.0 
+            ["ITEM_MOD_STAMINA_SHORT"]=1.0,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, -- RESTORED
+            ["ITEM_MOD_SPIRIT_SHORT"]=1.2        -- RESTORED
         }
     },
 
