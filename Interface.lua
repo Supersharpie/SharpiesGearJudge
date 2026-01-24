@@ -693,17 +693,45 @@ function MSC.UpdateLogic()
              b:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"})
              b:SetBackdropColor(0, 0, 0, 0.5) -- Darker background
              
-             -- [[ NEW TEXTURE ]] Use a smooth raid bar texture for the "Glass" look
+             -- Glassy Texture
              b:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Fill")
-             
              b:EnableMouse(true)
-             -- (Keep your existing tooltip OnEnter/OnLeave scripts here...)
+             
+             -- [[ RESTORED TOOLTIP LOGIC ]]
              b:SetScript("OnEnter", function(self)
-                 -- ... (Copy your existing tooltip code here if you want to keep it) ...
                  GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                  GameTooltip:SetText(self.StatName, 1, 1, 1)
+                 
+                 if self.CurrentVal and self.CurrentVal > 0 then
+                     GameTooltip:AddLine(" ")
+                     local scoreContrib = (self.Weight or 0) * self.CurrentVal
+                     GameTooltip:AddDoubleLine("Gear Contribution:", string.format("%.1f", self.CurrentVal), 1, 1, 1, 1, 1, 1)
+                     
+                     if self.RealTotal and self.RealTotal > 0 then
+                         if math.abs(self.RealTotal - self.CurrentVal) > 1 then
+                             GameTooltip:AddDoubleLine("Character Sheet:", string.format("%d (Includes Base/Enchants)", self.RealTotal), 0.6, 0.6, 0.6, 0.6, 0.6, 0.6)
+                         end
+                     end
+                     
+                     GameTooltip:AddLine(" ")
+                     GameTooltip:AddDoubleLine("Score Calculation:", " ", 1, 0.82, 0)
+                     GameTooltip:AddLine(string.format("%.2f (Weight) x %.1f (Gear)", self.Weight, self.CurrentVal), 1, 1, 1)
+                     GameTooltip:AddDoubleLine("= Score:", string.format("%.1f", scoreContrib), nil, nil, nil, 0, 1, 0)
+                 else
+                     GameTooltip:AddDoubleLine("Stat Weight:", string.format("%.2f", self.Weight or 0), nil,nil,nil, 0, 1, 0)
+                     GameTooltip:AddLine("You currently have 0 of this stat from gear.", 0.6, 0.6, 0.6)
+                 end
+                 
+                 if self.Reason then 
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(self.Reason, 0.6, 0.6, 0.6, true) 
+                 end
+                 
                  GameTooltip:Show()
+                 self:SetAlpha(1)
              end)
+             -- [[ END TOOLTIP LOGIC ]]
+
              b:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(0.8) end)
              
              b.leftT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.leftT:SetPoint("TOPLEFT", 10, -8)
