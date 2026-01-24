@@ -207,6 +207,20 @@ MSC.Scanner.EquipPatterns = {
     -- "Restores" doesn't match "Increases", so these are required.
     { p = "Restores (%d+) (mana per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
     { p = "Restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
+	{ p = "Restores (%d+) (.*) every ([%d%.]+) sec", 
+    func = function(match1, match2, match3, outputStats)
+			local key = (match2:find("health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
+						or "ITEM_MOD_MANA_REGENERATION_SHORT"
+			-- Normalization math: (Value / Interval) * 5
+			local val = tonumber(match1)
+			local interval = tonumber(match3)
+			if val and interval then
+				local normalizedValue = (val / interval) * 5
+				outputStats[key] = (outputStats[key] or 0) + normalizedValue
+			end
+		end 
+	},
+	{ p = "Restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
     
     -- [[ ARPEN & THREAT ]]
     { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
@@ -331,16 +345,17 @@ local function CreateItemObject()
 end
 
 local function ParseCooldown(text)
-    -- [[ FIX: CASE INSENSITIVE MATCHING ]]
     local lowerText = text:lower()
     
-    local min = lowerText:match("%((%d+) min cooldown%)")
+    -- Matches "min", "mins", "minutes"
+    local min = lowerText:match("%((%d+)%s*min[s%a]*%s*cooldown%)")
     if min then return tonumber(min) * 60 end
     
-    local sec = lowerText:match("%((%d+) sec cooldown%)")
+    -- Matches "sec", "secs", "seconds"
+    local sec = lowerText:match("%((%d+)%s*sec[s%a]*%s*cooldown%)")
     if sec then return tonumber(sec) end
     
-    return 120 -- Default to 2 mins if we can't read it
+    return 120 -- Default fallback
 end
 
 function MSC.Scanner.ClassifyLine(text, colorR, colorG, colorB)
@@ -413,36 +428,38 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
 end
 
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
-    -- [[ FIX: STRIP COLORS FROM EQUIP LINES ]]
     local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("^Equip: ", "")
     
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
-        local match1, match2 = cleanText:match(pat.p)
+        local match1, match2, match3 = cleanText:match(pat.p)
+        
         if match1 then
-            
-            -- [[ LOGIC FIX: Handle fixedStat vs Dynamic Name ]]
+            -- Check for the Custom Function logic first
+            if pat.func then
+                pat.func(match1, match2, match3, outputStats)
+                return
+            end
+
+            -- Standard Logic
             if pat.fixedStat then
-                -- If we have a fixed stat (like Feral AP), we grab the value from the designated index
-                local valStr = match1
-                if pat.valIdx == 2 then valStr = match2 end
-                
+                local valStr = (pat.valIdx == 2) and match2 or match1
                 local val = tonumber(valStr)
                 if val then
                     outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + val
                 end
                 return
             else
-                -- Dynamic Stat Name (e.g. "Increases Hit Rating by 10")
-                local val, rawName
-                if pat.valIdx == 1 then val = tonumber(match1); rawName = match2
-                else val = tonumber(match2); rawName = match1 end
+                local val = tonumber((pat.valIdx == 1) and match1 or match2)
+                local rawName = (pat.valIdx == 1) and match2 or match1
                 
-                local cleanName = rawName:lower():match("^%s*(.-)%s*$")
-                local key = MSC.Scanner.TermMap[cleanName]
-                
-                if key and val then
-                    outputStats[key] = (outputStats[key] or 0) + val
-                    return
+                if rawName and val then
+                    local cleanName = rawName:lower():match("^%s*(.-)%s*$")
+                    local key = MSC.Scanner.TermMap[cleanName]
+                    
+                    if key then
+                        outputStats[key] = (outputStats[key] or 0) + val
+                        return
+                    end
                 end
             end
         end
