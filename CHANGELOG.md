@@ -1,6 +1,19 @@
 # Sharpie's Gear Judge - Version History
 
-## v2.2.3 Changelog
+## v2.2.4 Changelog
+
+### Core Engine Fixes
+* **Silent Crash Fix: Updated MSC:GetTalentRank in Dynamic_Engine.lua to enforce a number return (tonumber(rank) or 0). This prevents the addon from crashing when the WoW API returns nil for talent data.
+* **Optimization: Implemented a Talent Cache system. The addon now scans your 50+ talents once per session instead of every time you move the mouse, significantly reducing CPU lag.
+
+### Scoring Logic
+* **Hybrid Item Fix: Removed the "Poison Penalty" system which subtracted 10 points for having off-spec stats.
+* **New "Bouncer" System: Implemented a Ratio Check, replacing the poison logic (good in theroy, bad for hybrid items) The addon now only rejects an item if the "Useless Stats" (Str/Agi) count is double the "Useful Stats" (Stam/Int).
+* **Result: Hybrid items now score correctly, while pure trash items are still ignored.
+
+------------------------------------------------------------------------------------------------
+
+## v2.2.3
 
 ### New Features
 * **Math Tooltips: Hovering over any stat bar now displays the exact equation used: Weight × Amount = Score.

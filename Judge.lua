@@ -42,9 +42,13 @@ end)
 SLASH_SHARPIESGEARJUDGE1 = "/sgj"
 SLASH_SHARPIESGEARJUDGE2 = "/judge"
 SlashCmdList["SHARPIESGEARJUDGE"] = function(msg) 
-    if msg == "options" or msg == "config" then 
+    local cmd = msg:lower()
+    
+    if cmd == "debug" then
+        MSC:DebugItem()
+    elseif cmd == "options" or cmd == "config" then 
         if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end 
-    elseif msg == "import" then
+    elseif cmd == "import" then
         if MSC.ShowImportWindow then MSC.ShowImportWindow() end
     else 
         if MSC.ToggleMainMenu then MSC.ToggleMainMenu() end 

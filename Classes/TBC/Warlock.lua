@@ -632,11 +632,16 @@ function Warlock:GetDynamicWeights(forceKey)
 end
 
 function Warlock:ApplyScalers(weights, currentSpec)
-    local function Rank(k) return MSC:GetTalentRank(k) end
+    -- [[ FIX: SAFETY GUARD ]]
+    -- We add "or 0" here. If GetTalentRank returns nil (unscanned/missing), 
+    -- it defaults to 0 so the math below never crashes.
+    local function Rank(k) return MSC:GetTalentRank(k) or 0 end
+    
     local level = UnitLevel("player")
     local activeCaps = {}
     
     -- [[ 1. EXISTING TALENTS ]]
+    -- Now safe: 1 + (0 * 0.03) = 1. No more crash.
     local rEmb = Rank("DEMONIC_EMBRACE")
     if rEmb > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then 
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03)) 
@@ -647,19 +652,16 @@ function Warlock:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rFel * 0.01)) 
     end
 
-	-- [[ 2. FEL ARMOR & DEMONIC KNOWLEDGE ]]
+    -- [[ 2. FEL ARMOR & DEMONIC KNOWLEDGE ]]
     if level >= 62 and weights["ITEM_MOD_SPIRIT_SHORT"] then
         local spiritConversion = 0.3 -- Base Fel Armor (30%)
         
-        -- Now this will work because we added it to Warlock.Talents
         local rDemonicAegis = Rank("DEMONIC_AEGIS") 
-        
         if rDemonicAegis > 0 then
-            -- 10% boost per rank (30% becomes 33%, 36%, 39%)
             spiritConversion = spiritConversion * (1 + (rDemonicAegis * 0.10)) 
         end
         
-        -- Add the Spell Power value of Spirit to the Spirit Weight
+        -- Add Spell Power value of Spirit to the Spirit Weight
         weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (spiritConversion * (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
     end
 
@@ -681,7 +683,6 @@ function Warlock:ApplyScalers(weights, currentSpec)
         if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) 
         else spellPower = GetSpellBonusDamage(2) end
         
-        -- Lowered threshold slightly for TBC leveling/early heroics
         if spellPower > 600 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             local scaler = 1 + ((spellPower - 600) / 10000)
             if scaler > 1.2 then scaler = 1.2 end -- Capped at 20% bonus
@@ -695,22 +696,19 @@ function Warlock:ApplyScalers(weights, currentSpec)
     -- [[ 4. HIT CAP with HYSTERESIS ]]
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(8) 
-        local baseCap = 202 -- TBC Standard (16% * 12.6)
+        local baseCap = 202 -- TBC Standard
         
         if currentSpec:find("PVP") then
-            baseCap = 51 -- ~4% PvP (3% base + buffer)
+            baseCap = 51 
         end
         
         local talentBonus = 0
-        -- Suppression Logic: Only applies to Affliction spells. 
-        -- If we are Destro, we IGNORE Suppression for the cap because our nuke (Shadow Bolt) doesn't get it.
         if (currentSpec:find("AFFLICTION") or currentSpec:find("Leveling")) and not currentSpec:find("Fire") then
-		 talentBonus = Rank("SUPPRESSION") * 25.2 
-		end
+         talentBonus = Rank("SUPPRESSION") * 25.2 
+        end
         
         local finalCap = baseCap - talentBonus
 
-        -- Check Draenei (Heroic Presence: +1% hit)
         local _, race = UnitRace("player")
         if race == "Draenei" then finalCap = finalCap - 12.6 end
 
@@ -718,7 +716,7 @@ function Warlock:ApplyScalers(weights, currentSpec)
         
         -- BUFFER LOGIC
         if hitRating >= (finalCap + 10) then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 -- Never go strictly 0, keep it minimal
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
             table.insert(activeCaps, "Hit (Capped)")
         elseif hitRating >= finalCap then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.2

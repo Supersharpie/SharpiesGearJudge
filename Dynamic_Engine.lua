@@ -1,7 +1,7 @@
 local _, MSC = ...
 
 -- =========================================================================
--- 1. TALENT CACHING SYSTEM
+-- 1. TALENT CACHING SYSTEM (Updated)
 -- =========================================================================
 MSC.TalentCache = {}
 MSC.TalentCacheLoaded = false
@@ -13,7 +13,6 @@ MSC.CachedSpecKey = nil
 -- Scans the player's talent tree once and saves it
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
-    -- Version Safe: GetNumTalentTabs works in Era and TBC
     local tabs = GetNumTalentTabs() or 0
     if tabs == 0 then return end
 
@@ -21,14 +20,17 @@ function MSC:BuildTalentCache()
         local num = GetNumTalents(t) or 0
         for i = 1, num do
             local name, _, _, _, rank = GetTalentInfo(t, i)
-            if name then MSC.TalentCache[name] = rank end
+            if name then 
+                -- [[ FIX 1: SAFETY FORCE NUMBER ]]
+                -- We use tonumber() and 'or 0' to guarantee no nil values ever enter the cache
+                MSC.TalentCache[name] = tonumber(rank) or 0
+            end
         end
     end
     MSC.TalentCacheLoaded = true
 end
 
 -- Helper for Classes to check their talents
--- NOTE: This accepts a KEY (e.g. "PRECISION") and looks up the Class Module's mapping
 function MSC:GetTalentRank(talentKey)
     -- Safety: If no class module is loaded, we can't look up talent names
     if not MSC.CurrentClass or not MSC.CurrentClass.Talents then return 0 end
@@ -38,10 +40,12 @@ function MSC:GetTalentRank(talentKey)
         if not MSC.TalentCacheLoaded then return 0 end
     end
 
-    -- Look up the Localized Name from the Class Module (e.g. "PRECISION" -> "Precision" or "Präzision")
+    -- Look up the Localized Name
     local localizedName = MSC.CurrentClass.Talents[talentKey]
     if not localizedName then return 0 end
 
+    -- [[ FIX 2: RETURN SAFETY ]]
+    -- Even if cache lookup fails, return 0 to prevent math crashes
     return MSC.TalentCache[localizedName] or 0
 end
 
@@ -147,11 +151,14 @@ talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")
 talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
 talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
+-- [[ FIX 3: DUAL SPEC SUPPORT ]]
+talentTracker:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 talentTracker:SetScript("OnEvent", function(self, event, unit)
     if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
 
-    if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" then
+    -- [[ LOGIC: Wipe Cache on Spec Swap ]]
+    if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
     end
@@ -160,16 +167,12 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
     MSC.CachedSpecKey = nil
     
     -- [[ UI UPDATE FIX ]]
-    -- Refreshes the Settings Window Dropdown text if it's currently open
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()
-        
         local displayName = detectedKey
         if MSC.PrettyNames and MSC.PrettyNames[detectedKey] then
             displayName = MSC.PrettyNames[detectedKey]
         end
-        
-        -- Update the text on the dropdown button
         UIDropDownMenu_SetText(MyStatCompareFrame.ProfileDD, "Auto: " .. displayName)
     end
 end)

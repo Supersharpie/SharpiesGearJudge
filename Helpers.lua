@@ -114,20 +114,6 @@ function MSC:GetSpiritValueInMP5(level, spirit)
     end
 end
 
-function MSC:GetTalentRank(talentNameKey)
-    if not MSC.CurrentClass or not MSC.CurrentClass.Talents then return 0 end
-    local searchName = MSC.CurrentClass.Talents[talentNameKey]
-    if not searchName then return 0 end
-    for tab = 1, 3 do
-        local numTalents = GetNumTalents(tab)
-        for i = 1, numTalents do
-            local name, icon, tier, column, rank = GetTalentInfo(tab, i)
-            if name == searchName then return rank end
-        end
-    end
-    return 0
-end
-
 -- =============================================================
 -- 3. COMPARISON MATH
 -- =============================================================
@@ -669,6 +655,10 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
     if not stats or not weights then return 0 end
     local score = 0
     
+    -- 1. Setup Counters for the "Bouncer"
+    local usefulRaw = 0
+    local uselessRaw = 0
+
     for stat, val in pairs(stats) do
         local weightKey = stat
         
@@ -681,8 +671,8 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
 
         -- [[ NEW LOGIC: Swap SPEED key for Offhand ]]
         if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
-            if weights["MSC_OH_WEAPON_SPEED"] then
-                weightKey = "MSC_OH_WEAPON_SPEED"
+            if weights["MSC_OH_WEAPON_SPEED"] then 
+                weightKey = "MSC_OH_WEAPON_SPEED" 
             end
         end
         
@@ -694,10 +684,19 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
                 finalVal = val * 0.5 
             end
             
-            score = score + (finalVal * w) 
+            score = score + (finalVal * w)
+            
+            -- [[ THE BOUNCER LOGIC ]]
+            -- We track how much raw stat value is "Useful" vs "Useless"
+            if w >= 0.1 then
+                usefulRaw = usefulRaw + val
+            else
+                uselessRaw = uselessRaw + val
+            end
         end
     end
     
+    -- [[ 2. RESILIENCE PENALTY (Keep this for PvE) ]]
     if not MSC.IsEra and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
         local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"]
         local resWeight = weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
@@ -706,15 +705,16 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         end
     end
     
-    local penalty = 0
-    local poisonCandidates = { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" }
-    for _, statKey in ipairs(poisonCandidates) do
-        if (stats[statKey] or 0) > 0 and (weights[statKey] or 0) <= 0.01 then 
-            penalty = penalty + 10 
-        end
+    -- [[ 3. THE FIX: RATIO CHECK INSTEAD OF POISON ]]
+    -- Instead of subtracting points, we check if the item is "Mostly Junk".
+    -- If useless stats are more than double the useful stats, the item is trash.
+    -- Example: Ring of Strength (+10 Str). Useful: 0. Useless: 10. RESULT: 0 Score.
+    -- Example: Seal of Wrynn (+6 Bad, +11 Good). Useful: 11. Useless: 6. RESULT: Score Kept.
+    
+    if uselessRaw > (usefulRaw * 2) then
+        return 0
     end
     
-    score = score - penalty
     return math.max(0, MSC.Round(score, 1))
 end
 
@@ -784,4 +784,66 @@ function MSC:GetItemGems(itemLink)
     end
     
     return Scratch_ItemColors, metaID, Scratch_ItemGemIDs
+end
+
+-- =============================================================
+-- 11. DEBUG
+-- =============================================================
+function MSC:DebugItem()
+    local tip = GameTooltip
+    local _, link = tip:GetItem()
+    
+    if not link then 
+        print("|cffff0000SGJ: Please hover over an item to debug.|r")
+        return 
+    end
+
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights then 
+        print("|cffff0000SGJ: No weights loaded.|r") 
+        return 
+    end
+
+    local stats = MSC.SafeGetItemStats(link, nil, weights, specName)
+    local score = 0
+    
+    print(" ")
+    print("|cff00ccff--- SGJ DEBUG REPORT ---|r")
+    print("Item: " .. link)
+    print("Profile: |cffffd100" .. (specName or "Unknown") .. "|r")
+
+    -- 1. Print valid stats
+    for stat, val in pairs(stats) do
+        if type(val) == "number" then
+            local w = weights[stat]
+            if w then
+                local lineScore = val * w
+                score = score + lineScore
+                local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
+                print(string.format("|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r", statName, val, w, lineScore))
+            else
+                -- Print unweighted stats in grey so you see what is being ignored
+                local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
+                print(string.format("|cff888888%s: %.1f (Weight: 0)|r", statName, val))
+            end
+        end
+    end
+    
+    -- 2. Check the "Bouncer" Logic
+    local useful, useless = 0, 0
+    for stat, val in pairs(stats) do
+        if type(val) == "number" then
+            if (weights[stat] or 0) >= 0.1 then useful = useful + val 
+            else useless = useless + val end
+        end
+    end
+    
+    print("Ratio Check: " .. string.format("Useful: %.1f / Useless: %.1f", useful, useless))
+    if useless > (useful * 2) then
+        print("|cffff0000[FAIL] Item rejected by Bouncer (Mostly Junk)|r")
+    else
+        print("|cff00ff00[PASS] Item accepted|r")
+    end
+    
+    print("Final Score: |cff00ccff" .. MSC.Round(score, 1) .. "|r")
 end
