@@ -361,19 +361,44 @@ end
 function MSC.Scanner.ClassifyLine(text, colorR, colorG, colorB)
     if not text or text == "" then return "SKIP" end
     
-    -- [[ FIX: STRIP COLORS FOR CLASSIFICATION ]]
-    -- We must strip colors here, otherwise "^Equip:" fails if the line starts with |cff...
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    -- 1. CLEANING: Strip Colors & Newlines
+    -- We replace newlines with spaces so "Increases\nDamage" becomes "Increases Damage"
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " ")
     
-    if cleanText:find("Chance on hit") or cleanText:find("When struck") then return "PROC" end
-    if cleanText:find("^Equip:") then return "EQUIP" end
+    -- 2. PROCS (Top Priority)
+    -- Must be first. If we see "Chance on hit", it is NEVER a static stat.
+    if cleanText:find("Chance on hit") or cleanText:find("When struck") then 
+        return "PROC" 
+    end
+    
+    -- 3. EXPLICIT USE
     if cleanText:find("^Use:") then return "USE" end
+
+    -- 4. IMPLICIT USE (The "Missing Tag" Safety Net)
+    -- If it has a duration ("for 10 sec"), it is a temporary effect, NOT a stat.
+    -- EXCEPTION: "per 5 sec" is for MP5/HP5, which IS a static stat.
+    if cleanText:find(" for %d+ sec") and not cleanText:find("per %d+ sec") then
+        return "USE"
+    end
     
-    -- Set/Socket checks usually don't have this issue, but consistency is good
+    -- 5. SETS & SOCKETS
+    -- We check these before generic stats to prevent misclassification.
     if cleanText:find("Set:") or cleanText:find("%(%d/%d%)") then return "SET" end
-    if cleanText:find("Socket") and not cleanText:find("Bonus") then return "SOCKET_INFO" end 
     if cleanText:find("Socket Bonus:") then return "SOCKET_BONUS" end
+    if cleanText:find("Socket") then return "SOCKET_INFO" end 
     
+    -- 6. EQUIP EFFECTS (The Fix)
+    -- We use the start-of-line anchor (^) to ensure we don't accidentally match
+    -- the middle of a sentence (like "Socket Bonus: Increases...").
+    if cleanText:find("^Equip:") 
+       or cleanText:find("^Increases") 
+       or cleanText:find("^Improves") 
+       or cleanText:find("^Restores") then 
+       return "EQUIP" 
+    end
+    
+    -- 7. GENERIC STATS
+    -- Fallback for simple lines like "+10 Strength"
     if cleanText:find("%d") then return "STAT" end 
     
     return "FLUFF"
