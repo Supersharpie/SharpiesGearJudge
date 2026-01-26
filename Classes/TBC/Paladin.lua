@@ -682,33 +682,42 @@ Paladin.StatToCritMatrix = {
 -- PALADIN SPECIFIC ITEMS (Librams)
 -- =============================================================
 Paladin.Relics = {
+-- [[ 7. PALADIN LIBRAMS (MANUAL OVERRIDES) ]]
     -- [[ CLASSIC / LEVELING (1-60) ]]
-    [23201] = { ITEM_MOD_HEALING_POWER_SHORT = 53 },
-    [23006] = { ITEM_MOD_HEALING_POWER_SHORT = 83 },
-    [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 },
-    [22402] = { ITEM_MOD_ARMOR_SHORT = 0 },
+    [23201] = { ITEM_MOD_HEALING_POWER_SHORT = 53 }, -- Libram of Divinity
+    [23006] = { ITEM_MOD_HEALING_POWER_SHORT = 83 }, -- Libram of Light
+    [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Libram of Hope
+    [22402] = { ITEM_MOD_ARMOR_SHORT = 50 }, -- Libram of Truth (Armor buff)
 
     -- [[ TBC LEVELING / DUNGEON (60-70) ]]
-    [25644] = { ITEM_MOD_ATTACK_POWER_SHORT = 12 },
-    [27917] = { ITEM_MOD_SPELL_POWER_SHORT = 20 }, 
-    [28592] = { ITEM_MOD_HEALING_POWER_SHORT = 84 },
+    [25644] = { ITEM_MOD_ATTACK_POWER_SHORT = 12 }, -- Libram of Righteous Power (Crusader Strike AP)
+    [27917] = { ITEM_MOD_SPELL_POWER_SHORT = 20, note = "BiS" }, -- Libram of Divine Purpose (Seal/Judgement Dmg)
 
     -- [[ TBC RAID (Holy) ]]
-    [30991] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
-    [29388] = { ITEM_MOD_HEALING_POWER_SHORT = 40 }, 
-    [34231] = { ITEM_MOD_HEALING_POWER_SHORT = 80 },
-    [28592] = { ITEM_MOD_HEALING_POWER_SHORT = 113 },
+    [30991] = { ITEM_MOD_HEALING_POWER_SHORT = 87 }, -- Libram of Mending (Holy Light)
+    [29388] = { ITEM_MOD_HEALING_POWER_SHORT = 40 }, -- Libram of the Lightbringer (Flash of Light)
+    [34231] = { ITEM_MOD_HEALING_POWER_SHORT = 80 }, -- Libram of Divine Judgement (Holy Light)
+    [28592] = { ITEM_MOD_HEALING_POWER_SHORT = 113, note = "BiS" }, -- Libram of Souls Redeemed (Flash of Light)
+    [30063] = { ITEM_MOD_HEALING_POWER_SHORT = 87, note = "BiS" }, -- Libram of Absolute Truth (Holy Light)
 
     -- [[ TBC RAID (Retribution) ]]
-    [27484] = { ITEM_MOD_CRIT_RATING_SHORT = 53 },
-    [31033] = { ITEM_MOD_ATTACK_POWER_SHORT = 60 },
-    [33503] = { ITEM_MOD_ATTACK_POWER_SHORT = 120 },
+    [27484] = { ITEM_MOD_CRIT_RATING_SHORT = 53, note = "BiS Crit" }, -- Libram of Avengement
+    [31033] = { ITEM_MOD_ATTACK_POWER_SHORT = 60 }, -- Libram of Righteousness
+    [33503] = { ITEM_MOD_ATTACK_POWER_SHORT = 120 }, -- Libram of Divine Judgement
 
     -- [[ TBC RAID (Protection) ]]
-    [29386] = { ITEM_MOD_BLOCK_VALUE_SHORT = 42 },
-    [30642] = { ITEM_MOD_SPELL_POWER_SHORT = 47 },
-    [32489] = { ITEM_MOD_BLOCK_VALUE_SHORT = 100 },
-    [27958] = { ITEM_MOD_BLOCK_VALUE_SHORT = 53 },
+    [29386] = { ITEM_MOD_BLOCK_VALUE_SHORT = 42 }, -- Libram of Repentance
+    [30642] = { ITEM_MOD_SPELL_POWER_SHORT = 47 }, -- Libram of the Eternal Rest (Consecration Dmg)
+    [32489] = { ITEM_MOD_BLOCK_VALUE_SHORT = 100 }, -- Tome of the Lightbringer
+    [27958] = { ITEM_MOD_BLOCK_VALUE_SHORT = 53 }, -- Libram of the Sacred Shield
+
+    -- [[ PREVIOUSLY MISSING ITEMS (FILLED) ]]
+    -- Libram of the Lightbringer (+47 Block Value on Holy Shield)
+    [28296] = { ITEM_MOD_BLOCK_VALUE_SHORT = 47, note = "BiS" }, 
+    
+    -- Libram of the Eternal Rest (+47 Consecration Dmg)
+    -- This is crucial for Prot Paladin AoE threat.
+    [24386] = { ITEM_MOD_SPELL_POWER_SHORT = 47, note = "BiS AoE" }, 
 
     -- [[ PVP LIBRAMS (Seasons 1-4) ]]
     [28358] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 17 }, -- S1
@@ -716,8 +725,8 @@ Paladin.Relics = {
     [33844] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 23 }, -- S3
     [35026] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- S4
     
-    [42612] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- (Wrath/Pre-patch?)
-    [42613] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 29 }, -- (Wrath/Pre-patch?)
+    [42612] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Deadly Gladiator (Wrath)
+    [42613] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 29 }, -- Furious Gladiator (Wrath)
 }
 
 -- =============================================================

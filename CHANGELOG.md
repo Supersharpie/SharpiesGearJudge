@@ -1,6 +1,45 @@
 # Sharpie's Gear Judge - Version History
 
-## v2.2.4 Changelog
+## 🚀 v2.2.5 Changelog
+
+###💎 Gem Database & Logic
+* **Expanded Gem Library: Added full support for Tier 6/Sunwell gems (Crimson Spinel, Lionseye), Heroic Dungeon drops (Fire Opals), and "Ornate" PvP gems.
+
+* **Unified Detection: Consolidated Epic, PvP, and Leveling tables into master color lists (Red, Blue, Yellow) for automatic detection.
+* **Dynamic Meta Requirements: Rewrote the scoring engine to handle multi-color gems accurately.
+* **Purple: Counts as 1 Red + 1 Blue.
+* **Orange: Counts as 1 Red + 1 Yellow.
+* **Green: Counts as 1 Blue + 1 Yellow.
+* **UI Update: The "Gem Suggestions" now correctly displays multi-color options for leveling slots.
+
+###✨ Enchant & Item Database
+* **High-End Enchant Support: Added Exalted Aldor/Scryer inscriptions, Naxxramas shoulder enchants, and T5/T6 leg armor (Nethercobra/Spellthread).
+* **Relic & Trinket Overrides: Implemented manual stat overrides for items with unique effects:
+* **Class Relics: Idols, Librams, and Totems now map specific spell bonuses (e.g., Starfire damage) to evaluated Spell Power/Block values.
+* **Procs (PPM): Added scoring for major procs like Dragonspine Trophy, Tsunami Talisman, and Dragonstrike.
+* **Special Items: Implemented valuation for Darkmoon Cards (Crusade/Blue Dragon) and Mark of the Champion.
+* **Database Architecture: Split the database into modular files (Data_Weapons.lua, Data_Trinkets.lua, etc.) to improve maintainability and reduced memory footprint by filtering "high-value" vs "fluff" items.
+
+### 🧠 Core Scoring & Logic
+* **Projected vs. Raw: "Mode 3" now correctly applies best-in-slot enchants to currently equipped gear to prevent false upgrade flags on un-enchanted bag items.
+* **Raw Mode Integrity: Fixed an issue where "Mode 1" would strip existing enchants during calculation.
+* **Class Safety & Validation: Added IsItemUsable checks to bag scanning. The addon will no longer suggest weapons or off-hands your class/spec cannot equip (e.g., non-Enhancement Shamans are now restricted to Shields/Held Items).
+* **Stat Detection (Parse.lua): Updated ClassifyLine to detect implicit stats (e.g., "Restores X mana") that lack the standard Equip: prefix.
+
+###📜 New Feature: "Judge's Note" System
+* **Manual Insights: Added a "Librarian" system to display tooltips for items that math alone cannot evaluate (e.g., "Phase 1 BiS").
+* **Visual Enhancements: Implemented a high-quality color gradient system for notes:
+* **Purple: Trinkets & Standard Class Notes.
+* **Orange: Weapons.
+* **Red/Pink: PvP Items.
+* **Cyan: Class-specific Relics/Totems.
+
+### 🐛 Bug Fixes
+* ** Parsing: Fixed a newline bug where word-wrapping caused scanners to fail on long item descriptions.
+
+------------------------------------------------------------------------------------------------
+
+## v2.2.4 
 
 ### Core Engine Fixes
 * **Silent Crash Fix: Updated MSC:GetTalentRank in Dynamic_Engine.lua to enforce a number return (tonumber(rank) or 0). This prevents the addon from crashing when the WoW API returns nil for talent data.

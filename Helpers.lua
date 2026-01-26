@@ -433,83 +433,84 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
 
     if not weights then return finalStats end
     
-    local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1 -- Default 1 (Off) per user req
+    local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local level = UnitLevel("player")
-	
+    
     if slotId then
-        -- A. IDENTIFY PHYSICAL ENCHANT ON ITEM (The one we might want to strip)
-        local physicalEnchantID = 0
-        local itemString = string.match(itemLink, "item[%-?%d:]+")
-        if itemString then
-            local _, _, eid = strsplit(":", itemString)
-            physicalEnchantID = tonumber(eid) or 0
-        end
+        -- [FIX] Only strip/manipulate enchants if we are NOT in Mode 1 (Off/Raw)
+        if enchantMode ~= 1 then
+            
+            -- A. IDENTIFY PHYSICAL ENCHANT ON ITEM (The one we might want to strip)
+            local physicalEnchantID = 0
+            local itemString = string.match(itemLink, "item[%-?%d:]+")
+            if itemString then
+                local _, _, eid = strsplit(":", itemString)
+                physicalEnchantID = tonumber(eid) or 0
+            end
 
-        -- B. STRIP PHYSICAL ENCHANT (Reset to Naked)
-        if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
-            local pData = MSC.EnchantDB[physicalEnchantID]
-            if pData.stats then
-                for k, v in pairs(pData.stats) do
-                     -- Only subtract if we actually scanned it (Scanner sees numbers, DB has numbers)
-                    if type(v) == "number" and (finalStats[k] or 0) >= v then
-                        finalStats[k] = finalStats[k] - v
+            -- B. STRIP PHYSICAL ENCHANT (Reset to Naked so we can project)
+            if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
+                local pData = MSC.EnchantDB[physicalEnchantID]
+                if pData.stats then
+                    for k, v in pairs(pData.stats) do
+                        if type(v) == "number" and (finalStats[k] or 0) >= v then
+                            finalStats[k] = finalStats[k] - v
+                        end
                     end
                 end
             end
-        end
 
-        -- C. APPLY MODE LOGIC
-        if enchantMode == 1 then
-            -- OFF MODE: Do nothing. Item is now naked. 
-            
-        elseif enchantMode == 2 then
-            -- CURRENT MODE: Transfer Equipped Enchant -> Mouseover
-            local equippedLink = GetInventoryItemLink("player", slotId)
-            if equippedLink then
-                local eqEnchantID = 0
-                local eqStr = string.match(equippedLink, "item[%-?%d:]+")
-                if eqStr then
-                    local _, _, eid = strsplit(":", eqStr)
-                    eqEnchantID = tonumber(eid) or 0
+            -- C. APPLY MODE LOGIC
+            if enchantMode == 2 then
+                -- CURRENT MODE: Transfer Equipped Enchant -> Mouseover
+                local equippedLink = GetInventoryItemLink("player", slotId)
+                if equippedLink then
+                    local eqEnchantID = 0
+                    local eqStr = string.match(equippedLink, "item[%-?%d:]+")
+                    if eqStr then
+                        local _, _, eid = strsplit(":", eqStr)
+                        eqEnchantID = tonumber(eid) or 0
+                    end
+                    
+                    if eqEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[eqEnchantID] then
+                        local eqData = MSC.EnchantDB[eqEnchantID]
+                        
+                        if eqData.stats then
+                            for k, v in pairs(eqData.stats) do
+                                if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end
+                            end
+                        end
+                        
+                        finalStats.IS_PROJECTED = true
+                        finalStats.ENCHANT_TEXT = eqData.name .. " (Equipped)"
+                    end
                 end
                 
-                if eqEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[eqEnchantID] then
-                    local eqData = MSC.EnchantDB[eqEnchantID]
-                    
-                    if eqData.stats then
-                        for k, v in pairs(eqData.stats) do
-                            if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end
-                        end
-                    end
-                    
-                    finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = eqData.name .. " (Equipped)"
+            elseif enchantMode == 3 then
+                -- BEST MODE: Sim Best
+                local enchantType = MSC:GetValidEnchantType(itemLink)
+                -- Fallback if type lookup fails but we know the slot
+                if not enchantType and slotId then
+                     local s = slotId
+                     if s==1 or s==3 or s==5 or s==6 or s==7 or s==8 or s==9 or s==10 then enchantType = "Armor"
+                     elseif s==15 then enchantType = "Armor" 
+                     elseif s==17 then enchantType = "Shield"
+                     end
                 end
-            end
-            
-        elseif enchantMode == 3 then
-            -- BEST MODE: Sim Best
-            local enchantType = MSC:GetValidEnchantType(itemLink)
-             if not enchantType and slotId then
-                 local s = slotId
-                 if s==1 or s==3 or s==5 or s==6 or s==7 or s==8 or s==9 or s==10 then enchantType = "Armor"
-                 elseif s==15 then enchantType = "Armor" 
-                 elseif s==17 then enchantType = "Shield"
-                 end
-            end
 
-            if enchantType then
-                local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
-                if bestID and MSC.EnchantDB[bestID] then
-                    local bestData = MSC.EnchantDB[bestID]
-                    if bestData.stats then
-                        for k, v in pairs(bestData.stats) do 
-                            if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end
+                if enchantType then
+                    local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
+                    if bestID and MSC.EnchantDB[bestID] then
+                        local bestData = MSC.EnchantDB[bestID]
+                        if bestData.stats then
+                            for k, v in pairs(bestData.stats) do 
+                                if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end
+                            end
                         end
+                        finalStats.IS_PROJECTED = true
+                        finalStats.ENCHANT_TEXT = bestData.name
                     end
-                    finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = bestData.name
                 end
             end
         end

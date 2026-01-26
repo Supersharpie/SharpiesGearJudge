@@ -301,11 +301,80 @@ local function OnTooltipSetItem(tooltip)
                 local comparedItemLink = GetInventoryItemLink("player", slotId)
                 if comparedItemLink then tooltip:AddDoubleLine("vs.", comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end
             end
+		if link then
+                local itemID = tonumber(link:match("item:(%d+)"))
+                local noteDisplayed = false
+
+                -- 1. CLASS SPECIFIC CHECK (Relics/Totems/Idols)
+                if MSC.CurrentClass then
+                    local classDB = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols
+                    
+                    if classDB and classDB[itemID] then
+                        local dbStats = classDB[itemID]
+                        local statStr = ""
+                        
+                        -- A. PARSE STATS (Cyan Text)
+                        for key, val in pairs(dbStats) do
+                            if key ~= "note" and type(val) == "number" and val > 0 then
+                                local name = (MSC.ShortNames and MSC.ShortNames[key]) 
+                                if not name then
+                                    name = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower()
+                                end
+                                if statStr ~= "" then statStr = statStr .. ", " end
+                                statStr = statStr .. string.format("+%d %s", val, name)
+                            end
+                        end
+                        
+                        if statStr ~= "" then
+                            tooltip:AddLine(" ")
+                            tooltip:AddLine("Class Bonus: " .. statStr, 0, 1, 1, true) 
+                        end
+                        
+                        -- B. PARSE NOTE (Gradient: Light Purple -> Epic Purple)
+                        if dbStats.note then
+                            tooltip:AddDoubleLine("Judge's Note:", dbStats.note, 0.85, 0.6, 1.0, 0.64, 0.21, 0.93)
+                            noteDisplayed = true
+                        end
+                    end
+                end
+
+                -- 2. GLOBAL DATABASE CHECKS (If no class note was shown)
+                if not noteDisplayed then
+                    local entry = nil
+                    
+                    -- Define Gradient Colors (Left RGB, Right RGB)
+                    -- Default: Light Purple -> Epic Purple
+                    local cL = {r=0.85, g=0.6, b=1.0}
+                    local cR = {r=0.64, g=0.21, b=0.93}
+
+                    if MSC.PvPDB and MSC.PvPDB[itemID] then
+                        entry = MSC.PvPDB[itemID]
+                        -- PvP: Pink -> Red
+                        cL = {r=1.0, g=0.6, b=0.6}; cR = {r=1.0, g=0.2, b=0.2} 
+                    elseif MSC.WeaponDB and MSC.WeaponDB[itemID] then
+                        entry = MSC.WeaponDB[itemID]
+                        -- Weapons: Light Orange -> Deep Orange
+                        cL = {r=1.0, g=0.8, b=0.4}; cR = {r=1.0, g=0.5, b=0.0} 
+                    elseif MSC.TrinketDB and MSC.TrinketDB[itemID] then
+                        entry = MSC.TrinketDB[itemID]
+                        -- Trinkets: Keep Purple Gradient
+                    elseif MSC.ProcDB and MSC.ProcDB[itemID] then
+                        entry = MSC.ProcDB[itemID]
+                        -- Procs: Keep Purple Gradient
+                    end
+
+                    if entry and entry.note then
+                        tooltip:AddLine(" ")
+                        tooltip:AddDoubleLine("Judge's Note:", entry.note, cL.r, cL.g, cL.b, cR.r, cR.g, cR.b)
+                    end
+                end
+			end
+			
             local percentDiff = 0; if oldScore > 0 then percentDiff = ((newScore - oldScore) / oldScore) * 100 end
             if delta > 0.1 then tooltip:AddLine(string.format("|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r", TEX_UP, delta, percentDiff))
             elseif delta < -0.1 then tooltip:AddLine(string.format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
             else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
-        else tooltip:AddLine("|cff00ffff*** CURRENTLY EQUIPPED ***|r") end
+        else tooltip:AddLine("|cff00ffff*** EQUIPPED ***|r") end
 
         -- Projections (TBC Only for Gems/Metas)
         if newStats.IS_PROJECTED or newStats.GEMS_PROJECTED then
@@ -393,6 +462,7 @@ local function OnTooltipSetItem(tooltip)
             PrintList("Losses:", losses, 1, 0, 0)
 
         end
+		
         tooltip:Show()
     end)
     MSC.IsCalculating = false

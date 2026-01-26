@@ -879,36 +879,49 @@ end
 -- CLASS SPECIFIC ITEMS (Totems)
 -- =============================================================
 Shaman.Relics = {
-    -- [[ CLASSIC / LEVELING (1-60) ]]
-    [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 },
-    [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 30 },
-    [22394] = { ITEM_MOD_HEALING_POWER_SHORT = 80 },
-    [22393] = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 },
-    [23200] = { ITEM_MOD_MANA_REGENERATION_SHORT = 0 },
+	-- [[ CLASSIC / LEVELING (1-60) ]]
+    [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 }, -- Totem of the Storm (Lightning/Chain)
+    [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of the Void (Classic version?) Or Storm?
+    [22394] = { ITEM_MOD_HEALING_POWER_SHORT = 80 }, -- Totem of Rebirth
+    [22393] = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 }, -- Totem of Life (Lesser Healing Wave cost?)
+    [23200] = { ITEM_MOD_HEALING_POWER_SHORT = 10 }, -- Totem of Flowing Water (Stream Totem)
 
     -- [[ TBC LEVELING / DUNGEON (60-70) ]]
-    [25645] = { ITEM_MOD_SPELL_POWER_SHORT = 30 },
-    [27949] = { ITEM_MOD_SPELL_POWER_SHORT = 48 },
-    [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 46 },
-    [27523] = { ITEM_MOD_HEALING_POWER_SHORT = 88 },
-    [28248] = { ITEM_MOD_SPELL_POWER_SHORT = 55 },
+    [25645] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of the Plains (Shock Dmg)
+    [27949] = { ITEM_MOD_SPELL_POWER_SHORT = 48 }, -- Totem of Impact (Shock Dmg)
+    [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 46 }, -- Totem of the Void (Lightning Dmg - Dungeon)
+    [27523] = { ITEM_MOD_HEALING_POWER_SHORT = 88 }, -- Totem of the Healer (Healing Wave)
+    [28248] = { ITEM_MOD_SPELL_POWER_SHORT = 55, note = "BiS" }, -- Totem of the Void (Lightning Dmg - Kara)
 
     -- [[ TBC RAID ]]
-    [27815] = { ITEM_MOD_ATTACK_POWER_SHORT = 80 },
-    [33507] = { ITEM_MOD_ATTACK_POWER_SHORT = 40 }, 
-    [34072] = { ITEM_MOD_ATTACK_POWER_SHORT = 100 },
-    [33506] = { ITEM_MOD_HASTE_RATING_SHORT = 101 },
-    [32330] = { ITEM_MOD_SPELL_POWER_SHORT = 85 },
-    [34539] = { ITEM_MOD_SPELL_POWER_SHORT = 60 },
-    [28227] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
-    [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 20 },
+    [27815] = { ITEM_MOD_ATTACK_POWER_SHORT = 80, note = "BiS" }, -- Totem of the Astral Winds (Windfury Bonus)
+    [33507] = { ITEM_MOD_ATTACK_POWER_SHORT = 40 }, -- Stonebreaker's Totem (Shock proc)
+    [34072] = { ITEM_MOD_ATTACK_POWER_SHORT = 100 }, -- Totem of Splintering (Windfury Bonus)
+    [33506] = { ITEM_MOD_HASTE_RATING_SHORT = 101 }, -- Skycall Totem
+    [32330] = { ITEM_MOD_SPELL_POWER_SHORT = 85, note = "BiS" }, -- Totem of Ancestral Guidance (Lightning Dmg)
+    [34539] = { ITEM_MOD_SPELL_POWER_SHORT = 60 }, -- Totem of the Maelstrom (Lightning Bolt Haste/Dmg?)
+    [28227] = { ITEM_MOD_HEALING_POWER_SHORT = 87 }, -- Totem of Healing Rains (Chain Heal)
+    [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 20 }, -- Totem of Living Water (Chain Heal cost reduction, val as MP5)
 
     -- [[ PVP TOTEMS ]]
-    [28359] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
-    [33078] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
-    [33838] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
-    [35022] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
-    [38367] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 40 }, 
+    [28359] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- S1
+    [33078] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- S2
+    [33838] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- S3
+    [35022] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- S4
+    [38367] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 40 }, -- Wrath
+
+    -- Totem of the Thunderhead (Lightning Shield Dmg)
+    -- Extremely niche, mostly for farming or boosting, but if you want it:
+    [24413] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33, note = "Farm BiS" }, 
+
+    -- Totem of Spontaneous Regrowth (+88 Healing Wave)
+    -- Strong single-target Tank healing totem.
+    [27544] = { ITEM_MOD_HEALING_POWER_SHORT = 88, note = "BiS Tank Heal" }, 
+
+    -- Totem of Healing Rains (+87 Chain Heal)
+    -- The absolute King of TBC Resto Shaman items.
+    [28523] = { ITEM_MOD_HEALING_POWER_SHORT = 87, note = "BiS Raid" },
+	
 }
 
 -- =============================================================

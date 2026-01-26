@@ -860,32 +860,33 @@ function Druid:GetWeaponBonus(itemLink) return 0 end
 -- CLASS SPECIFIC ITEMS (Idols)
 -- =============================================================
 Druid.Relics = {
-	-- [[ CLASSIC OP ITEMS ]]
+-- [[ CLASSIC OP ITEMS ]]
     [8345] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 80 }, -- Wolfshead Helm (Manual weighting to force it to win)
+    
     -- [[ LEVELING / CLASSIC IDOLS ]]
-    [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 },
-    [22396] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 },
-    [22397] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },
-    [22330] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },
-    [23197] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 33 },
+    [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Ferocity
+    [22396] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Brutality (Classic)
+    [22397] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },      -- Idol of Rejuvenation
+    [22330] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },      -- Idol of Health
+    [23197] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 33 },      -- Idol of the Moon (Starfire)
 
     -- [[ TBC DUNGEON / QUEST ]]
-    [25643] = { ITEM_MOD_HEALING_POWER_SHORT = 86 },
-    [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 },
-    [27526] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 },
-    [27483] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 24 },
-    [27886] = { ITEM_MOD_HEALING_POWER_SHORT = 47 },
-    [31037] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 25 },
+    [25643] = { ITEM_MOD_HEALING_POWER_SHORT = 86 },      -- Idol of the Emerald Queen (Rejuv)
+    [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 }, -- Idol of Brutality (TBC Maul)
+    [27526] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 }, -- Idol of the Wild (Mangle)
+    [27483] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 24 }, -- Idol of Savagery
+    [27886] = { ITEM_MOD_HEALING_POWER_SHORT = 47, note = "BiS" }, -- Idol of the Avian Heart (Healing Touch)
+    [31037] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 25 },      -- Idol of the Avenger (Wrath)
 
     -- [[ TBC RAID ]]
-    [29390] = { ITEM_MOD_HEALING_POWER_SHORT = 136 },
-    [29391] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 45 },
-    [27885] = { ITEM_MOD_HEALING_POWER_SHORT = 65 },
-    [32387] = { ITEM_MOD_HEALING_POWER_SHORT = 44, ITEM_MOD_CRIT_RATING_SHORT = 40, ITEM_MOD_SPELL_CRIT_RATING_SHORT = 40 },
-    [30652] = { ITEM_MOD_AGILITY_SHORT = 45, ITEM_MOD_DODGE_RATING_SHORT = 45 },
-    [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70 },
-    [38295] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 60 },
-    
+    [29390] = { ITEM_MOD_HEALING_POWER_SHORT = 136 },     -- Idol of the Emerald Queen (Lifebloom)
+    [29391] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 45 }, -- Idol of Terror
+    [27885] = { ITEM_MOD_HEALING_POWER_SHORT = 65 },      -- Idol of the Raven Goddess
+    [32387] = { ITEM_MOD_HEALING_POWER_SHORT = 44, ITEM_MOD_CRIT_RATING_SHORT = 40, ITEM_MOD_SPELL_CRIT_RATING_SHORT = 40 }, -- Idol of the Raven Goddess (Epic Flight)
+    [30652] = { ITEM_MOD_AGILITY_SHORT = 45, ITEM_MOD_DODGE_RATING_SHORT = 45 }, -- Idol of the Crescent Goddess
+    [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70, note = "BiS" }, -- Idol of the White Stag
+    [38295] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 60 }, -- Idol of Terror (Later version?)
+
     -- [[ PVP IDOLS ]]
     [28355] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
     [33076] = { ITEM_MOD_HEALING_POWER_SHORT = 105 },
@@ -899,6 +900,19 @@ Druid.Relics = {
     [33075] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
     [33842] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
     [35019] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
+    
+    -- Ivory Idol of the Moongoddess (+55 Starfire Dmg) -> Best Moonkin Starfire Idol
+    [27518] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 55, note = "BiS" },    
+    -- Idol of the Claw (+20 Bear Ability Dmg) -> Solid Dungeon Tank Idol
+    [25940] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 25, note = "BiS" }, 
+    -- Idol of Ursoc (+Lacerate Dmg) -> T5/T6 Tanking Threat Idol
+    [27744] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 55, note = "BiS" }, 
+    -- Idol of Feral Shadows (+Rip Dmg) -> Cat Bleed Idol
+    [28372] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40, note = "BiS" }, 
+    -- Idol of the Avian Heart (Proc: 120 SP) -> Averaged to ~65 SP for scoring
+    [28568] = { ITEM_MOD_SPELL_POWER_SHORT = 65, note = "BiS" }, 
+    -- Idol of the Crescent Goddess (-87 Regrowth Cost) -> Converted to Mp5/Value
+    [30051] = { ITEM_MOD_MANA_REGENERATION_SHORT = 22, note = "BiS" },
 }
 
 -- =============================================================

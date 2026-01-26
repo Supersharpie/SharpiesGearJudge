@@ -1,6 +1,14 @@
 local _, MSC = ...
 
 -- ============================================================================
+-- DATA: PLACEHOLDERS (Prevents errors if files aren't loaded)
+-- ============================================================================
+MSC.PvPDB       = MSC.PvPDB or {}
+MSC.WeaponDB    = MSC.WeaponDB or {}
+MSC.TrinketDB   = MSC.TrinketDB or {}
+MSC.RingDB      = MSC.RingDB or {}
+MSC.ClassItemDB = MSC.ClassItemDB or {}
+-- ============================================================================
 --	DATA: ITEM SETS (MASTER COMPLETIONIST LIST)
 -- ============================================================================
 -- Format: [SetID] = { {ItemIDs} }
@@ -350,14 +358,18 @@ end
 -- 7. PROC DATA (TRINKETS & WEAPONS)
 -- ============================================================================
 MSC.ProcDB = {
-    -- [[ CLASSIC TRINKETS ]]
-    [11815] = { score=20 }, -- Hand of Justice
-    [23207] = { score=30 }, -- Mark of the Champion
-    [19379] = { score=35 }, -- Neltharion's Tear
-    [19406] = { score=35 }, -- Drake Fang Talisman
-    -- [[ WEAPONS ]]
-    [19019] = { score=30 }, -- Thunderfury
-}
+		-- [[ CLASSIC TRINKETS ]]
+		[11815] = { score=20, note="ERA BiS for Melee (HoJ)" }, 
+		[19379] = { score=35, note="ERA BiS Caster (Nelth's Tear)" },
+		[19406] = { score=35, note="ERA BiS Physical (DFT)" },
+
+		-- [[ WEAPONS & NICHE ITEMS ]]
+		[19019] = { score=30, note="Legendary Threat Gen (TF)" },
+		[871]   = { score=40, note="ERA Top Tier for Prot Paladin (Extra Seals)" }, -- Flurry Axe
+		
+		-- [[ TBC ITEMS ]]
+		[28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note="BiS Physical DPS" },
+	}
 
 if not MSC.IsEra then
     -- [[ TBC TRINKETS ]]
@@ -367,11 +379,82 @@ if not MSC.IsEra then
         [27683] = { ppm=1.0, val=320, dur=6,  stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT" },-- Quagmirran's
         [28034] = { ppm=1.2, val=300, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },       -- Hourglass
         [28223] = { ppm=1.5, val=320, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },       -- Abacus
-        -- [[ WEAPONS ]]
-        [28438] = { score=50 }, -- Dragonmaw
-        [28439] = { score=60 }, -- Dragonstrike
+		-- PHASE 1
+        [28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, 
+        [29370] = { ppm=0.8, val=260, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, 
+        -- CORRECTION: 29370 is Icon of the Silver Crescent (USE Effect). 
+        -- 28830 is DST (Proc).
+        
+        -- DUNGEON / KARA
+        [28190] = { ppm=1.0, val=160, dur=6, stat="ITEM_MOD_HASTE_RATING_SHORT",},
+        [28528] = { score=40, note="Moroes' Lucky Pocket Watch (Dodge Use)" }, 
+        [24460] = { score=35, note="Talisman of Tenacity (Use: HP)" }, 
+        
+        -- PHASE 2 (SSC/TK)
+        [30627] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT"},
+        [30449] = { ppm=1.5, val=130, dur=10, stat="ITEM_MOD_SPELL_POWER_SHORT", note="Pet Proc" },
+        [29923] = { score=65, note="Rage/Energy Proc" }, -- Special handling needed for Rage/Energy
+
+        -- PHASE 3 (Hyjal/BT)
+        [32471] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT"},
+        [32505] = { ppm=1.0, val=200, dur=10, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"},
+        [32361] = { ppm=1.0, val=200, dur=15, stat="ITEM_MOD_SPELL_POWER_SHORT"},
+
+        -- PHASE 4 (ZA)
+        [33830] = { ppm=1.0, val=360, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT"},
+
+
+        -- PHASE 5 (Sunwell)
+        [34472] = { ppm=1.0, val=230, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT"},
+		
+        [34427] = { score=100}, -- Complex mechanic, pure score override is safest.
         [28767] = { score=40 }, -- The Decapitator
+
+        -- [[ CRAFTED BLACKSMITHING WEAPONS (The Big Ones) ]]
+        -- Dragonmaw / Dragonstrike (Haste Proc)
+        [28437] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" },
+        [28438] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" },
+        [28439] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" },
+        
+        -- Lionheart Champion / Executioner (Strength Proc)
+        [28429] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" },
+        [28430] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" },
+
+        -- Deep Thunder / Stormherald (PvP Stun - Pure Score Override)
+        [28433] = { score=50, note="Stun Proc PvP BiS" },
+
+        -- [[ KARAZHAN / DUNGEON ]]
+        -- Blade of the Unrequited (300 Dmg debuff - Hard to value, giving flat score)
+        [28572] = { score=40, note="BiS Phase 1 (Unique Dmg Proc)" },
+        
+        -- Despair (Chance on Hit: Daze - PvP Utility)
+        [28573] = { score=20, note="Despair (PvP Daze)" },
+
+        -- [[ TIER 5 / HYJAL ]]
+        -- Rod of the Sun King (Chance on hit: 10 Rage / 40 Energy)
+        -- This is huge. We value it as ~Attack Power equivalence for the resource gain.
+        [29996] = { score=80, note="BiS (Infinite Energy Proc)" },
+        
+        -- Glaive of the Pit (Life Drain) - Roughly ~30 DPS
+        [28774] = { ppm=1.0, val=30, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT"},
+
+        -- [[ BLACK TEMPLE / SUNWELL ]]
+        -- Bulwark of Azzinoth (Armor Proc)
+        [32375] = { ppm=0.5, val=2000, dur=10, stat="ITEM_MOD_ARMOR_SHORT", note="BiS Tank (Proc)" },
+
+        -- Black Bow of the Betrayer (Mana Restore)
+        -- ~160 Mana per proc approx. Valued as MP5.
+        [32336] = { ppm=1.0, val=25, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="BiS Hunter (Mana Proc)" },
+        
+        -- Syphon of the Nathrezim (Life Drain)
+        [32236] = { ppm=1.0, val=40, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
+
+        -- Thori'dal, the Stars' Fury (Legendary)
+        -- No ammo required = Massive DPS gain not shown on sheet.
+        [34334] = { score=500, note="LEGENDARY (No Ammo = Huge DPS)" },
     }
+
+    -- Merge into main ProcDB
     for id, data in pairs(tbcProcs) do MSC.ProcDB[id] = data end
 end
 
