@@ -162,18 +162,20 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
     end
 
     -- [[ 7. CALCULATE SET BONUSES ]]
-    if MSC.ItemSetMap and MSC.RawSetData then
+if MSC.ItemSetMap and MSC.SetBonusScores then
         for setID, count in pairs(Scratch_SetCounts) do
-             local setData = MSC.RawSetData[setID]
-             if setData then
-                 for reqCount, bonusData in pairs(setData) do
+             local scoreData = MSC.SetBonusScores[setID]
+             if scoreData then
+                 for reqCount, bonusData in pairs(scoreData) do
                      if count >= reqCount then
+                         -- Apply Stats
                          if bonusData.stats then
                              for stat, val in pairs(bonusData.stats) do
                                  Scratch_Accumulator[stat] = (Scratch_Accumulator[stat] or 0) + val
                                  if weights[stat] then totalScore = totalScore + (val * weights[stat]) end
                              end
                          end
+                         -- Apply Flat Score
                          if bonusData.score then
                              totalScore = totalScore + bonusData.score
                          end

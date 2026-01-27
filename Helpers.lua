@@ -29,12 +29,19 @@ function MSC.IsItemUsable(itemLink)
         end
     end
 
-    -- 2. ARMOR CHECK
+ -- 2. ARMOR CHECK (Fixed for Level 40 Training)
     if classID == 4 then 
-        local maxArmor = 1 -- Cloth
-        if playerClass == "WARRIOR" or playerClass == "PALADIN" then maxArmor = 4
-        elseif playerClass == "SHAMAN" or playerClass == "HUNTER" then maxArmor = 3
-        elseif playerClass == "ROGUE" or playerClass == "DRUID" then maxArmor = 2 
+        local level = UnitLevel("player")
+        local maxArmor = 1 -- Cloth (Default)
+        
+        if playerClass == "WARRIOR" or playerClass == "PALADIN" then 
+            -- Plate at 40, Mail below 40
+            maxArmor = (level >= 40) and 4 or 3
+        elseif playerClass == "SHAMAN" or playerClass == "HUNTER" then 
+            -- Mail at 40, Leather below 40
+            maxArmor = (level >= 40) and 3 or 2
+        elseif playerClass == "ROGUE" or playerClass == "DRUID" then 
+            maxArmor = 2 
         end
         
         if subClassID == 6 then -- Shield
@@ -387,20 +394,36 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
     return bestGem, bestScore
 end
 
-function MSC.GetGemStatsByID(gemID)
-    if not gemID then return nil end
-    local id = tonumber(gemID)
+-- =============================================================
+-- FIXED: GEM CACHE & LOOKUP (Performance Patch)
+-- =============================================================
+MSC.GemIDCache = {}
+
+function MSC:BuildGemCache()
     local dbs = { MSC.GemOptions, MSC.GemOptions_Leveling }
     for _, db in ipairs(dbs) do
         if db then
             for _, list in pairs(db) do
                 for _, gem in ipairs(list) do 
-                    if gem.id == id then return gem end 
+                    MSC.GemIDCache[gem.id] = gem 
                 end
             end
         end
     end
-    return nil
+end
+
+function MSC.GetGemStatsByID(gemID)
+    if not gemID then return nil end
+    local id = tonumber(gemID)
+    
+    -- 1. Fast Lookup
+    if MSC.GemIDCache[id] then return MSC.GemIDCache[id] end
+    
+    -- 2. Build Cache if missing (Lazy Load)
+    MSC:BuildGemCache()
+    
+    -- 3. Retry Lookup
+    return MSC.GemIDCache[id]
 end
 
 function MSC.GetGemColor(gemID)
@@ -753,11 +776,14 @@ local Scratch_ItemColors = { RED=0, YELLOW=0, BLUE=0 }
 local Scratch_ItemGemIDs = {}
 
 function MSC:GetItemGems(itemLink)
+    -- Reset the scratch tables
     Scratch_ItemColors.RED = 0; Scratch_ItemColors.YELLOW = 0; Scratch_ItemColors.BLUE = 0;
     wipe(Scratch_ItemGemIDs)
     
     local metaID = nil
-    if not itemLink then return Scratch_ItemColors, nil, Scratch_ItemGemIDs end
+    if not itemLink then 
+        return MSC:SafeCopy(Scratch_ItemColors), nil, MSC:SafeCopy(Scratch_ItemGemIDs) 
+    end
     
     local g1, g2, g3, g4 = itemLink:match("item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)")
     local foundGems = { tonumber(g1), tonumber(g2), tonumber(g3), tonumber(g4) }
@@ -765,12 +791,15 @@ function MSC:GetItemGems(itemLink)
     for _, id in ipairs(foundGems) do
         if id and id > 0 then
             table.insert(Scratch_ItemGemIDs, id)
+            
+            -- Check for Meta Gem ID
             if MSC.GemOptions and MSC.GemOptions["EMPTY_SOCKET_META"] then
                 for _, g in ipairs(MSC.GemOptions["EMPTY_SOCKET_META"]) do 
                     if g.id == id then metaID = id; break end 
                 end
             end
             
+            -- Count Colors
             local cType = MSC.GetGemColor and MSC.GetGemColor(id)
             if cType then
                 if cType == "RED" then Scratch_ItemColors.RED = Scratch_ItemColors.RED + 1
@@ -784,7 +813,8 @@ function MSC:GetItemGems(itemLink)
         end
     end
     
-    return Scratch_ItemColors, metaID, Scratch_ItemGemIDs
+    -- RETURN COPIES, NOT REFERENCES
+    return MSC:SafeCopy(Scratch_ItemColors), metaID, MSC:SafeCopy(Scratch_ItemGemIDs)
 end
 
 -- =============================================================

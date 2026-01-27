@@ -1,6 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.2.5 Changelog
+## 🚀 v2.2.6 Changelog
+
+* ** This update itemization, specifically addressing items with "Use" effects, complex procs, and niche mechanics that the automatic scanner cannot naturally value.
+
+#### Jewelcrafting Figurines 
+* ** Added manual value overrides for the BoP Jewelcrafting trinkets. These rely on active "Use" effects.
+
+### 🐛 Bug Fixes
+* ** Fixed an issue where the "Chance to reduce mana cost" was ignored. It is now valued.
+* ** Fix: Handle newline wrapping in tooltips; improve whitespace sanitization; expand TBC spell damage patterns.
+* ** Fixed scoring for items with unique triggers or non-standard stat blocks.
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.2.5
 
 ###💎 Gem Database & Logic
 * **Expanded Gem Library: Added full support for Tier 6/Sunwell gems (Crimson Spinel, Lionseye), Heroic Dungeon drops (Fire Opals), and "Ornate" PvP gems.

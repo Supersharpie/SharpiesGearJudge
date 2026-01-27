@@ -13,12 +13,12 @@ MSC.Scanner.BaseStatMap = {
     ["spirit"]    = "ITEM_MOD_SPIRIT_SHORT",
     
     -- [[ DEFENSIVE & WEAPON ]]
-    ["armor"]       = "ITEM_MOD_ARMOR_SHORT",
-    ["block"]       = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    ["armor"]        = "ITEM_MOD_ARMOR_SHORT",
+    ["block"]        = "ITEM_MOD_BLOCK_VALUE_SHORT",
     ["block value"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
     ["shield block"]= "ITEM_MOD_BLOCK_VALUE_SHORT",
-    ["speed"]       = "MSC_WEAPON_SPEED",
-    ["dps"]         = "MSC_WEAPON_DPS",
+    ["speed"]        = "MSC_WEAPON_SPEED",
+    ["dps"]          = "MSC_WEAPON_DPS",
     ["damage per second"] = "MSC_WEAPON_DPS",
     
     -- [[ RESISTANCES ]]
@@ -29,12 +29,12 @@ MSC.Scanner.BaseStatMap = {
     ["nature resistance"] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
     
     -- [[ OFFENSIVE / SPELL ]]
-    ["attack power"]       = "ITEM_MOD_ATTACK_POWER_SHORT", 
+    ["attack power"]        = "ITEM_MOD_ATTACK_POWER_SHORT", 
     ["feral attack power"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
-    ["healing spells"]     = "ITEM_MOD_HEALING_POWER_SHORT",
-    ["healing"]            = "ITEM_MOD_HEALING_POWER_SHORT",
-    ["spell damage"]       = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["spell power"]        = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["healing spells"]      = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["healing"]             = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["spell damage"]        = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["spell power"]         = "ITEM_MOD_SPELL_POWER_SHORT",
     
     -- [[ SCHOOL DAMAGE ]]
     ["shadow damage"]  = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
@@ -44,14 +44,14 @@ MSC.Scanner.BaseStatMap = {
     ["nature damage"]  = "ITEM_MOD_NATURE_DAMAGE_SHORT",
     ["holy damage"]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     
-	-- "Spell Damage" Variants (Crucial for TBC Random Enchants)
+    -- "Spell Damage" Variants (Crucial for TBC Random Enchants)
     ["shadow spell damage"]  = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
     ["fire spell damage"]    = "ITEM_MOD_FIRE_DAMAGE_SHORT",
     ["frost spell damage"]   = "ITEM_MOD_FROST_DAMAGE_SHORT",
     ["arcane spell damage"]  = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
     ["nature spell damage"]  = "ITEM_MOD_NATURE_DAMAGE_SHORT",
     ["holy spell damage"]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
-	
+    
     -- [[ RESOURCES ]]
     ["mana"]   = "ITEM_MOD_MANA_SHORT",
     ["health"] = "ITEM_MOD_HEALTH_SHORT",
@@ -192,8 +192,8 @@ MSC.Scanner.EquipPatterns = {
     -- [[ 1. LAZY / SHORT FORM (Top Priority) ]]
     -- ========================================================================
     -- Catches: "+10 Agility", "+1% Hit", "Equip: +4 Mana Regen"
-	-- The %s* allows for invisible spaces like "+ 10 Agility"
-	{ p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
+    -- The %s* allows for invisible spaces like "+ 10 Agility"
+    { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
     { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
 
     -- ========================================================================
@@ -207,20 +207,20 @@ MSC.Scanner.EquipPatterns = {
     -- "Restores" doesn't match "Increases", so these are required.
     { p = "Restores (%d+) (mana per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
     { p = "Restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
-	{ p = "Restores (%d+) (.*) every ([%d%.]+) sec", 
+    { p = "Restores (%d+) (.*) every ([%d%.]+) sec", 
     func = function(match1, match2, match3, outputStats)
-			local key = (match2:find("health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
-						or "ITEM_MOD_MANA_REGENERATION_SHORT"
-			-- Normalization math: (Value / Interval) * 5
-			local val = tonumber(match1)
-			local interval = tonumber(match3)
-			if val and interval then
-				local normalizedValue = (val / interval) * 5
-				outputStats[key] = (outputStats[key] or 0) + normalizedValue
-			end
-		end 
-	},
-	{ p = "Restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+            local key = (match2:find("health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
+                        or "ITEM_MOD_MANA_REGENERATION_SHORT"
+            -- Normalization math: (Value / Interval) * 5
+            local val = tonumber(match1)
+            local interval = tonumber(match3)
+            if val and interval then
+                local normalizedValue = (val / interval) * 5
+                outputStats[key] = (outputStats[key] or 0) + normalizedValue
+            end
+        end 
+    },
+    { p = "Restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
     
     -- [[ ARPEN & THREAT ]]
     { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
@@ -236,6 +236,7 @@ MSC.Scanner.EquipPatterns = {
     -- Era "Up to" (Healing/Spell Power)
     { p = "Increases (.*) by up to (%d+)%.?", valIdx = 2, nameIdx = 1 },
     { p = "^Damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+    { p = "Damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
     
     -- "Improves" (TBC Variation)
     { p = "Improves your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1 }, -- Percentages
@@ -339,7 +340,7 @@ MSC.Scanner.UsePatterns = {
 
 local function CreateItemObject()
     return {
-        Stats = {}, UseEffects = {}, Procs = {},         
+        Stats = {}, UseEffects = {}, Procs = {},          
         Meta = { SetName = nil, SetCount = 0, Sockets = {}, SocketBonusActive = false }
     }
 end
@@ -411,8 +412,8 @@ end
 function MSC.Scanner.ParseStatLine(text, outputTable)
     if not text then return end
     
-    -- Strip color codes to handle white text that might be wrapped in color tags
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    -- [[ FIX: ADDED \n STRIP (Essential for wrapping) ]]
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " ")
     
     for _, pat in ipairs(MSC.Scanner.StatPatterns) do
         local match1, match2 = cleanText:match(pat.p)
@@ -433,10 +434,10 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
             
             if rawName then
                 -- [[ NORMALIZATION ]]
-                -- 1. Remove "to " prefix (e.g. "+30 to Healing" -> "Healing")
+                -- 1. Remove "to " prefix
                 -- 2. Lowercase all text
-                -- 3. Trim extra whitespace
-                local cleanName = rawName:lower():gsub("^to%s+", ""):match("^%s*(.-)%s*$")
+                -- 3. Trim extra whitespace AND collapse internal double spaces
+                local cleanName = rawName:lower():gsub("^to%s+", ""):gsub("%s+", " "):match("^%s*(.-)%s*$")
                 
                 local key = MSC.Scanner.BaseStatMap[cleanName]
                 
@@ -453,7 +454,8 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
 end
 
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("^Equip: ", "")
+    -- [[ FIX: Replace \n with space so wrapped lines match the Data Map ]]
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("^Equip: ", "")
     
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
         local match1, match2, match3 = cleanText:match(pat.p)
@@ -478,7 +480,8 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
                 local rawName = (pat.valIdx == 1) and match2 or match1
                 
                 if rawName and val then
-                    local cleanName = rawName:lower():match("^%s*(.-)%s*$")
+                    -- [[ FIX: Ensure internal double spaces don't break lookup ]]
+                    local cleanName = rawName:lower():gsub("%s+", " "):match("^%s*(.-)%s*$")
                     local key = MSC.Scanner.TermMap[cleanName]
                     
                     if key then
@@ -494,9 +497,8 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
 end
 
 function MSC.Scanner.ParseProcLine(text, outputProcs)
-    -- [[ FIX: STRIP COLORS FIRST ]]
-    -- We do this first so we don't miss the "Chance on hit:" prefix if it's colored yellow
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    -- [[ FIX: STRIP COLORS & NEWLINES FIRST ]]
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " ")
     
     -- Now remove the prefixes safely
     cleanText = cleanText:gsub("^Chance on hit: ", ""):gsub("^Equip: Chance on hit: ", "")
@@ -517,7 +519,6 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
                 
             elseif pat.valIdx then
                 -- This handles "Increases X by Y..."
-                -- Without the color strip, 'match1' (the name) would contain |cffff...|r
                 procObj.type = "Stat"
                 procObj.val = tonumber(match2)
                 procObj.duration = tonumber(match3)
@@ -535,8 +536,8 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
 end
 
 function MSC.Scanner.ParseUseLine(text, outputUseTable)
-    -- 1. STRIP COLORS (Essential!)
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("^Use: ", "")
+    -- [[ FIX: STRIP COLORS & NEWLINES (Essential!) ]]
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("^Use: ", "")
     
     local cooldown = ParseCooldown(text)
     
@@ -556,9 +557,8 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                 if pat.fixedStat then 
                     effect.statKey = pat.fixedStat
                 elseif name then
-                    -- [[ FIX: REMOVE 'YOUR' FROM STAT NAME ]]
-                    -- Turns "your Spell Power" into "Spell Power" so the lookup works
-                    local cleanName = name:lower():gsub("your ", ""):match("^%s*(.-)%s*$")
+                    -- [[ FIX: REMOVE 'YOUR' + DOUBLE SPACE CHECK ]]
+                    local cleanName = name:lower():gsub("your ", ""):gsub("%s+", " "):match("^%s*(.-)%s*$")
                     
                     effect.statKey = MSC.Scanner.TermMap[cleanName]
                     effect.statName = name 
@@ -585,13 +585,6 @@ end
 function MSC.Scanner.ParseSetLine(text, r, g, b, metaTable, outputStats)
     local setName, current, total = text:match("^(.*) %((%d+)/(%d+)%)$")
     if setName then metaTable.SetName = setName; metaTable.SetCount = tonumber(current); return end
-   --[[ local required = text:match("^%((%d+)%) Set:")
-    if required then
-        if g > 0.8 and r < 0.6 then 
-            local cleanEffect = text:gsub("^%((%d+)%) Set: ", "")
-            MSC.Scanner.ParseEquipLine(cleanEffect, outputStats, {})
-        end
-    end--]]
 end
 
 -- =============================================================

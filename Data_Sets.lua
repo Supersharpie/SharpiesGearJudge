@@ -226,6 +226,7 @@ if not MSC.IsEra then
     
     -- TBC ITEM SET DEFINITIONS
     local tbcSets = {
+        -- CRAFTED (Tailoring/Leatherworking/Blacksmithing)
         [559] = { {24266, 24262} }, -- Spellstrike
         [571] = { {24264, 24261} }, -- Whitemend
         [572] = { {24267, 24263} }, -- Battlecast
@@ -235,120 +236,337 @@ if not MSC.IsEra then
         [552] = { {21848, 21847, 21846} }, -- Wrath of Spellfire
         [553] = { {21869, 21871, 21870} }, -- Shadow's Embrace
         [554] = { {21874, 21875, 21873} }, -- Primal Mooncloth
-        -- D3
-        [650] = { {28275, 27801, 28228, 27474, 27874} }, -- Beast Lord
-        [653] = { {28350, 27803, 28205, 27475, 27977} }, -- Bold Armor
-        [660] = { {28192, 27713, 28401, 27528, 27936} }, -- Desolation
-        [659] = { {28224, 27797, 28264, 27531, 27837} }, -- Wastewalker
-        [658] = { {28193, 27796, 28191, 27465, 27907} }, -- Mana-Etched
-        [662] = { {28413, 27775, 28230, 27536, 27875} }, -- Hallowed
-        [644] = { {28415, 27778, 28232, 27537, 27948} }, -- Oblivion
-        [620] = { {28414, 27776, 28204, 27509, 27908} }, -- Assassination
-        [630] = { {28349, 27802, 28231, 27510, 27909} }, -- Tidefury
-        [647] = { {28278, 27738, 28229, 27508, 27838} }, -- Incanter's
-        [637] = { {28348, 27737, 28202, 27468, 27873} }, -- Moonglade
-        -- T4
-        [655] = { {29021, 29023, 29019, 29020, 29022} }, [654] = { {29011, 29016, 29012, 29017, 29015} }, 
-        [624] = { {29061, 29064, 29062, 29065, 29063} }, [625] = { {29068, 29070, 29066, 29067, 29069} }, 
-        [626] = { {29073, 29075, 29071, 29072, 29074} }, [651] = { {29081, 29084, 29082, 29085, 29083} }, 
-        [621] = { {29044, 29047, 29045, 29048, 29046} }, [640] = { {29098, 29100, 29096, 29097, 29099} }, 
-        [638] = { {29086, 29089, 29087, 29090, 29088} }, [639] = { {29093, 29095, 29091, 29092, 29094} }, 
-        [633] = { {29040, 29043, 29038, 29039, 29042} }, [632] = { {29035, 29037, 29033, 29034, 29036} }, 
-        [631] = { {29028, 29031, 29029, 29032, 29030} }, [648] = { {29076, 29079, 29077, 29080, 29078} }, 
-        [645] = { {28963, 28967, 28964, 28968, 28966} }, [663] = { {29049, 29054, 29050, 29055, 29053} }, 
-        [664] = { {29058, 29060, 29056, 29057, 29059} }, 
-        -- T5
-        [656] = { {30115, 30117, 30113, 30114, 30116} }, [657] = { {30120, 30122, 30118, 30119, 30121} },
-        [627] = { {30136, 30138, 30134, 30135, 30137} }, [628] = { {30125, 30127, 30123, 30124, 30126} },
-        [629] = { {30131, 30133, 30129, 30130, 30132} }, [652] = { {30141, 30143, 30139, 30140, 30142} },
-        [622] = { {30146, 30149, 30144, 30145, 30148} }, [641] = { {30228, 30230, 30222, 30223, 30229} },
-        [649] = { {30206, 30210, 30196, 30205, 30207} }, [646] = { {30212, 30215, 30214, 30211, 30213} },
-        [665] = { {30152, 30154, 30150, 30151, 30153} }, [666] = { {30161, 30163, 30159, 30160, 30162} },
-        [634] = { {30166, 30168, 30164, 30165, 30167} },
-        -- T6
-        [672] = { {30972, 30979, 30975, 34441, 30969} }, [673] = { {30974, 30980, 30976, 34442, 30970} },
-        [679] = { {30987, 30998, 30991, 34433, 30985} }, [681] = { {30988, 30996, 30992, 34432, 30983} },
-        [669] = { {31003, 31006, 31004, 34443, 31001} }, [668] = { {31027, 31030, 31028, 34448, 31026} },
-        [676] = { {31039, 31048, 31042, 34444, 31034} }, [671] = { {31056, 31059, 31057, 34447, 31055} },
-        [670] = { {31051, 31054, 31052, 34436, 31050} }, [675] = { {31063, 31069, 31066, 34435, 31060} },
-        [682] = { {31015, 31024, 31018, 34439, 31011} },
-        -- Legendary
-        [699] = { {32837, 32838} }, 
-        -- S1 Arena
-        [700] = { {28331,28334,28332,28335,28333} }, [701] = { {28336,28339,28337,28340,28338} },
-        [702] = { {28341,28344,28342,28345,28343} }, [703] = { {28346,28349,28347,28350,28348} },
-        [704] = { {28351,28354,28352,28355,28353} }, [705] = { {28356,28359,28357,28360,28358} },
-        [706] = { {28361,28364,28362,28365,28363} }, [707] = { {28366,28369,28367,28370,28368} },
-        [708] = { {28371,28374,28372,28375,28373} }, [709] = { {31580,31584,31581,31588,31582} },
-        [710] = { {31590,31594,31591,31598,31592} }, [711] = { {31600,31604,31601,31608,31602} },
-        [712] = { {31610,31614,31611,31618,31612} }, [713] = { {31620,31624,31621,31628,31622} },
-        -- S2 Arena
-        [720] = { {31973,31976,31974,31977,31975} }, [721] = { {31988,31996,31991,31997,31994} },
-        [722] = { {31960,31965,31961,31966,31963} }, [723] = { {31998,32002,31999,32003,32000} },
-        [724] = { {31978,31986,31981,31987,31984} }, [725] = { {31967,31971,31968,31972,31969} },
-        [726] = { {32047,32051,32048,32052,32049} }, [727] = { {32054,32058,32055,32059,32056} },
-        [728] = { {32033,32037,32034,32038,32035} }, [729] = { {32040,32045,32041,32046,32043} },
-        [730] = { {32019,32024,32020,32025,32022} }, [731] = { {32012,32017,32013,32018,32015} },
-        [732] = { {32005,32010,32006,32011,32008} }, [733] = { {32026,32031,32027,32032,32029} },
-        [734] = { {32061,32065,32062,32066,32063} },
-        -- S3 Arena
-        [740] = { {33665,33668,33666,33669,33667} }, [741] = { {33671,33674,33672,33675,33673} },
-        [742] = { {33677,33680,33678,33681,33679} }, [743] = { {33683,33686,33684,33687,33685} },
-        [744] = { {33689,33692,33690,33693,33691} }, [745] = { {33695,33698,33696,33699,33697} },
-        [746] = { {33701,33704,33702,33705,33703} }, [747] = { {33719,33722,33720,33723,33721} },
-        [748] = { {33707,33710,33708,33711,33709} }, [749] = { {33713,33716,33714,33717,33715} },
-        [750] = { {33725,33728,33726,33729,33727} }, [751] = { {33731,33734,33732,33735,33733} },
-        [752] = { {33737,33740,33738,33741,33739} }, [753] = { {33743,33746,33744,33747,33745} },
-        [754] = { {33758,33761,33759,33762,33760} }, [755] = { {33749,33752,33750,33753,33751} },
+        [567] = { {23564, 23565, 23563, 23566, 23561, 23562, 23559, 23560} }, -- Khorium Ward (Tank)
+        [568] = { {23554, 23555, 23556, 23553, 23551, 23552, 23550, 23549} }, -- Faith in Felsteel (Heal/Tank)
+        [570] = { {23574, 23576, 23575, 23577, 23572, 23573, 23571, 23570} }, -- Burning Rage (Melee)
+
+        -- DUNGEON SET 3 (Bold = Tank, Desolation = Melee, etc.)
+        [650] = { {28275, 27801, 28228, 27474, 27874} }, -- Beast Lord (Hunter)
+        [653] = { {28350, 27803, 28205, 27475, 27977} }, -- Bold Armor (Plate Tank)
+        [660] = { {28192, 27713, 28401, 27528, 27936} }, -- Desolation (Plate DPS)
+        [659] = { {28224, 27797, 28264, 27531, 27837} }, -- Wastewalker (Rogue/Druid)
+        [658] = { {28193, 27796, 28191, 27465, 27907} }, -- Mana-Etched (Mage/Lock)
+        [662] = { {28413, 27775, 28230, 27536, 27875} }, -- Hallowed (Priest Heal)
+        [644] = { {28415, 27778, 28232, 27537, 27948} }, -- Oblivion (Warlock/Shadow Priest)
+        [620] = { {28414, 27776, 28204, 27509, 27908} }, -- Assassination (Rogue)
+        [630] = { {28349, 27802, 28231, 27510, 27909} }, -- Tidefury (Shaman)
+        [647] = { {28278, 27738, 28229, 27508, 27838} }, -- Incanter's (Mage)
+        [637] = { {28348, 27737, 28202, 27468, 27873} }, -- Moonglade (Druid)
+        [661] = { {27712, 27910, 28194, 28226, 27489} }, -- Doomplate (Warrior)
+        [623] = { {27748, 27986, 28203, 28340, 27539} }, -- Righteous (Paladin)
+
+        -- TIER 4
+        [655] = { {29021, 29023, 29019, 29020, 29022} }, -- Warbringer (DPS)
+        [654] = { {29011, 29016, 29012, 29017, 29015} }, -- Warbringer (Tank)
+        [624] = { {29061, 29064, 29062, 29065, 29063} }, -- Justicar (Tank)
+        [625] = { {29068, 29070, 29066, 29067, 29069} }, -- Justicar (Heal)
+        [626] = { {29073, 29075, 29071, 29072, 29074} }, -- Justicar (Ret)
+        [651] = { {29081, 29084, 29082, 29085, 29083} }, -- Demon Stalker (Hunter)
+        [621] = { {29044, 29047, 29045, 29048, 29046} }, -- Netherblade (Rogue)
+        [640] = { {29098, 29100, 29096, 29097, 29099} }, -- Malorne (Feral)
+        [638] = { {29086, 29089, 29087, 29090, 29088} }, -- Malorne (Boomkin)
+        [641] = { {29093, 29095, 29091, 29092, 29094} }, -- Malorne (Resto) -- *Corrected ID from previous map*
+        [639] = { {29038, 29039, 29040, 29042, 29043} }, -- Cyclone (Enhance) -- *Corrected ID*
+        [633] = { {29028, 29031, 29029, 29032, 29030} }, -- Cyclone (Ele)
+        [632] = { {29033, 29034, 29035, 29036, 29037} }, -- Cyclone (Resto)
+        [648] = { {29076, 29079, 29077, 29080, 29078} }, -- Aldor (Mage)
+        [645] = { {28963, 28967, 28964, 28968, 28966} }, -- Voidheart (Warlock)
+        [663] = { {29049, 29054, 29050, 29055, 29053} }, -- Incarnate (Shadow)
+        [664] = { {29058, 29060, 29056, 29057, 29059} }, -- Incarnate (Heal)
+
+        -- TIER 5
+        [656] = { {30115, 30117, 30113, 30114, 30116} }, -- Destroyer (DPS)
+        [657] = { {30120, 30122, 30118, 30119, 30121} }, -- Destroyer (Tank)
+        [627] = { {30136, 30138, 30134, 30135, 30137} }, -- Crystalforge (Ret)
+        [628] = { {30125, 30127, 30123, 30124, 30126} }, -- Crystalforge (Tank)
+        [629] = { {30131, 30133, 30129, 30130, 30132} }, -- Crystalforge (Heal)
+        [652] = { {30141, 30143, 30139, 30140, 30142} }, -- Rift Stalker
+        [622] = { {30146, 30149, 30144, 30145, 30148} }, -- Deathmantle
+        [641] = { {30228, 30230, 30222, 30223, 30229} }, -- Nordrassil (Resto)
+        [642] = { {30216, 30217, 30219, 30220, 30221} }, -- Nordrassil (Feral)
+        [643] = { {30231, 30232, 30233, 30234, 30235} }, -- Nordrassil (Balance)
+        [649] = { {30206, 30210, 30196, 30205, 30207} }, -- Tirisfal (Mage)
+        [646] = { {30212, 30215, 30214, 30211, 30213} }, -- Corruptor (Warlock)
+        [665] = { {30152, 30154, 30150, 30151, 30153} }, -- Avatar (Heal)
+        [666] = { {30161, 30163, 30159, 30160, 30162} }, -- Avatar (Shadow)
+        [634] = { {30166, 30168, 30164, 30165, 30167} }, -- Cataclysm (Ele)
+        [635] = { {30185, 30189, 30190, 30192, 30194} }, -- Cataclysm (Enh)
+        [636] = { {30171, 30172, 30173, 30169, 30170} }, -- Cataclysm (Resto)
+
+        -- TIER 6
+        [672] = { {30972, 30979, 30975, 34441, 30969, 34560, 34543, 34441} }, -- Onslaught (DPS)
+        [673] = { {30974, 30980, 30976, 34442, 30970, 34561, 34544, 34442} }, -- Onslaught (Tank)
+        [679] = { {30987, 30998, 30991, 34433, 30985, 34564, 34529, 34433} }, -- Lightbringer (Heal)
+        [681] = { {30988, 30996, 30992, 34432, 30983, 34565, 34530, 34432} }, -- Lightbringer (Ret)
+        [680] = { {30990, 30995, 30997, 34431, 30989, 34566, 34528, 34431} }, -- Lightbringer (Tank)
+        [669] = { {31003, 31006, 31004, 34443, 31001, 34549, 34570, 34443} }, -- Gronnstalker
+        [668] = { {31027, 31030, 31028, 34448, 31026, 34558, 34575, 34448} }, -- Slayer
+        [676] = { {31039, 31048, 31042, 34444, 31034, 34556, 34573, 34444} }, -- Thunderheart (Feral)
+        [677] = { {31040, 31046, 31049, 34446, 31037, 34554, 34571, 34446} }, -- Thunderheart (Resto)
+        [678] = { {31035, 31041, 31045, 34445, 31043, 34555, 34572, 34445} }, -- Thunderheart (Balance)
+        [671] = { {31056, 31059, 31057, 34447, 31055, 34557, 34574, 34447} }, -- Tempest (Mage)
+        [670] = { {31051, 31054, 31052, 34436, 31050, 34563, 34528, 34436} }, -- Malefic (Warlock)
+        [675] = { {31063, 31069, 31066, 34435, 31060, 34559, 34527, 34435} }, -- Absolution (Heal)
+        [674] = { {31061, 31064, 31065, 34434, 31067, 34562, 34526, 34434} }, -- Absolution (Shadow)
+        [682] = { {31015, 31024, 31018, 34439, 31011, 34546, 34567, 34439} }, -- Skyshatter (Ele)
+        [683] = { {31012, 31019, 31022, 34437, 31014, 34547, 34568, 34437} }, -- Skyshatter (Enh)
+        [684] = { {31016, 31020, 31023, 34438, 31017, 34545, 34569, 34438} }, -- Skyshatter (Resto)
+
+        -- LEGENDARY
+        [699] = { {32837, 32838} }, -- Warglaives of Azzinoth
+
+        -- ARENA S1 (Gladiator)
+        [700] = { {28331,28334,28332,28335,28333} }, -- War
+        [701] = { {28336,28339,28337,28340,28338} }, -- Lock
+        [702] = { {28341,28344,28342,28345,28343} }, -- Rogue
+        [703] = { {28346,28349,28347,28350,28348} }, -- Shaman (Ele)
+        [704] = { {28351,28354,28352,28355,28353} }, -- Shaman (Res)
+        [705] = { {28356,28359,28357,28360,28358} }, -- Shaman (Enh)
+        [706] = { {28361,28364,28362,28365,28363} }, -- Mage
+        [707] = { {28366,28369,28367,28370,28368} }, -- Priest (Heal)
+        [708] = { {28371,28374,28372,28375,28373} }, -- Priest (Shadow)
+        [709] = { {31580,31584,31581,31588,31582} }, -- Druid (Bal)
+        [710] = { {31590,31594,31591,31598,31592} }, -- Druid (Feral)
+        [711] = { {31600,31604,31601,31608,31602} }, -- Druid (Resto)
+        [712] = { {31610,31614,31611,31618,31612} }, -- Paladin (Holy)
+        [713] = { {31620,31624,31621,31628,31622} }, -- Paladin (Ret)
+        [714] = { {31630,31634,31631,31638,31632} }, -- Hunter
+        -- ARENA S2 (Merciless)
+        [720] = { {31973,31976,31974,31977,31975} }, -- War
+        [721] = { {31988,31996,31991,31997,31994} }, -- Lock
+        [722] = { {31960,31965,31961,31966,31963} }, -- Rogue
+        [723] = { {31998,32002,31999,32003,32000} }, -- Hunter
+        [724] = { {31978,31986,31981,31987,31984} }, -- Shaman (Ele)
+        [725] = { {31967,31971,31968,31972,31969} }, -- Shaman (Enh)
+        [726] = { {32047,32051,32048,32052,32049} }, -- Mage
+        [727] = { {32054,32058,32055,32059,32056} }, -- Priest (Shadow)
+        [728] = { {32033,32037,32034,32038,32035} }, -- Priest (Heal)
+        [729] = { {32040,32045,32041,32046,32043} }, -- Druid (Bal)
+        [730] = { {32019,32024,32020,32025,32022} }, -- Druid (Feral)
+        [731] = { {32012,32017,32013,32018,32015} }, -- Druid (Resto)
+        [732] = { {32005,32010,32006,32011,32008} }, -- Paladin (Holy)
+        [733] = { {32026,32031,32027,32032,32029} }, -- Paladin (Ret)
+        [734] = { {32061,32065,32062,32066,32063} }, -- Shaman (Resto)
+
+        -- ARENA S3 (Vengeful)
+        [740] = { {33665,33668,33666,33669,33667} }, -- War
+        [741] = { {33671,33674,33672,33675,33673} }, -- Lock
+        [742] = { {33677,33680,33678,33681,33679} }, -- Rogue
+        [743] = { {33683,33686,33684,33687,33685} }, -- Hunter
+        [744] = { {33689,33692,33690,33693,33691} }, -- Shaman (Ele)
+        [745] = { {33695,33698,33696,33699,33697} }, -- Shaman (Enh)
+        [746] = { {33701,33704,33702,33705,33703} }, -- Mage
+        [747] = { {33719,33722,33720,33723,33721} }, -- Priest (Shadow)
+        [748] = { {33707,33710,33708,33711,33709} }, -- Priest (Heal)
+        [749] = { {33713,33716,33714,33717,33715} }, -- Druid (Bal)
+        [750] = { {33725,33728,33726,33729,33727} }, -- Druid (Feral)
+        [751] = { {33731,33734,33732,33735,33733} }, -- Druid (Resto)
+        [752] = { {33737,33740,33738,33741,33739} }, -- Paladin (Holy)
+        [753] = { {33743,33746,33744,33747,33745} }, -- Paladin (Ret)
+        [754] = { {33758,33761,33759,33762,33760} }, -- Shaman (Resto)
+
+        -- ARENA S4 (Brutal Gladiator - Phase 5)
+        [762] = { {35066,35067,35068,35069,35070} }, -- War
+        [763] = { {35047,35048,35049,35050,35051} }, -- Rogue
+        [764] = { {35032,35033,35034,35035,35036} }, -- Hunter
+        [765] = { {35080,35081,35082,35083,35084} }, -- Paladin (Holy)
+        [766] = { {35085,35086,35087,35088,35089} }, -- Paladin (Ret)
+        [767] = { {35090,35091,35092,35093,35094} }, -- Paladin (Shock)
+        [768] = { {35098,35099,35100,35101,35102} }, -- Shaman (Ele)
+        [769] = { {35103,35104,35105,35106,35107} }, -- Shaman (Enh)
+        [770] = { {35108,35109,35110,35111,35112} }, -- Shaman (Resto)
+        [771] = { {35071,35072,35073,35074,35075} }, -- Mage
+        [772] = { {35076,35077,35078,35079,35107} }, -- Priest (Heal)
+        [773] = { {35129,35130,35131,35132,35133} }, -- Priest (Shadow)
+        [774] = { {35118,35119,35120,35121,35122} }, -- Warlock
+        [775] = { {35113,35114,35115,35116,35117} }, -- Druid (Bal)
+        [776] = { {35124,35125,35126,35127,35128} }, -- Druid (Feral)
+        [777] = { {35134,35135,35136,35137,35138} }, -- Druid (Resto)
+		
+		-- NICHE SETS
+        [667] = { {32946, 32945} }, -- The Fists of Fury (Hyjal Trash Claws)
+        [616] = { {31749, 31750} }, -- The Twin Stars (Mana Tombs Rings)
+        [615] = { {28189, 27901} }, -- Latro's Flurry (D3 Swords)
+		
+		-- [[ LEVEL 70 HONOR SETS (RARE QUALITY) ]]
+        -- These are the "Blue" PvP sets (Grand Marshal / High Warlord at Lvl 70)
+        
+        -- WARRIOR (Plate)
+        [580] = { {28699, 28700, 28701, 28702, 28703} }, -- Alliance (GM)
+        [581] = { {28853, 28854, 28855, 28856, 28857} }, -- Horde (HWL)
+        
+        -- ROGUE (Leather)
+        [582] = { {28704, 28705, 28706, 28707, 28708} }, -- Alliance
+        [583] = { {28858, 28859, 28860, 28861, 28862} }, -- Horde
+        
+        -- HUNTER (Chain)
+        [584] = { {28694, 28695, 28696, 28697, 28698} }, -- Alliance
+        [585] = { {28848, 28849, 28850, 28851, 28852} }, -- Horde
+        
+        -- MAGE/WARLOCK (Dreadweave)
+        [586] = { {28684, 28685, 28686, 28687, 28688} }, -- Alliance
+        [587] = { {28838, 28839, 28840, 28841, 28842} }, -- Horde
+        
+        -- MAGE/WARLOCK (Silk/Satin)
+        [588] = { {28714, 28715, 28716, 28717, 28718} }, -- Alliance
+        [589] = { {28868, 28869, 28870, 28871, 28872} }, -- Horde
+        
+        -- PRIEST (Mooncloth/Heal)
+        [590] = { {28724, 28725, 28726, 28727, 28728} }, -- Alliance
+        [591] = { {28878, 28879, 28880, 28881, 28882} }, -- Horde
+        
+        -- DRUID (Dragonhide/Feral)
+        [592] = { {28689, 28690, 28691, 28692, 28693} }, -- Alliance
+        [593] = { {28843, 28844, 28845, 28846, 28847} }, -- Horde
+        
+        -- DRUID (Kodohide/Resto)
+        [594] = { {28709, 28710, 28711, 28712, 28713} }, -- Alliance
+        [595] = { {28863, 28864, 28865, 28866, 28867} }, -- Horde
+        
+        -- SHAMAN (Mail/Enhance)
+        [596] = { {28679, 28680, 28681, 28682, 28683} }, -- Alliance
+        [597] = { {28833, 28834, 28835, 28836, 28837} }, -- Horde
+        
+        -- SHAMAN (Mail/Ele)
+        [598] = { {28719, 28720, 28721, 28722, 28723} }, -- Alliance
+        [599] = { {28873, 28874, 28875, 28876, 28877} }, -- Horde
+        
+        -- PALADIN (Plate/Ret)
+        [600] = { {28729, 28730, 28731, 28732, 28733} }, -- Alliance
+        [601] = { {28883, 28884, 28885, 28886, 28887} }, -- Horde
     }
     
     -- TBC SET BONUS SCORES
     local tbcScores = {
-        [559] = { [2] = { stats = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 25 } } },
-        [571] = { [2] = { stats = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 35 } } },
-        [619] = { [3] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40 } } },
-        [552] = { [3] = { stats = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 35 } } },
-        [554] = { [3] = { stats = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 10 } } },
-        [650] = { [2] = { score = 20 }, [4] = { stats = { ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 40 } } },
-        [653] = { [2] = { stats = { ["ITEM_MOD_STRENGTH_SHORT"] = 20 } }, [4] = { score = 40 } },
-        [659] = { [2] = { stats = { ["ITEM_MOD_HIT_RATING_SHORT"] = 35 } }, [4] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30 } } },
-        [658] = { [2] = { stats = { ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 35 } }, [4] = { stats = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 30 } } },
-        [620] = { [2] = { score = 25 }, [4] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 } } },
-        [624] = { [2] = { score=30 }, [4] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=10} } },
-        [625] = { [2] = { score=35 }, [4] = { score=50 } }, [626] = { [2] = { score=25 }, [4] = { score=40 } },
-        [655] = { [2] = { score=30 }, [4] = { score=45 } }, [654] = { [2] = { score=25 }, [4] = { score=50 } },
-        [651] = { [2] = { score=30 }, [4] = { score=60 } }, [621] = { [2] = { score=80 }, [4] = { score=50 } },
-        [645] = { [2] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=35} }, [4] = { score=80 } },
-        [648] = { [2] = { score=15 }, [4] = { stats={["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=35} } },
-        [640] = { [2] = { score=30 }, [4] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} } },
-        [638] = { [2] = { score=20 }, [4] = { score=40 } }, [639] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=8} }, [4] = { score=45 } },
-        [633] = { [2] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} }, [4] = { score=50 } },
-        [632] = { [2] = { score=25 }, [4] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=40} } },
-        [652] = { [2] = { score=50 }, [4] = { stats={["ITEM_MOD_CRIT_RATING_SHORT"]=35} } },
-        [622] = { [2] = { score=60 }, [4] = { score=40 } }, [649] = { [2] = { score=50 }, [4] = { stats={["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=70} } },
-        [646] = { [2] = { score=60 }, [4] = { score=55 } }, [669] = { [2] = { score=40 }, [4] = { score=120 } },
-        [668] = { [2] = { score=50 }, [4] = { score=100 } }, [672] = { [2] = { score=40 }, [4] = { score=80 } },
-        [673] = { [2] = { score=45 }, [4] = { score=110 } }, [670] = { [2] = { score=50 }, [4] = { score=130 } },
-        [671] = { [2] = { score=40 }, [4] = { score=125 } }, [681] = { [2] = { score=35 }, [4] = { score=120 } },
-        [676] = { [2] = { score=50 }, [4] = { score=110 } }, [699] = { [2] = { score=500 } },
+	-- CRAFTED
+        [559] = { [2] = { stats = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 25 } } }, -- Spellstrike
+        [571] = { [2] = { stats = { ["ITEM_MOD_HEALING_POWER_SHORT"] = 35 } } }, -- Whitemend
+        [619] = { [3] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 40 } } }, -- Primalstrike
+        [552] = { [3] = { stats = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 35 } } }, -- Spellfire (Fire/Arcane)
+        [554] = { [3] = { stats = { ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 10 } } }, -- Primal Mooncloth
+        [570] = { [2] = { score = 20 } }, -- Burning Rage
+
+        -- DUNGEON SET 3
+        [650] = { [2] = { score = 20 }, [4] = { stats = { ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 40 } } }, -- Beast Lord
+        [653] = { [2] = { stats = { ["ITEM_MOD_STRENGTH_SHORT"] = 20 } }, [4] = { score = 40 } }, -- Bold
+        [659] = { [2] = { stats = { ["ITEM_MOD_HIT_RATING_SHORT"] = 35 } }, [4] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 30 } } }, -- Wastewalker
+        [658] = { [2] = { stats = { ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 35 } }, [4] = { stats = { ["ITEM_MOD_SPELL_POWER_SHORT"] = 30 } } }, -- Mana-Etched
+        [620] = { [2] = { score = 25 }, [4] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"] = 20 } } }, -- Assassination
+        [624] = { [2] = { score=30 }, [4] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=10} } }, -- Justicar Tank
+        [660] = { [2] = { stats={["ITEM_MOD_HIT_RATING_SHORT"]=35} }, [4] = { stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20} } }, -- Desolation
+        [662] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=15} }, [4] = { score=35 } }, -- Hallowed
+        [644] = { [2] = { stats={["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=35} }, [4] = { score=40 } }, -- Oblivion
+        [630] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=15} }, [4] = { score=40 } }, -- Tidefury
+        [647] = { [2] = { score=20 }, [4] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25} } }, -- Incanter
+        [637] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=15} }, [4] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=20} } }, -- Moonglade
+
+        -- TIER 4
+        [655] = { [2] = { score=30 }, [4] = { score=45 } }, -- Warbringer DPS
+        [654] = { [2] = { score=25 }, [4] = { score=50 } }, -- Warbringer Tank
+        [625] = { [2] = { score=35 }, [4] = { score=50 } }, -- Justicar Heal
+        [626] = { [2] = { score=25 }, [4] = { score=40 } }, -- Justicar Ret
+        [651] = { [2] = { score=30 }, [4] = { score=60 } }, -- Demon Stalker
+        [621] = { [2] = { score=80 }, [4] = { score=50 } }, -- Netherblade
+        [645] = { [2] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=35} }, [4] = { score=80 } }, -- Voidheart
+        [648] = { [2] = { score=15 }, [4] = { stats={["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=35} } }, -- Aldor
+        [640] = { [2] = { score=30 }, [4] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} } }, -- Malorne Feral
+        [638] = { [2] = { score=20 }, [4] = { score=40 } }, -- Malorne Balance
+        [639] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=8} }, [4] = { score=45 } }, -- Cyclone Enh
+        [633] = { [2] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} }, [4] = { score=50 } }, -- Cyclone Ele
+        [632] = { [2] = { score=25 }, [4] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=40} } }, -- Cyclone Resto
+        [663] = { [2] = { score=25 }, [4] = { score=40 } }, -- Incarnate Shadow
+        [664] = { [2] = { score=25 }, [4] = { score=40 } }, -- Incarnate Heal
+
+        -- TIER 5
+        [652] = { [2] = { score=50 }, [4] = { stats={["ITEM_MOD_CRIT_RATING_SHORT"]=35} } }, -- Rift Stalker
+        [622] = { [2] = { score=60 }, [4] = { score=40 } }, -- Deathmantle
+        [649] = { [2] = { score=50 }, [4] = { stats={["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=70} } }, -- Tirisfal
+        [646] = { [2] = { score=60 }, [4] = { score=55 } }, -- Corruptor
+        [656] = { [2] = { score=40 }, [4] = { stats={["ITEM_MOD_HASTE_RATING_SHORT"]=50} } }, -- Destroyer DPS
+        [657] = { [2] = { score=40 }, [4] = { score=60 } }, -- Destroyer Tank
+        [627] = { [2] = { score=30 }, [4] = { score=50 } }, -- Crystalforge Ret
+        [628] = { [2] = { score=40 }, [4] = { score=60 } }, -- Crystalforge Tank
+        [642] = { [2] = { score=30 }, [4] = { score=50 } }, -- Nordrassil Feral
+        [635] = { [2] = { score=30 }, [4] = { score=50 } }, -- Cataclysm Enh
+
+        -- TIER 6
+        [669] = { [2] = { score=40 }, [4] = { score=120 } }, -- Gronnstalker
+        [668] = { [2] = { score=50 }, [4] = { score=100 } }, -- Slayer
+        [672] = { [2] = { score=40 }, [4] = { score=80 } }, -- Onslaught DPS
+        [673] = { [2] = { score=45 }, [4] = { score=110 } }, -- Onslaught Tank
+        [670] = { [2] = { score=50 }, [4] = { score=130 } }, -- Malefic
+        [671] = { [2] = { score=40 }, [4] = { score=125 } }, -- Tempest
+        [681] = { [2] = { score=35 }, [4] = { score=120 } }, -- Lightbringer Ret
+        [676] = { [2] = { score=50 }, [4] = { score=110 } }, -- Thunderheart Feral
+        [683] = { [2] = { score=45 }, [4] = { score=90 } }, -- Skyshatter Enh
+
+        -- LEGENDARY
+        [699] = { [2] = { score=500 } }, -- Warglaives (Haste Proc)
+
+        -- PVP ARENA S1-S4 (Resilience & Stat Boosts)
+        -- General Rule: 2pc is Resilience, 4pc is Stat or Spec Specific
         [700] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20}} },
         [703] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} },
         [702] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} },
         [706] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} },
         [707] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} },
         [704] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_HEALING_POWER_SHORT"]=40}} },
-        [720] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=40} },
-        [723] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} },
-        [726] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} },
-        [727] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} },
-        [729] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
-        [740] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=50} },
-        [743] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} },
-        [746] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} },
-        [747] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} },
-        [755] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=20}} },
-    }
-    
+        [714] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=20} },
+		
+		-- S2 (Merciless) - Approx Values
+        [720] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=40} }, -- War
+        [723] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Hunter
+        [726] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=28}} }, -- Mage
+        [730] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} }, -- Feral
+
+        -- S3 (Vengeful) - Approx Values
+        [740] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=50} }, -- War
+        [743] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=10}} }, -- Hunter
+        [746] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=30}} }, -- Mage
+        [750] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} }, -- Feral
+
+        -- S4 (Brutal) - High Values
+        [762] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={score=60} }, -- War
+        [764] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} }, -- Hunter
+        [771] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=35}} }, -- Mage
+        [763] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20}} }, -- Rogue
+        [774] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=35}} }, -- Warlock
+        [776] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=20}} }, -- Feral
+
+        -- NICHE
+        [667] = { [2] = { score = 40, note="Chance on hit: Haste" } }, -- Fists of Fury
+        [616] = { [2] = { stats = { ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15, ["ITEM_MOD_HIT_RATING_SHORT"]=15 } } }, -- Twin Stars
+        [615] = { [2] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=30 } } }, -- Latro's Flurry
+		
+		-- LEVEL 70 HONOR SETS (GM / HWL)
+        -- Warrior
+        [580] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20}} },
+        [581] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_ATTACK_POWER_SHORT"]=20}} },
+        -- Rogue
+        [582] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} },
+        [583] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} },
+        -- Hunter
+        [584] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} },
+        [585] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_AGILITY_SHORT"]=15}} },
+        -- Mage / Warlock (Dreadweave - Dmg)
+        [586] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} },
+        [587] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} },
+        -- Priest / Mage (Silk - Dmg/Heal)
+        [588] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} },
+        [589] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_POWER_SHORT"]=25}} },
+        -- Priest (Heal)
+        [590] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_HEALING_POWER_SHORT"]=40}} },
+        [591] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_HEALING_POWER_SHORT"]=40}} },
+        -- Druid (Feral)
+        [592] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
+        [593] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
+        -- Shaman (Enh)
+        [596] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
+        [597] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
+        -- Paladin (Ret)
+        [600] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
+        [601] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
+    }    
     -- MERGE TBC DATA
     for id, data in pairs(tbcSets) do MSC.RawSetData[id] = data end
     for id, scores in pairs(tbcScores) do MSC.SetBonusScores[id] = scores end

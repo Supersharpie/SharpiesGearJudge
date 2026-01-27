@@ -413,6 +413,11 @@ MSC.EnchantCandidates_Leveling = {
 if MSC.IsTBC or MSC.IsWrath then
     local GEMS = {
    -- [[ 1. ENDGAME (RARE, EPIC, PVP, & UNIQUE) ]]
+   
+   PRISMATIC = {
+		{ id=22460, stat="ITEM_MOD_RESISTANCE_ALL_SHORT", val=4, name="Void Sphere", colorType="PRISMATIC" },
+	},
+	
     RED = {
         -- Rare (Original)
         { id=24027, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Bold Living Ruby", colorType="RED" },
@@ -641,15 +646,20 @@ if MSC.IsTBC or MSC.IsWrath then
     AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED)
     AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE)
     AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE)
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC) -- Void Sphere fits in Red
 
     AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW)
     AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE)
     AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN)
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC) -- Fits in Yellow
 
     AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE)
     AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE)
     AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN)
-
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC) -- Fits in Blue
+	
+	AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC)
+	
     -- POPULATE LEVELING (Green Gems)
     -- Fixed: Now includes Orange/Purple/Green for leveling sockets
     AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
@@ -693,6 +703,21 @@ end
 -- 4. ITEM OVERRIDES (Manual Stats for "Use" & "Proc" Items)
 -- ============================================================================
 MSC.ItemOverrides = {
+
+-- [[ JEWELCRAFTING FIGURINES ]]
+    -- Living Ruby Serpent (Int + Use SP)
+    [24126] = { ITEM_MOD_INTELLECT_SHORT = 33, ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true }, 
+    -- Talasite Owl (Mana Regen + Use Mana)
+    [24124] = { ITEM_MOD_MANA_REGENERATION_SHORT = 14, ITEM_MOD_MANA_SHORT = 150, estimate = true }, 
+    -- Dawnstone Crab (Dodge + Use Dodge)
+    [24125] = { ITEM_MOD_DODGE_RATING_SHORT = 32, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15, estimate = true },
+    -- Nightseye Panther (Stealth + Use AP)
+    [24128] = { ITEM_MOD_ATTACK_POWER_SHORT = 55, estimate = true }, -- Stealth level is hard to score, valuing the AP use high
+    -- Khorium Boar (Attack Power + Use Pet)
+    [24129] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true }, 
+    -- Felsteel Boar (Lower level version)
+    [24127] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
+	
     -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
     [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
     [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
@@ -848,6 +873,36 @@ MSC.ItemOverrides = {
 	-- Mark of the Champion (Melee) - 150 AP vs Undead/Demon
 	-- Estimated as ~45 AP for general use.
 	[23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
+	
+	-- [[ WEIRD / NICHE ODDS & ENDS ]]
+    -- Eye of Gruul (Healer - Chance on cast to reduce mana cost)
+    -- Valued as roughly 45 MP5 in a raid setting.
+    [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
+
+    -- Romulo's Poison Vial (Kara - Hit + Chance on Hit Nature Dmg)
+    -- The proc is worth ~30 DPS or ~60 AP approx.
+    [31331] = { ITEM_MOD_HIT_RATING_SHORT = 35, ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
+
+    -- Spyglass of the Hidden Fleet (SSC - Hit + Use SP)
+    [30620] = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 40, ITEM_MOD_SPELL_POWER_SHORT = 22, estimate = true },
+
+    -- Skyguard Silver Cross (Rep - Stam + Use Health)
+    -- Good starter tank trinket.
+    [32770] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_HEALTH_SHORT = 100, estimate = true },
+
+    -- Airman's Ribbon of Gallantry (Rep - Crit + Use AP)
+    [32771] = { ITEM_MOD_CRIT_RATING_SHORT = 25, ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
+
+    -- Commander's Badge (Netherwing - Stam + Use Health)
+    [32658] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_HEALTH_SHORT = 150, estimate = true },
+	
+	-- [[ BREWFEST ]]
+    -- Coren's Lucky Coin / Empty Mug of Direbrew (Tanking)
+    -- Blocking gives 59 Block Value / Defense.
+    [38289] = { ITEM_MOD_STAMINA_SHORT = 50, ITEM_MOD_BLOCK_VALUE_SHORT = 20, estimate = true }, 
+    [38288] = { ITEM_MOD_STAMINA_SHORT = 50, ITEM_MOD_BLOCK_VALUE_SHORT = 20, estimate = true },
+    -- Balebrew Charm (Melee DPS)
+    [37128] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
 	
 	}
 
