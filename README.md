@@ -3,23 +3,17 @@
 🚀 New Plugins Now Available!
 Expand your gear judging capabilities with our two newest plugins, designed to help you plan your progression and master your theorycrafting.
 
-📍 [Roadmap Plugin]
+###📍 [Roadmap Plugin]
 Take the guesswork out of your gear progression.
+* **Upgrade Leaderboard: Automatically generates a prioritized list of dungeons based on which ones offer the most significant upgrades for your current set.
+* **Chain Mode: Simulate entire gear acquisition paths to see how your stats evolve as you pick up pieces over time.
+* **Progression Planning: Perfect for mapping out your journey through TBC Anniversary content.
 
-Upgrade Leaderboard: Automatically generates a prioritized list of dungeons based on which ones offer the most significant upgrades for your current set.
-
-Chain Mode: Simulate entire gear acquisition paths to see how your stats evolve as you pick up pieces over time.
-
-Progression Planning: Perfect for mapping out your journey through TBC Anniversary content.
-
-🧪 [Laboratory Plugin (The Lab)]
+###🧪 [Laboratory Plugin (The Lab)]
 The ultimate sandbox for theorycrafters.
-
-Dual-Set Comparator: Side-by-side gear comparison to see exactly how different setups impact your performance.
-
-Easy Importing: Seamlessly import builds from SeventyUpgrades, SimC, and other popular formats.
-
-Theorycrafting Suite: Test "what-if" scenarios without needing to commit to gems or enchants in-game first.
+* **Dual-Set Comparator: Side-by-side gear comparison to see exactly how different setups impact your performance.
+* **Easy Importing: Seamlessly import builds from SeventyUpgrades, SimC, and other popular formats.
+* **Theorycrafting Suite: Test "what-if" scenarios without needing to commit to gems or enchants in-game first.
 
 **The Final Verdict on your gear.**
 
