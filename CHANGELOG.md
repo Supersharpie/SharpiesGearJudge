@@ -1,6 +1,10 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.2.6 Changelog
+## 🚀 v2.2.7 Changelog
+* **Update to files to enable plug-in addons 
+* **Class Backgrounds Returned
+
+## 🚀 v2.2.6
 
 * ** This update itemization, specifically addressing items with "Use" effects, complex procs, and niche mechanics that the automatic scanner cannot naturally value.
 

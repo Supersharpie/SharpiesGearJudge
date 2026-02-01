@@ -1,4 +1,5 @@
 local addonName, MSC = ...
+_G.MSC = MSC 
 
 -- =============================================================
 -- 0. API COMPATIBILITY WRAPPERS
@@ -351,7 +352,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
             if needsOH then
                 if is2HSpec then
                     Scratch_Gear[17] = nil
-                    contextMsg = "|cffff0000(No 2H)|r"
+                    contextMsg = "|cffff0000(Not 2Hander)|r"
                 else
                     local bestBagOH = MSC:GetBestOffHandInBags(weights, specName)
                     if bestBagOH then

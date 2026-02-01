@@ -886,7 +886,11 @@ function MSC.RenderSidebarButtons()
 end
 
 function MSC.ToggleMainMenu()
-    if MSC.MainFrame then if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end return end
+    if MSC.MainFrame then 
+        if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end 
+        return 
+    end
+
     local f = CreateFrame("Frame", "SGJ_MainFrame", UIParent, "BackdropTemplate")
     f:SetSize(650, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
     
@@ -897,35 +901,61 @@ function MSC.ToggleMainMenu()
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing); f:SetFrameStrata("HIGH")
     MSC.CreateModernBorder(f, 1)
     
+    -- Header Logic
     f.Header = CreateFrame("Frame", nil, f); f.Header:SetPoint("TOPLEFT", 70, 0); f.Header:SetPoint("TOPRIGHT", 0, 0); f.Header:SetHeight(60); f.Header:EnableMouse(true)
-    f.Header:SetScript("OnMouseWheel", function(self, delta) local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end; if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur) end)
-    f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8); f.Bg:SetAllPoints(); local _, class = UnitClass("player"); local fixedClass = class:sub(1,1)..class:sub(2):lower()
-    pcall(function() f.Bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga") end)
-    f.Bg:SetTexCoord(0, 1, 0.1, 0.9); f.Bg:SetColorTexture(0.1, 0.1, 0.1, 1) 
-    f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7); f.Overlay:SetAllPoints(); f.Overlay:SetColorTexture(0.08, 0.08, 0.10, 0.90) 
-    f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND"); f.Header.Grad:SetAllPoints(); f.Header.Grad:SetColorTexture(0, 0, 0, 0.5); f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
+    f.Header:SetScript("OnMouseWheel", function(self, delta) 
+        local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end
+        if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur) 
+    end)
+
+    -- [[ BACKGROUND RESTORATION ]]
+    f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8)
+    
+    local _, class = UnitClass("player")
+    local fixedClass = class:sub(1,1):upper() .. class:sub(2):lower()
+    local texPath = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga"
+    
+    f.Bg:SetTexture(texPath)
+    
+    -- INSTEAD OF SetAllPoints, we anchor to the center and use a fixed size 
+    -- or set points that preserve aspect ratio. 
+    -- This keeps the character from looking "wide."
+    f.Bg:SetPoint("CENTER", f, "CENTER", 0, 0)
+    f.Bg:SetSize(512, 512) -- Standard TGA size; adjust if your files are 1024
+    f.Bg:SetAlpha(0.7)      -- Softens the image slightly before the overlay
+    
+    -- Using a cleaner TexCoord (standard 0,1,0,1) to avoid the 10% vertical squish
+    f.Bg:SetTexCoord(0, 1, 0, 1) 
+    
+    -- Overlay (This stays SetAllPoints to ensure the window background is consistent)
+    f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7)
+    f.Overlay:SetAllPoints()
+    f.Overlay:SetColorTexture(0.05, 0.05, 0.07, 0.88)
+
+    -- Header Gradient
+    f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND")
+    f.Header.Grad:SetAllPoints()
+    f.Header.Grad:SetColorTexture(0, 0, 0, 0.5)
+    f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
+
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.6 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.7 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0)
-    f.ScaleHint:SetText("Scroll to Scale")
-    f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
+    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0); f.ScaleHint:SetText("Scroll to Scale"); f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
 
     f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
     f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
     f.Sidebar.Line = f.Sidebar:CreateTexture(nil, "OVERLAY"); f.Sidebar.Line:SetColorTexture(0, 0, 0, 1); f.Sidebar.Line:SetWidth(1); f.Sidebar.Line:SetPoint("TOPRIGHT", 0, 0); f.Sidebar.Line:SetPoint("BOTTOMRIGHT", 0, 0)
     
     f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.MoveHint:SetPoint("BOTTOM", 0, 15)
-    f.MoveHint:SetText("Hold\nto Move")
-    f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
+    f.MoveHint:SetPoint("BOTTOM", 0, 15); f.MoveHint:SetText("Hold\nto Move"); f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
     
     f.Content = CreateFrame("Frame", nil, f); f.Content:SetPoint("TOPLEFT", f.Sidebar, "TOPRIGHT", 0, -60); f.Content:SetPoint("BOTTOMRIGHT", 0, 0)
     MSC.MainFrame = f
     
-    -- [[ INIT ALL VIEWS HERE ]]
+    -- [[ INIT ALL VIEWS ]]
     MSC.InitLabView(f.Content)
     MSC.InitReceiptView(f.Content)
     MSC.InitLogicView(f.Content)

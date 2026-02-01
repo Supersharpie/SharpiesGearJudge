@@ -1,5 +1,5 @@
 local addonName, MSC = ...
-_G[addonName] = MSC
+_G.MSC = MSC 
 
 -- =============================================================
 -- 1. INITIALIZATION & EVENTS
