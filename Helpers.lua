@@ -29,7 +29,7 @@ function MSC.IsItemUsable(itemLink)
         end
     end
 
- -- 2. ARMOR CHECK (Fixed for Level 40 Training)
+    -- 2. ARMOR CHECK (Fixed for Level 40 Training)
     if classID == 4 then 
         local level = UnitLevel("player")
         local maxArmor = 1 -- Cloth (Default)
@@ -233,7 +233,7 @@ function MSC.Round(num, numDecimalPlaces)
 end
 
 -- =============================================================
--- RATING CONVERTER (Uses the Truth Table in Database.lua)
+-- RATING CONVERTER
 -- =============================================================
 function MSC:GetRatingPercent(statKey, ratingVal, level)
     if not MSC.CombatRatingScalars or not MSC.RatingIndexMap then return nil end
@@ -249,7 +249,7 @@ function MSC:GetRatingPercent(statKey, ratingVal, level)
 end
 
 -- =============================================================
--- 6. SCANNING (THE NEW INTEGRATION)
+-- 6. SCANNING (THE FIX IS HERE)
 -- =============================================================
 
 function MSC.GetRawItemStats(itemLink)
@@ -263,27 +263,54 @@ function MSC.GetRawItemStats(itemLink)
     local finalStats = scanData.Stats or {}
     local bonusStats = {}
 
-    -- 3. INTEGRATE USE EFFECTS (Averaged Values)
+    -- 3. INTEGRATE USE EFFECTS
     for _, effect in ipairs(scanData.UseEffects) do
         if effect.statKey and effect.averageVal and effect.averageVal > 0 then
-             -- Add the average value to the total score
              finalStats[effect.statKey] = (finalStats[effect.statKey] or 0) + effect.averageVal
-             
-             -- Keep a record for UI display (Evaluator uses _AUTO_PROC to show "Effective: X")
              if not finalStats._AUTO_PROC then
                  finalStats._AUTO_PROC = { stat=effect.statKey, val=effect.averageVal }
              end
         end
     end
 
-    -- 4. HANDLE SOCKET BONUSES (Separation Logic)
-    -- We moved these to Meta.BonusStats in Parse.lua so we can strip them easily
+    -- ========================================================
+    -- [[ 4. APPLY DATABASE OVERRIDES (THE MISSING LINK) ]]
+    -- ========================================================
+    local itemID = tonumber(itemLink:match("item:(%d+)"))
+    if itemID then
+        local entry = nil
+        
+        -- Check all databases in order of priority
+        if MSC.ProcDB and MSC.ProcDB[itemID] then entry = MSC.ProcDB[itemID]
+        elseif MSC.WeaponDB and MSC.WeaponDB[itemID] then entry = MSC.WeaponDB[itemID]
+        elseif MSC.TrinketDB and MSC.TrinketDB[itemID] then entry = MSC.TrinketDB[itemID]
+        end
+
+        if entry then
+            -- Inject Stat Value
+            if entry.val and entry.stat then
+                finalStats[entry.stat] = (finalStats[entry.stat] or 0) + entry.val
+                
+                -- Mark as proc so Evaluator can see it
+                if not finalStats._AUTO_PROC then
+                    finalStats._AUTO_PROC = { stat=entry.stat, val=entry.val }
+                end
+            end
+            
+            -- Inject Flat Score (For purely mechanic-based items)
+            if entry.score then
+                finalStats._MANUAL_SCORE = entry.score
+            end
+        end
+    end
+    -- ========================================================
+
+    -- 5. HANDLE SOCKET BONUSES
     if scanData.Meta and scanData.Meta.BonusStats then
         bonusStats = scanData.Meta.BonusStats
     end
 
-    -- 5. ATTACH BONUS TABLE
-    -- This allows SafeGetItemStats to ignore these bonuses when calculating "Best Gems"
+    -- 6. ATTACH BONUS TABLE
     finalStats._BONUS_STATS = bonusStats
     
     MSC.StatCache[itemLink] = finalStats
@@ -291,7 +318,7 @@ function MSC.GetRawItemStats(itemLink)
 end
 
 -- =============================================================
--- 7. ENCHANT & GEM ENGINE (Unchanged but vital)
+-- 7. ENCHANT & GEM ENGINE
 -- =============================================================
 
 function MSC:GetValidEnchantType(itemLink)
@@ -395,7 +422,7 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
 end
 
 -- =============================================================
--- FIXED: GEM CACHE & LOOKUP (Performance Patch)
+-- FIXED: GEM CACHE & LOOKUP
 -- =============================================================
 MSC.GemIDCache = {}
 

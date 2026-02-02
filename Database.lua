@@ -68,6 +68,7 @@ MSC.ShortNames = {
     ["ITEM_MOD_ARCANE_RESISTANCE_SHORT"] = "Arcane Res",
     ["ITEM_MOD_ALL_RESISTANCE_SHORT"]    = "All Res",
     ["MSC_WEAPON_SPEED"]                 = "Speed",
+	["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "Weapon DPS",
     ["MSC_WEAPON_DPS"]                   = "Weapon DPS",
     ["MSC_WAND_DPS"]                     = "Wand DPS",
 }

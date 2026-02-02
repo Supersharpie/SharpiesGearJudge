@@ -584,6 +584,8 @@ MSC.ProcDB = {
 		-- [[ WEAPONS & NICHE ITEMS ]]
 		[19019] = { score=30, note="Legendary Threat Gen (TF)" },
 		[871]   = { score=40, note="ERA Top Tier for Prot Paladin (Extra Seals)" }, -- Flurry Axe
+		-- Ravager (Bladestorm) - 1.0 PPM, approx 15 DPS single target, massive AoE value
+		[7717] = { ppm=1.0, val=15, stat="MSC_WEAPON_DPS", note="Bladestorm Proc" },
 		
 		-- [[ TBC ITEMS ]]
 		[28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note="BiS Physical DPS" },
@@ -654,7 +656,7 @@ if not MSC.IsEra then
         [29996] = { score=80, note="BiS (Infinite Energy Proc)" },
         
         -- Glaive of the Pit (Life Drain) - Roughly ~30 DPS
-        [28774] = { ppm=1.0, val=30, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT"},
+        [28774] = { ppm=1.0, val=30, stat="MSC_WEAPON_DPS"},
 
         -- [[ BLACK TEMPLE / SUNWELL ]]
         -- Bulwark of Azzinoth (Armor Proc)
@@ -665,7 +667,7 @@ if not MSC.IsEra then
         [32336] = { ppm=1.0, val=25, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="BiS Hunter (Mana Proc)" },
         
         -- Syphon of the Nathrezim (Life Drain)
-        [32236] = { ppm=1.0, val=40, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
+        [32236] = { ppm=1.0, val=40, stat="MSC_WEAPON_DPS" },
 
         -- Thori'dal, the Stars' Fury (Legendary)
         -- No ammo required = Massive DPS gain not shown on sheet.

@@ -1,8 +1,19 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.2.7 Changelog
+## 🚀 v2.2.8 Changelog
+
+### 🐛 Bug Fixes
+	* Fixed Parser it was not scanning right side of tooltip missing weapon speed and causeing speed and weapon damages to fail calculations 
+	* Paladin Ret stat weights adjusted
+	* Add a few more On Chance items to database
+	
+------------------------------------------------------------------------------------------------	
+	
+## 🚀 v2.2.7 
 * **Update to files to enable plug-in addons 
 * **Class Backgrounds Returned
+
+------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.2.6
 

@@ -134,8 +134,8 @@ Paladin.LevelingBrackets = {
     ["Leveling_RET_21_40"] = {
         min = 21, max = 40,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 8.0, 
-            ["MSC_WEAPON_SPEED"] = 2.0, -- Seal of Command unlocked. Slow is REQUIRED.
+            ["MSC_WEAPON_DPS"] = 12.0, 
+            ["MSC_WEAPON_SPEED"] = 4.0, -- Seal of Command unlocked. Slow is REQUIRED.
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
@@ -151,8 +151,8 @@ Paladin.LevelingBrackets = {
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 9.0, 
-            ["MSC_WEAPON_SPEED"] = 2.5, 
+            ["MSC_WEAPON_DPS"] = 13.0, 
+            ["MSC_WEAPON_SPEED"] = 4.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
@@ -171,8 +171,8 @@ Paladin.LevelingBrackets = {
     ["Leveling_RET_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 9.0, 
-            ["MSC_WEAPON_SPEED"] = 2.5, 
+            ["MSC_WEAPON_DPS"] = 13.0, 
+            ["MSC_WEAPON_SPEED"] = 4.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0, 
@@ -188,8 +188,8 @@ Paladin.LevelingBrackets = {
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 10.0, 
-            ["MSC_WEAPON_SPEED"] = 3.0, -- Crusader Strike (Lvl 50) hits based on weapon dmg. SLOW IS KING.
+            ["MSC_WEAPON_DPS"] = 14.0, 
+            ["MSC_WEAPON_SPEED"] = 5.0, -- Crusader Strike (Lvl 50) hits based on weapon dmg. SLOW IS KING.
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.4, 
@@ -208,8 +208,8 @@ Paladin.LevelingBrackets = {
     ["Leveling_RET_52_59"] = {
         min = 52, max = 59,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 10.0, 
-            ["MSC_WEAPON_SPEED"] = 3.0, 
+            ["MSC_WEAPON_DPS"] = 14.0, 
+            ["MSC_WEAPON_SPEED"] = 5.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
@@ -224,8 +224,8 @@ Paladin.LevelingBrackets = {
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 12.0, 
-            ["MSC_WEAPON_SPEED"] = 3.5, 
+            ["MSC_WEAPON_DPS"] = 16.0, 
+            ["MSC_WEAPON_SPEED"] = 5.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.5, 
@@ -243,8 +243,8 @@ Paladin.LevelingBrackets = {
     ["Leveling_RET_60_70"] = {
         min = 60, max = 70,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 12.0, 
-            ["MSC_WEAPON_SPEED"] = 3.5, 
+            ["MSC_WEAPON_DPS"] = 16.0, 
+            ["MSC_WEAPON_SPEED"] = 5.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.5, 
@@ -262,8 +262,8 @@ Paladin.LevelingBrackets = {
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
         },
         End = { 
-            ["MSC_WEAPON_DPS"] = 15.0, 
-            ["MSC_WEAPON_SPEED"] = 4.0, -- Maximum Slow Priority
+            ["MSC_WEAPON_DPS"] = 18.0, 
+            ["MSC_WEAPON_SPEED"] = 6.0, -- Maximum Slow Priority
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.0, 
