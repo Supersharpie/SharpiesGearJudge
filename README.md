@@ -1,19 +1,25 @@
 # Sharpie's Gear Judge (Era & TBC Edition)
 
-#🚀 New Plugins Now Available!
-## Expand your gear judging capabilities with our two newest plugins, designed to help you plan your progression and master your theorycrafting.
+🚀 New Plugins Now Available!
+Expand your gear judging capabilities with our two newest plugins, designed to help you plan your progression and master your theorycrafting.
 
-###📍 [Roadmap Plugin]
+📍 [Roadmap Plugin]
 Take the guesswork out of your gear progression.
-* Upgrade Leaderboard: Automatically generates a prioritized list of dungeons based on which ones offer the most significant upgrades for your current set.
-* Chain Mode: Simulate entire gear acquisition paths to see how your stats evolve as you pick up pieces over time.
-* Progression Planning: Perfect for mapping out your journey through TBC Anniversary content.
 
-###🧪 [Laboratory Plugin (The Lab)]
+Upgrade Leaderboard: Automatically generates a prioritized list of dungeons based on which ones offer the most significant upgrades for your current set.
+
+Chain Mode: Simulate entire gear acquisition paths to see how your stats evolve as you pick up pieces over time.
+
+Progression Planning: Perfect for mapping out your journey through TBC Anniversary content.
+
+🧪 [Laboratory Plugin (The Lab)]
 The ultimate sandbox for theorycrafters.
-* Dual-Set Comparator: Side-by-side gear comparison to see exactly how different setups impact your performance.
-* Easy Importing: Seamlessly import builds from SeventyUpgrades, SimC, and other popular formats.
-* Theorycrafting Suite: Test "what-if" scenarios without needing to commit to gems or enchants in-game first.
+
+Dual-Set Comparator: Side-by-side gear comparison to see exactly how different setups impact your performance.
+
+Easy Importing: Seamlessly import builds from SeventyUpgrades, SimC, and other popular formats.
+
+Theorycrafting Suite: Test "what-if" scenarios without needing to commit to gems or enchants in-game first.
 
 **The Final Verdict on your gear.**
 
@@ -27,6 +33,11 @@ Unlike standard addons that assign static points to items (e.g., "Hit = 10 pts")
 The Judge watches your stats in real-time.
 * **Hit Cap Awareness:** If you are already Hit Capped, the addon dynamically reduces the value of Hit Rating on new items to prevent "fake upgrades."
 * **Tank Defense Protocol:** For tanks, it enforces the **490 Defense Cap** (TBC) or **440 Skill** (Era). It applies massive score penalties if swapping an item would drop you below critical immunity thresholds.
+
+### 🔬 The Laboratory
+Stop guessing if breaking your set bonus is worth it.
+* **Virtual Paperdoll:** Drag and drop items from chat or your bags into **The Laboratory** to test loadouts without equipping them.
+* **2H vs. Dual Wield:** Directly compare a Two-Handed Weapon against a Main Hand + Off-Hand combo side-by-side.
 
 ### 🔮 Smart Projection (SimC-Lite)
 * **Gem Simulator (TBC):** The addon doesn't just read the gems currently in an item. It simulates **Strategy A (Match Socket Colors)** vs. **Strategy B (Pure Stats)** and projects the highest possible score for that item, ensuring you don't trash a powerful off-color item.
