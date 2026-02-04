@@ -47,28 +47,42 @@ MSC.Scanner.BaseStatMap = {
 }
 
 MSC.Scanner.TermMap = {
+    -- Ratings (Needed for Equip sentences)
+    ["dodge rating"] = "ITEM_MOD_DODGE_RATING_SHORT",
+    ["parry rating"] = "ITEM_MOD_PARRY_RATING_SHORT",
+    ["block rating"] = "ITEM_MOD_BLOCK_RATING_SHORT",
+    ["resilience rating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
     ["hit rating"] = "ITEM_MOD_HIT_RATING_SHORT",
     ["crit rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
     ["critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
     ["defense rating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
     ["defense"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["attack power"] = "ITEM_MOD_ATTACK_POWER_SHORT",
-    ["spell power"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing"] = "ITEM_MOD_HEALING_POWER_SHORT",
+
+    -- Mana/Health
+    ["mana"] = "ITEM_MOD_MANA_SHORT", 
+    ["health"] = "ITEM_MOD_HEALTH_SHORT",
     ["mana per 5 sec"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
-    ["health per 5 sec"] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
+
+    -- Spell Power & Combat
+    ["damage and healing done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["healing done by magical spells and effects"] = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["spell power"] = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["attack power"] = "ITEM_MOD_ATTACK_POWER_SHORT",
+
+    -- Base Stats
     ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
     ["agility"] = "ITEM_MOD_AGILITY_SHORT",
     ["stamina"] = "ITEM_MOD_STAMINA_SHORT",
     ["intellect"] = "ITEM_MOD_INTELLECT_SHORT",
     ["spirit"] = "ITEM_MOD_SPIRIT_SHORT",
+
+    -- Secondary
     ["spell hit rating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
     ["spell critical strike rating"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
     ["haste rating"] = "ITEM_MOD_HASTE_RATING_SHORT",
     ["spell haste rating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT",
     ["armor penetration rating"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
     ["expertise rating"] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
-    ["block rating"] = "ITEM_MOD_BLOCK_RATING_SHORT",
     ["shield block value"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
 }
 
@@ -93,15 +107,22 @@ MSC.Scanner.StatPatterns = {
 }
 
 MSC.Scanner.EquipPatterns = {
-    { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
-    { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
+    -- 1. High Priority Specific Sentences
+    { p = "increases damage and healing done by magical spells and effects by up to (%d+)", valIdx = 1, forceName = "damage and healing done by magical spells and effects" },
+    { p = "increases healing done by magical spells and effects by up to (%d+)", valIdx = 1, forceName = "healing done by magical spells and effects" },
+    { p = "restores (%d+) mana per 5 sec%.?", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+    { p = "restores (%d+) health every ([%d%.]+) sec%.?", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+
+    -- 2. Feral / Armor / Threat
     { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = "increases (.*) by (%d+)", valIdx = 2, nameIdx = 1 },
-    { p = "improves (.*) by (%d+)", valIdx = 2, nameIdx = 1 },
-    { p = "restores (%d+) (.*) per 5 sec", valIdx=1, nameIdx=2 },
-    { p = "restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
     { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
     { p = "decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
+
+    -- 3. General Patterns
+    { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
+    { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
+    { p = "increases (.*) by (%d+)", valIdx = 2, nameIdx = 1 },
+    { p = "improves (.*) by (%d+)", valIdx = 2, nameIdx = 1 },
 }
 
 MSC.Scanner.ProcPatterns = {
@@ -191,15 +212,30 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
         local m1, m2 = cleanText:match(pat.p)
         if m1 then
+            -- Handle Fixed Stats (MP5, Armor Pen, etc.)
+            if pat.fixedStat then
+                local val = tonumber(pat.valIdx == 1 and m1 or (pat.valIdx == 2 and m2 or 0))
+                outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + val
+                return
+            end
+
+            -- Handle Named Stats (Dodge, Mana, Strength)
             local val = tonumber(pat.valIdx == 1 and m1 or m2)
-            local name = pat.valIdx == 1 and m2 or m1
+            local name = pat.forceName or (pat.nameIdx == 1 and m1 or m2)
+            
             if val and name then
-                local cleanName = name:gsub("your ", ""):gsub("%s+$", "")
+                -- Cleans "your " and trailing dots/spaces so "dodge rating." becomes "dodge rating"
+                local cleanName = name:gsub("your ", ""):gsub("[%s%.]+$", "")
                 local key = MSC.Scanner.TermMap[cleanName]
-                if key then outputStats[key] = (outputStats[key] or 0) + val; return end
+                
+                if key then 
+                    outputStats[key] = (outputStats[key] or 0) + val 
+                    return 
+                end
             end
         end
     end
+    
     table.insert(outputProcs, { type = "Equip", desc = text })
 end
 
