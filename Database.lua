@@ -722,7 +722,6 @@ MSC.ItemOverrides = {
     -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
     [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
     [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
-    [28528] = { ITEM_MOD_DODGE_RATING_SHORT = 63 },
     [27529] = { ITEM_MOD_BLOCK_RATING_SHORT = 32, ITEM_MOD_STAMINA_SHORT = 20 },
     [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21 },
     
@@ -732,18 +731,21 @@ MSC.ItemOverrides = {
 
     -- [[ WEAPONS ]]
     [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
+	
+	-- [[ WEIRD / NICHE ODDS & ENDS ]]
+	
+	-- [[ CLASS SPECIFIC BIS / MECHANICS ]]
+	[9449] = { ITEM_MOD_HASTE_RATING_SHORT = 150, estimate = true, note = "BiS (Burst Haste)" },-- Manual Crowd Pummeler
+    [8345] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 80, estimate = true, note = "BiS (Powershift)" },-- Wolfshead Helm (Druid Feral) The energy refund mechanic is mathematically worth ~80 Feral AP in a rotation.
     
     -- [[ TBC PHASE 1 ]]
     [29383] = { ITEM_MOD_ATTACK_POWER_SHORT = 46, estimate = true },
     [28288] = { ITEM_MOD_HASTE_RATING_SHORT = 21, estimate = true },
-    [28034] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
-    [28830] = { ITEM_MOD_HASTE_RATING_SHORT = 45, estimate = true },
     [28579] = { ITEM_MOD_ATTACK_POWER_SHORT = 65, estimate = true },
     [28041] = { ITEM_MOD_ATTACK_POWER_SHORT = 33, estimate = true },
     [25844] = { ITEM_MOD_CRIT_RATING_SHORT = 22, estimate = true },
     [32780] = { ITEM_MOD_ATTACK_POWER_SHORT = 32, estimate = true },
     [29370] = { ITEM_MOD_SPELL_POWER_SHORT = 26, estimate = true },
-    [27683] = { ITEM_MOD_HASTE_RATING_SHORT = 35, estimate = true },
     [29132] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
     [29179] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
     [28785] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true },
@@ -751,24 +753,21 @@ MSC.ItemOverrides = {
     [28789] = { ITEM_MOD_SPELL_POWER_SHORT = 20, estimate = true },
 
     -- [[ TBC PHASE 2 ]]
-    [30627] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
+
     [32483] = { ITEM_MOD_HASTE_RATING_SHORT = 29, estimate = true },
     [30626] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
     [30621] = { ITEM_MOD_ATTACK_POWER_SHORT = 53, estimate = true },
     [30450] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 200, estimate = true },
-    [30665] = { ITEM_MOD_SPELL_POWER_SHORT = 48, estimate = true },
+    [30665] = { ITEM_MOD_SPIRIT_SHORT = 50, estimate = true },-- Use: 300 Spirit for 20s (2 min CD). Avg = 50 Spirit.
     [30448] = { ITEM_MOD_SPELL_POWER_SHORT = 30, estimate = true },
     [30446] = { ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
     [29376] = { ITEM_MOD_HEALING_SHORT = 50, estimate = true },
     [30841] = { ITEM_MOD_HEALING_SHORT = 55, estimate = true },
     [28590] = { ITEM_MOD_HEALING_SHORT = 9, estimate = true },
-    [28370] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
     [28727] = { ITEM_MOD_MANA_REGENERATION_SHORT = 41, estimate = true },
     [29387] = { ITEM_MOD_BLOCK_VALUE_SHORT = 10, estimate = true },
     [27928] = { ITEM_MOD_BLOCK_RATING_SHORT = 21, estimate = true },
     [27922] = { ITEM_MOD_STAMINA_SHORT = 15, estimate = true },
-    [28438] = { ITEM_MOD_HASTE_RATING_SHORT = 25, estimate = true }, 
-    [28439] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true }, 
     [28441] = { ITEM_MOD_CRIT_RATING_SHORT = 30, estimate = true }, 
     [28442] = { ITEM_MOD_CRIT_RATING_SHORT = 45, estimate = true }, 
     [29993] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true },
@@ -786,14 +785,11 @@ MSC.ItemOverrides = {
     [32500] = { ITEM_MOD_DODGE_RATING_SHORT = 25, estimate = true },
 
     -- [[ TBC PHASE 4 ]]
-    [33830] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
     [33829] = { ITEM_MOD_SPELL_POWER_SHORT = 35, estimate = true },
     [33831] = { ITEM_MOD_ARMOR_SHORT = 333, estimate = true },
     [33828] = { ITEM_MOD_HEALING_SHORT = 49, estimate = true },
 
     -- [[ TBC PHASE 5 ]]
-    [34427] = { ITEM_MOD_ATTACK_POWER_SHORT = 130, estimate = true },
-    [34472] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, estimate = true },
     [35702] = { ITEM_MOD_ATTACK_POWER_SHORT = 53, estimate = true },
     [34678] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true },
     [34679] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true },
@@ -832,9 +828,7 @@ MSC.ItemOverrides = {
     [24379] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true }, -- Bogstrok Scale Cloak (Not trinket, but has AP proc?)
     [24460] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 24, estimate = true }, -- Talisman of Tenacity (Use effect is HP)
     [28121] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, estimate = true }, -- Icon of Unyielding Courage (Use: HP)
-    [28223] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true }, -- Abacus of Violent Odds (Use: 260 Haste)
     [28134] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true }, -- Brooch of Heightened Potential (Use: SP)
-    [29370] = { ITEM_MOD_SPELL_POWER_SHORT = 43, estimate = true }, -- Icon of the Silver Crescent (Use: 155 SP) -> Avg ~25-30 + Base 43
     [29132] = { ITEM_MOD_HEALING_POWER_SHORT = 80, estimate = true }, -- Essence of the Martyr (Use: Heal)
 
     -- [[ RAID TRINKETS ]]
@@ -851,22 +845,23 @@ MSC.ItemOverrides = {
     [37128] = { ITEM_MOD_STAMINA_SHORT = 45, estimate = true }, -- Balebrew Charm (Use: Dmg)
     [38290] = { ITEM_MOD_STAMINA_SHORT = 51, estimate = true }, -- Dark Iron Smoking Pipe (Use: Shield)
 	
-		-- Darkmoon Card: Crusade (Stacking AP/SP)
-		-- It gives 6 AP (or 8 SP) per stack, up to 20 stacks (120 AP / 160 SP).
-		-- In a raid, it stays fully stacked. We value it at ~80-90% max stacks.
+	-- Darkmoon Card: Crusade (Stacking AP/SP)
+	-- It gives 6 AP (or 8 SP) per stack, up to 20 stacks (120 AP / 160 SP).
+	-- In a raid, it stays fully stacked. We value it at ~80-90% max stacks.
 	[31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, ITEM_MOD_SPELL_POWER_SHORT = 120, estimate = true, note = "BiS (Stacks)" },
 
-		-- Darkmoon Card: Vengeance (Counterattack Dmg)
-		-- Chance on being hit to deal Holy Dmg. Good for Paladin Tanks (Threat).
+	-- Darkmoon Card: Vengeance (Counterattack Dmg)
+	-- Chance on being hit to deal Holy Dmg. Good for Paladin Tanks (Threat).
 	[31858] = { ITEM_MOD_STAMINA_SHORT = 51, score = 40, note = "Tank Threat (Proc)" },
 
-		-- Darkmoon Card: Wrath (Crit Chance)
-		-- This wasn't in your list, but it's the other TBC card.
+	-- Darkmoon Card: Wrath (Crit Chance)
+	-- This wasn't in your list, but it's the other TBC card.
 	[31857] = { score = 45, note = "Crit Stacking (Niche)" },
 
 	-- Darkmoon Card: Blue Dragon (Classic - Mana Regen)
 	-- 2% Chance on cast to gain 100% mana regen.
 	[19288] = { ppm=1.0, val=60, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="Mp5 Equivalence" },
+	
 	-- Mark of the Champion (Caster) - 85 SP vs Undead/Demon
 	-- We estimate this as ~25 SP for general use (it's amazing in Kara/Hyjal, bad in Gruul).
 	[23207] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true},
@@ -875,7 +870,6 @@ MSC.ItemOverrides = {
 	-- Estimated as ~45 AP for general use.
 	[23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
 	
-	-- [[ WEIRD / NICHE ODDS & ENDS ]]
     -- Eye of Gruul (Healer - Chance on cast to reduce mana cost)
     -- Valued as roughly 45 MP5 in a raid setting.
     [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },

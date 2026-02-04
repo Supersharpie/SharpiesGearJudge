@@ -280,7 +280,21 @@ function MSC.GetRawItemStats(itemLink)
     if itemID then
         local entry = nil
         
-        -- Check all databases in order of priority
+        -- [[ A. CLASS SPECIFIC OVERRIDES (Relics, Idols, Totems) ]]
+        if MSC.CurrentClass then
+            local classDB = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols or MSC.CurrentClass.ItemOverrides
+            if classDB and classDB[itemID] then
+                for statKey, val in pairs(classDB[itemID]) do
+                    -- We exclude 'note' and ensure it's a number
+                    if type(val) == "number" and statKey ~= "note" then
+                        finalStats[statKey] = (finalStats[statKey] or 0) + val
+                    end
+                end
+            end
+        end
+
+        -- [[ B. GLOBAL DATABASE OVERRIDES (Procs, Weapons, Trinkets) ]]
+        local entry = nil
         if MSC.ProcDB and MSC.ProcDB[itemID] then entry = MSC.ProcDB[itemID]
         elseif MSC.WeaponDB and MSC.WeaponDB[itemID] then entry = MSC.WeaponDB[itemID]
         elseif MSC.TrinketDB and MSC.TrinketDB[itemID] then entry = MSC.TrinketDB[itemID]

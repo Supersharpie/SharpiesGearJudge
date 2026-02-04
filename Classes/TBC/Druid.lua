@@ -860,8 +860,6 @@ function Druid:GetWeaponBonus(itemLink) return 0 end
 -- CLASS SPECIFIC ITEMS (Idols)
 -- =============================================================
 Druid.Relics = {
--- [[ CLASSIC OP ITEMS ]]
-    [8345] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 80 }, -- Wolfshead Helm (Manual weighting to force it to win)
     
     -- [[ LEVELING / CLASSIC IDOLS ]]
     [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Ferocity
@@ -880,12 +878,10 @@ Druid.Relics = {
 
     -- [[ TBC RAID ]]
     [29390] = { ITEM_MOD_HEALING_POWER_SHORT = 136 },     -- Idol of the Emerald Queen (Lifebloom)
-    [29391] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 45 }, -- Idol of Terror
-    [27885] = { ITEM_MOD_HEALING_POWER_SHORT = 65 },      -- Idol of the Raven Goddess
+    [29391] = { ITEM_MOD_AGILITY_SHORT = 55, estimate = true, note = "BiS (Agility Proc)" }, -- Idol of Terror
     [32387] = { ITEM_MOD_HEALING_POWER_SHORT = 44, ITEM_MOD_CRIT_RATING_SHORT = 40, ITEM_MOD_SPELL_CRIT_RATING_SHORT = 40 }, -- Idol of the Raven Goddess (Epic Flight)
     [30652] = { ITEM_MOD_AGILITY_SHORT = 45, ITEM_MOD_DODGE_RATING_SHORT = 45 }, -- Idol of the Crescent Goddess
     [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70, note = "BiS" }, -- Idol of the White Stag
-    [38295] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 60 }, -- Idol of Terror (Later version?)
 
     -- [[ PVP IDOLS ]]
     [28355] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
