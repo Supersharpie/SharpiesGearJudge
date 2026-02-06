@@ -46,4 +46,3 @@
 	* Fixed Parser it was not scanning right side of tooltip missing weapon speed and causeing speed and weapon damages to fail calculations 
 	* Paladin Ret stat weights adjusted
 	* Add a few more On Chance items to database
-	
