@@ -547,8 +547,75 @@ end
 
 local function GetClassRings(class, stats, weights)
     local rings = {}
-    local CAP_HIT_MELEE = 9; local CAP_HIT_SPELL = 16; local CAP_EXP = 26; local CAP_DEF = 490
+    local CAP_HIT_MELEE = 9
+    local CAP_HIT_SPELL = 16
+    local CAP_EXP = 26
+    local CAP_DEF = 490
     
+    -- [[ 1. DETECT HIT TALENTS ]]
+    local spellHitBonus = 0
+    local meleeHitBonus = 0
+    local isTBC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+
+    -- Helper to scan talents safely
+    local function GetTalentRank(tab, talentName)
+        local numTalents = GetNumTalents(tab)
+        for i=1, numTalents do
+            local name, _, _, _, rank = GetTalentInfo(tab, i)
+            if name == talentName then return rank end
+        end
+        return 0
+    end
+
+    if class == "MAGE" then
+        -- Arcane Focus (Arcane): 2% per rank
+        -- Elemental Precision (Frost): 2% (Vanilla) or 1% (TBC)
+        local arcane = GetTalentRank(1, "Arcane Focus") * 2
+        local frost = GetTalentRank(3, "Elemental Precision") * (isTBC and 1 or 2)
+        spellHitBonus = math.max(arcane, frost)
+
+    elseif class == "WARLOCK" then
+        -- Suppression (Affliction): 2% per rank
+        spellHitBonus = GetTalentRank(1, "Suppression") * 2
+
+    elseif class == "PRIEST" then
+        -- Shadow Focus (Shadow): 2% per rank
+        spellHitBonus = GetTalentRank(3, "Shadow Focus") * 2
+
+    elseif class == "SHAMAN" then
+        -- Elemental Precision (Elemental): 2% per rank (Fire/Frost/Nature)
+        -- Nature's Guidance (Resto): 1% per rank (Melee & Spell)
+        local elePrec = GetTalentRank(1, "Elemental Precision") * 2
+        local natGuid = GetTalentRank(3, "Nature's Guidance") * 1
+        spellHitBonus = elePrec + natGuid
+        meleeHitBonus = natGuid
+
+    elseif class == "DRUID" then
+        if isTBC then
+            -- Balance of Power (Balance): 2% per rank (Spell Hit)
+            spellHitBonus = GetTalentRank(1, "Balance of Power") * 2
+        end
+
+    elseif class == "ROGUE" then
+        -- Precision (Combat): 1% per rank
+        meleeHitBonus = GetTalentRank(2, "Precision") * 1
+
+    elseif class == "HUNTER" then
+        -- Surefooted (Survival): 1% per rank
+        meleeHitBonus = GetTalentRank(3, "Surefooted") * 1
+
+    elseif class == "PALADIN" then
+        -- Precision (Protection): 1% per rank (Melee & Spell)
+        local prec = GetTalentRank(2, "Precision") * 1
+        meleeHitBonus = prec
+        spellHitBonus = prec
+    end
+
+    -- [[ 2. ADJUST CAPS ]]
+    CAP_HIT_MELEE = math.max(0, CAP_HIT_MELEE - meleeHitBonus)
+    CAP_HIT_SPELL = math.max(0, CAP_HIT_SPELL - spellHitBonus)
+
+    -- [[ 3. RENDER RINGS ]]
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
         local val = stats[statKey] or 0
         local level = UnitLevel("player"); if level > 70 then level = 70 end
@@ -588,7 +655,7 @@ local function GetClassRings(class, stats, weights)
     elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" then
         AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
         AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%") 
-        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")    
+        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")     
     elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
         local isTank = (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5
         local isCaster = (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
