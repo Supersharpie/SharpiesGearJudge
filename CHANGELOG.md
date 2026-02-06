@@ -1,6 +1,16 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.2.10 CHANGELOG
+## 🚀 v2.2.11 CHANGELOG
+
+* ** Added talent detection and apply talent-based hit bonuses to melee/spell hit caps  and racial/weapon effects to hit, expertise, crit and defense caps used for UI rings.**
+	*(including TBC-specific talents like Draenei Heroic Presence and Druid Survival of the Fittest), and performs a weapon/ranged check to grant racial expertise/crit where appropriate.
+* ** Introduces GetTalentRank helper, computes meleeHitBonus and spellHitBonus for Mage, Warlock, Priest, Shaman, Druid, Rogue, Hunter, Paladin.**
+* ** Handles TBC-specific talent differences, clamps caps to non-negative values, and then uses the adjusted caps when building rings.**
+* ** Also adds smart expertise visibility logic, minor ring formatting cleanup.**
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.2.10
 
 * ** Add spell power to Priest leveling/healer weights (ERA & TBC) and tidy formatting. (No idea how I could have forgot this >.<)**
 * ** Overhaul minimap button: make it movable, draggable, save/restore position on login, ensure proper frame level. **

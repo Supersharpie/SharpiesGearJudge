@@ -552,12 +552,15 @@ local function GetClassRings(class, stats, weights)
     local CAP_EXP = 26
     local CAP_DEF = 490
     
-    -- [[ 1. DETECT HIT TALENTS ]]
     local spellHitBonus = 0
     local meleeHitBonus = 0
+    local expertBonus = 0
+    local critBonus = 0
+    
     local isTBC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+    local _, playerRace = UnitRace("player")
 
-    -- Helper to scan talents safely
+    -- [[ 1. DETECT TALENTS ]]
     local function GetTalentRank(tab, talentName)
         local numTalents = GetNumTalents(tab)
         for i=1, numTalents do
@@ -568,54 +571,92 @@ local function GetClassRings(class, stats, weights)
     end
 
     if class == "MAGE" then
-        -- Arcane Focus (Arcane): 2% per rank
-        -- Elemental Precision (Frost): 2% (Vanilla) or 1% (TBC)
         local arcane = GetTalentRank(1, "Arcane Focus") * 2
         local frost = GetTalentRank(3, "Elemental Precision") * (isTBC and 1 or 2)
         spellHitBonus = math.max(arcane, frost)
-
     elseif class == "WARLOCK" then
-        -- Suppression (Affliction): 2% per rank
         spellHitBonus = GetTalentRank(1, "Suppression") * 2
-
     elseif class == "PRIEST" then
-        -- Shadow Focus (Shadow): 2% per rank
         spellHitBonus = GetTalentRank(3, "Shadow Focus") * 2
-
     elseif class == "SHAMAN" then
-        -- Elemental Precision (Elemental): 2% per rank (Fire/Frost/Nature)
-        -- Nature's Guidance (Resto): 1% per rank (Melee & Spell)
         local elePrec = GetTalentRank(1, "Elemental Precision") * 2
         local natGuid = GetTalentRank(3, "Nature's Guidance") * 1
         spellHitBonus = elePrec + natGuid
         meleeHitBonus = natGuid
-
     elseif class == "DRUID" then
-        if isTBC then
-            -- Balance of Power (Balance): 2% per rank (Spell Hit)
-            spellHitBonus = GetTalentRank(1, "Balance of Power") * 2
+        if isTBC then 
+            spellHitBonus = GetTalentRank(1, "Balance of Power") * 2 
+            -- Feral Tank (Survival of the Fittest) - 3/3 drops Defense Cap to 415
+            local sotf = GetTalentRank(2, "Survival of the Fittest")
+            if sotf == 3 then CAP_DEF = 415
+            elseif sotf == 2 then CAP_DEF = 440
+            elseif sotf == 1 then CAP_DEF = 465 
+            end
         end
-
     elseif class == "ROGUE" then
-        -- Precision (Combat): 1% per rank
         meleeHitBonus = GetTalentRank(2, "Precision") * 1
-
+        local wepExp = GetTalentRank(2, "Weapon Expertise")
+        expertBonus = expertBonus + (wepExp * 5)
     elseif class == "HUNTER" then
-        -- Surefooted (Survival): 1% per rank
         meleeHitBonus = GetTalentRank(3, "Surefooted") * 1
-
     elseif class == "PALADIN" then
-        -- Precision (Protection): 1% per rank (Melee & Spell)
         local prec = GetTalentRank(2, "Precision") * 1
-        meleeHitBonus = prec
-        spellHitBonus = prec
+        meleeHitBonus = prec; spellHitBonus = prec
+        local ant = GetTalentRank(2, "Anticipation") * 4
+        CAP_DEF = math.max(350, CAP_DEF - ant)
+    elseif class == "WARRIOR" then
+        meleeHitBonus = GetTalentRank(2, "Precision") * 1
+        local ant = GetTalentRank(3, "Anticipation") * 4
+        CAP_DEF = math.max(350, CAP_DEF - ant)
+        if isTBC then
+            local def = GetTalentRank(3, "Defiance") 
+            expertBonus = expertBonus + (def * 2) 
+        end
     end
 
-    -- [[ 2. ADJUST CAPS ]]
+    -- [[ 2. DETECT RACIALS (WEAPON CHECK) ]]
+    
+    -- A. MELEE (Slot 16 - Main Hand)
+    local mhLink = GetInventoryItemLink("player", 16)
+    if mhLink then
+        local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(mhLink)
+        -- subClassID: 0=Axe1H, 1=Axe2H, 4=Mace1H, 5=Mace2H, 7=Sword1H, 8=Sword2H
+        
+        if playerRace == "Human" then
+            if subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5 then
+                expertBonus = expertBonus + 5
+            end
+        elseif playerRace == "Orc" then
+            if subClassID == 0 or subClassID == 1 then
+                expertBonus = expertBonus + 5
+            end
+        end
+    end
+
+    -- B. RANGED (Slot 18) - Hunters
+    local rangedLink = GetInventoryItemLink("player", 18)
+    if rangedLink then
+        local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(rangedLink)
+        -- subClassID: 2=Bow, 3=Gun
+        if playerRace == "Dwarf" then
+            if subClassID == 3 then critBonus = critBonus + 1 end -- Gun Spec
+        elseif playerRace == "Troll" then
+            if subClassID == 2 then critBonus = critBonus + 1 end -- Bow Spec
+        end
+    end
+
+    -- Draenei Heroic Presence
+    if isTBC and playerRace == "Draenei" then
+        spellHitBonus = spellHitBonus + 1
+        meleeHitBonus = meleeHitBonus + 1
+    end
+
+    -- [[ 3. ADJUST CAPS ]]
     CAP_HIT_MELEE = math.max(0, CAP_HIT_MELEE - meleeHitBonus)
     CAP_HIT_SPELL = math.max(0, CAP_HIT_SPELL - spellHitBonus)
+    CAP_EXP       = math.max(0, CAP_EXP - expertBonus)
 
-    -- [[ 3. RENDER RINGS ]]
+    -- [[ 4. RENDER RINGS ]]
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
         local val = stats[statKey] or 0
         local level = UnitLevel("player"); if level > 70 then level = 70 end
@@ -632,25 +673,42 @@ local function GetClassRings(class, stats, weights)
         local currentDisplay = 0; local capRating = 0
         if isSkill then
             if label == "Def Cap" then
-                local skillAdded = math.floor(val / scalar); currentDisplay = 350 + skillAdded; capRating = (capTarget - 350) * scalar
+                local skillAdded = math.floor(val / scalar)
+                currentDisplay = 350 + skillAdded
+                capRating = (capTarget - 350) * scalar
             else
-                currentDisplay = math.floor(val / scalar); capRating = capTarget * scalar
+                currentDisplay = math.floor(val / scalar)
+                capRating = capTarget * scalar
             end
         else
             currentDisplay = val / scalar; capRating = capTarget * scalar
         end
+        
+        -- Apply Racial Crit Bonus
+        if label == "Crit" or label:find("Crit") then
+            currentDisplay = currentDisplay + critBonus
+        end
+
         table.insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar })
     end
 
     if class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" then
         if class == "WARRIOR" and (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5 then
+            -- Tank Mode
             AddRing("Def Cap", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
             AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
             AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
         else
+            -- DPS Mode
             AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
             AddRing("Crit", "ITEM_MOD_CRIT_RATING_SHORT", 35, "%.1f%%") 
-            AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
+            
+            -- [[ SMART EXPERTISE CHECK ]]
+            -- Show if: Not a Hunter OR (Is a Hunter AND they specifically weighted Expertise > 0)
+            local wantsExpertise = (weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) > 0
+            if class ~= "HUNTER" or wantsExpertise then
+                AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
+            end
         end
     elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" then
         AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
@@ -659,9 +717,14 @@ local function GetClassRings(class, stats, weights)
     elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
         local isTank = (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5
         local isCaster = (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
+        
         if isTank then
             AddRing("Def Cap", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
-            if isCaster and class == "PALADIN" then AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%") else AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%") end
+            if isCaster and class == "PALADIN" then 
+                AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%") 
+            else 
+                AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%") 
+            end
             AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
         elseif isCaster then
             AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
@@ -1006,7 +1069,7 @@ function MSC.ToggleMainMenu()
     f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
 
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.10 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.11 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
