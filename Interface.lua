@@ -939,7 +939,7 @@ function MSC.ToggleMainMenu()
     f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
 
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.9 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.10 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -995,11 +995,52 @@ end
 -- =============================================================
 -- 4. EVENTS & HOOKS
 -- =============================================================
-local mb = CreateFrame("Button", "MSC_Minimap", Minimap); mb:SetSize(32,32); mb:SetFrameLevel(8); mb:SetPoint("CENTER", -60, -60)
-mb.icon = mb:CreateTexture(nil,"BACKGROUND"); mb.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02"); mb.icon:SetSize(20,20); mb.icon:SetPoint("CENTER")
-mb.border = mb:CreateTexture(nil,"OVERLAY"); mb.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder"); mb.border:SetSize(54,54); mb.border:SetPoint("TOPLEFT")
-mb:RegisterForClicks("AnyUp"); mb:SetScript("OnClick", MSC.ToggleMainMenu)
+-- [[ 1. CREATE MINIMAP BUTTON ]]
+local mb = CreateFrame("Button", "MSC_Minimap", Minimap)
+mb:SetSize(32,32)
+mb:SetFrameLevel(Minimap:GetFrameLevel() + 10) -- Ensure it sits above the minimap
+-- Default position (Relative to Minimap Center)
+mb:SetPoint("CENTER", -60, -60) 
 
+-- Visuals
+mb.icon = mb:CreateTexture(nil,"BACKGROUND")
+mb.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02")
+mb.icon:SetSize(20,20)
+mb.icon:SetPoint("CENTER")
+
+mb.border = mb:CreateTexture(nil,"OVERLAY")
+mb.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+mb.border:SetSize(54,54)
+mb.border:SetPoint("TOPLEFT")
+
+-- [[ 2. MAKE MOVABLE ]]
+mb:SetMovable(true)
+mb:EnableMouse(true)
+mb:RegisterForDrag("LeftButton")
+mb:SetClampedToScreen(true) -- Safety: Prevents dragging off-screen
+
+mb:SetScript("OnDragStart", function(self) 
+    self:StartMoving() 
+end)
+
+mb:SetScript("OnDragStop", function(self) 
+    self:StopMovingOrSizing()
+    
+    -- Save Position (Screen Coordinates)
+    if not SGJ_Settings then SGJ_Settings = {} end
+    local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint()
+    -- We ignore 'relativeTo' because we can't save UserData to file. 
+    -- We will restore relative to UIParent.
+    SGJ_Settings.MinimapPos = { point, relativePoint, xOfs, yOfs }
+end)
+
+-- Click Handler
+mb:RegisterForClicks("AnyUp")
+mb:SetScript("OnClick", function(self) 
+    MSC.ToggleMainMenu() 
+end)
+
+-- [[ 3. RESTORE POSITION ON LOGIN ]]
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -1008,6 +1049,15 @@ f:RegisterEvent("PLAYER_TALENT_UPDATE")
 
 f:SetScript("OnEvent", function(self, event) 
     if event == "PLAYER_LOGIN" then 
+        -- Restore Position
+        if SGJ_Settings and SGJ_Settings.MinimapPos then
+            local p = SGJ_Settings.MinimapPos
+            MSC_Minimap:ClearAllPoints()
+            -- FIX: Anchor to UIParent (Screen) to match the saved coordinates
+            MSC_Minimap:SetPoint(p[1], UIParent, p[2], p[3], p[4])
+        end
+        
+        -- Update Visibility
         MSC.UpdateMinimapPosition() 
     else
         -- Force update on EnterWorld, Equip change, or Talent change
@@ -1016,6 +1066,7 @@ f:SetScript("OnEvent", function(self, event)
     end
 end)
 
+-- [[ 4. HOOKS ]]
 function MSC.OnItemLinkClick(link)
     if not MSC.ViewLab or not MSC.ViewLab:IsShown() then return end
     

@@ -4,119 +4,313 @@ _G.MSC = MSC
 MSC.Scanner = {}
 
 -- =============================================================
--- 1. DATA MAPS
+-- 1. DATA MAPS (Shared Dictionaries)
 -- =============================================================
+
+-- [[ A. WHITE TEXT MAP (Base Stats + Suffixes) ]]
 MSC.Scanner.BaseStatMap = {
-    ["strength"]  = "ITEM_MOD_STRENGTH_SHORT",
-    ["agility"]   = "ITEM_MOD_AGILITY_SHORT",
-    ["stamina"]   = "ITEM_MOD_STAMINA_SHORT",
-    ["intellect"] = "ITEM_MOD_INTELLECT_SHORT",
-    ["spirit"]    = "ITEM_MOD_SPIRIT_SHORT",
-    ["armor"]     = "ITEM_MOD_ARMOR_SHORT",
-    ["block"]     = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    -- Primary
+    ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
+    ["agility"]  = "ITEM_MOD_AGILITY_SHORT",
+    ["stamina"]  = "ITEM_MOD_STAMINA_SHORT",
+    ["intellect"]= "ITEM_MOD_INTELLECT_SHORT",
+    ["spirit"]   = "ITEM_MOD_SPIRIT_SHORT",
+    
+    -- Defensive / Weapon
+    ["armor"] = "ITEM_MOD_ARMOR_SHORT",
+    ["block"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
     ["block value"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
-    ["speed"]     = "MSC_WEAPON_SPEED",
-    ["dps"]       = "MSC_WEAPON_DPS",
+    ["speed"] = "MSC_WEAPON_SPEED",
     ["damage per second"] = "MSC_WEAPON_DPS",
-    ["attack power"] = "ITEM_MOD_ATTACK_POWER_SHORT",
-    ["crit rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["hit rating"] = "ITEM_MOD_HIT_RATING_SHORT",
-    ["defense rating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["dodge rating"] = "ITEM_MOD_DODGE_RATING_SHORT",
-    ["parry rating"] = "ITEM_MOD_PARRY_RATING_SHORT",
-    ["resilience rating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
-    ["spell power"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing"] = "ITEM_MOD_HEALING_POWER_SHORT",
-    ["mp"] = "ITEM_MOD_MANA_SHORT",
-    ["hp"] = "ITEM_MOD_HEALTH_SHORT",
-    ["mana per 5 sec"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
-    ["health per 5 sec"] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
-    ["feral attack power"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
-    ["shadow damage"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
-    ["fire damage"] = "ITEM_MOD_FIRE_DAMAGE_SHORT",
-    ["frost damage"] = "ITEM_MOD_FROST_DAMAGE_SHORT",
-    ["arcane damage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
-    ["nature damage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    ["holy damage"] = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    ["dps"] = "MSC_WEAPON_DPS",
+    
+    -- Resistances (Often White Text on Gear)
+    ["shadow resistance"] = "ITEM_MOD_SHADOW_RESISTANCE_SHORT",
+    ["fire resistance"]   = "ITEM_MOD_FIRE_RESISTANCE_SHORT",
+    ["frost resistance"]  = "ITEM_MOD_FROST_RESISTANCE_SHORT",
+    ["arcane resistance"] = "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
+    ["nature resistance"] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
+    
+    -- Random Suffixes (The "Cheats")
+    ["attack power"]   = "ITEM_MOD_ATTACK_POWER_SHORT", 
+    ["healing spells"] = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["healing"]        = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["spell damage"]   = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["spell power"]    = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["shadow damage"]  = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    ["fire damage"]    = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    ["frost damage"]   = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    ["arcane damage"]  = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    ["nature damage"]  = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    ["holy damage"]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     ["shadow spell damage"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
-    ["fire spell damage"] = "ITEM_MOD_FIRE_DAMAGE_SHORT",
-    ["frost spell damage"] = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    ["fire spell damage"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    ["frost spell damage"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
     ["arcane spell damage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
     ["nature spell damage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    ["holy spell damage"] = "ITEM_MOD_HOLY_DAMAGE_SHORT",
-}
-
-MSC.Scanner.TermMap = {
-    ["hit rating"] = "ITEM_MOD_HIT_RATING_SHORT",
-    ["crit rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
+    ["holy spell damage"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    
+    ["mana"]           = "ITEM_MOD_MANA_SHORT",
+    ["health"]         = "ITEM_MOD_HEALTH_SHORT",
+    ["hp"]             = "ITEM_MOD_HEALTH_SHORT",
+    ["mp"]             = "ITEM_MOD_MANA_SHORT",
+    
+    -- TBC Ratings (White Text Variants)
+    ["dodge rating"]      = "ITEM_MOD_DODGE_RATING_SHORT",
+    ["parry rating"]      = "ITEM_MOD_PARRY_RATING_SHORT",
+    ["block rating"]      = "ITEM_MOD_BLOCK_RATING_SHORT",
+    ["hit rating"]        = "ITEM_MOD_HIT_RATING_SHORT",
+    ["crit rating"]       = "ITEM_MOD_CRIT_RATING_SHORT",
     ["critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["defense rating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["defense"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["attack power"] = "ITEM_MOD_ATTACK_POWER_SHORT",
-    ["spell power"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing"] = "ITEM_MOD_HEALING_POWER_SHORT",
-    ["mana per 5 sec"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
-    ["health per 5 sec"] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
-    ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
-    ["agility"] = "ITEM_MOD_AGILITY_SHORT",
-    ["stamina"] = "ITEM_MOD_STAMINA_SHORT",
-    ["intellect"] = "ITEM_MOD_INTELLECT_SHORT",
-    ["spirit"] = "ITEM_MOD_SPIRIT_SHORT",
-    ["spell hit rating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    ["haste rating"]      = "ITEM_MOD_HASTE_RATING_SHORT",
+    ["resilience rating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
+    ["defense rating"]    = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    ["expertise rating"]  = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+    ["armor penetration rating"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"
+}
+
+-- [[ B. GREEN TEXT MAP (Equip / Use / Proc Effects) ]]
+-- Maps lowercase text phrases to Internal Keys
+MSC.Scanner.TermMap = {
+    -- [[ 1. OFFENSIVE RATINGS ]]
+    ["hit rating"]        = "ITEM_MOD_HIT_RATING_SHORT",
+    ["chance to hit"]     = "ITEM_MOD_HIT_RATING_SHORT", -- Era
+    
+    ["critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
+    ["chance to get a critical strike"] = "ITEM_MOD_CRIT_RATING_SHORT", -- Era
+    
+    ["spell hit rating"]  = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    ["chance to hit with spells"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT", -- Era Long
+
     ["spell critical strike rating"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
-    ["haste rating"] = "ITEM_MOD_HASTE_RATING_SHORT",
+    ["critical strike with spells"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era
+    ["chance to get a critical strike with spells"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era Long
+    
+    ["haste rating"]       = "ITEM_MOD_HASTE_RATING_SHORT",
     ["spell haste rating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT",
+    ["spell penetration"]  = "ITEM_MOD_SPELL_PENETRATION_SHORT",
+    ["magical resistances of your spell targets"] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Era Long
+
     ["armor penetration rating"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
-    ["expertise rating"] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
-    ["block rating"] = "ITEM_MOD_BLOCK_RATING_SHORT",
-    ["shield block value"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    ["expertise rating"]   = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+    ["ranged attack power"]= "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
+
+    -- [[ 2. DEFENSIVE RATINGS ]]
+    ["defense rating"]    = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    ["increased defense"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", -- Era
+    ["defense"]           = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    ["dodge rating"]      = "ITEM_MOD_DODGE_RATING_SHORT",
+    ["chance to dodge"]   = "ITEM_MOD_DODGE_RATING_SHORT", -- Era
+    ["parry rating"]      = "ITEM_MOD_PARRY_RATING_SHORT",
+    ["chance to parry"]   = "ITEM_MOD_PARRY_RATING_SHORT", -- Era
+    ["block rating"]      = "ITEM_MOD_BLOCK_RATING_SHORT",
+    ["chance to block"]   = "ITEM_MOD_BLOCK_RATING_SHORT", -- Era
+    ["shield block value"]= "ITEM_MOD_BLOCK_VALUE_SHORT",
+    ["the block value of your shield"] = "ITEM_MOD_BLOCK_VALUE_SHORT", -- Era Long
+    ["resilience rating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
+
+    -- [[ 3. RESISTANCES ]]
+    ["shadow resistance"] = "ITEM_MOD_SHADOW_RESISTANCE_SHORT",
+    ["fire resistance"]   = "ITEM_MOD_FIRE_RESISTANCE_SHORT",
+    ["frost resistance"]  = "ITEM_MOD_FROST_RESISTANCE_SHORT",
+    ["arcane resistance"] = "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
+    ["nature resistance"] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
+    ["all resistances"]   = "ITEM_MOD_ALL_RESISTANCE_SHORT",
+    ["resistance to all schools of magic"] = "ITEM_MOD_ALL_RESISTANCE_SHORT", -- Classic phrasing
+
+    -- [[ 4. POWER STATS ]]
+    ["attack power"]      = "ITEM_MOD_ATTACK_POWER_SHORT",
+    ["attack power in cat"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+    ["feral attack power"]  = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+    ["spell power"]       = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["healing"]           = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["mana per 5 sec"]    = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    ["health per 5 sec"]  = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
+    
+    -- [[ 5. ERA SPELL DAMAGE ("Up to") ]]
+    ["damage and healing done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["healing done by spells and effects"] = "ITEM_MOD_HEALING_POWER_SHORT",
+    
+    -- Specific Schools (Era)
+    ["damage done by shadow spells and effects"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    ["damage done by fire spells and effects"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    ["damage done by frost spells and effects"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    ["damage done by arcane spells and effects"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    ["damage done by nature spells and effects"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    ["damage done by holy spells and effects"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    
+    -- TBC Short Forms
+    ["shadow damage"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    ["fire damage"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    ["frost damage"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    ["arcane damage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    ["nature damage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    ["holy damage"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    
+    -- [[ 6. BASE STATS (For "Use: Increases Strength..." lines) ]]
+    ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
+    ["agility"]  = "ITEM_MOD_AGILITY_SHORT",
+    ["stamina"]  = "ITEM_MOD_STAMINA_SHORT",
+    ["intellect"]= "ITEM_MOD_INTELLECT_SHORT",
+    ["spirit"]   = "ITEM_MOD_SPIRIT_SHORT",
+    ["armor"]    = "ITEM_MOD_ARMOR_SHORT",
+    ["mana"]     = "ITEM_MOD_MANA_SHORT",
+    ["health"]   = "ITEM_MOD_HEALTH_SHORT",
+    
+    -- [[ 7. WEAPON SKILLS (Era / Classic) ]]
+    ["swords"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["axes"]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["maces"]    = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["daggers"]  = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["bows"]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["crossbows"]= "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["guns"]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["staves"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["polearms"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["two-handed swords"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["two-handed axes"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["two-handed maces"]  = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with swords"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with axes"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with maces"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with bows"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with guns"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with daggers"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with crossbows"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with staves"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["skill with polearms"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
 }
 
 -- =============================================================
--- 2. PATTERNS (LOOSE MATCHING)
+-- 2. PATTERN DATABASE (LOWERCASE ONLY)
 -- =============================================================
-MSC.Scanner.StatPatterns = {
-    -- [[ 1. DPS (Matches "38.9 damage per second" anywhere in the line) ]]
-    { p = "(%d+%.?%d*)%s+damage%s+per%s+second", fixedStat = "MSC_WEAPON_DPS" },
-    { p = "(%d+%.?%d*)%s+dps", fixedStat = "MSC_WEAPON_DPS" },
-    
-    -- [[ 2. SPEED (Matches "Speed 2.80" anywhere) ]]
-    { p = "speed%s+(%d+%.?%d*)", fixedStat = "MSC_WEAPON_SPEED" },
-    
-    -- [[ 3. DAMAGE RANGE (Matches "87 - 131 Damage" or "87 to 131 Damage") ]]
-    { p = "(%d+)%s*[%-%p]%s*(%d+)%s+damage", type="RANGE" },
-    { p = "(%d+)%s+to%s+(%d+)%s+damage", type="RANGE" },
 
-    -- [[ 4. STANDARD STATS (Prefix/Suffix) ]]
-    { p = "^[%s%+]*(%d+%.?%d*)%s+(.*)$", valIdx = 1, nameIdx = 2 },
-    { p = "^(.*)%s+[%+:]*%s*(%d+%.?%d*)$", valIdx = 2, nameIdx = 1 },
+MSC.Scanner.StatPatterns = {
+    -- White Text
+    { p = "^%+(%d+) (.*)$", valIdx = 1, nameIdx = 2 },
+    { p = "^(.*) %+(%d+)$", valIdx = 2, nameIdx = 1 },
+    { p = "^(%d+) armor$", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
+    { p = "^(%d+) block$", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+    { p = "^speed (%d+%.?%d*)$", valIdx = 1, fixedStat = "MSC_WEAPON_SPEED" },
+    
+    -- DPS Explicit
+    { p = "^%((%d+%.?%d*) (damage per second)%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
+    { p = "^%((%d+%.?%d*) (damage per second)%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
+    { p = "^%((%d+%.?%d*) (dps)%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
+    
+    -- Damage Range
+    { p = "^(%d+) %- (%d+) damage$", type="RANGE" }
 }
 
 MSC.Scanner.EquipPatterns = {
+    -- ========================================================================
+    -- [[ 1. SPECIALIZED OVERRIDES (Must be before Generic!) ]]
+    -- ========================================================================
+    -- [[ FERAL AP ]] 
+    { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+
+    -- [[ RESTORES (MP5/HP5) ]]
+    -- "Restores" doesn't match "Increases", so these are required.
+    { p = "restores (%d+) (mana per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
+    { p = "restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
+    -- Complex: "Restores X mana every Y sec"
+    { p = "restores (%d+) (.*) every ([%d%.]+) sec", 
+      func = function(match1, match2, match3, outputStats)
+            local key = (match2:find("health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
+                        or "ITEM_MOD_MANA_REGENERATION_SHORT"
+            -- Normalization math: (Value / Interval) * 5
+            local val = tonumber(match1)
+            local interval = tonumber(match3)
+            if val and interval then
+                local normalizedValue = (val / interval) * 5
+                outputStats[key] = (outputStats[key] or 0) + normalizedValue
+            end
+        end 
+    },
+    { p = "restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+
+    -- [[ ARPEN & THREAT ]]
+    { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+    { p = "ignores (%d+) armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+    { p = "decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
+    { p = "decreases the (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
+
+    -- [[ WEAPON SKILL (Era) ]]
+    { p = "increased (.*) %+(%d+)%.?", valIdx = 2, nameIdx = 1 },
+
+    -- ========================================================================
+    -- [[ 2. VERB VARIATIONS ]]
+    -- ========================================================================
+    -- Era "Up to" (Healing/Spell Power)
+    { p = "increases (.*) by up to (%d+)%.?", valIdx = 2, nameIdx = 1 },
+    { p = "^damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+
+    -- "Improves" (TBC Variation)
+    { p = "improves your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1 }, -- Percentages
+    { p = "improves (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, -- Ratings
+    
+    -- "Increases Your X by Y"
+    { p = "increases your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1 }, -- Percentages
+    { p = "increases your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
+
+    -- ========================================================================
+    -- [[ 3. LAZY / SHORT FORM (Top Priority) ]]
+    -- ========================================================================
     { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
     { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
-    { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = "increases (.*) by (%d+)", valIdx = 2, nameIdx = 1 },
-    { p = "improves (.*) by (%d+)", valIdx = 2, nameIdx = 1 },
-    { p = "restores (%d+) (.*) per 5 sec", valIdx=1, nameIdx=2 },
-    { p = "restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-    { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
+
+    -- ========================================================================
+    -- [[ 4. GENERIC CATCH-ALL (Bottom Priority) ]]
+    -- ========================================================================
+    { p = "increases (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
 }
 
 MSC.Scanner.ProcPatterns = {
+    -- Buffs
     { p = "^%+(%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
     { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "chance on hit:", type="PROC" },
-    { p = "equip: chance on hit:", type="PROC" },
+    { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    { p = "increases your (.*) by (%d+)$", valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 }, 
+
+    -- Damage Procs
+    { p = "for (%d+) to (%d+) .*damage", type="DAMAGE" },
+    { p = "inflicts (%d+) to (%d+) .*damage", type="DAMAGE" },
     { p = "for (%d+) .*damage", type="DAMAGE" },
     { p = "inflicts (%d+) .*damage", type="DAMAGE" },
+    { p = "deals (%d+) .*damage", type="DAMAGE" },
+    { p = "blasts (.*) for (%d+)", valIdx=2, type="DAMAGE" },
+
+    -- Resources
+    { p = "steals (%d+) life", type="HEAL" },
+    { p = "restores (%d+) mana", type="MANA" },
+    { p = "restores (%d+) health", type="HEAL" },
+
+    -- Catch All
+    { p = "blasts your enemy", type="GENERIC" }
 }
 
 MSC.Scanner.UsePatterns = {
+    -- Short Forms
     { p = "^%+(%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "^%+(%d+) (.*)$", valIdx=1, nameIdx=2, type="BUFF", defaultDur=15 },
+
+    -- Verbs
+    { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+
+    -- Complex
+    { p = "increases (.*) by up to (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
     { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
-    { p = "use: (.*)", type="USE" }
+
+    -- Resources
+    { p = "restores (%d+) to (%d+) mana", type="MANA_RANGE" },
+    { p = "restores (%d+) to (%d+) health", type="HEALTH_RANGE" },
+    { p = "restores (%d+) mana", valIdx=1, type="MANA" },
+    { p = "restores (%d+) health", valIdx=1, type="HEALTH" },
+
+    -- Misc
+    { p = "adds (%d+) damage", valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
 }
 
 -- =============================================================
@@ -139,15 +333,29 @@ local function ParseCooldown(text)
 end
 
 function MSC.Scanner.ClassifyLine(text)
-    if not text then return "SKIP" end
-    local clean = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " ")
+    if not text or text == "" then return "SKIP" end
+    -- Clean colors FIRST
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):lower()
     
-    if clean:find("Chance on hit") then return "PROC" end
-    if clean:find("^Use:") then return "USE" end
-    if clean:find("^Equip:") or clean:find("^Increases") or clean:find("^Improves") or clean:find("^Restores") then return "EQUIP" end
-    if clean:find("Set:") then return "SET" end
-    if clean:find("Socket Bonus:") then return "SOCKET_BONUS" end
-    if clean:find("%d") then return "STAT" end 
+    if cleanText:find("chance on hit") or cleanText:find("when struck") then return "PROC" end
+    if cleanText:find("^use:") then return "USE" end
+    
+    -- "Implicit Use" (for 10 sec) but NOT MP5 (per 5 sec)
+    if cleanText:find(" for %d+ sec") and not cleanText:find("per %d+ sec") then return "USE" end
+
+    if cleanText:find("set:") or cleanText:find("%(%d/%d%)") then return "SET" end
+    if cleanText:find("socket bonus:") then return "SOCKET_BONUS" end
+    if cleanText:find("socket") then return "SOCKET_INFO" end 
+    
+    if cleanText:find("^equip:") 
+       or cleanText:find("^increases") 
+       or cleanText:find("^improves") 
+       or cleanText:find("^restores") 
+       or cleanText:find("^increased") then 
+       return "EQUIP" 
+    end
+
+    if cleanText:find("%d") then return "STAT" end 
     return "FLUFF"
 end
 
@@ -189,11 +397,27 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     cleanText = cleanText:gsub("^equip: ", "")
     
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
-        local m1, m2 = cleanText:match(pat.p)
-        if m1 then
-            local val = tonumber(pat.valIdx == 1 and m1 or m2)
-            local name = pat.valIdx == 1 and m2 or m1
-            if val and name then
+        local match1, match2, match3 = cleanText:match(pat.p)
+        if match1 then
+            -- [[ FIX: Custom Func Support (Restored) ]]
+            if pat.func then
+                pat.func(match1, match2, match3, outputStats)
+                return
+            end
+
+            local val = tonumber(pat.valIdx == 1 and match1 or match2)
+            -- Support Patterns with no Name (FixedStat only)
+            if pat.fixedStat and not pat.nameIdx then
+                -- if valIdx is nil, assume val=1 (threat reduction generic)
+                if not pat.valIdx then val = 1 end
+                if val then outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + val; return end
+            end
+
+            local name = pat.nameIdx and (pat.nameIdx == 1 and match1 or match2)
+            
+            if pat.fixedStat and val then
+                 outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + val; return
+            elseif val and name then
                 local cleanName = name:gsub("your ", ""):gsub("%s+$", "")
                 local key = MSC.Scanner.TermMap[cleanName]
                 if key then outputStats[key] = (outputStats[key] or 0) + val; return end
@@ -214,10 +438,15 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
             if pat.type == "DAMAGE" then
                 procObj.type = "Damage"
                 procObj.val = tonumber(m1)
+                if m2 then procObj.val = (procObj.val + tonumber(m2)) / 2 end
+            elseif pat.type == "HEAL" or pat.type == "MANA" then
+                procObj.type = pat.type
+                procObj.val = tonumber(m1)
             elseif pat.valIdx then
                 procObj.type = "Stat"
                 procObj.val = tonumber(m2)
                 procObj.duration = tonumber(m3)
+                procObj.statName = m1 
             else 
                 procObj.type = "Generic" 
             end
@@ -249,6 +478,13 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                     effect.statKey = MSC.Scanner.TermMap[cleanName]
                 end
                 effect.type = "Stat"
+            elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then
+                local val = tonumber(m1)
+                if m2 then val = (val + tonumber(m2)) / 2 end
+                if pat.type:find("MANA") then effect.statKey = "ITEM_MOD_MANA_REGENERATION_SHORT"
+                else effect.statKey = "ITEM_MOD_HEALTH_REGENERATION_SHORT" end
+                effect.averageVal = (val / cooldown) * 5
+                effect.type = "Resource"
             end
             table.insert(outputUseTable, effect)
             return
@@ -262,7 +498,7 @@ function MSC.Scanner.ParseSetLine(text, r, g, b, metaTable, outputStats)
 end
 
 -- =============================================================
--- 5. MAIN PIPELINE (UPDATED FOR RIGHT-SIDE SCANNING)
+-- 5. MAIN PIPELINE (RIGHT-SIDE SCANNING ENABLED)
 -- =============================================================
 
 function MSC.Scanner.Scan(itemLink)
@@ -277,6 +513,7 @@ function MSC.Scanner.Scan(itemLink)
         -- READ LEFT TEXT
         local leftLine = _G["MSC_NewScannerTooltipTextLeft"..i]
         local leftText = leftLine and leftLine:GetText()
+        local r, g, b = leftLine and leftLine:GetTextColor() or 1, 1, 1
         
         -- READ RIGHT TEXT (CRITICAL for Speed!)
         local rightLine = _G["MSC_NewScannerTooltipTextRight"..i]
@@ -294,7 +531,7 @@ function MSC.Scanner.Scan(itemLink)
             elseif type == "EQUIP" then MSC.Scanner.ParseEquipLine(fullText, result.Stats, result.Procs)
             elseif type == "USE" then MSC.Scanner.ParseUseLine(fullText, result.UseEffects)
             elseif type == "SET" then MSC.Scanner.ParseSetLine(fullText, nil, nil, nil, result.Meta, result.Stats)
-            elseif type == "SOCKET_BONUS" then 
+            elseif type == "SOCKET_BONUS" and g > 0.9 and r < 0.2 then 
                 result.Meta.SocketBonusActive = true
                 if not result.Meta.BonusStats then result.Meta.BonusStats = {} end
                 MSC.Scanner.ParseStatLine(fullText, result.Meta.BonusStats)

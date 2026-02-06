@@ -342,16 +342,18 @@ Priest.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, -- [[ ADDED ]]
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, -- [[ ADDED ]]
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5, 
@@ -363,17 +365,19 @@ Priest.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, -- [[ ADDED ]]
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5,
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8, -- Added for Sync
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, -- [[ ADDED ]]
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.0, 
@@ -382,7 +386,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
         }
     },
-}
+}	
 
 -- =============================================================
 -- CLASS METADATA

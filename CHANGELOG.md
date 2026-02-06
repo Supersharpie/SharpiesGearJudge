@@ -1,6 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.2.9 Changelog
+## 🚀 v2.2.10 CHANGELOG
+
+* ** Add spell power to Priest leveling/healer weights (ERA & TBC) and tidy formatting. (No idea how I could have forgot this >.<)**
+* ** Overhaul minimap button: make it movable, draggable, save/restore position on login, ensure proper frame level. **
+* ** Major enhancements to expand BaseStatMap and TermMap, add many green/white-text and TBC-era phrases, improve pattern databases, add functional pattern support. **
+* ** Misc: minor parsing fixes and improved pattern priority/robustness for parsing item tooltips.**
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.2.9
 
 ###✨ Item Database
 * **Rework proc and item data and add class-specific lookup.**
