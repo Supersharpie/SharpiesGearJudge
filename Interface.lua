@@ -1069,7 +1069,7 @@ function MSC.ToggleMainMenu()
     f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
 
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.11 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.12 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -1182,12 +1182,20 @@ f:SetScript("OnEvent", function(self, event)
         -- Restore Position
         if SGJ_Settings and SGJ_Settings.MinimapPos then
             local p = SGJ_Settings.MinimapPos
-            MSC_Minimap:ClearAllPoints()
-            -- FIX: Anchor to UIParent (Screen) to match the saved coordinates
-            MSC_Minimap:SetPoint(p[1], UIParent, p[2], p[3], p[4])
+            
+            -- [[ SAFETY CHECK ]]
+            -- Verify 'p' is actually a table of coordinates. 
+            if type(p) == "table" then
+                MSC_Minimap:ClearAllPoints()
+                MSC_Minimap:SetPoint(p[1], UIParent, p[2], p[3], p[4])
+            else
+                -- Bad Data found: Reset to default
+                SGJ_Settings.MinimapPos = nil
+                MSC_Minimap:ClearAllPoints()
+                MSC_Minimap:SetPoint("CENTER", Minimap, "CENTER", -60, -60)
+            end
         end
         
-        -- Update Visibility
         MSC.UpdateMinimapPosition() 
     else
         -- Force update on EnterWorld, Equip change, or Talent change
