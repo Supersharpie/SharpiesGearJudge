@@ -917,18 +917,57 @@ function MSC.UpdateLogic()
     content:SetHeight(math.abs(yOff) + 50)
 end
 
--- [[ VIEW 4: SETTINGS ]]
+-- [[ VIEW 4: SETTINGS (Fixed Tooltips) ]]
 function MSC.InitSettingsView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
-    local function CreateHeader(text, relTo, yOff)
+    
+    -- Helper: Header (Now supports Tooltips + Interactive Frame)
+    local function CreateHeader(text, relTo, yOff, xOverride, yOverride, tooltip)
         local h = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); h:SetText(text); h:SetTextColor(1, 0.82, 0)
-        if relTo then h:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff) else h:SetPoint("TOPLEFT", 40, -30) end
+        
+        if xOverride then 
+            h:SetPoint("TOPLEFT", xOverride, yOverride) 
+        elseif relTo then 
+            h:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff) 
+        else 
+            h:SetPoint("TOPLEFT", 40, -30) 
+        end
+
+        -- [[ NEW: Invisible Hitbox for Tooltip ]]
+        if tooltip then
+            local hitRect = CreateFrame("Frame", nil, f)
+            -- Make the hitbox slightly larger than the text so it's easy to hit
+            hitRect:SetPoint("TOPLEFT", h, "TOPLEFT", -10, 10)
+            hitRect:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 50, -10) -- Extend right slightly
+            hitRect:EnableMouse(true)
+            hitRect:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(text, 1, 1, 1)
+                GameTooltip:AddLine(tooltip, nil, nil, nil, true)
+                GameTooltip:Show()
+            end)
+            hitRect:SetScript("OnLeave", GameTooltip_Hide)
+        end
+
         return h
     end
-    local function CreateDropdown(label, key, options, relTo, yOff)
+
+    -- Helper: Dropdown
+    local function CreateDropdown(label, key, options, relTo, yOff, tooltip)
         local frame = CreateFrame("Frame", nil, f); frame:SetSize(200, 50); frame:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff)
+        
+        frame:EnableMouse(true)
+        if tooltip then
+            frame:SetScript("OnEnter", function(self) 
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(label, 1, 1, 1)
+                GameTooltip:AddLine(tooltip, nil, nil, nil, true); GameTooltip:Show() 
+            end)
+            frame:SetScript("OnLeave", GameTooltip_Hide)
+        end
+
         local lbl = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); lbl:SetPoint("TOPLEFT", 0, 0); lbl:SetText(label); lbl:SetTextColor(0.6, 0.6, 0.6)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
+        
         local function OnClick(self) 
             UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
             if key == "Mode" then 
@@ -946,6 +985,8 @@ function MSC.InitSettingsView(parent)
         UIDropDownMenu_SetText(dd, currentText); if key == "Mode" then f.ProfileDD = dd end
         return frame
     end
+
+    -- Helper: Checkbox
     local function CreateCheck(label, key, tooltip, relTo, xOff, yOff)
         local cb = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff); cb.Text:SetText(label); cb.Text:SetTextColor(0.9, 0.9, 0.9); cb:SetChecked(SGJ_Settings[key])
         cb:SetScript("OnClick", function(self) SGJ_Settings[key] = self:GetChecked(); if key == "HideMinimap" then MSC.UpdateMinimapPosition() end end)
@@ -953,28 +994,84 @@ function MSC.InitSettingsView(parent)
         return cb
     end
     
+    -- ========================================================================
+    -- [[ LEFT COLUMN ]]
+    -- ========================================================================
     local h1 = CreateHeader("Comparison Logic", nil, 0)
-    local ddEnchant = CreateDropdown("Enchant Mode", "EnchantMode", {{ text = "Off (Raw Stats)", val = 1 }, { text = "Current Only", val = 2 }, { text = "Project Best", val = 3 }}, h1, -10)
-    local ddGem = CreateDropdown("Gemming Logic", "GemMode", {{ text = "The Skeptic", val = 1 }, { text = "The Casual", val = 2 }, { text = "The Pro", val = 3 }}, ddEnchant, -5)
+    
+    local enchantTip = "Controls how item enchantments affect the score.\n\n|cffffffffOff:|r Scores items based on base stats only.\n|cffffffffCurrent:|r Includes the value of the enchant currently on the item.\n|cffffffffProject:|r Simulates the best possible enchant for that item level."
+    local ddEnchant = CreateDropdown("Enchant Mode", "EnchantMode", {{ text = "Off (Raw Stats)", val = 1 }, { text = "Current Only", val = 2 }, { text = "Project Best", val = 3 }}, h1, -10, enchantTip)
+    
+    local gemTip = "Controls how empty sockets are scored.\n\n|cffffffffSkeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffCasual:|r Assumes empty sockets are filled with Rare (Blue) quality gems.\n|cffffffffPro:|r Assumes empty sockets are filled with Epic/Best-in-Slot gems."
+    local ddGem = CreateDropdown("Gemming Logic", "GemMode", {{ text = "The Skeptic", val = 1 }, { text = "The Casual", val = 2 }, { text = "The Pro", val = 3 }}, ddEnchant, -5, gemTip)
 
     local h2 = CreateHeader("Character Profile", ddGem, -20)
     local specOptions = { { text = "Auto-Detect", val = "AUTO" } }; local seen = { ["AUTO"] = true }
+    
+    -- Gather Profile List
+    local profileList = {}
     if MSC.CurrentClass then
         local function AddList(listSource)
             if not listSource then return end
             local sorted = {}; for k in pairs(listSource) do table.insert(sorted, k) end; table.sort(sorted)
-            for _, k in ipairs(sorted) do if not seen[k] then local name = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[k]) or k; table.insert(specOptions, { text = name, val = k }); seen[k] = true end end
+            for _, k in ipairs(sorted) do 
+                if not seen[k] then 
+                    local name = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[k]) or k; 
+                    table.insert(specOptions, { text = name, val = k })
+                    table.insert(profileList, { text = name, val = k }) 
+                    seen[k] = true 
+                end 
+            end
         end
         AddList(MSC.CurrentClass.Weights); AddList(MSC.CurrentClass.LevelingWeights); AddList(MSC.CurrentClass.Profiles)
     end
-    local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10)
     
+    local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
+    local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
+    
+    -- Interface Options
     local h3 = CreateHeader("Interface Options", ddProfile, -20)
     local cb1 = CreateCheck("Hide Minimap Button", "HideMinimap", "Hides the circular button on your minimap.", h3, 0, -10)
     local cb2 = CreateCheck("Hide Tooltip Verdict", "HideTooltips", "Stops the addon from adding scores to item tooltips.", cb1, 0, -5)
     local cb3 = CreateCheck("Mute Error Sounds", "MuteSounds", "Stops the error sound when clicking invalid items.", cb2, 0, -5)
     local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", cb3, 0, -5)
 
+    -- ========================================================================
+    -- [[ RIGHT COLUMN ]]
+    -- ========================================================================
+    
+    local specTip = "Select additional profiles to track in tooltips.\n\nIf an item is an upgrade for a checked profile, a small notification will appear at the bottom of the item tooltip."
+    
+    -- [[ FIXED: Tooltip is now attached to the HEADER text, not the blocked frame ]]
+    local hSpec = CreateHeader("Secondary Spec Tracking", nil, nil, 320, -30, specTip)
+    
+    local trackFrame = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    trackFrame:SetSize(230, 280)
+    trackFrame:SetPoint("TOPLEFT", hSpec, "BOTTOMLEFT", 0, -10)
+    trackFrame:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8", edgeFile="Interface\\Buttons\\WHITE8X8", edgeSize=1})
+    trackFrame:SetBackdropColor(0,0,0,0.3); trackFrame:SetBackdropBorderColor(0,0,0,0.5)
+    
+    local scroll = CreateFrame("ScrollFrame", nil, trackFrame, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint("TOPLEFT", 5, -5); scroll:SetPoint("BOTTOMRIGHT", -25, 5)
+    local sChild = CreateFrame("Frame", nil, scroll); sChild:SetSize(200, 400); scroll:SetScrollChild(sChild)
+    
+    local ty = 0
+    for _, p in ipairs(profileList) do
+        local cb = CreateFrame("CheckButton", nil, sChild, "ChatConfigCheckButtonTemplate")
+        cb:SetPoint("TOPLEFT", 5, ty)
+        cb.Text:SetText(p.text); cb.Text:SetTextColor(0.8, 0.8, 0.8)
+        cb:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val])
+        cb:SetScript("OnClick", function(self) 
+            if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
+            SGJ_Settings.TrackedSpecs[p.val] = self:GetChecked()
+        end)
+        ty = ty - 20
+    end
+    sChild:SetHeight(math.abs(ty) + 20)
+
+    -- ========================================================================
+    -- [[ BOTTOM ]]
+    -- ========================================================================
     local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40); bImp:SetText("Import Pawn String")
     bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
     local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40); bExport:SetText("Export Data")
@@ -1069,7 +1166,7 @@ function MSC.ToggleMainMenu()
     f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
 
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.2.12 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.3.0 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")

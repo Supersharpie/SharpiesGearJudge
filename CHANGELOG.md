@@ -1,5 +1,16 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.3.0 CHANGELOG
+
+###✨ New Feature Multi-Spec Tracking
+
+* **Enhance settings UI and add multi-spec tracking.**
+	*Added dropdown/checkbox tooltip handling, organize left/right columns, and build a scrollable list of secondary profiles for tracking. 
+* **Initialize display positive upgrade deltas for tracked off-specs in item tooltips. **
+* **Small data/UX fixes to defaults and profile handling to support the new tracking feature.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.2.12 CHANGELOG
 
 * **Add a safety check to ensure SGJ_Settings.MinimapPos is a table before using it to SetPoint.** 

@@ -14,9 +14,11 @@ EventFrame:RegisterEvent("PLAYER_LEVEL_UP")
 
 EventFrame:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == addonName then
-        if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45 } end
+        -- [[ UPDATED SETTINGS ]]
+        if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45, TrackedSpecs = {} } end
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
+        if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
         
         local version = MSC.IsEra and "Classic Era" or "TBC Edition"
         print("|cff00ff00Sharpie's Gear Judge|r ("..version..") Loaded. Type /sgj for menu.")
@@ -106,6 +108,17 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
     end
 
     return defaultSlot
+end
+
+-- =============================================================
+-- HELPER: GET WEIGHTS BY NAME (FOR OFF-SPEC TRACKING)
+-- =============================================================
+function MSC.GetWeightsByName(profileName)
+    if not MSC.CurrentClass then return nil end
+    if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[profileName] then return MSC.CurrentClass.Weights[profileName] end
+    if MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[profileName] then return MSC.CurrentClass.LevelingWeights[profileName] end
+    if MSC.CurrentClass.Profiles and MSC.CurrentClass.Profiles[profileName] then return MSC.CurrentClass.Profiles[profileName] end
+    return nil
 end
 
 -- =============================================================
@@ -375,6 +388,29 @@ local function OnTooltipSetItem(tooltip)
             elseif delta < -0.1 then tooltip:AddLine(string.format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
             else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
         else tooltip:AddLine("|cff00ffff*** EQUIPPED ***|r") end
+
+        -- [[ MULTI-SPEC TRACKING ]]
+        if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
+            for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
+                if isActive and tSpec ~= specName then
+                    local tWeights = MSC.GetWeightsByName(tSpec)
+                    if tWeights then
+                        -- Check for comparison slot again for this specific spec (in case 1H vs 2H logic differs)
+                        local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
+                        if tSlotId then
+                            local tNewScore, tOldScore = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
+                            local tDelta = tNewScore - tOldScore
+                            
+                            -- Only show UPGRADES to prevent clutter
+                            if tDelta > 0.1 then
+                                local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
+                                tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string.format("|cff00ff00+%s (Upgrade)|r", math.floor(tDelta)), 1, 1, 1, 1, 1, 1)
+                            end
+                        end
+                    end
+                end
+            end
+        end
 
         -- Projections (TBC Only for Gems/Metas)
         if newStats.IS_PROJECTED or newStats.GEMS_PROJECTED then
