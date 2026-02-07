@@ -23,11 +23,12 @@ Druid.Weights = {
         ["ITEM_MOD_NATURE_DAMAGE_SHORT"]    = 1.0, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 1.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.7, 
-        ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.8, 
+        ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.9, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.3, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.4,
+        ["ITEM_MOD_STAMINA_SHORT"]          = 0.1, -- Added: Dead dps do no dps
         
-        -- POISON PROTECTION
+        -- POISON PROTECTION (prevent negative scores on hybrid gear)
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02, 
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 0.02,
@@ -40,11 +41,13 @@ Druid.Weights = {
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.8, 
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.9, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 2.1, 
-        ["ITEM_MOD_AGILITY_SHORT"]          = 1.8, 
+        ["ITEM_MOD_AGILITY_SHORT"]          = 2.3, 
         ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0, 
         ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 1.0, 
-        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.4, 
+        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.6, 
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.8,
+        ["ITEM_MOD_HASTE_RATING_SHORT"]     = 1.2, -- Added: Critical for DST / TBC Endgame
+        ["ITEM_MOD_STAMINA_SHORT"]          = 0.1, -- Added: Survival
         
         -- POISON PROTECTION
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.02,    
@@ -68,11 +71,13 @@ Druid.Weights = {
         ["ITEM_MOD_RESILIENCE_RATING_SHORT"]= 1.0,    
         -- THREAT
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.5, 
-        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.6,      
-        -- OFFENSIVE
+        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.6, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 1.0, 
         ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 0.5,
-        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 0.8,      
+        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 0.8,
+        ["ITEM_MOD_HASTE_RATING_SHORT"]     = 0.8, -- Added: Threat stat
+        ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.4, -- Added: Threat stat
+             
         -- TRASH
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.002,    
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.002,
@@ -87,11 +92,12 @@ Druid.Weights = {
     ["RESTO_TREE"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.0,
         ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
-        ["ITEM_MOD_SPIRIT_SHORT"]           = 1.1, 
+        ["ITEM_MOD_SPIRIT_SHORT"]           = 1.35, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.7, 
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.6, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.3,
+        ["ITEM_MOD_STAMINA_SHORT"]          = 0.2, -- Added: PvP/Survival crossover
         
         -- POISON PROTECTION
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
@@ -112,21 +118,21 @@ Druid.LevelingBrackets = {
     ["Leveling_1_20"] = { 
         min = 1, max = 20,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 0.1, -- DPS matters slightly for auto-attacks in caster form OOM
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.5, -- 2 AP
-            ["ITEM_MOD_AGILITY_SHORT"] = 1.2, -- 1 AP + Crit + Dodge
+            ["MSC_WEAPON_DPS"] = 0.5, -- ADJUSTED: Staff bashing is #1 until Bear Form
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.5,
+            ["ITEM_MOD_AGILITY_SHORT"] = 1.2,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
-            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.5, -- Troll blood / regen
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, -- Regeneration helps leveling
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 1.0, -- Troll blood is strong early
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 0.5,
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0 -- Just in case
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5, 
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.5,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
@@ -136,7 +142,7 @@ Druid.LevelingBrackets = {
     },
     
     -- [[ FERAL CAT LEVELING ]]
-    -- Focus: Str (Raw AP) > Agi (Crit/AP). 
+    -- Progression: Str/AP -> Agi/Crit
     ["Leveling_21_40"] = { 
         min = 21, max = 40,
         Start = { 
@@ -146,8 +152,8 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5, -- Added for sync
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.2, -- Added for sync
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0, -- Bumped: Crit matters early for combo points
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0
         },
         End = { 
@@ -157,8 +163,8 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0
         }
     },
@@ -169,22 +175,22 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5, -- Added for Sync
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Added TBC Stat
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.4, 
             ["ITEM_MOD_AGILITY_SHORT"] = 2.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.2,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0
         }
@@ -196,12 +202,12 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.4, 
             ["ITEM_MOD_AGILITY_SHORT"] = 2.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2 -- Added for Sync
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0,
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.2
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -210,7 +216,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
@@ -225,29 +231,29 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 2.2, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, -- Added for sync
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5, -- TBC Stat
-            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
-            ["ITEM_MOD_AGILITY_SHORT"] = 2.5, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, -- Reduced: Shift priority to Agi
+            ["ITEM_MOD_AGILITY_SHORT"] = 2.8,  -- Increased: Match Endgame "Agi is King"
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.2
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.5
         }
     },
     
     -- [[ FERAL BEAR LEVELING ]]
-    -- Agility Buffed: It gives Armor/Dodge/Crit/AP. It is better than Str for Tanks.
+    -- Adjusted: Increased Strength/AP slightly so leveling bears can actually kill mobs
     ["Leveling_Bear_21_40"] = { 
         min = 21, max = 40,
         Start = { 
@@ -255,20 +261,20 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, -- Bumped from 1.0
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8 -- Bumped from 0.5
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.5
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8
         }
     },
     ["Leveling_Bear_41_51"] = { 
@@ -280,9 +286,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -290,9 +296,9 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.5,
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
         }
     },
@@ -304,10 +310,10 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, -- Capable of crits suppression
+            ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, 
-            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0 -- Added for Sync
+            ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.5, -- Start tapering off for pure tanking
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -330,10 +336,10 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 2.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, 
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.0, -- Crit immunity stat
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_ARMOR_SHORT"] = 1.2, -- Added for Sync
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0 -- Added for Sync
+            ["ITEM_MOD_ARMOR_SHORT"] = 1.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -345,37 +351,39 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_ARMOR_SHORT"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.0, -- Added: Threat
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5
         }
     },
     
     -- [[ BOOMKIN LEVELING ]]
-    -- Int is King (Lunar Guidance + Dreamstate).
+    -- Int is King. Spirit buffed for downtime.
     ["Leveling_Caster_41_51"] = { 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, -- Bumped from 0.8
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5, -- Boomkin needs MP5
-			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
-			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.8, -- Bumped: Boomkin needs MP5
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0,
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, -- Bumped
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
-			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
-			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.8,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0,
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         }
     },
     ["Leveling_Caster_52_59"] = { 
@@ -386,11 +394,11 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5, -- Added for Sync
-			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
-			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.8,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0,
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -398,11 +406,11 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
-			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
-			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.8,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0,
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         }
     },
     ["Leveling_Caster_60_70"] = { 
@@ -414,11 +422,11 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, -- Added for Sync
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- TBC Stat
-			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
-			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0, -- TBC gearing
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5,
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, 
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -427,11 +435,11 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
-            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.8,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
             ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
-			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, -- Wrath / Insect Swarm
-			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0 -- Starfire / Moonfire
+			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, 
+			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         }
     },
     
@@ -482,7 +490,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0 -- Added for Sync
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -502,7 +510,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -581,7 +589,8 @@ Druid.Talents = {
     ["SURVIVAL_OF_FITTEST"] = "Survival of the Fittest",
     ["FERAL_CHARGE"]="Feral Charge",
 	["INSECT_SWARM"]="Insect Swarm",
-	["LUNAR_GUIDANCE"]="Lunar Guidance"
+	["LUNAR_GUIDANCE"]="Lunar Guidance",
+    ["PREDATORY_INSTINCTS"]="Predatory Instincts" -- ADDED
 }
 
 -- =============================================================
@@ -718,6 +727,25 @@ function Druid:ApplyScalers(weights, currentSpec)
         w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.05)) 
     end
 
+    -- [[ NEW: DREAMSTATE (Int -> Mp5) ]]
+    -- Regenerate mana equal to 4/7/10% of Int.
+    local rDream = Rank("DREAMSTATE")
+    if rDream > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
+        local mp5Value = w["ITEM_MOD_MANA_REGENERATION_SHORT"] or 0
+        local conversion = 0.0
+        if rDream == 1 then conversion = 0.04 end
+        if rDream == 2 then conversion = 0.07 end
+        if rDream == 3 then conversion = 0.10 end
+        
+        -- Effect: 100 Int = 10 Mp5.
+        -- If 1 Mp5 = Score 2.0, then 10 Mp5 = Score 20.
+        -- So 100 Int gains +20 Score. 1 Int gains +0.2 Score.
+        -- Logic: 1 Int * Conversion * Mp5Weight
+        if mp5Value > 0 then
+             w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + (conversion * mp5Value)
+        end
+    end
+
     -- [[ LUNAR GUIDANCE (Int -> SP) ]]
     local rLunar = Rank("LUNAR_GUIDANCE") 
     if rLunar > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
@@ -727,9 +755,36 @@ function Druid:ApplyScalers(weights, currentSpec)
         w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + (ratio * spWeight)
     end
 
+    -- [[ NEW: PREDATORY INSTINCTS (Crit Dmg) ]]
+    -- Increases Crit Dmg by 3/7/10%.
+    -- This makes Crit Rating more valuable.
+    local rPred = Rank("PREDATORY_INSTINCTS")
+    if rPred > 0 then
+         local scaler = 1.0
+         if rPred == 1 then scaler = 1.03 end
+         if rPred == 2 then scaler = 1.07 end
+         if rPred == 3 then scaler = 1.10 end
+         
+         if w["ITEM_MOD_CRIT_RATING_SHORT"] then
+             w["ITEM_MOD_CRIT_RATING_SHORT"] = w["ITEM_MOD_CRIT_RATING_SHORT"] * scaler
+         end
+         -- Agility gives Crit, so it also scales slightly
+         if w["ITEM_MOD_AGILITY_SHORT"] then
+             w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * (1 + (scaler - 1)/2)
+         end
+    end
+
+
     -- [[ 2. COVARIANCE (Synergy) ]]
     if currentSpec:find("BALANCE") or currentSpec:find("Caster") then
         if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
+            -- [[ NEW: MANA SAFETY ]]
+            -- If max mana is too low (<7000), Haste burns you out.
+            local maxMana = UnitPowerMax("player", 0)
+            if maxMana < 7000 then
+                 w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.2 -- Heavy penalty until geared
+            end
+
             local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
@@ -814,6 +869,21 @@ function Druid:ApplyScalers(weights, currentSpec)
             table.insert(activeCaps, "Hit (Soft)")
         end
     end
+    
+    -- [[ NEW: EXPERTISE CAP (6.5% Dodge) ]]
+    if (currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear")) and w["ITEM_MOD_EXPERTISE_RATING_SHORT"] then
+        local expRating = GetCombatRating(24) -- CR_EXPERTISE
+        -- Cap is 6.5% Dodge. 1 Exp = 3.94 rating. 26 Exp = 102.5 rating.
+        local cap = 103 
+        
+        if expRating >= (cap + 12) then
+            w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.2
+            table.insert(activeCaps, "Exp")
+        elseif expRating >= cap then
+            w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = w["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.4
+            table.insert(activeCaps, "Exp (Soft)")
+        end
+    end
 
     -- C. BEAR CRIT IMMUNITY (Def/Resil)
     if (currentSpec:find("FERAL_BEAR") or currentSpec:find("Bear")) and w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] then
@@ -879,7 +949,15 @@ Druid.Relics = {
     -- [[ TBC RAID ]]
     [29390] = { ITEM_MOD_HEALING_POWER_SHORT = 136 },     -- Idol of the Emerald Queen (Lifebloom)
     [29391] = { ITEM_MOD_AGILITY_SHORT = 55, estimate = true, note = "BiS (Agility Proc)" }, -- Idol of Terror
-    [32387] = { ITEM_MOD_HEALING_POWER_SHORT = 44, ITEM_MOD_CRIT_RATING_SHORT = 40, ITEM_MOD_SPELL_CRIT_RATING_SHORT = 40 }, -- Idol of the Raven Goddess (Epic Flight)
+    
+    -- [[ NEW: DYNAMIC IDOL (Raven Goddess) ]]
+    -- We list ALL stats. The weight filter will ignore the useless ones for your spec.
+    [32387] = { 
+        ITEM_MOD_HEALING_POWER_SHORT = 44,    -- Tree of Life (Resto)
+        ITEM_MOD_CRIT_RATING_SHORT = 20,      -- Leader of Pack (Feral)
+        ITEM_MOD_SPELL_CRIT_RATING_SHORT = 20 -- Moonkin (Balance)
+    }, 
+    
     [30652] = { ITEM_MOD_AGILITY_SHORT = 45, ITEM_MOD_DODGE_RATING_SHORT = 45 }, -- Idol of the Crescent Goddess
     [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70, note = "BiS" }, -- Idol of the White Stag
 
