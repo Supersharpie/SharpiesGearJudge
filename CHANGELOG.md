@@ -20,6 +20,7 @@
 * **This handles cases like "Blasts X for Y" where the second capture is the real value. Adds a brief comment and minor whitespace cleanup.**
 * **Update both TBC.toc and Vanilla.toc to move SGJ_Settings from the global SavedVariables list to SavedVariablesPerCharacter, while keeping SGJ_History as a global SavedVariable.**
 * **This ensures user settings are stored per-character instead of shared across characters.**
+* **On ADDON_LOADED, set MSC.ManualSpec from SGJ_Settings.Mode so the engine reflects the saved Mode (AUTO/MANUAL).**
 
 ------------------------------------------------------------------------------------------------
 

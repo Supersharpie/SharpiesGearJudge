@@ -14,12 +14,15 @@ EventFrame:RegisterEvent("PLAYER_LEVEL_UP")
 
 EventFrame:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == addonName then
-        -- [[ UPDATED SETTINGS ]]
+
         if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45, TrackedSpecs = {} } end
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
-        
+		
+        -- [[ SYNC ENGINE WITH SAVED SETTING ]]
+        MSC.ManualSpec = SGJ_Settings.Mode
+		
         local version = MSC.IsEra and "Classic Era" or "TBC Edition"
         print("|cff00ff00Sharpie's Gear Judge|r ("..version..") Loaded. Type /sgj for menu.")
         
