@@ -472,10 +472,19 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
         local m1, m2, m3 = cleanText:match(pat.p)
         if m1 then
             local procObj = { description = text }
+            
             if pat.type == "DAMAGE" then
                 procObj.type = "Damage"
-                procObj.val = tonumber(m1)
-                if m2 then procObj.val = (procObj.val + tonumber(m2)) / 2 end
+                
+                -- [[ FIX: Check valIdx to handle "Blasts X for Y" patterns ]]
+                local valStr = (pat.valIdx == 2) and m2 or m1
+                procObj.val = tonumber(valStr)
+                
+                -- Only average if it's a range pattern (m2 exists AND we didn't just use it as the primary value)
+                if m2 and not pat.valIdx then 
+                    procObj.val = (procObj.val + tonumber(m2)) / 2 
+                end
+
             elseif pat.type == "HEAL" or pat.type == "MANA" then
                 procObj.type = pat.type
                 procObj.val = tonumber(m1)
