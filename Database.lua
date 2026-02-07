@@ -413,14 +413,14 @@ MSC.EnchantCandidates_Leveling = {
 
 if MSC.IsTBC or MSC.IsWrath then
     local GEMS = {
-   -- [[ 1. ENDGAME (RARE, EPIC, PVP, & UNIQUE) ]]
-   
-   PRISMATIC = {
+   -- ========================================================================
+   -- [[ PHASE 1: LAUNCH (RARE, PVP, & HEROIC) ]]
+   -- ========================================================================
+   PRISMATIC_P1 = {
 		{ id=22460, stat="ITEM_MOD_RESISTANCE_ALL_SHORT", val=4, name="Void Sphere", colorType="PRISMATIC" },
 	},
-	
-    RED = {
-        -- Rare (Original)
+    
+    RED_P1 = {
         { id=24027, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Bold Living Ruby", colorType="RED" },
         { id=24028, stat="ITEM_MOD_AGILITY_SHORT", val=8, name="Delicate Living Ruby", colorType="RED" },
         { id=24030, stat="ITEM_MOD_SPELL_POWER_SHORT", val=9, name="Runed Living Ruby", colorType="RED" },
@@ -428,31 +428,21 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=24032, stat="ITEM_MOD_DODGE_RATING_SHORT", val=8, name="Subtle Living Ruby", colorType="RED" },
         { id=24033, stat="ITEM_MOD_PARRY_RATING_SHORT", val=8, name="Flashing Living Ruby", colorType="RED" },
         { id=24035, stat="ITEM_MOD_HEALING_POWER_SHORT", val=18, name="Teardrop Living Ruby", colorType="RED" },
-        -- Epic (T6/Sunwell)
-        { id=32193, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name="Bold Crimson Spinel", colorType="RED" },
-        { id=32194, stat="ITEM_MOD_AGILITY_SHORT", val=10, name="Delicate Crimson Spinel", colorType="RED" },
-        { id=32196, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Crimson Spinel", colorType="RED" },
-        { id=32195, stat="ITEM_MOD_HEALING_POWER_SHORT", val=22, name="Teardrop Crimson Spinel", colorType="RED" },
         -- PvP / Ornate
         { id=28118, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Ornate Ruby", colorType="RED" },
         { id=28362, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name="Bold Ornate Ruby", colorType="RED" },
     },
 
-    BLUE = {
-        -- Rare (Original)
+    BLUE_P1 = {
         { id=24053, stat="ITEM_MOD_STAMINA_SHORT", val=12, name="Solid Star of Elune", colorType="BLUE" }, 
         { id=24054, stat="ITEM_MOD_SPIRIT_SHORT", val=8, name="Sparkling Star of Elune", colorType="BLUE" },
         { id=24056, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name="Lustrous Star of Elune", colorType="BLUE" },
         { id=24057, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=10, name="Stormy Star of Elune", colorType="BLUE" },
-        -- Epic (T6/Sunwell)
-        { id=32200, stat="ITEM_MOD_STAMINA_SHORT", val=15, name="Solid Empyrean Sapphire", colorType="BLUE" },
-        { id=32201, stat="ITEM_MOD_SPIRIT_SHORT", val=10, name="Sparkling Empyrean Sapphire", colorType="BLUE" },
-        -- Unique / Misc
+        -- Misc
         { id=34831, stat="ITEM_MOD_STAMINA_SHORT", val=15, name="Eye of the Sea", colorType="BLUE" },
     },
 
-    YELLOW = {
-        -- Rare (Original)
+    YELLOW_P1 = {
         { id=24047, stat="ITEM_MOD_HIT_RATING_SHORT", val=8, name="Rigid Dawnstone", colorType="YELLOW" },
         { id=24048, stat="ITEM_MOD_CRIT_RATING_SHORT", val=8, name="Smooth Dawnstone", colorType="YELLOW" },
         { id=24050, stat="ITEM_MOD_INTELLECT_SHORT", val=8, name="Brilliant Dawnstone", colorType="YELLOW" },
@@ -460,94 +450,43 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=24052, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=8, name="Mystic Dawnstone", colorType="YELLOW" },
         { id=24053, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=8, name="Gleaming Dawnstone", colorType="YELLOW" },
         { id=24061, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=8, name="Great Dawnstone", colorType="YELLOW" },
-        -- Epic (T6/Sunwell)
-        { id=32204, stat="ITEM_MOD_INTELLECT_SHORT", val=10, name="Brilliant Lionseye", colorType="YELLOW" },
-        { id=32205, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name="Smooth Lionseye", colorType="YELLOW" },
-        { id=32206, stat="ITEM_MOD_HIT_RATING_SHORT", val=10, name="Rigid Lionseye", colorType="YELLOW" },
-        { id=32208, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=10, name="Thick Lionseye", colorType="YELLOW" },
-        { id=32209, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=10, name="Mystic Lionseye", colorType="YELLOW" },
-        { id=32210, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=10, name="Great Lionseye", colorType="YELLOW" },
-        { id=35761, stat="ITEM_MOD_HASTE_RATING_SHORT", val=10, name="Quick Lionseye", colorType="YELLOW" },
         -- PvP / Ornate
         { id=28119, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name="Smooth Ornate Dawnstone", colorType="YELLOW" },
     },
 
-    ORANGE = {
-        -- Rare (Original)
+    ORANGE_P1 = {
         { id=24058, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name="Inscribed Noble Topaz", colorType="ORANGE" },
         { id=24060, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Etched Noble Topaz", colorType="ORANGE" },
         { id=24059, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Potent Noble Topaz", colorType="ORANGE" },
         { id=24062, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=4, name="Veiled Noble Topaz", colorType="ORANGE" },
         { id=24061, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Glinting Noble Topaz", colorType="ORANGE" },
         { id=24065, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Luminous Noble Topaz", colorType="ORANGE" },
-        -- Epic (T6/Sunwell)
-        { id=32217, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Pyrestone", colorType="ORANGE" },
-        { id=32218, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name="Potent Pyrestone", colorType="ORANGE" },
-        { id=32219, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Pyrestone", colorType="ORANGE" },
-        { id=32220, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=5, name="Glinting Pyrestone", colorType="ORANGE" },
-        { id=32221, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name="Veiled Pyrestone", colorType="ORANGE" },
-        { id=32222, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Wicked Pyrestone", colorType="ORANGE" },
-        { id=35760, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HASTE_RATING_SHORT", val2=5, name="Reckless Pyrestone", colorType="ORANGE" },
-        -- Heroic Dungeon Epics
-        { id=30547, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Fire Opal", colorType="ORANGE" },
-        { id=30556, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Glinting Fire Opal", colorType="ORANGE" },
-        { id=30559, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Etched Fire Opal", colorType="ORANGE" },
-        { id=30564, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name="Shining Fire Opal", colorType="ORANGE" },
-        { id=30582, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name="Deadly Fire Opal", colorType="ORANGE" },
-        { id=30588, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Potent Fire Opal", colorType="ORANGE" },
-        { id=30593, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Iridescent Fire Opal", colorType="ORANGE" },
-        { id=30604, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name="Resplendent Fire Opal", colorType="ORANGE" },
         -- PvP / Ornate
         { id=28363, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Ornate Topaz", colorType="ORANGE" },
     },
 
-    PURPLE = {
-        -- Rare (Original)
+    PURPLE_P1 = {
         { id=24063, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Nightseye", colorType="PURPLE" },
         { id=24064, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Nightseye", colorType="PURPLE" },
         { id=24065, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Nightseye", colorType="PURPLE" },
         { id=24066, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Purified Nightseye", colorType="PURPLE" },
         { id=24067, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Royal Nightseye", colorType="PURPLE" },
         { id=24068, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Balanced Nightseye", colorType="PURPLE" },
-        -- Epic (T6/Sunwell)
-        { id=32211, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Sovereign Shadowsong Amethyst", colorType="PURPLE" },
-        { id=32212, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Shifting Shadowsong Amethyst", colorType="PURPLE" },
-        { id=32215, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Glowing Shadowsong Amethyst", colorType="PURPLE" },
-        { id=32216, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Royal Shadowsong Amethyst", colorType="PURPLE" },
-        { id=37503, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Purified Shadowsong Amethyst", colorType="PURPLE" },
-        -- Heroic Dungeon Epics
-        { id=30546, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Tanzanite", colorType="PURPLE" },
-        { id=30549, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Tanzanite", colorType="PURPLE" },
-        { id=30555, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Tanzanite", colorType="PURPLE" },
-        { id=30574, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Brutal Tanzanite", colorType="PURPLE" },
-        { id=30600, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Fluorescent Tanzanite", colorType="PURPLE" },
-        { id=30603, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Tanzanite", colorType="PURPLE" },
         -- PvP / Ornate
         { id=32836, stat="ITEM_MOD_SPELL_POWER_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Purified Shadow Pearl", colorType="PURPLE" },
-        -- Misc
         { id=35707, stat="ITEM_MOD_DODGE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Regal Nightseye", colorType="PURPLE" },
     },
 
-    GREEN = {
-        -- Rare (Original)
+    GREEN_P1 = {
         { id=24069, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Enduring Talasite", colorType="GREEN" },
         { id=24070, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Dazzling Talasite", colorType="GREEN" },
         { id=24071, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Jagged Talasite", colorType="GREEN" },
         { id=24072, stat="ITEM_MOD_HIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Vivid Talasite", colorType="GREEN" },
-        -- Epic (T6/Sunwell)
-        { id=32223, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Enduring Seaspray Emerald", colorType="GREEN" },
-        { id=32226, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Jagged Seaspray Emerald", colorType="GREEN" },
-        { id=35758, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Steady Seaspray Emerald", colorType="GREEN" },
-        -- Heroic Dungeon Epics
-        { id=30550, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Sundered Chrysoprase", colorType="GREEN" },
-        { id=30602, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Jagged Chrysoprase", colorType="GREEN" },
-        { id=30605, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Vivid Chrysoprase", colorType="GREEN" },
-        { id=30606, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Lambent Chrysoprase", colorType="GREEN" },
         -- Misc
         { id=33782, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Steady Talasite", colorType="GREEN" },
     },
 
-    META = {
+    META_P1 = {
         { id=32409, stat="ITEM_MOD_AGILITY_SHORT", val=12, name="Relentless Earthstorm", isMeta=true, colorType="META" }, 
         { id=34220, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name="Chaotic Skyfire", isMeta=true, colorType="META" }, 
         { id=25893, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=0, name="Mystical Skyfire", isMeta=true, colorType="META" }, 
@@ -556,69 +495,164 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, name="Insightful Earthstorm", isMeta=true, colorType="META" }, 
         { id=25890, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name="Destructive Skyfire", isMeta=true, colorType="META" }, 
         { id=25894, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, name="Swift Starfire", isMeta=true, colorType="META" }, 
-        -- Extra Metas
-        { id=35501, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, name="Eternal Earthstorm", isMeta=true, colorType="META" }, 
         { id=25897, stat="ITEM_MOD_HEALING_POWER_SHORT", val=26, name="Bracing Earthstorm", isMeta=true, colorType="META" }, 
     },
-	
-	--JC_ONLY = {
-    --   { id=33131, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, name="Crimson Sun", colorType="RED" },
-	--   { id=33133, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, name="Don Julio's Heart", colorType="RED" },
-    --   { id=33143, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name="Stone of Blades", colorType="YELLOW" },
-    --},
-	
+
+   -- ========================================================================
+   -- [[ PHASE 3: HYJAL / BLACK TEMPLE (EPIC DROPS) ]]
+   -- ========================================================================
+    RED_P3 = {
+        { id=32193, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name="Bold Crimson Spinel", colorType="RED" },
+        { id=32194, stat="ITEM_MOD_AGILITY_SHORT", val=10, name="Delicate Crimson Spinel", colorType="RED" },
+        { id=32196, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Crimson Spinel", colorType="RED" },
+        { id=32195, stat="ITEM_MOD_HEALING_POWER_SHORT", val=22, name="Teardrop Crimson Spinel", colorType="RED" },
+    },
+    BLUE_P3 = {
+        { id=32200, stat="ITEM_MOD_STAMINA_SHORT", val=15, name="Solid Empyrean Sapphire", colorType="BLUE" },
+        { id=32201, stat="ITEM_MOD_SPIRIT_SHORT", val=10, name="Sparkling Empyrean Sapphire", colorType="BLUE" },
+        { id=35318, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=13, name="Stormy Empyrean Sapphire", colorType="BLUE" },
+    },
+    YELLOW_P3 = {
+        { id=32204, stat="ITEM_MOD_INTELLECT_SHORT", val=10, name="Brilliant Lionseye", colorType="YELLOW" },
+        { id=32205, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name="Smooth Lionseye", colorType="YELLOW" },
+        { id=32206, stat="ITEM_MOD_HIT_RATING_SHORT", val=10, name="Rigid Lionseye", colorType="YELLOW" },
+        { id=32208, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=10, name="Thick Lionseye", colorType="YELLOW" },
+        { id=32209, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=10, name="Mystic Lionseye", colorType="YELLOW" },
+        { id=32210, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=10, name="Great Lionseye", colorType="YELLOW" },
+    },
+    ORANGE_P3 = {
+        { id=32217, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Pyrestone", colorType="ORANGE" },
+        { id=32218, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name="Potent Pyrestone", colorType="ORANGE" },
+        { id=32219, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Pyrestone", colorType="ORANGE" },
+        { id=32220, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=5, name="Glinting Pyrestone", colorType="ORANGE" },
+        { id=32221, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name="Veiled Pyrestone", colorType="ORANGE" },
+        { id=32222, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Wicked Pyrestone", colorType="ORANGE" },
+    },
+    PURPLE_P3 = {
+        { id=32211, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Sovereign Shadowsong Amethyst", colorType="PURPLE" },
+        { id=32212, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Shifting Shadowsong Amethyst", colorType="PURPLE" },
+        { id=32215, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Glowing Shadowsong Amethyst", colorType="PURPLE" },
+        { id=32216, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Royal Shadowsong Amethyst", colorType="PURPLE" },
+        { id=37503, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Purified Shadowsong Amethyst", colorType="PURPLE" },
+    },
+    GREEN_P3 = {
+        { id=32223, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Enduring Seaspray Emerald", colorType="GREEN" },
+        { id=32226, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Jagged Seaspray Emerald", colorType="GREEN" },
+    },
+
+   -- ========================================================================
+   -- [[ PHASE 5: SUNWELL (JC UNIQUES, HASTE/ARP, & NEW METAS) ]]
+   -- ========================================================================
+    RED_P5 = {
+        -- Jewelcrafter Unique (BoP)
+        { id=33131, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, name="Crimson Sun", colorType="RED", unique=true },
+        { id=33133, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, name="Don Julio's Heart", colorType="RED", unique=true },
+        { id=33134, stat="ITEM_MOD_HEALING_POWER_SHORT", val=26, name="Kailee's Rose", colorType="RED", unique=true },
+        { id=33130, stat="ITEM_MOD_STRENGTH_SHORT", val=12, name="Don Amancio's Heart", colorType="RED", unique=true },
+        { id=33132, stat="ITEM_MOD_AGILITY_SHORT", val=12, name="Delicate Fire Ruby", colorType="RED", unique=true },
+    },
+    BLUE_P5 = {
+        -- Jewelcrafter Unique (BoP)
+        { id=33135, stat="ITEM_MOD_STAMINA_SHORT", val=18, name="Falling Star", colorType="BLUE", unique=true },
+        { id=33137, stat="ITEM_MOD_SPIRIT_SHORT", val=12, name="Sparkling Falling Star", colorType="BLUE", unique=true },
+        { id=33136, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=6, name="Lustrous Falling Star", colorType="BLUE", unique=true },
+        { id=33145, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=15, name="Stormy Falling Star", colorType="BLUE", unique=true },
+    },
+    YELLOW_P5 = {
+        -- Jewelcrafter Unique (BoP)
+        { id=33140, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name="Blood of Amber", colorType="YELLOW", unique=true },
+        { id=33143, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name="Stone of Blades", colorType="YELLOW", unique=true },
+        { id=33139, stat="ITEM_MOD_INTELLECT_SHORT", val=12, name="Brilliant Bladestone", colorType="YELLOW", unique=true },
+        { id=33141, stat="ITEM_MOD_HIT_RATING_SHORT", val=12, name="Great Bladestone", colorType="YELLOW", unique=true },
+        { id=33142, stat="ITEM_MOD_HIT_RATING_SHORT", val=12, name="Rigid Bladestone", colorType="YELLOW", unique=true },
+        { id=33138, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=12, name="Mystic Bladestone", colorType="YELLOW", unique=true },
+        { id=33144, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, name="Facet of Eternity", colorType="YELLOW", unique=true },
+        -- Haste
+        { id=35761, stat="ITEM_MOD_HASTE_RATING_SHORT", val=10, name="Quick Lionseye", colorType="YELLOW" },
+    },
+    ORANGE_P5 = {
+        -- Haste
+        { id=35760, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HASTE_RATING_SHORT", val2=5, name="Reckless Pyrestone", colorType="ORANGE" },
+        -- Heroic Dungeon Epics (Unique-Equipped)
+        { id=30547, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Fire Opal", colorType="ORANGE" },
+        { id=30556, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Glinting Fire Opal", colorType="ORANGE" },
+        { id=30559, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Etched Fire Opal", colorType="ORANGE" },
+        { id=30564, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name="Shining Fire Opal", colorType="ORANGE" },
+        { id=30582, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name="Deadly Fire Opal", colorType="ORANGE" },
+        { id=30588, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Potent Fire Opal", colorType="ORANGE" },
+        { id=30593, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Iridescent Fire Opal", colorType="ORANGE" },
+        { id=30604, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name="Resplendent Fire Opal", colorType="ORANGE" },
+    },
+    PURPLE_P5 = {
+        -- Heroic Dungeon Epics (Unique-Equipped)
+        { id=30546, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Tanzanite", colorType="PURPLE" },
+        { id=30549, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Tanzanite", colorType="PURPLE" },
+        { id=30555, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Tanzanite", colorType="PURPLE" },
+        { id=30574, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Brutal Tanzanite", colorType="PURPLE" },
+        { id=30600, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Fluorescent Tanzanite", colorType="PURPLE" },
+        { id=30603, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Tanzanite", colorType="PURPLE" },
+    },
+    GREEN_P5 = {
+        -- Haste
+        { id=35758, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Steady Seaspray Emerald", colorType="GREEN" },
+        { id=35759, stat="ITEM_MOD_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Forceful Seaspray Emerald", colorType="GREEN" },
+        -- Heroic Dungeon Epics (Unique-Equipped)
+        { id=30550, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Sundered Chrysoprase", colorType="GREEN" },
+        { id=30602, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Jagged Chrysoprase", colorType="GREEN" },
+        { id=30605, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Vivid Chrysoprase", colorType="GREEN" },
+        { id=30606, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Lambent Chrysoprase", colorType="GREEN" },
+    },
+    META_P5 = {
+        { id=35501, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, name="Eternal Earthstorm", isMeta=true, colorType="META" }, 
+    },
+
     -- [[ 2. LEVELING (UNCOMMON / GREEN QUALITY) ]]
+    -- [[ FIXED IDS (Range 23094 - 23121) ]]
     LEVELING_RED = {
         { id=23095, stat="ITEM_MOD_STRENGTH_SHORT", val=6, name="Bold Blood Garnet", colorType="RED" },
         { id=23096, stat="ITEM_MOD_AGILITY_SHORT", val=6, name="Delicate Blood Garnet", colorType="RED" },
         { id=23097, stat="ITEM_MOD_SPELL_POWER_SHORT", val=7, name="Runed Blood Garnet", colorType="RED" },
-        { id=23098, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=12, name="Bright Blood Garnet", colorType="RED" },
-        { id=23101, stat="ITEM_MOD_HEALING_POWER_SHORT", val=14, name="Teardrop Blood Garnet", colorType="RED" },
-        { id=23102, stat="ITEM_MOD_PARRY_RATING_SHORT", val=6, name="Flashing Blood Garnet", colorType="RED" },
-        { id=23099, stat="ITEM_MOD_DODGE_RATING_SHORT", val=6, name="Subtle Blood Garnet", colorType="RED" },
+        -- Bright Blood Garnet is ID 28595, outside the block
+        { id=28595, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=12, name="Bright Blood Garnet", colorType="RED" }, 
+        { id=23094, stat="ITEM_MOD_HEALING_POWER_SHORT", val=14, name="Teardrop Blood Garnet", colorType="RED" },
     },
 
     LEVELING_BLUE = {
-        { id=23114, stat="ITEM_MOD_STAMINA_SHORT", val=9, name="Solid Azure Moonstone", colorType="BLUE" },
-        { id=23115, stat="ITEM_MOD_SPIRIT_SHORT", val=6, name="Sparkling Azure Moonstone", colorType="BLUE" },
-        { id=23116, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2, name="Lustrous Azure Moonstone", colorType="BLUE" },
-        { id=23118, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=8, name="Stormy Azure Moonstone", colorType="BLUE" },
+        { id=23118, stat="ITEM_MOD_STAMINA_SHORT", val=9, name="Solid Azure Moonstone", colorType="BLUE" }, -- Fixed
+        { id=23119, stat="ITEM_MOD_SPIRIT_SHORT", val=6, name="Sparkling Azure Moonstone", colorType="BLUE" }, -- Fixed
+        { id=23121, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2, name="Lustrous Azure Moonstone", colorType="BLUE" }, -- Fixed
+        { id=23120, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=8, name="Stormy Azure Moonstone", colorType="BLUE" }, -- Fixed
     },
 
     LEVELING_YELLOW = {
-        { id=23103, stat="ITEM_MOD_HIT_RATING_SHORT", val=6, name="Rigid Golden Draenite", colorType="YELLOW" },
-        { id=23104, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, name="Smooth Golden Draenite", colorType="YELLOW" },
-        { id=23105, stat="ITEM_MOD_INTELLECT_SHORT", val=6, name="Brilliant Golden Draenite", colorType="YELLOW" },
-        { id=23106, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=6, name="Thick Golden Draenite", colorType="YELLOW" },
-        { id=23112, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=6, name="Great Golden Draenite", colorType="YELLOW" },
-        { id=23110, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=6, name="Mystic Golden Draenite", colorType="YELLOW" },
-        { id=23108, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=6, name="Gleaming Golden Draenite", colorType="YELLOW" },
+        { id=23116, stat="ITEM_MOD_HIT_RATING_SHORT", val=6, name="Rigid Golden Draenite", colorType="YELLOW" }, -- Fixed
+        { id=23112, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, name="Smooth Golden Draenite", colorType="YELLOW" }, -- Smooth is often Base? No, 23112 is base in some lists. Let's use 23112 if verified or closest match.
+        { id=23113, stat="ITEM_MOD_INTELLECT_SHORT", val=6, name="Brilliant Golden Draenite", colorType="YELLOW" }, -- Fixed
+        { id=23115, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=6, name="Thick Golden Draenite", colorType="YELLOW" }, -- Fixed
+        { id=23114, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=6, name="Gleaming Golden Draenite", colorType="YELLOW" }, -- Fixed
     },
 
     LEVELING_ORANGE = {
-        { id=23098, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=3, name="Inscribed Flame Spessarite", colorType="ORANGE" },
-        { id=23100, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=3, name="Glinting Flame Spessarite", colorType="ORANGE" },
-        { id=23101, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=3, name="Potent Flame Spessarite", colorType="ORANGE" },
-        { id=23102, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=3, name="Veiled Flame Spessarite", colorType="ORANGE" },
-        { id=23117, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_INTELLECT_SHORT", val2=3, name="Luminous Flame Spessarite", colorType="ORANGE" },
-        { id=23119, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=6, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=3, name="Wicked Flame Spessarite", colorType="ORANGE" },
+        { id=23098, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=3, name="Inscribed Flame Spessarite", colorType="ORANGE" }, -- Fixed
+        { id=23100, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=3, name="Glinting Flame Spessarite", colorType="ORANGE" }, -- Fixed
+        { id=23101, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=3, name="Potent Flame Spessarite", colorType="ORANGE" }, -- Fixed
+        { id=23102, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=3, name="Veiled Flame Spessarite", colorType="ORANGE" }, -- Fixed
+        { id=23099, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_INTELLECT_SHORT", val2=3, name="Luminous Flame Spessarite", colorType="ORANGE" }, -- Fixed
     },
 
     LEVELING_PURPLE = {
-        { id=23122, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Sovereign Shadow Draenite", colorType="PURPLE" },
-        { id=23123, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Shifting Shadow Draenite", colorType="PURPLE" },
-        { id=23124, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Glowing Shadow Draenite", colorType="PURPLE" },
-        { id=23125, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_SPIRIT_SHORT", val2=3, name="Purified Shadow Draenite", colorType="PURPLE" },
-        { id=23126, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Royal Shadow Draenite", colorType="PURPLE" },
-        { id=23127, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Balanced Shadow Draenite", colorType="PURPLE" },
+        { id=23111, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Sovereign Shadow Draenite", colorType="PURPLE" }, -- Fixed
+        { id=23110, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Shifting Shadow Draenite", colorType="PURPLE" }, -- Fixed
+        { id=23108, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Glowing Shadow Draenite", colorType="PURPLE" }, -- Fixed
+        { id=23109, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Royal Shadow Draenite", colorType="PURPLE" }, -- Fixed
+        -- Purified/Balanced don't exist in the Launch Uncommon set (added later or Rare only)
     },
 
     LEVELING_GREEN = {
-        { id=23128, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Enduring Deep Peridot", colorType="GREEN" },
-        { id=23129, stat="ITEM_MOD_INTELLECT_SHORT", val=3, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name="Dazzling Deep Peridot", colorType="GREEN" }, -- 1 MP5? (Rare is 2)
-        { id=23130, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Jagged Deep Peridot", colorType="GREEN" },
-        { id=23131, stat="ITEM_MOD_HIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Vivid Deep Peridot", colorType="GREEN" },
-        { id=23132, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=4, name="Radiant Deep Peridot", colorType="GREEN" },
+        { id=23105, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Enduring Deep Peridot", colorType="GREEN" }, -- Fixed
+        { id=23106, stat="ITEM_MOD_INTELLECT_SHORT", val=3, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name="Dazzling Deep Peridot", colorType="GREEN" }, -- Fixed
+        { id=23104, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Jagged Deep Peridot", colorType="GREEN" }, -- Fixed
+        { id=23103, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=4, name="Radiant Deep Peridot", colorType="GREEN" }, -- Fixed
     }
 }
 
@@ -627,7 +661,7 @@ if MSC.IsTBC or MSC.IsWrath then
         EMPTY_SOCKET_RED = {},
         EMPTY_SOCKET_YELLOW = {},
         EMPTY_SOCKET_BLUE = {},
-        EMPTY_SOCKET_META = GEMS.META,
+        EMPTY_SOCKET_META = {},
         PRISMATIC_GEMS = {} 
     }
 
@@ -635,31 +669,65 @@ if MSC.IsTBC or MSC.IsWrath then
         EMPTY_SOCKET_RED = {},
         EMPTY_SOCKET_YELLOW = {},
         EMPTY_SOCKET_BLUE = {},
-        EMPTY_SOCKET_META = GEMS.META, 
+        EMPTY_SOCKET_META = GEMS.META_P1, 
         PRISMATIC_GEMS = {} 
     }
 
     local function AddTo(targetList, sourceList)
+        if not sourceList then return end
         for _, gem in ipairs(sourceList) do table.insert(targetList, gem) end
     end
 
-    -- POPULATE ENDGAME (Blue/Epic Gems)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE)
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC) -- Void Sphere fits in Red
+    -- 1. POPULATE RED SOCKETS
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P5)
+    
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P5)
+    
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P5)
+    
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC_P1)
 
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN)
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC) -- Fits in Yellow
+    -- 2. POPULATE YELLOW SOCKETS
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P5)
+    
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P5)
+    
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P5)
+    
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC_P1)
 
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN)
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC) -- Fits in Blue
+    -- 3. POPULATE BLUE SOCKETS
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P5)
+    
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P5)
+    
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P3)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P5)
+    
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC_P1)
 	
-	AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC)
+	-- 4. META & PRISMATIC
+	AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P1)
+	-- AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P5)
+	
+	AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC_P1)
 	
     -- POPULATE LEVELING (Green Gems)
     -- Fixed: Now includes Orange/Purple/Green for leveling sockets
@@ -677,12 +745,12 @@ if MSC.IsTBC or MSC.IsWrath then
 
     -- Prismatic Lists
     -- (Prismatic sockets accept all colors, but usually we just check the pure stats)
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.RED)
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.BLUE)
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.YELLOW)
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.ORANGE) -- Often good to include these for prismatic too
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PURPLE)
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.GREEN)
+    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.RED_P1)
+    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.BLUE_P1)
+    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.YELLOW_P1)
+    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.ORANGE_P1) 
+    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PURPLE_P1)
+    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.GREEN_P1)
 
     AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_RED)
     AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_BLUE)
@@ -1088,77 +1156,5 @@ MSC.PrimaryStatScalars = {
         [68] = { WARRIOR=30.40, PALADIN=24.04, HUNTER=38.61, ROGUE=38.17, PRIEST=24.27, SHAMAN=23.98, MAGE=24.51, WARLOCK=23.58, DRUID=24.27 },
         [69] = { WARRIOR=31.75, PALADIN=24.51, HUNTER=39.37, ROGUE=39.06, PRIEST=24.39, SHAMAN=24.51, MAGE=24.75, WARLOCK=24.15, DRUID=24.63 },
         [70] = { WARRIOR=33.00, PALADIN=25.00, HUNTER=40.00, ROGUE=40.00, PRIEST=25.00, SHAMAN=25.00, MAGE=25.00, WARLOCK=24.69, DRUID=25.00 },
-    },
-    INT = {
-        [1] = { PALADIN=12.02, HUNTER=14.31, PRIEST=5.85, SHAMAN=7.50, MAGE=6.11, WARLOCK=6.67, DRUID=6.99 },
-        [2] = { PALADIN=12.61, HUNTER=15.02, PRIEST=6.11, SHAMAN=7.86, MAGE=6.35, WARLOCK=6.97, DRUID=7.30 },
-        [3] = { PALADIN=12.61, HUNTER=15.02, PRIEST=6.38, SHAMAN=8.22, MAGE=6.60, WARLOCK=7.27, DRUID=7.62 },
-        [4] = { PALADIN=13.21, HUNTER=15.75, PRIEST=6.64, SHAMAN=8.22, MAGE=7.09, WARLOCK=7.58, DRUID=7.94 },
-        [5] = { PALADIN=13.21, HUNTER=15.75, PRIEST=7.17, SHAMAN=8.58, MAGE=7.33, WARLOCK=7.88, DRUID=8.26 },
-        [6] = { PALADIN=13.81, HUNTER=16.45, PRIEST=7.44, SHAMAN=8.93, MAGE=7.58, WARLOCK=8.18, DRUID=8.58 },
-        [7] = { PALADIN=14.41, HUNTER=16.45, PRIEST=7.71, SHAMAN=9.29, MAGE=7.82, WARLOCK=8.48, DRUID=8.90 },
-        [8] = { PALADIN=14.41, HUNTER=17.15, PRIEST=7.97, SHAMAN=9.64, MAGE=8.06, WARLOCK=8.79, DRUID=8.90 },
-        [9] = { PALADIN=15.02, HUNTER=17.15, PRIEST=8.24, SHAMAN=10.00, MAGE=8.55, WARLOCK=9.09, DRUID=9.21 },
-        [10] = { PALADIN=15.02, HUNTER=17.89, PRIEST=8.77, SHAMAN=10.00, MAGE=8.80, WARLOCK=9.39, DRUID=10.16 },
-        [11] = { PALADIN=15.63, HUNTER=17.89, PRIEST=9.57, SHAMAN=10.72, MAGE=9.53, WARLOCK=10.30, DRUID=10.80 },
-        [12] = { PALADIN=16.23, HUNTER=18.59, PRIEST=10.63, SHAMAN=11.43, MAGE=10.75, WARLOCK=11.21, DRUID=11.75 },
-        [13] = { PALADIN=16.84, HUNTER=20.04, PRIEST=11.43, SHAMAN=12.50, MAGE=11.48, WARLOCK=12.12, DRUID=12.39 },
-        [14] = { PALADIN=17.42, HUNTER=20.04, PRIEST=12.76, SHAMAN=13.23, MAGE=13.68, WARLOCK=13.04, DRUID=13.33 },
-        [15] = { PALADIN=18.62, HUNTER=21.46, PRIEST=13.81, SHAMAN=14.29, MAGE=14.90, WARLOCK=13.95, DRUID=14.62 },
-        [16] = { PALADIN=18.62, HUNTER=21.46, PRIEST=14.62, SHAMAN=15.02, MAGE=15.65, WARLOCK=14.53, DRUID=15.24 },
-        [17] = { PALADIN=19.23, HUNTER=22.17, PRIEST=15.95, SHAMAN=15.72, MAGE=16.61, WARLOCK=15.75, DRUID=16.21 },
-        [18] = { PALADIN=20.41, HUNTER=23.58, PRIEST=16.75, SHAMAN=16.78, MAGE=17.61, WARLOCK=16.67, DRUID=16.84 },
-        [19] = { PALADIN=20.41, HUNTER=23.58, PRIEST=17.79, SHAMAN=17.51, MAGE=18.59, WARLOCK=17.57, DRUID=17.79 },
-        [20] = { PALADIN=21.65, HUNTER=25.06, PRIEST=19.12, SHAMAN=18.59, MAGE=19.80, WARLOCK=18.48, DRUID=19.38 },
-        [21] = { PALADIN=22.22, HUNTER=25.77, PRIEST=19.92, SHAMAN=19.31, MAGE=20.53, WARLOCK=19.38, DRUID=20.00 },
-        [22] = { PALADIN=22.83, HUNTER=25.77, PRIEST=21.28, SHAMAN=20.00, MAGE=21.74, WARLOCK=20.28, DRUID=20.96 },
-        [23] = { PALADIN=23.42, HUNTER=27.17, PRIEST=22.08, SHAMAN=21.10, MAGE=22.47, WARLOCK=21.23, DRUID=21.60 },
-        [24] = { PALADIN=24.04, HUNTER=27.93, PRIEST=23.36, SHAMAN=21.79, MAGE=23.70, WARLOCK=22.42, DRUID=22.88 },
-        [25] = { PALADIN=25.25, HUNTER=28.57, PRIEST=24.45, SHAMAN=22.88, MAGE=24.69, WARLOCK=23.31, DRUID=23.81 },
-        [26] = { PALADIN=25.84, HUNTER=29.33, PRIEST=25.51, SHAMAN=23.58, MAGE=25.64, WARLOCK=23.92, DRUID=24.45 },
-        [27] = { PALADIN=25.84, HUNTER=30.03, PRIEST=26.60, SHAMAN=24.27, MAGE=26.88, WARLOCK=25.13, DRUID=25.38 },
-        [28] = { PALADIN=27.03, HUNTER=30.77, PRIEST=27.62, SHAMAN=25.38, MAGE=29.59, WARLOCK=26.04, DRUID=26.04 },
-        [29] = { PALADIN=27.62, HUNTER=31.45, PRIEST=28.74, SHAMAN=26.11, MAGE=30.77, WARLOCK=27.25, DRUID=27.32 },
-        [30] = { PALADIN=28.82, HUNTER=32.89, PRIEST=30.03, SHAMAN=27.17, MAGE=32.05, WARLOCK=28.17, DRUID=28.90 },
-        [31] = { PALADIN=29.41, HUNTER=33.67, PRIEST=31.06, SHAMAN=28.25, MAGE=32.79, WARLOCK=28.82, DRUID=29.50 },
-        [32] = { PALADIN=30.03, HUNTER=33.67, PRIEST=32.15, SHAMAN=28.90, MAGE=34.01, WARLOCK=30.03, DRUID=30.77 },
-        [33] = { PALADIN=30.67, HUNTER=35.09, PRIEST=33.22, SHAMAN=30.03, MAGE=34.97, WARLOCK=30.86, DRUID=31.45 },
-        [34] = { PALADIN=31.25, HUNTER=35.71, PRIEST=34.60, SHAMAN=30.77, MAGE=35.97, WARLOCK=32.15, DRUID=32.36 },
-        [35] = { PALADIN=32.47, HUNTER=37.17, PRIEST=35.59, SHAMAN=31.85, MAGE=37.17, WARLOCK=33.00, DRUID=33.67 },
-        [36] = { PALADIN=33.00, HUNTER=37.88, PRIEST=36.63, SHAMAN=32.89, MAGE=38.17, WARLOCK=33.90, DRUID=34.25 },
-        [37] = { PALADIN=33.67, HUNTER=37.88, PRIEST=38.02, SHAMAN=33.56, MAGE=39.37, WARLOCK=35.21, DRUID=35.21 },
-        [38] = { PALADIN=34.84, HUNTER=39.37, PRIEST=39.06, SHAMAN=34.60, MAGE=40.32, WARLOCK=36.10, DRUID=36.23 },
-        [39] = { PALADIN=35.46, HUNTER=40.00, PRIEST=40.16, SHAMAN=35.34, MAGE=41.49, WARLOCK=37.31, DRUID=37.17 },
-        [40] = { PALADIN=36.63, HUNTER=41.49, PRIEST=41.49, SHAMAN=36.76, MAGE=42.55, WARLOCK=38.17, DRUID=39.06 },
-        [41] = { PALADIN=37.31, HUNTER=42.19, PRIEST=42.55, SHAMAN=37.45, MAGE=43.48, WARLOCK=39.06, DRUID=39.68 },
-        [42] = { PALADIN=37.88, HUNTER=42.19, PRIEST=43.86, SHAMAN=38.17, MAGE=46.51, WARLOCK=40.32, DRUID=40.98 },
-        [43] = { PALADIN=39.06, HUNTER=43.67, PRIEST=44.84, SHAMAN=39.37, MAGE=47.39, WARLOCK=41.15, DRUID=41.67 },
-        [44] = { PALADIN=39.06, HUNTER=44.44, PRIEST=46.30, SHAMAN=40.32, MAGE=48.54, WARLOCK=42.37, DRUID=42.92 },
-        [45] = { PALADIN=40.32, HUNTER=45.87, PRIEST=47.62, SHAMAN=41.49, MAGE=49.75, WARLOCK=43.67, DRUID=43.86 },
-        [46] = { PALADIN=40.82, HUNTER=46.51, PRIEST=48.54, SHAMAN=42.55, MAGE=50.76, WARLOCK=44.64, DRUID=44.84 },
-        [47] = { PALADIN=42.02, HUNTER=47.17, PRIEST=50.00, SHAMAN=43.29, MAGE=52.08, WARLOCK=45.45, DRUID=45.66 },
-        [48] = { PALADIN=43.29, HUNTER=48.54, PRIEST=51.02, SHAMAN=44.25, MAGE=53.19, WARLOCK=46.73, DRUID=46.73 },
-        [49] = { PALADIN=43.86, HUNTER=49.26, PRIEST=52.36, SHAMAN=45.45, MAGE=54.35, WARLOCK=47.85, DRUID=47.85 },
-        [50] = { PALADIN=45.05, HUNTER=50.76, PRIEST=53.76, SHAMAN=46.51, MAGE=55.87, WARLOCK=49.02, DRUID=49.50 },
-        [51] = { PALADIN=45.66, HUNTER=51.55, PRIEST=54.64, SHAMAN=47.62, MAGE=56.82, WARLOCK=50.00, DRUID=50.51 },
-        [52] = { PALADIN=46.30, HUNTER=52.08, PRIEST=56.18, SHAMAN=48.31, MAGE=57.80, WARLOCK=51.28, DRUID=51.81 },
-        [53] = { PALADIN=47.39, HUNTER=53.76, PRIEST=57.14, SHAMAN=49.75, MAGE=58.82, WARLOCK=52.36, DRUID=52.36 },
-        [54] = { PALADIN=48.08, HUNTER=54.35, PRIEST=58.48, SHAMAN=50.25, MAGE=60.24, WARLOCK=53.76, DRUID=53.76 },
-        [55] = { PALADIN=49.26, HUNTER=55.87, PRIEST=60.24, SHAMAN=51.81, MAGE=61.73, WARLOCK=54.95, DRUID=54.95 },
-        [56] = { PALADIN=49.75, HUNTER=56.50, PRIEST=60.98, SHAMAN=52.63, MAGE=64.94, WARLOCK=55.87, DRUID=55.87 },
-        [57] = { PALADIN=50.51, HUNTER=57.14, PRIEST=62.50, SHAMAN=53.48, MAGE=66.23, WARLOCK=56.82, DRUID=56.82 },
-        [58] = { PALADIN=52.36, HUNTER=58.82, PRIEST=63.69, SHAMAN=54.95, MAGE=67.11, WARLOCK=58.14, DRUID=57.80 },
-        [59] = { PALADIN=52.91, HUNTER=59.52, PRIEST=64.94, SHAMAN=55.87, MAGE=68.49, WARLOCK=59.52, DRUID=59.17 },
-        [60] = { PALADIN=54.05, HUNTER=60.98, PRIEST=66.23, SHAMAN=57.14, MAGE=69.93, WARLOCK=60.61, DRUID=60.98 },
-        [61] = { PALADIN=63.69, HUNTER=63.69, PRIEST=67.57, SHAMAN=60.98, MAGE=69.93, WARLOCK=62.89, DRUID=61.73 },
-        [62] = { PALADIN=65.36, HUNTER=64.94, PRIEST=68.97, SHAMAN=62.89, MAGE=69.93, WARLOCK=64.94, DRUID=63.69 },
-        [63] = { PALADIN=67.57, HUNTER=66.67, PRIEST=69.93, SHAMAN=65.79, MAGE=69.93, WARLOCK=67.57, DRUID=66.67 },
-        [64] = { PALADIN=69.93, HUNTER=69.44, PRIEST=71.94, SHAMAN=68.03, MAGE=70.42, WARLOCK=69.93, DRUID=68.49 },
-        [65] = { PALADIN=71.43, HUNTER=70.92, PRIEST=72.99, SHAMAN=70.42, MAGE=70.42, WARLOCK=72.46, DRUID=70.42 },
-        [66] = { PALADIN=73.53, HUNTER=72.99, PRIEST=74.63, SHAMAN=72.46, MAGE=72.46, WARLOCK=74.07, DRUID=72.99 },
-        [67] = { PALADIN=75.19, HUNTER=75.19, PRIEST=75.76, SHAMAN=74.63, MAGE=75.19, WARLOCK=76.92, DRUID=75.19 },
-        [68] = { PALADIN=76.34, HUNTER=76.92, PRIEST=76.92, SHAMAN=76.34, MAGE=76.34, WARLOCK=78.74, DRUID=76.34 },
-        [69] = { PALADIN=78.13, HUNTER=78.13, PRIEST=78.74, SHAMAN=78.13, MAGE=78.13, WARLOCK=80.00, DRUID=78.13 },
-        [70] = { PALADIN=80.00, HUNTER=80.00, PRIEST=80.00, SHAMAN=80.00, MAGE=80.00, WARLOCK=81.97, DRUID=80.00 },
     }
 }

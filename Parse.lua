@@ -563,8 +563,9 @@ function MSC.Scanner.Scan(itemLink)
             elseif type == "EQUIP" then MSC.Scanner.ParseEquipLine(fullText, result.Stats, result.Procs)
             elseif type == "USE" then MSC.Scanner.ParseUseLine(fullText, result.UseEffects)
             elseif type == "SET" then MSC.Scanner.ParseSetLine(fullText, nil, nil, nil, result.Meta, result.Stats)
-            elseif type == "SOCKET_BONUS" and g > 0.9 and r < 0.2 then 
-                result.Meta.SocketBonusActive = true
+            elseif type == "SOCKET_BONUS" then 
+                -- [[ UPDATED: Always parse Bonus Stats, but track Active separately ]]
+                if g > 0.9 and r < 0.2 then result.Meta.SocketBonusActive = true end
                 if not result.Meta.BonusStats then result.Meta.BonusStats = {} end
                 MSC.Scanner.ParseStatLine(fullText, result.Meta.BonusStats)
             elseif type == "PROC" then MSC.Scanner.ParseProcLine(fullText, result.Procs)

@@ -206,6 +206,10 @@ local Scratch_MatchGems = {}
 local Scratch_PureGems = {}
 local Scratch_GemTextParts = {}
 local Scratch_ProjectedIDs = {}
+local Scratch_GemCounts = {}
+local Scratch_GemOrder = {}
+local Scratch_GemStats = {}
+local Scratch_GemColors = {}
 local Scratch_ProjectedColors = { RED=0, YELLOW=0, BLUE=0 }
 
 MSC.StatShortNames = {
@@ -417,7 +421,8 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
             if db["EMPTY_SOCKET_BLUE"] then table.insert(lists, db["EMPTY_SOCKET_BLUE"]) end
         else
             if db[socketColor] then table.insert(lists, db[socketColor]) end
-            if db["PRISMATIC_GEMS"] then table.insert(lists, db["PRISMATIC_GEMS"]) end
+            -- [FIX: DO NOT ADD PRISMATIC_GEMS HERE]
+            -- Prismatic gems are already in the specific color lists in Database.lua
         end
     end
 
@@ -486,6 +491,53 @@ end
 -- =============================================================
 -- 8. THE MAIN PARSER (SafeGetItemStats)
 -- =============================================================
+
+-- [[ NEW HELPER FOR MODE 2 ]]
+function MSC.SolveColorMatch(gemIDs, baseLink)
+    local template = GetItemStats(baseLink)
+    local sockets = {}
+    for i=1, (template["EMPTY_SOCKET_RED"] or 0) do table.insert(sockets, "RED") end
+    for i=1, (template["EMPTY_SOCKET_YELLOW"] or 0) do table.insert(sockets, "YELLOW") end
+    for i=1, (template["EMPTY_SOCKET_BLUE"] or 0) do table.insert(sockets, "BLUE") end
+    
+    if #sockets == 0 then return true end
+
+    -- Recursive solver
+    local function MatchRecursive(gemIdx, availableSockets)
+        if gemIdx > #gemIDs then return #availableSockets == 0 end 
+        if #availableSockets == 0 then return true end
+        
+        local gID = gemIDs[gemIdx]
+        local gColor = MSC.GetGemColor(gID)
+        
+        -- Try to fit this gem into a socket
+        local placed = false
+        if gColor then
+            for i, sColor in ipairs(availableSockets) do
+                local match = false
+                if gColor == "PRISMATIC" then match = true
+                elseif gColor == sColor then match = true
+                elseif gColor == "ORANGE" and (sColor == "RED" or sColor == "YELLOW") then match = true
+                elseif gColor == "PURPLE" and (sColor == "RED" or sColor == "BLUE") then match = true
+                elseif gColor == "GREEN" and (sColor == "BLUE" or sColor == "YELLOW") then match = true
+                end
+
+                if match then
+                    local nextSockets = { unpack(availableSockets) }
+                    table.remove(nextSockets, i)
+                    if MatchRecursive(gemIdx + 1, nextSockets) then return true end
+                end
+            end
+        end
+        
+        -- If gem didn't fit, skip it and try next
+        return MatchRecursive(gemIdx + 1, availableSockets)
+    end
+    
+    return MatchRecursive(1, sockets)
+end
+
+
 function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
     if not itemLink then return {} end
     
@@ -494,6 +546,17 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
     local finalStats = {}
     for k,v in pairs(rawStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
     local bonusStats = rawStats._BONUS_STATS or {}
+
+    -- [[ FALLBACK: FETCH BONUS FROM BASE ITEM IF MISSING ]]
+    if not next(bonusStats) and MSC.GetBaseLink then
+        local baseLink = MSC.GetBaseLink(itemLink)
+        if baseLink and baseLink ~= itemLink then
+            local baseRaw = MSC.GetRawItemStats(baseLink)
+            if baseRaw._BONUS_STATS and next(baseRaw._BONUS_STATS) then
+                bonusStats = baseRaw._BONUS_STATS
+            end
+        end
+    end
 
     if not weights then return finalStats end
     
@@ -583,14 +646,24 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
     if not MSC.IsEra and gemMode ~= 1 then
         wipe(Scratch_GemTextParts)
         wipe(Scratch_ProjectedIDs)
+        wipe(Scratch_GemCounts)
+        wipe(Scratch_GemOrder)
+        wipe(Scratch_GemStats)
+        wipe(Scratch_GemColors)
         wipe(Scratch_ProjectedColors); Scratch_ProjectedColors.RED=0; Scratch_ProjectedColors.YELLOW=0; Scratch_ProjectedColors.BLUE=0
         local projectedMeta = nil
 
         if gemMode == 1 then
             for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
         else
-            local currentGems = { itemLink:match("item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)") }
+            -- [[ DEFINE SIMULATION SCOPE ]]
+            local baseLink = MSC.GetBaseLink(itemLink)
+            local socketsToFill = {}
+            local existingGems = {}
+            
             if gemMode == 3 then
+                -- PRO: Strip everything, simulate from Base
+                local currentGems = { itemLink:match("item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)") }
                 for _, gID in ipairs(currentGems) do
                     local id = tonumber(gID)
                     if id and id > 0 and MSC.GetGemStatsByID then
@@ -601,24 +674,27 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                         end
                     end
                 end
+                socketsToFill = GetItemStats(baseLink) or {} -- Full fresh sockets
+                
+            elseif gemMode == 2 then
+                -- CASUAL: Keep everything, fill only empty
+                socketsToFill = GetItemStats(itemLink) or {} -- Only empty sockets
+                local _, _, ids = MSC:GetItemGems(itemLink)
+                for _, id in ipairs(ids) do
+                    table.insert(existingGems, id) -- Store IDs for bonus checking
+                end
             end
 
             if MSC.GetBaseLink and MSC.GetBestGemForSocket then
                 wipe(Scratch_MatchGems); wipe(Scratch_PureGems)
                 local matchScore = 0; local pureScore = 0
                 
-                local baseLink = MSC.GetBaseLink(itemLink)
-                local rawForSockets = GetItemStats(baseLink) or {}
                 local socketKeys = {"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}
 
+                -- 1. MATCH SIMULATION (Respects Colors)
                 local uniqueTrackerMatch = {} 
-                if next(bonusStats) then
-                    for k,v in pairs(bonusStats) do 
-                        if weights[k] then matchScore = matchScore + (v * weights[k]) end 
-                    end
-                end
                 for _, colorKey in ipairs(socketKeys) do
-                    local count = rawForSockets[colorKey] or 0
+                    local count = socketsToFill[colorKey] or 0
                     for i=1, count do
                         local bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights, uniqueTrackerMatch)
                         if bestGem then 
@@ -628,51 +704,144 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                         end
                     end
                 end
+                
+                -- Check Bonus for Match Sim
+                local matchCandidateIDs = { unpack(existingGems) }
+                for _, g in ipairs(Scratch_MatchGems) do table.insert(matchCandidateIDs, g.id) end
+                local matchBonusActive = MSC.SolveColorMatch(matchCandidateIDs, baseLink)
+                
+                if matchBonusActive and next(bonusStats) then
+                     for k,v in pairs(bonusStats) do 
+                        if weights[k] then matchScore = matchScore + (v * weights[k]) end 
+                     end
+                end
 
-                local uniqueTrackerPure = {}
-                for _, colorKey in ipairs(socketKeys) do
-                    local count = rawForSockets[colorKey] or 0
-                    for i=1, count do
-                        local searchKey = (colorKey == "EMPTY_SOCKET_META") and "EMPTY_SOCKET_META" or "ANY"
-                        local bestGem, score = MSC.GetBestGemForSocket(searchKey, level, weights, uniqueTrackerPure)
-                        if bestGem then 
-                            pureScore = pureScore + score
-                            table.insert(Scratch_PureGems, bestGem)
-                            if bestGem.unique then uniqueTrackerPure[bestGem.id] = true end
+                -- 2. PURE SIMULATION (Ignores Colors)
+                -- [CHANGE] Only run this for Mode 3 (Pro). Mode 2 (Casual) forces Color Match.
+                if gemMode == 3 then
+                    local uniqueTrackerPure = {}
+                    for _, colorKey in ipairs(socketKeys) do
+                        local count = socketsToFill[colorKey] or 0
+                        for i=1, count do
+                            local searchKey = (colorKey == "EMPTY_SOCKET_META") and "EMPTY_SOCKET_META" or "ANY"
+                            local bestGem, score = MSC.GetBestGemForSocket(searchKey, level, weights, uniqueTrackerPure)
+                            if bestGem then 
+                                pureScore = pureScore + score
+                                table.insert(Scratch_PureGems, bestGem)
+                                if bestGem.unique then uniqueTrackerPure[bestGem.id] = true end
+                            end
                         end
                     end
-                end
-
-                local chosenGems = (matchScore >= pureScore) and Scratch_MatchGems or Scratch_PureGems
-                local useBonus = (matchScore >= pureScore) and next(bonusStats)
-
-                for _, gem in ipairs(chosenGems) do
-                    if gem.stat then finalStats[gem.stat] = (finalStats[gem.stat] or 0) + gem.val end
-                    if gem.stat2 then finalStats[gem.stat2] = (finalStats[gem.stat2] or 0) + gem.val2 end
-                    if gem.isMeta then projectedMeta = gem.id end
-                    table.insert(Scratch_ProjectedIDs, gem.id)
-                    table.insert(Scratch_GemTextParts, "1x " .. (MSC.StatShortNames[gem.stat] or "Gem"))
                     
-                    local cType = MSC.GetGemColor and MSC.GetGemColor(gem.id)
-                    if cType then
-                        if cType == "RED" then Scratch_ProjectedColors.RED = Scratch_ProjectedColors.RED + 1
-                        elseif cType == "YELLOW" then Scratch_ProjectedColors.YELLOW = Scratch_ProjectedColors.YELLOW + 1
-                        elseif cType == "BLUE" then Scratch_ProjectedColors.BLUE = Scratch_ProjectedColors.BLUE + 1
-                        elseif cType == "ORANGE" then Scratch_ProjectedColors.RED = Scratch_ProjectedColors.RED + 1; Scratch_ProjectedColors.YELLOW = Scratch_ProjectedColors.YELLOW + 1
-                        elseif cType == "PURPLE" then Scratch_ProjectedColors.RED = Scratch_ProjectedColors.RED + 1; Scratch_ProjectedColors.BLUE = Scratch_ProjectedColors.BLUE + 1
-                        elseif cType == "GREEN" then Scratch_ProjectedColors.YELLOW = Scratch_ProjectedColors.YELLOW + 1; Scratch_ProjectedColors.BLUE = Scratch_ProjectedColors.BLUE + 1
-                        elseif cType == "PRISMATIC" then Scratch_ProjectedColors.RED = Scratch_ProjectedColors.RED + 1; Scratch_ProjectedColors.YELLOW = Scratch_ProjectedColors.YELLOW + 1; Scratch_ProjectedColors.BLUE = Scratch_ProjectedColors.BLUE + 1 end
+                    -- Check Bonus for Pure Sim
+                    local pureCandidateIDs = { unpack(existingGems) }
+                    for _, g in ipairs(Scratch_PureGems) do table.insert(pureCandidateIDs, g.id) end
+                    local pureBonusActive = MSC.SolveColorMatch(pureCandidateIDs, baseLink)
+                    
+                    if pureBonusActive and next(bonusStats) then
+                         for k,v in pairs(bonusStats) do 
+                            if weights[k] then pureScore = pureScore + (v * weights[k]) end 
+                         end
                     end
                 end
+
+                -- 3. SELECTION
+                -- [CHANGE] If Mode 2, we ignore PureScore and force MatchGems.
+                local usePure = (gemMode == 3) and (pureScore > matchScore)
                 
-                if useBonus then
-                    for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
+                local chosenGems = usePure and Scratch_PureGems or Scratch_MatchGems
+                local bonusActive = usePure and (MSC.SolveColorMatch(MSC:SafeCopy(existingGems), baseLink)) or matchBonusActive 
+                if usePure then
+                    -- Re-check bonus for Pure Sim explicitly if we chose it
+                    local allGems = { unpack(existingGems) }
+                    for _, g in ipairs(Scratch_PureGems) do table.insert(allGems, g.id) end
+                    bonusActive = MSC.SolveColorMatch(allGems, baseLink)
+                end
+                
+                -- 4. APPLICATION (Only add stats for NEW gems)
+                for _, gem in ipairs(chosenGems) do
+                    if gem.stat then 
+                        finalStats[gem.stat] = (finalStats[gem.stat] or 0) + gem.val 
+                        Scratch_GemStats[gem.stat] = (Scratch_GemStats[gem.stat] or 0) + gem.val 
+                    end
+                    if gem.stat2 then 
+                        finalStats[gem.stat2] = (finalStats[gem.stat2] or 0) + gem.val2 
+                        Scratch_GemStats[gem.stat2] = (Scratch_GemStats[gem.stat2] or 0) + gem.val2 
+                    end
+                    if gem.isMeta then projectedMeta = gem.id end
+                    table.insert(Scratch_ProjectedIDs, gem.id)
+                end
+                
+                -- [NEW] Bonus Stat Application & Text Generation
+                local bonusText = ""
+                if bonusActive and next(bonusStats) then
+                    -- Apply to Final Stats & Summary Stats
+                    for k, v in pairs(bonusStats) do 
+                        finalStats[k] = (finalStats[k] or 0) + v 
+                        Scratch_GemStats[k] = (Scratch_GemStats[k] or 0) + v
+                    end
                     finalStats.BONUS_PROJECTED = true
+                    
+                    -- Generate Green Bonus Text
+                    local bParts = {}
+                    for k, v in pairs(bonusStats) do
+                        local short = (MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat"
+                        table.insert(bParts, "+" .. v .. " " .. short)
+                    end
+                    bonusText = "|n|cff00ff00Socket Bonus: " .. table.concat(bParts, ", ") .. "|r"
+                end
+                
+                -- [[ DISPLAY AGGREGATION ]]
+                local function AddToDisplay(id)
+                    local gName = GetItemInfo(id)
+                    local cType = MSC.GetGemColor(id) or "Unknown"
+                    if type(cType) == "string" then cType = cType:sub(1,1)..cType:sub(2):lower() end
+
+                    if not gName then 
+                        local g = MSC.GetGemStatsByID(id)
+                        gName = g and (MSC.StatShortNames[g.stat] or "Gem") or "Gem"
+                    end
+                    
+                    if not Scratch_GemCounts[gName] then
+                        Scratch_GemCounts[gName] = 0
+                        Scratch_GemColors[gName] = cType
+                        table.insert(Scratch_GemOrder, gName)
+                    end
+                    Scratch_GemCounts[gName] = Scratch_GemCounts[gName] + 1
+                end
+
+                for _, id in ipairs(existingGems) do AddToDisplay(id) end
+                for _, gem in ipairs(chosenGems) do AddToDisplay(gem.id) end
+                
+                wipe(Scratch_GemTextParts)
+                for _, gName in ipairs(Scratch_GemOrder) do
+                     local c = Scratch_GemColors[gName] or "?"
+                     table.insert(Scratch_GemTextParts, Scratch_GemCounts[gName] .. "x " .. gName .. " |cffaaaaaa(" .. c .. ")|r")
+                end
+                
+                local statParts = {}
+                for k, v in pairs(Scratch_GemStats) do
+                    table.insert(statParts, { k = k, v = v })
+                end
+                table.sort(statParts, function(a,b) return a.v > b.v end)
+                
+                local statStrings = {}
+                for _, s in ipairs(statParts) do
+                    local short = (MSC.StatShortNames and MSC.StatShortNames[s.k]) or "Stat"
+                    table.insert(statStrings, "+" .. s.v .. " " .. short)
+                end
+                
+                if #Scratch_GemTextParts > 0 then 
+                    local line1 = table.concat(Scratch_GemTextParts, "|n")
+                    local line2 = ""
+                    if #statStrings > 0 then
+                        line2 = "|n|cff00ccff(" .. table.concat(statStrings, ", ") .. ")|r"
+                    end
+                    finalStats.GEM_TEXT = line1 .. bonusText .. line2
                 end
                 
                 finalStats.GEMS_PROJECTED = #Scratch_GemTextParts
                 finalStats.META_ID = projectedMeta
-                if #Scratch_GemTextParts > 0 then finalStats.GEM_TEXT = table.concat(Scratch_GemTextParts, ", ") end
                 
                 finalStats.COLORS = MSC:SafeCopy(Scratch_ProjectedColors)
             end

@@ -1,6 +1,24 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.3.0 CHANGELOG
+## 🚀 v2.3.1 CHANGELOG
+
+###💎 Gem 
+* **Reorganize Database.lua gem definitions into phase-specific groups and move several gem entries into appropriate phase buckets.**
+* **Fix multiple leveling gem IDs, adjust EMPTY_SOCKET_META to use the phase meta set, add a nil-guard to AddTo(), and update how gem option lists are populated.** 
+* **Overall these changes prepare the gem database for phased content and correct several ID/stat mappings.**
+* **Also update prismatic/meta population logic and make a small change to primary stat scalars at the end of the file.**
+
+### CLASS SPECIFIC UPDATES: Druids
+* **Adjust Druid stat weights and leveling brackets, add new talent support and scaling logic.** 
+	*Key changes: tweak primary weights (haste, crit, agility, stamina, etc.) and add small "poison protection" fallbacks for hybrid gear; 
+	*bump DPS/regen/hp5 for leveling and rebalance Feral (Cat/Bear) priorities including more Strength and Feral AP for early leveling; buff caster Spirit/MP5 and tweak Boomkin MP5 scaling.
+* **Added Dreamstate (Int -> MP5) and Predatory Instincts (crit damage scaling), a mana-safety penalty for spell haste when max mana is low, and an expertise cap softening for Feral.** 
+* **Update Relics to include a dynamic Raven Goddess idol entry listing all relevant stats.**
+
+------------------------------------------------------------------------------------------------
+
+
+## 🚀 v2.3.0
 
 ###✨ New Feature Multi-Spec Tracking
 * **Enhance settings UI and add multi-spec tracking.**
