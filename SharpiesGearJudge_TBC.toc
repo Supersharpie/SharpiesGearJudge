@@ -2,8 +2,9 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 2.3.0-TBC
-## SavedVariables: SGJ_Settings, SGJ_History
+## Version: 2.3.01-TBC
+## SavedVariables: SGJ_History
+## SavedVariablesPerCharacter: SGJ_Settings
 
 Init.lua
 ConflictManager.lua

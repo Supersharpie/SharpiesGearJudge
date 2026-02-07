@@ -15,6 +15,12 @@
 * **Added Dreamstate (Int -> MP5) and Predatory Instincts (crit damage scaling), a mana-safety penalty for spell haste when max mana is low, and an expertise cap softening for Feral.** 
 * **Update Relics to include a dynamic Raven Goddess idol entry listing all relevant stats.**
 
+### 🐛 Bug Fixes
+* **Adjust DAMAGE parsing to respect pat.valIdx when choosing which capture (m1 or m2) contains the actual damage value, and only compute an average when the pattern indicates a range.** 
+* **This handles cases like "Blasts X for Y" where the second capture is the real value. Adds a brief comment and minor whitespace cleanup.**
+* **Update both TBC.toc and Vanilla.toc to move SGJ_Settings from the global SavedVariables list to SavedVariablesPerCharacter, while keeping SGJ_History as a global SavedVariable.**
+* **This ensures user settings are stored per-character instead of shared across characters.**
+
 ------------------------------------------------------------------------------------------------
 
 
