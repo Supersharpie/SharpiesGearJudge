@@ -3,11 +3,16 @@
 ## 🚀 v2.3.0 CHANGELOG
 
 ###✨ New Feature Multi-Spec Tracking
-
 * **Enhance settings UI and add multi-spec tracking.**
 	*Added dropdown/checkbox tooltip handling, organize left/right columns, and build a scrollable list of secondary profiles for tracking. 
 * **Initialize display positive upgrade deltas for tracked off-specs in item tooltips. **
-* **Small data/UX fixes to defaults and profile handling to support the new tracking feature.**
+
+### 🐛 Bug Fixes
+* **Warlock: Add spell penetration and Malediction handling and caps. Also implemented PVP spell penetration cap/hysteresis and minor formatting fixes.**
+* **Parse: Improve stat/equip parsing and TBC percent handling.** 
+* **Adjusts BaseStat/Term maps (adds mapping for "magical resistances" -> spell penetration)**
+* **Relaxed and extends stat/equip patterns (unanchors DPS/speed/range, handles era "up to" spell power/healing, "decreases" patterns)** 
+* **Adds TBC percent-to-rating conversion logic for common stats and normalizes several phrase variants to improve detection of stats and procs.**
 
 ------------------------------------------------------------------------------------------------
 
