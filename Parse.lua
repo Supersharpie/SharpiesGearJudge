@@ -223,7 +223,7 @@ MSC.Scanner.EquipPatterns = {
     -- [[ 2. SPECIALIZED OVERRIDES (Must be before Generic!) ]]
     -- ========================================================================
     -- [[ NEW: TBC SPECIFIC SPELL POWER ]]
-    -- Explicitly catches the long phrasing from your screenshot to avoid Generic confusion
+    -- Explicitly catches the long phrasing
     { p = "damage and healing done by magical spells and effects by up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
 
     -- [[ FERAL AP ]] 
