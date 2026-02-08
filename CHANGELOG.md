@@ -1,6 +1,11 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.3.1 CHANGELOG
+## 🚀 v2.3.3 CHANGELOG
+
+### 🐛 Bug Fixes - Pushing to fix AP, SP and Healing power
+
+------------------------------------------------------------------------------------------------
+## 🚀 v2.3.2
 
 ###💎 Gem 
 * **Reorganize Database.lua gem definitions into phase-specific groups and move several gem entries into appropriate phase buckets.**
@@ -21,6 +26,7 @@
 * **Update both TBC.toc and Vanilla.toc to move SGJ_Settings from the global SavedVariables list to SavedVariablesPerCharacter, while keeping SGJ_History as a global SavedVariable.**
 * **This ensures user settings are stored per-character instead of shared across characters.**
 * **On ADDON_LOADED, set MSC.ManualSpec from SGJ_Settings.Mode so the engine reflects the saved Mode (AUTO/MANUAL).**
+* **Rework Scanner pattern tables to be more robust**
 
 ------------------------------------------------------------------------------------------------
 

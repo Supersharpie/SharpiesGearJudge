@@ -68,7 +68,7 @@ MSC.ShortNames = {
     ["ITEM_MOD_ARCANE_RESISTANCE_SHORT"] = "Arcane Res",
     ["ITEM_MOD_ALL_RESISTANCE_SHORT"]    = "All Res",
     ["MSC_WEAPON_SPEED"]                 = "Speed",
-	["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "Weapon DPS",
+    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "Weapon DPS",
     ["MSC_WEAPON_DPS"]                   = "Weapon DPS",
     ["MSC_WAND_DPS"]                     = "Wand DPS",
 }
@@ -187,7 +187,7 @@ MSC.EnchantDB = {
     [2721] = { name = "Zandalar Signet of Mojo", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 18 } },
     [2716] = { name = "Zandalar Signet of Might", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30 } },
     [2717] = { name = "Zandalar Signet of Serenity", slot = 3, stats = { ITEM_MOD_HEALING_POWER_SHORT = 33 } },
-	-- [[ SHOULDER: ALDOR / SCRYER (EXALTED) ]]
+    -- [[ SHOULDER: ALDOR / SCRYER (EXALTED) ]]
     [2996] = { name = "Greater Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } }, -- Aldor
     [2999] = { name = "Greater Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } }, -- Aldor
     [3000] = { name = "Greater Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } }, -- Aldor
@@ -211,7 +211,7 @@ MSC.EnchantDB = {
     [2521] = { name = "Subtlety (-2% Threat)", slot = 15, stats = { MSC_THREAT_MOD = -2 } },
     [2622] = { name = "Dodge (+1%)", slot = 15, stats = { ITEM_MOD_DODGE_RATING_SHORT = 15 } },
     [3256] = { name = "Major Resistance (+7)", slot = 15, stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 7 } },
-	-- [[ CLOAK: RESISTANCES ]]
+    -- [[ CLOAK: RESISTANCES ]]
     [2662] = { name = "Spell Penetration", slot = 15, stats = { ITEM_MOD_SPELL_PENETRATION_SHORT = 20 } },
     [2794] = { name = "Greater Shadow Resistance", slot = 15, stats = { ITEM_MOD_SHADOW_RESISTANCE_SHORT = 15 } },
     [2521] = { name = "Subtlety", slot = 15, stats = { MSC_THREAT_MOD = -2 } }, -- -2% Threat
@@ -281,7 +281,7 @@ MSC.EnchantDB = {
     [2617] = { name = "Healing Power (+30)", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, 
     [3231] = { name = "Precision (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 15 } },
     [3245] = { name = "Spell Strike (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 15 } },
-	-- [[ GLOVES: UTILITY ]]
+    -- [[ GLOVES: UTILITY ]]
     [3220] = { name = "Glove Reinforcements", slot = 10, stats = { ITEM_MOD_ARMOR_SHORT = 240 } },
 
     -- [[ LEGS ]]
@@ -326,7 +326,7 @@ MSC.EnchantDB = {
     [2934] = { name = "Stats", slot = 11, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } }, 
     [2629] = { name = "Striking", slot = 11, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } },
 
-	-- [[ MISSING LOW-LEVEL / TWINK ENCHANTS ]] --
+    -- [[ MISSING LOW-LEVEL / TWINK ENCHANTS ]] --
     -- [[ GLOVES ]]
     -- Highly valued by twinks/levelers for the cheap Haste
     [931]  = { name = "Minor Haste", stats = { ITEM_MOD_HASTE_RATING_SHORT = 10 } }, -- ~1% Haste
@@ -341,12 +341,12 @@ MSC.EnchantDB = {
     [1899] = { name = "Impact (+5 Dmg)", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.4 }, requires2H = true },   
     -- [[ CHEST ]]
     [1951] = { name = "Lesser Absorption", stats = { MSC_EHP_MOD = 5 } }, -- (Abstracted value for proc)
-	-- [[ SHOULDER: NAXXRAMAS / SAPPHIRON ]]
+    -- [[ SHOULDER: NAXXRAMAS / SAPPHIRON ]]
     [2613] = { name = "Power of the Scourge", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } }, -- Rockbiter is different ID
     [2611] = { name = "Fortitude of the Scourge", slot = 3, stats = { ITEM_MOD_STAMINA_SHORT = 16, ITEM_MOD_ARMOR_SHORT = 100 } },
     [2612] = { name = "Might of the Scourge", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26, ITEM_MOD_CRIT_RATING_SHORT = 14 } },
     [2610] = { name = "Resilience of the Scourge", slot = 3, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 13, ITEM_MOD_STAMINA_SHORT = 10 } },
-	-- [[ LEGS: EPIC ]]
+    -- [[ LEGS: EPIC ]]
     [3154] = { name = "Runic Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 35, ITEM_MOD_STAMINA_SHORT = 20 } },
     [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_HEALING_POWER_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
     [2953] = { name = "Nethercobra Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
@@ -401,7 +401,7 @@ MSC.EnchantCandidates_Leveling = {
     [7] = { 2741, 2743, 2427 }, -- (Armor Kits usually)
     [8] = { 910, 2564, 911, 273, 845, 844, 274, 842 }, 
     [15] = { 849, 1889, 250 }, 
-	[16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897, 2563, 1894, 2564, 249, 250, 254, 912, 964, 33, 2443, 804, 2566, 2565, 1899 },
+    [16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897, 2563, 1894, 2564, 249, 250, 254, 912, 964, 33, 2443, 804, 2566, 2565, 1899 },
     [17] = { 2621, 803, 1900, 1898, 2655, 1071, 2747, 2746, 2745 }, 
     [11] = {}, [12] = {},
     [18] = { 10548, 33, 664 } 
@@ -417,8 +417,8 @@ if MSC.IsTBC or MSC.IsWrath then
    -- [[ PHASE 1: LAUNCH (RARE, PVP, & HEROIC) ]]
    -- ========================================================================
    PRISMATIC_P1 = {
-		{ id=22460, stat="ITEM_MOD_RESISTANCE_ALL_SHORT", val=4, name="Void Sphere", colorType="PRISMATIC" },
-	},
+        { id=22460, stat="ITEM_MOD_RESISTANCE_ALL_SHORT", val=4, name="Void Sphere", colorType="PRISMATIC" },
+    },
     
     RED_P1 = {
         { id=24027, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Bold Living Ruby", colorType="RED" },
@@ -691,7 +691,7 @@ if MSC.IsTBC or MSC.IsWrath then
     -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P3)
     -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P5)
     
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC_P1)
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC_P1)
 
     -- 2. POPULATE YELLOW SOCKETS
     AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P1)
@@ -706,7 +706,7 @@ if MSC.IsTBC or MSC.IsWrath then
     -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P3)
     -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P5)
     
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC_P1)
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC_P1)
 
     -- 3. POPULATE BLUE SOCKETS
     AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P1)
@@ -721,14 +721,14 @@ if MSC.IsTBC or MSC.IsWrath then
     -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P3)
     -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P5)
     
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC_P1)
-	
-	-- 4. META & PRISMATIC
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P1)
-	-- AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P5)
-	
-	AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC_P1)
-	
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC_P1)
+    
+    -- 4. META & PRISMATIC
+    AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P1)
+    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P5)
+    
+    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC_P1)
+    
     -- POPULATE LEVELING (Green Gems)
     -- Fixed: Now includes Orange/Purple/Green for leveling sockets
     AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
@@ -786,7 +786,7 @@ MSC.ItemOverrides = {
     [24129] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true }, 
     -- Felsteel Boar (Lower level version)
     [24127] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
-	
+    
     -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
     [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
     [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
@@ -799,11 +799,11 @@ MSC.ItemOverrides = {
 
     -- [[ WEAPONS ]]
     [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
-	
-	-- [[ WEIRD / NICHE ODDS & ENDS ]]
-	
-	-- [[ CLASS SPECIFIC BIS / MECHANICS ]]
-	[9449] = { ITEM_MOD_HASTE_RATING_SHORT = 150, estimate = true, note = "BiS (Burst Haste)" },-- Manual Crowd Pummeler
+    
+    -- [[ WEIRD / NICHE ODDS & ENDS ]]
+    
+    -- [[ CLASS SPECIFIC BIS / MECHANICS ]]
+    [9449] = { ITEM_MOD_HASTE_RATING_SHORT = 150, estimate = true, note = "BiS (Burst Haste)" },-- Manual Crowd Pummeler
     [8345] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 80, estimate = true, note = "BiS (Powershift)" },-- Wolfshead Helm (Druid Feral) The energy refund mechanic is mathematically worth ~80 Feral AP in a rotation.
     
     -- [[ TBC PHASE 1 ]]
@@ -890,8 +890,8 @@ MSC.ItemOverrides = {
     [28235] = { MSC_PVP_UTILITY = 80, estimate = true },
     [37864] = { MSC_PVP_UTILITY = 100, estimate = true },
     [37865] = { MSC_PVP_UTILITY = 100, estimate = true },
-	
-	-- [[ DUNGEON / HEROIC ]]
+    
+    -- [[ DUNGEON / HEROIC ]]
     [24096] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true }, -- Heartblood Prayer Beads (Use: 220 AP) -> Avg ~40
     [24379] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true }, -- Bogstrok Scale Cloak (Not trinket, but has AP proc?)
     [24460] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 24, estimate = true }, -- Talisman of Tenacity (Use effect is HP)
@@ -912,32 +912,32 @@ MSC.ItemOverrides = {
     [37127] = { ITEM_MOD_STAMINA_SHORT = 45, estimate = true }, -- Brightbrew Charm (Use: Heal)
     [37128] = { ITEM_MOD_STAMINA_SHORT = 45, estimate = true }, -- Balebrew Charm (Use: Dmg)
     [38290] = { ITEM_MOD_STAMINA_SHORT = 51, estimate = true }, -- Dark Iron Smoking Pipe (Use: Shield)
-	
-	-- Darkmoon Card: Crusade (Stacking AP/SP)
-	-- It gives 6 AP (or 8 SP) per stack, up to 20 stacks (120 AP / 160 SP).
-	-- In a raid, it stays fully stacked. We value it at ~80-90% max stacks.
-	[31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, ITEM_MOD_SPELL_POWER_SHORT = 120, estimate = true, note = "BiS (Stacks)" },
+    
+    -- Darkmoon Card: Crusade (Stacking AP/SP)
+    -- It gives 6 AP (or 8 SP) per stack, up to 20 stacks (120 AP / 160 SP).
+    -- In a raid, it stays fully stacked. We value it at ~80-90% max stacks.
+    [31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, ITEM_MOD_SPELL_POWER_SHORT = 120, estimate = true, note = "BiS (Stacks)" },
 
-	-- Darkmoon Card: Vengeance (Counterattack Dmg)
-	-- Chance on being hit to deal Holy Dmg. Good for Paladin Tanks (Threat).
-	[31858] = { ITEM_MOD_STAMINA_SHORT = 51, score = 40, note = "Tank Threat (Proc)" },
+    -- Darkmoon Card: Vengeance (Counterattack Dmg)
+    -- Chance on being hit to deal Holy Dmg. Good for Paladin Tanks (Threat).
+    [31858] = { ITEM_MOD_STAMINA_SHORT = 51, score = 40, note = "Tank Threat (Proc)" },
 
-	-- Darkmoon Card: Wrath (Crit Chance)
-	-- This wasn't in your list, but it's the other TBC card.
-	[31857] = { score = 45, note = "Crit Stacking (Niche)" },
+    -- Darkmoon Card: Wrath (Crit Chance)
+    -- This wasn't in your list, but it's the other TBC card.
+    [31857] = { score = 45, note = "Crit Stacking (Niche)" },
 
-	-- Darkmoon Card: Blue Dragon (Classic - Mana Regen)
-	-- 2% Chance on cast to gain 100% mana regen.
-	[19288] = { ppm=1.0, val=60, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="Mp5 Equivalence" },
-	
-	-- Mark of the Champion (Caster) - 85 SP vs Undead/Demon
-	-- We estimate this as ~25 SP for general use (it's amazing in Kara/Hyjal, bad in Gruul).
-	[23207] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true},
+    -- Darkmoon Card: Blue Dragon (Classic - Mana Regen)
+    -- 2% Chance on cast to gain 100% mana regen.
+    [19288] = { ppm=1.0, val=60, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="Mp5 Equivalence" },
+    
+    -- Mark of the Champion (Caster) - 85 SP vs Undead/Demon
+    -- We estimate this as ~25 SP for general use (it's amazing in Kara/Hyjal, bad in Gruul).
+    [23207] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true},
 
-	-- Mark of the Champion (Melee) - 150 AP vs Undead/Demon
-	-- Estimated as ~45 AP for general use.
-	[23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
-	
+    -- Mark of the Champion (Melee) - 150 AP vs Undead/Demon
+    -- Estimated as ~45 AP for general use.
+    [23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
+    
     -- Eye of Gruul (Healer - Chance on cast to reduce mana cost)
     -- Valued as roughly 45 MP5 in a raid setting.
     [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
@@ -958,40 +958,50 @@ MSC.ItemOverrides = {
 
     -- Commander's Badge (Netherwing - Stam + Use Health)
     [32658] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_HEALTH_SHORT = 150, estimate = true },
-	
-	-- [[ BREWFEST ]]
+    
+    -- [[ BREWFEST ]]
     -- Coren's Lucky Coin / Empty Mug of Direbrew (Tanking)
     -- Blocking gives 59 Block Value / Defense.
     [38289] = { ITEM_MOD_STAMINA_SHORT = 50, ITEM_MOD_BLOCK_VALUE_SHORT = 20, estimate = true }, 
     [38288] = { ITEM_MOD_STAMINA_SHORT = 50, ITEM_MOD_BLOCK_VALUE_SHORT = 20, estimate = true },
     -- Balebrew Charm (Melee DPS)
     [37128] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
-	
-	}
+    
+    }
 
 -- ============================================================================
 -- 5. INITIALIZATION STRUCTURE
 -- ============================================================================
--- We define these here, but they are used by the Data_Sets file
-MSC.ItemSetMap = {} 
-MSC.RawSetData = {}
-
-function MSC:BuildDatabase()
-    for setID, data in pairs(MSC.RawSetData) do
-        local itemIDs = data[1] or data 
-        if type(itemIDs) == "table" then
-            for _, itemID in ipairs(itemIDs) do
-                MSC.ItemSetMap[itemID] = setID
-            end
-        end
-    end
-end
+-- We define these here, but Data_Sets.lua populates them.
+if not MSC.ItemSetMap then MSC.ItemSetMap = {} end
+MSC.SetNameToID = {}
+MSC.RawSetData = {} -- Deprecated, but kept to prevent nil errors if referenced elsewhere
 
 function MSC:GetSetBonusDefinition(setID, count)
-    if MSC.SetBonusScores[setID] and MSC.SetBonusScores[setID][count] then
+    if MSC.SetBonusScores and MSC.SetBonusScores[setID] and MSC.SetBonusScores[setID][count] then
         return MSC.SetBonusScores[setID][count]
     end
     return nil
+end
+
+function MSC:BuildDatabase()
+    if not MSC.SetNameToID then MSC.SetNameToID = {} end
+    wipe(MSC.SetNameToID) 
+    
+    if MSC.ItemSetMap then
+        local seen = {}
+        for itemID, setID in pairs(MSC.ItemSetMap) do
+            -- Ensure setID is a valid number before calling API
+            if type(setID) == "number" and not seen[setID] then
+                seen[setID] = true
+                -- Use pcall to ignore errors if the ID is weird or API fails
+                local status, setName = pcall(GetItemSetInfo, setID)
+                if status and setName then
+                    MSC.SetNameToID[setName] = setID
+                end
+            end
+        end
+    end
 end
 
 -- ============================================================================
@@ -1156,5 +1166,77 @@ MSC.PrimaryStatScalars = {
         [68] = { WARRIOR=30.40, PALADIN=24.04, HUNTER=38.61, ROGUE=38.17, PRIEST=24.27, SHAMAN=23.98, MAGE=24.51, WARLOCK=23.58, DRUID=24.27 },
         [69] = { WARRIOR=31.75, PALADIN=24.51, HUNTER=39.37, ROGUE=39.06, PRIEST=24.39, SHAMAN=24.51, MAGE=24.75, WARLOCK=24.15, DRUID=24.63 },
         [70] = { WARRIOR=33.00, PALADIN=25.00, HUNTER=40.00, ROGUE=40.00, PRIEST=25.00, SHAMAN=25.00, MAGE=25.00, WARLOCK=24.69, DRUID=25.00 },
+    },
+        INT = {
+        [1] = { PALADIN=12.02, HUNTER=14.31, PRIEST=5.85, SHAMAN=7.50, MAGE=6.11, WARLOCK=6.67, DRUID=6.99 },
+        [2] = { PALADIN=12.61, HUNTER=15.02, PRIEST=6.11, SHAMAN=7.86, MAGE=6.35, WARLOCK=6.97, DRUID=7.30 },
+        [3] = { PALADIN=12.61, HUNTER=15.02, PRIEST=6.38, SHAMAN=8.22, MAGE=6.60, WARLOCK=7.27, DRUID=7.62 },
+        [4] = { PALADIN=13.21, HUNTER=15.75, PRIEST=6.64, SHAMAN=8.22, MAGE=7.09, WARLOCK=7.58, DRUID=7.94 },
+        [5] = { PALADIN=13.21, HUNTER=15.75, PRIEST=7.17, SHAMAN=8.58, MAGE=7.33, WARLOCK=7.88, DRUID=8.26 },
+        [6] = { PALADIN=13.81, HUNTER=16.45, PRIEST=7.44, SHAMAN=8.93, MAGE=7.58, WARLOCK=8.18, DRUID=8.58 },
+        [7] = { PALADIN=14.41, HUNTER=16.45, PRIEST=7.71, SHAMAN=9.29, MAGE=7.82, WARLOCK=8.48, DRUID=8.90 },
+        [8] = { PALADIN=14.41, HUNTER=17.15, PRIEST=7.97, SHAMAN=9.64, MAGE=8.06, WARLOCK=8.79, DRUID=8.90 },
+        [9] = { PALADIN=15.02, HUNTER=17.15, PRIEST=8.24, SHAMAN=10.00, MAGE=8.55, WARLOCK=9.09, DRUID=9.21 },
+        [10] = { PALADIN=15.02, HUNTER=17.89, PRIEST=8.77, SHAMAN=10.00, MAGE=8.80, WARLOCK=9.39, DRUID=10.16 },
+        [11] = { PALADIN=15.63, HUNTER=17.89, PRIEST=9.57, SHAMAN=10.72, MAGE=9.53, WARLOCK=10.30, DRUID=10.80 },
+        [12] = { PALADIN=16.23, HUNTER=18.59, PRIEST=10.63, SHAMAN=11.43, MAGE=10.75, WARLOCK=11.21, DRUID=11.75 },
+        [13] = { PALADIN=16.84, HUNTER=20.04, PRIEST=11.43, SHAMAN=12.50, MAGE=11.48, WARLOCK=12.12, DRUID=12.39 },
+        [14] = { PALADIN=17.42, HUNTER=20.04, PRIEST=12.76, SHAMAN=13.23, MAGE=13.68, WARLOCK=13.04, DRUID=13.33 },
+        [15] = { PALADIN=18.62, HUNTER=21.46, PRIEST=13.81, SHAMAN=14.29, MAGE=14.90, WARLOCK=13.95, DRUID=14.62 },
+        [16] = { PALADIN=18.62, HUNTER=21.46, PRIEST=14.62, SHAMAN=15.02, MAGE=15.65, WARLOCK=14.53, DRUID=15.24 },
+        [17] = { PALADIN=19.23, HUNTER=22.17, PRIEST=15.95, SHAMAN=15.72, MAGE=16.61, WARLOCK=15.75, DRUID=16.21 },
+        [18] = { PALADIN=20.41, HUNTER=23.58, PRIEST=16.75, SHAMAN=16.78, MAGE=17.61, WARLOCK=16.67, DRUID=16.84 },
+        [19] = { PALADIN=20.41, HUNTER=23.58, PRIEST=17.79, SHAMAN=17.51, MAGE=18.59, WARLOCK=17.57, DRUID=17.79 },
+        [20] = { PALADIN=21.65, HUNTER=25.06, PRIEST=19.12, SHAMAN=18.59, MAGE=19.80, WARLOCK=18.48, DRUID=19.38 },
+        [21] = { PALADIN=22.22, HUNTER=25.77, PRIEST=19.92, SHAMAN=19.31, MAGE=20.53, WARLOCK=19.38, DRUID=20.00 },
+        [22] = { PALADIN=22.83, HUNTER=25.77, PRIEST=21.28, SHAMAN=20.00, MAGE=21.74, WARLOCK=20.28, DRUID=20.96 },
+        [23] = { PALADIN=23.42, HUNTER=27.17, PRIEST=22.08, SHAMAN=21.10, MAGE=22.47, WARLOCK=21.23, DRUID=21.60 },
+        [24] = { PALADIN=24.04, HUNTER=27.93, PRIEST=23.36, SHAMAN=21.79, MAGE=23.70, WARLOCK=22.42, DRUID=22.88 },
+        [25] = { PALADIN=25.25, HUNTER=28.57, PRIEST=24.45, SHAMAN=22.88, MAGE=24.69, WARLOCK=23.31, DRUID=23.81 },
+        [26] = { PALADIN=25.84, HUNTER=29.33, PRIEST=25.51, SHAMAN=23.58, MAGE=25.64, WARLOCK=23.92, DRUID=24.45 },
+        [27] = { PALADIN=25.84, HUNTER=30.03, PRIEST=26.60, SHAMAN=24.27, MAGE=26.88, WARLOCK=25.13, DRUID=25.38 },
+        [28] = { PALADIN=27.03, HUNTER=30.77, PRIEST=27.62, SHAMAN=25.38, MAGE=29.59, WARLOCK=26.04, DRUID=26.04 },
+        [29] = { PALADIN=27.62, HUNTER=31.45, PRIEST=28.74, SHAMAN=26.11, MAGE=30.77, WARLOCK=27.25, DRUID=27.32 },
+        [30] = { PALADIN=28.82, HUNTER=32.89, PRIEST=30.03, SHAMAN=27.17, MAGE=32.05, WARLOCK=28.17, DRUID=28.90 },
+        [31] = { PALADIN=29.41, HUNTER=33.67, PRIEST=31.06, SHAMAN=28.25, MAGE=32.79, WARLOCK=28.82, DRUID=29.50 },
+        [32] = { PALADIN=30.03, HUNTER=33.67, PRIEST=32.15, SHAMAN=28.90, MAGE=34.01, WARLOCK=30.03, DRUID=30.77 },
+        [33] = { PALADIN=30.67, HUNTER=35.09, PRIEST=33.22, SHAMAN=30.03, MAGE=34.97, WARLOCK=30.86, DRUID=31.45 },
+        [34] = { PALADIN=31.25, HUNTER=35.71, PRIEST=34.60, SHAMAN=30.77, MAGE=35.97, WARLOCK=32.15, DRUID=32.36 },
+        [35] = { PALADIN=32.47, HUNTER=37.17, PRIEST=35.59, SHAMAN=31.85, MAGE=37.17, WARLOCK=33.00, DRUID=33.67 },
+        [36] = { PALADIN=33.00, HUNTER=37.88, PRIEST=36.63, SHAMAN=32.89, MAGE=38.17, WARLOCK=33.90, DRUID=34.25 },
+        [37] = { PALADIN=33.67, HUNTER=37.88, PRIEST=38.02, SHAMAN=33.56, MAGE=39.37, WARLOCK=35.21, DRUID=35.21 },
+        [38] = { PALADIN=34.84, HUNTER=39.37, PRIEST=39.06, SHAMAN=34.60, MAGE=40.32, WARLOCK=36.10, DRUID=36.23 },
+        [39] = { PALADIN=35.46, HUNTER=40.00, PRIEST=40.16, SHAMAN=35.34, MAGE=41.49, WARLOCK=37.31, DRUID=37.17 },
+        [40] = { PALADIN=36.63, HUNTER=41.49, PRIEST=41.49, SHAMAN=36.76, MAGE=42.55, WARLOCK=38.17, DRUID=39.06 },
+        [41] = { PALADIN=37.31, HUNTER=42.19, PRIEST=42.55, SHAMAN=37.45, MAGE=43.48, WARLOCK=39.06, DRUID=39.68 },
+        [42] = { PALADIN=37.88, HUNTER=42.19, PRIEST=43.86, SHAMAN=38.17, MAGE=46.51, WARLOCK=40.32, DRUID=40.98 },
+        [43] = { PALADIN=39.06, HUNTER=43.67, PRIEST=44.84, SHAMAN=39.37, MAGE=47.39, WARLOCK=41.15, DRUID=41.67 },
+        [44] = { PALADIN=39.06, HUNTER=44.44, PRIEST=46.30, SHAMAN=40.32, MAGE=48.54, WARLOCK=42.37, DRUID=42.92 },
+        [45] = { PALADIN=40.32, HUNTER=45.87, PRIEST=47.62, SHAMAN=41.49, MAGE=49.75, WARLOCK=43.67, DRUID=43.86 },
+        [46] = { PALADIN=40.82, HUNTER=46.51, PRIEST=48.54, SHAMAN=42.55, MAGE=50.76, WARLOCK=44.64, DRUID=44.84 },
+        [47] = { PALADIN=42.02, HUNTER=47.17, PRIEST=50.00, SHAMAN=43.29, MAGE=52.08, WARLOCK=45.45, DRUID=45.66 },
+        [48] = { PALADIN=43.29, HUNTER=48.54, PRIEST=51.02, SHAMAN=44.25, MAGE=53.19, WARLOCK=46.73, DRUID=46.73 },
+        [49] = { PALADIN=43.86, HUNTER=49.26, PRIEST=52.36, SHAMAN=45.45, MAGE=54.35, WARLOCK=47.85, DRUID=47.85 },
+        [50] = { PALADIN=45.05, HUNTER=50.76, PRIEST=53.76, SHAMAN=46.51, MAGE=55.87, WARLOCK=49.02, DRUID=49.50 },
+        [51] = { PALADIN=45.66, HUNTER=51.55, PRIEST=54.64, SHAMAN=47.62, MAGE=56.82, WARLOCK=50.00, DRUID=50.51 },
+        [52] = { PALADIN=46.30, HUNTER=52.08, PRIEST=56.18, SHAMAN=48.31, MAGE=57.80, WARLOCK=51.28, DRUID=51.81 },
+        [53] = { PALADIN=47.39, HUNTER=53.76, PRIEST=57.14, SHAMAN=49.75, MAGE=58.82, WARLOCK=52.36, DRUID=52.36 },
+        [54] = { PALADIN=48.08, HUNTER=54.35, PRIEST=58.48, SHAMAN=50.25, MAGE=60.24, WARLOCK=53.76, DRUID=53.76 },
+        [55] = { PALADIN=49.26, HUNTER=55.87, PRIEST=60.24, SHAMAN=51.81, MAGE=61.73, WARLOCK=54.95, DRUID=54.95 },
+        [56] = { PALADIN=49.75, HUNTER=56.50, PRIEST=60.98, SHAMAN=52.63, MAGE=64.94, WARLOCK=55.87, DRUID=55.87 },
+        [57] = { PALADIN=50.51, HUNTER=57.14, PRIEST=62.50, SHAMAN=53.48, MAGE=66.23, WARLOCK=56.82, DRUID=56.82 },
+        [58] = { PALADIN=52.36, HUNTER=58.82, PRIEST=63.69, SHAMAN=54.95, MAGE=67.11, WARLOCK=58.14, DRUID=57.80 },
+        [59] = { PALADIN=52.91, HUNTER=59.52, PRIEST=64.94, SHAMAN=55.87, MAGE=68.49, WARLOCK=59.52, DRUID=59.17 },
+        [60] = { PALADIN=54.05, HUNTER=60.98, PRIEST=66.23, SHAMAN=57.14, MAGE=69.93, WARLOCK=60.61, DRUID=60.98 },
+        [61] = { PALADIN=63.69, HUNTER=63.69, PRIEST=67.57, SHAMAN=60.98, MAGE=69.93, WARLOCK=62.89, DRUID=61.73 },
+        [62] = { PALADIN=65.36, HUNTER=64.94, PRIEST=68.97, SHAMAN=62.89, MAGE=69.93, WARLOCK=64.94, DRUID=63.69 },
+        [63] = { PALADIN=67.57, HUNTER=66.67, PRIEST=69.93, SHAMAN=65.79, MAGE=69.93, WARLOCK=67.57, DRUID=66.67 },
+        [64] = { PALADIN=69.93, HUNTER=69.44, PRIEST=71.94, SHAMAN=68.03, MAGE=70.42, WARLOCK=69.93, DRUID=68.49 },
+        [65] = { PALADIN=71.43, HUNTER=70.92, PRIEST=72.99, SHAMAN=70.42, MAGE=70.42, WARLOCK=72.46, DRUID=70.42 },
+        [66] = { PALADIN=73.53, HUNTER=72.99, PRIEST=74.63, SHAMAN=72.46, MAGE=72.46, WARLOCK=74.07, DRUID=72.99 },
+        [67] = { PALADIN=75.19, HUNTER=75.19, PRIEST=75.76, SHAMAN=74.63, MAGE=75.19, WARLOCK=76.92, DRUID=75.19 },
+        [68] = { PALADIN=76.34, HUNTER=76.92, PRIEST=76.92, SHAMAN=76.34, MAGE=76.34, WARLOCK=78.74, DRUID=76.34 },
+        [69] = { PALADIN=78.13, HUNTER=78.13, PRIEST=78.74, SHAMAN=78.13, MAGE=78.13, WARLOCK=80.00, DRUID=78.13 },
+        [70] = { PALADIN=80.00, HUNTER=80.00, PRIEST=80.00, SHAMAN=80.00, MAGE=80.00, WARLOCK=81.97, DRUID=80.00 },
     }
 }

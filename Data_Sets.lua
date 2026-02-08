@@ -13,7 +13,7 @@ MSC.ClassItemDB = MSC.ClassItemDB or {}
 -- ============================================================================
 -- Format: [SetID] = { {ItemIDs} }
 
-MSC.RawSetData = {
+MSC.ItemSetMap = {
     -- ========================================================================
     -- [[ 1. LOW LEVEL / LEVELING SETS (15-50) ]]
     -- ========================================================================
@@ -568,7 +568,7 @@ if not MSC.IsEra then
         [601] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
     }    
     -- MERGE TBC DATA
-    for id, data in pairs(tbcSets) do MSC.RawSetData[id] = data end
+    for id, data in pairs(tbcSets) do MSC.ItemSetMap[id] = data end
     for id, scores in pairs(tbcScores) do MSC.SetBonusScores[id] = scores end
 end
 
@@ -633,9 +633,3 @@ if not MSC.IsEra then
     -- Merge TBC Procs into Main Table
     for k, v in pairs(tbcProcs) do MSC.ProcDB[k] = v end
 end
-
--- ============================================================================
--- 8. INITIALIZE
--- ============================================================================
--- Run initialization
-MSC:BuildDatabase()

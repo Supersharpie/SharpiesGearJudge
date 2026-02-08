@@ -10,10 +10,11 @@ EventFrame:RegisterEvent("PLAYER_LOGIN")
 EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 EventFrame:RegisterEvent("PLAYER_LEVEL_UP")
 
--- Note: TALENT_UPDATE is handled in Dynamic_Engine.lua now
-
 EventFrame:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == addonName then
+        
+        -- [[ 1. INITIALIZE DATABASE ]]
+        if MSC.BuildDatabase then MSC:BuildDatabase() end
 
         if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45, TrackedSpecs = {} } end
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
@@ -132,7 +133,10 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     local dest = outTable or {}
     
     -- 1. Copy raw stats
-    for k, v in pairs(baseStats) do dest[k] = v end
+    -- [FIX] Added safety check to prevent crash if baseStats is nil
+    if baseStats then
+        for k, v in pairs(baseStats) do dest[k] = v end
+    end
 
     local _, class = UnitClass("player")
     local function Rank(name) return (MSC.GetTalentRank and MSC:GetTalentRank(name)) or 0 end
@@ -301,7 +305,7 @@ local function OnTooltipSetItem(tooltip)
         -- Header
         tooltip:AddLine(" ")
         local scoreLabel = "Judge's Score:"
-        if newStats.Context then scoreLabel = scoreLabel .. " " .. newStats.Context end
+        if newStats and newStats.Context then scoreLabel = scoreLabel .. " " .. newStats.Context end
         tooltip:AddDoubleLine(scoreLabel, string.format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
         
         local displayName = specName
@@ -416,7 +420,7 @@ local function OnTooltipSetItem(tooltip)
         end
 
         -- Projections (TBC Only for Gems/Metas)
-        if newStats.IS_PROJECTED or newStats.GEMS_PROJECTED then
+        if newStats and (newStats.IS_PROJECTED or newStats.GEMS_PROJECTED) then
             tooltip:AddLine(" ")
             
             -- 1. ENCHANT NAME
@@ -445,7 +449,8 @@ local function OnTooltipSetItem(tooltip)
 
         -- STAT COMPARISON
         if not isEquipped then
-            local newExpanded = MSC.ExpandDerivedStats(newStats, link, Scratch_Tooltip_New)
+            -- [FIX] Added 'or {}' to prevent crashes if Evaluator returns nil
+            local newExpanded = MSC.ExpandDerivedStats(newStats or {}, link, Scratch_Tooltip_New)
             local oldExpanded = MSC.ExpandDerivedStats(oldStats or {}, nil, Scratch_Tooltip_Old)
             local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
 

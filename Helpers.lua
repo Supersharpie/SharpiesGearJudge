@@ -896,18 +896,12 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
     for stat, val in pairs(stats) do
         local weightKey = stat
         
-        -- [[ EXISTING LOGIC: Swap DPS key for Offhand ]]
+        -- Swap DPS/Speed keys for Offhand
         if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
-            if weights["MSC_WEAPON_DPS_OH"] then 
-                weightKey = "MSC_WEAPON_DPS_OH" 
-            end
+            if weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH" end
         end
-
-        -- [[ NEW LOGIC: Swap SPEED key for Offhand ]]
         if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
-            if weights["MSC_OH_WEAPON_SPEED"] then 
-                weightKey = "MSC_OH_WEAPON_SPEED" 
-            end
+            if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
         end
         
         if weights[weightKey] and type(val) == "number" then 
@@ -921,16 +915,18 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             score = score + (finalVal * w)
             
             -- [[ THE BOUNCER LOGIC ]]
-            -- We track how much raw stat value is "Useful" vs "Useless"
             if w >= 0.1 then
                 usefulRaw = usefulRaw + val
             else
-                uselessRaw = uselessRaw + val
+                -- EXCEPTION: Do not count Armor/Stamina as junk
+                if stat ~= "ITEM_MOD_ARMOR_SHORT" and stat ~= "ITEM_MOD_STAMINA_SHORT" then
+                    uselessRaw = uselessRaw + val
+                end
             end
         end
     end
     
-    -- [[ 2. RESILIENCE PENALTY (Keep this for PvE) ]]
+    -- 2. RESILIENCE PENALTY
     if not MSC.IsEra and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
         local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"]
         local resWeight = weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
@@ -939,12 +935,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         end
     end
     
-    -- [[ 3. THE FIX: RATIO CHECK INSTEAD OF POISON ]]
-    -- Instead of subtracting points, we check if the item is "Mostly Junk".
-    -- If useless stats are more than double the useful stats, the item is trash.
-    -- Example: Ring of Strength (+10 Str). Useful: 0. Useless: 10. RESULT: 0 Score.
-    -- Example: Seal of Wrynn (+6 Bad, +11 Good). Useful: 11. Useless: 6. RESULT: Score Kept.
-    
+    -- 3. RATIO CHECK
     if uselessRaw > (usefulRaw * 2) then
         return 0
     end
@@ -959,9 +950,26 @@ function MSC.ApplyElvUISkin(frame) end
 -- =============================================================
 function MSC:GetItemSetID(itemIDOrLink)
     if not itemIDOrLink then return nil end
-    local _, _, _, _, _, _, _, _, _, _, _, _, _, _, setID = GetItemInfo(itemIDOrLink)
-    if setID then return setID end
 
+    -- 1. Extract the numeric Item ID
+    local itemID = tonumber(itemIDOrLink)
+    if not itemID then
+        local idStr = itemIDOrLink:match("item:(%d+)")
+        if idStr then itemID = tonumber(idStr) end
+    end
+
+    -- [[ SELF-HEAL ]]
+    if not MSC.ItemSetMap or not next(MSC.ItemSetMap) then
+        if MSC.BuildDatabase then MSC:BuildDatabase() end
+    end
+
+    -- 2. PRIMARY CHECK: Database Map (Fastest)
+    if itemID and MSC.ItemSetMap and MSC.ItemSetMap[itemID] then
+        return MSC.ItemSetMap[itemID]
+    end
+
+    -- 3. FALLBACK: Tooltip Scanning (The "Mental Block" Fix)
+    -- This allows the addon to "read" the set name even if the ID is missing from your DB.
     local tipName = "MSC_ScannerTooltip"
     local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
@@ -972,9 +980,17 @@ function MSC:GetItemSetID(itemIDOrLink)
             local line = _G[tipName.."TextLeft"..i]
             local text = line and line:GetText()
             if text then
-                 if text:find("Set: ") then
-                     local setName = text:match("Set: (.*) %(")
-                     return setName
+                 -- A. Strip Color Codes (Crucial for matching)
+                 local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+                 
+                 -- B. Match the "Name (Current/Total)" pattern
+                 local setName = cleanText:match("^(.*) %((%d+)/(%d+)%)$")
+                 
+                 if setName then
+                    -- C. Check if we know this Set Name (e.g., "Field Marshal's Aegis")
+                    if MSC.SetNameToID and MSC.SetNameToID[setName] then
+                        return MSC.SetNameToID[setName] -- Returns 386
+                    end
                  end
             end
         end
@@ -1063,19 +1079,24 @@ function MSC:DebugItem()
                 local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
                 print(string.format("|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r", statName, val, w, lineScore))
             else
-                -- Print unweighted stats in grey so you see what is being ignored
                 local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
                 print(string.format("|cff888888%s: %.1f (Weight: 0)|r", statName, val))
             end
         end
     end
     
-    -- 2. Check the "Bouncer" Logic
+    -- 2. Check the "Bouncer" Logic (UPDATED)
     local useful, useless = 0, 0
     for stat, val in pairs(stats) do
         if type(val) == "number" then
-            if (weights[stat] or 0) >= 0.1 then useful = useful + val 
-            else useless = useless + val end
+            if (weights[stat] or 0) >= 0.1 then 
+                useful = useful + val 
+            else 
+                -- EXCEPTION FOR DEBUG REPORT
+                if stat ~= "ITEM_MOD_ARMOR_SHORT" and stat ~= "ITEM_MOD_STAMINA_SHORT" then
+                    useless = useless + val
+                end
+            end
         end
     end
     

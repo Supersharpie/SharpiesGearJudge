@@ -32,7 +32,7 @@ function MSC:GetWeaponSpecBonus(itemLink, class, specName)
 end
 
 function MSC:CheckMetaRequirements(metaID, counts)
-    if MSC.IsEra then return true end -- Era has no metas, always pass
+    if MSC.IsEra then return true end 
     if not metaID then return false end
     if metaID == 32409 then return (counts.RED >= 2 and counts.BLUE >= 2 and counts.YELLOW >= 2) -- Relentless
     elseif metaID == 34220 then return (counts.BLUE >= 2) -- Chaotic
@@ -93,30 +93,15 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                         if gData.stat then stats[gData.stat] = (stats[gData.stat] or 0) + gData.val end
                         if gData.stat2 then stats[gData.stat2] = (stats[gData.stat2] or 0) + gData.val2 end
 
-                        -- B. TRACK META GEM COLORS (TBC Logic)
-                        -- We map the specific colorType from your list to the Primary Red/Blue/Yellow counters
+                        -- B. TRACK META GEM COLORS
                         if not MSC.IsEra and gData.colorType then
-                            if gData.colorType == "RED" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                            elseif gData.colorType == "BLUE" then
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                            elseif gData.colorType == "YELLOW" then
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            elseif gData.colorType == "PURPLE" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                            elseif gData.colorType == "ORANGE" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            elseif gData.colorType == "GREEN" then
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            elseif gData.colorType == "PRISMATIC" then
-                                -- Prismatic counts as all three
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            end
+                            if gData.colorType == "RED" then Scratch_Colors.RED = Scratch_Colors.RED + 1
+                            elseif gData.colorType == "BLUE" then Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
+                            elseif gData.colorType == "YELLOW" then Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
+                            elseif gData.colorType == "PURPLE" then Scratch_Colors.RED = Scratch_Colors.RED + 1; Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
+                            elseif gData.colorType == "ORANGE" then Scratch_Colors.RED = Scratch_Colors.RED + 1; Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
+                            elseif gData.colorType == "GREEN" then Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1; Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
+                            elseif gData.colorType == "PRISMATIC" then Scratch_Colors.RED = Scratch_Colors.RED + 1; Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1; Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1 end
                         end
                     end
                 end
@@ -133,13 +118,23 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                 end
             end
             
-            -- [[ 6. HANDLE PROCS, SETS & HYBRID SCORING ]]
-            -- (Legacy code remains the same)
+            -- [[ 6. HANDLE PROCS & SETS (FIXED FALLBACK) ]]
             local itemID = GetItemInfoInstant(itemLink)
             if itemID then
-                if MSC.GetItemSetID then
-                    local setID = MSC:GetItemSetID(itemLink) 
-                    if setID then Scratch_SetCounts[setID] = (Scratch_SetCounts[setID] or 0) + 1 end
+                local setID = nil
+                
+                -- Attempt 1: Helper Function
+                if MSC.GetItemSetID then 
+                    setID = MSC:GetItemSetID(itemLink)
+                end
+                
+                -- Attempt 2: Direct Map Lookup (The Fallback Fix)
+                if not setID and MSC.ItemSetMap then
+                    setID = MSC.ItemSetMap[itemID]
+                end
+
+                if setID then 
+                    Scratch_SetCounts[setID] = (Scratch_SetCounts[setID] or 0) + 1 
                 end
                 
                 if stats._AUTO_PROC then
@@ -163,7 +158,8 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
     end
 
     -- [[ 7. CALCULATE SET BONUSES ]]
-if MSC.ItemSetMap and MSC.SetBonusScores then
+    -- Ensure we check SetBonusScores exists
+    if MSC.SetBonusScores then
         for setID, count in pairs(Scratch_SetCounts) do
              local scoreData = MSC.SetBonusScores[setID]
              if scoreData then
@@ -191,11 +187,10 @@ if MSC.ItemSetMap and MSC.SetBonusScores then
     if mh then totalScore = totalScore + MSC:GetWeaponSpecBonus(mh, MSC.CurrentClass, specName) end
     if oh then totalScore = totalScore + MSC:GetWeaponSpecBonus(oh, MSC.CurrentClass, specName) end
 
-    -- [[ 9. META GEM ACTIVATION CHECK (TBC Only) ]]
+    -- [[ 9. META GEM ACTIVATION CHECK ]]
     if not MSC.IsEra and metaGemID and MSC.CheckMetaRequirements then
         local isActive = MSC:CheckMetaRequirements(metaGemID, Scratch_Colors)
         if not isActive then
-             -- If inactive, subtract the value of the meta gem from the total score
              local metaStats = MSC.GetGemStatsByID and MSC.GetGemStatsByID(metaGemID)
              if metaStats then
                  local lostScore = 0
@@ -221,7 +216,7 @@ function MSC:GetBestMainHandInBags(weights, specName)
         local numSlots = GetBagSlots(bag) 
         for slot = 1, numSlots do
             local link = GetBagLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then -- [FIX] Added Usable Check
+            if link and MSC.IsItemUsable(link) then 
                 local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
                 if (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND") and IsEquippableItem(link) then
                     local stats = MSC.SafeGetItemStats(link, 16, weights, specName)
@@ -237,19 +232,13 @@ function MSC:GetBestMainHandInBags(weights, specName)
     return bestLink
 end
 
--- Find the best OFF HAND in bags (to pair with a new Main Hand)
 function MSC:GetBestOffHandInBags(weights, specName)
     local bestLink = nil
     local bestScore = -1
     local _, playerClass = UnitClass("player")
     
-    -- [FIX] Define who is allowed to hold a WEAPON in the Off-Hand
     local canDualWield = (playerClass == "ROGUE" or playerClass == "WARRIOR" or playerClass == "HUNTER")
-    
-    -- [FIX] Check for Enhancement Shaman Talent if applicable
     if playerClass == "SHAMAN" and MSC.GetTalentRank then
-        -- Assuming "DUAL_WIELD" is the key in your talent DB. 
-        -- If you don't have talent data loaded yet, this defaults to false (Safety first).
         if MSC:GetTalentRank("DUAL_WIELD") > 0 then canDualWield = true end
     end
 
@@ -257,21 +246,14 @@ function MSC:GetBestOffHandInBags(weights, specName)
         local numSlots = GetBagSlots(bag) 
         for slot = 1, numSlots do
             local link = GetBagLink(bag, slot)
-            -- [FIX] Added Usable Check (Prevents Priests from seeing Plate/Swords)
             if link and MSC.IsItemUsable(link) then
                 local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
-                
-                -- 1. Identify Candidate Type
                 local isWeapon   = (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONOFFHAND")
                 local isStandard = (loc == "INVTYPE_SHIELD" or loc == "INVTYPE_HOLDABLE")
                 
-                -- 2. Apply Dual Wield Logic
                 local allowed = false
-                if isStandard then
-                    allowed = true -- Shield/Frill logic is handled by IsItemUsable
-                elseif isWeapon then
-                    if canDualWield then allowed = true end
-                end
+                if isStandard then allowed = true 
+                elseif isWeapon and canDualWield then allowed = true end
 
                 if allowed and IsEquippableItem(link) then
                     local stats = MSC.SafeGetItemStats(link, 17, weights, specName)
@@ -306,47 +288,27 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local originalOH   = Scratch_Gear[17]
     local contextMsg   = nil
 
-    -- 2. PRE-CALCULATE ITEM STATS
+    -- 2. PRE-CALCULATE ITEM STATS (Kept for metadata/context)
     local finalNewStats = MSC.SafeGetItemStats(newItemLink, targetSlotID, weights, specName)
     
-    local finalOldStats = {}
-    local oldItemLink = GetInventoryItemLink("player", targetSlotID)
-    if oldItemLink then 
-        finalOldStats = MSC.SafeGetItemStats(oldItemLink, targetSlotID, weights, specName) 
-        if finalOldStats._AUTO_PROC then
-             local p = finalOldStats._AUTO_PROC
-             finalOldStats[p.stat] = (finalOldStats[p.stat] or 0) + p.val
-        end
-    end
-
     -- 3. SWAP GEAR & HANDLE MH/OH LOGIC
     Scratch_Gear[targetSlotID] = newItemLink
-    
     local _,_,_,_,_,_,_,_, newLoc = GetItemInfo(newItemLink)
     local isNew2H = (newLoc == "INVTYPE_2HWEAPON" or newLoc == "INVTYPE_STAFF" or newLoc == "INVTYPE_POLEARM")
-    
-    -- Check for spec preference (Arms, Ret, etc)
     local is2HSpec = (specName and (specName:find("ARMS") or specName:find("RET") or specName:find("2H")))
 
     if targetSlotID == 16 then
         if isNew2H then
-            Scratch_Gear[17] = nil -- 2H clears OH
+            Scratch_Gear[17] = nil 
         else
-            -- It's a 1H weapon. Check if we need to fill the OH.
             local needsOH = false
-            
-            -- Check if we are currently wearing a 2H
             local currentMH = GetInventoryItemLink("player", 16)
             if currentMH then
                 local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
-                local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
-                if isCurrent2H then needsOH = true end
+                if (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM") then needsOH = true end
             else
-                -- If we had NO weapon equipped, we definitely need an OH
                 needsOH = true
             end
-
-            -- [FIX] Also check if the OH slot is explicitly empty/missing in our scratch gear
             if not Scratch_Gear[17] then needsOH = true end
 
             if needsOH then
@@ -360,10 +322,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                         local bagName = GetItemInfo(bestBagOH)
                         contextMsg = "|cff00ff00(w/ ".. (bagName or "Bag Item") ..")|r"
                     else
-                        -- Only warn if we actually expected one but failed
-                        if not Scratch_Gear[17] then 
-                            contextMsg = "|cffff0000(No OH found)|r" 
-                        end
+                        if not Scratch_Gear[17] then contextMsg = "|cffff0000(No OH found)|r" end
                     end
                 end
             end
@@ -373,7 +332,6 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         if currentMH then
             local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
             local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
-            
             if isCurrent2H then
                 local bestBagMH = MSC:GetBestMainHandInBags(weights, specName)
                 if bestBagMH then
@@ -389,19 +347,15 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     end
 
     -- 4. CALCULATE FUTURE SCORE
-	local newScore, newStatsTotal, newTotalColors = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
+    local newScore, newStatsTotal, newTotalColors = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
     -- [[ 5. CAP GUARDIAN (Hit/Def Caps) ]]
     local _, playerClass = UnitClass("player")
     local function Rank(k) return MSC:GetTalentRank(k) end 
-
-    -- Version-Specific Display and ID Maps
     local STAT_DISPLAY = { ["ITEM_MOD_HIT_RATING_SHORT"]="Hit", ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]="Spell Hit", ["ITEM_MOD_EXPERTISE_RATING_SHORT"]="Exp", ["DEFENSE_FLOOR"]="Def" }
-    
     local SAFETY_CAPS = {}
 
     if MSC.IsTBC or MSC.IsWrath then
-        -- TBC CAPS (Rating Based)
         SAFETY_CAPS = {
             WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
             PALADIN = { { stat="DEFENSE_FLOOR", base=490, penalty=1000 }, { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="PRECISION", tVal=12.6, penalty=100 } },
@@ -414,7 +368,6 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
             PRIEST = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="SHADOW_FOCUS", tVal=25.2, penalty=100 } },
         }
     else
-        -- ERA CAPS (Percentage Based)
         SAFETY_CAPS = {
             WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 } },
             ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 } },
@@ -427,22 +380,14 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     if SAFETY_CAPS[playerClass] then
         for _, rule in ipairs(SAFETY_CAPS[playerClass]) do
             if rule.stat ~= "DEFENSE_FLOOR" then
-                -- 1. Get Cap Threshold
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
-                
-                -- 2. Get Current & Future Values (CORRECTED DELTA MATH)
-                -- We compare Player Total (Current) against Player Total (Future)
                 local currentVal = MSC:GetPlayerStat(rule.stat == "ITEM_MOD_HIT_RATING_SHORT" and "HIT" or "SPELL_HIT")
-                
-                -- [FIX 2] Calculate the change in gear stats
                 local oldGearVal = currentStatsTotal[rule.stat] or 0
                 local newGearVal = newStatsTotal[rule.stat] or 0
                 local diff = newGearVal - oldGearVal
-                
                 local futureVal = currentVal + diff
                 
-                -- Check for Break (Allowing 0.1 tolerance for float errors)
                 if currentVal >= trueCap and futureVal < (trueCap - 0.1) then
                     newScore = newScore - rule.penalty
                     local deficit = futureVal - trueCap
@@ -452,17 +397,12 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                         finalNewStats.Context = (finalNewStats.Context or "") .. msg
                     end
                 end
-            
             elseif rule.stat == "DEFENSE_FLOOR" and MSC.IsTBC then
-                -- Tank Defense Cap (TBC Only)
                 local defWeight = weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                 if defWeight > 0 then
                     local currentDef = MSC:GetPlayerStat("DEFENSE")
-                    
-                    -- [FIX 3] Use the same Delta Logic for Defense (Handles 2H swaps correctly)
                     local oldDefRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     local newDefRating = newStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
-                    
                     local diffSkill = (newDefRating - oldDefRating) / 2.36
                     local futureDef = currentDef + diffSkill
                     
@@ -488,10 +428,13 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         finalNewStats.Context = (finalNewStats.Context or "") .. " " .. contextMsg 
     end
 
-    if finalNewStats._AUTO_PROC then
-         local p = finalNewStats._AUTO_PROC
-         finalNewStats[p.stat] = (finalNewStats[p.stat] or 0) + p.val
+    if finalNewStats.Context then
+        newStatsTotal.Context = finalNewStats.Context
     end
 
-    return newScore, currentScore, finalNewStats, finalOldStats, newTotalColors
+    if finalNewStats._AUTO_PROC then
+         newStatsTotal._AUTO_PROC = finalNewStats._AUTO_PROC
+    end
+
+    return newScore, currentScore, newStatsTotal, currentStatsTotal, newTotalColors
 end

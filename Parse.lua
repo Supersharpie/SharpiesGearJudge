@@ -181,183 +181,139 @@ MSC.Scanner.TermMap = {
 }
 
 -- =============================================================
--- 2. PATTERN DATABASE
+-- 2. PATTERN DATABASE (Merged)
 -- =============================================================
 
 MSC.Scanner.StatPatterns = {
-    -- [[ 1. PREFIX FORMAT (Standard) ]]
-    -- Handles: "+10 Strength", "10 Strength", "150 Armor"
-    -- The pattern is "Start -> Optional + -> Number -> Space -> Text -> End"
+    -- [[ 1. STANDARD STATS & PREFIX/SUFFIX ]]
+    -- Covers: "+10 Strength", "10 Strength", "150 Armor"
     { p = "^[%s%+]*(%d+%.?%d*)%s+(.*)$", valIdx = 1, nameIdx = 2 },
-
-    -- [[ 2. SUFFIX FORMAT (Standard) ]]
-    -- Handles: "Strength +10", "Stamina 10", "Speed 2.80"
+    -- Covers: "Strength +10", "Stamina 10", "Speed 2.80"
     { p = "^(.*)%s+[%+:]*%s*(%d+%.?%d*)$", valIdx = 2, nameIdx = 1 },
+    
+    -- [[ 2. FIXED SHORT STATS ]]
+    { p = "^(%d+) armor$", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
+    { p = "^(%d+) block$", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
 
-    -- [[ 3. SPECIFIC DPS FORMATS ]]
-    -- Handles: "(55.4 damage per second)"
+    -- [[ 3. WEAPON & DPS ]]
+    { p = "speed (%d+%.?%d*)", valIdx = 1, fixedStat = "MSC_WEAPON_SPEED" },
     { p = "^%((%d+%.?%d*) damage per second%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
-    { p = "^%((%d+%.?%d*) DPS%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" }, -- Lazy variant
+    { p = "^%((%d+%.?%d*) dps%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
+    { p = "^(%d+) %- (%d+) damage$", type="RANGE" },
     
-    -- [[ 4. DAMAGE RANGE ]]
-    -- Handles: "100 - 200 Damage"
-    { p = "^(%d+) %- (%d+) Damage$", type="RANGE" },
-    
-    -- [[ 5. ENCHANT/SCOPE FORMATS (Lazy Text) ]]
-    -- Handles: "Scope (+7 Damage)" or "Enchant: +15 Agility"
-    -- Sometimes these slip through as 'STAT' lines if the bouncer misses them
-    { p = "Scope %([%+:]*(%d+) (.*)%)", valIdx = 1, nameIdx = 2 },
-    { p = "Enchant:? [%+:]*(%d+) (.*)", valIdx = 1, nameIdx = 2 },
+    -- [[ 4. ENCHANT/SCOPE FORMATS ]]
+    { p = "scope %([%+:]*(%d+) (.*)%)", valIdx = 1, nameIdx = 2 },
+    { p = "enchant:? [%+:]*(%d+) (.*)", valIdx = 1, nameIdx = 2 },
 }
 
 MSC.Scanner.EquipPatterns = {
     -- ========================================================================
-    -- [[ 1. LAZY / SHORT FORM (Top Priority) ]]
+    -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority) ]]
     -- ========================================================================
-    -- Catches: "+10 Agility", "+1% Hit", "Equip: +4 Mana Regen"
-    -- The %s* allows for invisible spaces like "+ 10 Agility"
-    { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
-    { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
-
-    -- ========================================================================
-    -- [[ 2. SPECIALIZED OVERRIDES (Must be before Generic!) ]]
-    -- ========================================================================
-    -- [[ NEW: TBC SPECIFIC SPELL POWER ]]
-    -- Explicitly catches the long phrasing
-    { p = "damage and healing done by magical spells and effects by up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-
-    -- [[ FERAL AP ]] 
-    -- MUST be before the generic parser, or it will just be read as normal Attack Power!
-    { p = "Increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
     
+    -- [[ TBC: HYBRID HEAL/DAMAGE SPLIT ]]
+    { p = "healing.-up to (%d+).-damage.-up to (%d+)", 
+      func = function(heal, dmg, _, outputStats) 
+          if outputStats then
+              outputStats["ITEM_MOD_HEALING_POWER_SHORT"] = (outputStats["ITEM_MOD_HEALING_POWER_SHORT"] or 0) + tonumber(heal)
+              outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + tonumber(dmg)
+          end
+      end 
+    },
+
+    -- [[ ERA/TBC: UNIFIED SPELL POWER ]]
+    { p = "damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+    { p = "healing done.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_HEALING_POWER_SHORT" },
+
+    -- [[ FERAL AP & WEAPON SKILL ]] 
+    { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+    { p = "increased (.*) %+(%d+)%.?", valIdx = 2, nameIdx = 1 },
+
     -- [[ RESTORES (MP5/HP5) ]]
-    -- "Restores" doesn't match "Increases", so these are required.
-    { p = "Restores (%d+) (mana per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
-    { p = "Restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
-    { p = "Restores (%d+) (.*) every ([%d%.]+) sec", 
-    func = function(match1, match2, match3, outputStats)
+    { p = "restores (%d+) (mana per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
+    { p = "restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
+    { p = "restores (%d+) (.*) every ([%d%.]+) sec", 
+        func = function(match1, match2, match3, outputStats)
             local key = (match2:find("health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
                         or "ITEM_MOD_MANA_REGENERATION_SHORT"
-            -- Normalization math: (Value / Interval) * 5
-            local val = tonumber(match1)
-            local interval = tonumber(match3)
-            if val and interval then
-                local normalizedValue = (val / interval) * 5
-                outputStats[key] = (outputStats[key] or 0) + normalizedValue
-            end
+            local val, interval = tonumber(match1), tonumber(match3)
+            if val and interval then outputStats[key] = (outputStats[key] or 0) + ((val / interval) * 5) end
         end 
     },
-    { p = "Restores (%d+) health every ([%d%.]+) sec", valIdx = 1, nameIdx = 2, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-    
-    -- [[ ARPEN & THREAT ]]
+
+    -- [[ ARPEN, THREAT, & PENETRATION ]]
     { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "Ignores (%d+) armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "Decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
-
-    -- [[ WEAPON SKILL (Era) ]]
-    { p = "Increased (.*) %+(%d+)%.?", valIdx = 2, nameIdx = 1 },
+    { p = "ignores (%d+) armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+    { p = "decreases (.*) by (%d+)", valIdx=2, nameIdx=1 }, 
+    { p = "decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
 
     -- ========================================================================
-    -- [[ 3. VERB VARIATIONS (Up To / Improves) ]]
+    -- [[ 2. STANDARD PHRASING (Percent vs Rating) ]]
     -- ========================================================================
-    -- Era "Up to" (Healing/Spell Power)
-    { p = "Increases (.*) by up to (%d+)%.?", valIdx = 2, nameIdx = 1 },
-    { p = "^Damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
     
-    -- "Improves" (TBC Variation)
-    { p = "Improves your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1 }, -- Percentages
-    { p = "Improves (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, -- Ratings
+    -- Percent (Caught first to prevent splitting "1% Hit" into just "1 Hit")
+    { p = "improves your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true }, 
+    { p = "increases your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true }, 
+    { p = "increases (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true },
+
+    -- Flat Rating / "Up To"
+    { p = "improves your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
+    { p = "improves (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
+    { p = "increases your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
+    { p = "increases (.*) by up to (%d+)%.?", valIdx = 2, nameIdx = 1 },
+    { p = "increases (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
 
     -- ========================================================================
-    -- [[ 4. GENERIC CATCH-ALL (Bottom Priority) ]]
+    -- [[ 3. LAZY / SHORT FORM (Green Text) ]]
     -- ========================================================================
-    -- This handles 90% of items: "Increases [Stat Name] by [Value]"
-    { p = "Increases your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
-    { p = "Increases (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
+    { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
+    { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
 }
 
 MSC.Scanner.ProcPatterns = {
-    -- ========================================================================
-    -- [[ 1. BUFFS (Your Stats) ]]
-    -- ========================================================================
-    -- Lazy: "Chance on hit: +100 Haste for 10 sec"
+    -- Buffs
     { p = "^%+(%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    { p = "increases your (.*) by (%d+)$", valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 }, 
 
-    -- Verbs: "Grants 100..." / "Gain 100..." / "Increases 100..."
-    { p = "Grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "Gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "Increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
-    
-    -- Permanent-ish Procs (Rare, but exist)
-    { p = "Increases your (.*) by (%d+)$", valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 }, -- Guess 10s
-
-    -- ========================================================================
-    -- [[ 2. DAMAGE PROCS ]]
-    -- ========================================================================
-    -- Ranges: "Inflicts 100 to 150 Fire damage"
+    -- Damage Procs
     { p = "for (%d+) to (%d+) .*damage", type="DAMAGE" },
     { p = "inflicts (%d+) to (%d+) .*damage", type="DAMAGE" },
-    
-    -- Flat: "Inflicts 100 Fire damage" / "Deals 100 Shadow damage"
     { p = "for (%d+) .*damage", type="DAMAGE" },
     { p = "inflicts (%d+) .*damage", type="DAMAGE" },
     { p = "deals (%d+) .*damage", type="DAMAGE" },
     { p = "blasts (.*) for (%d+)", valIdx=2, type="DAMAGE" },
 
-    -- ========================================================================
-    -- [[ 3. HEALING / RESOURCES ]]
-    -- ========================================================================
+    -- Resources
     { p = "steals (%d+) life", type="HEAL" },
-    { p = "Restores (%d+) mana", type="MANA" },
-    { p = "Restores (%d+) health", type="HEAL" },
-    
-    -- ========================================================================
-    -- [[ 4. CATCH-ALL ]]
-    -- ========================================================================
-    { p = "Blasts your enemy", type="GENERIC" }
+    { p = "restores (%d+) mana", type="MANA" },
+    { p = "restores (%d+) health", type="HEAL" },
+
+    -- Catch All
+    { p = "blasts your enemy", type="GENERIC" }
 }
 
 MSC.Scanner.UsePatterns = {
-    -- ========================================================================
-    -- [[ 1. LAZY SYNTAX (Short Forms) ]]
-    -- ========================================================================
-    -- "Use: +250 Health" (No duration implies permanent or instant heal, but we trap it here)
-    -- "Use: +50 Strength for 20 sec"
+    -- Short Forms
     { p = "^%+(%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "^%+(%d+) (.*)$", valIdx=1, nameIdx=2, type="BUFF", defaultDur=15 }, -- Fallback 15s
+    { p = "^%+(%d+) (.*)$", valIdx=1, nameIdx=2, type="BUFF", defaultDur=15 },
 
-    -- ========================================================================
-    -- [[ 2. ALTERNATE VERBS ]]
-    -- ========================================================================
-    -- "Grants" / "Gain"
-    { p = "Grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "Gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    
-    -- ========================================================================
-    -- [[ 3. COMPLEX PHRASING ("Up To" / TOEP) ]]
-    -- ========================================================================
-    -- This handles: "Increases damage... by up to 175 for 15 sec"
-    { p = "Increases (.*) by up to (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
-    
-    -- Standard: "Increases Spell Power by 100 for 20 sec"
-    { p = "Increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    -- Verbs
+    { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "increases (.*) by up to (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
 
-    -- ========================================================================
-    -- [[ 4. RESOURCES (Potions / Gems) ]]
-    -- ========================================================================
-    -- Ranges: "Restores 900 to 1500 mana"
-    { p = "Restores (%d+) to (%d+) mana", type="MANA_RANGE" },
-    { p = "Restores (%d+) to (%d+) health", type="HEALTH_RANGE" },
-    
-    -- Flat: "Restores 500 mana"
-    { p = "Restores (%d+) mana", valIdx=1, type="MANA" },
-    { p = "Restores (%d+) health", valIdx=1, type="HEALTH" },
-    
-    -- ========================================================================
-    -- [[ 5. MISC / EDGE CASES ]]
-    -- ========================================================================
-    -- "Adds 4 damage per second" (TBC Weapon Oils/Stones)
-    { p = "Adds (%d+) damage", valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
+    -- Resources
+    { p = "restores (%d+) to (%d+) mana", type="MANA_RANGE" },
+    { p = "restores (%d+) to (%d+) health", type="HEALTH_RANGE" },
+    { p = "restores (%d+) mana", valIdx=1, type="MANA" },
+    { p = "restores (%d+) health", valIdx=1, type="HEALTH" },
+
+    -- Misc
+    { p = "adds (%d+) damage", valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
 }
 
 -- =============================================================
@@ -507,19 +463,10 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
         local m1, m2, m3 = cleanText:match(pat.p)
         if m1 then
             local procObj = { description = text }
-            
             if pat.type == "DAMAGE" then
                 procObj.type = "Damage"
-                
-                -- [[ FIX: Check valIdx to handle "Blasts X for Y" patterns ]]
-                local valStr = (pat.valIdx == 2) and m2 or m1
-                procObj.val = tonumber(valStr)
-                
-                -- Only average if it's a range pattern (m2 exists AND we didn't just use it as the primary value)
-                if m2 and not pat.valIdx then 
-                    procObj.val = (procObj.val + tonumber(m2)) / 2 
-                end
-
+                procObj.val = tonumber(m1)
+                if m2 then procObj.val = (procObj.val + tonumber(m2)) / 2 end
             elseif pat.type == "HEAL" or pat.type == "MANA" then
                 procObj.type = pat.type
                 procObj.val = tonumber(m1)
@@ -607,9 +554,8 @@ function MSC.Scanner.Scan(itemLink)
             elseif type == "EQUIP" then MSC.Scanner.ParseEquipLine(fullText, result.Stats, result.Procs)
             elseif type == "USE" then MSC.Scanner.ParseUseLine(fullText, result.UseEffects)
             elseif type == "SET" then MSC.Scanner.ParseSetLine(fullText, nil, nil, nil, result.Meta, result.Stats)
-            elseif type == "SOCKET_BONUS" then 
-                -- [[ UPDATED: Always parse Bonus Stats, but track Active separately ]]
-                if g > 0.9 and r < 0.2 then result.Meta.SocketBonusActive = true end
+            elseif type == "SOCKET_BONUS" and g > 0.9 and r < 0.2 then 
+                result.Meta.SocketBonusActive = true
                 if not result.Meta.BonusStats then result.Meta.BonusStats = {} end
                 MSC.Scanner.ParseStatLine(fullText, result.Meta.BonusStats)
             elseif type == "PROC" then MSC.Scanner.ParseProcLine(fullText, result.Procs)

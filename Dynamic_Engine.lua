@@ -176,3 +176,48 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
         UIDropDownMenu_SetText(MyStatCompareFrame.ProfileDD, "Auto: " .. displayName)
     end
 end)
+
+-- =========================================================================
+-- 5. SET BONUS CALCULATOR (Added to Engine)
+-- =========================================================================
+function MSC:UpdateSetBonusScores(weights)
+    if not MSC.SetBonusScores or not weights then return end
+
+    local count = 0
+    for setID, setStages in pairs(MSC.SetBonusScores) do
+        for reqCount, data in pairs(setStages) do
+            -- Only calculate if we have stats (and Recalculate every time weights change)
+            if data.stats then
+                local score = 0
+                for stat, val in pairs(data.stats) do
+                    local w = weights[stat] or 0
+                    if w > 0 then
+                        score = score + (val * w)
+                    end
+                end
+                
+                -- Save the calculated score into the table so Evaluator can see it
+                data.score = MSC.Round(score, 1)
+                count = count + 1
+            end
+        end
+    end
+end
+
+-- [[ AUTO-CALCULATE ON LOAD ]]
+local setCalcFrame = CreateFrame("Frame")
+setCalcFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+setCalcFrame:SetScript("OnEvent", function(self, event)
+    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    
+    -- Wait 2s for weights/database to stabilize, then calculate
+    C_Timer.After(2, function()
+        if MSC.GetCurrentWeights then
+            local weights = MSC.GetCurrentWeights()
+            if weights then
+                MSC:UpdateSetBonusScores(weights)
+                -- print("SGJ: Set Bonus Scores Ready.")
+            end
+        end
+    end)
+end)
