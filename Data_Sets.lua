@@ -13,7 +13,7 @@ MSC.ClassItemDB = MSC.ClassItemDB or {}
 -- ============================================================================
 -- Format: [SetID] = { {ItemIDs} }
 
-MSC.ItemSetMap = {
+MSC.SetDefinitions = {
     -- ========================================================================
     -- [[ 1. LOW LEVEL / LEVELING SETS (15-50) ]]
     -- ========================================================================
@@ -132,7 +132,7 @@ MSC.ItemSetMap = {
     [384] = { {16477,16478,16479,16480,16483,16484} }, -- Field Marshal's Battlegear (Ally)
     [383] = { {16541,16542,16543,16544,16545,16548} }, -- Warlord's Battlegear (Horde)
     -- [[ PALADIN ]]
-    [386] = { {16472,16473,16474,16475,16476,16481,16482} }, -- Field Marshal's Aegis (Ally)
+    [386] = { {16472,16473,16474,16475,16476,16471} }, -- Field Marshal's Aegis (Ally)
     -- [[ HUNTER ]]
     [388] = { {16462,16463,16464,16465,16466,16467,16468} }, -- Field Marshal's Pursuit (Ally)
     [387] = { {16518,16519,16520,16521,16522,16523,16524} }, -- Warlord's Pursuit (Horde)
@@ -568,7 +568,7 @@ if not MSC.IsEra then
         [601] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=15}} },
     }    
     -- MERGE TBC DATA
-    for id, data in pairs(tbcSets) do MSC.ItemSetMap[id] = data end
+    for id, data in pairs(tbcSets) do MSC.SetDefinitions[id] = data end
     for id, scores in pairs(tbcScores) do MSC.SetBonusScores[id] = scores end
 end
 
@@ -632,4 +632,28 @@ if not MSC.IsEra then
 
     -- Merge TBC Procs into Main Table
     for k, v in pairs(tbcProcs) do MSC.ProcDB[k] = v end
+end
+-- ============================================================================
+--  DATABASE BUILDER (Flattening ItemID Lookup Map)
+-- ============================================================================
+
+function MSC:BuildDatabase()
+    
+    -- We use MSC.SetDefinitions as the source since it holds your master list
+    if not MSC.SetDefinitions then return end
+
+    for setID, itemList in pairs(MSC.SetDefinitions) do
+        -- Iterate over the top level { {id, id} }
+        for _, entry in ipairs(itemList) do
+            -- If it's the inner table {id, id, id}, map each ID to the setID
+            if type(entry) == "table" then
+                for _, itemID in ipairs(entry) do
+                    MSC.ItemSetMap[itemID] = setID
+                end
+            else
+                -- Fallback for standard single-table {id, id}
+                MSC.ItemSetMap[entry] = setID
+            end
+        end
+    end
 end

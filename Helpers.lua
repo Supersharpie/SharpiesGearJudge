@@ -185,16 +185,27 @@ MSC.PawnStatMap = {
     ["BlockValue"] = "ITEM_MOD_BLOCK_VALUE_SHORT", ["Dps"] = "MSC_WEAPON_DPS", ["Speed"] = "MSC_WEAPON_SPEED",
 }
 
-function MSC:ParsePawnString(pawnString)
-    if not pawnString then return nil, "No string" end
-    local name = string.match(pawnString, '"([^"]+)"') or "Imported"
-    local weights = {}
-    for k, v in string.gmatch(pawnString, "([%a%d]+)=([%d%.]+)") do
-        local mappedKey = MSC.PawnStatMap and MSC.PawnStatMap[k]
-        if mappedKey then weights[mappedKey] = tonumber(v) end
+function MSC:ImportAndSavePawnString(pawnString)
+    -- 1. Parse the string using your existing helper
+    local weights, name = self:ParsePawnString(pawnString)
+    if not weights then 
+        print("|cffff0000SGJ: Failed to parse Pawn string.|r")
+        return false 
     end
-    if not next(weights) then return nil, "No stats" end
-    return weights, name
+
+    -- 2. Save to your Character-Specific DB
+    SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
+    SharpiesGearJudgeDB.customWeights = SharpiesGearJudgeDB.customWeights or {}
+    SharpiesGearJudgeDB.customWeights[name] = weights
+    
+    -- 3. Update the session weights so it appears immediately
+    if MSC.CurrentClass then
+        MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
+        MSC.CurrentClass.Weights[name] = weights
+    end
+    
+    print("|cff00ff00SGJ: Profile '" .. name .. "' saved to character database.|r")
+    return true, name
 end
 
 -- =============================================================
@@ -421,7 +432,6 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
             if db["EMPTY_SOCKET_BLUE"] then table.insert(lists, db["EMPTY_SOCKET_BLUE"]) end
         else
             if db[socketColor] then table.insert(lists, db[socketColor]) end
-            -- [FIX: DO NOT ADD PRISMATIC_GEMS HERE]
             -- Prismatic gems are already in the specific color lists in Database.lua
         end
     end
@@ -492,7 +502,6 @@ end
 -- 8. THE MAIN PARSER (SafeGetItemStats)
 -- =============================================================
 
--- [[ NEW HELPER FOR MODE 2 ]]
 function MSC.SolveColorMatch(gemIDs, baseLink)
     local template = GetItemStats(baseLink)
     local sockets = {}
@@ -564,8 +573,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local level = UnitLevel("player")
     
-    if slotId then
-        -- [FIX] Only strip/manipulate enchants if we are NOT in Mode 1 (Off/Raw)
+    if slotId then1
         if enchantMode ~= 1 then
             
             -- A. IDENTIFY PHYSICAL ENCHANT ON ITEM (The one we might want to strip)
@@ -896,12 +904,18 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
     for stat, val in pairs(stats) do
         local weightKey = stat
         
-        -- Swap DPS/Speed keys for Offhand
+        -- [[ EXISTING LOGIC: Swap DPS key for Offhand ]]
         if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
-            if weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH" end
+            if weights["MSC_WEAPON_DPS_OH"] then 
+                weightKey = "MSC_WEAPON_DPS_OH" 
+            end
         end
+
+        -- [[ NEW LOGIC: Swap SPEED key for Offhand ]]
         if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
-            if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
+            if weights["MSC_OH_WEAPON_SPEED"] then 
+                weightKey = "MSC_OH_WEAPON_SPEED" 
+            end
         end
         
         if weights[weightKey] and type(val) == "number" then 
@@ -915,18 +929,16 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             score = score + (finalVal * w)
             
             -- [[ THE BOUNCER LOGIC ]]
+            -- We track how much raw stat value is "Useful" vs "Useless"
             if w >= 0.1 then
                 usefulRaw = usefulRaw + val
             else
-                -- EXCEPTION: Do not count Armor/Stamina as junk
-                if stat ~= "ITEM_MOD_ARMOR_SHORT" and stat ~= "ITEM_MOD_STAMINA_SHORT" then
-                    uselessRaw = uselessRaw + val
-                end
+                uselessRaw = uselessRaw + val
             end
         end
     end
     
-    -- 2. RESILIENCE PENALTY
+    -- [[ 2. RESILIENCE PENALTY (Keep this for PvE) ]]
     if not MSC.IsEra and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
         local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"]
         local resWeight = weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
@@ -934,8 +946,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             score = score - (resVal * 1.5) 
         end
     end
-    
-    -- 3. RATIO CHECK
+
     if uselessRaw > (usefulRaw * 2) then
         return 0
     end
@@ -950,26 +961,9 @@ function MSC.ApplyElvUISkin(frame) end
 -- =============================================================
 function MSC:GetItemSetID(itemIDOrLink)
     if not itemIDOrLink then return nil end
+    local _, _, _, _, _, _, _, _, _, _, _, _, _, _, setID = GetItemInfo(itemIDOrLink)
+    if setID then return setID end
 
-    -- 1. Extract the numeric Item ID
-    local itemID = tonumber(itemIDOrLink)
-    if not itemID then
-        local idStr = itemIDOrLink:match("item:(%d+)")
-        if idStr then itemID = tonumber(idStr) end
-    end
-
-    -- [[ SELF-HEAL ]]
-    if not MSC.ItemSetMap or not next(MSC.ItemSetMap) then
-        if MSC.BuildDatabase then MSC:BuildDatabase() end
-    end
-
-    -- 2. PRIMARY CHECK: Database Map (Fastest)
-    if itemID and MSC.ItemSetMap and MSC.ItemSetMap[itemID] then
-        return MSC.ItemSetMap[itemID]
-    end
-
-    -- 3. FALLBACK: Tooltip Scanning (The "Mental Block" Fix)
-    -- This allows the addon to "read" the set name even if the ID is missing from your DB.
     local tipName = "MSC_ScannerTooltip"
     local tip = _G[tipName] or CreateFrame("GameTooltip", tipName, nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
@@ -980,17 +974,9 @@ function MSC:GetItemSetID(itemIDOrLink)
             local line = _G[tipName.."TextLeft"..i]
             local text = line and line:GetText()
             if text then
-                 -- A. Strip Color Codes (Crucial for matching)
-                 local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-                 
-                 -- B. Match the "Name (Current/Total)" pattern
-                 local setName = cleanText:match("^(.*) %((%d+)/(%d+)%)$")
-                 
-                 if setName then
-                    -- C. Check if we know this Set Name (e.g., "Field Marshal's Aegis")
-                    if MSC.SetNameToID and MSC.SetNameToID[setName] then
-                        return MSC.SetNameToID[setName] -- Returns 386
-                    end
+                 if text:find("Set: ") then
+                     local setName = text:match("Set: (.*) %(")
+                     return setName
                  end
             end
         end
@@ -1079,24 +1065,19 @@ function MSC:DebugItem()
                 local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
                 print(string.format("|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r", statName, val, w, lineScore))
             else
+                -- Print unweighted stats in grey so you see what is being ignored
                 local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
                 print(string.format("|cff888888%s: %.1f (Weight: 0)|r", statName, val))
             end
         end
     end
     
-    -- 2. Check the "Bouncer" Logic (UPDATED)
+    -- 2. Check the "Bouncer" Logic
     local useful, useless = 0, 0
     for stat, val in pairs(stats) do
         if type(val) == "number" then
-            if (weights[stat] or 0) >= 0.1 then 
-                useful = useful + val 
-            else 
-                -- EXCEPTION FOR DEBUG REPORT
-                if stat ~= "ITEM_MOD_ARMOR_SHORT" and stat ~= "ITEM_MOD_STAMINA_SHORT" then
-                    useless = useless + val
-                end
-            end
+            if (weights[stat] or 0) >= 0.1 then useful = useful + val 
+            else useless = useless + val end
         end
     end
     

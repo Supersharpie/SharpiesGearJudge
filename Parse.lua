@@ -7,7 +7,6 @@ MSC.Scanner = {}
 -- 1. DATA MAPS (Shared Dictionaries)
 -- =============================================================
 
--- [[ A. WHITE TEXT MAP (Base Stats + Suffixes) ]]
 MSC.Scanner.BaseStatMap = {
     -- Primary
     ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
@@ -315,14 +314,16 @@ MSC.Scanner.UsePatterns = {
     -- Misc
     { p = "adds (%d+) damage", valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
 }
-
 -- =============================================================
 -- 3. UTILITIES
 -- =============================================================
+
 local function CreateItemObject()
     return { 
         Stats = {}, UseEffects = {}, Procs = {}, 
-        Meta = { SetName=nil, SetCount=0, Sockets={}, SocketBonusActive=false, BonusStats={} } 
+        Meta = { 
+            SetName=nil, SetCount=0, SetTotal=0, Sockets={}, SocketBonusActive=false, BonusStats={} 
+        } 
     }
 end
 
@@ -337,20 +338,25 @@ end
 
 function MSC.Scanner.ClassifyLine(text)
     if not text or text == "" then return "SKIP" end
-    -- Clean colors FIRST
+    -- Clean colors and formatting
     local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):lower()
     
+    -- 1. SET LOGIC (Prioritize Header over Equip)
+    if cleanText:find("%(%d+/%d+%)") then return "SET_HEADER" end
+    if cleanText:find("^%s*%(%d+%)%s*set:") then return "SKIP" end -- Skip the specific bonus lines to avoid mis-parsing
+    if cleanText:find("set:") then return "SET" end
+
+    -- 2. PROCS & USE
     if cleanText:find("chance on hit") or cleanText:find("when struck") then return "PROC" end
-    if cleanText:find("^use:") then return "USE" end
-    
-    -- "Implicit Use" (for 10 sec) but NOT MP5 (per 5 sec)
+    if cleanText:find("^%s*use:") then return "USE" end
     if cleanText:find(" for %d+ sec") and not cleanText:find("per %d+ sec") then return "USE" end
 
-    if cleanText:find("set:") or cleanText:find("%(%d/%d%)") then return "SET" end
+    -- 3. SOCKETS
     if cleanText:find("socket bonus:") then return "SOCKET_BONUS" end
     if cleanText:find("socket") then return "SOCKET_INFO" end 
-    
-    if cleanText:find("^equip:") 
+
+    -- 4. EQUIP LINES
+    if cleanText:find("^%s*equip:") 
        or cleanText:find("^increases") 
        or cleanText:find("^improves") 
        or cleanText:find("^restores") 
@@ -359,7 +365,9 @@ function MSC.Scanner.ClassifyLine(text)
        return "EQUIP" 
     end
 
+    -- 5. RAW STATS
     if cleanText:find("%d") then return "STAT" end 
+    
     return "FLUFF"
 end
 
@@ -367,19 +375,20 @@ end
 -- 4. SUB-PARSERS
 -- =============================================================
 
-function MSC.Scanner.ParseSetLine(text, r, g, b, metaTable, outputStats)
-    -- 1. Try to match the Header: "Nemesis Raiment (3/8)"
-    local setName, current, total = text:match("^(.*) %((%d+)/(%d+)%)$")
+function MSC.Scanner.ParseSetHeader(text, metaTable)
+    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    local setName, current, total = cleanText:match("^(.*)%s+%(?(%d+)/(%d+)%)?$")
     if setName then 
-        metaTable.SetName = setName
+        metaTable.SetName = setName:gsub("^%s*(.-)%s*$", "%1")
         metaTable.SetCount = tonumber(current)
-        return 
+        metaTable.SetTotal = tonumber(total)
+        return true
     end
 end
 
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("^Equip: ", ""):gsub("%s+", " "):lower()
-    cleanText = cleanText:gsub("^equip: ", "")
+    cleanText = cleanText:gsub("^%s*equip:%s*", "")
     
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
         local match1, match2, match3 = cleanText:match(pat.p)
@@ -389,16 +398,12 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             local val = tonumber(pat.valIdx == 1 and match1 or match2)
             local name = pat.nameIdx and (pat.nameIdx == 1 and match1 or match2)
 
-            -- [[ 1. TBC PERCENT CONVERSION ]]
+            -- TBC PERCENT CONVERSION (Level 70)
             if val and pat.isPercent and MSC.IsTBC then
-                -- Standard TBC Conversion Rates (Level 70)
-                -- Spell Hit: ~12.6, Melee Hit: ~15.8, Crit: ~22.1, Haste: ~15.8
                 local mult = 15.8 -- Default (Melee Hit/Haste)
-                
                 if name then
                     if name:find("spell") then 
-                        if name:find("hit") then mult = 12.6 
-                        elseif name:find("crit") then mult = 22.1 end
+                        mult = (name:find("hit") and 12.6 or 22.1)
                     elseif name:find("crit") then 
                         mult = 22.1
                     elseif name:find("speed") or name:find("haste") then 
@@ -408,14 +413,9 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
                 val = val * mult
             end
 
-            -- [[ 2. STANDARD ASSIGNMENT ]]
-            if pat.fixedStat and not pat.nameIdx then
-                if not pat.valIdx then val = 1 end
-                if val then outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + val; return end
-            end
-            
-            if pat.fixedStat and val then
-                 outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + val; return
+            if pat.fixedStat then
+                outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + (val or 1)
+                return
             elseif val and name then
                 local cleanName = name:gsub("your ", ""):gsub("%s+$", "")
                 local key = MSC.Scanner.TermMap[cleanName]
@@ -423,7 +423,7 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             end
         end
     end
-    table.insert(outputProcs, { type = "Equip", desc = text })
+    if outputProcs then table.insert(outputProcs, { type = "Equip", desc = text }) end
 end
 
 function MSC.Scanner.ParseStatLine(text, outputTable)
@@ -465,8 +465,9 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
             local procObj = { description = text }
             if pat.type == "DAMAGE" then
                 procObj.type = "Damage"
-                procObj.val = tonumber(m1)
-                if m2 then procObj.val = (procObj.val + tonumber(m2)) / 2 end
+                local valStr = (pat.valIdx == 2) and m2 or m1
+                procObj.val = tonumber(valStr)
+                if m2 and not pat.valIdx then procObj.val = (procObj.val + tonumber(m2)) / 2 end
             elseif pat.type == "HEAL" or pat.type == "MANA" then
                 procObj.type = pat.type
                 procObj.val = tonumber(m1)
@@ -509,8 +510,7 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
             elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then
                 local val = tonumber(m1)
                 if m2 then val = (val + tonumber(m2)) / 2 end
-                if pat.type:find("MANA") then effect.statKey = "ITEM_MOD_MANA_REGENERATION_SHORT"
-                else effect.statKey = "ITEM_MOD_HEALTH_REGENERATION_SHORT" end
+                effect.statKey = pat.type:find("MANA") and "ITEM_MOD_MANA_REGENERATION_SHORT" or "ITEM_MOD_HEALTH_REGENERATION_SHORT"
                 effect.averageVal = (val / cooldown) * 5
                 effect.type = "Resource"
             end
@@ -521,7 +521,7 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
 end
 
 -- =============================================================
--- 5. MAIN PIPELINE (RIGHT-SIDE SCANNING ENABLED)
+-- 5. MAIN PIPELINE (FIXED)
 -- =============================================================
 
 function MSC.Scanner.Scan(itemLink)
@@ -533,16 +533,13 @@ function MSC.Scanner.Scan(itemLink)
     pcall(function() tip:SetHyperlink(itemLink) end)
 
     for i = 2, tip:NumLines() do 
-        -- READ LEFT TEXT
         local leftLine = _G["MSC_NewScannerTooltipTextLeft"..i]
         local leftText = leftLine and leftLine:GetText()
         local r, g, b = leftLine and leftLine:GetTextColor() or 1, 1, 1
         
-        -- READ RIGHT TEXT (CRITICAL for Speed!)
         local rightLine = _G["MSC_NewScannerTooltipTextRight"..i]
         local rightText = rightLine and rightLine:GetText()
         
-        -- MERGE THEM (e.g., "87 - 131 Damage" + "Speed 2.80")
         local fullText = (leftText or "")
         if rightText and rightText ~= "" then
             fullText = fullText .. " " .. rightText
@@ -550,29 +547,31 @@ function MSC.Scanner.Scan(itemLink)
 
         if fullText ~= "" then
             local type = MSC.Scanner.ClassifyLine(fullText)
-            if type == "STAT" then MSC.Scanner.ParseStatLine(fullText, result.Stats)
-            elseif type == "EQUIP" then MSC.Scanner.ParseEquipLine(fullText, result.Stats, result.Procs)
-            elseif type == "USE" then MSC.Scanner.ParseUseLine(fullText, result.UseEffects)
-            elseif type == "SET" then MSC.Scanner.ParseSetLine(fullText, nil, nil, nil, result.Meta, result.Stats)
-            elseif type == "SOCKET_BONUS" and g > 0.9 and r < 0.2 then 
-                result.Meta.SocketBonusActive = true
+            
+            -- FIX: Changed ParseSetLine to ParseSetHeader to match the sub-parser name
+            if type == "SET_HEADER" or type == "SET" then 
+                MSC.Scanner.ParseSetHeader(fullText, result.Meta)
+            elseif type == "STAT" then 
+                MSC.Scanner.ParseStatLine(fullText, result.Stats)
+            elseif type == "EQUIP" then 
+                MSC.Scanner.ParseEquipLine(fullText, result.Stats, result.Procs)
+            elseif type == "USE" then 
+                MSC.Scanner.ParseUseLine(fullText, result.UseEffects)
+            elseif type == "SOCKET_BONUS" then 
+                if g > 0.9 and r < 0.2 then result.Meta.SocketBonusActive = true end
                 if not result.Meta.BonusStats then result.Meta.BonusStats = {} end
                 MSC.Scanner.ParseStatLine(fullText, result.Meta.BonusStats)
-            elseif type == "PROC" then MSC.Scanner.ParseProcLine(fullText, result.Procs)
+            elseif type == "PROC" then 
+                MSC.Scanner.ParseProcLine(fullText, result.Procs)
             end
         end
     end
-    
-    -- FALLBACK DPS CALC
-    if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] then
+
+    -- Fallback DPS Calculation
+    if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
         local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
-        local dps = avg / result.Stats["MSC_WEAPON_SPEED"]
-        local mult = 10; result.Stats["MSC_WEAPON_DPS"] = math.floor(dps * mult + 0.5) / mult
+        result.Stats["MSC_WEAPON_DPS"] = math.floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
     end
-    
-    -- Cleanup temp keys
-    result.Stats["MSC_DAMAGE_RANGE_MIN"] = nil
-    result.Stats["MSC_DAMAGE_RANGE_MAX"] = nil
 
     return result
 end

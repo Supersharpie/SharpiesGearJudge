@@ -1,6 +1,11 @@
 # Sharpie's Gear Judge - Version History
+Rename and centralize item set definitions to flatten a fast itemID->setID lookup. 
+Improve talent/cache handling and caching logic in Dynamic_Engine (safer talent lookups, cache invalidation on events, dual‑spec support).
+Add set bonus calculation utilities and trigger recalcs when weights change.
 
-## 🚀 v2.3.3 CHANGELOG
+------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------
 
 ### 🐛 Bug Fixes - Pushing to fix AP, SP and Healing power
 

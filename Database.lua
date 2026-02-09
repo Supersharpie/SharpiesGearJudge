@@ -984,26 +984,6 @@ function MSC:GetSetBonusDefinition(setID, count)
     return nil
 end
 
-function MSC:BuildDatabase()
-    if not MSC.SetNameToID then MSC.SetNameToID = {} end
-    wipe(MSC.SetNameToID) 
-    
-    if MSC.ItemSetMap then
-        local seen = {}
-        for itemID, setID in pairs(MSC.ItemSetMap) do
-            -- Ensure setID is a valid number before calling API
-            if type(setID) == "number" and not seen[setID] then
-                seen[setID] = true
-                -- Use pcall to ignore errors if the ID is weird or API fails
-                local status, setName = pcall(GetItemSetInfo, setID)
-                if status and setName then
-                    MSC.SetNameToID[setName] = setID
-                end
-            end
-        end
-    end
-end
-
 -- ============================================================================
 -- 6. SCALAR TABLES (The Truth Data)
 -- ============================================================================

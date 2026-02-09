@@ -298,7 +298,7 @@ local function OnTooltipSetItem(tooltip)
         local slotId = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
         if not slotId then return end
 
-        local newScore, oldScore, newStats, oldStats, newTotalColors = MSC:EvaluateUpgrade(link, slotId, weights, specName)
+        local newScore, oldScore, newStats, oldStats, newTotalColors, oldSetCounts, newSetCounts = MSC:EvaluateUpgrade(link, slotId, weights, specName)
         local delta = newScore - oldScore
         local isEquipped = (GetInventoryItemLink("player", slotId) == link)
 
@@ -394,30 +394,71 @@ local function OnTooltipSetItem(tooltip)
             if delta > 0.1 then tooltip:AddLine(string.format("|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r", TEX_UP, delta, percentDiff))
             elseif delta < -0.1 then tooltip:AddLine(string.format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
             else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
-        else tooltip:AddLine("|cff00ffff*** EQUIPPED ***|r") end
 
-        -- [[ MULTI-SPEC TRACKING ]]
-        if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
-            for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
-                if isActive and tSpec ~= specName then
-                    local tWeights = MSC.GetWeightsByName(tSpec)
-                    if tWeights then
-                        -- Check for comparison slot again for this specific spec (in case 1H vs 2H logic differs)
-                        local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
-                        if tSlotId then
-                            local tNewScore, tOldScore = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
-                            local tDelta = tNewScore - tOldScore
-                            
-                            -- Only show UPGRADES to prevent clutter
-                            if tDelta > 0.1 then
-                                local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
-                                tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string.format("|cff00ff00+%s (Upgrade)|r", math.floor(tDelta)), 1, 1, 1, 1, 1, 1)
+            -- [[ MAIN SPEC SET TRACKING (GAINED & BROKEN) ]]
+            if not isEquipped and MSC.SetBonusScores and oldSetCounts and newSetCounts then
+                for setID, scores in pairs(MSC.SetBonusScores) do
+                    local oC = oldSetCounts[setID] or 0
+                    local nC = newSetCounts[setID] or 0
+                    
+                    -- A. CHECK FOR BROKEN BONUSES (Red)
+                    if nC < oC then
+                        for req, _ in pairs(scores) do
+                            local rN = tonumber(req)
+                            if rN and oC >= rN and nC < rN then
+                                tooltip:AddLine(string.format("|cffff0000!!! WARNING: Breaking Set Bonus (%d) !!!|r", rN))
+                            end
+                        end
+                    -- B. CHECK FOR GAINED BONUSES (Green)
+                    elseif nC > oC then
+                        for req, _ in pairs(scores) do
+                            local rN = tonumber(req)
+                            if rN and nC >= rN and oC < rN then
+                                tooltip:AddLine(string.format("|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r", rN))
                             end
                         end
                     end
                 end
             end
-        end
+        else tooltip:AddLine("|cff00ffff*** EQUIPPED ***|r") end
+
+        -- [[ MULTI-SPEC TRACKING ]]
+		if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
+			for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
+				if isActive and tSpec ~= specName then
+					local tWeights = MSC.GetWeightsByName(tSpec)
+					if tWeights then
+						local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
+						if tSlotId then
+							-- Capture oldSetCounts and newSetCounts for the off-spec check
+							local tNewScore, tOldScore, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
+							local tDelta = tNewScore - tOldScore
+							
+							if tDelta > 0.1 then
+								local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
+								tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string.format("|cff00ff00+%s (Upgrade)|r", math.floor(tDelta)), 1, 1, 1, 1, 1, 1)
+								
+								-- Check if this off-spec upgrade would break a current set bonus
+								if oSC and nSC and MSC.SetBonusScores then
+									for setID, scores in pairs(MSC.SetBonusScores) do
+										local oC = oSC[setID] or 0
+										local nC = nSC[setID] or 0
+										if nC < oC then
+											for req, _ in pairs(scores) do
+												local rN = tonumber(req)
+												if rN and oC >= rN and nC < rN then
+													tooltip:AddLine(string.format("  |cffff0000(Breaks %d-pc Set Bonus!)|r", rN))
+												end
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
 
         -- Projections (TBC Only for Gems/Metas)
         if newStats and (newStats.IS_PROJECTED or newStats.GEMS_PROJECTED) then

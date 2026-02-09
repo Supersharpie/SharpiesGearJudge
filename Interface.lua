@@ -256,7 +256,6 @@ function MSC.UpdateLabCalc()
         MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins! (+" .. string.format("%.1f", delta) .. ")")
         MSC.ViewLab.ResultText:SetTextColor(0, 1, 0)
         
-        -- Stat Logic is now decoupled, so we don't call UpdateLogic here anymore.
     end
 end
 
@@ -508,7 +507,6 @@ function MSC.ApplyRingArt(f, statType)
          f.Spin:SetDegrees(360); f.Spin:SetDuration(60); f.AnimGroup:Play()
 
     elseif statType:find("Hit") or statType:find("Haste") then
-         -- [[ FIX: HASTE IS NOW INCLUDED HERE ]]
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Swirl.tga")
          f.Spin:SetDegrees(-360); f.Spin:SetDuration(30); f.AnimGroup:Play()
          
@@ -766,8 +764,6 @@ function MSC.UpdateLogic()
     local currentGear = {}
     for i=1, 18 do currentGear[i] = GetInventoryItemLink("player", i) end
     
-    -- Note: Removed Lab Projection logic block here.
-    
     local _, stats = MSC:GetTotalCharacterScore(currentGear, weights, detectedKey)
     local rings = GetClassRings(select(2, UnitClass("player")), stats, weights)
     
@@ -779,14 +775,11 @@ function MSC.UpdateLogic()
             f.lbl:SetText(ring.l:upper())
             f.val:SetText(string.format(ring.fmt, ring.v))
             
-            -- [[ APPLY THE NEW ART ]]
             MSC.ApplyRingArt(f, ring.l) 
-            -- [[ END NEW ART ]]
-
+ 
             local fillPct = 0
             if ring.m > 0 then fillPct = math.min(100, (ring.v / ring.m) * 100) end
             
-            -- We just tint the cooldown swipe green if capped, but let the ring glow its own color
             local r,g,b = 0, 0, 0
             if ring.l:find("Cap") or ring.l:find("Hit") or ring.l:find("Expertise") or ring.l:find("Def") then
                 if fillPct >= 100 then r,g,b = 0, 1, 0 end
@@ -868,7 +861,6 @@ function MSC.UpdateLogic()
                  GameTooltip:Show()
                  self:SetAlpha(1)
              end)
-             -- [[ END TOOLTIP LOGIC ]]
 
              b:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(0.8) end)
              
@@ -881,7 +873,7 @@ function MSC.UpdateLogic()
         local name = (MSC.GetCleanStatName and MSC.GetCleanStatName(s.k)) or s.k
         local reason = GetStatReason(tostring(s.k):upper(), class, detectedKey)
         local currentVal = stats[s.k] or 0
-        local realTotal = 0 -- (Add back your RealTotal logic here if needed)
+        local realTotal = 0 
 
         bar.StatName = name; bar.Weight = s.v; bar.Reason = reason; bar.CurrentVal = currentVal
 
@@ -917,11 +909,9 @@ function MSC.UpdateLogic()
     content:SetHeight(math.abs(yOff) + 50)
 end
 
--- [[ VIEW 4: SETTINGS (Fixed Tooltips) ]]
+-- [[ VIEW 4: SETTINGS]]
 function MSC.InitSettingsView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
-    
-    -- Helper: Header (Now supports Tooltips + Interactive Frame)
     local function CreateHeader(text, relTo, yOff, xOverride, yOverride, tooltip)
         local h = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); h:SetText(text); h:SetTextColor(1, 0.82, 0)
         
@@ -933,12 +923,10 @@ function MSC.InitSettingsView(parent)
             h:SetPoint("TOPLEFT", 40, -30) 
         end
 
-        -- [[ NEW: Invisible Hitbox for Tooltip ]]
         if tooltip then
             local hitRect = CreateFrame("Frame", nil, f)
-            -- Make the hitbox slightly larger than the text so it's easy to hit
             hitRect:SetPoint("TOPLEFT", h, "TOPLEFT", -10, 10)
-            hitRect:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 50, -10) -- Extend right slightly
+            hitRect:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 50, -10)
             hitRect:EnableMouse(true)
             hitRect:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -1023,9 +1011,21 @@ function MSC.InitSettingsView(parent)
                 end 
             end
         end
-        AddList(MSC.CurrentClass.Weights); AddList(MSC.CurrentClass.LevelingWeights); AddList(MSC.CurrentClass.Profiles)
-    end
-    
+
+        -- 1. Load custom Pawn strings first so they appear in the list
+        if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights then
+            AddList(SharpiesGearJudgeDB.customWeights)
+        end
+
+        -- 2. Load built-in class weights
+        AddList(MSC.CurrentClass.Weights)
+        AddList(MSC.CurrentClass.LevelingWeights)
+        AddList(MSC.CurrentClass.Profiles)
+    end 
+
+    local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
+    local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
+	
     local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
     local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
     
@@ -1041,8 +1041,6 @@ function MSC.InitSettingsView(parent)
     -- ========================================================================
     
     local specTip = "Select additional profiles to track in tooltips.\n\nIf an item is an upgrade for a checked profile, a small notification will appear at the bottom of the item tooltip."
-    
-    -- [[ FIXED: Tooltip is now attached to the HEADER text, not the blocked frame ]]
     local hSpec = CreateHeader("Secondary Spec Tracking", nil, nil, 320, -30, specTip)
     
     local trackFrame = CreateFrame("Frame", nil, f, "BackdropTemplate")
@@ -1143,12 +1141,8 @@ function MSC.ToggleMainMenu()
     local texPath = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga"
     
     f.Bg:SetTexture(texPath)
-    
-    -- INSTEAD OF SetAllPoints, we anchor to the center and use a fixed size 
-    -- or set points that preserve aspect ratio. 
-    -- This keeps the character from looking "wide."
     f.Bg:SetPoint("CENTER", f, "CENTER", 0, 0)
-    f.Bg:SetSize(512, 512) -- Standard TGA size; adjust if your files are 1024
+    f.Bg:SetSize(512, 512)
     f.Bg:SetAlpha(0.7)      -- Softens the image slightly before the overlay
     
     -- Using a cleaner TexCoord (standard 0,1,0,1) to avoid the 10% vertical squish
@@ -1256,8 +1250,6 @@ mb:SetScript("OnDragStop", function(self)
     -- Save Position (Screen Coordinates)
     if not SGJ_Settings then SGJ_Settings = {} end
     local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint()
-    -- We ignore 'relativeTo' because we can't save UserData to file. 
-    -- We will restore relative to UIParent.
     SGJ_Settings.MinimapPos = { point, relativePoint, xOfs, yOfs }
 end)
 
@@ -1274,8 +1266,10 @@ f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 f:RegisterEvent("PLAYER_TALENT_UPDATE")
 
-f:SetScript("OnEvent", function(self, event) 
+f:SetScript("OnEvent", function(self, event, arg1) 
     if event == "PLAYER_LOGIN" then 
+        -- Initialize SavedVariables if they don't exist
+        SharpiesGearJudgeDB = SharpiesGearJudgeDB or { customWeights = {} }
         -- Restore Position
         if SGJ_Settings and SGJ_Settings.MinimapPos then
             local p = SGJ_Settings.MinimapPos
@@ -1290,6 +1284,13 @@ f:SetScript("OnEvent", function(self, event)
                 SGJ_Settings.MinimapPos = nil
                 MSC_Minimap:ClearAllPoints()
                 MSC_Minimap:SetPoint("CENTER", Minimap, "CENTER", -60, -60)
+            end
+        end
+		
+		-- Load Custom Pawn Weights into the selectable list
+        if MSC.WeightDB then
+            for name, weights in pairs(SharpiesGearJudgeDB.customWeights) do
+                MSC.WeightDB[name] = weights
             end
         end
         
@@ -1374,7 +1375,16 @@ function MSC.ShowImportWindow()
     b:SetSize(120, 25); b:SetPoint("BOTTOM", 0, 15); b:SetText("Import")
     b:SetScript("OnClick", function()
         local text = f.EditBox:GetText()
-        print("|cff00ff00SGJ:|r Import received: " .. string.sub(text, 1, 20) .. "...")
+        
+        if MSC.ImportAndSavePawnString then
+            local success, name = MSC:ImportAndSavePawnString(text)
+            if success then
+                print("|cff00ff00SGJ:|r Successfully imported " .. name)
+            end
+        else
+            print("|cffff0000SGJ Error:|r ImportAndSavePawnString missing in helpers.lua")
+        end
+        
         f:Hide()
     end)
     
@@ -1433,3 +1443,32 @@ function MSC.ShowHistory()
     
     MSC.ExportFrame = f
 end
+-- =============================================================
+-- 6. INITIALIZATION & DATABASE LOADING
+-- =============================================================
+local loader = CreateFrame("Frame")
+loader:RegisterEvent("ADDON_LOADED")
+loader:SetScript("OnEvent", function(self, event, name)
+    if name == "SharpiesGearJudge" then
+        -- 1. Initialize the Character-Specific SavedVariable
+        SharpiesGearJudgeDB = SharpiesGearJudgeDB or { customWeights = {} }
+        
+        -- 2. Inject saved weights into the active Weight database
+        if SharpiesGearJudgeDB.customWeights and MSC.CurrentClass then
+            -- Ensure the class weight table exists
+            MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
+            
+            for profileName, weights in pairs(SharpiesGearJudgeDB.customWeights) do
+                MSC.CurrentClass.Weights[profileName] = weights
+            end
+        end
+
+        -- 3. If the settings window is already open, refresh the dropdown
+        if MSC.MainFrame and MSC.MainFrame:IsShown() and MSC.InitSettingsView then
+             MSC.InitSettingsView(MSC.MainFrame.Content)
+        end
+        
+        -- Unregister once loaded to save memory
+        self:UnregisterEvent("ADDON_LOADED")
+    end
+end)
