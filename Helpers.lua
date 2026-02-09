@@ -573,7 +573,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local level = UnitLevel("player")
     
-    if slotId then1
+    if slotId then
         if enchantMode ~= 1 then
             
             -- A. IDENTIFY PHYSICAL ENCHANT ON ITEM (The one we might want to strip)
