@@ -59,14 +59,14 @@ Shaman.Weights = {
         ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"]= 0.4,
         -- POISON
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02, 
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.02,
     },
 
     -- [[ 4. RESTORATION ]]
     ["RESTO_PVE"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.5, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.9, 
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.8, 
@@ -492,7 +492,7 @@ Shaman.LevelingBrackets = {
         min = 40, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
@@ -502,7 +502,7 @@ Shaman.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0, 
@@ -515,7 +515,7 @@ Shaman.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
@@ -525,7 +525,7 @@ Shaman.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
@@ -538,7 +538,7 @@ Shaman.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
@@ -549,7 +549,7 @@ Shaman.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 2.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.8,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
@@ -882,15 +882,15 @@ Shaman.Relics = {
 	-- [[ CLASSIC / LEVELING (1-60) ]]
     [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 }, -- Totem of the Storm (Lightning/Chain)
     [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of the Void (Classic version?) Or Storm?
-    [22394] = { ITEM_MOD_HEALING_POWER_SHORT = 80 }, -- Totem of Rebirth
+    [22394] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Totem of Rebirth
     [22393] = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 }, -- Totem of Life (Lesser Healing Wave cost?)
-    [23200] = { ITEM_MOD_HEALING_POWER_SHORT = 10 }, -- Totem of Flowing Water (Stream Totem)
+    [23200] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 10 }, -- Totem of Flowing Water (Stream Totem)
 
     -- [[ TBC LEVELING / DUNGEON (60-70) ]]
     [25645] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of the Plains (Shock Dmg)
     [27949] = { ITEM_MOD_SPELL_POWER_SHORT = 48 }, -- Totem of Impact (Shock Dmg)
     [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 46 }, -- Totem of the Void (Lightning Dmg - Dungeon)
-    [27523] = { ITEM_MOD_HEALING_POWER_SHORT = 88 }, -- Totem of the Healer (Healing Wave)
+    [27523] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 88 }, -- Totem of the Healer (Healing Wave)
     [28248] = { ITEM_MOD_SPELL_POWER_SHORT = 55, note = "BiS" }, -- Totem of the Void (Lightning Dmg - Kara)
 
     -- [[ TBC RAID ]]
@@ -900,7 +900,7 @@ Shaman.Relics = {
     [33506] = { ITEM_MOD_HASTE_RATING_SHORT = 101 }, -- Skycall Totem
     [32330] = { ITEM_MOD_SPELL_POWER_SHORT = 85, note = "BiS" }, -- Totem of Ancestral Guidance (Lightning Dmg)
     [34539] = { ITEM_MOD_SPELL_POWER_SHORT = 60 }, -- Totem of the Maelstrom (Lightning Bolt Haste/Dmg?)
-    [28227] = { ITEM_MOD_HEALING_POWER_SHORT = 87 }, -- Totem of Healing Rains (Chain Heal)
+    [28227] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Totem of Healing Rains (Chain Heal)
     [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 20 }, -- Totem of Living Water (Chain Heal cost reduction, val as MP5)
 
     -- [[ PVP TOTEMS ]]
@@ -916,11 +916,11 @@ Shaman.Relics = {
 
     -- Totem of Spontaneous Regrowth (+88 Healing Wave)
     -- Strong single-target Tank healing totem.
-    [27544] = { ITEM_MOD_HEALING_POWER_SHORT = 88, note = "BiS Tank Heal" }, 
+    [27544] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 88, note = "BiS Tank Heal" }, 
 
     -- Totem of Healing Rains (+87 Chain Heal)
     -- The absolute King of TBC Resto Shaman items.
-    [28523] = { ITEM_MOD_HEALING_POWER_SHORT = 87, note = "BiS Raid" },
+    [28523] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87, note = "BiS Raid" },
 	
 }
 

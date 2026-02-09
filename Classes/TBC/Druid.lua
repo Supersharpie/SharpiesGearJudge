@@ -54,7 +54,7 @@ Druid.Weights = {
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.02,
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.02,
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 3. FERAL BEAR (Tank) ]]
@@ -83,7 +83,7 @@ Druid.Weights = {
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.002,
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.002,
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.002,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.002,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.002,
         ["ITEM_MOD_PARRY_RATING_SHORT"]     = 0.002, 
         ["ITEM_MOD_BLOCK_RATING_SHORT"]     = 0.002, 
     },
@@ -91,7 +91,7 @@ Druid.Weights = {
     -- [[ 4. RESTO (Healer) ]]
     ["RESTO_TREE"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.0,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 1.35, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.7, 
@@ -450,7 +450,7 @@ Druid.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0 
         },
@@ -458,7 +458,7 @@ Druid.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.2,
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0
         }
@@ -469,7 +469,7 @@ Druid.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.2, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0
         },
@@ -477,7 +477,7 @@ Druid.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0
         }
@@ -486,7 +486,7 @@ Druid.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,
@@ -494,7 +494,7 @@ Druid.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5,
@@ -505,7 +505,7 @@ Druid.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.8, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
@@ -514,7 +514,7 @@ Druid.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 2.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
@@ -934,26 +934,26 @@ Druid.Relics = {
     -- [[ LEVELING / CLASSIC IDOLS ]]
     [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Ferocity
     [22396] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Brutality (Classic)
-    [22397] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },      -- Idol of Rejuvenation
-    [22330] = { ITEM_MOD_HEALING_POWER_SHORT = 50 },      -- Idol of Health
+    [22397] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 },      -- Idol of Rejuvenation
+    [22330] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 },      -- Idol of Health
     [23197] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 33 },      -- Idol of the Moon (Starfire)
 
     -- [[ TBC DUNGEON / QUEST ]]
-    [25643] = { ITEM_MOD_HEALING_POWER_SHORT = 86 },      -- Idol of the Emerald Queen (Rejuv)
+    [25643] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 86 },      -- Idol of the Emerald Queen (Rejuv)
     [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 }, -- Idol of Brutality (TBC Maul)
     [27526] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 }, -- Idol of the Wild (Mangle)
     [27483] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 24 }, -- Idol of Savagery
-    [27886] = { ITEM_MOD_HEALING_POWER_SHORT = 47, note = "BiS" }, -- Idol of the Avian Heart (Healing Touch)
+    [27886] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 47, note = "BiS" }, -- Idol of the Avian Heart (Healing Touch)
     [31037] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 25 },      -- Idol of the Avenger (Wrath)
 
     -- [[ TBC RAID ]]
-    [29390] = { ITEM_MOD_HEALING_POWER_SHORT = 136 },     -- Idol of the Emerald Queen (Lifebloom)
+    [29390] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 136 },     -- Idol of the Emerald Queen (Lifebloom)
     [29391] = { ITEM_MOD_AGILITY_SHORT = 55, estimate = true, note = "BiS (Agility Proc)" }, -- Idol of Terror
     
     -- [[ NEW: DYNAMIC IDOL (Raven Goddess) ]]
     -- We list ALL stats. The weight filter will ignore the useless ones for your spec.
     [32387] = { 
-        ITEM_MOD_HEALING_POWER_SHORT = 44,    -- Tree of Life (Resto)
+        ITEM_MOD_SPELL_HEALING_DONE_SHORT = 44,    -- Tree of Life (Resto)
         ITEM_MOD_CRIT_RATING_SHORT = 20,      -- Leader of Pack (Feral)
         ITEM_MOD_SPELL_CRIT_RATING_SHORT = 20 -- Moonkin (Balance)
     }, 
@@ -962,10 +962,10 @@ Druid.Relics = {
     [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70, note = "BiS" }, -- Idol of the White Stag
 
     -- [[ PVP IDOLS ]]
-    [28355] = { ITEM_MOD_HEALING_POWER_SHORT = 87 },
-    [33076] = { ITEM_MOD_HEALING_POWER_SHORT = 105 },
-    [33841] = { ITEM_MOD_HEALING_POWER_SHORT = 116 },
-    [35021] = { ITEM_MOD_HEALING_POWER_SHORT = 131 },
+    [28355] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 },
+    [33076] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 105 },
+    [33841] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 116 },
+    [35021] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 131 },
     [28356] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
     [33074] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
     [33840] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },

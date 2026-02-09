@@ -32,8 +32,8 @@ MSC.Scanner.BaseStatMap = {
     
     -- Random Suffixes
     ["attack power"]   = "ITEM_MOD_ATTACK_POWER_SHORT", 
-    ["healing spells"] = "ITEM_MOD_HEALING_POWER_SHORT",
-    ["healing"]        = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["healing spells"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    ["healing"]        = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
     ["spell damage"]   = "ITEM_MOD_SPELL_POWER_SHORT",
     ["spell power"]    = "ITEM_MOD_SPELL_POWER_SHORT",
     ["shadow damage"]  = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
@@ -122,13 +122,13 @@ MSC.Scanner.TermMap = {
     ["attack power in cat"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
     ["feral attack power"]  = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
     ["spell power"]       = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing"]           = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["healing"]           = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
     ["mana per 5 sec"]    = "ITEM_MOD_MANA_REGENERATION_SHORT",
     ["health per 5 sec"]  = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
     
     -- [[ 5. ERA SPELL DAMAGE ]]
     ["damage and healing done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing done by spells and effects"] = "ITEM_MOD_HEALING_POWER_SHORT",
+    ["healing done by spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
     
     ["damage done by shadow spells and effects"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
     ["damage done by fire spells and effects"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
@@ -214,7 +214,7 @@ MSC.Scanner.EquipPatterns = {
     { p = "healing.-up to (%d+).-damage.-up to (%d+)", 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
-              outputStats["ITEM_MOD_HEALING_POWER_SHORT"] = (outputStats["ITEM_MOD_HEALING_POWER_SHORT"] or 0) + tonumber(heal)
+              outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + tonumber(heal)
               outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + tonumber(dmg)
           end
       end 
@@ -222,7 +222,7 @@ MSC.Scanner.EquipPatterns = {
 
     -- [[ ERA/TBC: UNIFIED SPELL POWER ]]
     { p = "damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = "healing done.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_HEALING_POWER_SHORT" },
+    { p = "healing done.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
 
     -- [[ FERAL AP & WEAPON SKILL ]] 
     { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },

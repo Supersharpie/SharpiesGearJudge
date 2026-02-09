@@ -18,7 +18,7 @@ Paladin.Weights = {
         -- INTELLECT (The Stat King in 2.5.5)
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.75,
         -- THROUGHPUT
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.9,         
         -- HASTE (Sunwell Meta)
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 1.1,
@@ -253,7 +253,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.02, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 0.02, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0, -- Added for Sync
             ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
@@ -273,7 +273,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 0.02,
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 0.02,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.0,
             ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.0,
@@ -387,7 +387,7 @@ Paladin.LevelingBrackets = {
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
@@ -396,7 +396,7 @@ Paladin.LevelingBrackets = {
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
@@ -409,7 +409,7 @@ Paladin.LevelingBrackets = {
         min = 41, max = 51,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
@@ -419,7 +419,7 @@ Paladin.LevelingBrackets = {
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
@@ -432,7 +432,7 @@ Paladin.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
@@ -442,7 +442,7 @@ Paladin.LevelingBrackets = {
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 2.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
@@ -455,7 +455,7 @@ Paladin.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.0, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 2.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
@@ -467,7 +467,7 @@ Paladin.LevelingBrackets = {
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.5, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 2.5,
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 2.5,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
@@ -684,8 +684,8 @@ Paladin.StatToCritMatrix = {
 Paladin.Relics = {
 -- [[ 7. PALADIN LIBRAMS (MANUAL OVERRIDES) ]]
     -- [[ CLASSIC / LEVELING (1-60) ]]
-    [23201] = { ITEM_MOD_HEALING_POWER_SHORT = 53 }, -- Libram of Divinity
-    [23006] = { ITEM_MOD_HEALING_POWER_SHORT = 83 }, -- Libram of Light
+    [23201] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 53 }, -- Libram of Divinity
+    [23006] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 83 }, -- Libram of Light
     [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Libram of Hope
     [22402] = { ITEM_MOD_ARMOR_SHORT = 50 }, -- Libram of Truth (Armor buff)
 
@@ -694,11 +694,11 @@ Paladin.Relics = {
     [27917] = { ITEM_MOD_SPELL_POWER_SHORT = 20, note = "BiS" }, -- Libram of Divine Purpose (Seal/Judgement Dmg)
 
     -- [[ TBC RAID (Holy) ]]
-    [30991] = { ITEM_MOD_HEALING_POWER_SHORT = 87 }, -- Libram of Mending (Holy Light)
-    [29388] = { ITEM_MOD_HEALING_POWER_SHORT = 40 }, -- Libram of the Lightbringer (Flash of Light)
-    [34231] = { ITEM_MOD_HEALING_POWER_SHORT = 80 }, -- Libram of Divine Judgement (Holy Light)
-    [28592] = { ITEM_MOD_HEALING_POWER_SHORT = 113, note = "BiS" }, -- Libram of Souls Redeemed (Flash of Light)
-    [30063] = { ITEM_MOD_HEALING_POWER_SHORT = 87, note = "BiS" }, -- Libram of Absolute Truth (Holy Light)
+    [30991] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Libram of Mending (Holy Light)
+    [29388] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 40 }, -- Libram of the Lightbringer (Flash of Light)
+    [34231] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Libram of Divine Judgement (Holy Light)
+    [28592] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 113, note = "BiS" }, -- Libram of Souls Redeemed (Flash of Light)
+    [30063] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87, note = "BiS" }, -- Libram of Absolute Truth (Holy Light)
 
     -- [[ TBC RAID (Retribution) ]]
     [27484] = { ITEM_MOD_CRIT_RATING_SHORT = 53, note = "BiS Crit" }, -- Libram of Avengement

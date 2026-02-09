@@ -7,7 +7,7 @@ Priest.Name = "PRIEST"
 -- =============================================================
 Priest.Weights = {
     ["Default"] = { 
-        ["ITEM_MOD_HEALING_POWER_SHORT"]=1.0, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, 
         ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
         ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
@@ -18,7 +18,7 @@ Priest.Weights = {
     -- [[ 1. HOLY (Deep Healing) ]]
     ["HOLY_DEEP"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.0,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.9, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 1.1, -- Spiritual Guidance
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.5, 
@@ -36,7 +36,7 @@ Priest.Weights = {
     ["DISC_SUPPORT"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.0,
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.5, -- Max Mana = Rapture
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 1.0, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.9,
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.0, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.6, 
@@ -61,7 +61,7 @@ Priest.Weights = {
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 0.5,
         
         -- POISON PROTECTION
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.1, 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.1, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
     },
@@ -341,7 +341,7 @@ Priest.LevelingBrackets = {
     ["Leveling_Healer_52_59"] = { 
         min = 52, max = 59,
         Start = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.2, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, -- [[ ADDED ]]
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
@@ -352,7 +352,7 @@ Priest.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, -- [[ ADDED ]]
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
@@ -364,7 +364,7 @@ Priest.LevelingBrackets = {
     ["Leveling_Healer_60_70"] = { 
         min = 60, max = 70,
         Start = { 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, -- [[ ADDED ]]
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5,
@@ -376,7 +376,7 @@ Priest.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
-            ["ITEM_MOD_HEALING_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, -- [[ ADDED ]]
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 

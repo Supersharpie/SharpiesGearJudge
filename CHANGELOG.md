@@ -1,11 +1,31 @@
 # Sharpie's Gear Judge - Version History
-Rename and centralize item set definitions to flatten a fast itemID->setID lookup. 
-Improve talent/cache handling and caching logic in Dynamic_Engine (safer talent lookups, cache invalidation on events, dual‑spec support).
-Add set bonus calculation utilities and trigger recalcs when weights change.
+
+## 🚀 v2.3.4
+
+### CLASS SPECIFIC UPDATES:
+* **Replaced occurrences of ITEM_MOD_HEALING_POWER_SHORT with ITEM_MOD_SPELL_HEALING_DONE_SHORT across class weight/config files and relic definitions.** 
+* **(ERA and TBC files: Druid, Paladin, Priest, Shaman, Hunter, Mage, Warlock, Warrior).**
+* **Updated related Leveling/Bracket entries and relic/item stat maps to use the new stat token.** 
+* **This is a token/terminology rename to align with the newer stat key and avoid scoring mismatches.**
+
+### Key changes:
+**Rename and centralize item set definitions and add a fast itemID->setID builder; improve set bonus calculation, talent/cache handling, and upgrade evaluation.**
+* **Data_Sets.lua: renamed MSC.ItemSetMap -> MSC.SetDefinitions and added MSC:BuildDatabase() to flatten SetDefinitions into an itemID->setID lookup (MSC.ItemSetMap).**
+* **Database.lua: removed the older BuildDatabase implementation in favor of the centralized builder in Data_Sets.lua.**
+* **Dynamic_Engine.lua: cleaned set bonus calculator, ensure UpdateSetBonusScores runs after weights load, and improved recalc behavior.**
+* **Evaluator.lua: improved meta gem color counting, switched to flat itemID->setID lookups, surfaced set counts from GetTotalCharacterScore, applied set bonus stats/score correctly,**
+	*and added logic to subtract inactive meta gem value; beefed up main/offhand usability and dual-wield rules; added detection for set completion/breaking during EvaluateUpgrade; fixed cap/delta math for hit/defense checks.
+* **Helpers.lua: added ImportAndSavePawnString to parse and persist Pawn strings into SavedVariables and load them into the active weight DB; refined scoring logic for off-hand DPS/speed and bouncer/resilience logic;
+	*simplified GetItemSetID to attempt GetItemInfo first and fallback to tooltip scanning for set name.**
+* **Interface.lua: UI/Settings tweaks, load/save for custom Pawn weights, import UI wired to new import helper, initialization on ADDON_LOADED to inject saved custom weights, and assorted tooltip/skin/positioning refinements.**
+* **Judge.lua: tooltip upgrade output now reports set bonus gains/breaks for main- and off-spec checks and includes set count diffs when evaluating upgrades.**
+* **Parse.lua: improved scanner classification (set lines, procs, sockets, equip lines) and item object metadata.
+
+### Why: unify set data source, provide a fast lookup for set membership, make set bonus scoring reactive to weight changes, and improve correctness and UX when presenting upgrade/set impacts across specs. Saved custom Pawn profiles are now persisted and shown in the settings UI.
 
 ------------------------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------------------------
+## 🚀 v2.3.3
 
 ### 🐛 Bug Fixes - Pushing to fix AP, SP and Healing power
 

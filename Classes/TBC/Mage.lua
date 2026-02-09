@@ -29,7 +29,7 @@ Mage.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 2. FIRE (Crit / Ignite) ]]
@@ -46,7 +46,7 @@ Mage.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 3. FROST PVE (Safe DPS) ]]
@@ -63,7 +63,7 @@ Mage.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 4. FROST PVP ]]

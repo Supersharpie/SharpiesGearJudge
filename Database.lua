@@ -35,7 +35,7 @@ MSC.ShortNames = {
     ["ITEM_MOD_HEALTH_SHORT"]         = "Health",
     ["ITEM_MOD_MANA_SHORT"]           = "Mana",
     ["ITEM_MOD_SPELL_POWER_SHORT"]    = "Spell Power",
-    ["ITEM_MOD_HEALING_POWER_SHORT"]  = "Healing",
+    ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]  = "Healing",
     ["ITEM_MOD_SPELL_HEALING_DONE"]   = "Healing", 
     ["ITEM_MOD_MANA_REGENERATION_SHORT"] = "Mp5",
     ["ITEM_MOD_POWER_REGEN0_SHORT"]   = "Mp5", 
@@ -111,8 +111,8 @@ MSC.EnchantDB = {
     [2675] = { name = "Soulfrost", stats = { ITEM_MOD_SPELL_POWER_SHORT = 54, ITEM_MOD_FROST_DAMAGE_SHORT = 54 } },
     [3225] = { name = "Executioner", stats = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 120 } }, 
     [2669] = { name = "Major Spellpower", stats = { ITEM_MOD_SPELL_POWER_SHORT = 40 } },
-    [2642] = { name = "Major Healing", stats = { ITEM_MOD_HEALING_POWER_SHORT = 81 } },
-    [2671] = { name = "Sunfire (Healing)", stats = { ITEM_MOD_HEALING_POWER_SHORT = 50 } },
+    [2642] = { name = "Major Healing", stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 81 } },
+    [2671] = { name = "Sunfire (Healing)", stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 } },
     [2666] = { name = "Major Intellect", stats = { ITEM_MOD_INTELLECT_SHORT = 30 } },
     [2667] = { name = "Savagery", stats = { ITEM_MOD_ATTACK_POWER_SHORT = 70 } }, 
     [2668] = { name = "Major Agility", stats = { ITEM_MOD_AGILITY_SHORT = 20 } },
@@ -125,7 +125,7 @@ MSC.EnchantDB = {
     [803]  = { name = "Fiery Weapon", stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 4 } }, 
     [1897] = { name = "Weapon Dmg +5", stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, 
     [2504] = { name = "Spellpower +30", stats = { ITEM_MOD_SPELL_POWER_SHORT = 30 } },
-    [2505] = { name = "Healing +55", stats = { ITEM_MOD_HEALING_POWER_SHORT = 55 } },
+    [2505] = { name = "Healing +55", stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 55 } },
     [1900] = { name = "Unholy Weapon", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 4 } }, 
     [2563] = { name = "Major Strength (+15)", stats = { ITEM_MOD_STRENGTH_SHORT = 15 } },
     [1898] = { name = "Lifestealing", stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 3 } },
@@ -167,7 +167,7 @@ MSC.EnchantDB = {
     [3012] = { name = "Glyph of Power", slot = 1, stats = { ITEM_MOD_SPELL_POWER_SHORT = 22, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } },
     [3010] = { name = "Glyph of Ferocity", slot = 1, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 34, ITEM_MOD_HIT_RATING_SHORT = 16 } },
     [3013] = { name = "Glyph of the Defender", slot = 1, stats = { ITEM_MOD_DODGE_RATING_SHORT = 16, ITEM_MOD_BLOCK_VALUE_SHORT = 17 } },
-    [3011] = { name = "Glyph of Renewal", slot = 1, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35, ITEM_MOD_MANA_REGENERATION_SHORT = 7 } },
+    [3011] = { name = "Glyph of Renewal", slot = 1, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 35, ITEM_MOD_MANA_REGENERATION_SHORT = 7 } },
     [3003] = { name = "Glyph of the Gladiator", slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 18, ITEM_MOD_RESILIENCE_RATING_SHORT = 20 } },
     [3002] = { name = "Glyph of the Outcast", slot = 1, stats = { ITEM_MOD_STRENGTH_SHORT = 17, ITEM_MOD_INTELLECT_SHORT = 16 } },
     [2543] = { name = "Lesser Arcanum (Agi)", slot = 1, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
@@ -179,23 +179,23 @@ MSC.EnchantDB = {
     [3004] = { name = "Greater Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [3007] = { name = "Greater Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
     [3009] = { name = "Greater Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } },
-    [3005] = { name = "Greater Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_HEALING_POWER_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } },
+    [3005] = { name = "Greater Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } },
     [2992] = { name = "Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } },
     [2998] = { name = "Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } },
     [2994] = { name = "Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 13 } },
     [2993] = { name = "Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 } },
     [2721] = { name = "Zandalar Signet of Mojo", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 18 } },
     [2716] = { name = "Zandalar Signet of Might", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30 } },
-    [2717] = { name = "Zandalar Signet of Serenity", slot = 3, stats = { ITEM_MOD_HEALING_POWER_SHORT = 33 } },
+    [2717] = { name = "Zandalar Signet of Serenity", slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 33 } },
     -- [[ SHOULDER: ALDOR / SCRYER (EXALTED) ]]
     [2996] = { name = "Greater Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } }, -- Aldor
     [2999] = { name = "Greater Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } }, -- Aldor
     [3000] = { name = "Greater Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } }, -- Aldor
-    [2997] = { name = "Greater Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_HEALING_POWER_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- Aldor
+    [2997] = { name = "Greater Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- Aldor
     [3004] = { name = "Greater Inscription of the Orb", slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } }, -- Scryer (Duplicate Stat, diff ID)
     [3007] = { name = "Greater Inscription of Vengeance", slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } }, -- Scryer
     [3009] = { name = "Greater Inscription of the Knight", slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } }, -- Scryer
-    [3005] = { name = "Greater Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_HEALING_POWER_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- Scryer
+    [3005] = { name = "Greater Inscription of the Oracle", slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- Scryer
 
     -- [[ BACK ]]
     [2653] = { name = "Greater Agility (+12)", slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
@@ -238,7 +238,7 @@ MSC.EnchantDB = {
     -- [[ WRIST ]]
     [2647] = { name = "Brawn (+12 Str)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, 
     [2650] = { name = "Spellpower (+15)", slot = 9, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15 } }, 
-    [2651] = { name = "Major Healing (+30)", slot = 9, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, 
+    [2651] = { name = "Major Healing (+30)", slot = 9, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30 } }, 
     [2649] = { name = "Assault (+24 AP)", slot = 9, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 24 } }, 
     [2646] = { name = "Major Defense", slot = 9, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } },
     [2655] = { name = "Fortitude (+12 Stam)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 12 } }, 
@@ -248,7 +248,7 @@ MSC.EnchantDB = {
     [1885] = { name = "Superior Strength (+9)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 9 } },
     [1886] = { name = "Superior Stamina (+9)", slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 9 } },
     [1893] = { name = "Mana Regen (+4mp5)", slot = 9, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 4 } },
-    [2508] = { name = "Healing Power (+24)", slot = 9, stats = { ITEM_MOD_HEALING_POWER_SHORT = 24 } },
+    [2508] = { name = "Healing Power (+24)", slot = 9, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 24 } },
     [2793] = { name = "Major Strength (+12)", slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } },
     [2794] = { name = "Major Intellect (+12)", slot = 9, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
     [246]  = { name = "Minor Spirit (+1)", slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } },
@@ -264,7 +264,7 @@ MSC.EnchantDB = {
     -- [[ HANDS ]]
     [2562] = { name = "Superior Agility (+15)", slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, 
     [2937] = { name = "Major Spellpower (+20)", slot = 10, stats = { ITEM_MOD_SPELL_POWER_SHORT = 20 } }, 
-    [2935] = { name = "Major Healing (+35)", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 35 } }, 
+    [2935] = { name = "Major Healing (+35)", slot = 10, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 35 } }, 
     [2648] = { name = "Assault (+26 AP)", slot = 10, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } }, 
     [2613] = { name = "Threat (+Hit)", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } }, 
     [3246] = { name = "Blast (+Crit)", slot = 10, stats = { ITEM_MOD_SPELL_CRIT_RATING_SHORT = 10 } },
@@ -278,7 +278,7 @@ MSC.EnchantDB = {
     [2614] = { name = "Shadow Power (+20)", slot = 10, stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 20 } },
     [2615] = { name = "Frost Power (+20)", slot = 10, stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 20 } },
     [2616] = { name = "Fire Power (+20)", slot = 10, stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 20 } },
-    [2617] = { name = "Healing Power (+30)", slot = 10, stats = { ITEM_MOD_HEALING_POWER_SHORT = 30 } }, 
+    [2617] = { name = "Healing Power (+30)", slot = 10, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30 } }, 
     [3231] = { name = "Precision (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 15 } },
     [3245] = { name = "Spell Strike (+15 Hit)", slot = 10, stats = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 15 } },
     -- [[ GLOVES: UTILITY ]]
@@ -286,7 +286,7 @@ MSC.EnchantDB = {
 
     -- [[ LEGS ]]
     [3154] = { name = "Runic Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 35, ITEM_MOD_STAMINA_SHORT = 20 } },
-    [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_HEALING_POWER_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
+    [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
     [2953] = { name = "Nethercobra Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [2952] = { name = "Nethercleft Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 40, ITEM_MOD_AGILITY_SHORT = 12 } },
     [2741] = { name = "Cobrahide Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 40, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
@@ -322,7 +322,7 @@ MSC.EnchantDB = {
 
     -- [[ RINGS ]]
     [2931] = { name = "Spellpower", slot = 11, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } }, 
-    [2933] = { name = "Healing Power", slot = 11, stats = { ITEM_MOD_HEALING_POWER_SHORT = 20 } }, 
+    [2933] = { name = "Healing Power", slot = 11, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 20 } }, 
     [2934] = { name = "Stats", slot = 11, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } }, 
     [2629] = { name = "Striking", slot = 11, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } },
 
@@ -348,7 +348,7 @@ MSC.EnchantDB = {
     [2610] = { name = "Resilience of the Scourge", slot = 3, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 13, ITEM_MOD_STAMINA_SHORT = 10 } },
     -- [[ LEGS: EPIC ]]
     [3154] = { name = "Runic Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 35, ITEM_MOD_STAMINA_SHORT = 20 } },
-    [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_HEALING_POWER_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
+    [3153] = { name = "Golden Spellthread", slot = 7, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
     [2953] = { name = "Nethercobra Leg Armor", slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
     [2952] = { name = "Nethercleft Leg Armor", slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 40, ITEM_MOD_AGILITY_SHORT = 12 } },
 }
@@ -427,7 +427,7 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=24031, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=16, name="Bright Living Ruby", colorType="RED" },
         { id=24032, stat="ITEM_MOD_DODGE_RATING_SHORT", val=8, name="Subtle Living Ruby", colorType="RED" },
         { id=24033, stat="ITEM_MOD_PARRY_RATING_SHORT", val=8, name="Flashing Living Ruby", colorType="RED" },
-        { id=24035, stat="ITEM_MOD_HEALING_POWER_SHORT", val=18, name="Teardrop Living Ruby", colorType="RED" },
+        { id=24035, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=18, name="Teardrop Living Ruby", colorType="RED" },
         -- PvP / Ornate
         { id=28118, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Ornate Ruby", colorType="RED" },
         { id=28362, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name="Bold Ornate Ruby", colorType="RED" },
@@ -460,7 +460,7 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=24059, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Potent Noble Topaz", colorType="ORANGE" },
         { id=24062, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=4, name="Veiled Noble Topaz", colorType="ORANGE" },
         { id=24061, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Glinting Noble Topaz", colorType="ORANGE" },
-        { id=24065, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Luminous Noble Topaz", colorType="ORANGE" },
+        { id=24065, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Luminous Noble Topaz", colorType="ORANGE" },
         -- PvP / Ornate
         { id=28363, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Ornate Topaz", colorType="ORANGE" },
     },
@@ -469,8 +469,8 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=24063, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Nightseye", colorType="PURPLE" },
         { id=24064, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Nightseye", colorType="PURPLE" },
         { id=24065, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Nightseye", colorType="PURPLE" },
-        { id=24066, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Purified Nightseye", colorType="PURPLE" },
-        { id=24067, stat="ITEM_MOD_HEALING_POWER_SHORT", val=9, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Royal Nightseye", colorType="PURPLE" },
+        { id=24066, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Purified Nightseye", colorType="PURPLE" },
+        { id=24067, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Royal Nightseye", colorType="PURPLE" },
         { id=24068, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Balanced Nightseye", colorType="PURPLE" },
         -- PvP / Ornate
         { id=32836, stat="ITEM_MOD_SPELL_POWER_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Purified Shadow Pearl", colorType="PURPLE" },
@@ -495,7 +495,7 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, name="Insightful Earthstorm", isMeta=true, colorType="META" }, 
         { id=25890, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name="Destructive Skyfire", isMeta=true, colorType="META" }, 
         { id=25894, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, name="Swift Starfire", isMeta=true, colorType="META" }, 
-        { id=25897, stat="ITEM_MOD_HEALING_POWER_SHORT", val=26, name="Bracing Earthstorm", isMeta=true, colorType="META" }, 
+        { id=25897, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, name="Bracing Earthstorm", isMeta=true, colorType="META" }, 
     },
 
    -- ========================================================================
@@ -505,7 +505,7 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=32193, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name="Bold Crimson Spinel", colorType="RED" },
         { id=32194, stat="ITEM_MOD_AGILITY_SHORT", val=10, name="Delicate Crimson Spinel", colorType="RED" },
         { id=32196, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Crimson Spinel", colorType="RED" },
-        { id=32195, stat="ITEM_MOD_HEALING_POWER_SHORT", val=22, name="Teardrop Crimson Spinel", colorType="RED" },
+        { id=32195, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=22, name="Teardrop Crimson Spinel", colorType="RED" },
     },
     BLUE_P3 = {
         { id=32200, stat="ITEM_MOD_STAMINA_SHORT", val=15, name="Solid Empyrean Sapphire", colorType="BLUE" },
@@ -523,7 +523,7 @@ if MSC.IsTBC or MSC.IsWrath then
     ORANGE_P3 = {
         { id=32217, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Pyrestone", colorType="ORANGE" },
         { id=32218, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name="Potent Pyrestone", colorType="ORANGE" },
-        { id=32219, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Pyrestone", colorType="ORANGE" },
+        { id=32219, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Pyrestone", colorType="ORANGE" },
         { id=32220, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=5, name="Glinting Pyrestone", colorType="ORANGE" },
         { id=32221, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name="Veiled Pyrestone", colorType="ORANGE" },
         { id=32222, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Wicked Pyrestone", colorType="ORANGE" },
@@ -532,8 +532,8 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=32211, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Sovereign Shadowsong Amethyst", colorType="PURPLE" },
         { id=32212, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Shifting Shadowsong Amethyst", colorType="PURPLE" },
         { id=32215, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Glowing Shadowsong Amethyst", colorType="PURPLE" },
-        { id=32216, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Royal Shadowsong Amethyst", colorType="PURPLE" },
-        { id=37503, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Purified Shadowsong Amethyst", colorType="PURPLE" },
+        { id=32216, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Royal Shadowsong Amethyst", colorType="PURPLE" },
+        { id=37503, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Purified Shadowsong Amethyst", colorType="PURPLE" },
     },
     GREEN_P3 = {
         { id=32223, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Enduring Seaspray Emerald", colorType="GREEN" },
@@ -547,7 +547,7 @@ if MSC.IsTBC or MSC.IsWrath then
         -- Jewelcrafter Unique (BoP)
         { id=33131, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, name="Crimson Sun", colorType="RED", unique=true },
         { id=33133, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, name="Don Julio's Heart", colorType="RED", unique=true },
-        { id=33134, stat="ITEM_MOD_HEALING_POWER_SHORT", val=26, name="Kailee's Rose", colorType="RED", unique=true },
+        { id=33134, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, name="Kailee's Rose", colorType="RED", unique=true },
         { id=33130, stat="ITEM_MOD_STRENGTH_SHORT", val=12, name="Don Amancio's Heart", colorType="RED", unique=true },
         { id=33132, stat="ITEM_MOD_AGILITY_SHORT", val=12, name="Delicate Fire Ruby", colorType="RED", unique=true },
     },
@@ -590,7 +590,7 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=30555, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Tanzanite", colorType="PURPLE" },
         { id=30574, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Brutal Tanzanite", colorType="PURPLE" },
         { id=30600, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Fluorescent Tanzanite", colorType="PURPLE" },
-        { id=30603, stat="ITEM_MOD_HEALING_POWER_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Tanzanite", colorType="PURPLE" },
+        { id=30603, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Tanzanite", colorType="PURPLE" },
     },
     GREEN_P5 = {
         -- Haste
@@ -614,7 +614,7 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=23097, stat="ITEM_MOD_SPELL_POWER_SHORT", val=7, name="Runed Blood Garnet", colorType="RED" },
         -- Bright Blood Garnet is ID 28595, outside the block
         { id=28595, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=12, name="Bright Blood Garnet", colorType="RED" }, 
-        { id=23094, stat="ITEM_MOD_HEALING_POWER_SHORT", val=14, name="Teardrop Blood Garnet", colorType="RED" },
+        { id=23094, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=14, name="Teardrop Blood Garnet", colorType="RED" },
     },
 
     LEVELING_BLUE = {
@@ -637,14 +637,14 @@ if MSC.IsTBC or MSC.IsWrath then
         { id=23100, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=3, name="Glinting Flame Spessarite", colorType="ORANGE" }, -- Fixed
         { id=23101, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=3, name="Potent Flame Spessarite", colorType="ORANGE" }, -- Fixed
         { id=23102, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=3, name="Veiled Flame Spessarite", colorType="ORANGE" }, -- Fixed
-        { id=23099, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_INTELLECT_SHORT", val2=3, name="Luminous Flame Spessarite", colorType="ORANGE" }, -- Fixed
+        { id=23099, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_INTELLECT_SHORT", val2=3, name="Luminous Flame Spessarite", colorType="ORANGE" }, -- Fixed
     },
 
     LEVELING_PURPLE = {
         { id=23111, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Sovereign Shadow Draenite", colorType="PURPLE" }, -- Fixed
         { id=23110, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Shifting Shadow Draenite", colorType="PURPLE" }, -- Fixed
         { id=23108, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Glowing Shadow Draenite", colorType="PURPLE" }, -- Fixed
-        { id=23109, stat="ITEM_MOD_HEALING_POWER_SHORT", val=7, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Royal Shadow Draenite", colorType="PURPLE" }, -- Fixed
+        { id=23109, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Royal Shadow Draenite", colorType="PURPLE" }, -- Fixed
         -- Purified/Balanced don't exist in the Launch Uncommon set (added later or Rare only)
     },
 
@@ -897,7 +897,7 @@ MSC.ItemOverrides = {
     [24460] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 24, estimate = true }, -- Talisman of Tenacity (Use effect is HP)
     [28121] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, estimate = true }, -- Icon of Unyielding Courage (Use: HP)
     [28134] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true }, -- Brooch of Heightened Potential (Use: SP)
-    [29132] = { ITEM_MOD_HEALING_POWER_SHORT = 80, estimate = true }, -- Essence of the Martyr (Use: Heal)
+    [29132] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80, estimate = true }, -- Essence of the Martyr (Use: Heal)
 
     -- [[ RAID TRINKETS ]]
     [28727] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true }, -- Pendant of the Violet Eye (Int + Mana Regen Proc)

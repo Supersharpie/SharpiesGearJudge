@@ -31,7 +31,7 @@ Hunter.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 2. SURVIVAL (Expose Weakness Support) ]]

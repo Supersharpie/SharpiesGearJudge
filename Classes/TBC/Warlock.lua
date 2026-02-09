@@ -29,7 +29,7 @@ Warlock.Weights = {
         ["ITEM_MOD_FIRE_DAMAGE_SHORT"]      = 0.02, 
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 2. DESTRUCTION FIRE ]]
@@ -46,7 +46,7 @@ Warlock.Weights = {
         ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]    = 0.02,
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 3. RAID AFFLICTION ]]
@@ -63,7 +63,7 @@ Warlock.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
         ["ITEM_MOD_FIRE_DAMAGE_SHORT"]      = 0.02,
     },
 
@@ -80,7 +80,7 @@ Warlock.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 
     -- [[ 5. PVP SL/SL ]]
@@ -96,7 +96,7 @@ Warlock.Weights = {
         -- POISON PROTECTION
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
-        ["ITEM_MOD_HEALING_POWER_SHORT"]    = 0.02,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 0.02,
     },
 }
 
