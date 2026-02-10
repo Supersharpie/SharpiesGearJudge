@@ -1,6 +1,22 @@
 local addonName, MSC = ...
 _G.MSC = MSC 
 
+-- [[ SPEED OPTIMIZATION ]]
+local pairs, ipairs = pairs, ipairs
+local type, tonumber = type, tonumber
+local math_floor, math_max, math_abs = math.floor, math.max, math.abs
+local table_insert = table.insert
+-- [[ FIX: Added string_find here ]]
+local string_format, string_find = string.format, string.find 
+local wipe = wipe -- WoW API
+
+-- WoW API Localizations (Used heavily in scanning/scoring)
+local GetInventoryItemLink = GetInventoryItemLink
+local GetItemInfo = GetItemInfo
+local GetItemInfoInstant = GetItemInfoInstant
+local IsEquippableItem = IsEquippableItem
+local UnitClass = UnitClass
+
 -- =============================================================
 -- 0. API COMPATIBILITY WRAPPERS
 -- =============================================================
@@ -323,7 +339,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local isNew2H = (newLoc == "INVTYPE_2HWEAPON" or newLoc == "INVTYPE_STAFF" or newLoc == "INVTYPE_POLEARM")
     
     -- Check for spec preference (Arms, Ret, etc)
-    local is2HSpec = (specName and (specName:find("ARMS") or specName:find("RET") or specName:find("2H")))
+    local is2HSpec = (specName and (string_find(specName, "ARMS") or string_find(specName, "RET") or string_find(specName, "2H")))
 
     if targetSlotID == 16 then
         if isNew2H then
@@ -386,7 +402,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     end
 
     -- 4. CALCULATE FUTURE SCORE
-	local newScore, newStatsTotal, newTotalColors, newSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
+    local newScore, newStatsTotal, newTotalColors, newSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
 -- 4. CONTEXT: DETECT SET COMPLETION
     if MSC.SetBonusScores then
@@ -466,7 +482,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                     local deficit = futureVal - trueCap
                     local name = STAT_DISPLAY[rule.stat] or "Cap"
                     if finalNewStats then
-                        local msg = string.format(" |cffff0000(Cap %.1f %s)|r", deficit, name)
+                        local msg = string_format(" |cffff0000(Cap %.1f %s)|r", deficit, name)
                         finalNewStats.Context = (finalNewStats.Context or "") .. msg
                     end
                 end
@@ -488,7 +504,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                          newScore = newScore - rule.penalty
                          local deficit = futureDef - rule.base
                          if finalNewStats then
-                             local msg = string.format(" |cffff0000(Cap %.1f Def)|r", deficit)
+                             local msg = string_format(" |cffff0000(Cap %.1f Def)|r", deficit)
                              finalNewStats.Context = (finalNewStats.Context or "") .. msg
                          end
                     end

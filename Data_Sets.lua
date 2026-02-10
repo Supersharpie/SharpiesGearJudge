@@ -638,7 +638,9 @@ end
 -- ============================================================================
 
 function MSC:BuildDatabase()
-    
+    -- Safety: Ensure the target table exists
+    MSC.ItemSetMap = {} 
+
     -- We use MSC.SetDefinitions as the source since it holds your master list
     if not MSC.SetDefinitions then return end
 
@@ -656,4 +658,7 @@ function MSC:BuildDatabase()
             end
         end
     end
+
+    -- [[ OPTIMIZATION: FREE MEMORY ]]
+    MSC.SetDefinitions = nil 
 end

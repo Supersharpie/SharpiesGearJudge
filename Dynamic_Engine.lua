@@ -1,7 +1,20 @@
-local _, MSC = ...
+local addonName, MSC = ...
+_G.MSC = MSC 
+
+-- [[ SPEED OPTIMIZATION: LOCALIZED FUNCTIONS ]]
+local pairs, next = pairs, next
+local tonumber = tonumber
+
+local GetNumTalentTabs = GetNumTalentTabs
+local GetNumTalents = GetNumTalents
+local GetTalentInfo = GetTalentInfo
+local UnitClass = UnitClass
+local CreateFrame = CreateFrame
+local C_Timer = C_Timer
+local UIDropDownMenu_SetText = UIDropDownMenu_SetText
 
 -- =========================================================================
--- 1. TALENT CACHING SYSTEM (Updated)
+-- 1. TALENT CACHING SYSTEM 
 -- =========================================================================
 MSC.TalentCache = {}
 MSC.TalentCacheLoaded = false
@@ -21,8 +34,6 @@ function MSC:BuildTalentCache()
         for i = 1, num do
             local name, _, _, _, rank = GetTalentInfo(t, i)
             if name then 
-                -- [[ FIX 1: SAFETY FORCE NUMBER ]]
-                -- We use tonumber() and 'or 0' to guarantee no nil values ever enter the cache
                 MSC.TalentCache[name] = tonumber(rank) or 0
             end
         end
@@ -44,8 +55,6 @@ function MSC:GetTalentRank(talentKey)
     local localizedName = MSC.CurrentClass.Talents[talentKey]
     if not localizedName then return 0 end
 
-    -- [[ FIX 2: RETURN SAFETY ]]
-    -- Even if cache lookup fails, return 0 to prevent math crashes
     return MSC.TalentCache[localizedName] or 0
 end
 
@@ -62,7 +71,7 @@ function MSC:ApplyDynamicAdjustments()
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
         specKey = MSC.ManualSpec
         
-        -- [[ FIX: FORCE DYNAMIC CALCULATION FOR MANUAL SELECTION ]]
+        -- [[ FORCE DYNAMIC CALCULATION FOR MANUAL SELECTION ]]
         -- If the class supports dynamic weights, ask it to calculate this specific key first.
         -- This ensures Leveling Previews (e.g. Level 60 weights at Level 22) work correctly.
         if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
@@ -151,7 +160,6 @@ talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")
 talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
 talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
--- [[ FIX 3: DUAL SPEC SUPPORT ]]
 talentTracker:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 talentTracker:SetScript("OnEvent", function(self, event, unit)
@@ -166,7 +174,6 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
     MSC.CachedWeights = nil
     MSC.CachedSpecKey = nil
     
-    -- [[ UI UPDATE FIX ]]
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()
         local displayName = detectedKey

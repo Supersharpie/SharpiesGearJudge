@@ -1,6 +1,24 @@
 local addonName, MSC = ...
 _G.MSC = MSC 
 
+-- [[ SPEED OPTIMIZATION: LOCALIZED FUNCTIONS ]]
+local pairs, next, type, tonumber, select = pairs, next, type, tonumber, select
+local ipairs = ipairs
+local string_find, string_format, string_match = string.find, string.format, string.match
+local math_abs, math_floor, math_max = math.abs, math.floor, math.max
+local table_insert, table_sort = table.insert, table.sort
+local wipe = wipe or table.wipe
+local pcall = pcall
+
+local CreateFrame = CreateFrame
+local GetItemInfo = GetItemInfo
+local GetInventoryItemLink = GetInventoryItemLink
+local IsEquippableItem = IsEquippableItem
+local UnitClass = UnitClass
+local UnitLevel = UnitLevel
+local IsAddOnLoaded = IsAddOnLoaded
+local C_AddOns = C_AddOns
+
 -- =============================================================
 -- 1. INITIALIZATION & EVENTS
 -- =============================================================
@@ -20,10 +38,10 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
-		
+        
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
-		
+        
         local version = MSC.IsEra and "Classic Era" or "TBC Edition"
         print("|cff00ff00Sharpie's Gear Judge|r ("..version..") Loaded. Type /sgj for menu.")
         
@@ -133,7 +151,6 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     local dest = outTable or {}
     
     -- 1. Copy raw stats
-    -- [FIX] Added safety check to prevent crash if baseStats is nil
     if baseStats then
         for k, v in pairs(baseStats) do dest[k] = v end
     end
@@ -213,8 +230,8 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     if spt > 0 then
         if class == "PRIEST" then local r=Rank("SPIRITUAL_GUIDANCE"); if r>0 then local b=spt*(0.05*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=(dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0)+b end end
     end
-	
-	-- === F. ATTACK POWER ===
+    
+    -- === F. ATTACK POWER ===
     local apFromStr = 0
     local apFromAgi = 0
     
@@ -267,12 +284,11 @@ local TEX_UP = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png:14
 local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png:14:14:0:-2|t"
 
 -- [[ CONFIG: CONSOLIDATION DISABLED ]]
--- We purposefully empty this table so the Bouncer can see the raw stats
 local STAT_CONSOLIDATION_MAP = {} 
 
 local function OnTooltipSetItem(tooltip)
     if MSC.IsCalculating then return end
-    if tooltip:GetName() and string.find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
+    if tooltip:GetName() and string_find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
     if SGJ_Settings and SGJ_Settings.HideTooltips then return end
     
     local _, link = nil, nil
@@ -306,7 +322,7 @@ local function OnTooltipSetItem(tooltip)
         tooltip:AddLine(" ")
         local scoreLabel = "Judge's Score:"
         if newStats and newStats.Context then scoreLabel = scoreLabel .. " " .. newStats.Context end
-        tooltip:AddDoubleLine(scoreLabel, string.format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
+        tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
         
         local displayName = specName
         if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName] then displayName = MSC.CurrentClass.PrettyNames[specName] end
@@ -321,8 +337,8 @@ local function OnTooltipSetItem(tooltip)
                 local comparedItemLink = GetInventoryItemLink("player", slotId)
                 if comparedItemLink then tooltip:AddDoubleLine("vs.", comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end
             end
-		if link then
-                local itemID = tonumber(link:match("item:(%d+)"))
+        if link then
+                local itemID = tonumber(string_match(link, "item:(%d+)"))
                 local noteDisplayed = false
 
                 -- 1. CLASS SPECIFIC CHECK (Relics/Totems/Idols)
@@ -341,7 +357,7 @@ local function OnTooltipSetItem(tooltip)
                                     name = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower()
                                 end
                                 if statStr ~= "" then statStr = statStr .. ", " end
-                                statStr = statStr .. string.format("+%d %s", val, name)
+                                statStr = statStr .. string_format("+%d %s", val, name)
                             end
                         end
                         
@@ -388,11 +404,11 @@ local function OnTooltipSetItem(tooltip)
                         tooltip:AddDoubleLine("Judge's Note:", entry.note, cL.r, cL.g, cL.b, cR.r, cR.g, cR.b)
                     end
                 end
-			end
-			
+            end
+            
             local percentDiff = 0; if oldScore > 0 then percentDiff = ((newScore - oldScore) / oldScore) * 100 end
-            if delta > 0.1 then tooltip:AddLine(string.format("|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r", TEX_UP, delta, percentDiff))
-            elseif delta < -0.1 then tooltip:AddLine(string.format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
+            if delta > 0.1 then tooltip:AddLine(string_format("|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r", TEX_UP, delta, percentDiff))
+            elseif delta < -0.1 then tooltip:AddLine(string_format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
             else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
 
             -- [[ MAIN SPEC SET TRACKING (GAINED & BROKEN) ]]
@@ -406,7 +422,7 @@ local function OnTooltipSetItem(tooltip)
                         for req, _ in pairs(scores) do
                             local rN = tonumber(req)
                             if rN and oC >= rN and nC < rN then
-                                tooltip:AddLine(string.format("|cffff0000!!! WARNING: Breaking Set Bonus (%d) !!!|r", rN))
+                                tooltip:AddLine(string_format("|cffff0000!!! WARNING: Breaking Set Bonus (%d) !!!|r", rN))
                             end
                         end
                     -- B. CHECK FOR GAINED BONUSES (Green)
@@ -414,7 +430,7 @@ local function OnTooltipSetItem(tooltip)
                         for req, _ in pairs(scores) do
                             local rN = tonumber(req)
                             if rN and nC >= rN and oC < rN then
-                                tooltip:AddLine(string.format("|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r", rN))
+                                tooltip:AddLine(string_format("|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r", rN))
                             end
                         end
                     end
@@ -423,42 +439,42 @@ local function OnTooltipSetItem(tooltip)
         else tooltip:AddLine("|cff00ffff*** EQUIPPED ***|r") end
 
         -- [[ MULTI-SPEC TRACKING ]]
-		if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
-			for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
-				if isActive and tSpec ~= specName then
-					local tWeights = MSC.GetWeightsByName(tSpec)
-					if tWeights then
-						local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
-						if tSlotId then
-							-- Capture oldSetCounts and newSetCounts for the off-spec check
-							local tNewScore, tOldScore, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
-							local tDelta = tNewScore - tOldScore
-							
-							if tDelta > 0.1 then
-								local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
-								tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string.format("|cff00ff00+%s (Upgrade)|r", math.floor(tDelta)), 1, 1, 1, 1, 1, 1)
-								
-								-- Check if this off-spec upgrade would break a current set bonus
-								if oSC and nSC and MSC.SetBonusScores then
-									for setID, scores in pairs(MSC.SetBonusScores) do
-										local oC = oSC[setID] or 0
-										local nC = nSC[setID] or 0
-										if nC < oC then
-											for req, _ in pairs(scores) do
-												local rN = tonumber(req)
-												if rN and oC >= rN and nC < rN then
-													tooltip:AddLine(string.format("  |cffff0000(Breaks %d-pc Set Bonus!)|r", rN))
-												end
-											end
-										end
-									end
-								end
-							end
-						end
-					end
-				end
-			end
-		end
+        if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
+            for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
+                if isActive and tSpec ~= specName then
+                    local tWeights = MSC.GetWeightsByName(tSpec)
+                    if tWeights then
+                        local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
+                        if tSlotId then
+                            -- Capture oldSetCounts and newSetCounts for the off-spec check
+                            local tNewScore, tOldScore, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
+                            local tDelta = tNewScore - tOldScore
+                            
+                            if tDelta > 0.1 then
+                                local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
+                                tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format("|cff00ff00+%s (Upgrade)|r", math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
+                                
+                                -- Check if this off-spec upgrade would break a current set bonus
+                                if oSC and nSC and MSC.SetBonusScores then
+                                    for setID, scores in pairs(MSC.SetBonusScores) do
+                                        local oC = oSC[setID] or 0
+                                        local nC = nSC[setID] or 0
+                                        if nC < oC then
+                                            for req, _ in pairs(scores) do
+                                                local rN = tonumber(req)
+                                                if rN and oC >= rN and nC < rN then
+                                                    tooltip:AddLine(string_format("  |cffff0000(Breaks %d-pc Set Bonus!)|r", rN))
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
 
         -- Projections (TBC Only for Gems/Metas)
         if newStats and (newStats.IS_PROJECTED or newStats.GEMS_PROJECTED) then
@@ -490,7 +506,6 @@ local function OnTooltipSetItem(tooltip)
 
         -- STAT COMPARISON
         if not isEquipped then
-            -- [FIX] Added 'or {}' to prevent crashes if Evaluator returns nil
             local newExpanded = MSC.ExpandDerivedStats(newStats or {}, link, Scratch_Tooltip_New)
             local oldExpanded = MSC.ExpandDerivedStats(oldStats or {}, nil, Scratch_Tooltip_Old)
             local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
@@ -499,18 +514,18 @@ local function OnTooltipSetItem(tooltip)
             
             local gains, losses = {}, {}
             for _, d in ipairs(diffs) do
-                if math.abs(d.val) > 0.1 then
+                if math_abs(d.val) > 0.1 then
                     -- [[ THE BOUNCER ]]
                     -- This ensures we only see stats that actually matter to our score
                     local w = weights[d.key] or 0
                     if w > 0.02 then
-                        if d.val > 0 then table.insert(gains, d) else table.insert(losses, d) end 
+                        if d.val > 0 then table_insert(gains, d) else table_insert(losses, d) end 
                     end
                 end
             end
 
             local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
-            table.sort(gains, StableSort); table.sort(losses, StableSort)
+            table_sort(gains, StableSort); table_sort(losses, StableSort)
 
             local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
@@ -524,9 +539,9 @@ local function OnTooltipSetItem(tooltip)
                         -- [[ 2. APPEND PERCENTAGE ]]
                         local level = UnitLevel("player")
                         if MSC.GetRatingPercent then
-                             local percentVal = MSC:GetRatingPercent(d.key, math.abs(d.val), level)
+                             local percentVal = MSC:GetRatingPercent(d.key, math_abs(d.val), level)
                              if percentVal and percentVal > 0.01 then
-                                 name = name .. string.format(" |cff888888(%.2f%%)|r", percentVal)
+                                 name = name .. string_format(" |cff888888(%.2f%%)|r", percentVal)
                              end
                         end
 
@@ -534,7 +549,7 @@ local function OnTooltipSetItem(tooltip)
                         name = name .. (d.nameSuffix or "")
                         
                         -- [[ 4. FORMAT VALUE ]]
-                        local valStr = (d.val%1==0) and string.format("%d", math.abs(d.val)) or string.format("%.1f", math.abs(d.val))
+                        local valStr = (d.val%1==0) and string_format("%d", math_abs(d.val)) or string_format("%.1f", math_abs(d.val))
                         if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
                         
                         tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)
@@ -547,7 +562,7 @@ local function OnTooltipSetItem(tooltip)
             PrintList("Losses:", losses, 1, 0, 0)
 
         end
-		
+        
         tooltip:Show()
     end)
     MSC.IsCalculating = false

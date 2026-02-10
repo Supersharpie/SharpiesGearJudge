@@ -1,5 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.3.5
+### Multiple files updated to improve speed, robustness and memory usage:
+
+* **Data_Sets.lua: Initialize MSC.ItemSetMap in BuildDatabase and free MSC.SetDefinitions after database build to reduce memory.**
+* **Dynamic_Engine.lua: Use addonName var, expose _G.MSC, and localize frequently used globals (API functions) for performance; cleaned comments and ensured existing dynamic/spec logic remains intact.**
+* **Evaluator.lua: Localized common functions and WoW APIs, added string_find/local format aliases, fixed string usage in spec detection and formatting to avoid nil/crash paths.**
+* **Helpers.lua: Large localization of Lua/WoW APIs (string/table/math functions), safe handling when MSC.Scanner is nil, switched string.match/call sites to localized string_match, replaced table.insert/math.* 
+* **calls with localized variants, and other safety/consistency fixes (GetContainer wrapper, gem/enchant parsing, stat name cleaning).**
+* **Interface.lua: Localized APIs and helpers, replaced global calls with locals, optimized bag scanning to only run when MSC.BagCacheDirty, adjusted UI text/format calls to use localized string_format, and multiple small UI/ring rendering fixes.**
+
+* **IOverall this changeset focuses on micro-optimizations (localizing functions), defensive checks to prevent crashes when subsystems are missing, and minor logic/formatting fixes.**
+* **No functional algorithm changes beyond safety/efficiency improvements.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.3.4
 
 ### CLASS SPECIFIC UPDATES:

@@ -1,4 +1,43 @@
 local addonName, MSC = ...
+_G.MSC = MSC 
+
+-- [[ SPEED OPTIMIZATION: LOCALIZED FUNCTIONS ]]
+-- Lua APIs
+local _G = _G
+local type, pairs, ipairs, unpack, pcall, select = type, pairs, ipairs, unpack, pcall, select
+local tonumber, tostring, next = tonumber, tostring, next
+local math_floor, math_abs, math_max, math_min, math_sqrt = math.floor, math.abs, math.max, math.min, math.sqrt
+local string_find, string_match, string_lower, string_upper, string_gsub, string_format = string.find, string.match, string.lower, string.upper, string.gsub, string.format
+local table_insert, table_concat, table_remove, table_sort = table.insert, table.concat, table.remove, table.sort
+local wipe = wipe or table.wipe
+local strsplit = strsplit
+
+-- WoW APIs (General)
+local CreateFrame = CreateFrame
+local WorldFrame = WorldFrame
+local GetItemInfo = GetItemInfo
+local UnitClass = UnitClass
+local UnitLevel = UnitLevel
+local UnitRace = UnitRace
+local UnitStat = UnitStat
+local UnitDefense = UnitDefense
+local GetInventoryItemLink = GetInventoryItemLink
+local GetItemStats = GetItemStats
+
+-- WoW APIs (Stats - Classic/Era)
+local GetHitModifier = GetHitModifier
+local GetSpellHitModifier = GetSpellHitModifier
+local GetCritChance = GetCritChance
+local GetSpellCritChance = GetSpellCritChance
+local GetSpellBonusHealing = GetSpellBonusHealing
+local GetSpellBonusDamage = GetSpellBonusDamage
+
+-- WoW APIs (Stats - TBC/Retail)
+local GetCombatRating = GetCombatRating
+
+-- Container APIs
+local C_Container = C_Container
+local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or GetContainerItemInfo
 
 -- =============================================================
 -- 1. UTILITY FUNCTIONS
@@ -61,12 +100,12 @@ function MSC.IsItemUsable(itemLink)
             local line = _G["MSC_ScannerTooltipTextLeft"..i]
             local text = line and line:GetText()
             if text then
-                if text:find("Classes:") or (ITEM_CLASSES_ALLOWED and text:find(ITEM_CLASSES_ALLOWED:gsub("%%s", ""))) then
-                    if not text:find(localizedClass) then return false end
+                if string_find(text, "Classes:") or (ITEM_CLASSES_ALLOWED and string_find(text, string_gsub(ITEM_CLASSES_ALLOWED, "%%s", ""))) then
+                    if not string_find(text, localizedClass) then return false end
                 end
-                if text:find("Races:") or (ITEM_RACES_ALLOWED and text:find(ITEM_RACES_ALLOWED:gsub("%%s", ""))) then
-                     local localizedRace = UnitRace("player")
-                     if not text:find(localizedRace) then return false end
+                if string_find(text, "Races:") or (ITEM_RACES_ALLOWED and string_find(text, string_gsub(ITEM_RACES_ALLOWED, "%%s", ""))) then
+                      local localizedRace = UnitRace("player")
+                      if not string_find(text, localizedRace) then return false end
                 end
             end
         end
@@ -79,7 +118,7 @@ end
 -- =============================================================
 function MSC.getItemID(bagID, slotID)
     if not bagID or not slotID then return nil end
-    local itemInfo = C_Container.GetContainerItemInfo(bagID, slotID)
+    local itemInfo = GetContainerItemInfo(bagID, slotID)
     if itemInfo then return itemInfo.itemID end
     return nil
 end
@@ -117,7 +156,7 @@ function MSC:GetSpiritValueInMP5(level, spirit)
         if not level or level > 70 then level = 70 end
         local base = MSC.BaseRegenTable[level] or 0.009327
         local intel = UnitStat("player", 4) or 100
-        return 5 * (base * math.sqrt(intel))
+        return 5 * (base * math_sqrt(intel))
     end
 end
 
@@ -140,8 +179,8 @@ function MSC.GetStatDifferences(newStats, oldStats, outTable)
             local valOld = oldStats[k]
             if type(valOld) ~= "number" then valOld = 0 end
             local diff = valNew - valOld
-            if math.abs(diff) > 0.01 then
-                table.insert(outTable, { key = k, val = diff })
+            if math_abs(diff) > 0.01 then
+                table_insert(outTable, { key = k, val = diff })
             end
             processed[k] = true
         end
@@ -149,8 +188,8 @@ function MSC.GetStatDifferences(newStats, oldStats, outTable)
     for k, valOld in pairs(oldStats) do
         if not processed[k] and not ignoreKeys[k] and type(valOld) == "number" then
             local diff = 0 - valOld
-            if math.abs(diff) > 0.01 then
-                table.insert(outTable, { key = k, val = diff })
+            if math_abs(diff) > 0.01 then
+                table_insert(outTable, { key = k, val = diff })
             end
         end
     end
@@ -158,14 +197,14 @@ function MSC.GetStatDifferences(newStats, oldStats, outTable)
 end
 
 function MSC.SortStatDiffs(diffs)
-    table.sort(diffs, function(a,b) return a.val > b.val end)
+    table_sort(diffs, function(a,b) return a.val > b.val end)
     return diffs
 end
 
 function MSC.GetCleanStatName(key)
     if MSC.ShortNames and MSC.ShortNames[key] then return MSC.ShortNames[key] end
-    local s = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " ")
-    return string.lower(s):gsub("^%l", string.upper)
+    local s = string_gsub(string_gsub(string_gsub(key, "ITEM_MOD_", ""), "_SHORT", ""), "_", " ")
+    return string_gsub(string_lower(s), "^%l", string_upper)
 end
 
 -- =============================================================
@@ -244,7 +283,7 @@ MSC.StatShortNames = {
 
 function MSC.Round(num, numDecimalPlaces)
     local mult = 10^(numDecimalPlaces or 0)
-    return math.floor(num * mult + 0.5) / mult
+    return math_floor(num * mult + 0.5) / mult
 end
 
 -- =============================================================
@@ -264,7 +303,7 @@ function MSC:GetRatingPercent(statKey, ratingVal, level)
 end
 
 -- =============================================================
--- 6. SCANNING (THE FIX IS HERE)
+-- 6. SCANNING (FIXED)
 -- =============================================================
 
 function MSC.GetRawItemStats(itemLink)
@@ -272,26 +311,35 @@ function MSC.GetRawItemStats(itemLink)
     if MSC.StatCache[itemLink] then return MSC.StatCache[itemLink] end
 
     -- 1. EXECUTE SCANNER
-    local scanData = MSC.Scanner.Scan(itemLink)
+    -- [[ FIX: Added safety check for MSC.Scanner being nil ]]
+    local scanData = {}
+    if MSC.Scanner and MSC.Scanner.Scan then
+        scanData = MSC.Scanner.Scan(itemLink)
+    else
+        -- If Scanner isn't loaded, return empty stats safely to prevent crash
+        return {}
+    end
     
     -- 2. FLATTEN STATS
     local finalStats = scanData.Stats or {}
     local bonusStats = {}
 
     -- 3. INTEGRATE USE EFFECTS
-    for _, effect in ipairs(scanData.UseEffects) do
-        if effect.statKey and effect.averageVal and effect.averageVal > 0 then
-             finalStats[effect.statKey] = (finalStats[effect.statKey] or 0) + effect.averageVal
-             if not finalStats._AUTO_PROC then
-                 finalStats._AUTO_PROC = { stat=effect.statKey, val=effect.averageVal }
-             end
+    if scanData.UseEffects then
+        for _, effect in ipairs(scanData.UseEffects) do
+            if effect.statKey and effect.averageVal and effect.averageVal > 0 then
+                 finalStats[effect.statKey] = (finalStats[effect.statKey] or 0) + effect.averageVal
+                 if not finalStats._AUTO_PROC then
+                     finalStats._AUTO_PROC = { stat=effect.statKey, val=effect.averageVal }
+                 end
+            end
         end
     end
 
     -- ========================================================
     -- [[ 4. APPLY DATABASE OVERRIDES (THE MISSING LINK) ]]
     -- ========================================================
-    local itemID = tonumber(itemLink:match("item:(%d+)"))
+    local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
     if itemID then
         local entry = nil
         
@@ -420,18 +468,18 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
 
     local lists = {}
     if socketColor == "ANY" then
-        if db["EMPTY_SOCKET_RED"] then table.insert(lists, db["EMPTY_SOCKET_RED"]) end
-        if db["EMPTY_SOCKET_YELLOW"] then table.insert(lists, db["EMPTY_SOCKET_YELLOW"]) end
-        if db["EMPTY_SOCKET_BLUE"] then table.insert(lists, db["EMPTY_SOCKET_BLUE"]) end
+        if db["EMPTY_SOCKET_RED"] then table_insert(lists, db["EMPTY_SOCKET_RED"]) end
+        if db["EMPTY_SOCKET_YELLOW"] then table_insert(lists, db["EMPTY_SOCKET_YELLOW"]) end
+        if db["EMPTY_SOCKET_BLUE"] then table_insert(lists, db["EMPTY_SOCKET_BLUE"]) end
     elseif socketColor == "EMPTY_SOCKET_META" then
-        if db["EMPTY_SOCKET_META"] then table.insert(lists, db["EMPTY_SOCKET_META"]) end
+        if db["EMPTY_SOCKET_META"] then table_insert(lists, db["EMPTY_SOCKET_META"]) end
     else
         if socketColor == "EMPTY_SOCKET_PRISMATIC" then
-            if db["EMPTY_SOCKET_RED"] then table.insert(lists, db["EMPTY_SOCKET_RED"]) end
-            if db["EMPTY_SOCKET_YELLOW"] then table.insert(lists, db["EMPTY_SOCKET_YELLOW"]) end
-            if db["EMPTY_SOCKET_BLUE"] then table.insert(lists, db["EMPTY_SOCKET_BLUE"]) end
+            if db["EMPTY_SOCKET_RED"] then table_insert(lists, db["EMPTY_SOCKET_RED"]) end
+            if db["EMPTY_SOCKET_YELLOW"] then table_insert(lists, db["EMPTY_SOCKET_YELLOW"]) end
+            if db["EMPTY_SOCKET_BLUE"] then table_insert(lists, db["EMPTY_SOCKET_BLUE"]) end
         else
-            if db[socketColor] then table.insert(lists, db[socketColor]) end
+            if db[socketColor] then table_insert(lists, db[socketColor]) end
             -- Prismatic gems are already in the specific color lists in Database.lua
         end
     end
@@ -488,12 +536,12 @@ function MSC.GetGemColor(gemID)
     
     local _, _, _, _, _, _, _, _, _, icon = GetItemInfo(gemID or 0)
     if icon then
-        if icon:find("Red") or icon:find("Garnet") or icon:find("Ruby") then return "RED"
-        elseif icon:find("Yellow") or icon:find("Golden") or icon:find("Dawnstone") then return "YELLOW"
-        elseif icon:find("Blue") or icon:find("Azure") or icon:find("Star") then return "BLUE"
-        elseif icon:find("Orange") or icon:find("Topaz") then return "ORANGE"
-        elseif icon:find("Purple") or icon:find("Nightseye") then return "PURPLE"
-        elseif icon:find("Green") or icon:find("Talasite") then return "GREEN" end
+        if string_find(icon, "Red") or string_find(icon, "Garnet") or string_find(icon, "Ruby") then return "RED"
+        elseif string_find(icon, "Yellow") or string_find(icon, "Golden") or string_find(icon, "Dawnstone") then return "YELLOW"
+        elseif string_find(icon, "Blue") or string_find(icon, "Azure") or string_find(icon, "Star") then return "BLUE"
+        elseif string_find(icon, "Orange") or string_find(icon, "Topaz") then return "ORANGE"
+        elseif string_find(icon, "Purple") or string_find(icon, "Nightseye") then return "PURPLE"
+        elseif string_find(icon, "Green") or string_find(icon, "Talasite") then return "GREEN" end
     end
     return nil
 end
@@ -505,9 +553,9 @@ end
 function MSC.SolveColorMatch(gemIDs, baseLink)
     local template = GetItemStats(baseLink)
     local sockets = {}
-    for i=1, (template["EMPTY_SOCKET_RED"] or 0) do table.insert(sockets, "RED") end
-    for i=1, (template["EMPTY_SOCKET_YELLOW"] or 0) do table.insert(sockets, "YELLOW") end
-    for i=1, (template["EMPTY_SOCKET_BLUE"] or 0) do table.insert(sockets, "BLUE") end
+    for i=1, (template["EMPTY_SOCKET_RED"] or 0) do table_insert(sockets, "RED") end
+    for i=1, (template["EMPTY_SOCKET_YELLOW"] or 0) do table_insert(sockets, "YELLOW") end
+    for i=1, (template["EMPTY_SOCKET_BLUE"] or 0) do table_insert(sockets, "BLUE") end
     
     if #sockets == 0 then return true end
 
@@ -533,7 +581,7 @@ function MSC.SolveColorMatch(gemIDs, baseLink)
 
                 if match then
                     local nextSockets = { unpack(availableSockets) }
-                    table.remove(nextSockets, i)
+                    table_remove(nextSockets, i)
                     if MatchRecursive(gemIdx + 1, nextSockets) then return true end
                 end
             end
@@ -578,7 +626,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
             
             -- A. IDENTIFY PHYSICAL ENCHANT ON ITEM (The one we might want to strip)
             local physicalEnchantID = 0
-            local itemString = string.match(itemLink, "item[%-?%d:]+")
+            local itemString = string_match(itemLink, "item[%-?%d:]+")
             if itemString then
                 local _, _, eid = strsplit(":", itemString)
                 physicalEnchantID = tonumber(eid) or 0
@@ -602,7 +650,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 local equippedLink = GetInventoryItemLink("player", slotId)
                 if equippedLink then
                     local eqEnchantID = 0
-                    local eqStr = string.match(equippedLink, "item[%-?%d:]+")
+                    local eqStr = string_match(equippedLink, "item[%-?%d:]+")
                     if eqStr then
                         local _, _, eid = strsplit(":", eqStr)
                         eqEnchantID = tonumber(eid) or 0
@@ -627,11 +675,11 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 local enchantType = MSC:GetValidEnchantType(itemLink)
                 -- Fallback if type lookup fails but we know the slot
                 if not enchantType and slotId then
-                     local s = slotId
-                     if s==1 or s==3 or s==5 or s==6 or s==7 or s==8 or s==9 or s==10 then enchantType = "Armor"
-                     elseif s==15 then enchantType = "Armor" 
-                     elseif s==17 then enchantType = "Shield"
-                     end
+                      local s = slotId
+                      if s==1 or s==3 or s==5 or s==6 or s==7 or s==8 or s==9 or s==10 then enchantType = "Armor"
+                      elseif s==15 then enchantType = "Armor" 
+                      elseif s==17 then enchantType = "Shield"
+                      end
                 end
 
                 if enchantType then
@@ -671,14 +719,14 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
             
             if gemMode == 3 then
                 -- PRO: Strip everything, simulate from Base
-                local currentGems = { itemLink:match("item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)") }
+                local currentGems = { string_match(itemLink, "item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)") }
                 for _, gID in ipairs(currentGems) do
                     local id = tonumber(gID)
                     if id and id > 0 and MSC.GetGemStatsByID then
                         local gData = MSC.GetGemStatsByID(id)
                         if gData then
-                            if gData.stat then finalStats[gData.stat] = math.max(0, (finalStats[gData.stat] or 0) - (gData.val or 0)) end
-                            if gData.stat2 then finalStats[gData.stat2] = math.max(0, (finalStats[gData.stat2] or 0) - (gData.val2 or 0)) end
+                            if gData.stat then finalStats[gData.stat] = math_max(0, (finalStats[gData.stat] or 0) - (gData.val or 0)) end
+                            if gData.stat2 then finalStats[gData.stat2] = math_max(0, (finalStats[gData.stat2] or 0) - (gData.val2 or 0)) end
                         end
                     end
                 end
@@ -689,7 +737,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 socketsToFill = GetItemStats(itemLink) or {} -- Only empty sockets
                 local _, _, ids = MSC:GetItemGems(itemLink)
                 for _, id in ipairs(ids) do
-                    table.insert(existingGems, id) -- Store IDs for bonus checking
+                    table_insert(existingGems, id) -- Store IDs for bonus checking
                 end
             end
 
@@ -707,7 +755,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                         local bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights, uniqueTrackerMatch)
                         if bestGem then 
                             matchScore = matchScore + score
-                            table.insert(Scratch_MatchGems, bestGem)
+                            table_insert(Scratch_MatchGems, bestGem)
                             if bestGem.unique then uniqueTrackerMatch[bestGem.id] = true end
                         end
                     end
@@ -715,13 +763,13 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 
                 -- Check Bonus for Match Sim
                 local matchCandidateIDs = { unpack(existingGems) }
-                for _, g in ipairs(Scratch_MatchGems) do table.insert(matchCandidateIDs, g.id) end
+                for _, g in ipairs(Scratch_MatchGems) do table_insert(matchCandidateIDs, g.id) end
                 local matchBonusActive = MSC.SolveColorMatch(matchCandidateIDs, baseLink)
                 
                 if matchBonusActive and next(bonusStats) then
-                     for k,v in pairs(bonusStats) do 
+                      for k,v in pairs(bonusStats) do 
                         if weights[k] then matchScore = matchScore + (v * weights[k]) end 
-                     end
+                      end
                 end
 
                 -- 2. PURE SIMULATION (Ignores Colors)
@@ -735,7 +783,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                             local bestGem, score = MSC.GetBestGemForSocket(searchKey, level, weights, uniqueTrackerPure)
                             if bestGem then 
                                 pureScore = pureScore + score
-                                table.insert(Scratch_PureGems, bestGem)
+                                table_insert(Scratch_PureGems, bestGem)
                                 if bestGem.unique then uniqueTrackerPure[bestGem.id] = true end
                             end
                         end
@@ -743,7 +791,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                     
                     -- Check Bonus for Pure Sim
                     local pureCandidateIDs = { unpack(existingGems) }
-                    for _, g in ipairs(Scratch_PureGems) do table.insert(pureCandidateIDs, g.id) end
+                    for _, g in ipairs(Scratch_PureGems) do table_insert(pureCandidateIDs, g.id) end
                     local pureBonusActive = MSC.SolveColorMatch(pureCandidateIDs, baseLink)
                     
                     if pureBonusActive and next(bonusStats) then
@@ -762,7 +810,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 if usePure then
                     -- Re-check bonus for Pure Sim explicitly if we chose it
                     local allGems = { unpack(existingGems) }
-                    for _, g in ipairs(Scratch_PureGems) do table.insert(allGems, g.id) end
+                    for _, g in ipairs(Scratch_PureGems) do table_insert(allGems, g.id) end
                     bonusActive = MSC.SolveColorMatch(allGems, baseLink)
                 end
                 
@@ -777,7 +825,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                         Scratch_GemStats[gem.stat2] = (Scratch_GemStats[gem.stat2] or 0) + gem.val2 
                     end
                     if gem.isMeta then projectedMeta = gem.id end
-                    table.insert(Scratch_ProjectedIDs, gem.id)
+                    table_insert(Scratch_ProjectedIDs, gem.id)
                 end
                 
                 -- [NEW] Bonus Stat Application & Text Generation
@@ -794,9 +842,9 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                     local bParts = {}
                     for k, v in pairs(bonusStats) do
                         local short = (MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat"
-                        table.insert(bParts, "+" .. v .. " " .. short)
+                        table_insert(bParts, "+" .. v .. " " .. short)
                     end
-                    bonusText = "|n|cff00ff00Socket Bonus: " .. table.concat(bParts, ", ") .. "|r"
+                    bonusText = "|n|cff00ff00Socket Bonus: " .. table_concat(bParts, ", ") .. "|r"
                 end
                 
                 -- [[ DISPLAY AGGREGATION ]]
@@ -813,7 +861,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                     if not Scratch_GemCounts[gName] then
                         Scratch_GemCounts[gName] = 0
                         Scratch_GemColors[gName] = cType
-                        table.insert(Scratch_GemOrder, gName)
+                        table_insert(Scratch_GemOrder, gName)
                     end
                     Scratch_GemCounts[gName] = Scratch_GemCounts[gName] + 1
                 end
@@ -823,27 +871,27 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 
                 wipe(Scratch_GemTextParts)
                 for _, gName in ipairs(Scratch_GemOrder) do
-                     local c = Scratch_GemColors[gName] or "?"
-                     table.insert(Scratch_GemTextParts, Scratch_GemCounts[gName] .. "x " .. gName .. " |cffaaaaaa(" .. c .. ")|r")
+                      local c = Scratch_GemColors[gName] or "?"
+                      table_insert(Scratch_GemTextParts, Scratch_GemCounts[gName] .. "x " .. gName .. " |cffaaaaaa(" .. c .. ")|r")
                 end
                 
                 local statParts = {}
                 for k, v in pairs(Scratch_GemStats) do
-                    table.insert(statParts, { k = k, v = v })
+                    table_insert(statParts, { k = k, v = v })
                 end
-                table.sort(statParts, function(a,b) return a.v > b.v end)
+                table_sort(statParts, function(a,b) return a.v > b.v end)
                 
                 local statStrings = {}
                 for _, s in ipairs(statParts) do
                     local short = (MSC.StatShortNames and MSC.StatShortNames[s.k]) or "Stat"
-                    table.insert(statStrings, "+" .. s.v .. " " .. short)
+                    table_insert(statStrings, "+" .. s.v .. " " .. short)
                 end
                 
                 if #Scratch_GemTextParts > 0 then 
-                    local line1 = table.concat(Scratch_GemTextParts, "|n")
+                    local line1 = table_concat(Scratch_GemTextParts, "|n")
                     local line2 = ""
                     if #statStrings > 0 then
-                        line2 = "|n|cff00ccff(" .. table.concat(statStrings, ", ") .. ")|r"
+                        line2 = "|n|cff00ccff(" .. table_concat(statStrings, ", ") .. ")|r"
                     end
                     finalStats.GEM_TEXT = line1 .. bonusText .. line2
                 end
@@ -885,7 +933,7 @@ end
 
 function MSC.GetBaseLink(itemLink)
     if not itemLink then return nil end
-    local id = itemLink:match("item:(%d+)")
+    local id = string_match(itemLink, "item:(%d+)")
     if id then return "item:" .. id .. ":0:0:0:0:0:0:0:0" end
     return itemLink
 end
@@ -951,7 +999,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         return 0
     end
     
-    return math.max(0, MSC.Round(score, 1))
+    return math_max(0, MSC.Round(score, 1))
 end
 
 function MSC.ApplyElvUISkin(frame) end
@@ -974,8 +1022,8 @@ function MSC:GetItemSetID(itemIDOrLink)
             local line = _G[tipName.."TextLeft"..i]
             local text = line and line:GetText()
             if text then
-                 if text:find("Set: ") then
-                     local setName = text:match("Set: (.*) %(")
+                 if string_find(text, "Set: ") then
+                     local setName = string_match(text, "Set: (.*) %(")
                      return setName
                  end
             end
@@ -997,12 +1045,12 @@ function MSC:GetItemGems(itemLink)
         return MSC:SafeCopy(Scratch_ItemColors), nil, MSC:SafeCopy(Scratch_ItemGemIDs) 
     end
     
-    local g1, g2, g3, g4 = itemLink:match("item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)")
+    local g1, g2, g3, g4 = string_match(itemLink, "item:%d+:%d+:(%d+):(%d+):(%d+):(%d+)")
     local foundGems = { tonumber(g1), tonumber(g2), tonumber(g3), tonumber(g4) }
     
     for _, id in ipairs(foundGems) do
         if id and id > 0 then
-            table.insert(Scratch_ItemGemIDs, id)
+            table_insert(Scratch_ItemGemIDs, id)
             
             -- Check for Meta Gem ID
             if MSC.GemOptions and MSC.GemOptions["EMPTY_SOCKET_META"] then
@@ -1062,12 +1110,12 @@ function MSC:DebugItem()
             if w then
                 local lineScore = val * w
                 score = score + lineScore
-                local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
-                print(string.format("|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r", statName, val, w, lineScore))
+                local statName = string_gsub(string_gsub(stat, "ITEM_MOD_", ""), "_SHORT", "")
+                print(string_format("|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r", statName, val, w, lineScore))
             else
                 -- Print unweighted stats in grey so you see what is being ignored
-                local statName = stat:gsub("ITEM_MOD_", ""):gsub("_SHORT", "")
-                print(string.format("|cff888888%s: %.1f (Weight: 0)|r", statName, val))
+                local statName = string_gsub(string_gsub(stat, "ITEM_MOD_", ""), "_SHORT", "")
+                print(string_format("|cff888888%s: %.1f (Weight: 0)|r", statName, val))
             end
         end
     end
@@ -1081,7 +1129,7 @@ function MSC:DebugItem()
         end
     end
     
-    print("Ratio Check: " .. string.format("Useful: %.1f / Useless: %.1f", useful, useless))
+    print("Ratio Check: " .. string_format("Useful: %.1f / Useless: %.1f", useful, useless))
     if useless > (useful * 2) then
         print("|cffff0000[FAIL] Item rejected by Bouncer (Mostly Junk)|r")
     else

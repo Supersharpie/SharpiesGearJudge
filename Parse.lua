@@ -1,5 +1,19 @@
 local addonName, MSC = ...
-_G.MSC = MSC 
+local _G = _G 
+
+-- [[ SPEED OPTIMIZATION: LOCALIZED FUNCTIONS ]]
+-- Lua APIs
+local pairs, ipairs = pairs, ipairs
+local tonumber, type = tonumber, type
+-- [[ FIX: Added string.lower here ]]
+local string_find, string_match, string_format, string_gsub, string_lower = string.find, string.match, string.format, string.gsub, string.lower
+local table_insert = table.insert
+local math_floor = math.floor
+local pcall = pcall
+
+-- WoW APIs
+local CreateFrame = CreateFrame
+local WorldFrame = WorldFrame
 
 MSC.Scanner = {}
 
@@ -233,7 +247,7 @@ MSC.Scanner.EquipPatterns = {
     { p = "restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
     { p = "restores (%d+) (.*) every ([%d%.]+) sec", 
         func = function(match1, match2, match3, outputStats)
-            local key = (match2:find("health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
+            local key = (string_find(match2, "health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
                         or "ITEM_MOD_MANA_REGENERATION_SHORT"
             local val, interval = tonumber(match1), tonumber(match3)
             if val and interval then outputStats[key] = (outputStats[key] or 0) + ((val / interval) * 5) end
@@ -328,10 +342,10 @@ local function CreateItemObject()
 end
 
 local function ParseCooldown(text)
-    local lowerText = text:lower()
-    local min = lowerText:match("%((%d+)%s*min[s%a]*%s*cooldown%)")
+    local lowerText = string_lower(text)
+    local min = string_match(lowerText, "%((%d+)%s*min[s%a]*%s*cooldown%)")
     if min then return tonumber(min) * 60 end
-    local sec = lowerText:match("%((%d+)%s*sec[s%a]*%s*cooldown%)")
+    local sec = string_match(lowerText, "%((%d+)%s*sec[s%a]*%s*cooldown%)")
     if sec then return tonumber(sec) end
     return 120 
 end
@@ -339,34 +353,34 @@ end
 function MSC.Scanner.ClassifyLine(text)
     if not text or text == "" then return "SKIP" end
     -- Clean colors and formatting
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):lower()
+    local cleanText = string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " ")
     
     -- 1. SET LOGIC (Prioritize Header over Equip)
-    if cleanText:find("%(%d+/%d+%)") then return "SET_HEADER" end
-    if cleanText:find("^%s*%(%d+%)%s*set:") then return "SKIP" end -- Skip the specific bonus lines to avoid mis-parsing
-    if cleanText:find("set:") then return "SET" end
+    if string_find(cleanText, "%(%d+/%d+%)") then return "SET_HEADER" end
+    if string_find(cleanText, "^%s*%(%d+%)%s*set:") then return "SKIP" end -- Skip the specific bonus lines to avoid mis-parsing
+    if string_find(cleanText, "set:") then return "SET" end
 
     -- 2. PROCS & USE
-    if cleanText:find("chance on hit") or cleanText:find("when struck") then return "PROC" end
-    if cleanText:find("^%s*use:") then return "USE" end
-    if cleanText:find(" for %d+ sec") and not cleanText:find("per %d+ sec") then return "USE" end
+    if string_find(cleanText, "chance on hit") or string_find(cleanText, "when struck") then return "PROC" end
+    if string_find(cleanText, "^%s*use:") then return "USE" end
+    if string_find(cleanText, " for %d+ sec") and not string_find(cleanText, "per %d+ sec") then return "USE" end
 
     -- 3. SOCKETS
-    if cleanText:find("socket bonus:") then return "SOCKET_BONUS" end
-    if cleanText:find("socket") then return "SOCKET_INFO" end 
+    if string_find(cleanText, "socket bonus:") then return "SOCKET_BONUS" end
+    if string_find(cleanText, "socket") then return "SOCKET_INFO" end 
 
     -- 4. EQUIP LINES
-    if cleanText:find("^%s*equip:") 
-       or cleanText:find("^increases") 
-       or cleanText:find("^improves") 
-       or cleanText:find("^restores") 
-       or cleanText:find("^increased")
-       or cleanText:find("^decreases") then
+    if string_find(cleanText, "^%s*equip:") 
+       or string_find(cleanText, "^increases") 
+       or string_find(cleanText, "^improves") 
+       or string_find(cleanText, "^restores") 
+       or string_find(cleanText, "^increased")
+       or string_find(cleanText, "^decreases") then
        return "EQUIP" 
     end
 
     -- 5. RAW STATS
-    if cleanText:find("%d") then return "STAT" end 
+    if string_find(cleanText, "%d") then return "STAT" end 
     
     return "FLUFF"
 end
@@ -376,10 +390,10 @@ end
 -- =============================================================
 
 function MSC.Scanner.ParseSetHeader(text, metaTable)
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-    local setName, current, total = cleanText:match("^(.*)%s+%(?(%d+)/(%d+)%)?$")
+    local cleanText = string_gsub(string_gsub(text, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
+    local setName, current, total = string_match(cleanText, "^(.*)%s+%(?(%d+)/(%d+)%)?$")
     if setName then 
-        metaTable.SetName = setName:gsub("^%s*(.-)%s*$", "%1")
+        metaTable.SetName = string_gsub(setName, "^%s*(.-)%s*$", "%1")
         metaTable.SetCount = tonumber(current)
         metaTable.SetTotal = tonumber(total)
         return true
@@ -387,11 +401,11 @@ function MSC.Scanner.ParseSetHeader(text, metaTable)
 end
 
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("^Equip: ", ""):gsub("%s+", " "):lower()
-    cleanText = cleanText:gsub("^%s*equip:%s*", "")
+    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "^equip: ", "")
+    cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), "^%s*equip:%s*", "")
     
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
-        local match1, match2, match3 = cleanText:match(pat.p)
+        local match1, match2, match3 = string_match(cleanText, pat.p)
         if match1 then
             if pat.func then pat.func(match1, match2, match3, outputStats); return end
 
@@ -402,11 +416,11 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             if val and pat.isPercent and MSC.IsTBC then
                 local mult = 15.8 -- Default (Melee Hit/Haste)
                 if name then
-                    if name:find("spell") then 
-                        mult = (name:find("hit") and 12.6 or 22.1)
-                    elseif name:find("crit") then 
+                    if string_find(name, "spell") then 
+                        mult = (string_find(name, "hit") and 12.6 or 22.1)
+                    elseif string_find(name, "crit") then 
                         mult = 22.1
-                    elseif name:find("speed") or name:find("haste") then 
+                    elseif string_find(name, "speed") or string_find(name, "haste") then 
                         mult = 15.8
                     end
                 end
@@ -417,22 +431,22 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
                 outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + (val or 1)
                 return
             elseif val and name then
-                local cleanName = name:gsub("your ", ""):gsub("%s+$", "")
+                local cleanName = string_gsub(string_gsub(name, "your ", ""), "%s+$", "")
                 local key = MSC.Scanner.TermMap[cleanName]
                 if key then outputStats[key] = (outputStats[key] or 0) + val; return end
             end
         end
     end
-    if outputProcs then table.insert(outputProcs, { type = "Equip", desc = text }) end
+    if outputProcs then table_insert(outputProcs, { type = "Equip", desc = text }) end
 end
 
 function MSC.Scanner.ParseStatLine(text, outputTable)
     if not text then return end
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("%s+", " "):lower()
-    cleanText = cleanText:match("^%s*(.-)%s*$")
+    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " ")
+    cleanText = string_match(cleanText, "^%s*(.-)%s*$")
     
     for _, pat in ipairs(MSC.Scanner.StatPatterns) do
-        local m1, m2, m3 = cleanText:match(pat.p)
+        local m1, m2, m3 = string_match(cleanText, pat.p)
         if m1 then
             if pat.type == "RANGE" then
                 outputTable["MSC_DAMAGE_RANGE_MIN"] = tonumber(m1)
@@ -445,7 +459,7 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
                 local val = tonumber(pat.valIdx == 1 and m1 or m2)
                 local name = pat.valIdx == 1 and m2 or m1
                 if val and name then
-                    local cleanName = name:gsub("^to ", ""):gsub("%s+$", "")
+                    local cleanName = string_gsub(string_gsub(name, "^to ", ""), "%s+$", "")
                     local key = MSC.Scanner.BaseStatMap[cleanName]
                     if not key and cleanName == "armor" then key = "ITEM_MOD_ARMOR_SHORT" end
                     if key then outputTable[key] = (outputTable[key] or 0) + val; return end
@@ -456,11 +470,11 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
 end
 
 function MSC.Scanner.ParseProcLine(text, outputProcs)
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("%s+", " "):lower()
-    cleanText = cleanText:gsub("^chance on hit: ", ""):gsub("^equip: chance on hit: ", "")
+    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " ")
+    cleanText = string_gsub(string_gsub(cleanText, "^chance on hit: ", ""), "^equip: chance on hit: ", "")
 
     for _, pat in ipairs(MSC.Scanner.ProcPatterns) do
-        local m1, m2, m3 = cleanText:match(pat.p)
+        local m1, m2, m3 = string_match(cleanText, pat.p)
         if m1 then
             local procObj = { description = text }
             if pat.type == "DAMAGE" then
@@ -479,19 +493,19 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
             else 
                 procObj.type = "Generic" 
             end
-            table.insert(outputProcs, procObj)
+            table_insert(outputProcs, procObj)
             return
         end
     end
-    table.insert(outputProcs, { type = "Unknown", description = text })
+    table_insert(outputProcs, { type = "Unknown", description = text })
 end
 
 function MSC.Scanner.ParseUseLine(text, outputUseTable)
-    local cleanText = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("\n", " "):gsub("%s+", " "):gsub("^use: ", ""):lower()
+    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " "), "^use: ", "")
     local cooldown = ParseCooldown(text)
     
     for _, pat in ipairs(MSC.Scanner.UsePatterns) do
-        local m1, m2, m3 = cleanText:match(pat.p)
+        local m1, m2, m3 = string_match(cleanText, pat.p)
         if m1 then
             local effect = { raw = text, cooldown = cooldown }
             if pat.type == "BUFF" then
@@ -503,18 +517,18 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                 if pat.fixedStat then 
                     effect.statKey = pat.fixedStat
                 elseif name then
-                    local cleanName = name:gsub("your ", ""):gsub("%s+$", "")
+                    local cleanName = string_gsub(string_gsub(name, "your ", ""), "%s+$", "")
                     effect.statKey = MSC.Scanner.TermMap[cleanName]
                 end
                 effect.type = "Stat"
             elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then
                 local val = tonumber(m1)
                 if m2 then val = (val + tonumber(m2)) / 2 end
-                effect.statKey = pat.type:find("MANA") and "ITEM_MOD_MANA_REGENERATION_SHORT" or "ITEM_MOD_HEALTH_REGENERATION_SHORT"
+                effect.statKey = string_find(pat.type, "MANA") and "ITEM_MOD_MANA_REGENERATION_SHORT" or "ITEM_MOD_HEALTH_REGENERATION_SHORT"
                 effect.averageVal = (val / cooldown) * 5
                 effect.type = "Resource"
             end
-            table.insert(outputUseTable, effect)
+            table_insert(outputUseTable, effect)
             return
         end
     end
@@ -570,7 +584,7 @@ function MSC.Scanner.Scan(itemLink)
     -- Fallback DPS Calculation
     if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
         local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
-        result.Stats["MSC_WEAPON_DPS"] = math.floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
+        result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
     end
 
     return result

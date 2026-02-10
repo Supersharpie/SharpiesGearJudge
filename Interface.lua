@@ -1,6 +1,36 @@
 local addonName, MSC = ...
 _G.MSC = MSC 
 
+-- [[ SPEED OPTIMIZATION: LOCALIZED FUNCTIONS ]]
+local pairs, ipairs, next, type, tostring, unpack, select = pairs, ipairs, next, type, tostring, unpack, select
+local table_insert, table_sort = table.insert, table.sort
+local math_floor, math_ceil, math_max, math_min, math_abs = math.floor, math.ceil, math.max, math.min, math.abs
+local string_format, string_find = string.format, string.find
+local GetTime = GetTime
+
+-- WoW APIs (UI & Data)
+local CreateFrame = CreateFrame
+local UIParent = UIParent
+local GameTooltip = GameTooltip
+local GetItemInfo = GetItemInfo
+local GetInventoryItemLink = GetInventoryItemLink
+local GetInventoryItemTexture = GetInventoryItemTexture
+local GetItemIcon = GetItemIcon
+local SetItemButtonTexture = SetItemButtonTexture
+local UnitClass = UnitClass
+local UnitRace = UnitRace
+local UnitLevel = UnitLevel
+local UnitName = UnitName
+local GetRealmName = GetRealmName
+local GetCursorInfo = GetCursorInfo
+local ClearCursor = ClearCursor
+local IsShiftKeyDown = IsShiftKeyDown
+local CreateColor = CreateColor
+
+-- Container API Wrapper
+local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+
 -- =============================================================
 -- 1. THEME, COLORS & HELPERS
 -- =============================================================
@@ -12,27 +42,27 @@ MSC.Colors = {
 
 -- [[ STAT COLORS ]]
 MSC.StatColors = {
-	-- [[ MAGIC STATS ]]
+    -- [[ MAGIC STATS ]]
     SPELL_HIT   = {0.0, 1.0, 0.8},   -- Teal/Cyan (Distinct from Melee Green)
     SPELL_CRIT  = {0.8, 0.2, 1.0},   -- Bright Purple/Pink (Distinct from Melee Red)
     SPELL_POWER = {0.6, 0.4, 1.0},   -- Deep Purple
     MANA        = {0.0, 0.5, 1.0},   -- Mana Blue
     INTELLECT   = {0.2, 0.6, 1.0},   -- Cyan
     SPIRIT      = {0.6, 0.6, 1.0},   -- Lavender
-	-- [[ PHYSICAL STATS ]]
-    STAMINA = {0.6, 0.2, 0.2},      -- Dark Red
-    AGILITY = {0.2, 1.0, 0.6},      -- Mint Green
-    STRENGTH = {1.0, 0.2, 0.2},     -- Bright Red
+    -- [[ PHYSICAL STATS ]]
+    STAMINA = {0.6, 0.2, 0.2},       -- Dark Red
+    AGILITY = {0.2, 1.0, 0.6},       -- Mint Green
+    STRENGTH = {1.0, 0.2, 0.2},      -- Bright Red
     ATTACK_POWER = {1.0, 0.2, 0.2}, -- Red
-    HIT = {0.2, 1.0, 0.2},          -- Green
-    CRIT = {1.0, 0.2, 0.4},         -- Red/Pink
-    HASTE = {1.0, 0.8, 0.0},        -- Gold
-    DEFENSE = {0.2, 0.4, 0.8},      -- Tank Blue
-    DODGE = {0.4, 0.4, 0.8},        -- Tank Blue
-    PARRY = {0.4, 0.4, 0.8},        -- Tank Blue
-    BLOCK = {0.5, 0.3, 0.1},        -- Shield Brown
-    RESILIENCE = {0.5, 0.5, 0.5},   -- Grey
-    ARMOR = {0.8, 0.6, 0.4},        -- Leather/Tan
+    HIT = {0.2, 1.0, 0.2},           -- Green
+    CRIT = {1.0, 0.2, 0.4},          -- Red/Pink
+    HASTE = {1.0, 0.8, 0.0},         -- Gold
+    DEFENSE = {0.2, 0.4, 0.8},       -- Tank Blue
+    DODGE = {0.4, 0.4, 0.8},         -- Tank Blue
+    PARRY = {0.4, 0.4, 0.8},         -- Tank Blue
+    BLOCK = {0.5, 0.3, 0.1},         -- Shield Brown
+    RESILIENCE = {0.5, 0.5, 0.5},    -- Grey
+    ARMOR = {0.8, 0.6, 0.4},         -- Leather/Tan
 }
 
 -- [[ ROLE COLORS (NEON BRIGHT) ]]
@@ -66,7 +96,7 @@ function MSC.GetFromPool(poolType, parent, creatorFunc)
         end
     end
     local newFrame = creatorFunc(parent)
-    table.insert(MSC.Pools[poolType], newFrame)
+    table_insert(MSC.Pools[poolType], newFrame)
     return newFrame
 end
 
@@ -154,7 +184,7 @@ function MSC.InitLabView(parent)
                 GameTooltip:Show() 
             end)
             btn:SetScript("OnLeave", GameTooltip_Hide)
-            table.insert(frame.Slots, btn)
+            table_insert(frame.Slots, btn)
         end
         MSC.LabBlocks[id] = frame
     end
@@ -219,7 +249,7 @@ function MSC.UpdateLabCalc()
         
         if itemsFound then
             hasItems = true
-            block.Score:SetText(string.format("%.1f", blockScore))
+            block.Score:SetText(string_format("%.1f", blockScore))
             block.finalScore = blockScore
             if blockScore > bestScore then
                 bestScore = blockScore
@@ -253,7 +283,7 @@ function MSC.UpdateLabCalc()
         end
         if runnerUpScore > 0 then delta = bestScore - runnerUpScore end
         
-        MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins! (+" .. string.format("%.1f", delta) .. ")")
+        MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins! (+" .. string_format("%.1f", delta) .. ")")
         MSC.ViewLab.ResultText:SetTextColor(0, 1, 0)
         
     end
@@ -284,9 +314,9 @@ function MSC.InitReceiptView(parent)
         
         -- Click to Analyze
         btn:RegisterForClicks("AnyUp")
-        btn:SetScript("OnClick", function(self) if self.link then MSC.ShowScoreBreakdown(self.link, self.SlotID) end end)
+        btn:SetScript("OnClick", function(self) if self.link then MSC:ShowScoreBreakdown(self.link, self.SlotID) end end)
         
-        btn.SlotID = id; table.insert(MSC.ReceiptSlots, btn)
+        btn.SlotID = id; table_insert(MSC.ReceiptSlots, btn)
     end
 
     CreateSlot(1, pArmor, 10, -10, "Head"); CreateSlot(3, pArmor, 10, -55, "Shoulder"); CreateSlot(15, pArmor, 10, -100, "Back"); CreateSlot(5, pArmor, 10, -145, "Chest"); CreateSlot(9, pArmor, 10, -190, "Wrist")
@@ -301,7 +331,7 @@ function MSC.InitReceiptView(parent)
         local row = CreateFrame("Frame", nil, f.SummaryBox); row:SetSize(200, 16)
         row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", 0, 0)
         row.Value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Value:SetPoint("RIGHT", 0, 0)
-        table.insert(MSC.SummaryRows, row)
+        table_insert(MSC.SummaryRows, row)
     end
     
     -- [[ FORCE UPDATE ON SHOW ]]
@@ -327,22 +357,26 @@ function MSC.UpdateReceipt()
         end
     end
     local totalScore = MSC:GetTotalCharacterScore(gearTable, weights, specName)
-    MSC.ViewReceipt.Score:SetText("Score: " .. string.format("|cff00ff00%.1f|r", totalScore))
+    MSC.ViewReceipt.Score:SetText("Score: " .. string_format("|cff00ff00%.1f|r", totalScore))
     
-    MSC.BagCache = {}
-    for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local link = C_Container.GetContainerItemLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then
-                 local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                 local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
-                 if slotId then
-                        local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
-                        local score = MSC.GetItemScore(stats, weights, specName, slotId)
-                        table.insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
-                 end
+-- [[ OPTIMIZATION: ONLY SCAN IF BAGS CHANGED ]]
+    if MSC.BagCacheDirty then
+        MSC.BagCache = {}
+        for bag = 0, 4 do
+            for slot = 1, GetContainerNumSlots(bag) do
+                local link = GetContainerItemLink(bag, slot)
+                if link and MSC.IsItemUsable(link) then
+                      local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                      local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
+                      if slotId then
+                            local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
+                            local score = MSC.GetItemScore(stats, weights, specName, slotId)
+                            table_insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
+                      end
+                end
             end
         end
+        MSC.BagCacheDirty = false -- Reset the flag!
     end
 
     for _, btn in ipairs(MSC.ReceiptSlots) do
@@ -352,7 +386,7 @@ function MSC.UpdateReceipt()
             SetItemButtonTexture(btn, GetInventoryItemTexture(unit, btn.SlotID))
             local stats = MSC.SafeGetItemStats(link, btn.SlotID, weights, specName)
             local score = MSC.GetItemScore(stats, weights, specName, btn.SlotID)
-            if score > 0 then btn.ScoreText:SetText(math.floor(score)) else btn.ScoreText:SetText("") end
+            if score > 0 then btn.ScoreText:SetText(math_floor(score)) else btn.ScoreText:SetText("") end
             
             local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
             if equipLoc ~= "INVTYPE_HOLDABLE" and equipLoc ~= "INVTYPE_TABARD" and equipLoc ~= "INVTYPE_BODY" then
@@ -382,15 +416,15 @@ function MSC.UpdateReceipt()
     local sortedStats = {}
     for k, v in pairs(combinedStats) do
         if k ~= "IS_PROJECTED" and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" and v > 0 then
-            local weight = weights[k] or 0; if weight > 0 then table.insert(sortedStats, { key=k, val=v, weight=weight }) end
+            local weight = weights[k] or 0; if weight > 0 then table_insert(sortedStats, { key=k, val=v, weight=weight }) end
         end
     end
-    table.sort(sortedStats, function(a,b) return a.weight > b.weight end)
+    table_sort(sortedStats, function(a,b) return a.weight > b.weight end)
     for i, row in ipairs(MSC.SummaryRows) do
         if sortedStats[i] then
             row:Show(); local clean = MSC.GetCleanStatName(sortedStats[i].key)
-            row.Label:SetText("|cff00ff00" .. clean .. ":|r"); row.Value:SetText(string.format("%.1f", sortedStats[i].val))
-            local isLeft = (i % 2 ~= 0); local rIdx = math.ceil(i/2)
+            row.Label:SetText("|cff00ff00" .. clean .. ":|r"); row.Value:SetText(string_format("%.1f", sortedStats[i].val))
+            local isLeft = (i % 2 ~= 0); local rIdx = math_ceil(i/2)
             if isLeft then row:SetPoint("TOPLEFT", MSC.ViewReceipt.SummaryBox, "TOPLEFT", 10, -20 - (rIdx*16))
             else row:SetPoint("TOPLEFT", MSC.ViewReceipt.SummaryBox, "TOPLEFT", 230, -20 - (rIdx*16)) end
         else row:Hide() end
@@ -400,28 +434,28 @@ end
 -- [[ VIEW 3: STAT LOGIC ]]
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
-    if stat:find("STRENGTH") then return "Increases Attack Power and Block Value" end
-    if stat:find("AGILITY") then return "Increases Crit Chance, Dodge, and Armor" end
-    if stat:find("STAMINA") then return "Increases total Health Pool" end
-    if stat:find("INTELLECT") then return "Increases Mana Pool and Spell Crit" end
-    if stat:find("SPIRIT") then return "Increases Out-of-Combat and Spell5 Regen" end
-    if stat:find("ATTACK_POWER") then return "Increases Raw Physical Damage Output" end
-    if stat:find("EXPERTISE") then return "Reduces chance Target Parries or Dodges" end
-    if stat:find("ARMOR_PENETRATION") then return "Ignores a portion of Target's Armor" end
-    if stat:find("MELEE_HIT") or stat:find("RANGED_HIT") or (stat:find("HIT") and not stat:find("SPELL")) then return "Reduces chance to Miss Physical attacks" end
-    if stat:find("SPELL_POWER") then return "Increases Scaling Damage of Spells" end
-    if stat:find("HEALING") then return "Increases Potency of Healing spells" end
-    if stat:find("SPELL_HIT") then return "Reduces chance for Spells to Resist/Miss" end
-    if stat:find("MANA_REG") or stat:find("MP5") then return "Constant Mana Sustain (Mp5)" end
-    if stat:find("CRIT") and not stat:find("FROM_STATS") then return "Chance for Extra Critical Damage/Healing" end
-    if stat:find("HASTE") then return "Increases Attack/Casting Speed" end
-    if stat:find("DEFENSE") then return "Reduces chance to be Crit and Hit" end
-    if stat:find("DODGE") then return "Chance to completely Avoid Physical attacks" end
-    if stat:find("PARRY") then return "Chance to Deflect front-facing attacks" end
-    if stat:find("BLOCK_VALUE") then return "Increases Damage mitigated by Shield" end
-    if stat:find("BLOCK_RATING") then return "Chance to Mitigate damage with Shield" end
-    if stat:find("RESILIENCE") then return "Reduces Crit Damage and Chance (PvP)" end
-    if stat:find("ARMOR") and not stat:find("PENETRATION") then return "Reduces Incoming Physical Damage" end
+    if string_find(stat, "STRENGTH") then return "Increases Attack Power and Block Value" end
+    if string_find(stat, "AGILITY") then return "Increases Crit Chance, Dodge, and Armor" end
+    if string_find(stat, "STAMINA") then return "Increases total Health Pool" end
+    if string_find(stat, "INTELLECT") then return "Increases Mana Pool and Spell Crit" end
+    if string_find(stat, "SPIRIT") then return "Increases Out-of-Combat and Spell5 Regen" end
+    if string_find(stat, "ATTACK_POWER") then return "Increases Raw Physical Damage Output" end
+    if string_find(stat, "EXPERTISE") then return "Reduces chance Target Parries or Dodges" end
+    if string_find(stat, "ARMOR_PENETRATION") then return "Ignores a portion of Target's Armor" end
+    if string_find(stat, "MELEE_HIT") or string_find(stat, "RANGED_HIT") or (string_find(stat, "HIT") and not string_find(stat, "SPELL")) then return "Reduces chance to Miss Physical attacks" end
+    if string_find(stat, "SPELL_POWER") then return "Increases Scaling Damage of Spells" end
+    if string_find(stat, "HEALING") then return "Increases Potency of Healing spells" end
+    if string_find(stat, "SPELL_HIT") then return "Reduces chance for Spells to Resist/Miss" end
+    if string_find(stat, "MANA_REG") or string_find(stat, "MP5") then return "Constant Mana Sustain (Mp5)" end
+    if string_find(stat, "CRIT") and not string_find(stat, "FROM_STATS") then return "Chance for Extra Critical Damage/Healing" end
+    if string_find(stat, "HASTE") then return "Increases Attack/Casting Speed" end
+    if string_find(stat, "DEFENSE") then return "Reduces chance to be Crit and Hit" end
+    if string_find(stat, "DODGE") then return "Chance to completely Avoid Physical attacks" end
+    if string_find(stat, "PARRY") then return "Chance to Deflect front-facing attacks" end
+    if string_find(stat, "BLOCK_VALUE") then return "Increases Damage mitigated by Shield" end
+    if string_find(stat, "BLOCK_RATING") then return "Chance to Mitigate damage with Shield" end
+    if string_find(stat, "RESILIENCE") then return "Reduces Crit Damage and Chance (PvP)" end
+    if string_find(stat, "ARMOR") and not string_find(stat, "PENETRATION") then return "Reduces Incoming Physical Damage" end
     return nil
 end
 
@@ -470,10 +504,8 @@ local function CreateStatRing(parent, x, y, size, label)
     f.Spin = f.AnimGroup:CreateAnimation("Rotation")
     f.Spin:SetOrder(1)
 
-    -- [[ MISSING PULSE ADDED HERE ]]
     f.Pulse = f.AnimGroup:CreateAnimation("Scale")
     f.Pulse:SetOrder(1)
-    -- [[ END FIX ]]
     
     -- 4. TEXT FRAME
     f.TextFrame = CreateFrame("Frame", nil, f)
@@ -506,15 +538,15 @@ function MSC.ApplyRingArt(f, statType)
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Rune.tga") 
          f.Spin:SetDegrees(360); f.Spin:SetDuration(60); f.AnimGroup:Play()
 
-    elseif statType:find("Hit") or statType:find("Haste") then
+    elseif string_find(statType, "Hit") or string_find(statType, "Haste") then
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Swirl.tga")
          f.Spin:SetDegrees(-360); f.Spin:SetDuration(30); f.AnimGroup:Play()
          
          -- Color Logic
-         if statType:find("Haste") then
+         if string_find(statType, "Haste") then
             -- HASTE: Gold
             f.Energy:SetVertexColor(1.0, 0.8, 0.0, 1)
-         elseif statType:find("Spell") then 
+         elseif string_find(statType, "Spell") then 
             -- SPELL HIT: Teal/Cyan
             f.Energy:SetVertexColor(0.2, 1.0, 0.8, 1) 
          else
@@ -526,13 +558,13 @@ function MSC.ApplyRingArt(f, statType)
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
          f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) -- Orange
 
-    elseif statType:find("Crit") then
+    elseif string_find(statType, "Crit") then
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
          f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
          f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
          f.AnimGroup:Play()
          
-         if statType:find("Spell") then
+         if string_find(statType, "Spell") then
              f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1) -- Purple for Spells
          else
              f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1) -- Red for Melee
@@ -571,7 +603,7 @@ local function GetClassRings(class, stats, weights)
     if class == "MAGE" then
         local arcane = GetTalentRank(1, "Arcane Focus") * 2
         local frost = GetTalentRank(3, "Elemental Precision") * (isTBC and 1 or 2)
-        spellHitBonus = math.max(arcane, frost)
+        spellHitBonus = math_max(arcane, frost)
     elseif class == "WARLOCK" then
         spellHitBonus = GetTalentRank(1, "Suppression") * 2
     elseif class == "PRIEST" then
@@ -601,11 +633,11 @@ local function GetClassRings(class, stats, weights)
         local prec = GetTalentRank(2, "Precision") * 1
         meleeHitBonus = prec; spellHitBonus = prec
         local ant = GetTalentRank(2, "Anticipation") * 4
-        CAP_DEF = math.max(350, CAP_DEF - ant)
+        CAP_DEF = math_max(350, CAP_DEF - ant)
     elseif class == "WARRIOR" then
         meleeHitBonus = GetTalentRank(2, "Precision") * 1
         local ant = GetTalentRank(3, "Anticipation") * 4
-        CAP_DEF = math.max(350, CAP_DEF - ant)
+        CAP_DEF = math_max(350, CAP_DEF - ant)
         if isTBC then
             local def = GetTalentRank(3, "Defiance") 
             expertBonus = expertBonus + (def * 2) 
@@ -650,9 +682,9 @@ local function GetClassRings(class, stats, weights)
     end
 
     -- [[ 3. ADJUST CAPS ]]
-    CAP_HIT_MELEE = math.max(0, CAP_HIT_MELEE - meleeHitBonus)
-    CAP_HIT_SPELL = math.max(0, CAP_HIT_SPELL - spellHitBonus)
-    CAP_EXP       = math.max(0, CAP_EXP - expertBonus)
+    CAP_HIT_MELEE = math_max(0, CAP_HIT_MELEE - meleeHitBonus)
+    CAP_HIT_SPELL = math_max(0, CAP_HIT_SPELL - spellHitBonus)
+    CAP_EXP       = math_max(0, CAP_EXP - expertBonus)
 
     -- [[ 4. RENDER RINGS ]]
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
@@ -671,11 +703,11 @@ local function GetClassRings(class, stats, weights)
         local currentDisplay = 0; local capRating = 0
         if isSkill then
             if label == "Def Cap" then
-                local skillAdded = math.floor(val / scalar)
+                local skillAdded = math_floor(val / scalar)
                 currentDisplay = 350 + skillAdded
                 capRating = (capTarget - 350) * scalar
             else
-                currentDisplay = math.floor(val / scalar)
+                currentDisplay = math_floor(val / scalar)
                 capRating = capTarget * scalar
             end
         else
@@ -683,11 +715,11 @@ local function GetClassRings(class, stats, weights)
         end
         
         -- Apply Racial Crit Bonus
-        if label == "Crit" or label:find("Crit") then
+        if label == "Crit" or string_find(label, "Crit") then
             currentDisplay = currentDisplay + critBonus
         end
 
-        table.insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar })
+        table_insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar })
     end
 
     if class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" then
@@ -711,7 +743,7 @@ local function GetClassRings(class, stats, weights)
     elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" then
         AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
         AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%") 
-        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")     
+        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")      
     elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
         local isTank = (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5
         local isCaster = (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
@@ -742,8 +774,6 @@ function MSC.InitLogicView(parent)
     scroll:SetPoint("TOPLEFT", 20, -20); scroll:SetPoint("BOTTOMRIGHT", -40, 20)
     local content = CreateFrame("Frame", nil, scroll); content:SetSize(400, 800); scroll:SetScrollChild(content)
     f.Content = content
-    
-    -- [[ FORCE UPDATE ON SHOW ]]
     f:SetScript("OnShow", function() MSC.UpdateLogic() end)
     
     MSC.ViewLogic = f
@@ -773,15 +803,15 @@ function MSC.UpdateLogic()
             local f = MSC.GetFromPool("Rings", content, function(p) return CreateStatRing(p, 0, 0, 80, "TEMP") end)
             f:ClearAllPoints(); f:SetPoint("TOPLEFT", xPos, -20)
             f.lbl:SetText(ring.l:upper())
-            f.val:SetText(string.format(ring.fmt, ring.v))
+            f.val:SetText(string_format(ring.fmt, ring.v))
             
             MSC.ApplyRingArt(f, ring.l) 
  
             local fillPct = 0
-            if ring.m > 0 then fillPct = math.min(100, (ring.v / ring.m) * 100) end
+            if ring.m > 0 then fillPct = math_min(100, (ring.v / ring.m) * 100) end
             
             local r,g,b = 0, 0, 0
-            if ring.l:find("Cap") or ring.l:find("Hit") or ring.l:find("Expertise") or ring.l:find("Def") then
+            if string_find(ring.l, "Cap") or string_find(ring.l, "Hit") or string_find(ring.l, "Expertise") or string_find(ring.l, "Def") then
                 if fillPct >= 100 then r,g,b = 0, 1, 0 end
             end
             
@@ -797,32 +827,32 @@ function MSC.UpdateLogic()
                 GameTooltip:SetText(ring.l, 1, 1, 1)
                 GameTooltip:AddLine(" ")
                 if ring.rawVal and ring.rawCap and ring.rawCap > 0 then
-                    GameTooltip:AddDoubleLine("Rating:", string.format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
+                    GameTooltip:AddDoubleLine("Rating:", string_format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
                     local diff = ring.rawCap - ring.rawVal
-                    if diff > 0 then GameTooltip:AddLine(string.format("Need %d more rating to cap.", diff), 1, 0.5, 0.5) else GameTooltip:AddLine("Cap reached!", 0, 1, 0) end
+                    if diff > 0 then GameTooltip:AddLine(string_format("Need %d more rating to cap.", diff), 1, 0.5, 0.5) else GameTooltip:AddLine("Cap reached!", 0, 1, 0) end
                 else
-                    GameTooltip:AddDoubleLine("Current Rating:", string.format("%d", ring.rawVal), 1, 0.82, 0, 1, 1, 1)
+                    GameTooltip:AddDoubleLine("Current Rating:", string_format("%d", ring.rawVal), 1, 0.82, 0, 1, 1, 1)
                 end
-                if ring.scalar then GameTooltip:AddLine(" "); GameTooltip:AddLine(string.format("1%% requires %.2f Rating", ring.scalar), 0.6, 0.6, 0.6) end
+                if ring.scalar then GameTooltip:AddLine(" "); GameTooltip:AddLine(string_format("1%% requires %.2f Rating", ring.scalar), 0.6, 0.6, 0.6) end
                 GameTooltip:Show(); self:SetAlpha(1)
             end)
             f:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(1) end)
-            table.insert(content.children, f)
+            table_insert(content.children, f)
         end
     end
 
     local yOff = -135
     local sorted = {}
     local maxW = 0
-    for k, v in pairs(weights) do if v > 0 then table.insert(sorted, {k=k, v=v}); if v > maxW then maxW = v end end end
-    table.sort(sorted, function(a,b) return a.v > b.v end)
+    for k, v in pairs(weights) do if v > 0 then table_insert(sorted, {k=k, v=v}); if v > maxW then maxW = v end end end
+    table_sort(sorted, function(a,b) return a.v > b.v end)
 
     for _, s in ipairs(sorted) do
         local bar = MSC.GetFromPool("Bars", content, function(p)
              local b = CreateFrame("StatusBar", nil, p, "BackdropTemplate")
              b:SetSize(450, 32)
              b:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"})
-             b:SetBackdropColor(0, 0, 0, 0.5) -- Darker background
+             b:SetBackdropColor(0, 0, 0, 0.5)
              
              -- Glassy Texture
              b:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Fill")
@@ -836,20 +866,20 @@ function MSC.UpdateLogic()
                  if self.CurrentVal and self.CurrentVal > 0 then
                      GameTooltip:AddLine(" ")
                      local scoreContrib = (self.Weight or 0) * self.CurrentVal
-                     GameTooltip:AddDoubleLine("Gear Contribution:", string.format("%.1f", self.CurrentVal), 1, 1, 1, 1, 1, 1)
+                     GameTooltip:AddDoubleLine("Gear Contribution:", string_format("%.1f", self.CurrentVal), 1, 1, 1, 1, 1, 1)
                      
                      if self.RealTotal and self.RealTotal > 0 then
-                         if math.abs(self.RealTotal - self.CurrentVal) > 1 then
-                             GameTooltip:AddDoubleLine("Character Sheet:", string.format("%d (Includes Base/Enchants)", self.RealTotal), 0.6, 0.6, 0.6, 0.6, 0.6, 0.6)
+                         if math_abs(self.RealTotal - self.CurrentVal) > 1 then
+                             GameTooltip:AddDoubleLine("Character Sheet:", string_format("%d (Includes Base/Enchants)", self.RealTotal), 0.6, 0.6, 0.6, 0.6, 0.6, 0.6)
                          end
                      end
                      
                      GameTooltip:AddLine(" ")
                      GameTooltip:AddDoubleLine("Score Calculation:", " ", 1, 0.82, 0)
-                     GameTooltip:AddLine(string.format("%.2f (Weight) x %.1f (Gear)", self.Weight, self.CurrentVal), 1, 1, 1)
-                     GameTooltip:AddDoubleLine("= Score:", string.format("%.1f", scoreContrib), nil, nil, nil, 0, 1, 0)
+                     GameTooltip:AddLine(string_format("%.2f (Weight) x %.1f (Gear)", self.Weight, self.CurrentVal), 1, 1, 1)
+                     GameTooltip:AddDoubleLine("= Score:", string_format("%.1f", scoreContrib), nil, nil, nil, 0, 1, 0)
                  else
-                     GameTooltip:AddDoubleLine("Stat Weight:", string.format("%.2f", self.Weight or 0), nil,nil,nil, 0, 1, 0)
+                     GameTooltip:AddDoubleLine("Stat Weight:", string_format("%.2f", self.Weight or 0), nil,nil,nil, 0, 1, 0)
                      GameTooltip:AddLine("You currently have 0 of this stat from gear.", 0.6, 0.6, 0.6)
                  end
                  
@@ -880,18 +910,18 @@ function MSC.UpdateLogic()
         bar:ClearAllPoints(); bar:SetPoint("TOPLEFT", 15, yOff)
         bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v); bar:SetAlpha(0.9)
         
-		-- [[ NEW COLOR LOGIC: PRIORITY SYSTEM ]]
+        -- [[ NEW COLOR LOGIC: PRIORITY SYSTEM ]]
         local statKey = s.k:upper()
         local r, g, b = 0.5, 0.5, 0.5 -- Default Grey
         
         -- Check for specific "SPELL" overrides first!
-        if statKey:find("SPELL_HIT") then r,g,b = unpack(MSC.StatColors.SPELL_HIT)
-        elseif statKey:find("SPELL_CRIT") then r,g,b = unpack(MSC.StatColors.SPELL_CRIT)
-        elseif statKey:find("SPELL_POWER") then r,g,b = unpack(MSC.StatColors.SPELL_POWER)
+        if string_find(statKey, "SPELL_HIT") then r,g,b = unpack(MSC.StatColors.SPELL_HIT)
+        elseif string_find(statKey, "SPELL_CRIT") then r,g,b = unpack(MSC.StatColors.SPELL_CRIT)
+        elseif string_find(statKey, "SPELL_POWER") then r,g,b = unpack(MSC.StatColors.SPELL_POWER)
         else
             -- If no specific Spell match, look for generic matches
             for key, color in pairs(MSC.StatColors) do
-                if statKey:find(key) and not key:find("SPELL") then 
+                if string_find(statKey, key) and not string_find(key, "SPELL") then 
                     r,g,b = unpack(color); break 
                 end
             end
@@ -900,13 +930,13 @@ function MSC.UpdateLogic()
         -- Create a gradient from Dark -> Bright
         bar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(r*0.4, g*0.4, b*0.4, 1), CreateColor(r, g, b, 1))
 
-        bar.leftT:SetText(name:gsub("Rating", "")); bar.rightT:SetText(string.format("%.2f", s.v))
+        bar.leftT:SetText(name:gsub("Rating", "")); bar.rightT:SetText(string_format("%.2f", s.v))
         if reason then bar.sub:SetText(reason); bar.sub:SetTextColor(r+0.2, g+0.2, b+0.2, 0.8) else bar.sub:Hide() end
         
         yOff = yOff - 38
-        table.insert(content.children, bar)
+        table_insert(content.children, bar)
     end
-    content:SetHeight(math.abs(yOff) + 50)
+    content:SetHeight(math_abs(yOff) + 50)
 end
 
 -- [[ VIEW 4: SETTINGS]]
@@ -1001,12 +1031,12 @@ function MSC.InitSettingsView(parent)
     if MSC.CurrentClass then
         local function AddList(listSource)
             if not listSource then return end
-            local sorted = {}; for k in pairs(listSource) do table.insert(sorted, k) end; table.sort(sorted)
+            local sorted = {}; for k in pairs(listSource) do table_insert(sorted, k) end; table_sort(sorted)
             for _, k in ipairs(sorted) do 
                 if not seen[k] then 
                     local name = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[k]) or k; 
-                    table.insert(specOptions, { text = name, val = k })
-                    table.insert(profileList, { text = name, val = k }) 
+                    table_insert(specOptions, { text = name, val = k })
+                    table_insert(profileList, { text = name, val = k }) 
                     seen[k] = true 
                 end 
             end
@@ -1023,9 +1053,6 @@ function MSC.InitSettingsView(parent)
         AddList(MSC.CurrentClass.Profiles)
     end 
 
-    local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
-    local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
-	
     local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
     local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
     
@@ -1065,7 +1092,7 @@ function MSC.InitSettingsView(parent)
         end)
         ty = ty - 20
     end
-    sChild:SetHeight(math.abs(ty) + 20)
+    sChild:SetHeight(math_abs(ty) + 20)
 
     -- ========================================================================
     -- [[ BOTTOM ]]
@@ -1080,7 +1107,7 @@ end
 
 function MSC.RegisterPluginTab(name, icon, initFunc, viewKey, updateFuncKey)
     local newID = #MSC.RegisteredTabs + 1
-    table.insert(MSC.RegisteredTabs, {
+    table_insert(MSC.RegisteredTabs, {
         id = newID, name = name, icon = icon,
         directFunc = initFunc, view = viewKey, update = updateFuncKey
     })
@@ -1105,7 +1132,7 @@ function MSC.RenderSidebarButtons()
         btn:SetScript("OnEnter", function(self) self.Icon:SetVertexColor(1,1,1); self.Bg:SetAlpha(0.1); GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tab.name); GameTooltip:Show() end)
         btn:SetScript("OnLeave", function(self) self.Bg:SetAlpha(0); if self.ID ~= MSC.ActiveTab then self.Icon:SetVertexColor(0.6, 0.6, 0.6) end GameTooltip:Hide() end)
         btn:SetScript("OnClick", function(self) MSC.SwitchTab(self.ID) end)
-        btn.ID = idx; table.insert(MSC.NavButtons, btn)
+        btn.ID = idx; table_insert(MSC.NavButtons, btn)
     end
     if MSC.ActiveTab then MSC.SwitchTab(MSC.ActiveTab) end
 end
@@ -1144,8 +1171,6 @@ function MSC.ToggleMainMenu()
     f.Bg:SetPoint("CENTER", f, "CENTER", 0, 0)
     f.Bg:SetSize(512, 512)
     f.Bg:SetAlpha(0.7)      -- Softens the image slightly before the overlay
-    
-    -- Using a cleaner TexCoord (standard 0,1,0,1) to avoid the 10% vertical squish
     f.Bg:SetTexCoord(0, 1, 0, 1) 
     
     -- Overlay (This stays SetAllPoints to ensure the window background is consistent)
@@ -1160,7 +1185,7 @@ function MSC.ToggleMainMenu()
     f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
 
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.3.4 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.3.5 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -1286,8 +1311,8 @@ f:SetScript("OnEvent", function(self, event, arg1)
                 MSC_Minimap:SetPoint("CENTER", Minimap, "CENTER", -60, -60)
             end
         end
-		
-		-- Load Custom Pawn Weights into the selectable list
+        
+        -- Load Custom Pawn Weights into the selectable list
         if MSC.WeightDB then
             for name, weights in pairs(SharpiesGearJudgeDB.customWeights) do
                 MSC.WeightDB[name] = weights
@@ -1411,9 +1436,9 @@ function MSC.ShowHistory()
     for i=1, 18 do gearTable[i] = GetInventoryItemLink(unit, i) end
     local totalScore = MSC:GetTotalCharacterScore(gearTable, weights, specName)
 
-    local exportStr = string.format("```ini\n[ %s - %s (Lvl %d %s) ]\n", name, realm, lvl, class)
-    exportStr = exportStr .. string.format("Profile    = %s\n", profileName)
-    exportStr = exportStr .. string.format("TotalScore = %.1f\n\n", totalScore)
+    local exportStr = string_format("```ini\n[ %s - %s (Lvl %d %s) ]\n", name, realm, lvl, class)
+    exportStr = exportStr .. string_format("Profile    = %s\n", profileName)
+    exportStr = exportStr .. string_format("TotalScore = %.1f\n\n", totalScore)
     exportStr = exportStr .. "[ Equipment ]\n"
 
     local slots = {
@@ -1430,9 +1455,9 @@ function MSC.ShowHistory()
             local itemName = GetItemInfo(link) or "Unknown Item"
             local stats = MSC.SafeGetItemStats(link, slotID, weights, specName)
             local score = MSC.GetItemScore(stats, weights, specName, slotID)
-            exportStr = exportStr .. string.format("%-10s = %s (%.1f)\n", label, itemName, score)
+            exportStr = exportStr .. string_format("%-10s = %s (%.1f)\n", label, itemName, score)
         else
-            exportStr = exportStr .. string.format("%-10s = (Empty)\n", label)
+            exportStr = exportStr .. string_format("%-10s = (Empty)\n", label)
         end
     end
     exportStr = exportStr .. "```"
@@ -1449,7 +1474,7 @@ end
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("ADDON_LOADED")
 loader:SetScript("OnEvent", function(self, event, name)
-    if name == "SharpiesGearJudge" then
+    if name == addonName then
         -- 1. Initialize the Character-Specific SavedVariable
         SharpiesGearJudgeDB = SharpiesGearJudgeDB or { customWeights = {} }
         
@@ -1472,3 +1497,115 @@ loader:SetScript("OnEvent", function(self, event, name)
         self:UnregisterEvent("ADDON_LOADED")
     end
 end)
+
+-- =============================================================
+-- 7. SCORE BREAKDOWN POPUP
+-- =============================================================
+function MSC:ShowScoreBreakdown(itemLink, slotID)
+    if not itemLink then return end
+ 
+    if not MSC.BreakdownFrame then
+        local f = CreateFrame("Frame", "SGJ_BreakdownFrame", UIParent, "BackdropTemplate")
+        f:SetSize(300, 300)
+        f:SetFrameStrata("DIALOG")
+        f:EnableMouse(true)
+        f:SetMovable(true); f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        
+        f:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true, tileSize = 32, edgeSize = 32,
+            insets = { left = 11, right = 12, top = 12, bottom = 11 }
+        })
+        
+        f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        f.Title:SetPoint("TOP", 0, -15)
+        f.Title:SetTextColor(1, 0.82, 0)
+        
+        f.Close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+        f.Close:SetPoint("TOPRIGHT", -5, -5)
+        
+        f.Content = CreateFrame("Frame", nil, f)
+        f.Content:SetPoint("TOPLEFT", 25, -50)
+        f.Content:SetPoint("BOTTOMRIGHT", -25, 25)
+        
+        MSC.BreakdownFrame = f
+    end
+    
+    local f = MSC.BreakdownFrame
+    f:Show()
+    f:SetPoint("CENTER") -- Reset position or anchor to cursor if preferred
+    
+    -- 2. Calculate Math
+    local weights, specName = MSC.GetCurrentWeights()
+    -- Fallback to default class weights if none loaded
+    if not weights and MSC.CurrentClass then 
+        specName, weights = next(MSC.CurrentClass.Weights) 
+    end
+    
+    if not weights then 
+        f.Title:SetText("No Weights Loaded") 
+        return 
+    end
+
+    local stats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
+    local sorted = {}
+    local totalScore = 0
+    
+    for k, v in pairs(stats) do
+        -- Only show stats that have a weight (or match the special Bouncer logic)
+        if type(v) == "number" then
+            local w = weights[k] or 0
+            if w > 0 then
+                local subScore = v * w
+                totalScore = totalScore + subScore
+                table_insert(sorted, { k=k, v=v, w=w, s=subScore })
+            end
+        end
+    end
+    -- Sort by highest score contribution
+    table_sort(sorted, function(a,b) return a.s > b.s end)
+    
+    -- 3. Render Lines
+    if f.lines then for _, l in ipairs(f.lines) do l:Hide() end end
+    f.lines = f.lines or {}
+    
+    local itemName = GetItemInfo(itemLink) or "Unknown Item"
+    f.Title:SetText(itemName)
+    
+    local yOff = 0
+    for i, data in ipairs(sorted) do
+        local line = f.lines[i]
+        if not line then
+            line = f.Content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            line:SetJustifyH("LEFT")
+            f.lines[i] = line
+        end
+        line:ClearAllPoints()
+        line:SetPoint("TOPLEFT", 0, yOff)
+        
+        local cleanName = MSC.GetCleanStatName(data.k)
+        -- Format: "15 Strength x 2.2 = 33.0"
+        line:SetText(string_format("|cffffffff%.1f %s|r  x %.2f  =  |cff00ff00%.1f|r", data.v, cleanName, data.w, data.s))
+        line:Show()
+        
+        yOff = yOff - 20
+    end
+    
+    -- Add Total at Bottom
+    local totalIdx = #sorted + 1
+    local totalLine = f.lines[totalIdx]
+    if not totalLine then
+        totalLine = f.Content:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        totalLine:SetJustifyH("RIGHT")
+        f.lines[totalIdx] = totalLine
+    end
+    totalLine:ClearAllPoints()
+    totalLine:SetPoint("TOPRIGHT", 0, yOff - 10)
+    totalLine:SetText("Total Score: " .. string_format("|cff00ff00%.1f|r", totalScore))
+    totalLine:Show()
+
+    -- Resize frame to fit content
+    f:SetHeight(math_abs(yOff) + 100)
+end
