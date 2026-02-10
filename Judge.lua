@@ -277,6 +277,9 @@ end
 -- 4. TOOLTIP ENGINE (Consolidated)
 -- =============================================================
 MSC.IsCalculating = false
+MSC.LastLink = nil      -- Stores the last item we saw
+MSC.LastTime = 0        -- Stores the exact time we saw it
+
 local Scratch_Tooltip_New = {}
 local Scratch_Tooltip_Old = {}
 local Scratch_Tooltip_Diffs = {}
@@ -287,13 +290,29 @@ local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.pn
 local STAT_CONSOLIDATION_MAP = {} 
 
 local function OnTooltipSetItem(tooltip)
+    -- [[ 2. RECURSION & SETTINGS CHECKS ]]
     if MSC.IsCalculating then return end
     if tooltip:GetName() and string_find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
-    if SGJ_Settings and SGJ_Settings.HideTooltips then return end
+    
+    if SGJ_Settings then
+        if SGJ_Settings.HideTooltips then return end
+        if SGJ_Settings.ShiftOnlyTooltip and not IsShiftKeyDown() then return end
+    end
     
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
     if not link or not IsEquippableItem(link) then return end
+
+    -- [[ 3. THE THROTTLE (RAM SAVER) ]]
+    -- Prevents recalculating the same item multiple times in a split second
+    local now = GetTime()
+    if link == MSC.LastLink and (now - MSC.LastTime) < 0.1 then 
+        return 
+    end
+    -- Update the memory for next time
+    MSC.LastLink = link
+    MSC.LastTime = now
+
     if link and not MSC.IsItemUsable(link) then return end
 
     MSC.IsCalculating = true
@@ -301,7 +320,6 @@ local function OnTooltipSetItem(tooltip)
     
     -- Class Load Safety
     if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
-        -- This logic assumes Classes are loaded. If not, we wait.
         MSC.IsCalculating = false
         return
     end

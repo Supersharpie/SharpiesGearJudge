@@ -1055,13 +1055,26 @@ function MSC.InitSettingsView(parent)
 
     local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
     local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
-    
-    -- Interface Options
-    local h3 = CreateHeader("Interface Options", ddProfile, -20)
-    local cb1 = CreateCheck("Hide Minimap Button", "HideMinimap", "Hides the circular button on your minimap.", h3, 0, -10)
-    local cb2 = CreateCheck("Hide Tooltip Verdict", "HideTooltips", "Stops the addon from adding scores to item tooltips.", cb1, 0, -5)
-    local cb3 = CreateCheck("Mute Error Sounds", "MuteSounds", "Stops the error sound when clicking invalid items.", cb2, 0, -5)
+	-- Interface Options
+    local h3 = CreateHeader("Interface Options", ddProfile, -20)   
+    -- 1. The Minimap Toggle
+    local cb1 = CreateCheck("Hide Minimap Button", "HideMinimap", "Hides the circular button on your minimap.", h3, 0, -10)  
+    -- 2. The Main Tooltip Toggle
+    local cb2 = CreateCheck("Hide Tooltip Verdict", "HideTooltips", "Stops the addon from adding scores to item tooltips.", cb1, 0, -5)   
+    -- 3. The New Shift Toggle (Indented)
+    local cbShift = CreateCheck("Show Only via Shift Key", "ShiftOnlyTooltip", "Only shows the Judge score in tooltips while holding the SHIFT key.", cb2, 20, -5)
+    -- 4. Options moved down (Indented to match Shift, or aligned back to left)
+    -- I aligned these back to the left (0 offset from cbShift's parent logic) so they stand out as separate options
+    local cb3 = CreateCheck("Mute Error Sounds", "MuteSounds", "Stops the error sound when clicking invalid items.", cbShift, -20, -5)
     local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", cb3, 0, -5)
+    -- Optional: Make the Shift option grey out if the main toggle is off
+    cb2:HookScript("OnClick", function(self)
+        if self:GetChecked() then
+            cbShift:SetAlpha(0.5); cbShift:Disable()
+        else
+            cbShift:SetAlpha(1); cbShift:Enable()
+        end
+    end)
 
     -- ========================================================================
     -- [[ RIGHT COLUMN ]]

@@ -62,6 +62,13 @@ MSC.Scanner.BaseStatMap = {
     ["arcane spell damage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
     ["nature spell damage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
     ["holy spell damage"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+	["spell damage and healing"] = "ITEM_MOD_SPELL_POWER_SHORT",  -- Fixes "of the Crusade", "of the Sorcerer"
+    ["damage and healing spells"] = "ITEM_MOD_SPELL_POWER_SHORT", -- rare variation   
+    -- Hunter / Range missing entries
+    ["ranged attack power"] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", -- Critical for "of the Falcon" variants if they split stats
+    ["spell penetration"] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
+    ["all stats"] = "ITEM_MOD_ALL_STATS_SHORT", -- "of the Ancestors" or generic buffs
+    ["magic resistance"] = "ITEM_MOD_RESISTANCE_ALL_SHORT", -- "of Resistance" (rare white text)
     
     ["mana"]           = "ITEM_MOD_MANA_SHORT",
     ["health"]         = "ITEM_MOD_HEALTH_SHORT",
