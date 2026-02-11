@@ -1308,6 +1308,7 @@ f:RegisterEvent("PLAYER_LOGIN")
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 f:RegisterEvent("PLAYER_TALENT_UPDATE")
+f:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 f:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 
 local isFirstLogin = true
@@ -1345,7 +1346,7 @@ f:SetScript("OnEvent", function(self, event, arg1)
             -- Verify 'p' is actually a table of coordinates. 
             if type(p) == "table" then
                 MSC_Minimap:ClearAllPoints()
-                MSC_Minimap:SetPoint(p[1], UIParent, p[2], p[3], p[4])
+                MSC_Minimap:SetPoint(p[1], Minimap, p[2], p[3], p[4])
             else
                 -- Bad Data found: Reset to default
                 SGJ_Settings.MinimapPos = nil
@@ -1610,7 +1611,7 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     local totalScore = 0
     
     for k, v in pairs(stats) do
-        -- Only show stats that have a weight (or match the special Bouncer logic)
+        -- Standard stats
         if type(v) == "number" then
             local w = weights[k] or 0
             if w > 0 then
@@ -1620,6 +1621,18 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
             end
         end
     end
+    
+    -- Safely handle Auto Procs for the UI without altering the cache
+    if stats._AUTO_PROC then
+        local p = stats._AUTO_PROC
+        local w = weights[p.stat] or 0
+        if w > 0 then
+            local subScore = p.val * w
+            totalScore = totalScore + subScore
+            table_insert(sorted, { k=p.stat, v=p.val, w=w, s=subScore })
+        end
+    end
+
     -- Sort by highest score contribution
     table_sort(sorted, function(a,b) return a.s > b.s end)
     

@@ -256,10 +256,16 @@ function MSC:GetBestOffHandInBags(weights, specName)
     local bestScore = -1
     local _, playerClass = UnitClass("player")
     
-    -- [FIX] Define who is allowed to hold a WEAPON in the Off-Hand
-    local canDualWield = (playerClass == "ROGUE" or playerClass == "WARRIOR" or playerClass == "HUNTER")
+    -- Define who is allowed to hold a WEAPON in the Off-Hand
+    local playerLevel = UnitLevel("player")
+    local canDualWield = false
+    if playerClass == "ROGUE" or playerClass == "WARRIOR" then
+        if playerLevel >= 10 then canDualWield = true end
+    elseif playerClass == "HUNTER" then
+        if playerLevel >= 20 then canDualWield = true end
+    end
     
-    -- [FIX] Check for Enhancement Shaman Talent if applicable
+    -- Check for Enhancement Shaman Talent if applicable
     if playerClass == "SHAMAN" and MSC.GetTalentRank then
         -- Assuming "DUAL_WIELD" is the key in your talent DB. 
         -- If you don't have talent data loaded yet, this defaults to false (Safety first).
@@ -270,7 +276,7 @@ function MSC:GetBestOffHandInBags(weights, specName)
         local numSlots = GetBagSlots(bag) 
         for slot = 1, numSlots do
             local link = GetBagLink(bag, slot)
-            -- [FIX] Added Usable Check (Prevents Priests from seeing Plate/Swords)
+            -- Added Usable Check (Prevents Priests from seeing Plate/Swords)
             if link and MSC.IsItemUsable(link) then
                 local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
                 
@@ -301,7 +307,7 @@ function MSC:GetBestOffHandInBags(weights, specName)
 end
 
 -- =============================================================
--- 5. EVALUATE UPGRADE (Fixed Logic)
+-- 5. EVALUATE UPGRADE
 -- =============================================================
 
 function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
@@ -359,7 +365,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                 needsOH = true
             end
 
-            -- [FIX] Also check if the OH slot is explicitly empty/missing in our scratch gear
+            -- Also check if the OH slot is explicitly empty/missing in our scratch gear
             if not Scratch_Gear[17] then needsOH = true end
 
             if needsOH then
@@ -404,7 +410,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     -- 4. CALCULATE FUTURE SCORE
     local newScore, newStatsTotal, newTotalColors, newSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
--- 4. CONTEXT: DETECT SET COMPLETION
+	-- 5. CONTEXT: DETECT SET COMPLETION
     if MSC.SetBonusScores then
         for setID, scores in pairs(MSC.SetBonusScores) do
              local nC = (newSetCounts and newSetCounts[setID]) or 0
@@ -425,7 +431,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         end
     end
 
-    -- [[ 5. CAP GUARDIAN (Hit/Def Caps) ]]
+    -- 6. CAP GUARDIAN (Hit/Def Caps)
     local _, playerClass = UnitClass("player")
     local function Rank(k) return MSC:GetTalentRank(k) end 
 
@@ -465,15 +471,11 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
                 
-                -- 2. Get Current & Future Values (CORRECTED DELTA MATH)
-                -- We compare Player Total (Current) against Player Total (Future)
+                -- 2. Get Current & Future Values
                 local currentVal = MSC:GetPlayerStat(rule.stat == "ITEM_MOD_HIT_RATING_SHORT" and "HIT" or "SPELL_HIT")
-                
-                -- [FIX 2] Calculate the change in gear stats
                 local oldGearVal = currentStatsTotal[rule.stat] or 0
                 local newGearVal = newStatsTotal[rule.stat] or 0
                 local diff = newGearVal - oldGearVal
-                
                 local futureVal = currentVal + diff
                 
                 -- Check for Break (Allowing 0.1 tolerance for float errors)
@@ -481,10 +483,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                     newScore = newScore - rule.penalty
                     local deficit = futureVal - trueCap
                     local name = STAT_DISPLAY[rule.stat] or "Cap"
-                    if finalNewStats then
-                        local msg = string_format(" |cffff0000(Cap %.1f %s)|r", deficit, name)
-                        finalNewStats.Context = (finalNewStats.Context or "") .. msg
-                    end
+                    
+                    local msg = string_format(" |cffff0000(Cap %.1f %s)|r", deficit, name)
+                    contextMsg = (contextMsg or "") .. msg
                 end
             
             elseif rule.stat == "DEFENSE_FLOOR" and MSC.IsTBC then
@@ -492,8 +493,6 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                 local defWeight = weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                 if defWeight > 0 then
                     local currentDef = MSC:GetPlayerStat("DEFENSE")
-                    
-                    -- [FIX 3] Use the same Delta Logic for Defense (Handles 2H swaps correctly)
                     local oldDefRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     local newDefRating = newStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     
@@ -503,28 +502,19 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                     if currentDef >= rule.base and futureDef < (rule.base - 0.1) then
                          newScore = newScore - rule.penalty
                          local deficit = futureDef - rule.base
-                         if finalNewStats then
-                             local msg = string_format(" |cffff0000(Cap %.1f Def)|r", deficit)
-                             finalNewStats.Context = (finalNewStats.Context or "") .. msg
-                         end
+                         
+                         local msg = string_format(" |cffff0000(Cap %.1f Def)|r", deficit)
+                         contextMsg = (contextMsg or "") .. msg
                     end
                 end
             end
         end
     end
 
-    -- 6. FINALIZE
+    -- 7. FINALIZE
     Scratch_Gear[targetSlotID] = originalItem
     Scratch_Gear[16] = originalMH
     Scratch_Gear[17] = originalOH
 
-    if contextMsg then 
-        finalNewStats.Context = (finalNewStats.Context or "") .. " " .. contextMsg 
-    end
-
-    if finalNewStats._AUTO_PROC then
-             local p = finalNewStats._AUTO_PROC
-             finalNewStats[p.stat] = (finalNewStats[p.stat] or 0) + p.val
-        end
-        return newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts
+    return newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg
 end

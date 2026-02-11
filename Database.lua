@@ -771,203 +771,189 @@ end
 -- ============================================================================
 -- 4. ITEM OVERRIDES (Manual Stats for "Use" & "Proc" Items)
 -- ============================================================================
-MSC.ItemOverrides = {
+MSC.ItemOverrides = MSC.ItemOverrides or {}
+MSC.TrinketDB = MSC.TrinketDB or {}
 
--- [[ JEWELCRAFTING FIGURINES ]]
-    -- Living Ruby Serpent (Int + Use SP)
-    [24126] = { ITEM_MOD_INTELLECT_SHORT = 33, ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true }, 
-    -- Talasite Owl (Mana Regen + Use Mana)
-    [24124] = { ITEM_MOD_MANA_REGENERATION_SHORT = 14, ITEM_MOD_MANA_SHORT = 150, estimate = true }, 
-    -- Dawnstone Crab (Dodge + Use Dodge)
-    [24125] = { ITEM_MOD_DODGE_RATING_SHORT = 32, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15, estimate = true },
-    -- Nightseye Panther (Stealth + Use AP)
-    [24128] = { ITEM_MOD_ATTACK_POWER_SHORT = 55, estimate = true }, -- Stealth level is hard to score, valuing the AP use high
-    -- Khorium Boar (Attack Power + Use Pet)
-    [24129] = { ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true }, 
-    -- Felsteel Boar (Lower level version)
-    [24127] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
+-- This function feeds BOTH the Math Engine and the Tooltip Notes!
+local function AddOverrides(db)
+    for itemID, data in pairs(db) do
+        data.estimate = true -- Forces the addon to apply our math!
+        MSC.ItemOverrides[itemID] = data
+        MSC.TrinketDB[itemID] = data
+    end
+end
+
+AddOverrides({
+    -- [[ JEWELCRAFTING FIGURINES ]]
+    [24126] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Custom Score: AP use valued high." }, 
+    [24124] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_SHORT", val=150 }, note = "Custom Score: Mana use averaged." }, 
+    [24125] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=15 }, note = "Custom Score: Dodge use averaged." },
+    [24128] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = "Custom Score: Stealth ignored, AP use valued high." }, 
+    [24129] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Custom Score: Pet use averaged as AP." }, 
+    [24127] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=45 }, note = "Custom Score: Pet use averaged as AP." },
     
     -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
-    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, estimate = true },
-    [11815] = { ITEM_MOD_ATTACK_POWER_SHORT = 22, estimate = true }, 
-    [27529] = { ITEM_MOD_BLOCK_RATING_SHORT = 32, ITEM_MOD_STAMINA_SHORT = 20 },
-    [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21 },
-    
+    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, note = "Classic Carryover." },
+    [11815] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=22 }, note = "Calculated: 1% Crit to TBC Rating." }, 
+    [27529] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=15 }, note = "Custom Score: Block Heal valued as effective Block Value." },
+    [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21, note = "Leveling Tank Standard." },
+    [18820] = { -- Talisman of Ephemeral Power (MC)
+        _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=29.1 }, 
+        note = "Classic Legacy: +175 SP for 15s (90s CD). Avg +29 SP." 
+    },
+    [19950] = { -- Zandalarian Hero Charm (ZG)
+        _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=34 }, 
+        note = "Classic Legacy: Weighted average of decaying SP stacks." 
+    },
+    [19340] = { -- Rune of Metamorphosis (Class Quest)
+        _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, 
+        note = "Classic Legacy: Mana reduction averaged to ~10 Mp5." 
+    },
+    [23041] = { -- Slayer's Crest (Naxx)
+        ITEM_MOD_ATTACK_POWER_SHORT = 64, 
+        _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43.3 }, 
+        note = "Naxx Legacy: +64 Base & +43 Avg from Use (260 AP / 2 min CD)." 
+    },
+    [22954] = { -- Kiss of the Spider (Naxx)
+        ITEM_MOD_CRIT_RATING_SHORT = 14, -- 1%
+        ITEM_MOD_HIT_RATING_SHORT = 12.6, -- 1%
+        _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=33.3 }, 
+        note = "Naxx Legacy: +200 Haste for 15s (90s CD). Avg +33 Haste." 
+    },
+    [23035] = { -- Prestdor's Talisman of Connivery (Naxx)
+        ITEM_MOD_HIT_RATING_SHORT = 12.6, 
+        _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=16.6 }, 
+        note = "Naxx Legacy: +100 Haste for 30s (3 min CD). Avg +16 Haste." 
+    },
+    [19379] = { -- Neltharion's Tear (BWL)
+        ITEM_MOD_SPELL_POWER_SHORT = 44, 
+        ITEM_MOD_SPELL_HIT_RATING_SHORT = 25.2, -- 2% Hit in TBC is 25.2 Rating
+        note = "Classic BiS: Still top-tier for Hit capping in TBC." 
+    },
+    [18510] = { -- Hide of the Wild (Crafted)
+        ITEM_MOD_SPELL_HEALING_DONE_SHORT = 42, 
+        ITEM_MOD_INTELLECT_SHORT = 10,
+        note = "Classic Legacy: Powerful through level 68." 
+    },
+
+    -- [[ CLASSIC LEVELING / DUNGEON TRINKETS ]]
+    [13965] = { -- Blackhand's Breadth (Quest)
+        ITEM_MOD_CRIT_RATING_SHORT = 28, -- 2% translates to 28 Rating in TBC
+        note = "Leveling: +28 Physical Crit Rating." 
+    },
+    [13968] = { -- Eye of the Beast (Quest)
+        ITEM_MOD_SPELL_CRIT_RATING_SHORT = 28, -- 2% translates to 28 Rating in TBC
+        note = "Leveling: +28 Spell Crit Rating." 
+    },
+    [19120] = { -- Rune of the Dawn (Quest)
+        ITEM_MOD_ATTACK_POWER_SHORT = 15, -- Weighted against Undead/Demons
+        note = "Leveling: Weighted average for Outland demons." 
+    },
+    [13209] = { -- Cannonball Runner (Strat)
+        _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, 
+        note = "Leveling: Summon damage valued as ~10 AP." 
+    },
+    [17774] = { -- Mark of the Chosen (Maraudon)
+        _AUTO_PROC = { stat="ITEM_MOD_ALL_STATS_SHORT", val=8.3 }, 
+        note = "Leveling: +25 All Stats with ~33% expected uptime." 
+    },
+    [11810] = { -- Force of Will (BRD)
+        ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 10, 
+        _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=10 }, 
+        note = "Leveling Tank: Includes value for damage reduction proc." 
+    },
+
+    -- [[ 1. HELLFIRE PENINSULA / ZANGARMARSH QUESTS ]]
+    [25620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=17.3 }, note = "Calculated: +26 Base SP & +17 SP from Use uptime (16%)." },
+    [25633] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=17.5 }, note = "Calculated: +18 Healing from Use uptime (16%)." },
+    [25937] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = "Custom Score: Includes minor AP value for the Use effect." },
+
+    -- [[ 2. NAGRAND / NETHERSTORM / SHADOWMOON QUESTS ]]
+    [28041] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = "Calculated: +33 AP from Use uptime (16.6%)." },
+    [28040] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = "Calculated: +20 Spell Power from Use uptime (16.6%)." },
+    [29776] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=150 }, note = "Calculated: +150 Armor from Use uptime (16%)." },
+    [27924] = { _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=15 }, note = "Custom Score: Heal proc valued at ~15 Stamina equivalent." },
+
+    -- [[ 3. LEVEL 70 DUNGEON BLUES ]]
+    [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=42.6 }, note = "Calculated: +42 Haste from 45sec Internal Cooldown." },
+    [28034] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Calculated: +60 AP from 50sec Internal Cooldown." },
+    [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.6 }, note = "Calculated: +22 Haste from Use uptime (8%)." },
+    [28726] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=42.6 }, note = "Calculated: +42 Haste from 45sec Internal Cooldown." },
+    [28370] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = "Custom Score: Assumes ~15 bonus MP5 including Spirit Proc." },
+
     -- [[ DARKMOON CARDS ]]
-    [31856] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
-    [31858] = { ITEM_MOD_STAMINA_SHORT = 51, ITEM_MOD_STRENGTH_SHORT = 25, estimate = true },
+    [31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, ITEM_MOD_SPELL_POWER_SHORT = 120, note = "BiS (Stacks): Assumes full AP/SP uptime." },
+    [31858] = { _AUTO_PROC = { stat="ITEM_MOD_STRENGTH_SHORT", val=25 }, note = "Tank Threat: Holy Shield proc valued as Strength." },
+    [31857] = { ITEM_MOD_CRIT_RATING_SHORT = 17, note = "Crit Stacking (Niche): ~17% Crit uptime." },
+    [19288] = { ITEM_MOD_MANA_REGENERATION_SHORT = 60, note = "Classic Carryover: Mp5 Equivalence." },
 
-    -- [[ WEAPONS ]]
-    [11684] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
-    
-    -- [[ WEIRD / NICHE ODDS & ENDS ]]
-    
-    -- [[ CLASS SPECIFIC BIS / MECHANICS ]]
-    [9449] = { ITEM_MOD_HASTE_RATING_SHORT = 150, estimate = true, note = "BiS (Burst Haste)" },-- Manual Crowd Pummeler
-    [8345] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 80, estimate = true, note = "BiS (Powershift)" },-- Wolfshead Helm (Druid Feral) The energy refund mechanic is mathematically worth ~80 Feral AP in a rotation.
-    
-    -- [[ TBC PHASE 1 ]]
-    [29383] = { ITEM_MOD_ATTACK_POWER_SHORT = 46, estimate = true },
-    [28288] = { ITEM_MOD_HASTE_RATING_SHORT = 21, estimate = true },
-    [28579] = { ITEM_MOD_ATTACK_POWER_SHORT = 65, estimate = true },
-    [28041] = { ITEM_MOD_ATTACK_POWER_SHORT = 33, estimate = true },
-    [25844] = { ITEM_MOD_CRIT_RATING_SHORT = 22, estimate = true },
-    [32780] = { ITEM_MOD_ATTACK_POWER_SHORT = 32, estimate = true },
-    [29370] = { ITEM_MOD_SPELL_POWER_SHORT = 26, estimate = true },
-    [29132] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
-    [29179] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true },
-    [28785] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true },
-    [28418] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
-    [28789] = { ITEM_MOD_SPELL_POWER_SHORT = 20, estimate = true },
+    -- [[ WEAPONS & CLASS SPECIFIC BIS ]]
+    [11684] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Ironfoe Estimate" },
+    [9449]  = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=150 }, note = "BiS (Burst Haste): Manual Crowd Pummeler" },
+    [8345]  = { _AUTO_PROC = { stat="ITEM_MOD_FERAL_ATTACK_POWER_SHORT", val=80 }, note = "BiS (Powershift): Energy refund = ~80 AP." },
 
-    -- [[ TBC PHASE 2 ]]
+    -- [[ TBC PHASE 1 RAID ]]
+    [29383] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Bloodgem of the Scryers (16.6% uptime)." },
+    [28579] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=65 }, note = "Romulo's Poison Vial estimate." },
+    [29132] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49.5 }, note = "Essence of the Martyr (Use: Heal)" },
+    [28727] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=21 }, note = "Pendant of the Violet Eye (Int + Mana Regen Proc)" },
+    [31331] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Proc is worth ~30 DPS or ~60 AP." },
+    [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, note = "Eye of Gruul: Valued as roughly 45 MP5." },
 
-    [32483] = { ITEM_MOD_HASTE_RATING_SHORT = 29, estimate = true },
-    [30626] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
-    [30621] = { ITEM_MOD_ATTACK_POWER_SHORT = 53, estimate = true },
-    [30450] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 200, estimate = true },
-    [30665] = { ITEM_MOD_SPIRIT_SHORT = 50, estimate = true },-- Use: 300 Spirit for 20s (2 min CD). Avg = 50 Spirit.
-    [30448] = { ITEM_MOD_SPELL_POWER_SHORT = 30, estimate = true },
-    [30446] = { ITEM_MOD_ATTACK_POWER_SHORT = 70, estimate = true },
-    [29376] = { ITEM_MOD_HEALING_SHORT = 50, estimate = true },
-    [30841] = { ITEM_MOD_HEALING_SHORT = 55, estimate = true },
-    [28590] = { ITEM_MOD_HEALING_SHORT = 9, estimate = true },
-    [28727] = { ITEM_MOD_MANA_REGENERATION_SHORT = 41, estimate = true },
-    [29387] = { ITEM_MOD_BLOCK_VALUE_SHORT = 10, estimate = true },
-    [27928] = { ITEM_MOD_BLOCK_RATING_SHORT = 21, estimate = true },
-    [27922] = { ITEM_MOD_STAMINA_SHORT = 15, estimate = true },
-    [28441] = { ITEM_MOD_CRIT_RATING_SHORT = 30, estimate = true }, 
-    [28442] = { ITEM_MOD_CRIT_RATING_SHORT = 45, estimate = true }, 
-    [29993] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true },
+    -- [[ TBC PHASE 2 / REPUTATION ]]
+    [30665] = { _AUTO_PROC = { stat="ITEM_MOD_SPIRIT_SHORT", val=50 }, note = "Use: 300 Spirit for 20s (2 min CD). Avg = 50 Spirit." },
+    [30620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = "Spyglass of the Hidden Fleet (SSC)" },
+    [29923] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Talisman of the Sun King (Proc is Rage)" },
+    [30629] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=40 }, note = "Scarab of Displacement (Use: Dodge)" },
+    [30726] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=53 }, note = "Archaic Charm of Presence (Use: AP)" },
 
-    -- [[ TBC PHASE 3 ]]
-    [32505] = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 60, estimate = true },
-    [32492] = { ITEM_MOD_ATTACK_POWER_SHORT = 200, estimate = true },
-    [32485] = { ITEM_MOD_ATTACK_POWER_SHORT = 55, estimate = true },
-    [32491] = { ITEM_MOD_ATTACK_POWER_SHORT = 80, ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true },
-    [32488] = { ITEM_MOD_HASTE_RATING_SHORT = 40, estimate = true },
-    [32490] = { ITEM_MOD_SPELL_POWER_SHORT = 45, ITEM_MOD_HEALING_SHORT = 45, estimate = true },
-    [32486] = { ITEM_MOD_STRENGTH_SHORT = 40, ITEM_MOD_SPELL_POWER_SHORT = 40, ITEM_MOD_HEALING_SHORT = 40, estimate = true },
-    [32496] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
-    [32501] = { ITEM_MOD_STAMINA_SHORT = 29, estimate = true },
-    [32500] = { ITEM_MOD_DODGE_RATING_SHORT = 25, estimate = true },
+    -- [[ TBC PHASE 4 / ZUL'AMAN ]]
+    [33829] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=35 }, note = "Hex Shrunken Head (Use: 211 SP)" },
+    [33828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49 }, note = "Estimated." },
 
-    -- [[ TBC PHASE 4 ]]
-    [33829] = { ITEM_MOD_SPELL_POWER_SHORT = 35, estimate = true },
-    [33831] = { ITEM_MOD_ARMOR_SHORT = 333, estimate = true },
-    [33828] = { ITEM_MOD_HEALING_SHORT = 49, estimate = true },
+    -- [[ TBC PHASE 5 / SUNWELL ]]
+    [34179] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=60 }, note = "Heart of the Pit (Use: HP)" },
 
-    -- [[ TBC PHASE 5 ]]
-    [35702] = { ITEM_MOD_ATTACK_POWER_SHORT = 53, estimate = true },
-    [34678] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true },
-    [34679] = { ITEM_MOD_ATTACK_POWER_SHORT = 35, estimate = true },
-    [34470] = { ITEM_MOD_SPELL_POWER_SHORT = 45, estimate = true },
-    [34429] = { ITEM_MOD_SPELL_POWER_SHORT = 53, estimate = true },
-    [34664] = { ITEM_MOD_SPELL_POWER_SHORT = 20, estimate = true },
-    [34471] = { ITEM_MOD_HEALING_SHORT = 70, estimate = true },
-    [35703] = { ITEM_MOD_MANA_REGENERATION_SHORT = 55, estimate = true },
-    [34473] = { ITEM_MOD_DODGE_RATING_SHORT = 25, estimate = true },
-    [35700] = { ITEM_MOD_STAMINA_SHORT = 29, estimate = true },
+    -- [[ DUNGEON / HEROIC / UTILITY ]]
+    [24096] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=36.6 }, note = "Heartblood Prayer Beads (Use: 220 AP) -> Avg ~36" },
+    [24460] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=24 }, note = "Talisman of Tenacity (Use effect is HP)" }, 
+    [28121] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=30 }, note = "Icon of Unyielding Courage (Use: HP)" }, 
+    [28134] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = "Brooch of Heightened Potential (Use: SP)" },
+    [32770] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = "Skyguard Silver Cross (Rep - Stam + Use Health)" },
+    [32771] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Airman's Ribbon of Gallantry" },
+    [32658] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=150 }, note = "Commander's Badge (Netherwing)" },
 
-    -- [[ PVP UTILITY ]]
-    [18854] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18856] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18849] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18851] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18852] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18853] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18850] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18846] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18834] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18845] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18841] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18839] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18832] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18835] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18837] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [18838] = { MSC_PVP_UTILITY = 60, estimate = true }, 
-    [28234] = { MSC_PVP_UTILITY = 80, estimate = true }, 
-    [28235] = { MSC_PVP_UTILITY = 80, estimate = true },
-    [37864] = { MSC_PVP_UTILITY = 100, estimate = true },
-    [37865] = { MSC_PVP_UTILITY = 100, estimate = true },
-    
-    -- [[ DUNGEON / HEROIC ]]
-    [24096] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, estimate = true }, -- Heartblood Prayer Beads (Use: 220 AP) -> Avg ~40
-    [24379] = { ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true }, -- Bogstrok Scale Cloak (Not trinket, but has AP proc?)
-    [24460] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 24, estimate = true }, -- Talisman of Tenacity (Use effect is HP)
-    [28121] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, estimate = true }, -- Icon of Unyielding Courage (Use: HP)
-    [28134] = { ITEM_MOD_SPELL_POWER_SHORT = 40, estimate = true }, -- Brooch of Heightened Potential (Use: SP)
-    [29132] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80, estimate = true }, -- Essence of the Martyr (Use: Heal)
-
-    -- [[ RAID TRINKETS ]]
-    [28727] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true }, -- Pendant of the Violet Eye (Int + Mana Regen Proc)
-    [29923] = { ITEM_MOD_CRIT_RATING_SHORT = 30, estimate = true }, -- Talisman of the Sun King (Proc is Rage, handled in ProcDB)
-    [30629] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 40, estimate = true }, -- Scarab of Displacement (Use: Dodge)
-    [30726] = { ITEM_MOD_CRIT_RATING_SHORT = 40, estimate = true }, -- Archaic Charm of Presence (Use: AP)
-    
-    -- [[ ZA / SUNWELL ]]
-    [33829] = { ITEM_MOD_SPELL_POWER_SHORT = 53, estimate = true }, -- Hex Shrunken Head (Use: 211 SP)
-    [34179] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 60, estimate = true }, -- Heart of the Pit (Use: HP)
-    [32534] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 50, estimate = true }, -- Brooch of the Immortal King
-    [37127] = { ITEM_MOD_STAMINA_SHORT = 45, estimate = true }, -- Brightbrew Charm (Use: Heal)
-    [37128] = { ITEM_MOD_STAMINA_SHORT = 45, estimate = true }, -- Balebrew Charm (Use: Dmg)
-    [38290] = { ITEM_MOD_STAMINA_SHORT = 51, estimate = true }, -- Dark Iron Smoking Pipe (Use: Shield)
-    
-    -- Darkmoon Card: Crusade (Stacking AP/SP)
-    -- It gives 6 AP (or 8 SP) per stack, up to 20 stacks (120 AP / 160 SP).
-    -- In a raid, it stays fully stacked. We value it at ~80-90% max stacks.
-    [31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, ITEM_MOD_SPELL_POWER_SHORT = 120, estimate = true, note = "BiS (Stacks)" },
-
-    -- Darkmoon Card: Vengeance (Counterattack Dmg)
-    -- Chance on being hit to deal Holy Dmg. Good for Paladin Tanks (Threat).
-    [31858] = { ITEM_MOD_STAMINA_SHORT = 51, score = 40, note = "Tank Threat (Proc)" },
-
-    -- Darkmoon Card: Wrath (Crit Chance)
-    -- This wasn't in your list, but it's the other TBC card.
-    [31857] = { score = 45, note = "Crit Stacking (Niche)" },
-
-    -- Darkmoon Card: Blue Dragon (Classic - Mana Regen)
-    -- 2% Chance on cast to gain 100% mana regen.
-    [19288] = { ppm=1.0, val=60, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="Mp5 Equivalence" },
-    
-    -- Mark of the Champion (Caster) - 85 SP vs Undead/Demon
-    -- We estimate this as ~25 SP for general use (it's amazing in Kara/Hyjal, bad in Gruul).
-    [23207] = { ITEM_MOD_SPELL_POWER_SHORT = 25, estimate = true},
-
-    -- Mark of the Champion (Melee) - 150 AP vs Undead/Demon
-    -- Estimated as ~45 AP for general use.
-    [23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, estimate = true },
-    
-    -- Eye of Gruul (Healer - Chance on cast to reduce mana cost)
-    -- Valued as roughly 45 MP5 in a raid setting.
-    [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, estimate = true },
-
-    -- Romulo's Poison Vial (Kara - Hit + Chance on Hit Nature Dmg)
-    -- The proc is worth ~30 DPS or ~60 AP approx.
-    [31331] = { ITEM_MOD_HIT_RATING_SHORT = 35, ITEM_MOD_ATTACK_POWER_SHORT = 60, estimate = true },
-
-    -- Spyglass of the Hidden Fleet (SSC - Hit + Use SP)
-    [30620] = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 40, ITEM_MOD_SPELL_POWER_SHORT = 22, estimate = true },
-
-    -- Skyguard Silver Cross (Rep - Stam + Use Health)
-    -- Good starter tank trinket.
-    [32770] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_HEALTH_SHORT = 100, estimate = true },
-
-    -- Airman's Ribbon of Gallantry (Rep - Crit + Use AP)
-    [32771] = { ITEM_MOD_CRIT_RATING_SHORT = 25, ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
-
-    -- Commander's Badge (Netherwing - Stam + Use Health)
-    [32658] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_HEALTH_SHORT = 150, estimate = true },
-    
     -- [[ BREWFEST ]]
-    -- Coren's Lucky Coin / Empty Mug of Direbrew (Tanking)
-    -- Blocking gives 59 Block Value / Defense.
-    [38289] = { ITEM_MOD_STAMINA_SHORT = 50, ITEM_MOD_BLOCK_VALUE_SHORT = 20, estimate = true }, 
-    [38288] = { ITEM_MOD_STAMINA_SHORT = 50, ITEM_MOD_BLOCK_VALUE_SHORT = 20, estimate = true },
-    -- Balebrew Charm (Melee DPS)
-    [37128] = { ITEM_MOD_STAMINA_SHORT = 45, ITEM_MOD_ATTACK_POWER_SHORT = 30, estimate = true },
+    [38289] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = "Coren's Lucky Coin" }, 
+    [38288] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = "Empty Mug of Direbrew" },
+    [37128] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Balebrew Charm (Use: Dmg)" },
+    [37127] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=45 }, note = "Brightbrew Charm (Use: Heal)" }, 
+    [38290] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=30 }, note = "Dark Iron Smoking Pipe (Use: Shield)" },
+
+    -- [[ CHAMPION TRINKETS ]]
+    [23207] = { ITEM_MOD_SPELL_POWER_SHORT = 25, note = "Mark of the Champion (Caster): ~25 SP estimate." },
+    [23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, note = "Mark of the Champion (Melee): ~45 AP estimate." },
+})
+
+-- [[ PVP UTILITY OVERRIDES ]]
+-- Assigning the custom "MSC_PVP_UTILITY" stat allows you to weight the CC breaks highly in PvP profiles.
+local function AddPvPTrinkets()
+    local pvpIDs = {18854, 18856, 18849, 18851, 18852, 18853, 18850, 18846, 18834, 18845, 18841, 18839, 18832, 18835, 18837, 18838}
+    for _, id in ipairs(pvpIDs) do
+        MSC.ItemOverrides[id] = { MSC_PVP_UTILITY = 60, estimate = true, note = "CC Break (Rank 1)" }
+        MSC.TrinketDB[id] = MSC.ItemOverrides[id]
+    end
     
-    }
+    local r2 = { MSC_PVP_UTILITY = 80, estimate = true, note = "CC Break (Rank 2)" }
+    MSC.ItemOverrides[28234] = r2; MSC.TrinketDB[28234] = r2
+    MSC.ItemOverrides[28235] = r2; MSC.TrinketDB[28235] = r2
+    
+    local r3 = { MSC_PVP_UTILITY = 100, estimate = true, note = "CC Break (Rank 3)" }
+    MSC.ItemOverrides[37864] = r3; MSC.TrinketDB[37864] = r3
+    MSC.ItemOverrides[37865] = r3; MSC.TrinketDB[37865] = r3
+end
+AddPvPTrinkets()
+
 
 -- ============================================================================
 -- 5. INITIALIZATION STRUCTURE

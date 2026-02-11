@@ -3,6 +3,10 @@
 ## 🚀 v2.3.5
 
 ### Multiple files updated to improve speed, robustness and memory usage:
+* **Rework item override storage and proc handling, centralizing overrides and introducing a _AUTO_PROC format (plus notes).**
+* **Improve evaluator logic: stricter off-hand dual-wield checks by class/level, correct cap/defense delta math, build context messages instead of mutating stats, and change EvaluateUpgrade's return signature to include contextMsg.** 
+* **UI/tooltip updates: fix minimap anchoring, include _AUTO_PROC contributions in the score breakdown, and refactor Judge tooltip flow to use the new override/proc structure and evaluation behavior.** 
+	*These changes centralize trinket/proc data, improve accuracy of upgrade math, and produce clearer tooltip context.*
 * **Refactor projections and tooltip handling, add update throttling, and adjust EvaluateUpgrade returns.**
 	*These changes aim to provide cleaner data for tooltips, avoid flicker/race conditions when item info arrives, and ensure projections/meta/gem displays are robust and correctly formatted.
 * **Interface: reorganize Interface Options, add a "Show Only via Shift Key" (ShiftOnlyTooltip) toggle and hook to enable/disable it alongside tooltip display.**

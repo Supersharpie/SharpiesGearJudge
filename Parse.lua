@@ -198,6 +198,29 @@ MSC.Scanner.TermMap = {
     ["skill with crossbows"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     ["skill with staves"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     ["skill with polearms"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+	
+	-- [[ TBC: THE "RANGED" & "SHIELD" VARIANTS ]]
+    ["ranged critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
+    ["ranged hit rating"]             = "ITEM_MOD_HIT_RATING_SHORT",
+    ["ranged haste rating"]           = "ITEM_MOD_HASTE_RATING_SHORT",
+    ["shield block rating"]           = "ITEM_MOD_BLOCK_RATING_SHORT",
+    ["shield block value"]            = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    
+    -- [[ TBC: PET STATS (Warlock/Hunter Trinkets & Set Bonuses) ]]
+    ["your pet's armor"]              = "ITEM_MOD_ARMOR_SHORT", -- Handled loosely, but good to catch
+    ["your pet's attack power"]       = "ITEM_MOD_ATTACK_POWER_SHORT",
+    ["your pet's damage"]             = "ITEM_MOD_ATTACK_POWER_SHORT",
+    
+    -- [[ TBC: THE "SPELL" VARIANTS (Consistency) ]]
+    ["spell damage rating"]           = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["damage done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["healing done by magical spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    ["spell damage and healing"]      = "ITEM_MOD_SPELL_POWER_SHORT",
+    
+    -- [[ WEIRD / EDGE CASE CATCHERS ]]
+    ["all stats"]                     = "ITEM_MOD_ALL_STATS_SHORT",
+    ["magic resistance"]              = "ITEM_MOD_RESISTANCE_ALL_SHORT",
+    ["chance to resist mechanic mechanics"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
 }
 
 -- =============================================================
@@ -247,6 +270,8 @@ MSC.Scanner.EquipPatterns = {
 
     -- [[ FERAL AP & WEAPON SKILL ]] 
     { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+	{ p = "attack power by (%d+) in cat", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+    { p = "feral attack power by (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
     { p = "increased (.*) %+(%d+)%.?", valIdx = 2, nameIdx = 1 },
 
     -- [[ RESTORES (MP5/HP5) ]]
@@ -259,13 +284,20 @@ MSC.Scanner.EquipPatterns = {
             local val, interval = tonumber(match1), tonumber(match3)
             if val and interval then outputStats[key] = (outputStats[key] or 0) + ((val / interval) * 5) end
         end 
-    },
-
+		},
+	{ p = "restores (%d+) (mana per 5 sec).-casting", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+    { p = "restores (%d+) (health per 5 sec).-combat", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+	
     -- [[ ARPEN, THREAT, & PENETRATION ]]
     { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
     { p = "ignores (%d+) armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+    { p = "attacks ignore (%d+) of your", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
     { p = "decreases (.*) by (%d+)", valIdx=2, nameIdx=1 }, 
     { p = "decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
+	
+	-- [[FLAT WEAPON DAMAGE (Ammo, Scopes, Rings) ]]
+    { p = "adds (%d+) weapon damage", valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
+    { p = "adds (%d+) damage", valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
 
     -- ========================================================================
     -- [[ 2. STANDARD PHRASING (Percent vs Rating) ]]
@@ -296,7 +328,10 @@ MSC.Scanner.ProcPatterns = {
     { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
     { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
     { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
-    { p = "increases your (.*) by (%d+)$", valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 }, 
+    { p = "increases your (.*) by (%d+)$", valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 },
+	{ p = "chance on melee or ranged hit to gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "chance on spell critical hit to gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = "chance on spell cast to gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },	
 
     -- Damage Procs
     { p = "for (%d+) to (%d+) .*damage", type="DAMAGE" },
@@ -305,12 +340,14 @@ MSC.Scanner.ProcPatterns = {
     { p = "inflicts (%d+) .*damage", type="DAMAGE" },
     { p = "deals (%d+) .*damage", type="DAMAGE" },
     { p = "blasts (.*) for (%d+)", valIdx=2, type="DAMAGE" },
+	{ p = "chance to strike your enemy for (%d+) to (%d+) .*damage", type="DAMAGE" },
+    { p = "chance to blast your target for (%d+) to (%d+) .*damage", type="DAMAGE" },
 
     -- Resources
     { p = "steals (%d+) life", type="HEAL" },
     { p = "restores (%d+) mana", type="MANA" },
     { p = "restores (%d+) health", type="HEAL" },
-
+	
     -- Catch All
     { p = "blasts your enemy", type="GENERIC" }
 }
@@ -487,8 +524,12 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
             if pat.type == "DAMAGE" then
                 procObj.type = "Damage"
                 local valStr = (pat.valIdx == 2) and m2 or m1
-                procObj.val = tonumber(valStr)
-                if m2 and not pat.valIdx then procObj.val = (procObj.val + tonumber(m2)) / 2 end
+                procObj.val = tonumber(valStr) or 0
+                
+                if m2 and not pat.valIdx then 
+                    local maxVal = tonumber(m2) or 0
+                    procObj.val = (procObj.val + maxVal) / 2 
+                end
             elseif pat.type == "HEAL" or pat.type == "MANA" then
                 procObj.type = pat.type
                 procObj.val = tonumber(m1)
@@ -518,9 +559,13 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
             if pat.type == "BUFF" then
                 local val = tonumber(pat.valIdx == 1 and m1 or m2)
                 local name = pat.nameIdx and (pat.nameIdx == 1 and m1 or m2)
+                
+                if not val then return end
+
                 local duration = tonumber(m3) or pat.defaultDur or 15
                 effect.averageVal = val * (duration / cooldown)
                 effect.duration = duration
+                
                 if pat.fixedStat then 
                     effect.statKey = pat.fixedStat
                 elseif name then
@@ -588,11 +633,25 @@ function MSC.Scanner.Scan(itemLink)
         end
     end
 
-    -- Fallback DPS Calculation
-    if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
-        local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
-        result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
-    end
+	-- Fallback DPS Calculation
+		if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
+			local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
+			result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
+		end
 
-    return result
-end
+		local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
+		if itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID] then
+			local override = MSC.ItemOverrides[itemID]
+			
+			-- Check if the override ALREADY contains the math we want
+			if override._AUTO_PROC or override.UseEffects then
+				result.UseEffects = {}
+				result.Procs = {}
+				
+				-- Re-inject our clean override data into the result
+				if override._AUTO_PROC then result.Stats._AUTO_PROC = override._AUTO_PROC end
+			end
+		end
+
+		return result
+	end
