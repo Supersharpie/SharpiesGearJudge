@@ -3,7 +3,8 @@
 ## 🚀 v2.3.5
 
 ### Multiple files updated to improve speed, robustness and memory usage:
-
+* **Refactor projections and tooltip handling, add update throttling, and adjust EvaluateUpgrade returns.**
+	*These changes aim to provide cleaner data for tooltips, avoid flicker/race conditions when item info arrives, and ensure projections/meta/gem displays are robust and correctly formatted.
 * **Interface: reorganize Interface Options, add a "Show Only via Shift Key" (ShiftOnlyTooltip) toggle and hook to enable/disable it alongside tooltip display.**
 * **add recursion/setting checks and a small throttle to avoid redundant recalculations, and respect the new ShiftOnlyTooltip and HideTooltips settings.**
 * **add additional stat text mappings (e.g. "spell damage and healing", ranged attack power, spell penetration, all stats, magic resistance) to improve parsing of uncommon suffixes and variations.**

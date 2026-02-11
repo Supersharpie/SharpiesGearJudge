@@ -869,34 +869,38 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 for _, id in ipairs(existingGems) do AddToDisplay(id) end
                 for _, gem in ipairs(chosenGems) do AddToDisplay(gem.id) end
                 
-                wipe(Scratch_GemTextParts)
+                -- [[ CREATE A CLEAN DATA TABLE FOR THE UI ]]
+                finalStats.PROJECTION_DATA = {
+                    Gems = {},
+                    Bonus = nil,
+                    Stats = ""
+                }
+
                 for _, gName in ipairs(Scratch_GemOrder) do
-                      local c = Scratch_GemColors[gName] or "?"
-                      table_insert(Scratch_GemTextParts, Scratch_GemCounts[gName] .. "x " .. gName .. " |cffaaaaaa(" .. c .. ")|r")
+                    table_insert(finalStats.PROJECTION_DATA.Gems, {
+                        text = Scratch_GemCounts[gName] .. "x " .. gName,
+                        color = Scratch_GemColors[gName]
+                    })
                 end
                 
+                if bonusActive and next(bonusStats) then
+                    local bParts = {}
+                    for k, v in pairs(bonusStats) do
+                        table_insert(bParts, "+" .. v .. " " .. ((MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat"))
+                    end
+                    finalStats.PROJECTION_DATA.Bonus = "Socket Bonus: " .. table_concat(bParts, ", ")
+                end
+
                 local statParts = {}
                 for k, v in pairs(Scratch_GemStats) do
-                    table_insert(statParts, { k = k, v = v })
+                    local short = (MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat"
+                    table_insert(statParts, "+" .. v .. " " .. short)
                 end
-                table_sort(statParts, function(a,b) return a.v > b.v end)
-                
-                local statStrings = {}
-                for _, s in ipairs(statParts) do
-                    local short = (MSC.StatShortNames and MSC.StatShortNames[s.k]) or "Stat"
-                    table_insert(statStrings, "+" .. s.v .. " " .. short)
+                if #statParts > 0 then
+                    finalStats.PROJECTION_DATA.Stats = "(" .. table_concat(statParts, ", ") .. ")"
                 end
-                
-                if #Scratch_GemTextParts > 0 then 
-                    local line1 = table_concat(Scratch_GemTextParts, "|n")
-                    local line2 = ""
-                    if #statStrings > 0 then
-                        line2 = "|n|cff00ccff(" .. table_concat(statStrings, ", ") .. ")|r"
-                    end
-                    finalStats.GEM_TEXT = line1 .. bonusText .. line2
-                end
-                
-                finalStats.GEMS_PROJECTED = #Scratch_GemTextParts
+
+                finalStats.GEMS_PROJECTED = #finalStats.PROJECTION_DATA.Gems
                 finalStats.META_ID = projectedMeta
                 
                 finalStats.COLORS = MSC:SafeCopy(Scratch_ProjectedColors)

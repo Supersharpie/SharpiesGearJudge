@@ -19,6 +19,16 @@ local UnitLevel = UnitLevel
 local IsAddOnLoaded = IsAddOnLoaded
 local C_AddOns = C_AddOns
 
+local function CleanText(text)
+    if not text then return "" end
+    -- 1. Remove color codes (|cff... and |r)
+    local clean = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    -- 2. Remove textures/icons (|T...|t)
+    clean = clean:gsub("|T.-|t", "")
+    -- 3. Trim extra whitespace from the ends
+    return clean:match("^%s*(.-)%s*$")
+end
+
 -- =============================================================
 -- 1. INITIALIZATION & EVENTS
 -- =============================================================
@@ -332,14 +342,14 @@ local function OnTooltipSetItem(tooltip)
         local slotId = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
         if not slotId then return end
 
-        local newScore, oldScore, newStats, oldStats, newTotalColors, oldSetCounts, newSetCounts = MSC:EvaluateUpgrade(link, slotId, weights, specName)
+        local newScore, oldScore, itemNewStats, itemOldStats, newStatsTotal, oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts = MSC:EvaluateUpgrade(link, slotId, weights, specName)
         local delta = newScore - oldScore
         local isEquipped = (GetInventoryItemLink("player", slotId) == link)
 
         -- Header
         tooltip:AddLine(" ")
         local scoreLabel = "Judge's Score:"
-        if newStats and newStats.Context then scoreLabel = scoreLabel .. " " .. newStats.Context end
+        if itemNewStats and itemNewStats.Context then scoreLabel = scoreLabel .. " " .. itemNewStats.Context end
         tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
         
         local displayName = specName
@@ -465,7 +475,7 @@ local function OnTooltipSetItem(tooltip)
                         local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
                         if tSlotId then
                             -- Capture oldSetCounts and newSetCounts for the off-spec check
-                            local tNewScore, tOldScore, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
+                            local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
                             local tDelta = tNewScore - tOldScore
                             
                             if tDelta > 0.1 then
@@ -494,38 +504,54 @@ local function OnTooltipSetItem(tooltip)
             end
         end
 
-        -- Projections (TBC Only for Gems/Metas)
-        if newStats and (newStats.IS_PROJECTED or newStats.GEMS_PROJECTED) then
+-- Projections (TBC Only for Gems/Metas)
+        if itemNewStats and (itemNewStats.IS_PROJECTED or itemNewStats.GEMS_PROJECTED) then
             tooltip:AddLine(" ")
             
             -- 1. ENCHANT NAME
-            if newStats.ENCHANT_TEXT then 
-                tooltip:AddDoubleLine("Projected Enchant:", "|cffffffff" .. newStats.ENCHANT_TEXT .. "|r", 0, 1, 1)
-            elseif newStats.IS_PROJECTED then 
-                tooltip:AddDoubleLine("Projected Enchant:", "|cffffffffBest Available|r", 0, 1, 1) 
+            if itemNewStats.ENCHANT_TEXT then 
+                local cleanEnchant = CleanText(itemNewStats.ENCHANT_TEXT)
+                tooltip:AddDoubleLine("Projected Enchant:", cleanEnchant, 0, 1, 1, 1, 1, 1)
+            elseif itemNewStats.IS_PROJECTED then 
+                tooltip:AddDoubleLine("Projected Enchant:", "Best Available", 0, 1, 1, 1, 1, 1) 
             end
             
-            -- 2. GEM NAMES (TBC ONLY)
-            if not MSC.IsEra and newStats.GEM_TEXT then
-                tooltip:AddDoubleLine("Projected Gems:", "|cffffffff" .. newStats.GEM_TEXT .. "|r", 0, 1, 1)
+            -- 2. GEM NAMES & BONUSES (USING CLEAN DATA TABLE)
+            if not MSC.IsEra and itemNewStats.PROJECTION_DATA then
+                local data = itemNewStats.PROJECTION_DATA
+                
+                -- Print Gems
+                for i, gem in ipairs(data.Gems) do
+                    local label = (i == 1) and "Projected Gems:" or " "
+                    local leftR, leftG, leftB = (i == 1) and 0 or 0, (i == 1) and 1 or 0, (i == 1) and 1 or 0
+                    tooltip:AddDoubleLine(label, gem.text .. " (" .. gem.color .. ")", leftR, leftG, leftB, 1, 1, 1)
+                end
+                
+                -- Print Bonus
+                if data.Bonus then
+                    tooltip:AddDoubleLine(" ", data.Bonus, 0, 0, 0, 0, 1, 0)
+                end
+                
+                -- Print Stat Summary
+                if data.Stats ~= "" then
+                    tooltip:AddDoubleLine(" ", data.Stats, 0, 0, 0, 0, 0.8, 1)
+                end
             end
-
-            -- 3. BONUSES
-            if newStats.BONUS_PROJECTED then tooltip:AddLine("   + Socket Bonus Activated", 0, 1, 0) end
             
-            if not MSC.IsEra and newStats.META_ID and MSC.CheckMetaRequirements and newTotalColors then 
-                if MSC:CheckMetaRequirements(newStats.META_ID, newTotalColors) then 
-                    tooltip:AddLine("   + Meta Gem Active", 0, 1, 0) 
+            -- 3. META GEM STATUS
+            if not MSC.IsEra and itemNewStats.META_ID and MSC.CheckMetaRequirements and newTotalColors then 
+                if MSC:CheckMetaRequirements(itemNewStats.META_ID, newTotalColors) then 
+                    tooltip:AddDoubleLine(" ", "+ Meta Gem Active", 0, 0, 0, 0, 1, 0) 
                 else 
-                    tooltip:AddLine("   - Meta Gem Inactive (Reqs unmet)", 1, 0, 0) 
+                    tooltip:AddDoubleLine(" ", "- Meta Gem Inactive (Reqs unmet)", 0, 0, 0, 1, 0, 0) 
                 end 
             end
         end
 
         -- STAT COMPARISON
         if not isEquipped then
-            local newExpanded = MSC.ExpandDerivedStats(newStats or {}, link, Scratch_Tooltip_New)
-            local oldExpanded = MSC.ExpandDerivedStats(oldStats or {}, nil, Scratch_Tooltip_Old)
+            local newExpanded = MSC.ExpandDerivedStats(newStatsTotal or {}, link, Scratch_Tooltip_New)
+            local oldExpanded = MSC.ExpandDerivedStats(oldStatsTotal or {}, nil, Scratch_Tooltip_Old)
             local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
 
             -- [[ CONSOLIDATION PASS SKIPPED ]]

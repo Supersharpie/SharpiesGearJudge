@@ -523,9 +523,8 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     end
 
     if finalNewStats._AUTO_PROC then
-         local p = finalNewStats._AUTO_PROC
-         finalNewStats[p.stat] = (finalNewStats[p.stat] or 0) + p.val
-    end
-
-    return newScore, currentScore, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts
+             local p = finalNewStats._AUTO_PROC
+             finalNewStats[p.stat] = (finalNewStats[p.stat] or 0) + p.val
+        end
+        return newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts
 end

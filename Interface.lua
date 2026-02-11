@@ -86,6 +86,11 @@ MSC.Pools = {
     Headers = {}
 }
 
+local function TriggerFullUpdate()
+    if MSC.UpdateReceipt then MSC.UpdateReceipt() end
+    if MSC.UpdateLogic then MSC.UpdateLogic() end
+end
+
 function MSC.GetFromPool(poolType, parent, creatorFunc)
     if not MSC.Pools[poolType] then MSC.Pools[poolType] = {} end
     for _, frame in ipairs(MSC.Pools[poolType]) do
@@ -1303,6 +1308,30 @@ f:RegisterEvent("PLAYER_LOGIN")
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 f:RegisterEvent("PLAYER_TALENT_UPDATE")
+f:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+
+local isFirstLogin = true
+
+-- [[ NEW THROTTLE SYSTEM (Fixes the /reload issue) ]]
+local updatePending = false
+local timeSinceLastEvent = 0
+local throttleFrame = CreateFrame("Frame")
+throttleFrame:SetScript("OnUpdate", function(self, elapsed)
+    if updatePending then
+        timeSinceLastEvent = timeSinceLastEvent + elapsed
+        -- Wait 0.8 seconds after the last item is received for tooltips to populate
+        if timeSinceLastEvent > 0.8 then 
+            updatePending = false
+            TriggerFullUpdate()
+        end
+    end
+end)
+
+local function RequestUpdate()
+    updatePending = true
+    timeSinceLastEvent = 0 -- Reset the countdown timer
+end
+-- [[ END THROTTLE ]]
 
 f:SetScript("OnEvent", function(self, event, arg1) 
     if event == "PLAYER_LOGIN" then 
@@ -1333,10 +1362,24 @@ f:SetScript("OnEvent", function(self, event, arg1)
         end
         
         MSC.UpdateMinimapPosition() 
+        
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        if isFirstLogin then
+            isFirstLogin = false
+        end
+        RequestUpdate()
+
+    elseif event == "GET_ITEM_INFO_RECEIVED" then
+        -- [[ WIPE THE BAD CACHE ]]
+        -- The server just sent us an item, meaning our previous scan of it 
+        -- was likely blank. Wipe the memory so it scans the real stats!
+        if MSC.StatCache then wipe(MSC.StatCache) end
+        MSC.BagCacheDirty = true
+        
+        RequestUpdate()     
+        
     else
-        -- Force update on EnterWorld, Equip change, or Talent change
-        if MSC.UpdateReceipt then MSC.UpdateReceipt() end
-        if MSC.UpdateLogic then MSC.UpdateLogic() end
+        RequestUpdate()
     end
 end)
 
