@@ -1,5 +1,21 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.3.6
+
+### CLASS SPECIFIC UPDATES: Warlocks
+* **Stat weights across specs and leveling brackets.** 
+	*Changes include adding mana regeneration as a tiebreaker, increasing generic Spell Power in many bracket
+	*Refining Shadow/Fire priorities, adding Spell Penetration for PvP, and various stamina/intellect/haste/crit/hit tweaks to better reflect TBC priorities. 
+
+### Key changes:
+* **Fixed a missing newline/end in Helpers.lua and add commented debug Tooltip ID helpers.** 
+* **Add robust Pawn import parsing and UI reload prompt, improve stat parsing, and harden scanner usage.** 
+* **Bind string.sub, add PawnString to parse Pawn v1 strings into internal weight tables, update ImportAndSavePawnString to use the parser, save weights to DB/current session and show a reload popup.** 
+* **Added StaticPopupDialogs entry for SGJ_RELOAD_REQUIRED to prompt ReloadUI after import.** 
+* **Refined stat pattern regexes (prefix/suffix, ranges), improve cleaning (remove color tags, textures, non‑breaking spaces, normalize whitespace), accumulate fixed stats and better name cleanup.** 
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.3.5
 
 ### Multiple files updated to improve speed, robustness and memory usage:

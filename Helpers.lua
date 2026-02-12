@@ -1208,3 +1208,28 @@ function MSC:DebugItem()
     
     print("Final Score: |cff00ccff" .. MSC.Round(score, 1) .. "|r")
 end
+
+
+-- =============================================================
+-- 11. DEBUG TooltipIDs
+-- =============================================================
+
+--	local function DebugTooltipIDs(tooltip)
+--	   local _, link = tooltip:GetItem()
+--	    if link then
+--        local _, itemId, _, _, _, _, _, suffixId = strsplit(":", link)
+        
+--	        if itemId then
+--	            tooltip:AddLine(" ") -- Add a spacer
+--	            tooltip:AddDoubleLine("|cff00ff00Item ID:|r", itemId)          
+--	            if suffixId and suffixId ~= "" and suffixId ~= "0" then
+--	                tooltip:AddDoubleLine("|cff00ff00Suffix ID:|r", suffixId)
+--	            end
+--	          tooltip:Show()
+--	        end
+-- 	   end
+--	end]
+
+-- Hook the default GameTooltip and the ItemRefTooltip (for chat links)
+--GameTooltip:HookScript("OnTooltipSetItem", DebugTooltipIDs)
+--ItemRefTooltip:HookScript("OnTooltipSetItem", DebugTooltipIDs)
