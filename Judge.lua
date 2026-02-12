@@ -91,6 +91,19 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
     end 
 end
 
+StaticPopupDialogs["SGJ_RELOAD_REQUIRED"] = {
+    text = "|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect.",
+    button1 = "Reload Now",
+    button2 = "Later",
+    OnAccept = function()
+        ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+}
+
 -- =============================================================
 -- 2. SMART SLOT LOGIC (Comparison)
 -- =============================================================

@@ -228,23 +228,28 @@ MSC.Scanner.TermMap = {
 -- =============================================================
 
 MSC.Scanner.StatPatterns = {
-    -- [[ 1. STANDARD STATS & PREFIX/SUFFIX ]]
-    -- Covers: "+10 Strength", "10 Strength", "150 Armor"
-    { p = "^[%s%+]*(%d+%.?%d*)%s+(.*)$", valIdx = 1, nameIdx = 2 },
-    -- Covers: "Strength +10", "Stamina 10", "Speed 2.80"
-    { p = "^(.*)%s+[%+:]*%s*(%d+%.?%d*)$", valIdx = 2, nameIdx = 1 },
+    -- [[ 1. STANDARD PREFIX]]
+    -- Catches: "+14 Spell Damage", "14 Strength", "+ 14 Intellect"
+    { p = "^[%+]?%s*(%d+%.?%d*)%s+(.-)[%s%.]*$", valIdx = 1, nameIdx = 2 },
+
+    -- [[ 2. STANDARD SUFFIX]]
+    -- Catches: "Strength +14", "Agility 14", "Speed 2.80"
+    { p = "^(.-)%s+[%+:]?%s*(%d+%.?%d*)[%s%.]*$", valIdx = 2, nameIdx = 1 },
     
-    -- [[ 2. FIXED SHORT STATS ]]
+    -- [[ 3. FIXED SHORT STATS ]]
+    -- These specific strings don't need dictionary lookups
     { p = "^(%d+) armor$", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
     { p = "^(%d+) block$", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
 
-    -- [[ 3. WEAPON & DPS ]]
+    -- [[ 4. WEAPON & DPS ]]
     { p = "speed (%d+%.?%d*)", valIdx = 1, fixedStat = "MSC_WEAPON_SPEED" },
     { p = "^%((%d+%.?%d*) damage per second%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
     { p = "^%((%d+%.?%d*) dps%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
-    { p = "^(%d+) %- (%d+) damage$", type="RANGE" },
     
-    -- [[ 4. ENCHANT/SCOPE FORMATS ]]
+    -- Range: Covers "100 - 200 Damage" and "100-200 Damage"
+    { p = "^(%d+)%s?[-~]%s?(%d+) damage$", type="RANGE" },
+    
+    -- [[ 5. ENCHANT/SCOPE FORMATS ]]
     { p = "scope %([%+:]*(%d+) (.*)%)", valIdx = 1, nameIdx = 2 },
     { p = "enchant:? [%+:]*(%d+) (.*)", valIdx = 1, nameIdx = 2 },
 }
@@ -486,9 +491,27 @@ end
 
 function MSC.Scanner.ParseStatLine(text, outputTable)
     if not text then return end
-    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " ")
+    
+    -- [[ STEP 1: Aggressive Cleaning ]]
+    -- Lowercase -> Remove colors -> Remove Texture escapes (|T...|t)
+    local cleanText = string_lower(text)
+    cleanText = string_gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
+    cleanText = string_gsub(cleanText, "|r", "")
+    cleanText = string_gsub(cleanText, "|t.-|t", "") -- Removes icons/textures
+    
+    -- [[ STEP 2: Nuke Non-Standard Spaces ]]
+    -- This replaces ASCII 160 (NBSP) with a standard space (32). 
+    -- This is the #1 reason white text fails to parse.
+    cleanText = string_gsub(cleanText, "\194\160", " ") 
+    cleanText = string_gsub(cleanText, "\160", " ") 
+    
+    -- [[ STEP 3: Standardize Whitespace ]]
+    cleanText = string_gsub(cleanText, "%s+", " ")
     cleanText = string_match(cleanText, "^%s*(.-)%s*$")
     
+    -- [[ STEP 4: Debug (- Uncomment to see what the addon sees) ]]
+    -- print("MSC DEBUG:", cleanText) 
+
     for _, pat in ipairs(MSC.Scanner.StatPatterns) do
         local m1, m2, m3 = string_match(cleanText, pat.p)
         if m1 then
@@ -498,15 +521,24 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
                 return
             elseif pat.fixedStat then
                 local val = tonumber(m1)
-                if val then outputTable[pat.fixedStat] = val; return end
+                if val then 
+                    outputTable[pat.fixedStat] = (outputTable[pat.fixedStat] or 0) + val; 
+                    return 
+                end
             else
                 local val = tonumber(pat.valIdx == 1 and m1 or m2)
                 local name = pat.valIdx == 1 and m2 or m1
                 if val and name then
-                    local cleanName = string_gsub(string_gsub(name, "^to ", ""), "%s+$", "")
+                    -- Clean the name one last time (remove "to " prefix, trailing spaces)
+                    local cleanName = string_gsub(string_gsub(name, "^to ", ""), "[%s%.]+$", "")
+                    
                     local key = MSC.Scanner.BaseStatMap[cleanName]
                     if not key and cleanName == "armor" then key = "ITEM_MOD_ARMOR_SHORT" end
-                    if key then outputTable[key] = (outputTable[key] or 0) + val; return end
+                    
+                    if key then 
+                        outputTable[key] = (outputTable[key] or 0) + val; 
+                        return 
+                    end
                 end
             end
         end

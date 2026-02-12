@@ -7,7 +7,7 @@ local _G = _G
 local type, pairs, ipairs, unpack, pcall, select = type, pairs, ipairs, unpack, pcall, select
 local tonumber, tostring, next = tonumber, tostring, next
 local math_floor, math_abs, math_max, math_min, math_sqrt = math.floor, math.abs, math.max, math.min, math.sqrt
-local string_find, string_match, string_lower, string_upper, string_gsub, string_format = string.find, string.match, string.lower, string.upper, string.gsub, string.format
+local string_find, string_match, string_lower, string_upper, string_gsub, string_format, string_sub = string.find, string.match, string.lower, string.upper, string.gsub, string.format, string.sub
 local table_insert, table_concat, table_remove, table_sort = table.insert, table.concat, table.remove, table.sort
 local wipe = wipe or table.wipe
 local strsplit = strsplit
@@ -211,24 +211,81 @@ end
 -- 4. PAWN PARSER
 -- =============================================================
 MSC.PawnStatMap = {
-    ["Strength"] = "ITEM_MOD_STRENGTH_SHORT", ["Agility"] = "ITEM_MOD_AGILITY_SHORT",
-    ["Stamina"] = "ITEM_MOD_STAMINA_SHORT", ["Intellect"] = "ITEM_MOD_INTELLECT_SHORT",
-    ["Spirit"] = "ITEM_MOD_SPIRIT_SHORT", ["CritRating"] = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["HitRating"] = "ITEM_MOD_HIT_RATING_SHORT", ["HasteRating"] = "ITEM_MOD_HASTE_RATING_SHORT",
-    ["ResilienceRating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT", ["ArmorPenetration"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
-    ["SpellPower"] = "ITEM_MOD_SPELL_POWER_SHORT", ["Healing"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-    ["SpellCritRating"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", ["SpellHitRating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
-    ["SpellHasteRating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT", ["Mp5"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
-    ["DefenseRating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", ["DodgeRating"] = "ITEM_MOD_DODGE_RATING_SHORT",
-    ["ParryRating"] = "ITEM_MOD_PARRY_RATING_SHORT", ["BlockRating"] = "ITEM_MOD_BLOCK_RATING_SHORT",
-    ["BlockValue"] = "ITEM_MOD_BLOCK_VALUE_SHORT", ["Dps"] = "MSC_WEAPON_DPS", ["Speed"] = "MSC_WEAPON_SPEED",
+    ["Strength"] = "ITEM_MOD_STRENGTH_SHORT", 
+	["Agility"] = "ITEM_MOD_AGILITY_SHORT",
+    ["Stamina"] = "ITEM_MOD_STAMINA_SHORT", 
+	["Intellect"] = "ITEM_MOD_INTELLECT_SHORT",
+    ["Spirit"] = "ITEM_MOD_SPIRIT_SHORT", 
+	["CritRating"] = "ITEM_MOD_CRIT_RATING_SHORT",
+    ["HitRating"] = "ITEM_MOD_HIT_RATING_SHORT", 
+	["HasteRating"] = "ITEM_MOD_HASTE_RATING_SHORT",
+    ["ResilienceRating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT", 
+	["ArmorPenetration"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
+    ["SpellPower"] = "ITEM_MOD_SPELL_POWER_SHORT", 
+	["Healing"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    ["SpellCritRating"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 
+	["SpellHitRating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    ["SpellHasteRating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 
+	["Mp5"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    ["DefenseRating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", 
+	["DodgeRating"] = "ITEM_MOD_DODGE_RATING_SHORT",
+    ["ParryRating"] = "ITEM_MOD_PARRY_RATING_SHORT", 
+	["BlockRating"] = "ITEM_MOD_BLOCK_RATING_SHORT",
+    ["BlockValue"] = "ITEM_MOD_BLOCK_VALUE_SHORT", 
+	["Dps"] = "MSC_WEAPON_DPS", 
+	["Speed"] = "MSC_WEAPON_SPEED",
 }
 
+function MSC:ParsePawnString(pawnString)
+    if not pawnString or type(pawnString) ~= "string" then return nil end
+    
+    -- 1. CLEANUP & FORMAT CHECK
+    -- Pawn string format: ( Pawn: v1: "Profile Name": Stat=Value, Stat=Value, ... )
+    local clean = string_gsub(string_gsub(pawnString, "%)", ""), "%(", "")
+    
+    -- 2. EXTRACT PROFILE NAME
+    -- Pattern looks for: v1: "Name":
+    local namePattern = "v1:%s*\"([^\"]+)\":"
+    local profileName = string_match(clean, namePattern)
+    
+    if not profileName then 
+        -- Fallback: Try to grab it if quotes are missing or format is loose
+        profileName = string_match(clean, "v1:%s*([^%s:,]+):") 
+    end
+    if not profileName then return nil end
+
+    -- 3. EXTRACT STATS
+    local weights = {}
+    -- Remove the header part so we just have the stat list
+    local _, endPos = string_find(clean, namePattern)
+    if not endPos then _, endPos = string_find(clean, "v1:") end
+    if endPos then
+        local statBlock = string_sub(clean, endPos + 1)
+        
+        -- Loop through comma-separated stats
+        for stat, val in string.gmatch(statBlock, "([%a%d]+)=([%d%.]+)") do
+            -- Map Pawn Name -> SGJ Internal Name
+            local internalKey = MSC.PawnStatMap[stat]
+            local numberVal = tonumber(val)
+            
+            if internalKey and numberVal and numberVal > 0 then
+                weights[internalKey] = numberVal
+            end
+        end
+    end
+
+    -- 4. VALIDATION
+    if not next(weights) then return nil end
+    
+    return weights, profileName
+end
+
 function MSC:ImportAndSavePawnString(pawnString)
-    -- 1. Parse the string using your existing helper
+    -- 1. Parse the string
     local weights, name = self:ParsePawnString(pawnString)
+    
     if not weights then 
-        print("|cffff0000SGJ: Failed to parse Pawn string.|r")
+        print("|cffff0000SGJ: Invalid Pawn string format.|r")
         return false 
     end
 
@@ -237,13 +294,15 @@ function MSC:ImportAndSavePawnString(pawnString)
     SharpiesGearJudgeDB.customWeights = SharpiesGearJudgeDB.customWeights or {}
     SharpiesGearJudgeDB.customWeights[name] = weights
     
-    -- 3. Update the session weights so it appears immediately
+    -- 3. Update active session (optional now, since we are reloading)
     if MSC.CurrentClass then
         MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
         MSC.CurrentClass.Weights[name] = weights
     end
     
-    print("|cff00ff00SGJ: Profile '" .. name .. "' saved to character database.|r")
+    -- 4. TRIGGER THE RELOAD POPUP
+    StaticPopup_Show("SGJ_RELOAD_REQUIRED")
+    
     return true, name
 end
 
@@ -303,7 +362,7 @@ function MSC:GetRatingPercent(statKey, ratingVal, level)
 end
 
 -- =============================================================
--- 6. SCANNING (FIXED)
+-- 6. SCANNING
 -- =============================================================
 
 function MSC.GetRawItemStats(itemLink)
@@ -311,13 +370,20 @@ function MSC.GetRawItemStats(itemLink)
     if MSC.StatCache[itemLink] then return MSC.StatCache[itemLink] end
 
     -- 1. EXECUTE SCANNER
-    -- [[ FIX: Added safety check for MSC.Scanner being nil ]]
-    local scanData = {}
+    local scanData = nil -- Start nil to verify if scan works
+    
     if MSC.Scanner and MSC.Scanner.Scan then
-        scanData = MSC.Scanner.Scan(itemLink)
-    else
-        -- If Scanner isn't loaded, return empty stats safely to prevent crash
-        return {}
+        -- Protected call prevents the entire addon from crashing if Parse.lua errors
+        local status, result = pcall(MSC.Scanner.Scan, itemLink)
+        if status and result then
+            scanData = result
+        end
+    end
+    
+    -- [[ CRASH PROTECTION ]]
+    -- If scanner failed, returned nil, or crashed, use a safe empty structure
+    if not scanData then 
+        scanData = { Stats = {}, UseEffects = {}, Procs = {}, Meta = {} } 
     end
     
     -- 2. FLATTEN STATS
@@ -337,7 +403,7 @@ function MSC.GetRawItemStats(itemLink)
     end
 
     -- ========================================================
-    -- [[ 4. APPLY DATABASE OVERRIDES (THE MISSING LINK) ]]
+    -- [[ 4. APPLY DATABASE OVERRIDES ]
     -- ========================================================
     local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
     if itemID then
