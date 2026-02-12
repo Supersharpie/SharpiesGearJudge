@@ -2,12 +2,20 @@
 
 ## 🚀 v2.3.6
 
+
+
+
+
+
 ### CLASS SPECIFIC UPDATES: Warlocks
 * **Stat weights across specs and leveling brackets.** 
 	*Changes include adding mana regeneration as a tiebreaker, increasing generic Spell Power in many bracket
 	*Refining Shadow/Fire priorities, adding Spell Penetration for PvP, and various stamina/intellect/haste/crit/hit tweaks to better reflect TBC priorities. 
 
 ### Key changes:
+* **Introduce a C_Timer-based update throttle and RequestUpdate/TriggerFullUpdate flow for debounced UI refreshes; wire RequestUpdate to BAG_UPDATE and other events.**
+* **Added GetItemInfoInstant local and defensive fallback for wipe (wipe or table.wipe). Reduce allocations by reusing Scratch_Stats_Old in EvaluateUpgrade and copying old item stats into it.**
+* **Applied lazy-loading for the Receipt view, UI/visual tweaks, and remove/condense many stray comments and redundant code; also remove the old OnUpdate throttle logic.**
 * **Fixed a missing newline/end in Helpers.lua and add commented debug Tooltip ID helpers.** 
 * **Add robust Pawn import parsing and UI reload prompt, improve stat parsing, and harden scanner usage.** 
 * **Bind string.sub, add PawnString to parse Pawn v1 strings into internal weight tables, update ImportAndSavePawnString to use the parser, save weights to DB/current session and show a reload popup.** 

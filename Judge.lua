@@ -9,6 +9,7 @@ local math_abs, math_floor, math_max = math.abs, math.floor, math.max
 local table_insert, table_sort = table.insert, table.sort
 local wipe = wipe or table.wipe
 local pcall = pcall
+local GetTime = GetTime
 
 local CreateFrame = CreateFrame
 local GetItemInfo = GetItemInfo
@@ -303,7 +304,6 @@ end
 -- =============================================================
 MSC.IsCalculating = false
 MSC.LastLink = nil      -- Stores the last item we saw
-MSC.LastTime = 0        -- Stores the exact time we saw it
 
 local Scratch_Tooltip_New = {}
 local Scratch_Tooltip_Old = {}
@@ -311,11 +311,8 @@ local Scratch_Tooltip_Diffs = {}
 local TEX_UP = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png:14:14:0:-2|t"
 local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png:14:14:0:-2|t"
 
--- [[ CONFIG: CONSOLIDATION DISABLED ]]
-local STAT_CONSOLIDATION_MAP = {} 
-
 local function OnTooltipSetItem(tooltip)
-    -- [[ 2. RECURSION & SETTINGS CHECKS ]]
+    -- [[ 1. INSTANT CHECKS (Fail Fast) ]]
     if MSC.IsCalculating then return end
     if tooltip:GetName() and string_find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
     
@@ -326,19 +323,12 @@ local function OnTooltipSetItem(tooltip)
     
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
+
     if not link or not IsEquippableItem(link) then return end
+    if not MSC.IsItemUsable(link) then return end
 
-    -- [[ 3. THE THROTTLE (RAM SAVER) ]]
-    -- Prevents recalculating the same item multiple times in a split second
-    local now = GetTime()
-    if link == MSC.LastLink and (now - MSC.LastTime) < 0.1 then 
-        return 
-    end
-    -- Update the memory for next time
-    MSC.LastLink = link
-    MSC.LastTime = now
-
-    if link and not MSC.IsItemUsable(link) then return end
+    -- [[ REMOVED THROTTLE HERE TO FIX DISAPPEARING TEXT ]] 
+    -- We now always recalculate and redraw to ensure it persists after a game-clearing refresh.
 
     MSC.IsCalculating = true
     local _, playerClass = UnitClass("player")
@@ -360,8 +350,8 @@ local function OnTooltipSetItem(tooltip)
         local newScore, oldScore, itemNewStats, itemOldStats, newStatsTotal, oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts = MSC:EvaluateUpgrade(link, slotId, weights, specName)
         local delta = newScore - oldScore
         local isEquipped = (GetInventoryItemLink("player", slotId) == link)
-
-		-- [[ 1. THE HEADER (Always Shows) ]]
+        
+        -- [[ 1. THE HEADER (Always Shows) ]]
         tooltip:AddLine(" ")
         local scoreLabel = "Judge's Score:"
         if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end

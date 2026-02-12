@@ -2,16 +2,13 @@ local addonName, MSC = ...
 local _G = _G 
 
 -- [[ SPEED OPTIMIZATION: LOCALIZED FUNCTIONS ]]
--- Lua APIs
 local pairs, ipairs = pairs, ipairs
 local tonumber, type = tonumber, type
--- [[ FIX: Added string.lower here ]]
 local string_find, string_match, string_format, string_gsub, string_lower = string.find, string.match, string.format, string.gsub, string.lower
 local table_insert = table.insert
 local math_floor = math.floor
 local pcall = pcall
 
--- WoW APIs
 local CreateFrame = CreateFrame
 local WorldFrame = WorldFrame
 
@@ -401,35 +398,20 @@ end
 
 function MSC.Scanner.ClassifyLine(text)
     if not text or text == "" then return "SKIP" end
-    -- Clean colors and formatting
-    local cleanText = string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " ")
-    
-    -- 1. SET LOGIC (Prioritize Header over Equip)
-    if string_find(cleanText, "%(%d+/%d+%)") then return "SET_HEADER" end
-    if string_find(cleanText, "^%s*%(%d+%)%s*set:") then return "SKIP" end -- Skip the specific bonus lines to avoid mis-parsing
-    if string_find(cleanText, "set:") then return "SET" end
+    local lower = string_lower(text)
 
-    -- 2. PROCS & USE
-    if string_find(cleanText, "chance on hit") or string_find(cleanText, "when struck") then return "PROC" end
-    if string_find(cleanText, "^%s*use:") then return "USE" end
-    if string_find(cleanText, " for %d+ sec") and not string_find(cleanText, "per %d+ sec") then return "USE" end
-
-    -- 3. SOCKETS
-    if string_find(cleanText, "socket bonus:") then return "SOCKET_BONUS" end
-    if string_find(cleanText, "socket") then return "SOCKET_INFO" end 
-
-    -- 4. EQUIP LINES
-    if string_find(cleanText, "^%s*equip:") 
-       or string_find(cleanText, "^increases") 
-       or string_find(cleanText, "^improves") 
-       or string_find(cleanText, "^restores") 
-       or string_find(cleanText, "^increased")
-       or string_find(cleanText, "^decreases") then
-       return "EQUIP" 
+    -- [[ OPTIMIZATION: SIMPLE CHECKS FIRST ]]
+    if string_find(lower, "equip") then return "EQUIP" end
+    if string_find(lower, "use:") then return "USE" end
+    if string_find(lower, "chance on") then return "PROC" end
+    if string_find(lower, "set:") then return "SET" end
+    if string_find(lower, "socket") then 
+        if string_find(lower, "bonus") then return "SOCKET_BONUS" else return "SOCKET_INFO" end
     end
-
-    -- 5. RAW STATS
-    if string_find(cleanText, "%d") then return "STAT" end 
+    
+    -- Clean text for Stat Checks
+    local cleanText = string_gsub(string_gsub(lower, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
+    if string_find(cleanText, "%d") then return "STAT" end
     
     return "FLUFF"
 end
@@ -461,9 +443,8 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             local val = tonumber(pat.valIdx == 1 and match1 or match2)
             local name = pat.nameIdx and (pat.nameIdx == 1 and match1 or match2)
 
-            -- TBC PERCENT CONVERSION (Level 70)
             if val and pat.isPercent and MSC.IsTBC then
-                local mult = 15.8 -- Default (Melee Hit/Haste)
+                local mult = 15.8 
                 if name then
                     if string_find(name, "spell") then 
                         mult = (string_find(name, "hit") and 12.6 or 22.1)
@@ -491,27 +472,19 @@ end
 
 function MSC.Scanner.ParseStatLine(text, outputTable)
     if not text then return end
+
+    -- [[ OPTIMIZATION: DIGIT CHECK ]]
+    if not string_find(text, "%d") then return end
     
-    -- [[ STEP 1: Aggressive Cleaning ]]
-    -- Lowercase -> Remove colors -> Remove Texture escapes (|T...|t)
     local cleanText = string_lower(text)
     cleanText = string_gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
     cleanText = string_gsub(cleanText, "|r", "")
-    cleanText = string_gsub(cleanText, "|t.-|t", "") -- Removes icons/textures
-    
-    -- [[ STEP 2: Nuke Non-Standard Spaces ]]
-    -- This replaces ASCII 160 (NBSP) with a standard space (32). 
-    -- This is the #1 reason white text fails to parse.
+    cleanText = string_gsub(cleanText, "|t.-|t", "") 
     cleanText = string_gsub(cleanText, "\194\160", " ") 
     cleanText = string_gsub(cleanText, "\160", " ") 
-    
-    -- [[ STEP 3: Standardize Whitespace ]]
     cleanText = string_gsub(cleanText, "%s+", " ")
     cleanText = string_match(cleanText, "^%s*(.-)%s*$")
     
-    -- [[ STEP 4: Debug (- Uncomment to see what the addon sees) ]]
-    -- print("MSC DEBUG:", cleanText) 
-
     for _, pat in ipairs(MSC.Scanner.StatPatterns) do
         local m1, m2, m3 = string_match(cleanText, pat.p)
         if m1 then
@@ -529,9 +502,7 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
                 local val = tonumber(pat.valIdx == 1 and m1 or m2)
                 local name = pat.valIdx == 1 and m2 or m1
                 if val and name then
-                    -- Clean the name one last time (remove "to " prefix, trailing spaces)
                     local cleanName = string_gsub(string_gsub(name, "^to ", ""), "[%s%.]+$", "")
-                    
                     local key = MSC.Scanner.BaseStatMap[cleanName]
                     if not key and cleanName == "armor" then key = "ITEM_MOD_ARMOR_SHORT" end
                     
@@ -557,7 +528,6 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
                 procObj.type = "Damage"
                 local valStr = (pat.valIdx == 2) and m2 or m1
                 procObj.val = tonumber(valStr) or 0
-                
                 if m2 and not pat.valIdx then 
                     local maxVal = tonumber(m2) or 0
                     procObj.val = (procObj.val + maxVal) / 2 
@@ -619,7 +589,7 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
 end
 
 -- =============================================================
--- 5. MAIN PIPELINE (FIXED)
+-- 5. MAIN PIPELINE
 -- =============================================================
 
 function MSC.Scanner.Scan(itemLink)
@@ -646,7 +616,6 @@ function MSC.Scanner.Scan(itemLink)
         if fullText ~= "" then
             local type = MSC.Scanner.ClassifyLine(fullText)
             
-            -- FIX: Changed ParseSetLine to ParseSetHeader to match the sub-parser name
             if type == "SET_HEADER" or type == "SET" then 
                 MSC.Scanner.ParseSetHeader(fullText, result.Meta)
             elseif type == "STAT" then 
@@ -665,25 +634,20 @@ function MSC.Scanner.Scan(itemLink)
         end
     end
 
-	-- Fallback DPS Calculation
-		if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
-			local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
-			result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
-		end
+    if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
+        local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
+        result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
+    end
 
-		local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
-		if itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID] then
-			local override = MSC.ItemOverrides[itemID]
-			
-			-- Check if the override ALREADY contains the math we want
-			if override._AUTO_PROC or override.UseEffects then
-				result.UseEffects = {}
-				result.Procs = {}
-				
-				-- Re-inject our clean override data into the result
-				if override._AUTO_PROC then result.Stats._AUTO_PROC = override._AUTO_PROC end
-			end
-		end
+    local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
+    if itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID] then
+        local override = MSC.ItemOverrides[itemID]
+        if override._AUTO_PROC or override.UseEffects then
+            result.UseEffects = {}
+            result.Procs = {}
+            if override._AUTO_PROC then result.Stats._AUTO_PROC = override._AUTO_PROC end
+        end
+    end
 
-		return result
-	end
+    return result
+end
