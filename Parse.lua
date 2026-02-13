@@ -255,7 +255,10 @@ MSC.Scanner.EquipPatterns = {
     -- ========================================================================
     -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority) ]]
     -- ========================================================================
-    
+	
+    -- [[TBC QUEST REWARD PATTERN ]] 
+    { p = "increases damage and healing done by.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+	
     -- [[ TBC: HYBRID HEAL/DAMAGE SPLIT ]]
     { p = "healing.-up to (%d+).-damage.-up to (%d+)", 
       func = function(heal, dmg, _, outputStats) 
