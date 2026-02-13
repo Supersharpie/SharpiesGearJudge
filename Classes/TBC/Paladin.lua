@@ -87,7 +87,8 @@ Paladin.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.8, 
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 1.0,
         ["ITEM_MOD_STAMINA_SHORT"]          = 1.2, 
-        ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0, 
+        ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0,
+		["ITEM_MOD_ARMOR_SHORT"]            = 0.05,		
         ["MSC_WEAPON_DPS"]                  = 0.0,
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.2,
     },
@@ -105,15 +106,15 @@ Paladin.LevelingBrackets = {
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 7.0, 
-            ["MSC_WEAPON_SPEED"] = 0.5, -- Slight pref for slow (Seal of Command at 20)
+            ["MSC_WEAPON_SPEED"] = 0.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.8, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.01,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.05, -- Bumped slightly to ensure Mail preference
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_AGILITY_SHORT"] = 0.5, -- Added for Sync (Crit/Dodge)
-            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_AGILITY_SHORT"] = 0.5, 
+            ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -123,19 +124,19 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.01,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.05,
             ["ITEM_MOD_AGILITY_SHORT"] = 0.8,
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.8
         }
     },
 
     -- [[ RETRIBUTION LEVELING ]]
-    -- Focus: Slow 2H Weapon + Strength + Crit.
+    -- (Ret doesn't strictly NEED armor weight as much, but 0.01 helps tie-break)
     ["Leveling_RET_21_40"] = {
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
-            ["MSC_WEAPON_SPEED"] = 4.0, -- Seal of Command unlocked. Slow is REQUIRED.
+            ["MSC_WEAPON_SPEED"] = 4.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.2, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.8, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
@@ -144,11 +145,11 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.2, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, -- Added for Sync
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2,
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 13.0, 
@@ -164,8 +165,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
     ["Leveling_RET_41_51"] = {
@@ -181,15 +182,15 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, -- Added for Sync
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
-            ["MSC_WEAPON_SPEED"] = 5.0, -- Crusader Strike (Lvl 50) hits based on weapon dmg. SLOW IS KING.
+            ["MSC_WEAPON_SPEED"] = 5.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.8, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.4, 
@@ -200,9 +201,9 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, -- Ret starts getting some SP from gear
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
     ["Leveling_RET_52_59"] = {
@@ -219,9 +220,9 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, -- Added for Sync
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 16.0, 
@@ -236,8 +237,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
     ["Leveling_RET_60_70"] = {
@@ -255,15 +256,15 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 0.02, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0, -- Added for Sync
-            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
-            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5, -- TBC Stat
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 2.0, 
+            ["ITEM_MOD_HASTE_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 18.0, 
-            ["MSC_WEAPON_SPEED"] = 6.0, -- Maximum Slow Priority
+            ["MSC_WEAPON_SPEED"] = 6.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.0, 
@@ -277,28 +278,28 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 3.0,
             ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 1.0,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, -- Consecration/Judgement/Seals
-			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 -- Reduces drinking downtime
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
 
     -- [[ PROT AOE GRINDING ]]
-    -- Focus: Spell Power weapon + Stamina + Block Value.
     ["Leveling_PROT_AOE_41_51"] = {
         min = 41, max = 51,
         Start = { 
-            ["MSC_WEAPON_DPS"] = 0.5, -- Weapon DPS is IRRELEVANT. You want a mage sword.
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, -- Holy Shield Damage
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, -- Consecration Damage
+            ["MSC_WEAPON_DPS"] = 0.5, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5, -- Added for Sync
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0 -- Matches Spell Power value
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
@@ -312,7 +313,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0 -- Matches Spell Power value
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
     ["Leveling_PROT_AOE_52_59"] = {
@@ -327,9 +329,10 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8, -- Added for Sync
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8, -- Added for Sync
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0 -- Matches Spell Power value
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
@@ -343,7 +346,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.0,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0 -- Matches Spell Power value
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
     ["Leveling_PROT_AOE_60_70"] = {
@@ -361,7 +365,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0 -- Matches Spell Power value
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 2.0, 
@@ -376,12 +381,12 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5,
-			["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0 -- Matches Spell Power value
+            ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
 
     -- [[ HOLY DUNGEON LEVELING ]]
-    -- Focus: +Healing > Int > Mp5.
     ["Leveling_HOLY_DUNGEON_21_40"] = {
         min = 21, max = 40,
         Start = { 
@@ -392,7 +397,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
-            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
@@ -414,8 +419,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0 -- Added for Sync
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0 
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, 
@@ -437,8 +442,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0 -- Added for Sync
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0 
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
@@ -460,9 +465,9 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, -- Added for Sync
-            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, -- Added for Sync
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, 
@@ -478,7 +483,6 @@ Paladin.LevelingBrackets = {
     },
 
     -- [[ PROT DUNGEON LEVELING ]]
-    -- Focus: Mitigation (Def/Stam) > Reflective Damage. 
     ["Leveling_PROT_DUNGEON_21_40"] = {
         min = 21, max = 40,
         Start = { 
@@ -489,10 +493,11 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
             ["MSC_WEAPON_DPS"] = 1.5, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5, -- Added for Sync
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
@@ -505,7 +510,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
     ["Leveling_PROT_DUNGEON_41_51"] = {
@@ -520,9 +526,10 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
-            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8, -- Added for Sync
-            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8, -- Added for Sync
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.8 -- Added for Sync
+            ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.8,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
@@ -536,7 +543,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.2
+            ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.2,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
     ["Leveling_PROT_DUNGEON_52_59"] = {
@@ -553,7 +561,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
@@ -567,7 +576,8 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0, 
-            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8
+            ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
     ["Leveling_PROT_DUNGEON_60_70"] = {
@@ -585,7 +595,8 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 1.2, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5 -- Added for Sync
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         },
         End = { 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 3.0, 
@@ -600,7 +611,8 @@ Paladin.LevelingBrackets = {
             ["MSC_WEAPON_DPS"] = 1.2, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     }
 }

@@ -1,10 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
-Queue modules at registration and add a ForceInit routine to pick the correct class module at PLAYER_LOGIN. 
-Init.lua: RegisterModule now stores modules in MSC.PendingModules instead of trying to initialize immediately.
-	added MSC:ForceInit to detect player class, wire up Profiles and PrettyNames, print a load message, and clear the pending list to save memory. 
-	added a PLAYER_LOGIN frame to call ForceInit. 
-Judge.lua: call MSC:ForceInit on PLAYER_LOGIN and on certain talent events, and add a tooltip failsafe that attempts ForceInit before aborting.
+## 🚀 v2.3.7
+
+### Key changes:
+* **Reorganize and expand Parse.lua's term and equip pattern mappings:** 
+	*Consolidated and added alternative spell-damage/healing keys in TermMap to cover ERA/TBC phrasings and add many new EquipPatterns (casting stats, hit/crit, attack power variants, melee/tanking, elemental damage, etc.). 
+	*Reorder pattern priority (lazy/simple matches first, complex logic retained where needed), simplify weapon-damage handling, and improve percent/generic fallback and short-form parsing to better handle varied item tooltip phrasings and reduce missed matches.
+* **Register QUEST_COMPLETE and GET_ITEM_INFO_RECEIVED events and add MSC.UpdateQuestOverlays to mark quest reward choices that are upgrades.**
+* **The new handler calls UpdateQuestOverlays when the quest window opens or item info arrives and triggers RequestUpdate on GET_ITEM_INFO_RECEIVED.** 
+* **UpdateQuestOverlays works with both Classic and modern APIs, creates a per-button overlay texture at a high sublevel to survive UI skins, evaluates each choice using existing weight/profile logic, and shows or hides the overlay accordingly.**
+* **Large overhaul of the AddOverrides table — reorganized sections, added many item entries, updated stat and _AUTO_PROC values and notes to improve proc valuation accuracy and clarify use cases.** 
+* **Queue modules at registration and add a ForceInit routine to pick the correct class module at PLAYER_LOGIN.** 
+* **RegisterModule now stores modules in MSC.PendingModules instead of trying to initialize immediately.**
+	*Added MSC:ForceInit to detect player class, wire up Profiles and PrettyNames, print a load message, and clear the pending list to save memory. 
+	*Added a PLAYER_LOGIN frame to call ForceInit. 
+* **Call MSC:ForceInit on PLAYER_LOGIN and on certain talent events, and add a tooltip failsafe that attempts ForceInit before aborting.**
 
 ## 🚀 v2.3.6
 

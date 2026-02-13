@@ -144,10 +144,16 @@ MSC.Scanner.TermMap = {
     ["mana per 5 sec"]    = "ITEM_MOD_MANA_REGENERATION_SHORT",
     ["health per 5 sec"]  = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
     
-    -- [[ 5. ERA SPELL DAMAGE ]]
-    ["damage and healing done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing done by spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-    
+    -- [[ 5. ERA & TBC SPELL DAMAGE ]]
+	["healing done by spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+	["healing done by magical spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+	
+	["spell damage rating"]           = "ITEM_MOD_SPELL_POWER_SHORT",
+	["spell damage and healing"]      = "ITEM_MOD_SPELL_POWER_SHORT",
+	["damage done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
+	["damage and healing done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["damage and healing done by magical spells and effects by up to"] = "ITEM_MOD_SPELL_POWER_SHORT", 
+	
     ["damage done by shadow spells and effects"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
     ["damage done by fire spells and effects"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
     ["damage done by frost spells and effects"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
@@ -207,13 +213,7 @@ MSC.Scanner.TermMap = {
     ["your pet's armor"]              = "ITEM_MOD_ARMOR_SHORT", -- Handled loosely, but good to catch
     ["your pet's attack power"]       = "ITEM_MOD_ATTACK_POWER_SHORT",
     ["your pet's damage"]             = "ITEM_MOD_ATTACK_POWER_SHORT",
-    
-    -- [[ TBC: THE "SPELL" VARIANTS (Consistency) ]]
-    ["spell damage rating"]           = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["damage done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing done by magical spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-    ["spell damage and healing"]      = "ITEM_MOD_SPELL_POWER_SHORT",
-    
+    	
     -- [[ WEIRD / EDGE CASE CATCHERS ]]
     ["all stats"]                     = "ITEM_MOD_ALL_STATS_SHORT",
     ["magic resistance"]              = "ITEM_MOD_RESISTANCE_ALL_SHORT",
@@ -252,14 +252,57 @@ MSC.Scanner.StatPatterns = {
 }
 
 MSC.Scanner.EquipPatterns = {
+
     -- ========================================================================
-    -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority) ]]
+    -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority / Lazy Matching) ]]
     -- ========================================================================
-	
-    -- [[TBC QUEST REWARD PATTERN ]] 
-    { p = "increases damage and healing done by.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-	
-    -- [[ TBC: HYBRID HEAL/DAMAGE SPLIT ]]
+    -- These ignore sentence structure ("Increases", "by", "up to") and just grab the number.
+    
+    -- [[ CASTING STATS ]]
+    { p = "damage and healing.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+    { p = "healing done.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
+    { p = "spell penetration.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    { p = "restores (%d+) mana", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+
+    -- [[ HIT & CRIT (Spell/Ranged MUST be checked before Melee) ]]
+    { p = "spell hit rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+    { p = "ranged hit rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Hunters
+    { p = "hit rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
+
+    { p = "spell crit.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = "ranged crit.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = "critical strike rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+
+    -- [[ ATTACK POWER (Feral/Ranged MUST be checked before General) ]]
+    { p = "ranged attack power.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
+    { p = "feral attack power.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+    { p = "attack power.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+
+    -- [[ MELEE & TANKING ]]
+    { p = "expertise rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
+    { p = "armor penetration.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+    { p = "block value.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, -- Vital for Prot
+    { p = "block rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+    { p = "defense rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+    { p = "dodge rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT" },
+    { p = "parry rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT" },
+    { p = "resilience.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+    { p = "spell haste.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
+    { p = "haste rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HASTE_RATING_SHORT" },
+
+    -- [[ ELEMENTAL DAMAGE ]]
+    { p = "shadow damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+    { p = "fire damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+    { p = "frost damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+    { p = "arcane damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+    { p = "nature damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+    { p = "holy damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+
+    -- ========================================================================
+    -- [[ 2. COMPLEX / LOGIC PATTERNS (Cannot be Lazy) ]]
+    -- ========================================================================
+
+    -- [[ HYBRID HEAL/DAMAGE SPLIT (e.g. "Whitemend") ]]
     { p = "healing.-up to (%d+).-damage.-up to (%d+)", 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
@@ -269,60 +312,26 @@ MSC.Scanner.EquipPatterns = {
       end 
     },
 
-    -- [[ ERA/TBC: UNIFIED SPELL POWER ]]
-    { p = "damage and healing.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = "healing done.-up to (%d+)%.?", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
-
-    -- [[ FERAL AP & WEAPON SKILL ]] 
-    { p = "increases (attack power) by (%d+) in", valIdx = 2, nameIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-	{ p = "attack power by (%d+) in cat", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = "feral attack power by (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = "increased (.*) %+(%d+)%.?", valIdx = 2, nameIdx = 1 },
-
-    -- [[ RESTORES (MP5/HP5) ]]
-    { p = "restores (%d+) (mana per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
-    { p = "restores (%d+) (health per 5 sec)%.?", valIdx = 1, nameIdx = 2 },
-    { p = "restores (%d+) (.*) every ([%d%.]+) sec", 
-        func = function(match1, match2, match3, outputStats)
-            local key = (string_find(match2, "health") and "ITEM_MOD_HEALTH_REGENERATION_SHORT") 
-                        or "ITEM_MOD_MANA_REGENERATION_SHORT"
-            local val, interval = tonumber(match1), tonumber(match3)
-            if val and interval then outputStats[key] = (outputStats[key] or 0) + ((val / interval) * 5) end
-        end 
-		},
-	{ p = "restores (%d+) (mana per 5 sec).-casting", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-    { p = "restores (%d+) (health per 5 sec).-combat", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-	
-    -- [[ ARPEN, THREAT, & PENETRATION ]]
-    { p = "ignore (%d+) of your opponent's armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "ignores (%d+) armor", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "attacks ignore (%d+) of your", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "decreases (.*) by (%d+)", valIdx=2, nameIdx=1 }, 
-    { p = "decreases (threat) caused", valIdx = nil, fixedStat = "MSC_THREAT_MOD" },
-	
-	-- [[FLAT WEAPON DAMAGE (Ammo, Scopes, Rings) ]]
+    -- [[ WEAPON DAMAGE (Scopes, Rings) ]]
     { p = "adds (%d+) weapon damage", valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
     { p = "adds (%d+) damage", valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
 
-    -- ========================================================================
-    -- [[ 2. STANDARD PHRASING (Percent vs Rating) ]]
-    -- ========================================================================
-    
-    -- Percent (Caught first to prevent splitting "1% Hit" into just "1 Hit")
+    -- [[ PERCENTAGE MODS (e.g. "1% Hit") ]]
+    -- Caught here to prevent "1 Hit" being read as Rating
     { p = "improves your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true }, 
     { p = "increases your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true }, 
     { p = "increases (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true },
 
-    -- Flat Rating / "Up To"
+    -- [[ GENERIC FALLBACKS (The "Standard" Parser) ]]
+    -- Catches standard strings: "Increases Strength by 10"
     { p = "improves your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
     { p = "improves (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
     { p = "increases your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
     { p = "increases (.*) by up to (%d+)%.?", valIdx = 2, nameIdx = 1 },
     { p = "increases (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
 
-    -- ========================================================================
-    -- [[ 3. LAZY / SHORT FORM (Green Text) ]]
-    -- ========================================================================
+    -- [[ SHORT FORM (Green Text) ]]
+    -- Catches: "+10 Strength" or "Strength +10"
     { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
     { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
 }
