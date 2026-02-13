@@ -1,5 +1,11 @@
 # Sharpie's Gear Judge - Version History
 
+Queue modules at registration and add a ForceInit routine to pick the correct class module at PLAYER_LOGIN. 
+Init.lua: RegisterModule now stores modules in MSC.PendingModules instead of trying to initialize immediately.
+	added MSC:ForceInit to detect player class, wire up Profiles and PrettyNames, print a load message, and clear the pending list to save memory. 
+	added a PLAYER_LOGIN frame to call ForceInit. 
+Judge.lua: call MSC:ForceInit on PLAYER_LOGIN and on certain talent events, and add a tooltip failsafe that attempts ForceInit before aborting.
+
 ## 🚀 v2.3.6
 
 ### CLASS SPECIFIC UPDATES: Warlocks

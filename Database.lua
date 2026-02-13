@@ -785,154 +785,173 @@ end
 
 AddOverrides({
     -- [[ JEWELCRAFTING FIGURINES ]]
-    [24126] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Custom Score: AP use valued high." }, 
-    [24124] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_SHORT", val=150 }, note = "Custom Score: Mana use averaged." }, 
-    [24125] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=15 }, note = "Custom Score: Dodge use averaged." },
-    [24128] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = "Custom Score: Stealth ignored, AP use valued high." }, 
-    [24129] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Custom Score: Pet use averaged as AP." }, 
-    [24127] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=45 }, note = "Custom Score: Pet use averaged as AP." },
-    
-    -- [[ GLOBAL TRINKETS (Classic / Leveling) ]]
-    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, note = "Classic Carryover." },
-    [11815] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=22 }, note = "Calculated: 1% Crit to TBC Rating." }, 
-    [27529] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=15 }, note = "Custom Score: Block Heal valued as effective Block Value." },
-    [30300] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 30, ITEM_MOD_BLOCK_RATING_SHORT = 21, note = "Leveling Tank Standard." },
-    [18820] = { -- Talisman of Ephemeral Power (MC)
-        _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=29.1 }, 
-        note = "Classic Legacy: +175 SP for 15s (90s CD). Avg +29 SP." 
-    },
-    [19950] = { -- Zandalarian Hero Charm (ZG)
-        _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=34 }, 
-        note = "Classic Legacy: Weighted average of decaying SP stacks." 
-    },
-    [19340] = { -- Rune of Metamorphosis (Class Quest)
-        _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, 
-        note = "Classic Legacy: Mana reduction averaged to ~10 Mp5." 
-    },
-    [23041] = { -- Slayer's Crest (Naxx)
-        ITEM_MOD_ATTACK_POWER_SHORT = 64, 
-        _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43.3 }, 
-        note = "Naxx Legacy: +64 Base & +43 Avg from Use (260 AP / 2 min CD)." 
-    },
-    [22954] = { -- Kiss of the Spider (Naxx)
-        ITEM_MOD_CRIT_RATING_SHORT = 14, -- 1%
-        ITEM_MOD_HIT_RATING_SHORT = 12.6, -- 1%
-        _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=33.3 }, 
-        note = "Naxx Legacy: +200 Haste for 15s (90s CD). Avg +33 Haste." 
-    },
-    [23035] = { -- Prestdor's Talisman of Connivery (Naxx)
-        ITEM_MOD_HIT_RATING_SHORT = 12.6, 
-        _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=16.6 }, 
-        note = "Naxx Legacy: +100 Haste for 30s (3 min CD). Avg +16 Haste." 
-    },
-    [19379] = { -- Neltharion's Tear (BWL)
-        ITEM_MOD_SPELL_POWER_SHORT = 44, 
-        ITEM_MOD_SPELL_HIT_RATING_SHORT = 25.2, -- 2% Hit in TBC is 25.2 Rating
-        note = "Classic BiS: Still top-tier for Hit capping in TBC." 
-    },
-    [18510] = { -- Hide of the Wild (Crafted)
-        ITEM_MOD_SPELL_HEALING_DONE_SHORT = 42, 
-        ITEM_MOD_INTELLECT_SHORT = 10,
-        note = "Classic Legacy: Powerful through level 68." 
-    },
+    [24126] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 32, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=21 }, note = "Use: 21 Avg Dodge (based on uptime)" },
+    [24124] = { ITEM_MOD_INTELLECT_SHORT = 14, _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = "Use: Mana restore avg to ~15 mp5" },
+    [24125] = { ITEM_MOD_INTELLECT_SHORT = 33, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 25 Avg SP (based on uptime)" },
+    [24128] = { ITEM_MOD_STAMINA_SHORT = 18, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = "Use: 55 Avg AP (based on uptime)" },
+    [24129] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Use: 60 Avg AP + Pet Heal utility" },
+    [24127] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=45 }, note = "Use: 45 Avg AP + Pet Heal utility" },
+    [24123] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=34 }, note = "Use: ~34 Avg SP" },
+    [35702] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = "Use: 46 Avg AP (Defensive)" },
+    [35700] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = "Use: ~23 mp5" },
+    [35693] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = "Use: 80 Avg AP" },
+    [35694] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = "Use: Avg Summon Dmg" },
+    [25829] = { ITEM_MOD_INTELLECT_SHORT = 25, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = "Use: 21 Avg SP" },
 
-    -- [[ CLASSIC LEVELING / DUNGEON TRINKETS ]]
-    [13965] = { -- Blackhand's Breadth (Quest)
-        ITEM_MOD_CRIT_RATING_SHORT = 28, -- 2% translates to 28 Rating in TBC
-        note = "Leveling: +28 Physical Crit Rating." 
-    },
-    [13968] = { -- Eye of the Beast (Quest)
-        ITEM_MOD_SPELL_CRIT_RATING_SHORT = 28, -- 2% translates to 28 Rating in TBC
-        note = "Leveling: +28 Spell Crit Rating." 
-    },
-    [19120] = { -- Rune of the Dawn (Quest)
-        ITEM_MOD_ATTACK_POWER_SHORT = 15, -- Weighted against Undead/Demons
-        note = "Leveling: Weighted average for Outland demons." 
-    },
-    [13209] = { -- Cannonball Runner (Strat)
-        _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, 
-        note = "Leveling: Summon damage valued as ~10 AP." 
-    },
-    [17774] = { -- Mark of the Chosen (Maraudon)
-        _AUTO_PROC = { stat="ITEM_MOD_ALL_STATS_SHORT", val=8.3 }, 
-        note = "Leveling: +25 All Stats with ~33% expected uptime." 
-    },
-    [11810] = { -- Force of Will (BRD)
-        ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 10, 
-        _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=10 }, 
-        note = "Leveling Tank: Includes value for damage reduction proc." 
-    },
+    -- [[ QUEST REWARDS - PRE-RAID ]]
+    [28041] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = "Use: 33 Avg AP" },
+    [28040] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = "Use: 20 Avg SP" },
+    [30300] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=150 }, note = "Use: 150 Avg Armor" },
+    [25620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 25 Avg SP" },
+    [25619] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = "Use: 33 Avg AP" },
+    [29370] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: 30 Avg AP" },
+    [29376] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=150 }, note = "Use: HP valued flat" },
+    [29776] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=33.3 }, note = "Use: 33 Avg SP" },
+    [30340] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = "Use: 33 Avg AP" },
+    [30348] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = "Use: 23 Avg SP" },
+    [25633] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=17.5 }, note = "Use: 17.5 Avg HSP" },
+    [25628] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: 30 Avg AP" },
+    [32658] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=200 }, note = "Use: HP valued flat" },
+    [30351] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=12 }, note = "Use: ~12 mp5" },
+    [30345] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=14 }, note = "Use: ~14 Avg SP" },
+    [25937] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = "Use: 10 Avg AP (3.3% Uptime)" },
+    [27924] = { _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=15 }, note = "Use: Heal Valued as flat Stam" },
+    [29179] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 25 Avg SP" },
+    [29180] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=39 }, note = "Use: 39 Avg HSP" },
 
-    -- [[ 1. HELLFIRE PENINSULA / ZANGARMARSH QUESTS ]]
-    [25620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=17.3 }, note = "Calculated: +26 Base SP & +17 SP from Use uptime (16%)." },
-    [25633] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=17.5 }, note = "Calculated: +18 Healing from Use uptime (16%)." },
-    [25937] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = "Custom Score: Includes minor AP value for the Use effect." },
+    -- [[ BADGE OF JUSTICE / REPUTATION ]]
+    [29384] = { ITEM_MOD_ATTACK_POWER_SHORT = 72, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46.3 }, note = "Use: 46 Avg AP" },
+    [29305] = { ITEM_MOD_SPELL_POWER_SHORT = 43, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25.8 }, note = "Use: 26 Avg SP" },
+    [38287] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 35, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=20 }, note = "Use: 20 Avg Dodge" },
+    [29181] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=20 }, note = "Use: Aggro reduction utility" },
+    [32654] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=35 }, note = "Use: Heal" },
+    [30841] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=46.6 }, note = "Use: 46.6 Avg Agi" },
+    [32864] = { ITEM_MOD_STAMINA_SHORT = 45, note = "Proc: ~100 Avg Dodge (High Uptime)" },
 
-    -- [[ 2. NAGRAND / NETHERSTORM / SHADOWMOON QUESTS ]]
-    [28041] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = "Calculated: +33 AP from Use uptime (16.6%)." },
-    [28040] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = "Calculated: +20 Spell Power from Use uptime (16.6%)." },
-    [29776] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=150 }, note = "Calculated: +150 Armor from Use uptime (16%)." },
-    [27924] = { _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=15 }, note = "Custom Score: Heal proc valued at ~15 Stamina equivalent." },
+    -- [[ DUNGEON DROPS ]]
+    [27891] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=216 }, note = "Use: 216 Avg Armor" },
+    [28121] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=100 }, note = "Use: 600 ArP (Avg 100)" },
+    [24390] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = "Use: 22 Avg SP" },
+    [27416] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 25 Avg SP" },
+    [26055] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=16.6 }, note = "Use: 16.6 Avg SP" },
+    [25786] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=16.6 }, note = "Use: 16.6 Avg SP" },
+    [25936] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 25 Avg SP" },
+    [24376] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = "Use: Absorb valued as Health" },
+    [27529] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=15 }, note = "Use: Heal avg to 15 BV" },
+    [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=38 }, note = "Proc: 38 Avg Haste" },
+    [28034] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = "Proc: 50 Avg AP" },
+    [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.6 }, note = "Use: 21 Avg Haste" },
+    [28726] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=38 }, note = "Proc: 38 Avg Haste" },
+    [28370] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = "Proc: ~15 mp5" },
+    [31617] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=58 }, note = "Proc: 300 AP (Internal CD)" },
+    [28240] = { ITEM_MOD_STAMINA_SHORT = 45, note = "Use: Absorb valued as Stam" },
+    [27770] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=19 }, note = "Proc: ~19 Avg SP" },
+    [30542] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=14 }, note = "Use: 14 Avg Agi" },
+    [28190] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=26.6 }, note = "Proc: 160 Haste (15% spell proc) = ~26 Avg" },
 
-    -- [[ 3. LEVEL 70 DUNGEON BLUES ]]
-    [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=42.6 }, note = "Calculated: +42 Haste from 45sec Internal Cooldown." },
-    [28034] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Calculated: +60 AP from 50sec Internal Cooldown." },
-    [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.6 }, note = "Calculated: +22 Haste from Use uptime (8%)." },
-    [28726] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=42.6 }, note = "Calculated: +42 Haste from 45sec Internal Cooldown." },
-    [28370] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = "Custom Score: Assumes ~15 bonus MP5 including Spirit Proc." },
+    -- [[ RAID DROPS: T4 (KARA/GRUUL/MAG) ]]
+    [29383] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 25 Avg SP" },
+    [28727] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=21 }, note = "Proc: ~21 mp5" },
+    [28579] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=65 }, note = "Proc: ~65 Avg AP" },
+    [28830] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=108 }, note = "Proc: 108 Avg Haste" },
+    [29132] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49.5 }, note = "Use: 49.5 Avg HSP" },
+    [28789] = { ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=28 }, note = "Use: 170 SP" },
+    [28528] = { ITEM_MOD_DODGE_RATING_SHORT = 38, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=50 }, note = "Use: 300 Dodge" },
+    [28590] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 73, _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=22 }, note = "Use: 22 Avg mp5" },
+    [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, note = "Proc: Chance to reduce mana cost avg to 45 mp5" },
+    [28766] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=55 }, note = "Proc: Lightning Capacitor Dmg avg to 55 SP" },
 
-    -- [[ DARKMOON CARDS ]]
-    [31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 100, ITEM_MOD_SPELL_POWER_SHORT = 120, note = "BiS (Stacks): Assumes full AP/SP uptime." },
-    [31858] = { _AUTO_PROC = { stat="ITEM_MOD_STRENGTH_SHORT", val=25 }, note = "Tank Threat: Holy Shield proc valued as Strength." },
-    [31857] = { ITEM_MOD_CRIT_RATING_SHORT = 17, note = "Crit Stacking (Niche): ~17% Crit uptime." },
-    [19288] = { ITEM_MOD_MANA_REGENERATION_SHORT = 60, note = "Classic Carryover: Mp5 Equivalence." },
+    -- [[ RAID DROPS: T5 (SSC/TK) ]]
+    [29923] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Proc: Rage/Energy gain avg to 30 AP" },
+    [30726] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=53 }, note = "Use: 53 Avg AP" },
+    [30627] = { ITEM_MOD_CRIT_RATING_SHORT = 38, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=68 }, note = "Proc: 340 AP (10s duration)" },
+    [30665] = { _AUTO_PROC = { stat="ITEM_MOD_SPIRIT_SHORT", val=50 }, note = "Use: 300 Spirit" },
+    [30620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = "Use: 130 SP" },
+    [30629] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=40 }, note = "Use: 145 Dodge" },
+    [30448] = { ITEM_MOD_STAMINA_SHORT = 57, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=43 }, note = "Proc: 130 SP" },
 
-    -- [[ WEAPONS & CLASS SPECIFIC BIS ]]
-    [11684] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Ironfoe Estimate" },
-    [9449]  = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=150 }, note = "BiS (Burst Haste): Manual Crowd Pummeler" },
-    [8345]  = { _AUTO_PROC = { stat="ITEM_MOD_FERAL_ATTACK_POWER_SHORT", val=80 }, note = "BiS (Powershift): Energy refund = ~80 AP." },
+    -- [[ RAID DROPS: T6 / ZA / SUNWELL ]]
+    [32483] = { ITEM_MOD_SPELL_HASTE_RATING_SHORT = 25, ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=29 }, note = "Use: 175 Haste" },
+    [34429] = { ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=53 }, note = "Use: 320 Haste (Decaying)" },
+    [33829] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=35 }, note = "Use: 211 SP" },
+    [33831] = { ITEM_MOD_ATTACK_POWER_SHORT = 90, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Use: 360 AP" },
+    [33830] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=43 }, note = "Use: 260 Haste" },
+    [32694] = { ITEM_MOD_DODGE_RATING_SHORT = 40, note = "Use: 1750 HP" },
+    [34428] = { ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=32 }, note = "Use: 2000 Armor (Valued as defensive)" },
+    [34471] = { ITEM_MOD_STAMINA_SHORT = 57, note = "Proc: 152 Dodge" },
+    [34430] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 119, _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=25 }, note = "Use: Sustain" },
+    [34050] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = "Use: ~23 Avg SP" },
+    [34579] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = "Proc: ~22 Avg SP" },
+    [33828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49 }, note = "Proc: Heal Stacks avg to 49 Heal" },
+    [34473] = { ITEM_MOD_STAMINA_SHORT = 57, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=25 }, note = "Proc: 152 Dodge for 10s (Low rate) = ~25 Avg" },
 
-    -- [[ TBC PHASE 1 RAID ]]
-    [29383] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Bloodgem of the Scryers (16.6% uptime)." },
-    [28579] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=65 }, note = "Romulo's Poison Vial estimate." },
-    [29132] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49.5 }, note = "Essence of the Martyr (Use: Heal)" },
-    [28727] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=21 }, note = "Pendant of the Violet Eye (Int + Mana Regen Proc)" },
-    [31331] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Proc is worth ~30 DPS or ~60 AP." },
-    [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, note = "Eye of Gruul: Valued as roughly 45 MP5." },
+    -- [[ LEGACY / CLASSIC ]]
+    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, note = "Passive: Resistances not valued" },
+    [11815] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=22 }, note = "Proc: 1.33% Proc @ 70 (Nerfed in TBC)" },
+    [18820] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=29.1 }, note = "Use: 29 Avg SP" },
+    [19950] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=34 }, note = "Use: Decaying stacks avg to ~34 SP" },
+    [23035] = { ITEM_MOD_HIT_RATING_SHORT = 12.6, _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=16.6 }, note = "Use: 16.6 Avg Haste" },
+    [23041] = { ITEM_MOD_ATTACK_POWER_SHORT = 64, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43.3 }, note = "Use: 43 Avg AP" },
+    [22954] = { ITEM_MOD_CRIT_RATING_SHORT = 14, _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=33.3 }, note = "Use: 33 Avg Haste" },
+    [21670] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=140 }, note = "Proc: ArP" },
+    [19379] = { ITEM_MOD_SPELL_POWER_SHORT = 44, ITEM_MOD_SPELL_HIT_RATING_SHORT = 25.2, note = "Passive: 25.2 Hit" },
+    [23046] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = "Use: 130 SP" },
+    [23047] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = "Use: 450 Heal (Decaying)" },
+    [23042] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = "Use: 260 Def" },
+    [23040] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=20 }, note = "Use: 235 Block" },
+    [23570] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43 }, note = "Use: AP (Stacking)" },
+    [21579] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=28 }, note = "Proc: Dmg" },
+    [23558] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = "Use: Absorb" },
+    [21647] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=75 }, note = "Use: Threat Drop" },
+    [21625] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = "Use: Heal/Shield" },
+    [21180] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = "Use: 280 AP" },
+    [19339] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=55 }, note = "Use: 330 Haste" },
+    [19340] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, note = "Use: Mana" },
+    [19341] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: 1500 HP" },
+    [19342] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = "Use: Poison Dmg" },
+    [19343] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = "Use: 250 SP" },
+    [19344] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: 250 SP (Hunter)" },
+    [19345] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=20 }, note = "Use: Heal" },
+    [13965] = { ITEM_MOD_CRIT_RATING_SHORT = 28, note = "Passive: 2% Legacy Crit converts to 28 Rating" },
+    [13968] = { ITEM_MOD_SPELL_CRIT_RATING_SHORT = 28, note = "Passive: 2% Legacy Spell Crit converts to 28 Rating" },
+    [19120] = { ITEM_MOD_ATTACK_POWER_SHORT = 15, note = "Passive: Weighted average vs Undead/Demon" },
+    [13209] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = "Proc: Cannon dmg avg to ~10 AP" },
+    [17774] = { _AUTO_PROC = { stat="ITEM_MOD_ALL_STATS_SHORT", val=8.3 }, note = "Proc: 25 Stats with ~33% uptime" },
+    [11810] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 10, _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=10 }, note = "Proc: Dmg reduction value avg to Stam" },
+    [12930] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=15 }, note = "Passive: 29 SP" },
+    [22678] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=12 }, note = "Use: Dmg/Heal" },
 
-    -- [[ TBC PHASE 2 / REPUTATION ]]
-    [30665] = { _AUTO_PROC = { stat="ITEM_MOD_SPIRIT_SHORT", val=50 }, note = "Use: 300 Spirit for 20s (2 min CD). Avg = 50 Spirit." },
-    [30620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = "Spyglass of the Hidden Fleet (SSC)" },
-    [29923] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Talisman of the Sun King (Proc is Rage)" },
-    [30629] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=40 }, note = "Scarab of Displacement (Use: Dodge)" },
-    [30726] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=53 }, note = "Archaic Charm of Presence (Use: AP)" },
+    -- [[ DARKMOON / SPECIAL ]]
+    [31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 120, ITEM_MOD_SPELL_POWER_SHORT = 80, note = "Passive: Max Stacks (120 AP / 80 SP)" },
+    [31858] = { ITEM_MOD_STAMINA_SHORT = 51, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = "Proc: Holy Dmg avg to ~10 AP" },
+    [31857] = { ITEM_MOD_STAMINA_SHORT = 51, note = "Passive: 51 Stamina Base" },
+    [19288] = { ITEM_MOD_MANA_REGENERATION_SHORT = 60, note = "Proc: 100% Regen (Blue Dragon) avg to 60mp5" },
+    [19491] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = "Use: SP" },
 
-    -- [[ TBC PHASE 4 / ZUL'AMAN ]]
-    [33829] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=35 }, note = "Hex Shrunken Head (Use: 211 SP)" },
-    [33828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49 }, note = "Estimated." },
+    -- [[ UTILITY / ENGINEERING / BREWFEST ]]
+    [24096] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=36.6 }, note = "Use: 36.6 Avg AP" },
+    [24460] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=24 }, note = "Use: Health valued as Defense" },
+    [28134] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = "Use: ~23 Avg SP" },
+    [32770] = { ITEM_MOD_STAMINA_SHORT = 35, _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = "Use: 1000 HP (Shared CD)" },
+    [32771] = { ITEM_MOD_CRIT_RATING_SHORT = 24, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: 30 Avg AP" },
+    [23836] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = "Use: Stun/Dmg utility" },
+    [23835] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=20 }, note = "Use: Haste" },
+    [32695] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: HP" },
+    [37220] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = "Use: Avg 20 BV" },
+    [37128] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Use: 30 Avg AP" },
+    [37127] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=45 }, note = "Use: 265 Heal" },
+    [37129] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=30 }, note = "Use: Shield" },
+    [37195] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = "Use: Block value avg to 20" },
+    [10645] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=50 }, note = "Use: Dmg" },
+    [10725] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=50 }, note = "Use: Pet" },
+    [10577] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=50 }, note = "Use: Poly" },
 
-    -- [[ TBC PHASE 5 / SUNWELL ]]
-    [34179] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=60 }, note = "Heart of the Pit (Use: HP)" },
-
-    -- [[ DUNGEON / HEROIC / UTILITY ]]
-    [24096] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=36.6 }, note = "Heartblood Prayer Beads (Use: 220 AP) -> Avg ~36" },
-    [24460] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=24 }, note = "Talisman of Tenacity (Use effect is HP)" }, 
-    [28121] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=30 }, note = "Icon of Unyielding Courage (Use: HP)" }, 
-    [28134] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = "Brooch of Heightened Potential (Use: SP)" },
-    [32770] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = "Skyguard Silver Cross (Rep - Stam + Use Health)" },
-    [32771] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Airman's Ribbon of Gallantry" },
-    [32658] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=150 }, note = "Commander's Badge (Netherwing)" },
-
-    -- [[ BREWFEST ]]
-    [38289] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = "Coren's Lucky Coin" }, 
-    [38288] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = "Empty Mug of Direbrew" },
-    [37128] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Balebrew Charm (Use: Dmg)" },
-    [37127] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=45 }, note = "Brightbrew Charm (Use: Heal)" }, 
-    [38290] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=30 }, note = "Dark Iron Smoking Pipe (Use: Shield)" },
-
-    -- [[ CHAMPION TRINKETS ]]
-    [23207] = { ITEM_MOD_SPELL_POWER_SHORT = 25, note = "Mark of the Champion (Caster): ~25 SP estimate." },
-    [23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 45, note = "Mark of the Champion (Melee): ~45 AP estimate." },
+    -- [[ WEAPONS & CHAMPION ]]
+    [11684] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = "Proc: Extra Swing value avg to 30 AP" },
+    [9449]  = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=150 }, note = "Use: 50% Haste - Burst Value" },
+    [8345]  = { _AUTO_PROC = { stat="ITEM_MOD_FERAL_ATTACK_POWER_SHORT", val=80 }, note = "Powershift: Energy Refund valued as 80 AP" },
+    [23207] = { ITEM_MOD_SPELL_POWER_SHORT = 85, note = "Passive: 85 SP vs Demon/Undead" },
+    [23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 150, note = "Passive: 150 AP vs Demon/Undead" },
 })
 
 -- [[ PVP UTILITY OVERRIDES ]]
