@@ -59,6 +59,10 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         print("|cff00ff00Sharpie's Gear Judge|r ("..version..") Loaded. Type /sgj for menu.")
         
     elseif event == "PLAYER_LOGIN" then
+        -- [[ FIX 1: FORCE INIT ON LOGIN ]]
+        -- This connects to your new Init.lua to ensure stats load immediately.
+        if MSC.ForceInit then MSC:ForceInit() end
+
         local IsLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
         if not SGJ_Settings.DisableConflictCheck and IsLoaded then
             if IsLoaded("Pawn") then print("|cffffd100SGJ Warning:|r 'Pawn' is loaded. Tooltips may look cluttered.") end
@@ -70,6 +74,9 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_LEVEL_UP" or event == "PLAYER_TALENT_UPDATE" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
         MSC.CachedWeights = nil
+        -- Re-check initialization just in case
+        if event == "PLAYER_TALENT_UPDATE" and MSC.ForceInit then MSC:ForceInit() end
+
         if MSCLabFrame and MSCLabFrame:IsShown() and MSC.UpdateLabCalc then 
             MSC.UpdateLabCalc() 
         end
@@ -333,10 +340,16 @@ local function OnTooltipSetItem(tooltip)
     MSC.IsCalculating = true
     local _, playerClass = UnitClass("player")
     
-    -- Class Load Safety
+    -- [[ FIX 2: TOOLTIP FAILSAFE ]]
+    -- If the class isn't loaded yet, try to force it NOW.
     if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
-        MSC.IsCalculating = false
-        return
+        if MSC.ForceInit then MSC:ForceInit() end
+        
+        -- If it's STILL not loaded (very rare edge case), abort safely.
+        if not MSC.CurrentClass then 
+            MSC.IsCalculating = false
+            return 
+        end
     end
 
     local status, err = pcall(function()

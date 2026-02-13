@@ -2,11 +2,6 @@
 
 ## 🚀 v2.3.6
 
-
-
-
-
-
 ### CLASS SPECIFIC UPDATES: Warlocks
 * **Stat weights across specs and leveling brackets.** 
 	*Changes include adding mana regeneration as a tiebreaker, increasing generic Spell Power in many bracket
