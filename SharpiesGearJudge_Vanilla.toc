@@ -6,11 +6,23 @@
 ## SavedVariables: SGJ_History
 ## SavedVariablesPerCharacter: SGJ_Settings, SharpiesGearJudgeDB
 
+Localization.lua
+Locales/deDE.lua
+## Locales/frFR.lua
+## Locales/esES.lua
+## Locales/esMX.lua
+## Locales/ptBR.lua
+## Locales/ruRU.lua
+## Locales/koKR.lua
+## Locales/zhCN.lua
+## Locales/zhTW.lua
+
 Init.lua
 ConflictManager.lua
 Database.lua
 Data_Sets.lua
 Parse.lua
+PawnParser.lua
 Helpers.lua
 Dynamic_Engine.lua
 Evaluator.lua

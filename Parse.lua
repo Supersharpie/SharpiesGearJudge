@@ -20,204 +20,204 @@ MSC.Scanner = {}
 
 MSC.Scanner.BaseStatMap = {
     -- Primary
-    ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
-    ["agility"]  = "ITEM_MOD_AGILITY_SHORT",
-    ["stamina"]  = "ITEM_MOD_STAMINA_SHORT",
-    ["intellect"]= "ITEM_MOD_INTELLECT_SHORT",
-    ["spirit"]   = "ITEM_MOD_SPIRIT_SHORT",
+    [MSC.L["strength"]] = "ITEM_MOD_STRENGTH_SHORT",
+    [MSC.L["agility"]]  = "ITEM_MOD_AGILITY_SHORT",
+    [MSC.L["stamina"]]  = "ITEM_MOD_STAMINA_SHORT",
+    [MSC.L["intellect"]]= "ITEM_MOD_INTELLECT_SHORT",
+    [MSC.L["spirit"]]   = "ITEM_MOD_SPIRIT_SHORT",
     
     -- Defensive / Weapon
-    ["armor"] = "ITEM_MOD_ARMOR_SHORT",
-    ["block"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
-    ["block value"] = "ITEM_MOD_BLOCK_VALUE_SHORT",
-    ["speed"] = "MSC_WEAPON_SPEED",
-    ["damage per second"] = "MSC_WEAPON_DPS",
-    ["dps"] = "MSC_WEAPON_DPS",
+    [MSC.L["armor"]] = "ITEM_MOD_ARMOR_SHORT",
+    [MSC.L["block"]] = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    [MSC.L["block value"]] = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    [MSC.L["speed"]] = "MSC_WEAPON_SPEED",
+    [MSC.L["damage per second"]] = "MSC_WEAPON_DPS",
+    [MSC.L["dps"]] = "MSC_WEAPON_DPS",
     
     -- Resistances
-    ["shadow resistance"] = "ITEM_MOD_SHADOW_RESISTANCE_SHORT",
-    ["fire resistance"]   = "ITEM_MOD_FIRE_RESISTANCE_SHORT",
-    ["frost resistance"]  = "ITEM_MOD_FROST_RESISTANCE_SHORT",
-    ["arcane resistance"] = "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
-    ["nature resistance"] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
+    [MSC.L["shadow resistance"]] = "ITEM_MOD_SHADOW_RESISTANCE_SHORT",
+    [MSC.L["fire resistance"]]    = "ITEM_MOD_FIRE_RESISTANCE_SHORT",
+    [MSC.L["frost resistance"]]   = "ITEM_MOD_FROST_RESISTANCE_SHORT",
+    [MSC.L["arcane resistance"]] = "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
+    [MSC.L["nature resistance"]] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
     
     -- Random Suffixes
-    ["attack power"]   = "ITEM_MOD_ATTACK_POWER_SHORT", 
-    ["healing spells"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-    ["healing"]        = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-    ["spell damage"]   = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["spell power"]    = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["shadow damage"]  = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
-    ["fire damage"]    = "ITEM_MOD_FIRE_DAMAGE_SHORT",
-    ["frost damage"]   = "ITEM_MOD_FROST_DAMAGE_SHORT",
-    ["arcane damage"]  = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
-    ["nature damage"]  = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    ["holy damage"]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
-    ["shadow spell damage"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
-    ["fire spell damage"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
-    ["frost spell damage"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
-    ["arcane spell damage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
-    ["nature spell damage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    ["holy spell damage"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
-	["spell damage and healing"] = "ITEM_MOD_SPELL_POWER_SHORT",  -- Fixes "of the Crusade", "of the Sorcerer"
-    ["damage and healing spells"] = "ITEM_MOD_SPELL_POWER_SHORT", -- rare variation   
+    [MSC.L["attack power"]]    = "ITEM_MOD_ATTACK_POWER_SHORT", 
+    [MSC.L["healing spells"]] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    [MSC.L["healing"]]        = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    [MSC.L["spell damage"]]    = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["spell power"]]     = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["shadow damage"]]   = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    [MSC.L["fire damage"]]     = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    [MSC.L["frost damage"]]    = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    [MSC.L["arcane damage"]]   = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    [MSC.L["nature damage"]]   = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    [MSC.L["holy damage"]]     = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    [MSC.L["shadow spell damage"]] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    [MSC.L["fire spell damage"]]    = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    [MSC.L["frost spell damage"]]   = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    [MSC.L["arcane spell damage"]] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    [MSC.L["nature spell damage"]] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    [MSC.L["holy spell damage"]]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    [MSC.L["spell damage and healing"]] = "ITEM_MOD_SPELL_POWER_SHORT",  -- Fixes "of the Crusade", "of the Sorcerer"
+    [MSC.L["damage and healing spells"]] = "ITEM_MOD_SPELL_POWER_SHORT", -- rare variation    
     -- Hunter / Range missing entries
-    ["ranged attack power"] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", -- Critical for "of the Falcon" variants if they split stats
-    ["spell penetration"] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
-    ["all stats"] = "ITEM_MOD_ALL_STATS_SHORT", -- "of the Ancestors" or generic buffs
-    ["magic resistance"] = "ITEM_MOD_RESISTANCE_ALL_SHORT", -- "of Resistance" (rare white text)
+    [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", -- Critical for "of the Falcon" variants if they split stats
+    [MSC.L["spell penetration"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
+    [MSC.L["all stats"]] = "ITEM_MOD_ALL_STATS_SHORT", -- "of the Ancestors" or generic buffs
+    [MSC.L["magic resistance"]] = "ITEM_MOD_RESISTANCE_ALL_SHORT", -- "of Resistance" (rare white text)
     
-    ["mana"]           = "ITEM_MOD_MANA_SHORT",
-    ["health"]         = "ITEM_MOD_HEALTH_SHORT",
-    ["hp"]             = "ITEM_MOD_HEALTH_SHORT",
-    ["mp"]             = "ITEM_MOD_MANA_SHORT",
+    [MSC.L["mana"]]            = "ITEM_MOD_MANA_SHORT",
+    [MSC.L["health"]]          = "ITEM_MOD_HEALTH_SHORT",
+    [MSC.L["hp"]]              = "ITEM_MOD_HEALTH_SHORT",
+    [MSC.L["mp"]]              = "ITEM_MOD_MANA_SHORT",
     
     -- TBC Ratings
-    ["dodge rating"]      = "ITEM_MOD_DODGE_RATING_SHORT",
-    ["parry rating"]      = "ITEM_MOD_PARRY_RATING_SHORT",
-    ["block rating"]      = "ITEM_MOD_BLOCK_RATING_SHORT",
-    ["hit rating"]        = "ITEM_MOD_HIT_RATING_SHORT",
-    ["crit rating"]       = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["haste rating"]      = "ITEM_MOD_HASTE_RATING_SHORT",
-    ["resilience rating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
-    ["defense rating"]    = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["expertise rating"]  = "ITEM_MOD_EXPERTISE_RATING_SHORT",
-    ["armor penetration rating"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"
+    [MSC.L["dodge rating"]]       = "ITEM_MOD_DODGE_RATING_SHORT",
+    [MSC.L["parry rating"]]       = "ITEM_MOD_PARRY_RATING_SHORT",
+    [MSC.L["block rating"]]       = "ITEM_MOD_BLOCK_RATING_SHORT",
+    [MSC.L["hit rating"]]         = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["crit rating"]]        = "ITEM_MOD_CRIT_RATING_SHORT",
+    [MSC.L["critical strike rating"]] = "ITEM_MOD_CRIT_RATING_SHORT",
+    [MSC.L["haste rating"]]       = "ITEM_MOD_HASTE_RATING_SHORT",
+    [MSC.L["resilience rating"]] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
+    [MSC.L["defense rating"]]     = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    [MSC.L["expertise rating"]]   = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+    [MSC.L["armor penetration rating"]] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"
 }
 
 -- [[ B. GREEN TEXT MAP (Equip / Use / Proc Effects) ]]
 MSC.Scanner.TermMap = {
     -- [[ 1. OFFENSIVE RATINGS ]]
-    ["hit rating"]        = "ITEM_MOD_HIT_RATING_SHORT",
-    ["chance to hit"]     = "ITEM_MOD_HIT_RATING_SHORT", -- Era
+    [MSC.L["hit rating"]]         = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["chance to hit"]]      = "ITEM_MOD_HIT_RATING_SHORT", -- Era
     
-    ["critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["chance to get a critical strike"] = "ITEM_MOD_CRIT_RATING_SHORT", -- Era
+    [MSC.L["critical strike rating"]] = "ITEM_MOD_CRIT_RATING_SHORT",
+    [MSC.L["chance to get a critical strike"]] = "ITEM_MOD_CRIT_RATING_SHORT", -- Era
     
-    ["spell hit rating"]  = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
-    ["chance to hit with spells"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT", -- Era Long
+    [MSC.L["spell hit rating"]]   = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    [MSC.L["chance to hit with spells"]] = "ITEM_MOD_HIT_SPELL_RATING_SHORT", -- Era Long
 
-    ["spell critical strike rating"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
-    ["critical strike with spells"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era
-    ["chance to get a critical strike with spells"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era Long
+    [MSC.L["spell critical strike rating"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    [MSC.L["critical strike with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era
+    [MSC.L["chance to get a critical strike with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era Long
     
-    ["haste rating"]       = "ITEM_MOD_HASTE_RATING_SHORT",
-    ["spell haste rating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT",
-    ["spell penetration"]  = "ITEM_MOD_SPELL_PENETRATION_SHORT",
-    ["magical resistances"] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Key for "Decreases" pattern
-    ["magical resistances of your spell targets"] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Era Long
+    [MSC.L["haste rating"]]        = "ITEM_MOD_HASTE_RATING_SHORT",
+    [MSC.L["spell haste rating"]] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT",
+    [MSC.L["spell penetration"]]   = "ITEM_MOD_SPELL_PENETRATION_SHORT",
+    [MSC.L["magical resistances"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Key for "Decreases" pattern
+    [MSC.L["magical resistances of your spell targets"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Era Long
 
-    ["armor penetration rating"] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
-    ["expertise rating"]   = "ITEM_MOD_EXPERTISE_RATING_SHORT",
-    ["ranged attack power"]= "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
+    [MSC.L["armor penetration rating"]] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
+    [MSC.L["expertise rating"]]    = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+    [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
 
     -- [[ 2. DEFENSIVE RATINGS ]]
-    ["defense rating"]    = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["increased defense"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", -- Era
-    ["defense"]           = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
-    ["dodge rating"]      = "ITEM_MOD_DODGE_RATING_SHORT",
-    ["chance to dodge"]   = "ITEM_MOD_DODGE_RATING_SHORT", -- Era
-    ["parry rating"]      = "ITEM_MOD_PARRY_RATING_SHORT",
-    ["chance to parry"]   = "ITEM_MOD_PARRY_RATING_SHORT", -- Era
-    ["block rating"]      = "ITEM_MOD_BLOCK_RATING_SHORT",
-    ["chance to block"]   = "ITEM_MOD_BLOCK_RATING_SHORT", -- Era
-    ["shield block value"]= "ITEM_MOD_BLOCK_VALUE_SHORT",
-    ["the block value of your shield"] = "ITEM_MOD_BLOCK_VALUE_SHORT", -- Era Long
-    ["resilience rating"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
+    [MSC.L["defense rating"]]     = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    [MSC.L["increased defense"]] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", -- Era
+    [MSC.L["defense"]]            = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    [MSC.L["dodge rating"]]       = "ITEM_MOD_DODGE_RATING_SHORT",
+    [MSC.L["chance to dodge"]]    = "ITEM_MOD_DODGE_RATING_SHORT", -- Era
+    [MSC.L["parry rating"]]       = "ITEM_MOD_PARRY_RATING_SHORT",
+    [MSC.L["chance to parry"]]    = "ITEM_MOD_PARRY_RATING_SHORT", -- Era
+    [MSC.L["block rating"]]       = "ITEM_MOD_BLOCK_RATING_SHORT",
+    [MSC.L["chance to block"]]    = "ITEM_MOD_BLOCK_RATING_SHORT", -- Era
+    [MSC.L["shield block value"]] = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    [MSC.L["the block value of your shield"]] = "ITEM_MOD_BLOCK_VALUE_SHORT", -- Era Long
+    [MSC.L["resilience rating"]] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
 
     -- [[ 3. RESISTANCES ]]
-    ["shadow resistance"] = "ITEM_MOD_SHADOW_RESISTANCE_SHORT",
-    ["fire resistance"]   = "ITEM_MOD_FIRE_RESISTANCE_SHORT",
-    ["frost resistance"]  = "ITEM_MOD_FROST_RESISTANCE_SHORT",
-    ["arcane resistance"] = "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
-    ["nature resistance"] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
-    ["all resistances"]   = "ITEM_MOD_ALL_RESISTANCE_SHORT",
-    ["resistance to all schools of magic"] = "ITEM_MOD_ALL_RESISTANCE_SHORT", 
+    [MSC.L["shadow resistance"]] = "ITEM_MOD_SHADOW_RESISTANCE_SHORT",
+    [MSC.L["fire resistance"]]    = "ITEM_MOD_FIRE_RESISTANCE_SHORT",
+    [MSC.L["frost resistance"]]   = "ITEM_MOD_FROST_RESISTANCE_SHORT",
+    [MSC.L["arcane resistance"]] = "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
+    [MSC.L["nature resistance"]] = "ITEM_MOD_NATURE_RESISTANCE_SHORT",
+    [MSC.L["all resistances"]]    = "ITEM_MOD_ALL_RESISTANCE_SHORT",
+    [MSC.L["resistance to all schools of magic"]] = "ITEM_MOD_ALL_RESISTANCE_SHORT", 
 
     -- [[ 4. POWER STATS ]]
-    ["attack power"]      = "ITEM_MOD_ATTACK_POWER_SHORT",
-    ["attack power in cat"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
-    ["feral attack power"]  = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
-    ["spell power"]       = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["healing"]           = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-    ["mana per 5 sec"]    = "ITEM_MOD_MANA_REGENERATION_SHORT",
-    ["health per 5 sec"]  = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
+    [MSC.L["attack power"]]       = "ITEM_MOD_ATTACK_POWER_SHORT",
+    [MSC.L["attack power in cat"]] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+    [MSC.L["feral attack power"]]   = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+    [MSC.L["spell power"]]        = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["healing"]]            = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    [MSC.L["mana per 5 sec"]]     = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    [MSC.L["health per 5 sec"]]   = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
     
     -- [[ 5. ERA & TBC SPELL DAMAGE ]]
-	["healing done by spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-	["healing done by magical spells and effects"] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
-	
-	["spell damage rating"]           = "ITEM_MOD_SPELL_POWER_SHORT",
-	["spell damage and healing"]      = "ITEM_MOD_SPELL_POWER_SHORT",
-	["damage done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
-	["damage and healing done by magical spells and effects"] = "ITEM_MOD_SPELL_POWER_SHORT",
-    ["damage and healing done by magical spells and effects by up to"] = "ITEM_MOD_SPELL_POWER_SHORT", 
-	
-    ["damage done by shadow spells and effects"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
-    ["damage done by fire spells and effects"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
-    ["damage done by frost spells and effects"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
-    ["damage done by arcane spells and effects"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
-    ["damage done by nature spells and effects"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    ["damage done by holy spells and effects"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    [MSC.L["healing done by spells and effects"]] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    [MSC.L["healing done by magical spells and effects"]] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
+    
+    [MSC.L["spell damage rating"]]            = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["spell damage and healing"]]       = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["damage done by magical spells and effects"]] = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["damage and healing done by magical spells and effects"]] = "ITEM_MOD_SPELL_POWER_SHORT",
+    [MSC.L["damage and healing done by magical spells and effects by up to"]] = "ITEM_MOD_SPELL_POWER_SHORT", 
+    
+    [MSC.L["damage done by shadow spells and effects"]] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    [MSC.L["damage done by fire spells and effects"]]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    [MSC.L["damage done by frost spells and effects"]]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    [MSC.L["damage done by arcane spells and effects"]] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    [MSC.L["damage done by nature spells and effects"]] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    [MSC.L["damage done by holy spells and effects"]]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     
     -- TBC Short Forms
-    ["shadow damage"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
-    ["fire damage"]   = "ITEM_MOD_FIRE_DAMAGE_SHORT",
-    ["frost damage"]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
-    ["arcane damage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
-    ["nature damage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    ["holy damage"]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    [MSC.L["shadow damage"]] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    [MSC.L["fire damage"]]    = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    [MSC.L["frost damage"]]   = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    [MSC.L["arcane damage"]] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    [MSC.L["nature damage"]] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    [MSC.L["holy damage"]]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     
     -- [[ 6. BASE STATS ]]
-    ["strength"] = "ITEM_MOD_STRENGTH_SHORT",
-    ["agility"]  = "ITEM_MOD_AGILITY_SHORT",
-    ["stamina"]  = "ITEM_MOD_STAMINA_SHORT",
-    ["intellect"]= "ITEM_MOD_INTELLECT_SHORT",
-    ["spirit"]   = "ITEM_MOD_SPIRIT_SHORT",
-    ["armor"]    = "ITEM_MOD_ARMOR_SHORT",
-    ["mana"]     = "ITEM_MOD_MANA_SHORT",
-    ["health"]   = "ITEM_MOD_HEALTH_SHORT",
+    [MSC.L["strength"]] = "ITEM_MOD_STRENGTH_SHORT",
+    [MSC.L["agility"]]  = "ITEM_MOD_AGILITY_SHORT",
+    [MSC.L["stamina"]]  = "ITEM_MOD_STAMINA_SHORT",
+    [MSC.L["intellect"]]= "ITEM_MOD_INTELLECT_SHORT",
+    [MSC.L["spirit"]]   = "ITEM_MOD_SPIRIT_SHORT",
+    [MSC.L["armor"]]    = "ITEM_MOD_ARMOR_SHORT",
+    [MSC.L["mana"]]     = "ITEM_MOD_MANA_SHORT",
+    [MSC.L["health"]]   = "ITEM_MOD_HEALTH_SHORT",
     
     -- [[ 7. WEAPON SKILLS ]]
-    ["swords"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["axes"]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["maces"]    = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["daggers"]  = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["bows"]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["crossbows"]= "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["guns"]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["staves"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["polearms"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["two-handed swords"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["two-handed axes"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["two-handed maces"]  = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with swords"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with axes"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with maces"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with bows"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with guns"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with daggers"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with crossbows"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with staves"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    ["skill with polearms"]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-	
-	-- [[ TBC: THE "RANGED" & "SHIELD" VARIANTS ]]
-    ["ranged critical strike rating"] = "ITEM_MOD_CRIT_RATING_SHORT",
-    ["ranged hit rating"]             = "ITEM_MOD_HIT_RATING_SHORT",
-    ["ranged haste rating"]           = "ITEM_MOD_HASTE_RATING_SHORT",
-    ["shield block rating"]           = "ITEM_MOD_BLOCK_RATING_SHORT",
-    ["shield block value"]            = "ITEM_MOD_BLOCK_VALUE_SHORT",
+    [MSC.L["swords"]]    = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["axes"]]      = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["maces"]]     = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["daggers"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["bows"]]      = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["crossbows"]]= "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["guns"]]      = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["staves"]]    = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["polearms"]]    = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["two-handed swords"]] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["two-handed axes"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["two-handed maces"]]  = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with swords"]] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with axes"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with maces"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with bows"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with guns"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with daggers"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with crossbows"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with staves"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["skill with polearms"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    
+    -- [[ TBC: THE "RANGED" & "SHIELD" VARIANTS ]]
+    [MSC.L["ranged critical strike rating"]] = "ITEM_MOD_CRIT_RATING_SHORT",
+    [MSC.L["ranged hit rating"]]              = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["ranged haste rating"]]            = "ITEM_MOD_HASTE_RATING_SHORT",
+    [MSC.L["shield block rating"]]            = "ITEM_MOD_BLOCK_RATING_SHORT",
+    [MSC.L["shield block value"]]             = "ITEM_MOD_BLOCK_VALUE_SHORT",
     
     -- [[ TBC: PET STATS (Warlock/Hunter Trinkets & Set Bonuses) ]]
-    ["your pet's armor"]              = "ITEM_MOD_ARMOR_SHORT", -- Handled loosely, but good to catch
-    ["your pet's attack power"]       = "ITEM_MOD_ATTACK_POWER_SHORT",
-    ["your pet's damage"]             = "ITEM_MOD_ATTACK_POWER_SHORT",
-    	
+    [MSC.L["your pet's armor"]]               = "ITEM_MOD_ARMOR_SHORT", -- Handled loosely, but good to catch
+    [MSC.L["your pet's attack power"]]        = "ITEM_MOD_ATTACK_POWER_SHORT",
+    [MSC.L["your pet's damage"]]              = "ITEM_MOD_ATTACK_POWER_SHORT",
+        
     -- [[ WEIRD / EDGE CASE CATCHERS ]]
-    ["all stats"]                     = "ITEM_MOD_ALL_STATS_SHORT",
-    ["magic resistance"]              = "ITEM_MOD_RESISTANCE_ALL_SHORT",
-    ["chance to resist mechanic mechanics"] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
+    [MSC.L["all stats"]]                      = "ITEM_MOD_ALL_STATS_SHORT",
+    [MSC.L["magic resistance"]]               = "ITEM_MOD_RESISTANCE_ALL_SHORT",
+    [MSC.L["chance to resist mechanic mechanics"]] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
 }
 
 -- =============================================================
@@ -227,28 +227,28 @@ MSC.Scanner.TermMap = {
 MSC.Scanner.StatPatterns = {
     -- [[ 1. STANDARD PREFIX]]
     -- Catches: "+14 Spell Damage", "14 Strength", "+ 14 Intellect"
-    { p = "^[%+]?%s*(%d+%.?%d*)%s+(.-)[%s%.]*$", valIdx = 1, nameIdx = 2 },
+    { p = MSC.L["^[%+]?%s*(%d+%.?%d*)%s+(.-)[%s%.]*$"], valIdx = 1, nameIdx = 2 },
 
     -- [[ 2. STANDARD SUFFIX]]
     -- Catches: "Strength +14", "Agility 14", "Speed 2.80"
-    { p = "^(.-)%s+[%+:]?%s*(%d+%.?%d*)[%s%.]*$", valIdx = 2, nameIdx = 1 },
+    { p = MSC.L["^(.-)%s+[%+:]?%s*(%d+%.?%d*)[%s%.]*$"], valIdx = 2, nameIdx = 1 },
     
     -- [[ 3. FIXED SHORT STATS ]]
     -- These specific strings don't need dictionary lookups
-    { p = "^(%d+) armor$", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
-    { p = "^(%d+) block$", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+    { p = MSC.L["^(%d+) armor$"], valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
+    { p = MSC.L["^(%d+) block$"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
 
     -- [[ 4. WEAPON & DPS ]]
-    { p = "speed (%d+%.?%d*)", valIdx = 1, fixedStat = "MSC_WEAPON_SPEED" },
-    { p = "^%((%d+%.?%d*) damage per second%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
-    { p = "^%((%d+%.?%d*) dps%)$", valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
+    { p = MSC.L["speed (%d+%.?%d*)"], valIdx = 1, fixedStat = "MSC_WEAPON_SPEED" },
+    { p = MSC.L["^%((%d+%.?%d*) damage per second%)$"], valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
+    { p = MSC.L["^%((%d+%.?%d*) dps%)$"], valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
     
     -- Range: Covers "100 - 200 Damage" and "100-200 Damage"
-    { p = "^(%d+)%s?[-~]%s?(%d+) damage$", type="RANGE" },
+    { p = MSC.L["^(%d+)%s?[-~]%s?(%d+) damage$"], type="RANGE" },
     
     -- [[ 5. ENCHANT/SCOPE FORMATS ]]
-    { p = "scope %([%+:]*(%d+) (.*)%)", valIdx = 1, nameIdx = 2 },
-    { p = "enchant:? [%+:]*(%d+) (.*)", valIdx = 1, nameIdx = 2 },
+    { p = MSC.L["scope %([%+:]*(%d+) (.*)%)"], valIdx = 1, nameIdx = 2 },
+    { p = MSC.L["enchant:? [%+:]*(%d+) (.*)"], valIdx = 1, nameIdx = 2 },
 }
 
 MSC.Scanner.EquipPatterns = {
@@ -259,51 +259,51 @@ MSC.Scanner.EquipPatterns = {
     -- These ignore sentence structure ("Increases", "by", "up to") and just grab the number.
     
     -- [[ CASTING STATS ]]
-    { p = "damage and healing.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = "healing done.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
-    { p = "spell penetration.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
-    { p = "restores (%d+) mana", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+    { p = MSC.L["damage and healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+    { p = MSC.L["healing done.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
+    { p = MSC.L["spell penetration.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    { p = MSC.L["restores (%d+) mana"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
 
     -- [[ HIT & CRIT (Spell/Ranged MUST be checked before Melee) ]]
-    { p = "spell hit rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-    { p = "ranged hit rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Hunters
-    { p = "hit rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
+    { p = MSC.L["spell hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
+    { p = MSC.L["ranged hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Hunters
+    { p = MSC.L["hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
 
-    { p = "spell crit.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = "ranged crit.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = "critical strike rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = MSC.L["spell crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = MSC.L["ranged crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = MSC.L["critical strike rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
 
     -- [[ ATTACK POWER (Feral/Ranged MUST be checked before General) ]]
-    { p = "ranged attack power.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
-    { p = "feral attack power.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = "attack power.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    { p = MSC.L["ranged attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
+    { p = MSC.L["feral attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+    { p = MSC.L["attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
 
     -- [[ MELEE & TANKING ]]
-    { p = "expertise rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
-    { p = "armor penetration.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = "block value.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, -- Vital for Prot
-    { p = "block rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT" },
-    { p = "defense rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-    { p = "dodge rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT" },
-    { p = "parry rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT" },
-    { p = "resilience.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
-    { p = "spell haste.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
-    { p = "haste rating.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HASTE_RATING_SHORT" },
+    { p = MSC.L["expertise rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
+    { p = MSC.L["armor penetration.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
+    { p = MSC.L["block value.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, -- Vital for Prot
+    { p = MSC.L["block rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT" },
+    { p = MSC.L["defense rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+    { p = MSC.L["dodge rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT" },
+    { p = MSC.L["parry rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT" },
+    { p = MSC.L["resilience.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
+    { p = MSC.L["spell haste.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
+    { p = MSC.L["haste rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HASTE_RATING_SHORT" },
 
     -- [[ ELEMENTAL DAMAGE ]]
-    { p = "shadow damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-    { p = "fire damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-    { p = "frost damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-    { p = "arcane damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-    { p = "nature damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-    { p = "holy damage.-(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+    { p = MSC.L["shadow damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+    { p = MSC.L["fire damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+    { p = MSC.L["frost damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+    { p = MSC.L["arcane damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+    { p = MSC.L["nature damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+    { p = MSC.L["holy damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
 
     -- ========================================================================
     -- [[ 2. COMPLEX / LOGIC PATTERNS (Cannot be Lazy) ]]
     -- ========================================================================
 
     -- [[ HYBRID HEAL/DAMAGE SPLIT (e.g. "Whitemend") ]]
-    { p = "healing.-up to (%d+).-damage.-up to (%d+)", 
+    { p = MSC.L["healing.-up to (%d+).-damage.-up to (%d+)"], 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
               outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + tonumber(heal)
@@ -313,78 +313,78 @@ MSC.Scanner.EquipPatterns = {
     },
 
     -- [[ WEAPON DAMAGE (Scopes, Rings) ]]
-    { p = "adds (%d+) weapon damage", valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
-    { p = "adds (%d+) damage", valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
+    { p = MSC.L["adds (%d+) weapon damage"], valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
+    { p = MSC.L["adds (%d+) damage"], valIdx = 1, fixedStat = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" },
 
     -- [[ PERCENTAGE MODS (e.g. "1% Hit") ]]
     -- Caught here to prevent "1 Hit" being read as Rating
-    { p = "improves your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true }, 
-    { p = "increases your (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true }, 
-    { p = "increases (.*) by (%d+)%%%.?", valIdx = 2, nameIdx = 1, isPercent = true },
+    { p = MSC.L["improves your (.*) by (%d+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true }, 
+    { p = MSC.L["increases your (.*) by (%d+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true }, 
+    { p = MSC.L["increases (.*) by (%d+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true },
 
     -- [[ GENERIC FALLBACKS (The "Standard" Parser) ]]
     -- Catches standard strings: "Increases Strength by 10"
-    { p = "improves your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
-    { p = "improves (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
-    { p = "increases your (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 }, 
-    { p = "increases (.*) by up to (%d+)%.?", valIdx = 2, nameIdx = 1 },
-    { p = "increases (.*) by (%d+)%.?", valIdx = 2, nameIdx = 1 },
+    { p = MSC.L["improves your (.*) by (%d+)%.?"], valIdx = 2, nameIdx = 1 }, 
+    { p = MSC.L["improves (.*) by (%d+)%.?"], valIdx = 2, nameIdx = 1 }, 
+    { p = MSC.L["increases your (.*) by (%d+)%.?"], valIdx = 2, nameIdx = 1 }, 
+    { p = MSC.L["increases (.*) by up to (%d+)%.?"], valIdx = 2, nameIdx = 1 },
+    { p = MSC.L["increases (.*) by (%d+)%.?"], valIdx = 2, nameIdx = 1 },
 
     -- [[ SHORT FORM (Green Text) ]]
     -- Catches: "+10 Strength" or "Strength +10"
-    { p = "^%+?%s*(%d+)%%? (.*)$", valIdx = 1, nameIdx = 2 },
-    { p = "^(.-) %+(%d+)%%?$", valIdx = 2, nameIdx = 1 },
+    { p = MSC.L["^%+?%s*(%d+)%%? (.*)$"], valIdx = 1, nameIdx = 2 },
+    { p = MSC.L["^(.-) %+(%d+)%%?$"], valIdx = 2, nameIdx = 1 },
 }
 
 MSC.Scanner.ProcPatterns = {
     -- Buffs
-    { p = "^%+(%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
-    { p = "increases your (.*) by (%d+)$", valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 },
-	{ p = "chance on melee or ranged hit to gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "chance on spell critical hit to gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "chance on spell cast to gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },	
+    { p = MSC.L["^%+(%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["grants (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["gain (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["increases (.*) by (%d+) for (%d+) sec"], valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    { p = MSC.L["increases your (.*) by (%d+)$"], valIdx=2, nameIdx=1, type="BUFF", defaultDur=10 },
+    { p = MSC.L["chance on melee or ranged hit to gain (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["chance on spell critical hit to gain (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["chance on spell cast to gain (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },    
 
     -- Damage Procs
-    { p = "for (%d+) to (%d+) .*damage", type="DAMAGE" },
-    { p = "inflicts (%d+) to (%d+) .*damage", type="DAMAGE" },
-    { p = "for (%d+) .*damage", type="DAMAGE" },
-    { p = "inflicts (%d+) .*damage", type="DAMAGE" },
-    { p = "deals (%d+) .*damage", type="DAMAGE" },
-    { p = "blasts (.*) for (%d+)", valIdx=2, type="DAMAGE" },
-	{ p = "chance to strike your enemy for (%d+) to (%d+) .*damage", type="DAMAGE" },
-    { p = "chance to blast your target for (%d+) to (%d+) .*damage", type="DAMAGE" },
+    { p = MSC.L["for (%d+) to (%d+) .*damage"], type="DAMAGE" },
+    { p = MSC.L["inflicts (%d+) to (%d+) .*damage"], type="DAMAGE" },
+    { p = MSC.L["for (%d+) .*damage"], type="DAMAGE" },
+    { p = MSC.L["inflicts (%d+) .*damage"], type="DAMAGE" },
+    { p = MSC.L["deals (%d+) .*damage"], type="DAMAGE" },
+    { p = MSC.L["blasts (.*) for (%d+)"], valIdx=2, type="DAMAGE" },
+    { p = MSC.L["chance to strike your enemy for (%d+) to (%d+) .*damage"], type="DAMAGE" },
+    { p = MSC.L["chance to blast your target for (%d+) to (%d+) .*damage"], type="DAMAGE" },
 
     -- Resources
-    { p = "steals (%d+) life", type="HEAL" },
-    { p = "restores (%d+) mana", type="MANA" },
-    { p = "restores (%d+) health", type="HEAL" },
-	
+    { p = MSC.L["steals (%d+) life"], type="HEAL" },
+    { p = MSC.L["restores (%d+) mana"], type="MANA" },
+    { p = MSC.L["restores (%d+) health"], type="HEAL" },
+    
     -- Catch All
-    { p = "blasts your enemy", type="GENERIC" }
+    { p = MSC.L["blasts your enemy"], type="GENERIC" }
 }
 
 MSC.Scanner.UsePatterns = {
     -- Short Forms
-    { p = "^%+(%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "^%+(%d+) (.*)$", valIdx=1, nameIdx=2, type="BUFF", defaultDur=15 },
+    { p = MSC.L["^%+(%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["^%+(%d+) (.*)$"], valIdx=1, nameIdx=2, type="BUFF", defaultDur=15 },
 
     -- Verbs
-    { p = "grants (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "gain (%d+) (.*) for (%d+) sec", valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
-    { p = "increases (.*) by up to (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
-    { p = "increases (.*) by (%d+) for (%d+) sec", valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    { p = MSC.L["grants (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["gain (%d+) (.*) for (%d+) sec"], valIdx=1, nameIdx=2, durIdx=3, type="BUFF" },
+    { p = MSC.L["increases (.*) by up to (%d+) for (%d+) sec"], valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
+    { p = MSC.L["increases (.*) by (%d+) for (%d+) sec"], valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
 
     -- Resources
-    { p = "restores (%d+) to (%d+) mana", type="MANA_RANGE" },
-    { p = "restores (%d+) to (%d+) health", type="HEALTH_RANGE" },
-    { p = "restores (%d+) mana", valIdx=1, type="MANA" },
-    { p = "restores (%d+) health", valIdx=1, type="HEALTH" },
+    { p = MSC.L["restores (%d+) to (%d+) mana"], type="MANA_RANGE" },
+    { p = MSC.L["restores (%d+) to (%d+) health"], type="HEALTH_RANGE" },
+    { p = MSC.L["restores (%d+) mana"], valIdx=1, type="MANA" },
+    { p = MSC.L["restores (%d+) health"], valIdx=1, type="HEALTH" },
 
     -- Misc
-    { p = "adds (%d+) damage", valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
+    { p = MSC.L["adds (%d+) damage"], valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
 }
 -- =============================================================
 -- 3. UTILITIES
@@ -413,12 +413,12 @@ function MSC.Scanner.ClassifyLine(text)
     local lower = string_lower(text)
 
     -- [[ OPTIMIZATION: SIMPLE CHECKS FIRST ]]
-    if string_find(lower, "equip") then return "EQUIP" end
-    if string_find(lower, "use:") then return "USE" end
-    if string_find(lower, "chance on") then return "PROC" end
-    if string_find(lower, "set:") then return "SET" end
-    if string_find(lower, "socket") then 
-        if string_find(lower, "bonus") then return "SOCKET_BONUS" else return "SOCKET_INFO" end
+    if string_find(lower, MSC.L["equip"]) then return "EQUIP" end
+    if string_find(lower, MSC.L["use:"]) then return "USE" end
+    if string_find(lower, MSC.L["chance on"]) then return "PROC" end
+    if string_find(lower, MSC.L["set:"]) then return "SET" end
+    if string_find(lower, MSC.L["socket"]) then 
+        if string_find(lower, MSC.L["bonus"]) then return "SOCKET_BONUS" else return "SOCKET_INFO" end
     end
     
     -- Clean text for Stat Checks
@@ -434,7 +434,7 @@ end
 
 function MSC.Scanner.ParseSetHeader(text, metaTable)
     local cleanText = string_gsub(string_gsub(text, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
-    local setName, current, total = string_match(cleanText, "^(.*)%s+%(?(%d+)/(%d+)%)?$")
+    local setName, current, total = string_match(cleanText, MSC.L["^(.*)%s+%(?(%d+)/(%d+)%)?$"])
     if setName then 
         metaTable.SetName = string_gsub(setName, "^%s*(.-)%s*$", "%1")
         metaTable.SetCount = tonumber(current)
@@ -444,8 +444,8 @@ function MSC.Scanner.ParseSetHeader(text, metaTable)
 end
 
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
-    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "^equip: ", "")
-    cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), "^%s*equip:%s*", "")
+    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), MSC.L["^equip: "], "")
+    cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), MSC.L["^%s*equip:%s*"], "")
     
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
         local match1, match2, match3 = string_match(cleanText, pat.p)
@@ -458,11 +458,11 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             if val and pat.isPercent and MSC.IsTBC then
                 local mult = 15.8 
                 if name then
-                    if string_find(name, "spell") then 
-                        mult = (string_find(name, "hit") and 12.6 or 22.1)
-                    elseif string_find(name, "crit") then 
+                    if string_find(name, MSC.L["spell"]) then 
+                        mult = (string_find(name, MSC.L["hit"]) and 12.6 or 22.1)
+                    elseif string_find(name, MSC.L["crit"]) then 
                         mult = 22.1
-                    elseif string_find(name, "speed") or string_find(name, "haste") then 
+                    elseif string_find(name, MSC.L["speed"]) or string_find(name, MSC.L["haste"]) then 
                         mult = 15.8
                     end
                 end
@@ -514,9 +514,9 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
                 local val = tonumber(pat.valIdx == 1 and m1 or m2)
                 local name = pat.valIdx == 1 and m2 or m1
                 if val and name then
-                    local cleanName = string_gsub(string_gsub(name, "^to ", ""), "[%s%.]+$", "")
+                    local cleanName = string_gsub(string_gsub(name, MSC.L["^to "], ""), "[%s%.]+$", "")
                     local key = MSC.Scanner.BaseStatMap[cleanName]
-                    if not key and cleanName == "armor" then key = "ITEM_MOD_ARMOR_SHORT" end
+                    if not key and cleanName == MSC.L["armor"] then key = "ITEM_MOD_ARMOR_SHORT" end
                     
                     if key then 
                         outputTable[key] = (outputTable[key] or 0) + val; 
@@ -530,7 +530,7 @@ end
 
 function MSC.Scanner.ParseProcLine(text, outputProcs)
     local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " ")
-    cleanText = string_gsub(string_gsub(cleanText, "^chance on hit: ", ""), "^equip: chance on hit: ", "")
+    cleanText = string_gsub(string_gsub(cleanText, MSC.L["^chance on hit: "], ""), MSC.L["^equip: chance on hit: "], "")
 
     for _, pat in ipairs(MSC.Scanner.ProcPatterns) do
         local m1, m2, m3 = string_match(cleanText, pat.p)
@@ -563,7 +563,7 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
 end
 
 function MSC.Scanner.ParseUseLine(text, outputUseTable)
-    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " "), "^use: ", "")
+    local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " "), MSC.L["^use: "], "")
     local cooldown = ParseCooldown(text)
     
     for _, pat in ipairs(MSC.Scanner.UsePatterns) do

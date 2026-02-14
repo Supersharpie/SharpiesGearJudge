@@ -32,6 +32,14 @@ local GetItemInfoInstant = GetItemInfoInstant
 local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
 local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
 
+
+local version = C_AddOns and C_AddOns.GetAddOnMetadata(addonName, "Version") 
+               or GetAddOnMetadata(addonName, "Version") 
+               or "2.x"
+
+MSC.Version = version
+
+
 -- =============================================================
 -- 1. THEME, COLORS & HELPERS
 -- =============================================================
@@ -116,10 +124,10 @@ function MSC.GetFromPool(poolType, parent, creatorFunc)
 end
 
 MSC.RegisteredTabs = {
-    { id=1, icon="Interface\\Icons\\INV_Sword_04", name="Weapon Thunderdome", funcName="InitLabView", view="ViewLab", update="UpdateLabCalc" },
-    { id=2, icon="Interface\\Icons\\INV_Misc_Note_02", name="Receipt", funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
-    { id=3, icon="Interface\\Icons\\Spell_Holy_MindVision", name="Stat Logic", funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
-    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name="Protocol", funcName="InitSettingsView", view="ViewSettings" }
+    { id=1, icon="Interface\\Icons\\INV_Sword_04", name=MSC.L["Weapon Thunderdome"], funcName="InitLabView", view="ViewLab", update="UpdateLabCalc" },
+    { id=2, icon="Interface\\Icons\\INV_Misc_Note_02", name=MSC.L["Receipt"], funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
+    { id=3, icon="Interface\\Icons\\Spell_Holy_MindVision", name=MSC.L["Stat Logic"], funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
+    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name=MSC.L["Protocol"], funcName="InitSettingsView", view="ViewSettings" }
 }
 
 if not MSC.GetInspectSpec then function MSC.GetInspectSpec(unit) return "Default" end end
@@ -171,7 +179,7 @@ end
 
 function MSC.InitLabView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
-    local help = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); help:SetPoint("TOP", 0, -20); help:SetText("Drag (Shift/Ctrl+Click) items to compare. 6 Sets Enter, 1 Set Wins!"); help:SetTextColor(0.6, 0.6, 0.6)
+    local help = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); help:SetPoint("TOP", 0, -20); help:SetText(MSC.L["Drag (Shift/Ctrl+Click) items to compare. 6 Sets Enter, 1 Set Wins!"]); help:SetTextColor(0.6, 0.6, 0.6)
 
     MSC.LabBlocks = {}
 
@@ -213,14 +221,14 @@ function MSC.InitLabView(parent)
         MSC.LabBlocks[id] = frame
     end
 
-    CreateBlock(1, "Option A1: Two-Hander", 1, 10, -50)
-    CreateBlock(2, "Option B1: 1H + Shield/OH", 2, 10, -150)
-    CreateBlock(3, "Option C1: Dual Wield", 2, 10, -250)
-    CreateBlock(4, "Option A2: Two-Hander", 1, 300, -50)
-    CreateBlock(5, "Option B2: 1H + Shield/OH", 2, 300, -150)
-    CreateBlock(6, "Option C2: Dual Wield", 2, 300, -250)
+    CreateBlock(1, MSC.L["Option A1: Two-Hander"], 1, 10, -50)
+    CreateBlock(2, MSC.L["Option B1: 1H + Shield/OH"], 2, 10, -150)
+    CreateBlock(3, MSC.L["Option C1: Dual Wield"], 2, 10, -250)
+    CreateBlock(4, MSC.L["Option A2: Two-Hander"], 1, 300, -50)
+    CreateBlock(5, MSC.L["Option B2: 1H + Shield/OH"], 2, 300, -150)
+    CreateBlock(6, MSC.L["Option C2: Dual Wield"], 2, 300, -250)
 
-    f.ResultText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("BOTTOM", 0, 60); f.ResultText:SetText("Waiting for Items...")
+    f.ResultText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("BOTTOM", 0, 60); f.ResultText:SetText(MSC.L["Waiting for Items..."])
     
     local bClear = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     bClear:SetSize(24, 24)
@@ -252,8 +260,8 @@ function MSC.UpdateLabCalc()
     local hasItems = false
 
     local names = {
-        "Option A1 (2H)", "Option B1 (1H+OH)", "Option C1 (DW)",
-        "Option A2 (2H)", "Option B2 (1H+OH)", "Option C2 (DW)"
+        MSC.L["Option A1 (2H)"], MSC.L["Option B1 (1H+OH)"], MSC.L["Option C1 (DW)"],
+        MSC.L["Option A2 (2H)"], MSC.L["Option B2 (1H+OH)"], MSC.L["Option C2 (DW)"]
     }
 
     for id, block in pairs(MSC.LabBlocks) do
@@ -287,7 +295,7 @@ function MSC.UpdateLabCalc()
     for id, block in pairs(MSC.LabBlocks) do
         if not hasItems then
             block:SetBackdropBorderColor(0,0,0,1); block:SetAlpha(1)
-            MSC.ViewLab.ResultText:SetText("Waiting for Items...")
+            MSC.ViewLab.ResultText:SetText(MSC.L["Waiting for Items..."])
             MSC.ViewLab.ResultText:SetTextColor(1, 0.82, 0)
         elseif id == winnerIndex then
             block:SetBackdropBorderColor(0, 1, 0, 1); block:SetAlpha(1)
@@ -306,7 +314,7 @@ function MSC.UpdateLabCalc()
         end
         if runnerUpScore > 0 then delta = bestScore - runnerUpScore end
         
-        MSC.ViewLab.ResultText:SetText(names[winnerIndex] .. " Wins! (+" .. string_format("%.1f", delta) .. ")")
+        MSC.ViewLab.ResultText:SetText(string_format(MSC.L["%s Wins! (+%s)"], names[winnerIndex], string_format("%.1f", delta)))
         MSC.ViewLab.ResultText:SetTextColor(0, 1, 0)
     end
 end
@@ -321,9 +329,9 @@ function MSC.InitReceiptView(parent)
         p:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1}); p:SetBackdropColor(unpack(MSC.Colors.BgPanel)); p:SetBackdropBorderColor(0,0,0,0.5)
         local lbl = p:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); lbl:SetPoint("BOTTOMLEFT", p, "TOPLEFT", 0, 4); lbl:SetText(name); lbl:SetTextColor(0.7, 0.7, 0.7); return p
     end
-    local pArmor = CreatePanel("ARMOR", 220, 240, "TOPLEFT", c, "TOPLEFT", 0, 0)
-    local pJewel = CreatePanel("ACCESSORIES", 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 20, 0)
-    local pWeap  = CreatePanel("WEAPONS", 465, 75, "TOP", c, "TOP", 0, -260)
+    local pArmor = CreatePanel(MSC.L["ARMOR"], 220, 240, "TOPLEFT", c, "TOPLEFT", 0, 0)
+    local pJewel = CreatePanel(MSC.L["ACCESSORIES"], 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 20, 0)
+    local pWeap  = CreatePanel(MSC.L["WEAPONS"], 465, 75, "TOP", c, "TOP", 0, -260)
 
     local function CreateSlot(id, parentPanel, x, y, label)
         local btn = CreateFrame("Button", nil, f, "ItemButtonTemplate"); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
@@ -339,13 +347,13 @@ function MSC.InitReceiptView(parent)
         btn.SlotID = id; table_insert(MSC.ReceiptSlots, btn)
     end
 
-    CreateSlot(1, pArmor, 10, -10, "Head"); CreateSlot(3, pArmor, 10, -55, "Shoulder"); CreateSlot(15, pArmor, 10, -100, "Back"); CreateSlot(5, pArmor, 10, -145, "Chest"); CreateSlot(9, pArmor, 10, -190, "Wrist")
-    CreateSlot(10, pArmor, 115, -10, "Hands"); CreateSlot(6, pArmor, 115, -55, "Waist"); CreateSlot(7, pArmor, 115, -100, "Legs"); CreateSlot(8, pArmor, 115, -145, "Feet")
-    CreateSlot(2, pJewel, 10, -10, "Neck"); CreateSlot(11, pJewel, 10, -55, "Ring 1"); CreateSlot(12, pJewel, 10, -100, "Ring 2"); CreateSlot(13, pJewel, 10, -145, "Trinket 1"); CreateSlot(14, pJewel, 10, -190, "Trinket 2")
-    CreateSlot(16, pWeap, 30, -20, "Main Hand"); CreateSlot(17, pWeap, 160, -20, "Off Hand"); CreateSlot(18, pWeap, 290, -20, "Ranged")
+    CreateSlot(1, pArmor, 10, -10, MSC.L["Head"]); CreateSlot(3, pArmor, 10, -55, MSC.L["Shoulder"]); CreateSlot(15, pArmor, 10, -100, MSC.L["Back"]); CreateSlot(5, pArmor, 10, -145, MSC.L["Chest"]); CreateSlot(9, pArmor, 10, -190, MSC.L["Wrist"])
+    CreateSlot(10, pArmor, 115, -10, MSC.L["Hands"]); CreateSlot(6, pArmor, 115, -55, MSC.L["Waist"]); CreateSlot(7, pArmor, 115, -100, MSC.L["Legs"]); CreateSlot(8, pArmor, 115, -145, MSC.L["Feet"])
+    CreateSlot(2, pJewel, 10, -10, MSC.L["Neck"]); CreateSlot(11, pJewel, 10, -55, MSC.L["Ring 1"]); CreateSlot(12, pJewel, 10, -100, MSC.L["Ring 2"]); CreateSlot(13, pJewel, 10, -145, MSC.L["Trinket 1"]); CreateSlot(14, pJewel, 10, -190, MSC.L["Trinket 2"])
+    CreateSlot(16, pWeap, 30, -20, MSC.L["Main Hand"]); CreateSlot(17, pWeap, 160, -20, MSC.L["Off Hand"]); CreateSlot(18, pWeap, 290, -20, MSC.L["Ranged"])
     
     f.SummaryBox = CreateFrame("Frame", nil, f, "BackdropTemplate"); f.SummaryBox:SetPoint("TOP", pWeap, "BOTTOM", 0, -20); f.SummaryBox:SetSize(450, 100)
-    f.SummaryBox.Title = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryBox.Title:SetPoint("TOP", 0, 0); f.SummaryBox.Title:SetText("COMBINED GEAR STAT TOTALS"); f.SummaryBox.Title:SetTextColor(1, 0.82, 0)
+    f.SummaryBox.Title = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryBox.Title:SetPoint("TOP", 0, 0); f.SummaryBox.Title:SetText(MSC.L["COMBINED GEAR STAT TOTALS"]); f.SummaryBox.Title:SetTextColor(1, 0.82, 0)
     MSC.SummaryRows = {}
     for i=1, 12 do
         local row = CreateFrame("Frame", nil, f.SummaryBox); row:SetSize(200, 16)
@@ -381,7 +389,7 @@ function MSC.UpdateReceipt()
         end
     end
     local totalScore = MSC:GetTotalCharacterScore(gearTable, weights, specName)
-    MSC.ViewReceipt.Score:SetText("Score: " .. string_format("|cff00ff00%.1f|r", totalScore))
+    MSC.ViewReceipt.Score:SetText(MSC.L["Score: "] .. string_format("|cff00ff00%.1f|r", totalScore))
     
     if MSC.BagCacheDirty then
         MSC.BagCache = {}
@@ -417,7 +425,7 @@ function MSC.UpdateReceipt()
                  local validSlots = {[1]=true,[3]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[15]=true,[16]=true,[17]=true}
                  if validSlots[btn.SlotID] and (not enchantID or enchantID == "0") then 
                     btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); btn.Alert:Show()
-                    btn.AlertMode = "Enchant"; btn.AlertText = "Missing Enchant!" 
+                    btn.AlertMode = "Enchant"; btn.AlertText = MSC.L["Missing Enchant!"] 
                  end
             end
             local bestBagScore = score; local foundUpgrade = false
@@ -429,7 +437,7 @@ function MSC.UpdateReceipt()
             end
             if foundUpgrade then 
                 btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); btn.Alert:Show()
-                btn.AlertMode = "Upgrade"; btn.AlertText = "Better item in bags!" 
+                btn.AlertMode = "Upgrade"; btn.AlertText = MSC.L["Better item in bags!"] 
             end
         else
             SetItemButtonTexture(btn, "Interface\\PaperDoll\\UI-Backpack-EmptySlot"); btn.ScoreText:SetText("")
@@ -515,28 +523,28 @@ end
 
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
-    if string_find(stat, "STRENGTH") then return "Increases Attack Power and Block Value" end
-    if string_find(stat, "AGILITY") then return "Increases Crit Chance, Dodge, and Armor" end
-    if string_find(stat, "STAMINA") then return "Increases total Health Pool" end
-    if string_find(stat, "INTELLECT") then return "Increases Mana Pool and Spell Crit" end
-    if string_find(stat, "SPIRIT") then return "Increases Out-of-Combat and Spell5 Regen" end
-    if string_find(stat, "ATTACK_POWER") then return "Increases Raw Physical Damage Output" end
-    if string_find(stat, "EXPERTISE") then return "Reduces chance Target Parries or Dodges" end
-    if string_find(stat, "ARMOR_PENETRATION") then return "Ignores a portion of Target's Armor" end
-    if string_find(stat, "MELEE_HIT") or string_find(stat, "RANGED_HIT") or (string_find(stat, "HIT") and not string_find(stat, "SPELL")) then return "Reduces chance to Miss Physical attacks" end
-    if string_find(stat, "SPELL_POWER") then return "Increases Scaling Damage of Spells" end
-    if string_find(stat, "HEALING") then return "Increases Potency of Healing spells" end
-    if string_find(stat, "SPELL_HIT") then return "Reduces chance for Spells to Resist/Miss" end
-    if string_find(stat, "MANA_REG") or string_find(stat, "MP5") then return "Constant Mana Sustain (Mp5)" end
-    if string_find(stat, "CRIT") and not string_find(stat, "FROM_STATS") then return "Chance for Extra Critical Damage/Healing" end
-    if string_find(stat, "HASTE") then return "Increases Attack/Casting Speed" end
-    if string_find(stat, "DEFENSE") then return "Reduces chance to be Crit and Hit" end
-    if string_find(stat, "DODGE") then return "Chance to completely Avoid Physical attacks" end
-    if string_find(stat, "PARRY") then return "Chance to Deflect front-facing attacks" end
-    if string_find(stat, "BLOCK_VALUE") then return "Increases Damage mitigated by Shield" end
-    if string_find(stat, "BLOCK_RATING") then return "Chance to Mitigate damage with Shield" end
-    if string_find(stat, "RESILIENCE") then return "Reduces Crit Damage and Chance (PvP)" end
-    if string_find(stat, "ARMOR") and not string_find(stat, "PENETRATION") then return "Reduces Incoming Physical Damage" end
+    if string_find(stat, "STRENGTH") then return MSC.L["Increases Attack Power and Block Value"] end
+    if string_find(stat, "AGILITY") then return MSC.L["Increases Crit Chance, Dodge, and Armor"] end
+    if string_find(stat, "STAMINA") then return MSC.L["Increases total Health Pool"] end
+    if string_find(stat, "INTELLECT") then return MSC.L["Increases Mana Pool and Spell Crit"] end
+    if string_find(stat, "SPIRIT") then return MSC.L["Increases Out-of-Combat and Spell5 Regen"] end
+    if string_find(stat, "ATTACK_POWER") then return MSC.L["Increases Raw Physical Damage Output"] end
+    if string_find(stat, "EXPERTISE") then return MSC.L["Reduces chance Target Parries or Dodges"] end
+    if string_find(stat, "ARMOR_PENETRATION") then return MSC.L["Ignores a portion of Target's Armor"] end
+    if string_find(stat, "MELEE_HIT") or string_find(stat, "RANGED_HIT") or (string_find(stat, "HIT") and not string_find(stat, "SPELL")) then return MSC.L["Reduces chance to Miss Physical attacks"] end
+    if string_find(stat, "SPELL_POWER") then return MSC.L["Increases Scaling Damage of Spells"] end
+    if string_find(stat, "HEALING") then return MSC.L["Increases Potency of Healing spells"] end
+    if string_find(stat, "SPELL_HIT") then return MSC.L["Reduces chance for Spells to Resist/Miss"] end
+    if string_find(stat, "MANA_REG") or string_find(stat, "MP5") then return MSC.L["Constant Mana Sustain (Mp5)"] end
+    if string_find(stat, "CRIT") and not string_find(stat, "FROM_STATS") then return MSC.L["Chance for Extra Critical Damage/Healing"] end
+    if string_find(stat, "HASTE") then return MSC.L["Increases Attack/Casting Speed"] end
+    if string_find(stat, "DEFENSE") then return MSC.L["Reduces chance to be Crit and Hit"] end
+    if string_find(stat, "DODGE") then return MSC.L["Chance to completely Avoid Physical attacks"] end
+    if string_find(stat, "PARRY") then return MSC.L["Chance to Deflect front-facing attacks"] end
+    if string_find(stat, "BLOCK_VALUE") then return MSC.L["Increases Damage mitigated by Shield"] end
+    if string_find(stat, "BLOCK_RATING") then return MSC.L["Chance to Mitigate damage with Shield"] end
+    if string_find(stat, "RESILIENCE") then return MSC.L["Reduces Crit Damage and Chance (PvP)"] end
+    if string_find(stat, "ARMOR") and not string_find(stat, "PENETRATION") then return MSC.L["Reduces Incoming Physical Damage"] end
     return nil
 end
 
@@ -660,7 +668,7 @@ local function GetClassRings(class, stats, weights)
         local numTalents = GetNumTalents(tab)
         for i=1, numTalents do
             local name, _, _, _, rank = GetTalentInfo(tab, i)
-            if name == talentName then return rank end
+            if name == MSC.L[talentName] then return rank end
         end
         return 0
     end
@@ -867,13 +875,20 @@ function MSC.UpdateLogic()
                 GameTooltip:SetText(ring.l, 1, 1, 1)
                 GameTooltip:AddLine(" ")
                 if ring.rawVal and ring.rawCap and ring.rawCap > 0 then
-                    GameTooltip:AddDoubleLine("Rating:", string_format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
+                    GameTooltip:AddDoubleLine(MSC.L["Rating:"], string_format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
                     local diff = ring.rawCap - ring.rawVal
-                    if diff > 0 then GameTooltip:AddLine(string_format("Need %d more rating to cap.", diff), 1, 0.5, 0.5) else GameTooltip:AddLine("Cap reached!", 0, 1, 0) end
+                    if diff > 0 then 
+                        GameTooltip:AddLine(string_format(MSC.L["Need %d more rating to cap."], diff), 1, 0.5, 0.5) 
+                    else 
+                        GameTooltip:AddLine(MSC.L["Cap reached!"], 0, 1, 0) 
+                    end
                 else
-                    GameTooltip:AddDoubleLine("Current Rating:", string_format("%d", ring.rawVal), 1, 0.82, 0, 1, 1, 1)
+                    GameTooltip:AddDoubleLine(MSC.L["Current Rating:"], string_format("%d", ring.rawVal), 1, 0.82, 0, 1, 1, 1)
                 end
-                if ring.scalar then GameTooltip:AddLine(" "); GameTooltip:AddLine(string_format("1%% requires %.2f Rating", ring.scalar), 0.6, 0.6, 0.6) end
+                if ring.scalar then 
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(string_format(MSC.L["1%% requires %.2f Rating"], ring.scalar), 0.6, 0.6, 0.6) 
+                end
                 GameTooltip:Show(); self:SetAlpha(1)
             end)
             f:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(1) end)
@@ -901,19 +916,19 @@ function MSC.UpdateLogic()
                  if self.CurrentVal and self.CurrentVal > 0 then
                      GameTooltip:AddLine(" ")
                      local scoreContrib = (self.Weight or 0) * self.CurrentVal
-                     GameTooltip:AddDoubleLine("Gear Contribution:", string_format("%.1f", self.CurrentVal), 1, 1, 1, 1, 1, 1)
+                     GameTooltip:AddDoubleLine(MSC.L["Gear Contribution:"], string_format("%.1f", self.CurrentVal), 1, 1, 1, 1, 1, 1)
                      if self.RealTotal and self.RealTotal > 0 then
                          if math_abs(self.RealTotal - self.CurrentVal) > 1 then
-                             GameTooltip:AddDoubleLine("Character Sheet:", string_format("%d (Includes Base/Enchants)", self.RealTotal), 0.6, 0.6, 0.6, 0.6, 0.6, 0.6)
+                             GameTooltip:AddDoubleLine(MSC.L["Character Sheet:"], string_format(MSC.L["%d (Includes Base/Enchants)"], self.RealTotal), 0.6, 0.6, 0.6, 0.6, 0.6, 0.6)
                          end
                      end
                      GameTooltip:AddLine(" ")
-                     GameTooltip:AddDoubleLine("Score Calculation:", " ", 1, 0.82, 0)
-                     GameTooltip:AddLine(string_format("%.2f (Weight) x %.1f (Gear)", self.Weight, self.CurrentVal), 1, 1, 1)
-                     GameTooltip:AddDoubleLine("= Score:", string_format("%.1f", scoreContrib), nil, nil, nil, 0, 1, 0)
+                     GameTooltip:AddDoubleLine(MSC.L["Score Calculation:"], " ", 1, 0.82, 0)
+                     GameTooltip:AddLine(string_format(MSC.L["%.2f (Weight) x %.1f (Gear)"], self.Weight, self.CurrentVal), 1, 1, 1)
+                     GameTooltip:AddDoubleLine(MSC.L["= Score:"], string_format("%.1f", scoreContrib), nil, nil, nil, 0, 1, 0)
                  else
-                     GameTooltip:AddDoubleLine("Stat Weight:", string_format("%.2f", self.Weight or 0), nil,nil,nil, 0, 1, 0)
-                     GameTooltip:AddLine("You currently have 0 of this stat from gear.", 0.6, 0.6, 0.6)
+                     GameTooltip:AddDoubleLine(MSC.L["Stat Weight:"], string_format("%.2f", self.Weight or 0), nil,nil,nil, 0, 1, 0)
+                     GameTooltip:AddLine(MSC.L["You currently have 0 of this stat from gear."], 0.6, 0.6, 0.6)
                  end
                  if self.Reason then 
                     GameTooltip:AddLine(" ")
@@ -1009,7 +1024,7 @@ function MSC.InitSettingsView(parent)
             end 
         end
         UIDropDownMenu_Initialize(dd, Init)
-        local currentText = "Select..."; for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
+        local currentText = MSC.L["Select..."]; for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
         UIDropDownMenu_SetText(dd, currentText); if key == "Mode" then f.ProfileDD = dd end
         return frame
     end
@@ -1021,14 +1036,14 @@ function MSC.InitSettingsView(parent)
         return cb
     end
     
-    local h1 = CreateHeader("Comparison Logic", nil, 0)
-    local enchantTip = "Controls how item enchantments affect the score.\n\n|cffffffffOff:|r Scores items based on base stats only.\n|cffffffffCurrent:|r Includes the value of the enchant currently on the item.\n|cffffffffProject:|r Simulates the best possible enchant for that item level."
-    local ddEnchant = CreateDropdown("Enchant Mode", "EnchantMode", {{ text = "Off (Raw Stats)", val = 1 }, { text = "Current Only", val = 2 }, { text = "Project Best", val = 3 }}, h1, -10, enchantTip)
-    local gemTip = "Controls how empty sockets are scored.\n\n|cffffffffSkeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffCasual:|r Assumes empty sockets are filled with Rare (Blue) quality gems.\n|cffffffffPro:|r Assumes empty sockets are filled with Epic/Best-in-Slot gems."
-    local ddGem = CreateDropdown("Gemming Logic", "GemMode", {{ text = "The Skeptic", val = 1 }, { text = "The Casual", val = 2 }, { text = "The Pro", val = 3 }}, ddEnchant, -5, gemTip)
+    local h1 = CreateHeader(MSC.L["Comparison Logic"], nil, 0)
+    local enchantTip = MSC.L["Controls how item enchantments affect the score.\n\n|cffffffffOff:|r Scores items based on base stats only.\n|cffffffffCurrent:|r Includes the value of the enchant currently on the item.\n|cffffffffProject:|r Simulates the best possible enchant for that item level."]
+    local ddEnchant = CreateDropdown(MSC.L["Enchant Mode"], "EnchantMode", {{ text = MSC.L["Off (Raw Stats)"], val = 1 }, { text = MSC.L["Current Only"], val = 2 }, { text = MSC.L["Project Best"], val = 3 }}, h1, -10, enchantTip)
+    local gemTip = MSC.L["Controls how empty sockets are scored.\n\n|cffffffffSkeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffCasual:|r Assumes empty sockets are filled with Rare (Blue) quality gems.\n|cffffffffPro:|r Assumes empty sockets are filled with Epic/Best-in-Slot gems."]
+    local ddGem = CreateDropdown(MSC.L["Gemming Logic"], "GemMode", {{ text = MSC.L["The Skeptic"], val = 1 }, { text = MSC.L["The Casual"], val = 2 }, { text = MSC.L["The Pro"], val = 3 }}, ddEnchant, -5, gemTip)
 
-    local h2 = CreateHeader("Character Profile", ddGem, -20)
-    local specOptions = { { text = "Auto-Detect", val = "AUTO" } }; local seen = { ["AUTO"] = true }
+    local h2 = CreateHeader(MSC.L["Character Profile"], ddGem, -20)
+    local specOptions = { { text = MSC.L["Auto-Detect"], val = "AUTO" } }; local seen = { ["AUTO"] = true }
     
     local profileList = {}
     if MSC.CurrentClass then
@@ -1050,20 +1065,20 @@ function MSC.InitSettingsView(parent)
         AddList(MSC.CurrentClass.Profiles)
     end 
 
-    local profileTip = "Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."
-    local ddProfile = CreateDropdown("Active Scoring Profile", "Mode", specOptions, h2, -10, profileTip)
-    local h3 = CreateHeader("Interface Options", ddProfile, -20)   
-    local cb1 = CreateCheck("Hide Minimap Button", "HideMinimap", "Hides the circular button on your minimap.", h3, 0, -10)  
-    local cb2 = CreateCheck("Hide Tooltip Verdict", "HideTooltips", "Stops the addon from adding scores to item tooltips.", cb1, 0, -5)   
-    local cbShift = CreateCheck("Show Only via Shift Key", "ShiftOnlyTooltip", "Only shows the Judge score in tooltips while holding the SHIFT key.", cb2, 20, -5)
-    local cb3 = CreateCheck("Mute Error Sounds", "MuteSounds", "Stops the error sound when clicking invalid items.", cbShift, -20, -5)
-    local cb4 = CreateCheck("Disable Conflict Check", "DisableConflictCheck", "Stops the chat warning about Pawn/Zygor.", cb3, 0, -5)
+    local profileTip = MSC.L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."]
+    local ddProfile = CreateDropdown(MSC.L["Active Scoring Profile"], "Mode", specOptions, h2, -10, profileTip)
+    local h3 = CreateHeader(MSC.L["Interface Options"], ddProfile, -20)    
+    local cb1 = CreateCheck(MSC.L["Hide Minimap Button"], "HideMinimap", MSC.L["Hides the circular button on your minimap."], h3, 0, -10)  
+    local cb2 = CreateCheck(MSC.L["Hide Tooltip Verdict"], "HideTooltips", MSC.L["Stops the addon from adding scores to item tooltips."], cb1, 0, -5)   
+    local cbShift = CreateCheck(MSC.L["Show Only via Shift Key"], "ShiftOnlyTooltip", MSC.L["Only shows the Judge score in tooltips while holding the SHIFT key."], cb2, 20, -5)
+    local cb3 = CreateCheck(MSC.L["Mute Error Sounds"], "MuteSounds", MSC.L["Stops the error sound when clicking invalid items."], cbShift, -20, -5)
+    local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
     cb2:HookScript("OnClick", function(self)
         if self:GetChecked() then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end
     end)
 
-    local specTip = "Select additional profiles to track in tooltips.\n\nIf an item is an upgrade for a checked profile, a small notification will appear at the bottom of the item tooltip."
-    local hSpec = CreateHeader("Secondary Spec Tracking", nil, nil, 320, -30, specTip)
+    local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nIf an item is an upgrade for a checked profile, a small notification will appear at the bottom of the item tooltip."]
+    local hSpec = CreateHeader(MSC.L["Secondary Spec Tracking"], nil, nil, 320, -30, specTip)
     
     local trackFrame = CreateFrame("Frame", nil, f, "BackdropTemplate")
     trackFrame:SetSize(230, 280)
@@ -1089,9 +1104,9 @@ function MSC.InitSettingsView(parent)
     end
     sChild:SetHeight(math_abs(ty) + 20)
 
-    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40); bImp:SetText("Import Pawn String")
+    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40); bImp:SetText(MSC.L["Import Pawn String"])
     bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
-    local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40); bExport:SetText("Export Data")
+    local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40); bExport:SetText(MSC.L["Export Data"])
     bExport:SetScript("OnClick", function() MSC.ShowHistory() end)
     
     MSC.ViewSettings = f
@@ -1168,16 +1183,16 @@ function MSC.ToggleMainMenu()
     f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
 
     f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText("v2.3.7 Laboratory"); f.SubTitle:SetTextColor(MSC.GetClassColor())
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText(string.format("v%s %s", MSC.Version, MSC.L["Laboratory"])); f.SubTitle:SetTextColor(MSC.GetClassColor())
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0); f.ScaleHint:SetText("Scroll to Scale"); f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
+    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0); f.ScaleHint:SetText(MSC.L["Scroll to Scale"]); f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
 
     f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
     f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
     f.Sidebar.Line = f.Sidebar:CreateTexture(nil, "OVERLAY"); f.Sidebar.Line:SetColorTexture(0, 0, 0, 1); f.Sidebar.Line:SetWidth(1); f.Sidebar.Line:SetPoint("TOPRIGHT", 0, 0); f.Sidebar.Line:SetPoint("BOTTOMRIGHT", 0, 0)
     f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.MoveHint:SetPoint("BOTTOM", 0, 15); f.MoveHint:SetText("Hold\nto Move"); f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
+    f.MoveHint:SetPoint("BOTTOM", 0, 15); f.MoveHint:SetText(MSC.L["Hold\nto Move"]); f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
     
     f.Content = CreateFrame("Frame", nil, f); f.Content:SetPoint("TOPLEFT", f.Sidebar, "TOPRIGHT", 0, -60); f.Content:SetPoint("BOTTOMRIGHT", 0, 0)
     MSC.MainFrame = f
@@ -1280,7 +1295,7 @@ f:SetScript("OnEvent", function(self, event, arg1)
     elseif event == "GET_ITEM_INFO_RECEIVED" then
         if MSC.StatCache then wipe(MSC.StatCache) end
         MSC.BagCacheDirty = true
-        RequestUpdate()     
+        RequestUpdate()      
     else
         RequestUpdate()
     end
@@ -1346,11 +1361,11 @@ end
 
 function MSC.ShowImportWindow()
     if MSC.ImportFrame then MSC.ImportFrame:Show(); return end
-    local f = MSC.CreatePopupFrame("Import Pawn String")
-    f.EditBox:SetText("Paste Pawn string here...")
+    local f = MSC.CreatePopupFrame(MSC.L["Import Pawn String"])
+    f.EditBox:SetText(MSC.L["Paste Pawn string here..."])
     f.EditBox:HighlightText()
     local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    b:SetSize(120, 25); b:SetPoint("BOTTOM", 0, 15); b:SetText("Import")
+    b:SetSize(120, 25); b:SetPoint("BOTTOM", 0, 15); b:SetText(MSC.L["Import"])
     b:SetScript("OnClick", function()
         local text = f.EditBox:GetText()
         if MSC.ImportAndSavePawnString then
@@ -1364,7 +1379,7 @@ end
 
 function MSC.ShowHistory()
     if MSC.ExportFrame then MSC.ExportFrame:Show(); MSC.ExportFrame.EditBox:HighlightText(); return end
-    local f = MSC.CreatePopupFrame("Export Data (Discord Ready)")
+    local f = MSC.CreatePopupFrame(MSC.L["Export Data (Discord Ready)"])
     local unit = "player"
     local name = UnitName(unit)
     local realm = GetRealmName()
@@ -1375,7 +1390,7 @@ function MSC.ShowHistory()
     if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then 
         specName, weights = next(MSC.CurrentClass.Weights) 
     end
-    local profileName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName or "Unknown"
+    local profileName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName or MSC.L["Unknown"]
 
     local gearTable = {}
     for i=1, 18 do gearTable[i] = GetInventoryItemLink(unit, i) end
@@ -1397,12 +1412,12 @@ function MSC.ShowHistory()
         local slotID, label = unpack(info)
         local link = gearTable[slotID]
         if link then
-            local itemName = GetItemInfo(link) or "Unknown Item"
+            local itemName = GetItemInfo(link) or MSC.L["Unknown Item"]
             local stats = MSC.SafeGetItemStats(link, slotID, weights, specName)
             local score = MSC.GetItemScore(stats, weights, specName, slotID)
             exportStr = exportStr .. string_format("%-10s = %s (%.1f)\n", label, itemName, score)
         else
-            exportStr = exportStr .. string_format("%-10s = (Empty)\n", label)
+            exportStr = exportStr .. string_format("%-10s = %s\n", label, MSC.L["(Empty)"])
         end
     end
     exportStr = exportStr .. "```"
@@ -1464,7 +1479,7 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     if not weights and MSC.CurrentClass then 
         specName, weights = next(MSC.CurrentClass.Weights) 
     end
-    if not weights then f.Title:SetText("No Weights Loaded") return end
+    if not weights then f.Title:SetText(MSC.L["No Weights Loaded"]) return end
 
     local stats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
     local sorted = {}
@@ -1495,7 +1510,7 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     if f.lines then for _, l in ipairs(f.lines) do l:Hide() end end
     f.lines = f.lines or {}
     
-    local itemName = GetItemInfo(itemLink) or "Unknown Item"
+    local itemName = GetItemInfo(itemLink) or MSC.L["Unknown Item"]
     f.Title:SetText(itemName)
     
     local yOff = 0
@@ -1523,7 +1538,7 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     end
     totalLine:ClearAllPoints()
     totalLine:SetPoint("TOPRIGHT", 0, yOff - 10)
-    totalLine:SetText("Total Score: " .. string_format("|cff00ff00%.1f|r", totalScore))
+    totalLine:SetText(MSC.L["Total Score: "] .. string_format("|cff00ff00%.1f|r", totalScore))
     totalLine:Show()
     f:SetHeight(math_abs(yOff) + 100)
 end

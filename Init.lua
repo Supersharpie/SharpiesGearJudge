@@ -51,7 +51,7 @@ function MSC:ForceInit()
                 end
             end
             
-            print("|cff00ff00Sharpie's Gear Judge:|r Loaded " .. className)
+            print(string.format(MSC.L["|cff00ff00Sharpie's Gear Judge:|r Loaded %s"], className))
             break 
         end
     end

@@ -534,7 +534,7 @@ if not MSC.IsEra then
         [776] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_STRENGTH_SHORT"]=20}} }, -- Feral
 
         -- NICHE
-        [667] = { [2] = { score = 40, note="Chance on hit: Haste" } }, -- Fists of Fury
+        [667] = { [2] = { score = 40, note = MSC.L["Chance on hit: Haste"] } }, -- Fists of Fury
         [616] = { [2] = { stats = { ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15, ["ITEM_MOD_HIT_RATING_SHORT"]=15 } } }, -- Twin Stars
         [615] = { [2] = { stats = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=30 } } }, -- Latro's Flurry
 		
@@ -577,39 +577,39 @@ end
 -- =============================================================
 MSC.ProcDB = {
     -- [[ CLASSIC / ERA ]]
-    [11815] = { score=20, note="ERA BiS for Melee (HoJ)" }, 
-    [19379] = { score=35, note="ERA BiS Caster (Nelth's Tear)" },
-    [19406] = { score=35, note="ERA BiS Physical (DFT)" },
-    [19019] = { score=30, note="Legendary Threat Gen (TF)" },
-    [871]   = { score=40, note="ERA Top Tier Prot Pally" }, -- Flurry Axe
-    [7717]  = { ppm=1.0, val=15, stat="MSC_WEAPON_DPS", note="Bladestorm Proc" },
+    [11815] = { score=20, note = MSC.L["ERA BiS for Melee (HoJ)"] }, 
+    [19379] = { score=35, note = MSC.L["ERA BiS Caster (Nelth's Tear)"] },
+    [19406] = { score=35, note = MSC.L["ERA BiS Physical (DFT)"] },
+    [19019] = { score=30, note = MSC.L["Legendary Threat Gen (TF)"] },
+    [871]   = { score=40, note = MSC.L["ERA Top Tier Prot Pally"] }, -- Flurry Axe
+    [7717]  = { ppm=1.0, val=15, stat="MSC_WEAPON_DPS", note = MSC.L["Bladestorm Proc"] },
 }
 
 if not MSC.IsEra then
     local tbcProcs = {
         -- [[ TBC PHASE 1 ]]
-        [28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note="BiS Physical" }, -- DST
+        [28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["BiS Physical"] }, -- DST
         [29370] = { ppm=0.8, val=260, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Icon (Use)
         [27683] = { ppm=1.0, val=320, dur=6,  stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT" }, -- Quagmirran's
         [28034] = { ppm=1.2, val=300, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Hourglass
         [28223] = { ppm=1.5, val=320, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Abacus (Fixed Stat: It's Haste, not AP)
         [28190] = { ppm=1.0, val=160, dur=6,  stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Scarab of the Infinite Cycle
-        [28528] = { score=40, note="Moroes' Watch (Dodge Use)" }, 
-        [24460] = { score=35, note="Talisman of Tenacity (Use: HP)" }, 
-        
+        [28528] = { score=40, note = MSC.L["Moroes' Watch (Dodge Use)"] }, 
+        [24460] = { score=35, note = MSC.L["Talisman of Tenacity (Use: HP)"] },
+		
         -- [[ TBC PHASE 2 (SSC/TK) ]]
         [30627] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Tsunami
-        [30449] = { ppm=1.5, val=130, dur=10, stat="ITEM_MOD_SPELL_POWER_SHORT", note="Pet Proc" },
-        [29923] = { score=65, note="Rage/Energy Proc" }, 
-        [29996] = { score=80, note="BiS (Infinite Energy Proc)" }, -- Rod of the Sun King
-
+        [30449] = { ppm=1.5, val=130, dur=10, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Pet Proc"] },
+        [29923] = { score=65, note = MSC.L["Rage/Energy Proc"] }, 
+        [29996] = { score=80, note = MSC.L["BiS (Infinite Energy Proc)"] }, -- Rod of the Sun King
+		
         -- [[ TBC PHASE 3 (Hyjal/BT) ]]
         [32471] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Shard of Contempt (Fixed ID, Shard is 34472? No, Shard is 34472. 32471 is Shard of Contempt? Check IDs carefully. 34472 is Sunwell.)
         -- Correction: 32471 is Shard of Contempt (Expertise/AP proc).
         [32505] = { ppm=1.0, val=200, dur=10, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" }, -- Madness of the Betrayer
         [32361] = { ppm=1.0, val=200, dur=15, stat="ITEM_MOD_SPELL_POWER_SHORT" }, -- Skull of Gul'dan (Actually Haste Use, but valued high)
-        [32375] = { ppm=0.5, val=2000, dur=10, stat="ITEM_MOD_ARMOR_SHORT", note="BiS Tank (Proc)" }, -- Bulwark
-        [32336] = { ppm=1.0, val=25, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note="BiS Hunter (Mana Proc)" }, -- Black Bow
+        [32375] = { ppm=0.5, val=2000, dur=10, stat="ITEM_MOD_ARMOR_SHORT", note = MSC.L["BiS Tank (Proc)"] }, -- Bulwark
+        [32336] = { ppm=1.0, val=25, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["BiS Hunter (Mana Proc)"] }, -- Black Bow
         [32236] = { ppm=1.0, val=40, stat="MSC_WEAPON_DPS" }, -- Syphon of the Nathrezim
 
         -- [[ TBC PHASE 4 (ZA) ]]
@@ -618,8 +618,8 @@ if not MSC.IsEra then
 
         -- [[ TBC PHASE 5 (Sunwell) ]]
         [34472] = { ppm=1.0, val=230, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Shard of Contempt (Actually this ID is Grey Tongue's)
-        [34427] = { score=100, note="BiS (Mechanic)" }, -- Blackened Naaru Sliver
-        [34334] = { score=500, note="LEGENDARY" }, -- Thori'dal
+        [34427] = { score=100, note = MSC.L["BiS (Mechanic)"] }, -- Blackened Naaru Sliver
+        [34334] = { score=500, note = MSC.L["LEGENDARY"] }, -- Thori'dal
 
         -- [[ CRAFTED WEAPONS ]]
         [28437] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonmaw
@@ -627,7 +627,7 @@ if not MSC.IsEra then
         [28439] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
         [28429] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart
         [28430] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart Executioner
-        [28433] = { score=50, note="Stun Proc PvP BiS" }, -- Stormherald
+        [28433] = { score=50, note = MSC.L["Stun Proc PvP BiS"] }, -- Stormherald
     }
 
     -- Merge TBC Procs into Main Table

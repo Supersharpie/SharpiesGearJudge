@@ -180,7 +180,7 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
         if MSC.PrettyNames and MSC.PrettyNames[detectedKey] then
             displayName = MSC.PrettyNames[detectedKey]
         end
-        UIDropDownMenu_SetText(MyStatCompareFrame.ProfileDD, "Auto: " .. displayName)
+        UIDropDownMenu_SetText(MyStatCompareFrame.ProfileDD, string.format(MSC.L["Auto: %s"], displayName))
     end
 end)
 

@@ -350,43 +350,43 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
 
             if not Scratch_Gear[17] then needsOH = true end
 
-            if needsOH then
-                if is2HSpec then
-                    Scratch_Gear[17] = nil
-                    contextMsg = "|cffff0000(Not 2Hander)|r"
-                else
-                    local bestBagOH = MSC:GetBestOffHandInBags(weights, specName)
-                    if bestBagOH then
-                        Scratch_Gear[17] = bestBagOH
-                        local bagName = GetItemInfo(bestBagOH)
-                        contextMsg = "|cff00ff00(w/ ".. (bagName or "Bag Item") ..")|r"
-                    else
-                        if not Scratch_Gear[17] then 
-                            contextMsg = "|cffff0000(No OH found)|r" 
-                        end
-                    end
-                end
-            end
-        end
-    elseif targetSlotID == 17 then
-        local currentMH = GetInventoryItemLink("player", 16)
-        if currentMH then
-            local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
-            local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
-            
-            if isCurrent2H then
-                local bestBagMH = MSC:GetBestMainHandInBags(weights, specName)
-                if bestBagMH then
-                    Scratch_Gear[16] = bestBagMH
-                    local bagName = GetItemInfo(bestBagMH)
-                    contextMsg = "|cff00ff00(w/ ".. (bagName or "Bag Item") ..")|r"
-                else
-                    Scratch_Gear[16] = nil
-                    contextMsg = "|cffff0000(No MH found)|r"
-                end
-            end
-        end
-    end
+			if needsOH then
+							if is2HSpec then
+								Scratch_Gear[17] = nil
+								contextMsg = MSC.L["|cffff0000(Not 2Hander)|r"]
+							else
+								local bestBagOH = MSC:GetBestOffHandInBags(weights, specName)
+								if bestBagOH then
+									Scratch_Gear[17] = bestBagOH
+									local bagName = GetItemInfo(bestBagOH)
+									contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
+								else
+									if not Scratch_Gear[17] then
+										contextMsg = MSC.L["|cffff0000(No OH found)|r"]
+									end
+								end
+							end
+						end
+					end
+				elseif targetSlotID == 17 then
+					local currentMH = GetInventoryItemLink("player", 16)
+					if currentMH then
+						local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
+						local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
+						
+						if isCurrent2H then
+							local bestBagMH = MSC:GetBestMainHandInBags(weights, specName)
+							if bestBagMH then
+								Scratch_Gear[16] = bestBagMH
+								local bagName = GetItemInfo(bestBagMH)
+								contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
+							else
+								Scratch_Gear[16] = nil
+								contextMsg = MSC.L["|cffff0000(No MH found)|r"]
+							end
+						end
+					end
+				end
 
     -- 4. CALCULATE FUTURE SCORE
     local newScore, newStatsTotal, newTotalColors, newSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
@@ -401,9 +401,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                  for req, _ in pairs(scores) do
                      local rN = tonumber(req)
                      if rN and nC >= rN and oC < rN then
-                         local msg = "|cff00ff00(Set Bonus " .. rN .. ")|r"
-                         contextMsg = (contextMsg or "") .. " " .. msg
-                     end
+						 local msg = string_format(MSC.L["|cff00ff00(Set Bonus %s)|r"], rN)
+						 contextMsg = (contextMsg or "") .. " " .. msg
+					 end
                  end
              end
         end
@@ -413,7 +413,12 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local _, playerClass = UnitClass("player")
     local function Rank(k) return MSC:GetTalentRank(k) end 
 
-    local STAT_DISPLAY = { ["ITEM_MOD_HIT_RATING_SHORT"]="Hit", ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]="Spell Hit", ["ITEM_MOD_EXPERTISE_RATING_SHORT"]="Exp", ["DEFENSE_FLOOR"]="Def" }
+    local STAT_DISPLAY = { 
+        ["ITEM_MOD_HIT_RATING_SHORT"]       = MSC.L["Hit"], 
+        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = MSC.L["Spell Hit"], 
+        ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = MSC.L["Exp"], 
+        ["DEFENSE_FLOOR"]                   = MSC.L["Def"] 
+    }
     local SAFETY_CAPS = {}
 
     if MSC.IsTBC or MSC.IsWrath then
@@ -454,8 +459,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                     newScore = newScore - rule.penalty
                     local deficit = futureVal - trueCap
                     local name = STAT_DISPLAY[rule.stat] or "Cap"
-                    
-                    local msg = string_format(" |cffff0000(Cap %.1f %s)|r", deficit, name)
+                    local msg = string_format(MSC.L[" |cffff0000(Cap %.1f %s)|r"], deficit, name)
                     contextMsg = (contextMsg or "") .. msg
                 end
             
@@ -470,11 +474,11 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                     local futureDef = currentDef + diffSkill
                     
                     if currentDef >= rule.base and futureDef < (rule.base - 0.1) then
-                         newScore = newScore - rule.penalty
-                         local deficit = futureDef - rule.base
-                         local msg = string_format(" |cffff0000(Cap %.1f Def)|r", deficit)
-                         contextMsg = (contextMsg or "") .. msg
-                    end
+                     newScore = newScore - rule.penalty
+                     local deficit = futureDef - rule.base
+                     local msg = string_format(MSC.L[" |cffff0000(Cap %.1f Def)|r"], deficit)
+                     contextMsg = (contextMsg or "") .. msg
+                end
                 end
             end
         end

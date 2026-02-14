@@ -1,5 +1,23 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.3.8 - German localized
+
+### Key changes:
+* **Wrap in-code UI text with MSC.L lookups and add localization infrastructure. 
+* **Many hardcoded English strings in ConflictManager, Data_Sets, Database and related tables were replaced with MSC.L[...] to enable translation; popup button labels and messages were localized and Pawn-related messages use localized text. 
+* **Added new locale files as Place Holders (Locales/deDE.lua, Locales/esES.lua, Locales/frFR.lua) and Localization.lua, plus PawnParser.lua. 
+* **Updated .toc files and various data notes/enchants/proc descriptions to use localized strings. Small behavior/formatting tweaks in ConflictManager (localized prints and button text).
+* **Harden Helpers.lua: improve Pawn string parsing and restore/expand Pawn stat map entries; 
+* **Simplify and optimize gem/enchant logic: build/lookup gem cache more compactly, improve GetGemColor lookup, streamline SolveColorMatch and gem projection, only run pure-sim when applicable, and consolidate projection data construction. 
+* **Tidy up GetRawItemStats overrides and proc injection, compress conditional formatting/whitespace, and minor performance/localization comments updates. 
+
+### 🐛 Bug Fixes
+* **Fix scoring and offhand handling compactly, clean up DebugItem output formatting, and add a PLAYER_LOGIN handler to load saved custom weights (race-condition fix) and refresh UI if needed.
+* **Add safer scanner handling and default empty scan structure to avoid crashes.
+* **Made Parse/Import functions non-colon methods (MSC.ParsePawnString / MSC.ImportAndSavePawnString) and use a more robust regex for negative/whitespace values. 
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.3.7
 
 ### Key changes:
@@ -15,6 +33,8 @@
 	*Added MSC:ForceInit to detect player class, wire up Profiles and PrettyNames, print a load message, and clear the pending list to save memory. 
 	*Added a PLAYER_LOGIN frame to call ForceInit. 
 * **Call MSC:ForceInit on PLAYER_LOGIN and on certain talent events, and add a tooltip failsafe that attempts ForceInit before aborting.**
+
+------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.3.6
 

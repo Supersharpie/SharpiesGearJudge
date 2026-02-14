@@ -55,18 +55,17 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
         
-        local version = MSC.IsEra and "Classic Era" or "TBC Edition"
-        print("|cff00ff00Sharpie's Gear Judge|r ("..version..") Loaded. Type /sgj for menu.")
+        local version = MSC.IsEra and MSC.L["Classic Era"] or MSC.L["TBC Edition"]
+        print(string.format(MSC.L["|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."], version))
         
     elseif event == "PLAYER_LOGIN" then
         -- [[ FIX 1: FORCE INIT ON LOGIN ]]
-        -- This connects to your new Init.lua to ensure stats load immediately.
         if MSC.ForceInit then MSC:ForceInit() end
 
         local IsLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
         if not SGJ_Settings.DisableConflictCheck and IsLoaded then
-            if IsLoaded("Pawn") then print("|cffffd100SGJ Warning:|r 'Pawn' is loaded. Tooltips may look cluttered.") end
-            if IsLoaded("ZygorGuidesViewer") then print("|cffffd100SGJ Warning:|r 'Zygor' detected. Ensure its item scoring is disabled.") end
+            if IsLoaded("Pawn") then print(MSC.L["|cffffd100SGJ Warning:|r 'Pawn' is loaded. Tooltips may look cluttered."]) end
+            if IsLoaded("ZygorGuidesViewer") then print(MSC.L["|cffffd100SGJ Warning:|r 'Zygor' detected. Ensure its item scoring is disabled."]) end
         end
         
         local _, startSpec = MSC.GetCurrentWeights()
@@ -100,9 +99,9 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
 end
 
 StaticPopupDialogs["SGJ_RELOAD_REQUIRED"] = {
-    text = "|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect.",
-    button1 = "Reload Now",
-    button2 = "Later",
+    text = MSC.L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."],
+    button1 = MSC.L["Reload Now"],
+    button2 = MSC.L["Later"],
     OnAccept = function()
         ReloadUI()
     end,
@@ -334,9 +333,6 @@ local function OnTooltipSetItem(tooltip)
     if not link or not IsEquippableItem(link) then return end
     if not MSC.IsItemUsable(link) then return end
 
-    -- [[ REMOVED THROTTLE HERE TO FIX DISAPPEARING TEXT ]] 
-    -- We now always recalculate and redraw to ensure it persists after a game-clearing refresh.
-
     MSC.IsCalculating = true
     local _, playerClass = UnitClass("player")
     
@@ -360,13 +356,13 @@ local function OnTooltipSetItem(tooltip)
         local slotId = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
         if not slotId then return end
 
-        local newScore, oldScore, itemNewStats, itemOldStats, newStatsTotal, oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts = MSC:EvaluateUpgrade(link, slotId, weights, specName)
+        local newScore, oldScore, itemNewStats, itemOldStats, newStatsTotal, oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg = MSC:EvaluateUpgrade(link, slotId, weights, specName)
         local delta = newScore - oldScore
         local isEquipped = (GetInventoryItemLink("player", slotId) == link)
         
         -- [[ 1. THE HEADER (Always Shows) ]]
         tooltip:AddLine(" ")
-        local scoreLabel = "Judge's Score:"
+        local scoreLabel = MSC.L["Judge's Score:"]
         if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end
         tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
         
@@ -375,15 +371,15 @@ local function OnTooltipSetItem(tooltip)
         
         -- Cap Info
         local _, _, capInfo = MSC.GetCurrentWeights()
-        if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " Capped)|r" end
-        tooltip:AddDoubleLine("Verdict Profile:", "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
+        if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " " .. MSC.L["Capped"] .. ")|r" end
+        tooltip:AddDoubleLine(MSC.L["Verdict Profile:"], "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
 
         -- ====================================================================
         -- [[ 2. THE EQUIPPED SPLIT ]]
         -- ====================================================================
         if isEquipped then
             -- A. MINIMAL VIEW: They are wearing it, no extra fluff needed!
-            tooltip:AddLine("|cff00ffff* EQUIPPED *|r")
+            tooltip:AddLine(MSC.L["|cff00ffff* EQUIPPED *|r"])
             
         else
             -- B. FULL ANALYSIS VIEW: It's in their bags or chat, hit them with the data!
@@ -391,7 +387,7 @@ local function OnTooltipSetItem(tooltip)
             -- "VS" Text for Rings/Trinkets
             if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
                 local comparedItemLink = GetInventoryItemLink("player", slotId)
-                if comparedItemLink then tooltip:AddDoubleLine("vs.", comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end
+                if comparedItemLink then tooltip:AddDoubleLine(MSC.L["vs."], comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end
             end
 
             -- [[ 3. JUDGE'S NOTES ]]
@@ -415,10 +411,10 @@ local function OnTooltipSetItem(tooltip)
                         end
                         if statStr ~= "" then
                             tooltip:AddLine(" ")
-                            tooltip:AddLine("Class Bonus: " .. statStr, 0, 1, 1, true) 
+                            tooltip:AddLine(MSC.L["Class Bonus: "] .. statStr, 0, 1, 1, true) 
                         end
                         if dbStats.note then
-                            tooltip:AddDoubleLine("Judge's Note:", dbStats.note, 0.85, 0.6, 1.0, 0.64, 0.21, 0.93)
+                            tooltip:AddDoubleLine(MSC.L["Judge's Note:"], dbStats.note, 0.85, 0.6, 1.0, 0.64, 0.21, 0.93)
                             noteDisplayed = true
                         end
                     end
@@ -441,16 +437,16 @@ local function OnTooltipSetItem(tooltip)
 
                     if entry and entry.note then
                         tooltip:AddLine(" ")
-                        tooltip:AddDoubleLine("Judge's Note:", entry.note, cL.r, cL.g, cL.b, cR.r, cR.g, cR.b)
+                        tooltip:AddDoubleLine(MSC.L["Judge's Note:"], entry.note, cL.r, cL.g, cL.b, cR.r, cR.g, cR.b)
                     end
                 end
             end
 
             -- [[ 4. UPGRADE/DOWNGRADE MATH ]]
             local percentDiff = 0; if oldScore > 0 then percentDiff = ((newScore - oldScore) / oldScore) * 100 end
-            if delta > 0.1 then tooltip:AddLine(string_format("|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r", TEX_UP, delta, percentDiff))
-            elseif delta < -0.1 then tooltip:AddLine(string_format("|cffff0000%s Downgrade (%.1f / %.1f%%)|r", TEX_DOWN, delta, percentDiff))
-            else tooltip:AddLine("|cff888888= Sidegrade (0.0)|r") end
+            if delta > 0.1 then tooltip:AddLine(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r"], TEX_UP, delta, percentDiff))
+            elseif delta < -0.1 then tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f / %.1f%%)|r"], TEX_DOWN, delta, percentDiff))
+            else tooltip:AddLine(MSC.L["|cff888888= Sidegrade (0.0)|r"]) end
 
             -- MAIN SPEC SET TRACKING (GAINED & BROKEN)
             if MSC.SetBonusScores and oldSetCounts and newSetCounts then
@@ -461,12 +457,12 @@ local function OnTooltipSetItem(tooltip)
                     if nC < oC then
                         for req, _ in pairs(scores) do
                             local rN = tonumber(req)
-                            if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format("|cffff0000!!! WARNING: Breaking Set Bonus (%d) !!!|r", rN)) end
+                            if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format(MSC.L["|cffff0000!!! WARNING: Breaking Set Bonus (%d) !!!|r"], rN)) end
                         end
                     elseif nC > oC then
                         for req, _ in pairs(scores) do
                             local rN = tonumber(req)
-                            if rN and nC >= rN and oC < rN then tooltip:AddLine(string_format("|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r", rN)) end
+                            if rN and nC >= rN and oC < rN then tooltip:AddLine(string_format(MSC.L["|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r"], rN)) end
                         end
                     end
                 end
@@ -485,7 +481,7 @@ local function OnTooltipSetItem(tooltip)
                                 
                                 if tDelta > 0.1 then
                                     local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
-                                    tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format("|cff00ff00+%s (Upgrade)|r", math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
+                                    tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format(MSC.L["|cff00ff00+%s (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
                                     
                                     if oSC and nSC and MSC.SetBonusScores then
                                         for setID, scores in pairs(MSC.SetBonusScores) do
@@ -495,7 +491,7 @@ local function OnTooltipSetItem(tooltip)
                                                 for req, _ in pairs(scores) do
                                                     local rN = tonumber(req)
                                                     if rN and oC >= rN and nC < rN then
-                                                        tooltip:AddLine(string_format("  |cffff0000(Breaks %d-pc Set Bonus!)|r", rN))
+                                                        tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN))
                                                     end
                                                 end
                                             end
@@ -514,15 +510,15 @@ local function OnTooltipSetItem(tooltip)
                 
                 if itemNewStats.ENCHANT_TEXT then 
                     local cleanEnchant = CleanText(itemNewStats.ENCHANT_TEXT)
-                    tooltip:AddDoubleLine("Projected Enchant:", cleanEnchant, 0, 1, 1, 1, 1, 1)
+                    tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], cleanEnchant, 0, 1, 1, 1, 1, 1)
                 elseif itemNewStats.IS_PROJECTED then 
-                    tooltip:AddDoubleLine("Projected Enchant:", "Best Available", 0, 1, 1, 1, 1, 1) 
+                    tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], MSC.L["Best Available"], 0, 1, 1, 1, 1, 1) 
                 end
                 
                 if not MSC.IsEra and itemNewStats.PROJECTION_DATA then
                     local data = itemNewStats.PROJECTION_DATA
                     for i, gem in ipairs(data.Gems) do
-                        local label = (i == 1) and "Projected Gems:" or " "
+                        local label = (i == 1) and MSC.L["Projected Gems:"] or " "
                         local leftR, leftG, leftB = (i == 1) and 0 or 0, (i == 1) and 1 or 0, (i == 1) and 1 or 0
                         tooltip:AddDoubleLine(label, gem.text .. " (" .. gem.color .. ")", leftR, leftG, leftB, 1, 1, 1)
                     end
@@ -532,9 +528,9 @@ local function OnTooltipSetItem(tooltip)
                 
                 if not MSC.IsEra and itemNewStats.META_ID and MSC.CheckMetaRequirements and newTotalColors then 
                     if MSC:CheckMetaRequirements(itemNewStats.META_ID, newTotalColors) then 
-                        tooltip:AddDoubleLine(" ", "+ Meta Gem Active", 0, 0, 0, 0, 1, 0) 
+                        tooltip:AddDoubleLine(" ", MSC.L["+ Meta Gem Active"], 0, 0, 0, 0, 1, 0) 
                     else 
-                        tooltip:AddDoubleLine(" ", "- Meta Gem Inactive (Reqs unmet)", 0, 0, 0, 1, 0, 0) 
+                        tooltip:AddDoubleLine(" ", MSC.L["- Meta Gem Inactive (Reqs unmet)"], 0, 0, 0, 1, 0, 0) 
                     end 
                 end
             end
@@ -579,8 +575,8 @@ local function OnTooltipSetItem(tooltip)
                 end
             end
 
-            PrintList("Gains:", gains, 0, 1, 0)
-            PrintList("Losses:", losses, 1, 0, 0)
+            PrintList(MSC.L["Gains:"], gains, 0, 1, 0)
+            PrintList(MSC.L["Losses:"], losses, 1, 0, 0)
         end
         -- ====================================================================
 
