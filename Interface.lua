@@ -1076,7 +1076,6 @@ function MSC.InitSettingsView(parent)
     cb2:HookScript("OnClick", function(self)
         if self:GetChecked() then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end
     end)
-
     local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nIf an item is an upgrade for a checked profile, a small notification will appear at the bottom of the item tooltip."]
     local hSpec = CreateHeader(MSC.L["Secondary Spec Tracking"], nil, nil, 320, -30, specTip)
     
@@ -1103,10 +1102,26 @@ function MSC.InitSettingsView(parent)
         ty = ty - 20
     end
     sChild:SetHeight(math_abs(ty) + 20)
+	
+	local hVisuals = CreateHeader(MSC.L["Tooltip Visuals"], trackFrame, -20)
+    
+    local cbCompact = CreateCheck(MSC.L["Compact Equip Text"], "CompactEquip", MSC.L["Compact Equip Tooltip"], hVisuals, 0, -10)
+    
+    local cbSimple = CreateCheck(MSC.L["Shorten Stat Names"], "SimplifyStats", MSC.L["Shorten Stat Tooltip"], cbCompact, 0, -5)
+    
+    local cbColor = CreateCheck(MSC.L["Colorize Stats"], "ColorizeStats", MSC.L["Colorize Stats Tooltip"], cbSimple, 0, -5)
 
-    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40); bImp:SetText(MSC.L["Import Pawn String"])
+    -- [[ BUTTONS SECTION ]]
+    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    bImp:SetSize(140, 30)
+    bImp:SetPoint("BOTTOMRIGHT", -40, 40)
+    bImp:SetText(MSC.L["Import Pawn String"])
     bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
-    local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate"); bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40); bExport:SetText(MSC.L["Export Data"])
+
+    local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    bExport:SetSize(140, 30)
+    bExport:SetPoint("BOTTOMRIGHT", -190, 40)
+    bExport:SetText(MSC.L["Export Data"])
     bExport:SetScript("OnClick", function() MSC.ShowHistory() end)
     
     MSC.ViewSettings = f

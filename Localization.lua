@@ -640,6 +640,15 @@ L["- Meta Gem Inactive (Reqs unmet)"] = "- Meta Gem Inactive (Reqs unmet)"
 L["Gains:"] = "Gains:"
 L["Losses:"] = "Losses:"
 
+-- [[ INTERFACE: VISUALS ]]
+L["Tooltip Visuals"] = "Tooltip Visuals"
+L["Compact Equip Text"] = "Compact Equip Text"
+L["Compact Equip Tooltip"] = "Rewrites long 'Equip' sentences into concise math.\n\nExample:\n'Equip: Increases your hit rating by 20.'\nbecomes\n'Equip: +20 Hit'"
+L["Shorten Stat Names"] = "Shorten Stat Names"
+L["Shorten Stat Tooltip"] = "Abbreviates stat names to save space.\n\nExamples:\nStrength > Str\nAttack Power > AP"
+L["Colorize Stats"] = "Colorize Stats"
+L["Colorize Stats Tooltip"] = "Applies colors to stats."
+
 -- =============================================================
 -- DYNAMIC ENGINE
 -- =============================================================

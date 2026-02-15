@@ -51,7 +51,10 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
-        
+		if SGJ_Settings.SimplifyStats == nil then SGJ_Settings.SimplifyStats = true end
+		if SGJ_Settings.ColorizeStats == nil then SGJ_Settings.ColorizeStats = true end
+        if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end -- Controls "Equip: +20..." rewriting
+		
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
         
@@ -86,8 +89,13 @@ SLASH_SHARPIESGEARJUDGE1 = "/sgj"
 SLASH_SHARPIESGEARJUDGE2 = "/judge"
 SlashCmdList["SHARPIESGEARJUDGE"] = function(msg) 
     local cmd = msg:lower()
-    
-    if cmd == "debug" then
+    if cmd == "clean" or cmd == "simple" then
+        SGJ_Settings.SimplifyStats = not SGJ_Settings.SimplifyStats
+        print("|cff00ff00SGJ:|r Text Simplification is now " .. (SGJ_Settings.SimplifyStats and "ON" or "OFF"))
+    elseif cmd == "colors" then
+        SGJ_Settings.ColorizeStats = not SGJ_Settings.ColorizeStats
+        print("|cff00ff00SGJ:|r Stat Coloring is now " .. (SGJ_Settings.ColorizeStats and "ON" or "OFF"))
+    elseif cmd == "debug" then
         MSC:DebugItem()
     elseif cmd == "options" or cmd == "config" then 
         if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end 
@@ -317,33 +325,227 @@ local Scratch_Tooltip_Diffs = {}
 local TEX_UP = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png:14:14:0:-2|t"
 local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png:14:14:0:-2|t"
 
+-- [[ 1. VISUAL OPTIMIZATION: STATIC TABLES ]]
+
+-- Map: Short Name -> Long Name
+local SHORT_TO_LONG = {
+    ["Str"] = "Strength",   ["Agi"] = "Agility",    ["Stam"] = "Stamina",
+    ["Int"] = "Intellect",  ["Spt"] = "Spirit",
+    ["AP"]  = "Attack Power", ["SP"] = "Spell Power",
+    ["Hp5"] = "Health per 5 sec", ["Mp5"] = "Mana per 5 sec",
+    ["Hit"] = "Hit Rating", ["Crit"] = "Critical Strike Rating",
+    ["Haste"] = "Haste Rating", ["Exp"] = "Expertise Rating",
+    ["Def"] = "Defense Rating", ["Resil"] = "Resilience Rating",
+    ["Dodge"] = "Dodge Rating", ["Parry"] = "Parry Rating", 
+    ["Block"] = "Block Rating", ["BlockVal"] = "Block Value",
+    ["ArP"] = "Armor Penetration", ["Heal"] = "Healing",
+    ["Spell Hit"] = "Spell Hit Rating", ["Spell Crit"] = "Spell Crit Rating",
+}
+
+-- Map: Text -> Color Hex (Unified & Localized)
+local VISUAL_COLORS = {
+    -- Base Stats
+    ["Str"] = "ffbf8040", ["Strength"] = "ffbf8040", [MSC.L["strength"]] = "ffbf8040",
+    ["Agi"] = "ff1eff00", ["Agility"] = "ff1eff00", [MSC.L["agility"]] = "ff1eff00",
+    ["Stam"] = "ffffffff", ["Stamina"] = "ffffffff", [MSC.L["stamina"]] = "ffffffff",
+    ["Int"] = "ff69ccf0", ["Intellect"] = "ff69ccf0", [MSC.L["intellect"]] = "ff69ccf0",
+    ["Spt"] = "ffcacaca", ["Spirit"] = "ffcacaca", [MSC.L["spirit"]] = "ffcacaca",
+
+    -- Offensive
+    ["AP"] = "ffbf8040", ["Attack Power"] = "ffbf8040", [MSC.L["attack power"]] = "ffbf8040",
+    ["SP"] = "ff69ccf0", ["Spell Power"] = "ff69ccf0", [MSC.L["spell power"]] = "ff69ccf0",
+    ["Heal"] = "ff00ff99", ["Healing"] = "ff00ff99", [MSC.L["healing"]] = "ff00ff99",
+    ["Mp5"] = "ff00ccff", ["Mana per 5 sec"] = "ff00ccff",
+    ["Hit"] = "ff00ff00", ["Hit Rating"] = "ff00ff00", [MSC.L["hit rating"]] = "ff00ff00",
+    ["Crit"] = "ffff0000", ["Crit Rating"] = "ffff0000", [MSC.L["crit rating"]] = "ffff0000",
+    ["Haste"] = "ffffd100", ["Haste Rating"] = "ffffd100", [MSC.L["haste rating"]] = "ffffd100",
+    ["ArP"] = "ffbf8040", ["Armor Penetration"] = "ffbf8040",
+
+    -- Defensive
+    ["Def"] = "ff6666ff", ["Defense Rating"] = "ff6666ff", [MSC.L["defense rating"]] = "ff6666ff",
+    ["Dodge"] = "ff6666ff", ["Dodge Rating"] = "ff6666ff", [MSC.L["dodge rating"]] = "ff6666ff",
+    ["Parry"] = "ff6666ff", ["Parry Rating"] = "ff6666ff", [MSC.L["parry rating"]] = "ff6666ff",
+    ["Block"] = "ff6666ff", ["Block Rating"] = "ff6666ff", [MSC.L["block rating"]] = "ff6666ff",
+    ["BlockVal"] = "ffaaaaaa", ["Block Value"] = "ffaaaaaa",
+    ["Resil"] = "ffcccc00", ["Resilience Rating"] = "ffcccc00",
+    ["Hp5"] = "ff00ccff",
+    ["Armor"] = "ffe6cc80", [MSC.L["armor"]] = "ffe6cc80",
+
+    -- [[ RESISTANCES ]]
+    [MSC.L["shadow resistance"]] = "ff800080", ["Shadow Resistance"] = "ff800080", ["Shadow"] = "ff800080",
+    [MSC.L["fire resistance"]]   = "ffff8000", ["Fire Resistance"] = "ffff8000",   ["Fire"] = "ffff8000",
+    [MSC.L["frost resistance"]]  = "ff80ccff", ["Frost Resistance"] = "ff80ccff",  ["Frost"] = "ff80ccff",
+    [MSC.L["arcane resistance"]] = "ffcc99ff", ["Arcane Resistance"] = "ffcc99ff", ["Arcane"] = "ffcc99ff",
+    [MSC.L["nature resistance"]] = "ff40ff40", ["Nature Resistance"] = "ff40ff40", ["Nature"] = "ff40ff40",
+    [MSC.L["holy resistance"]]   = "ffffff80", ["Holy Resistance"] = "ffffff80",   ["Holy"] = "ffffff80",
+    [MSC.L["all resistances"]]   = "ffffffff", ["All Resistances"] = "ffffffff",
+
+    -- [[ WEAPON SKILLS ]]
+    ["Swords"] = "ffffd100", ["Axes"] = "ffffd100", ["Maces"] = "ffffd100",
+    ["Daggers"] = "ffffd100", ["Bows"] = "ffffd100", ["Guns"] = "ffffd100",
+}
+
+function MSC:BeautifyTooltip(tooltip)
+    if not SGJ_Settings then return end
+    if not MSC.Scanner or not MSC.Scanner.EquipPatterns or not MSC.Scanner.ClassifyLine then return end
+
+    local tooltipName = tooltip:GetName()
+    local numLines = tooltip:NumLines()
+
+    local function Colorize(text)
+        if not SGJ_Settings.ColorizeStats then return text end
+        local color = VISUAL_COLORS[text]
+        if color then return "|c" .. color .. text .. "|r" end
+        return text
+    end
+
+    for i = 2, numLines do
+        local leftObj = _G[tooltipName .. "TextLeft" .. i]
+        if leftObj then
+            local text = leftObj:GetText()
+            if text then
+                local newText = text
+                local lineChanged = false
+                
+                local lineType = MSC.Scanner.ClassifyLine(text)
+                
+                -- [[ PHASE 1: COMPACT EQUIP ]]
+                if SGJ_Settings.CompactEquip and (lineType == "EQUIP") then
+                    
+                    local cleanText = string.lower(text)
+                    cleanText = string.gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
+                    cleanText = string.gsub(cleanText, "|r", "")
+                    cleanText = string.gsub(cleanText, "\n", " ")
+                    cleanText = string.gsub(cleanText, "%s+", " ")
+                    cleanText = string.gsub(cleanText, "^%s*(.-)%s*$", "%1")
+                    cleanText = string.gsub(cleanText, "^equip: ", "") 
+
+                    for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
+                        if pat.p and not pat.func then
+                            local m1, m2 = string.match(cleanText, pat.p)
+                            if m1 then
+                                local val = tonumber(pat.valIdx == 1 and m1 or m2)
+                                local rawName = (pat.nameIdx == 1 and m1 or m2)
+                                local finalName = nil
+
+                                if pat.fixedStat and MSC.StatShortNames then
+                                    finalName = MSC.StatShortNames[pat.fixedStat]
+                                elseif rawName and MSC.Scanner.TermMap then
+                                    local nameKey = string.gsub(rawName, "your ", "")
+                                    nameKey = string.gsub(nameKey, "^%s*(.-)%s*$", "%1")
+                                    local internalKey = MSC.Scanner.TermMap[nameKey]
+                                    if not internalKey then
+                                        local titleCase = string.gsub(" "..nameKey, "%W%l", string.upper):sub(2)
+                                        internalKey = MSC.Scanner.TermMap[titleCase]
+                                    end
+                                    if internalKey and MSC.StatShortNames then
+                                        finalName = MSC.StatShortNames[internalKey]
+                                    end
+                                end
+
+                                if val and finalName then
+                                    if not SGJ_Settings.SimplifyStats then
+                                        if SHORT_TO_LONG[finalName] then
+                                            finalName = SHORT_TO_LONG[finalName]
+                                        end
+                                    end
+                                    
+                                    local prefix = "Equip: "
+                                    if pat.isPercent or string.find(text, "%%") then
+                                        newText = prefix .. "+" .. val .. "% " .. Colorize(finalName)
+                                    else
+                                        newText = prefix .. "+" .. val .. " " .. Colorize(finalName)
+                                    end
+                                    lineChanged = true
+                                    break 
+                                end
+                            end
+                        end
+                    end
+                end
+
+                -- [[ PHASE 2: WORD HIGHLIGHTING ]]
+                -- Runs on Base Stats and anything Phase 1 didn't catch (like Resistances)
+                if not lineChanged and MSC.Scanner.BaseStatMap then
+                    for localName, internalKey in pairs(MSC.Scanner.BaseStatMap) do
+                        
+                        -- Find the stat name in the text
+                        local s, e = string.find(string.lower(newText), string.lower(localName), 1, true)
+                        
+                        if s then
+                             -- We found it!
+                             local actualText = string.sub(newText, s, e)
+                             local replacement = actualText
+                             
+                             -- 1. SHORTEN (Only if Simplify ON & ShortName exists)
+                             local shortName = MSC.StatShortNames and MSC.StatShortNames[internalKey]
+                             if SGJ_Settings.SimplifyStats and shortName then 
+                                 replacement = shortName 
+                             end
+                             
+                             -- 2. COLOR (Look up by ShortName, LocalName, or ActualText)
+                             local color = nil
+                             if shortName and VISUAL_COLORS[shortName] then
+                                 color = VISUAL_COLORS[shortName]
+                             elseif VISUAL_COLORS[localName] then
+                                 color = VISUAL_COLORS[localName]
+                             elseif VISUAL_COLORS[actualText] then
+                                 color = VISUAL_COLORS[actualText]
+                             end
+
+                             if SGJ_Settings.ColorizeStats and color then
+                                 replacement = "|c" .. color .. replacement .. "|r"
+                             end
+
+                             -- 3. REPLACE
+                             if replacement ~= actualText then
+                                 newText = string.sub(newText, 1, s-1) .. replacement .. string.sub(newText, e+1)
+                             end
+                        end
+                    end
+                end
+
+                if newText ~= text then
+                    leftObj:SetText(newText)
+                end
+            end
+        end
+    end
+end
+
 local function OnTooltipSetItem(tooltip)
-    -- [[ 1. INSTANT CHECKS (Fail Fast) ]]
+    -- [[ 1. INSTANT CHECKS ]]
     if MSC.IsCalculating then return end
+
+    -- [[ 2. SETTINGS CHECKS ]]
     if tooltip:GetName() and string_find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
-    
     if SGJ_Settings then
         if SGJ_Settings.HideTooltips then return end
         if SGJ_Settings.ShiftOnlyTooltip and not IsShiftKeyDown() then return end
     end
-    
+
+    -- [[ 3. LOCK THE ENGINE ]]
+    MSC.IsCalculating = true 
+
+    -- [[ 4. GET ITEM LINK ]]
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
 
-    if not link or not IsEquippableItem(link) then return end
-    if not MSC.IsItemUsable(link) then return end
+    -- [[ 5. VALIDATE ITEM ]]
+    if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
+        MSC.IsCalculating = false 
+        return 
+    end
 
-    MSC.IsCalculating = true
+    -- [[ 6. RUN VISUAL UPDATES ]]
+    if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
+
+    -- [[ 7. RUN SCORING ENGINE ]]
     local _, playerClass = UnitClass("player")
-    
-    -- [[ FIX 2: TOOLTIP FAILSAFE ]]
-    -- If the class isn't loaded yet, try to force it NOW.
     if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
         if MSC.ForceInit then MSC:ForceInit() end
-        
-        -- If it's STILL not loaded (very rare edge case), abort safely.
         if not MSC.CurrentClass then 
-            MSC.IsCalculating = false
+            MSC.IsCalculating = false -- Unlock
             return 
         end
     end
@@ -360,7 +562,7 @@ local function OnTooltipSetItem(tooltip)
         local delta = newScore - oldScore
         local isEquipped = (GetInventoryItemLink("player", slotId) == link)
         
-        -- [[ 1. THE HEADER (Always Shows) ]]
+        -- [[ THE HEADER ]]
         tooltip:AddLine(" ")
         local scoreLabel = MSC.L["Judge's Score:"]
         if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end
@@ -374,17 +576,11 @@ local function OnTooltipSetItem(tooltip)
         if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " " .. MSC.L["Capped"] .. ")|r" end
         tooltip:AddDoubleLine(MSC.L["Verdict Profile:"], "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
 
-        -- ====================================================================
-        -- [[ 2. THE EQUIPPED SPLIT ]]
-        -- ====================================================================
+        -- [[ THE EQUIPPED SPLIT ]]
         if isEquipped then
-            -- A. MINIMAL VIEW: They are wearing it, no extra fluff needed!
             tooltip:AddLine(MSC.L["|cff00ffff* EQUIPPED *|r"])
-            
         else
-            -- B. FULL ANALYSIS VIEW: It's in their bags or chat, hit them with the data!
-            
-            -- "VS" Text for Rings/Trinkets
+            -- "VS" Text
             if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
                 local comparedItemLink = GetInventoryItemLink("player", slotId)
                 if comparedItemLink then tooltip:AddDoubleLine(MSC.L["vs."], comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end

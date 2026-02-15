@@ -1,8 +1,14 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.3.8 - German localized
+## 🚀 v2.4.0 - Pre-localization for language support
+
+###✨ New Feature
+* **Introduce tooltip visual enhancements and related settings: compact equip text, shorten stat names, and colorize stats.** 
 
 ### Key changes:
+* **Adds UI controls and defaults (SGJ_Settings.SimplifyStats, ColorizeStats, CompactEquip), slash toggles for simplify/colors, and new localization entries.** 
+	*colorize tooltip lines pre-scoring, plus safety/flow improvements in tooltip handling (validation, locking/unlocking). 
+* **Refactor Evaluator: move SAFETY_CAPS into MSC.SAFETY_CAPS (initialized once) and update usage in EvaluateUpgrade.**
 * **Wrap in-code UI text with MSC.L lookups and add localization infrastructure. 
 * **Many hardcoded English strings in ConflictManager, Data_Sets, Database and related tables were replaced with MSC.L[...] to enable translation; popup button labels and messages were localized and Pawn-related messages use localized text. 
 * **Added new locale files as Place Holders (Locales/deDE.lua, Locales/esES.lua, Locales/frFR.lua) and Localization.lua, plus PawnParser.lua. 
@@ -33,8 +39,6 @@
 	*Added MSC:ForceInit to detect player class, wire up Profiles and PrettyNames, print a load message, and clear the pending list to save memory. 
 	*Added a PLAYER_LOGIN frame to call ForceInit. 
 * **Call MSC:ForceInit on PLAYER_LOGIN and on certain talent events, and add a tooltip failsafe that attempts ForceInit before aborting.**
-
-------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.3.6
 

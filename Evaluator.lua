@@ -9,7 +9,7 @@ local table_insert = table.insert
 local string_format, string_find = string.format, string.find 
 local wipe = wipe or table.wipe
 
--- WoW API Localizations (Used heavily in scanning/scoring)
+-- WoW API Localizations
 local GetInventoryItemLink = GetInventoryItemLink
 local GetItemInfo = GetItemInfo
 local GetItemInfoInstant = GetItemInfoInstant
@@ -22,6 +22,30 @@ local UnitClass = UnitClass
 local GetBagSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
 local GetBagLink  = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
 
+MSC.SAFETY_CAPS = {}
+
+if MSC.IsTBC or MSC.IsWrath then
+    MSC.SAFETY_CAPS = {
+        WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
+        PALADIN = { { stat="DEFENSE_FLOOR", base=490, penalty=1000 }, { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="PRECISION", tVal=12.6, penalty=100 } },
+        ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 } },
+        HUNTER = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="SUREFOOTED", tVal=15.8, penalty=100, crOverride=7 } },
+        SHAMAN = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="NATURE_GUIDANCE", tVal=15.8, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="ELEMENTAL_PRECISION", tVal=12.6, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
+        DRUID = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="BALANCE_OF_POWER", tVal=25.2, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
+        MAGE = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="ELEMENTAL_PRECISION", tVal=12.6, penalty=100 } },
+        WARLOCK = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="SUPPRESSION", tVal=25.2, penalty=100 } },
+        PRIEST = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="SHADOW_FOCUS", tVal=25.2, penalty=100 } },
+    }
+else
+    MSC.SAFETY_CAPS = {
+        WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 } },
+        ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 } },
+        HUNTER = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="SUREFOOTED", tVal=1, penalty=100 } },
+        MAGE = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="ELEMENTAL_PRECISION", tVal=2, penalty=100 } },
+        WARLOCK = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="SUPPRESSION", tVal=2, penalty=100 } },
+    }
+end
+
 -- =============================================================
 -- 1. UTILITIES & RECYCLING BIN
 -- =============================================================
@@ -30,7 +54,7 @@ local Scratch_Stats = {}
 local Scratch_Accumulator = {}
 local Scratch_SetCounts = {}
 local Scratch_Colors = { RED = 0, YELLOW = 0, BLUE = 0 }
-local Scratch_Stats_Old = {} -- New scratch table for old stats
+local Scratch_Stats_Old = {} 
 
 function MSC:SafeCopy(orig, dest)
     wipe(dest or {})
@@ -318,7 +342,6 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local oldItemLink = GetInventoryItemLink("player", targetSlotID)
     if oldItemLink then 
         local fs = MSC.SafeGetItemStats(oldItemLink, targetSlotID, weights, specName) 
-        -- Manually copy so we don't break references if SafeGetItemStats returns a reused table
         for k,v in pairs(fs) do finalOldStats[k] = v end
 
         if finalOldStats._AUTO_PROC then
@@ -419,32 +442,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = MSC.L["Exp"], 
         ["DEFENSE_FLOOR"]                   = MSC.L["Def"] 
     }
-    local SAFETY_CAPS = {}
-
-    if MSC.IsTBC or MSC.IsWrath then
-        SAFETY_CAPS = {
-            WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
-            PALADIN = { { stat="DEFENSE_FLOOR", base=490, penalty=1000 }, { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="PRECISION", tVal=12.6, penalty=100 } },
-            ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="PRECISION", tVal=15.8, penalty=100 } },
-            HUNTER = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="SUREFOOTED", tVal=15.8, penalty=100, crOverride=7 } },
-            SHAMAN = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, talent="NATURE_GUIDANCE", tVal=15.8, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="ELEMENTAL_PRECISION", tVal=12.6, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
-            DRUID = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=142, penalty=100 }, { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="BALANCE_OF_POWER", tVal=25.2, penalty=100 }, { stat="DEFENSE_FLOOR", base=490, penalty=1000 } },
-            MAGE = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="ELEMENTAL_PRECISION", tVal=12.6, penalty=100 } },
-            WARLOCK = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="SUPPRESSION", tVal=25.2, penalty=100 } },
-            PRIEST = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=202, talent="SHADOW_FOCUS", tVal=25.2, penalty=100 } },
-        }
-    else
-        SAFETY_CAPS = {
-            WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 } },
-            ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 } },
-            HUNTER = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="SUREFOOTED", tVal=1, penalty=100 } },
-            MAGE = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="ELEMENTAL_PRECISION", tVal=2, penalty=100 } },
-            WARLOCK = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="SUPPRESSION", tVal=2, penalty=100 } },
-        }
-    end
-
-    if SAFETY_CAPS[playerClass] then
-        for _, rule in ipairs(SAFETY_CAPS[playerClass]) do
+    
+    if MSC.SAFETY_CAPS[playerClass] then
+        for _, rule in ipairs(MSC.SAFETY_CAPS[playerClass]) do
             if rule.stat ~= "DEFENSE_FLOOR" then
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
