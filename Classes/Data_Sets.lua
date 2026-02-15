@@ -587,26 +587,33 @@ MSC.ProcDB = {
 
 if not MSC.IsEra then
     local tbcProcs = {
-
+        -- [[ TBC PHASE 1 ]]
+        [28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["BiS Physical"] }, -- DST
+        [29370] = { ppm=0.8, val=260, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Icon (Use)
+        [27683] = { ppm=1.0, val=320, dur=6,  stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT" }, -- Quagmirran's
+        [28034] = { ppm=1.2, val=300, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Hourglass
         [28223] = { ppm=1.5, val=320, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Abacus (Fixed Stat: It's Haste, not AP)
         [28190] = { ppm=1.0, val=160, dur=6,  stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Scarab of the Infinite Cycle
         [28528] = { score=40, note = MSC.L["Moroes' Watch (Dodge Use)"] }, 
         [24460] = { score=35, note = MSC.L["Talisman of Tenacity (Use: HP)"] },
 		
         -- [[ TBC PHASE 2 (SSC/TK) ]]
+        [30627] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Tsunami
         [30449] = { ppm=1.5, val=130, dur=10, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Pet Proc"] },
         [29923] = { score=65, note = MSC.L["Rage/Energy Proc"] }, 
         [29996] = { score=80, note = MSC.L["BiS (Infinite Energy Proc)"] }, -- Rod of the Sun King
 		
         -- [[ TBC PHASE 3 (Hyjal/BT) ]]
-        [32471] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Shard of Contempt 
+        [32471] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Shard of Contempt (Fixed ID, Shard is 34472? No, Shard is 34472. 32471 is Shard of Contempt? Check IDs carefully. 34472 is Sunwell.)
+        -- Correction: 32471 is Shard of Contempt (Expertise/AP proc).
+        [32505] = { ppm=1.0, val=200, dur=10, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" }, -- Madness of the Betrayer
         [32361] = { ppm=1.0, val=200, dur=15, stat="ITEM_MOD_SPELL_POWER_SHORT" }, -- Skull of Gul'dan (Actually Haste Use, but valued high)
         [32375] = { ppm=0.5, val=2000, dur=10, stat="ITEM_MOD_ARMOR_SHORT", note = MSC.L["BiS Tank (Proc)"] }, -- Bulwark
         [32336] = { ppm=1.0, val=25, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["BiS Hunter (Mana Proc)"] }, -- Black Bow
         [32236] = { ppm=1.0, val=40, stat="MSC_WEAPON_DPS" }, -- Syphon of the Nathrezim
 
         -- [[ TBC PHASE 4 (ZA) ]]
-       
+        [33830] = { ppm=1.0, val=360, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Berserker's Call
         [28767] = { score=40 }, -- The Decapitator
 
         -- [[ TBC PHASE 5 (Sunwell) ]]
@@ -616,32 +623,12 @@ if not MSC.IsEra then
 
         -- [[ CRAFTED WEAPONS ]]
         [28437] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonmaw
-        [28438] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike   
-        [28429] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart    
+        [28438] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
+        [28439] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
+        [28429] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart
+        [28430] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart Executioner
         [28433] = { score=50, note = MSC.L["Stun Proc PvP BiS"] }, -- Stormherald
-    [28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["BiS Physical"] },-- Dragonspine Trophy (Gruul)
-    [30627] = { ppm=1.33, val=340, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },-- Tsunami Talisman (Leotheras)
-    [32505] = { ppm=1.0, val=300, dur=10, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },-- Madness of the Betrayer (Council)
-    [33830] = { ppm=0.5, val=360, dur=20, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Use Effect"] }, -- Berserker's Call (Zul'Aman)
-    [28034] = { ppm=1.2, val=300, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },-- Hourglass of the Unraveller (Black Morass)
-    [29383] = { ppm=0.5, val=278, dur=20, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Use Effect"] },-- Bloodlust Brooch (Badges)
-
-    -- [[ 2. CASTER TRINKETS ]]
-    [32483] = { ppm=0.5, val=175, dur=20, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["BiS Caster"] },-- The Skull of Gul'dan (Illidan)
-    [33829] = { ppm=0.5, val=211, dur=20, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Use Effect"] },-- Hex Shrunken Head (Zul'Aman)
-    [27683] = { ppm=1.33, val=320, dur=6, stat="ITEM_MOD_HASTE_RATING_SHORT" },-- Quagmirran's Eye (Slave Pens)
-    [29370] = { ppm=0.5, val=155, dur=20, stat="ITEM_MOD_SPELL_POWER_SHORT" },-- Icon of the Silver Crescent (Badges)
-    [30626] = { ppm=1.33, val=190, dur=15, stat="ITEM_MOD_SPELL_POWER_SHORT" },-- Sextant of Unstable Currents (Vashj)
-
-    -- [[ 3. TANK / DEFENSIVE ]]
-    [34473] = { ppm=2.0, val=152, dur=10, stat="ITEM_MOD_DODGE_RATING_SHORT" },-- Commendation of Kael'thas (MgT)
-    [32501] = { ppm=0.5, val=1750, dur=20, stat="ITEM_MOD_HEALTH_SHORT", note = MSC.L["Use: +1750 HP"] },-- Shadowmoon Insignia (Gurtogg)
-
-    -- [[ 4. CRAFTED WEAPONS (Examples) ]]
-    [28439] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
-    [28430] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart Executioner
-}
- 
+    }
 
     -- Merge TBC Procs into Main Table
     for k, v in pairs(tbcProcs) do MSC.ProcDB[k] = v end

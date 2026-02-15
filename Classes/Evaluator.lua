@@ -177,8 +177,25 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                 local setID = MSC.ItemSetMap[itemID]
                 Scratch_SetCounts[setID] = (Scratch_SetCounts[setID] or 0) + 1 
             end
-		end
-	end
+                
+            if stats._AUTO_PROC then
+                local p = stats._AUTO_PROC
+                Scratch_Accumulator[p.stat] = (Scratch_Accumulator[p.stat] or 0) + p.val
+                if weights[p.stat] and weights[p.stat] > 0 then
+                    totalScore = totalScore + (p.val * weights[p.stat])
+                end
+            elseif stats.UseEffects then
+                for _, effect in ipairs(stats.UseEffects) do
+                    if effect.statKey and effect.averageVal then
+                        Scratch_Accumulator[effect.statKey] = (Scratch_Accumulator[effect.statKey] or 0) + effect.averageVal
+                        if weights[effect.statKey] then
+                            totalScore = totalScore + (effect.averageVal * weights[effect.statKey])
+                        end
+                    end
+                end
+            end
+        end
+    end
 
     -- [[ 7. CALCULATE SET BONUSES ]]
     if MSC.SetBonusScores then

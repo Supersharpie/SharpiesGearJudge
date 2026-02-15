@@ -1381,16 +1381,14 @@ function MSC.ShowImportWindow()
     f.EditBox:HighlightText()
     local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     b:SetSize(120, 25); b:SetPoint("BOTTOM", 0, 15); b:SetText(MSC.L["Import"])
-	b:SetScript("OnClick", function()
-		local text = f.EditBox:GetText()
-		if MSC.ImportAndSavePawnString then
-			-- We only call the function; the messages are handled in SavePawnProfile
-			MSC:ImportAndSavePawnString(text)
-		else 
-			print("|cffff0000SGJ Error:|r ImportAndSavePawnString missing.") 
-		end
-		f:Hide() -- Hide the paste window immediately
-	end)
+    b:SetScript("OnClick", function()
+        local text = f.EditBox:GetText()
+        if MSC.ImportAndSavePawnString then
+            local success, name = MSC:ImportAndSavePawnString(text)
+            if success then print("|cff00ff00SGJ:|r Successfully imported " .. name) end
+        else print("|cffff0000SGJ Error:|r ImportAndSavePawnString missing in helpers.lua") end
+        f:Hide()
+    end)
     MSC.ImportFrame = f
 end
 
@@ -1448,45 +1446,16 @@ local loader = CreateFrame("Frame")
 loader:RegisterEvent("ADDON_LOADED")
 loader:SetScript("OnEvent", function(self, event, name)
     if name == addonName then
-        -- 1. INITIALIZE SAVED VARIABLES
-        SGJ_Settings = SGJ_Settings or {}
         SharpiesGearJudgeDB = SharpiesGearJudgeDB or { customWeights = {} }
-        
-        -- 2. DEFINE DEFAULTS (These only apply if the setting doesn't exist yet)
-        local defaults = {
-            EnchantMode = 1,       -- Off
-            GemMode = 1,           -- Skeptic
-            Mode = "AUTO",         -- Auto-Detect
-            HideMinimap = false,
-            HideTooltips = false,
-            MuteSounds = false,
-            CompactEquip = false,
-            ColorizeStats = true,
-            SimplifyStats = false,
-            TrackedSpecs = {}
-        }
-
-        -- 3. FILL MISSING SETTINGS ONLY
-        -- This loop preserves existing user choices during updates
-        for key, value in pairs(defaults) do
-            if SGJ_Settings[key] == nil then
-                SGJ_Settings[key] = value
-            end
-        end
-
-        -- 4. LOAD CUSTOM PAWN STRINGS
         if SharpiesGearJudgeDB.customWeights and MSC.CurrentClass then
             MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
-            for profileName, data in pairs(SharpiesGearJudgeDB.customWeights) do
-                if type(data) == "table" and data.weights then
-                    MSC.CurrentClass.Weights[profileName] = data.weights
-                else
-                    MSC.CurrentClass.Weights[profileName] = data
-                end
+            for profileName, weights in pairs(SharpiesGearJudgeDB.customWeights) do
+                MSC.CurrentClass.Weights[profileName] = weights
             end
         end
-
-        -- Clean up the loader
+        if MSC.MainFrame and MSC.MainFrame:IsShown() and MSC.InitSettingsView then
+             MSC.InitSettingsView(MSC.MainFrame.Content)
+        end
         self:UnregisterEvent("ADDON_LOADED")
     end
 end)

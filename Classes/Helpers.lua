@@ -305,23 +305,9 @@ function MSC.GetRawItemStats(itemLink)
         end
 
         if entry then
-            -- [[ PROC MATH CALCULATION ]]
-            local calcVal = entry.val
-            if entry.ppm and entry.val then
-                if entry.dur then
-                    calcVal = (entry.val * entry.ppm * entry.dur) / 60
-                else
-                    if entry.stat and (string.find(entry.stat, "REGENERATION") or string.find(entry.stat, "MANA") or string.find(entry.stat, "HEALTH")) then
-                         calcVal = (entry.val * entry.ppm * 5) / 60
-                    else
-                         calcVal = (entry.val * entry.ppm) / 60
-                    end
-                end
-            end
-
-            if calcVal and entry.stat then
-                finalStats[entry.stat] = (finalStats[entry.stat] or 0) + calcVal
-                if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=entry.stat, val=calcVal } end
+            if entry.val and entry.stat then
+                finalStats[entry.stat] = (finalStats[entry.stat] or 0) + entry.val
+                if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=entry.stat, val=entry.val } end
             end
             if entry.score then finalStats._MANUAL_SCORE = entry.score end
         end

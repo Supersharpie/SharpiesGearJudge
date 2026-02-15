@@ -1,8 +1,5 @@
 local addonName, MSC = ...
 local L = MSC.L
-local string_gsub, string_match = string.gsub, string.match
-local string_find, string_sub = string.find, string.sub
-local string_gmatch = string.gmatch 
 
 -- =============================================================
 -- 1. PAWN KEYWORDS
@@ -31,8 +28,8 @@ MSC.PawnStatMap = {
     ["Ap"] = "ITEM_MOD_ATTACK_POWER_SHORT",
     ["RangedAttackPower"] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
     ["Rap"] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
-    ["FeralAttackPower"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT", 
-	["FeralAp"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT", 
+    ["FeralAttackPower"] = "ITEM_MOD_ATTACK_POWER_SHORT", 
+    ["FeralAp"] = "ITEM_MOD_ATTACK_POWER_SHORT", 
     
     -- Spell
     ["SpellPower"] = "ITEM_MOD_SPELL_POWER_SHORT", 
@@ -79,7 +76,7 @@ MSC.PawnStatMap = {
 	-- Attack Power
 	["Angriffskraft"] = "ITEM_MOD_ATTACK_POWER_SHORT",
 	["Distanzangriffskraft"] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
-	["FeralAngriffskraft"] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+	["FeralAngriffskraft"] = "ITEM_MOD_ATTACK_POWER_SHORT",
 
 	-- Spell
 	["Zaubermacht"] = "ITEM_MOD_SPELL_POWER_SHORT",
@@ -101,9 +98,9 @@ MSC.PawnStatMap = {
 --  PAWN PARSER
 -- =============================================================
 
-function MSC:ParsePawnString(pawnString)
+function MSC.ParsePawnString(pawnString)
     if not pawnString or type(pawnString) ~= "string" then return nil end
-     
+    
     -- 1. CLEANUP
     local clean = string_gsub(string_gsub(pawnString, "%)", ""), "%(", "")
     
@@ -123,7 +120,7 @@ function MSC:ParsePawnString(pawnString)
     
     if endPos then
         local statBlock = string_sub(clean, endPos + 1)
-        for stat, val in string_gmatch(statBlock, "([^%s=,]+)%s*=%s*([%-%d%.]+)") do
+        for stat, val in string.gmatch(statBlock, "([^%s=]+)%s*=%s*([%-%d%.]+)") do
             local internalKey = MSC.PawnStatMap[stat]
             local numberVal = tonumber(val)
             
@@ -133,91 +130,34 @@ function MSC:ParsePawnString(pawnString)
         end
     end
 
+    -- 4. VALIDATION
     if not next(weights) then return nil end
     
     return weights, profileName
 end
 
--- Changed to a colon call to match self:ParsePawnString
-function MSC:ImportAndSavePawnString(pawnString)
-    local weights, name = self:ParsePawnString(pawnString)
+function MSC.ImportAndSavePawnString(pawnString)
+    -- 1. Parse the string
+    local weights, name = MSC.ParsePawnString(pawnString)
     
     if not weights then 
         print(MSC.L["|cffff0000SGJ: Invalid Pawn string format or empty stats.|r"])
         return false 
     end
 
-    -- Hand over to the UI for Spec Selection (Tagging)
-    self:ShowSpecSelectionUI(name, weights)
-    
-    return true
-end
-
-function MSC:SavePawnProfile(profileName, rawWeights, baseSpec)
-    -- Ensure the old DB exists
+    -- 2. Save to your Character-Specific DB
     SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
     SharpiesGearJudgeDB.customWeights = SharpiesGearJudgeDB.customWeights or {}
+    SharpiesGearJudgeDB.customWeights[name] = weights
     
-    -- Add the prefix to prevent overwriting hardcoded spec names
-    local uniqueName = "Pawn: " .. profileName
-    
-    -- Save weights AND the spec tag into the original DB
-    SharpiesGearJudgeDB.customWeights[uniqueName] = {
-        weights = rawWeights,
-        BaseSpec = baseSpec 
-    }
-    
-    -- Sync to active weights for the current session's dropdown
+    -- 3. Update active session
     if MSC.CurrentClass then
         MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
-        MSC.CurrentClass.Weights[uniqueName] = rawWeights
+        MSC.CurrentClass.Weights[name] = weights
     end
-    
-    print(string.format("|cff00ff00SGJ:|r Successfully imported %s", uniqueName))
+	
+    -- 4. TRIGGER THE RELOAD POPUP
     StaticPopup_Show("SGJ_RELOAD_REQUIRED")
-end
-
-function MSC:ShowSpecSelectionUI(profileName, weights)
-    if not SGJ_SpecSelectFrame then
-        local f = CreateFrame("Frame", "SGJ_SpecSelectFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(260, 200)
-        f:SetPoint("CENTER")
-        f:SetFrameStrata("DIALOG")
-        f.TitleText:SetText(MSC.L["Select Base Spec"])
-        f.Buttons = {} -- Button pool to prevent memory leaks
-        SGJ_SpecSelectFrame = f
-    end
-
-    local f = SGJ_SpecSelectFrame
-    f:Show()
-
-    local yOffset = -40
-    local buttonIndex = 1
-    local specs = MSC.CurrentClass and MSC.CurrentClass.PrettyNames or {}
-
-    for _, btn in ipairs(f.Buttons) do btn:Hide() end
-
-    for specKey, displayName in pairs(specs) do
-        if not string.find(specKey, "Leveling") then
-            local btn = f.Buttons[buttonIndex]
-            if not btn then
-                btn = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-                btn:SetSize(220, 25)
-                f.Buttons[buttonIndex] = btn
-            end
-
-            btn:SetPoint("TOP", 0, yOffset)
-            btn:SetText(displayName)
-            btn:Show()
-
-            btn:SetScript("OnClick", function()
-                self:SavePawnProfile(profileName, weights, specKey)
-                f:Hide()
-            end)
-            
-            yOffset = yOffset - 30
-            buttonIndex = buttonIndex + 1
-        end
-    end
-    f:SetHeight(math.abs(yOffset) + 20)
+    
+    return true, name
 end

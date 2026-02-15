@@ -857,18 +857,14 @@ function Druid:ApplyScalers(weights, currentSpec)
         local hitRating = GetCombatRating(6)
         local cap = 142
         
-        if hitRating >= (cap + 15) then
-             if currentSpec:find("Bear") then
-                 w["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 
-             else
-                 w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-             end
-                table.insert(activeCaps, "Hit")
-        elseif hitRating >= cap then
-            w["ITEM_MOD_HIT_RATING_SHORT"] = w["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "Hit (Soft)")
-        end
+        if hitRating >= (cap + 5) then -- Smaller buffer
+        w["ITEM_MOD_HIT_RATING_SHORT"] = 0.01 -- Drop to near zero
+        table.insert(activeCaps, "Hit")
+    elseif hitRating >= cap then
+        w["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 -- Significant drop at cap
+        table.insert(activeCaps, "Hit (Soft)")
     end
+end
     
     -- [[ NEW: EXPERTISE CAP (6.5% Dodge) ]]
     if (currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear")) and w["ITEM_MOD_EXPERTISE_RATING_SHORT"] then

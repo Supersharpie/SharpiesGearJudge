@@ -1,5 +1,13 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.1
+### Key changes:
+** Introduce locale enhanced setting off by defualt, harden parsing, improve gem/enchant/proc handling, and refine tooltip/UI behavior and saved Pawn import handling.** 
+** Fixed Driud Hit cap handling.** 
+** Fixed Paladin AoE Armor scaling** 
+** Fixed Chance on hit Trinket scoring triple dipping calculations** 
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.4.0 - Pre-localization for language support
 
 ###✨ New Feature

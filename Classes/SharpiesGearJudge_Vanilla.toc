@@ -1,11 +1,10 @@
-## Interface: 20505
-## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
+## Interface: 11508
+## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 2.4.1-TBC
+## Version: 2.4.0-Era
 ## SavedVariables: SGJ_History
 ## SavedVariablesPerCharacter: SGJ_Settings, SharpiesGearJudgeDB
-
 
 Localization.lua
 Locales/deDE.lua
@@ -28,15 +27,15 @@ Helpers.lua
 Dynamic_Engine.lua
 Evaluator.lua
 
-Classes\TBC\Warrior.lua
-Classes\TBC\Paladin.lua
-Classes\TBC\Rogue.lua
-Classes\TBC\Mage.lua
-Classes\TBC\Warlock.lua
-Classes\TBC\Priest.lua
-Classes\TBC\Shaman.lua
-Classes\TBC\Hunter.lua
-Classes\TBC\Druid.lua
+Classes\ERA\Warrior.lua
+Classes\ERA\Paladin.lua
+Classes\ERA\Rogue.lua
+Classes\ERA\Mage.lua
+Classes\ERA\Warlock.lua
+Classes\ERA\Priest.lua
+Classes\ERA\Shaman.lua
+Classes\ERA\Hunter.lua
+Classes\ERA\Druid.lua
 
 Interface.lua
 Judge.lua

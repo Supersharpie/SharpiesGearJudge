@@ -841,7 +841,7 @@ AddOverrides({
     [24376] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = MSC.L["Use: Absorb valued as Health"] },
     [27529] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=15 }, note = MSC.L["Use: Heal avg to 15 BV"] },
     [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=38 }, note = MSC.L["Proc: 38 Avg Haste"] },
-    [28034] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = MSC.L["Proc: 50 Avg AP"] },
+  --  [28034] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = MSC.L["Proc: 50 Avg AP"] },
     [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.6 }, note = MSC.L["Use: 21 Avg Haste"] },
     [28726] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=38 }, note = MSC.L["Proc: 38 Avg Haste"] },
     [28370] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = MSC.L["Proc: ~15 mp5"] },
@@ -981,35 +981,6 @@ AddPvPTrinkets()
 -- ============================================================================
 -- 5. INITIALIZATION STRUCTURE
 -- ============================================================================
-if MSC.ProcDB then
-    for itemID, procData in pairs(MSC.ProcDB) do
-        if not MSC.ItemOverrides[itemID] then
-            local newEntry = {
-                _AUTO_PROC = {
-                    stat = procData.stat,
-                    val = procData.val,
-                    ppm = procData.ppm,
-                    dur = procData.dur
-                },
-                note = procData.note or MSC.L["Proc Estimate"]
-            }
-            
-            for k, v in pairs(procData) do
-                if k ~= "ppm" and k ~= "val" and k ~= "dur" and k ~= "stat" and k ~= "note" and k ~= "score" then
-                    newEntry[k] = v
-                end
-            end
-
-            if procData._AUTO_PROC then
-                newEntry = procData
-            end
-            newEntry.estimate = true
-            MSC.ItemOverrides[itemID] = newEntry
-            MSC.TrinketDB[itemID] = newEntry
-        end
-    end
-end
-
 -- We define these here, but Data_Sets.lua populates them.
 if not MSC.ItemSetMap then MSC.ItemSetMap = {} end
 MSC.SetNameToID = {}

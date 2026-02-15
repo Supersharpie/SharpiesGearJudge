@@ -62,7 +62,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         print(string.format(MSC.L["|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."], version))
         
     elseif event == "PLAYER_LOGIN" then
-        -- [[ FORCE INIT ON LOGIN ]]
+        -- [[ FIX 1: FORCE INIT ON LOGIN ]]
         if MSC.ForceInit then MSC:ForceInit() end
 
         local IsLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded

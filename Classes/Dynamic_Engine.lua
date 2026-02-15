@@ -19,9 +19,11 @@ local UIDropDownMenu_SetText = UIDropDownMenu_SetText
 MSC.TalentCache = {}
 MSC.TalentCacheLoaded = false
 
+-- Stores the final calculated weights to prevent lag
 MSC.CachedWeights = nil
 MSC.CachedSpecKey = nil
 
+-- Scans the player's talent tree once and saves it
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
     local tabs = GetNumTalentTabs() or 0
@@ -39,7 +41,9 @@ function MSC:BuildTalentCache()
     MSC.TalentCacheLoaded = true
 end
 
+-- Helper for Classes to check their talents
 function MSC:GetTalentRank(talentKey)
+    -- Safety: If no class module is loaded, we can't look up talent names
     if not MSC.CurrentClass or not MSC.CurrentClass.Talents then return 0 end
 
     if not MSC.TalentCacheLoaded then 
@@ -47,6 +51,7 @@ function MSC:GetTalentRank(talentKey)
         if not MSC.TalentCacheLoaded then return 0 end
     end
 
+    -- Look up the Localized Name
     local localizedName = MSC.CurrentClass.Talents[talentKey]
     if not localizedName then return 0 end
 
@@ -62,27 +67,23 @@ function MSC:ApplyDynamicAdjustments()
     local specKey = "Default"
     local rawWeights = {}
 
-    -- 1. CHECK FOR MANUAL OVERRIDE 
+    -- 1. CHECK FOR MANUAL OVERRIDE (User selected specific spec in menu)
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
         specKey = MSC.ManualSpec
         
         -- [[ FORCE DYNAMIC CALCULATION FOR MANUAL SELECTION ]]
+        -- If the class supports dynamic weights, ask it to calculate this specific key first.
+        -- This ensures Leveling Previews (e.g. Level 60 weights at Level 22) work correctly.
         if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
             local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights(specKey)
             if dynWeights then
-                return dynWeights, dynKey 
+                return dynWeights, dynKey -- Return immediately if found
             end
         end
 
-        if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[specKey] then
-             local data = SharpiesGearJudgeDB.customWeights[specKey]
-             
-             if type(data) == "table" and data.weights then
-                 rawWeights = data.weights
-                 if data.BaseSpec then specKey = data.BaseSpec end
-             else
-                 rawWeights = data
-             end
+        -- Fallback: Check Static Tables (Custom Profiles or Old Class Modules)
+        if SGJ_Settings and SGJ_Settings.CustomProfiles and SGJ_Settings.CustomProfiles[specKey] then
+             rawWeights = SGJ_Settings.CustomProfiles[specKey]
         elseif MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
             rawWeights = MSC.CurrentClass.Weights[specKey]
         elseif MSC.CurrentClass and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
@@ -118,27 +119,26 @@ function MSC:ApplyDynamicAdjustments()
     end
 
     -- 5. APPLY SCALERS & HIT CAPS
-    local capText = nil 
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
+        local capText
         finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
     end
 
-    return finalWeights, specKey, capText 
+    return finalWeights, specKey
 end
 
 -- [[ THE MASTER WRAPPER ]] --
 function MSC.GetCurrentWeights()
     if MSC.CachedWeights then
-        return MSC.CachedWeights, MSC.CachedSpecKey, MSC.CachedCapText 
+        return MSC.CachedWeights, MSC.CachedSpecKey
     end
 
-    local w, key, capText = MSC:ApplyDynamicAdjustments()
+    local w, key = MSC:ApplyDynamicAdjustments()
     
     MSC.CachedWeights = w
     MSC.CachedSpecKey = key
-    MSC.CachedCapText = capText
     
-    return w, key, capText
+    return w, key
 end
 
 -- =========================================================================
