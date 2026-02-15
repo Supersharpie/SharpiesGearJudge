@@ -287,7 +287,7 @@ Paladin.LevelingBrackets = {
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 5.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
@@ -302,7 +302,7 @@ Paladin.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 5.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 2.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
@@ -320,7 +320,7 @@ Paladin.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 5.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
@@ -335,7 +335,7 @@ Paladin.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 6.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
@@ -353,7 +353,7 @@ Paladin.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 1.0, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 6.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
@@ -369,7 +369,7 @@ Paladin.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 2.0, 
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.1,
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.08,
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 6.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 4.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
@@ -496,7 +496,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.1 -- Added
         },
         End = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
@@ -510,7 +510,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
+            ["ITEM_MOD_ARMOR_SHORT"] = 0.1 -- Added
         }
     },
     ["Leveling_PROT_DUNGEON_41_51"] = {

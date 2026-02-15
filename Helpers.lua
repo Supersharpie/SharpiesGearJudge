@@ -787,7 +787,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             local w = weights[weightKey]
             if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
             score = score + (finalVal * w)
-            if w >= 0.1 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
+            if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
         end
     end
     
