@@ -981,6 +981,35 @@ AddPvPTrinkets()
 -- ============================================================================
 -- 5. INITIALIZATION STRUCTURE
 -- ============================================================================
+if MSC.ProcDB then
+    for itemID, procData in pairs(MSC.ProcDB) do
+        if not MSC.ItemOverrides[itemID] then
+            local newEntry = {
+                _AUTO_PROC = {
+                    stat = procData.stat,
+                    val = procData.val,
+                    ppm = procData.ppm,
+                    dur = procData.dur
+                },
+                note = procData.note or MSC.L["Proc Estimate"]
+            }
+            
+            for k, v in pairs(procData) do
+                if k ~= "ppm" and k ~= "val" and k ~= "dur" and k ~= "stat" and k ~= "note" and k ~= "score" then
+                    newEntry[k] = v
+                end
+            end
+
+            if procData._AUTO_PROC then
+                newEntry = procData
+            end
+            newEntry.estimate = true
+            MSC.ItemOverrides[itemID] = newEntry
+            MSC.TrinketDB[itemID] = newEntry
+        end
+    end
+end
+
 -- We define these here, but Data_Sets.lua populates them.
 if not MSC.ItemSetMap then MSC.ItemSetMap = {} end
 MSC.SetNameToID = {}

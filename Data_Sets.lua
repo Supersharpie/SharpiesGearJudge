@@ -597,15 +597,6 @@ if not MSC.IsEra then
     -- Effective PPM: ~1.33 (Procs almost immediately off CD).
     [30627] = { ppm=1.33, val=340, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },
 
-    -- Shard of Contempt (Magisters' Terrace)
-    -- Stat: AP. Proc: Chance on Hit. 20s Duration. 45s ICD.
-    -- Effective PPM: ~1.33 (60s / 45s ICD).
-    [34472] = { 
-        ITEM_MOD_HIT_RATING_SHORT = 20, 
-        _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=102 }, 
-        note = MSC.L["Proc: 102 Avg AP (High Uptime)"] 
-    },
-
     -- Madness of the Betrayer (Council)
     -- Stat: Armor Pen. Proc: Chance on Hit. 10s Duration. 1 PPM (RPPM system).
     [32505] = { ppm=1.0, val=300, dur=10, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
