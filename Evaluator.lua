@@ -180,9 +180,18 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                 
             if stats._AUTO_PROC then
                 local p = stats._AUTO_PROC
-                Scratch_Accumulator[p.stat] = (Scratch_Accumulator[p.stat] or 0) + p.val
+                
+                -- [FIX] Calculate Average Yield (Value * Duration * PPM / 60)
+                -- Example: 230 AP * 20sec * 1.33ppm / 60 = 102 Average AP
+                local avgVal = p.val
+                if p.ppm and p.dur then
+                    avgVal = p.val * (p.dur * p.ppm / 60)
+                end
+
+                Scratch_Accumulator[p.stat] = (Scratch_Accumulator[p.stat] or 0) + avgVal
+                
                 if weights[p.stat] and weights[p.stat] > 0 then
-                    totalScore = totalScore + (p.val * weights[p.stat])
+                    totalScore = totalScore + (avgVal * weights[p.stat])
                 end
             elseif stats.UseEffects then
                 for _, effect in ipairs(stats.UseEffects) do

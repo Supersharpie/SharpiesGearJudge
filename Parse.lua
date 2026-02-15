@@ -413,9 +413,13 @@ function MSC.Scanner.ClassifyLine(text)
     local lower = string_lower(text)
 
     -- [[ OPTIMIZATION: SIMPLE CHECKS FIRST ]]
-    if string_find(lower, MSC.L["equip"]) then return "EQUIP" end
     if string_find(lower, MSC.L["use:"]) then return "USE" end
-    if string_find(lower, MSC.L["chance on"]) then return "PROC" end
+    if string_find(lower, "chance on") or 
+       string_find(lower, "chance to increase") or 
+       string_find(lower, "chance to gain") then 
+       return "PROC" 
+    end
+	if string_find(lower, MSC.L["equip"]) then return "EQUIP" end
     if string_find(lower, MSC.L["set:"]) then return "SET" end
     if string_find(lower, MSC.L["socket"]) then 
         if string_find(lower, MSC.L["bonus"]) then return "SOCKET_BONUS" else return "SOCKET_INFO" end

@@ -406,104 +406,115 @@ function MSC:BeautifyTooltip(tooltip)
             if text then
                 local newText = text
                 local lineChanged = false
-                
                 local lineType = MSC.Scanner.ClassifyLine(text)
                 
-                -- [[ PHASE 1: COMPACT EQUIP ]]
-                if SGJ_Settings.CompactEquip and (lineType == "EQUIP") then
+                -- [[ SAFETY CHECK: Is this a Proc / Chance / Use line? ]]
+                -- We MUST NOT touch these lines. Modifying them causes the Math Scanner to double-count stats.
+                local cleanText = string.lower(text)
+                local isProc = string.find(cleanText, "chance") or 
+                               string.find(cleanText, "struck") or 
+                               string.find(cleanText, "period") or 
+                               string.find(cleanText, "sec")   or
+                               string.find(cleanText, "stack") or
+                               (string.find(cleanText, "use:") and not string.find(cleanText, "equip:")) -- Use effects
+
+                if not isProc then
                     
-                    local cleanText = string.lower(text)
-                    cleanText = string.gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
-                    cleanText = string.gsub(cleanText, "|r", "")
-                    cleanText = string.gsub(cleanText, "\n", " ")
-                    cleanText = string.gsub(cleanText, "%s+", " ")
-                    cleanText = string.gsub(cleanText, "^%s*(.-)%s*$", "%1")
-                    cleanText = string.gsub(cleanText, "^equip: ", "") 
+                    -- [[ PHASE 1: COMPACT EQUIP (Static Stats Only) ]]
+                    if SGJ_Settings.CompactEquip and (lineType == "EQUIP") then
+                        
+                        cleanText = string.gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
+                        cleanText = string.gsub(cleanText, "|r", "")
+                        cleanText = string.gsub(cleanText, "\n", " ")
+                        cleanText = string.gsub(cleanText, "%s+", " ")
+                        cleanText = string.gsub(cleanText, "^%s*(.-)%s*$", "%1")
+                        cleanText = string.gsub(cleanText, "^equip: ", "") 
 
-                    for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
-                        if pat.p and not pat.func then
-                            local m1, m2 = string.match(cleanText, pat.p)
-                            if m1 then
-                                local val = tonumber(pat.valIdx == 1 and m1 or m2)
-                                local rawName = (pat.nameIdx == 1 and m1 or m2)
-                                local finalName = nil
+                        for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
+                            if pat.p and not pat.func then
+                                local m1, m2 = string.match(cleanText, pat.p)
+                                if m1 then
+                                    local val = tonumber(pat.valIdx == 1 and m1 or m2)
+                                    local rawName = (pat.nameIdx == 1 and m1 or m2)
+                                    local finalName = nil
 
-                                if pat.fixedStat and MSC.StatShortNames then
-                                    finalName = MSC.StatShortNames[pat.fixedStat]
-                                elseif rawName and MSC.Scanner.TermMap then
-                                    local nameKey = string.gsub(rawName, "your ", "")
-                                    nameKey = string.gsub(nameKey, "^%s*(.-)%s*$", "%1")
-                                    local internalKey = MSC.Scanner.TermMap[nameKey]
-                                    if not internalKey then
-                                        local titleCase = string.gsub(" "..nameKey, "%W%l", string.upper):sub(2)
-                                        internalKey = MSC.Scanner.TermMap[titleCase]
-                                    end
-                                    if internalKey and MSC.StatShortNames then
-                                        finalName = MSC.StatShortNames[internalKey]
-                                    end
-                                end
-
-                                if val and finalName then
-                                    if not SGJ_Settings.SimplifyStats then
-                                        if SHORT_TO_LONG[finalName] then
-                                            finalName = SHORT_TO_LONG[finalName]
+                                    if pat.fixedStat and MSC.StatShortNames then
+                                        finalName = MSC.StatShortNames[pat.fixedStat]
+                                    elseif rawName and MSC.Scanner.TermMap then
+                                        local nameKey = string.gsub(rawName, "your ", "")
+                                        nameKey = string.gsub(nameKey, "^%s*(.-)%s*$", "%1")
+                                        local internalKey = MSC.Scanner.TermMap[nameKey]
+                                        if not internalKey then
+                                            local titleCase = string.gsub(" "..nameKey, "%W%l", string.upper):sub(2)
+                                            internalKey = MSC.Scanner.TermMap[titleCase]
+                                        end
+                                        if internalKey and MSC.StatShortNames then
+                                            finalName = MSC.StatShortNames[internalKey]
                                         end
                                     end
-                                    
-                                    local prefix = "Equip: "
-                                    if pat.isPercent or string.find(text, "%%") then
-                                        newText = prefix .. "+" .. val .. "% " .. Colorize(finalName)
-                                    else
-                                        newText = prefix .. "+" .. val .. " " .. Colorize(finalName)
+
+                                    if val and finalName then
+                                        if not SGJ_Settings.SimplifyStats then
+                                            if SHORT_TO_LONG[finalName] then
+                                                finalName = SHORT_TO_LONG[finalName]
+                                            end
+                                        end
+                                        
+                                        local prefix = "Equip: "
+                                        if pat.isPercent or string.find(text, "%%") then
+                                            newText = prefix .. "+" .. val .. "% " .. Colorize(finalName)
+                                        else
+                                            newText = prefix .. "+" .. val .. " " .. Colorize(finalName)
+                                        end
+                                        lineChanged = true
+                                        break 
                                     end
-                                    lineChanged = true
-                                    break 
                                 end
                             end
                         end
                     end
-                end
 
-                -- [[ PHASE 2: WORD HIGHLIGHTING ]]
-                -- Runs on Base Stats and anything Phase 1 didn't catch (like Resistances)
-                if not lineChanged and MSC.Scanner.BaseStatMap then
-                    for localName, internalKey in pairs(MSC.Scanner.BaseStatMap) do
-                        
-                        -- Find the stat name in the text
-                        local s, e = string.find(string.lower(newText), string.lower(localName), 1, true)
-                        
-                        if s then
-                             -- We found it!
-                             local actualText = string.sub(newText, s, e)
-                             local replacement = actualText
-                             
-                             -- 1. SHORTEN (Only if Simplify ON & ShortName exists)
-                             local shortName = MSC.StatShortNames and MSC.StatShortNames[internalKey]
-                             if SGJ_Settings.SimplifyStats and shortName then 
-                                 replacement = shortName 
-                             end
-                             
-                             -- 2. COLOR (Look up by ShortName, LocalName, or ActualText)
-                             local color = nil
-                             if shortName and VISUAL_COLORS[shortName] then
-                                 color = VISUAL_COLORS[shortName]
-                             elseif VISUAL_COLORS[localName] then
-                                 color = VISUAL_COLORS[localName]
-                             elseif VISUAL_COLORS[actualText] then
-                                 color = VISUAL_COLORS[actualText]
-                             end
+                    -- [[ PHASE 2: WORD HIGHLIGHTING (Static Stats Only) ]]
+                    -- We skip this if isProc is true to prevent Scanner confusion.
+                    if not lineChanged and MSC.Scanner.BaseStatMap then
+                        for localName, internalKey in pairs(MSC.Scanner.BaseStatMap) do
+                            local s, e = string.find(string.lower(newText), string.lower(localName), 1, true)
+                            
+                            if s then
+                                 local shortName = MSC.StatShortNames and MSC.StatShortNames[internalKey]
+                                 
+                                 -- Only color/shorten if it's NOT a proc line
+                                 if shortName or SGJ_Settings.ColorizeStats then
+                                     
+                                     local actualText = string.sub(newText, s, e)
+                                     local replacement = actualText
+                                     
+                                     if SGJ_Settings.SimplifyStats and shortName then 
+                                         replacement = shortName 
+                                     end
+                                     
+                                     local color = nil
+                                     if shortName and VISUAL_COLORS[shortName] then
+                                         color = VISUAL_COLORS[shortName]
+                                     elseif VISUAL_COLORS[localName] then
+                                         color = VISUAL_COLORS[localName]
+                                     elseif VISUAL_COLORS[actualText] then
+                                         color = VISUAL_COLORS[actualText]
+                                     end
 
-                             if SGJ_Settings.ColorizeStats and color then
-                                 replacement = "|c" .. color .. replacement .. "|r"
-                             end
+                                     if SGJ_Settings.ColorizeStats and color then
+                                         replacement = "|c" .. color .. replacement .. "|r"
+                                     end
 
-                             -- 3. REPLACE
-                             if replacement ~= actualText then
-                                 newText = string.sub(newText, 1, s-1) .. replacement .. string.sub(newText, e+1)
-                             end
+                                     if replacement ~= actualText then
+                                         newText = string.sub(newText, 1, s-1) .. replacement .. string.sub(newText, e+1)
+                                     end
+                                 end
+                            end
                         end
                     end
-                end
+                    
+                end -- End isProc Check
 
                 if newText ~= text then
                     leftObj:SetText(newText)
