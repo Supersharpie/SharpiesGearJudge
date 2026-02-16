@@ -8,6 +8,7 @@ local math_floor, math_max, math_abs = math.floor, math.max, math.abs
 local table_insert = table.insert
 local string_format, string_find = string.format, string.find 
 local wipe = wipe or table.wipe
+local unpack = unpack or table.unpack
 
 -- WoW API Localizations
 local GetInventoryItemLink = GetInventoryItemLink
@@ -225,87 +226,151 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
 end
 
 -- =============================================================
--- 4. BAG SCANNERS (Smart Weapon Logic)
+-- 4. BAG SCANNERS (Cached & Optimized)
 -- =============================================================
-function MSC:GetBestMainHandInBags(weights, specName)
-    local bestLink = nil
-    local bestScore = -1
 
-    for bag = 0, 4 do
-        local numSlots = GetBagSlots(bag) 
-        for slot = 1, numSlots do
-            local link = GetBagLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then 
-                local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
-                if (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND") and IsEquippableItem(link) then
-                    local stats = MSC.SafeGetItemStats(link, 16, weights, specName)
-                    local score = MSC.GetItemScore(stats, weights, specName, 16)
-                    if score > bestScore then
-                        bestScore = score
-                        bestLink = link
-                    end
-                end
-            end
-        end
-    end
-    return bestLink
-end
+	-- [[ A. CACHE STORAGE ]]
+	MSC.BagCache = {
+		MainHand = nil,
+		OffHand = nil,
+		Dirty = true,  
+		LastSpec = nil 
+	}
 
-function MSC:GetBestOffHandInBags(weights, specName)
-    local bestLink = nil
-    local bestScore = -1
-    local _, playerClass = UnitClass("player")
-    local playerLevel = UnitLevel("player")
-    local canDualWield = false
-    if playerClass == "ROGUE" or playerClass == "WARRIOR" then
-        if playerLevel >= 10 then canDualWield = true end
-    elseif playerClass == "HUNTER" then
-        if playerLevel >= 20 then canDualWield = true end
-    end
-    
-    if playerClass == "SHAMAN" and MSC.GetTalentRank then
-        if MSC:GetTalentRank("DUAL_WIELD") > 0 then canDualWield = true end
-    end
+	-- [[ B. EVENT LISTENER ]]
+	local CacheWatcher = CreateFrame("Frame")
+	CacheWatcher:RegisterEvent("BAG_UPDATE")
+	CacheWatcher:SetScript("OnEvent", function() 
+		MSC.BagCache.Dirty = true 
+	end)
 
-    for bag = 0, 4 do
-        local numSlots = GetBagSlots(bag) 
-        for slot = 1, numSlots do
-            local link = GetBagLink(bag, slot)
-            if link and MSC.IsItemUsable(link) then
-                local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
-                
-                local isWeapon   = (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONOFFHAND")
-                local isStandard = (loc == "INVTYPE_SHIELD" or loc == "INVTYPE_HOLDABLE")
-                
-                local allowed = false
-                if isStandard then
-                    allowed = true
-                elseif isWeapon then
-                    if canDualWield then allowed = true end
-                end
+	-- [[ C. INTERNAL SCANNERS (The heavy lifting) ]]
+	function MSC:Internal_ScanBestMainHand(weights, specName)
+		local bestLink = nil
+		local bestScore = -1
 
-                if allowed and IsEquippableItem(link) then
-                    local stats = MSC.SafeGetItemStats(link, 17, weights, specName)
-                    local score = MSC.GetItemScore(stats, weights, specName, 17)
-                    if score > bestScore then
-                        bestScore = score
-                        bestLink = link
-                    end
-                end
-            end
-        end
-    end
-    return bestLink
-end
+		for bag = 0, 4 do
+			local numSlots = GetBagSlots(bag) 
+			for slot = 1, numSlots do
+				local link = GetBagLink(bag, slot)
+				if link and MSC.IsItemUsable(link) then 
+					local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
+					if (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND") and IsEquippableItem(link) then
+						local stats = MSC.SafeGetItemStats(link, 16, weights, specName)
+						local score = MSC.GetItemScore(stats, weights, specName, 16)
+						if score > bestScore then
+							bestScore = score
+							bestLink = link
+						end
+					end
+				end
+			end
+		end
+		return bestLink
+	end
+
+	function MSC:Internal_ScanBestOffHand(weights, specName)
+		local bestLink = nil
+		local bestScore = -1
+		local _, playerClass = UnitClass("player")
+		local playerLevel = UnitLevel("player")
+		
+		-- Check Dual Wield capabilities
+		local canDualWield = false
+		if playerClass == "ROGUE" or playerClass == "WARRIOR" then
+			if playerLevel >= 10 then canDualWield = true end
+		elseif playerClass == "HUNTER" then
+			if playerLevel >= 20 then canDualWield = true end
+		elseif playerClass == "SHAMAN" and MSC.GetTalentRank then
+			if MSC:GetTalentRank("DUAL_WIELD") > 0 then canDualWield = true end
+		end
+
+		for bag = 0, 4 do
+			local numSlots = GetBagSlots(bag) 
+			for slot = 1, numSlots do
+				local link = GetBagLink(bag, slot)
+				if link and MSC.IsItemUsable(link) then
+					local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
+					
+					local isWeapon   = (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONOFFHAND")
+					local isStandard = (loc == "INVTYPE_SHIELD" or loc == "INVTYPE_HOLDABLE")
+					
+					local allowed = false
+					if isStandard then
+						allowed = true
+					elseif isWeapon and canDualWield then
+						allowed = true
+					end
+
+					if allowed and IsEquippableItem(link) then
+						local stats = MSC.SafeGetItemStats(link, 17, weights, specName)
+						local score = MSC.GetItemScore(stats, weights, specName, 17)
+						if score > bestScore then
+							bestScore = score
+							bestLink = link
+						end
+					end
+				end
+			end
+		end
+		return bestLink
+	end
+
+	-- [[ D. PUBLIC GETTERS  ]]
+	function MSC:GetBestMainHandInBags(weights, specName)
+		-- If bags changed OR spec changed, re-scan
+		if MSC.BagCache.Dirty or MSC.BagCache.LastSpec ~= specName then
+			MSC.BagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
+			MSC.BagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
+			MSC.BagCache.Dirty = false
+			MSC.BagCache.LastSpec = specName
+		end
+		return MSC.BagCache.MainHand
+	end
+
+	function MSC:GetBestOffHandInBags(weights, specName)
+		-- If bags changed OR spec changed, re-scan
+		if MSC.BagCache.Dirty or MSC.BagCache.LastSpec ~= specName then
+			MSC.BagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
+			MSC.BagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
+			MSC.BagCache.Dirty = false
+			MSC.BagCache.LastSpec = specName
+		end
+		return MSC.BagCache.OffHand
+	end
 
 -- =============================================================
--- 5. EVALUATE UPGRADE
+-- 5. EVALUATE UPGRADE (CACHED)
 -- =============================================================
+
+-- [[ PERFORMANCE CACHE ]]
+MSC.EvaluationCache = {}
+local CacheCleaner = CreateFrame("Frame")
+CacheCleaner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+CacheCleaner:RegisterEvent("PLAYER_TALENT_UPDATE")
+CacheCleaner:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+CacheCleaner:RegisterEvent("PLAYER_LEVEL_UP")
+CacheCleaner:RegisterEvent("BAG_UPDATE") -- Context might change (best bag item)
+
+CacheCleaner:SetScript("OnEvent", function(self, event)
+    -- We clear the cache whenever the basis of comparison (current gear/spec) changes
+    wipe(MSC.EvaluationCache)
+end)
+
+
 function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     if not newItemLink then return 0, 0, {}, {}, {} end
     if not weights then weights, specName = MSC.GetCurrentWeights() end
 
-    -- 1. SETUP & CURRENT SCORE
+    -- [[ 1. CACHE CHECK ]]
+    -- We include slotID and specName in key because an item's score depends on where it goes and who uses it
+    local cacheKey = (newItemLink or "nil") .. "_" .. (targetSlotID or "0") .. "_" .. (specName or "Default")
+    
+    if MSC.EvaluationCache[cacheKey] then
+        return unpack(MSC.EvaluationCache[cacheKey])
+    end
+
+    -- [[ 2. SETUP & CURRENT SCORE ]]
     MSC:GetEquippedGear(Scratch_Gear)
     
     local currentScore, currentStatsTotal, _, oldSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
@@ -315,7 +380,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local originalOH   = Scratch_Gear[17]
     local contextMsg   = nil
 
-    -- 2. PRE-CALCULATE ITEM STATS
+    -- [[ 3. PRE-CALCULATE ITEM STATS ]]
     local finalNewStats = MSC.SafeGetItemStats(newItemLink, targetSlotID, weights, specName)
     
     -- [[ MEMORY OPTIMIZATION ]]
@@ -333,7 +398,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         end
     end
 
-    -- 3. SWAP GEAR & HANDLE MH/OH LOGIC
+    -- [[ 4. SWAP GEAR & HANDLE MH/OH LOGIC ]]
     Scratch_Gear[targetSlotID] = newItemLink
     
     local _,_,_,_,_,_,_,_, newLoc = GetItemInfo(newItemLink)
@@ -357,47 +422,47 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
             if not Scratch_Gear[17] then needsOH = true end
 
 			if needsOH then
-							if is2HSpec then
-								Scratch_Gear[17] = nil
-								contextMsg = MSC.L["|cffff0000(Not 2Hander)|r"]
-							else
-								local bestBagOH = MSC:GetBestOffHandInBags(weights, specName)
-								if bestBagOH then
-									Scratch_Gear[17] = bestBagOH
-									local bagName = GetItemInfo(bestBagOH)
-									contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
-								else
-									if not Scratch_Gear[17] then
-										contextMsg = MSC.L["|cffff0000(No OH found)|r"]
-									end
-								end
-							end
-						end
-					end
-				elseif targetSlotID == 17 then
-					local currentMH = GetInventoryItemLink("player", 16)
-					if currentMH then
-						local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
-						local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
-						
-						if isCurrent2H then
-							local bestBagMH = MSC:GetBestMainHandInBags(weights, specName)
-							if bestBagMH then
-								Scratch_Gear[16] = bestBagMH
-								local bagName = GetItemInfo(bestBagMH)
-								contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
-							else
-								Scratch_Gear[16] = nil
-								contextMsg = MSC.L["|cffff0000(No MH found)|r"]
-							end
+				if is2HSpec then
+					Scratch_Gear[17] = nil
+					contextMsg = MSC.L["|cffff0000(Not 2Hander)|r"]
+				else
+					local bestBagOH = MSC:GetBestOffHandInBags(weights, specName)
+					if bestBagOH then
+						Scratch_Gear[17] = bestBagOH
+						local bagName = GetItemInfo(bestBagOH)
+						contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
+					else
+						if not Scratch_Gear[17] then
+							contextMsg = MSC.L["|cffff0000(No OH found)|r"]
 						end
 					end
 				end
+			end
+		end
+	elseif targetSlotID == 17 then
+		local currentMH = GetInventoryItemLink("player", 16)
+		if currentMH then
+			local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
+			local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
+			
+			if isCurrent2H then
+				local bestBagMH = MSC:GetBestMainHandInBags(weights, specName)
+				if bestBagMH then
+					Scratch_Gear[16] = bestBagMH
+					local bagName = GetItemInfo(bestBagMH)
+					contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
+				else
+					Scratch_Gear[16] = nil
+					contextMsg = MSC.L["|cffff0000(No MH found)|r"]
+				end
+			end
+		end
+	end
 
-    -- 4. CALCULATE FUTURE SCORE
+    -- [[ 5. CALCULATE FUTURE SCORE ]]
     local newScore, newStatsTotal, newTotalColors, newSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
-	-- 5. CONTEXT: DETECT SET COMPLETION
+	-- [[ 6. CONTEXT: DETECT SET COMPLETION ]]
     if MSC.SetBonusScores then
         for setID, scores in pairs(MSC.SetBonusScores) do
              local nC = (newSetCounts and newSetCounts[setID]) or 0
@@ -415,7 +480,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         end
     end
 
-    -- 6. CAP GUARDIAN (Hit/Def Caps)
+    -- [[ 7. CAP GUARDIAN (Hit/Def Caps) ]]
     local _, playerClass = UnitClass("player")
     local function Rank(k) return MSC:GetTalentRank(k) end 
 
@@ -467,10 +532,13 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
         end
     end
 
-    -- 7. FINALIZE
+    -- [[ 8. FINALIZE & STORE CACHE ]]
     Scratch_Gear[targetSlotID] = originalItem
     Scratch_Gear[16] = originalMH
     Scratch_Gear[17] = originalOH
-
-    return newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg
+    
+    local result = { newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg }
+    MSC.EvaluationCache[cacheKey] = result
+    
+    return unpack(result)
 end

@@ -141,18 +141,30 @@ end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("BAG_UPDATE")
-eventFrame:RegisterEvent("QUEST_COMPLETE")         -- Fires when the quest window opens
-eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED") -- Fires when item data arrives
+eventFrame:RegisterEvent("QUEST_COMPLETE")         
+eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED") 
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1) 
     if event == "BAG_UPDATE" then 
-        MSC.BagCacheDirty = true 
-        RequestUpdate()
-    elseif event == "QUEST_COMPLETE" or event == "GET_ITEM_INFO_RECEIVED" then
+        MSC.BagCache.Dirty = true
+        if RequestUpdate then RequestUpdate() end
+
+    elseif event == "QUEST_COMPLETE" then
         if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
         
-        if event == "GET_ITEM_INFO_RECEIVED" then
-             RequestUpdate()
+    elseif event == "GET_ITEM_INFO_RECEIVED" then
+        local itemID = arg1
+        
+        -- [[ OPTIMIZATION: CONTEXT AWARENESS ]]
+        if QuestInfoFrame and QuestInfoFrame:IsVisible() then
+             if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
+        end
+        
+        if GameTooltip:IsVisible() then
+            local _, link = GameTooltip:GetItem()
+            if link and string.find(link, "item:" .. itemID) then
+                 if RequestUpdate then RequestUpdate() end
+            end
         end
     end
 end)
@@ -463,14 +475,13 @@ function MSC.UpdateReceipt()
 end
 
 -- =============================================================
--- QUEST REWARD OVERLAYS
+-- QUEST REWARD OVERLAYS (Optimized)
 -- =============================================================
 function MSC.UpdateQuestOverlays()
-    -- Helper: Finds buttons in both Classic (Global) and Modern (Table) environments
+    -- 1. Helper: Finds buttons (Classic + Retail compatibility)
     local function GetRewardButton(index)
         local btn = _G["QuestInfoItem"..index]
         if btn then return btn end
-
         if QuestInfoRewardsFrame and QuestInfoRewardsFrame.RewardButtons then
             return QuestInfoRewardsFrame.RewardButtons[index]
         end
@@ -485,37 +496,45 @@ function MSC.UpdateQuestOverlays()
 
     for i = 1, numChoices do
         local btn = GetRewardButton(i)
-        local link = GetQuestItemLink("choice", i)
+        
+        -- Reset state (important for reusing frames)
+        if btn and btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
 
         if btn and btn:IsVisible() then
-            if not btn.SGJ_Overlay then
-                -- Draw Layer: OVERLAY (SubLevel 7) to ensure visibility over UI skins (ElvUI, etc)
-                btn.SGJ_Overlay = btn:CreateTexture(nil, "OVERLAY", nil, 7)
-                btn.SGJ_Overlay:SetSize(26, 26)
-                btn.SGJ_Overlay:SetPoint("TOPRIGHT", 0, 0)
-                btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                btn.SGJ_Overlay:Hide()
-            end
-
+            local link = GetQuestItemLink("choice", i)
             local showOverlay = false
 
+            -- [[ OPTIMIZATION: INSTANT FILTER ]]
+            -- usage: GetItemInfoInstant returns data without waiting for the server.
+            -- If 'equipLoc' is empty, it's not gear. Skip the heavy math.
             if link then
-                local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                if equipLoc then
+                local _, _, _, equipLoc = GetItemInfoInstant(link)
+                
+                -- Only proceed if it is actual equipment (Head, Chest, Weapon, etc.)
+                if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+                    
+                    -- Now it's safe to run the heavy engine
                     local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
                     if slotID then
-                        local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
-                        if newScore and oldScore and (newScore > oldScore) then
-                            showOverlay = true
-                        end
+                         local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
+                         -- Precision check to avoid floating point errors (e.g. 10.00001 vs 10.0)
+                         if newScore and oldScore and (newScore > (oldScore + 0.1)) then
+                             showOverlay = true
+                         end
                     end
                 end
             end
 
-            if showOverlay then 
-                btn.SGJ_Overlay:Show() 
-            else 
-                btn.SGJ_Overlay:Hide() 
+            -- [[ DRAW OVERLAY ]]
+            if showOverlay then
+                if not btn.SGJ_Overlay then
+                    -- Create only when needed (Lazy Load)
+                    btn.SGJ_Overlay = btn:CreateTexture(nil, "OVERLAY", nil, 7)
+                    btn.SGJ_Overlay:SetSize(26, 26)
+                    btn.SGJ_Overlay:SetPoint("TOPRIGHT", 0, 0)
+                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                end
+                btn.SGJ_Overlay:Show()
             end
         end
     end

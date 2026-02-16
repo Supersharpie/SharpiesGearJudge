@@ -385,22 +385,25 @@ local VISUAL_COLORS = {
     ["Daggers"] = "ffffd100", ["Bows"] = "ffffd100", ["Guns"] = "ffffd100",
 }
 
+
+local function Colorize(text)
+    if not SGJ_Settings.ColorizeStats then return text end
+    local color = VISUAL_COLORS[text]
+    if color then return "|c" .. color .. text .. "|r" end
+    return text
+end
+
 function MSC:BeautifyTooltip(tooltip)
     if not SGJ_Settings then return end
     if not MSC.Scanner or not MSC.Scanner.EquipPatterns or not MSC.Scanner.ClassifyLine then return end
 
     local tooltipName = tooltip:GetName()
     local numLines = tooltip:NumLines()
-
-    local function Colorize(text)
-        if not SGJ_Settings.ColorizeStats then return text end
-        local color = VISUAL_COLORS[text]
-        if color then return "|c" .. color .. text .. "|r" end
-        return text
-    end
+    
+    local prefix = tooltipName .. "TextLeft"
 
     for i = 2, numLines do
-        local leftObj = _G[tooltipName .. "TextLeft" .. i]
+        local leftObj = _G[prefix .. i]
         if leftObj then
             local text = leftObj:GetText()
             if text then
@@ -412,13 +415,13 @@ function MSC:BeautifyTooltip(tooltip)
                 -- [[ PHASE 1: COMPACT EQUIP ]]
                 if SGJ_Settings.CompactEquip and (lineType == "EQUIP") then
                     
-                    local cleanText = string.lower(text)
-                    cleanText = string.gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
-                    cleanText = string.gsub(cleanText, "|r", "")
-                    cleanText = string.gsub(cleanText, "\n", " ")
-                    cleanText = string.gsub(cleanText, "%s+", " ")
-                    cleanText = string.gsub(cleanText, "^%s*(.-)%s*$", "%1")
-                    cleanText = string.gsub(cleanText, "^equip: ", "") 
+                    local cleanText = text:lower()
+                        :gsub("|c%x%x%x%x%x%x%x%x", "")
+                        :gsub("|r", "")
+                        :gsub("[\n\t]", " ")
+                        :gsub("%s+", " ")
+                        :gsub("^%s*(.-)%s*$", "%1")
+                        :gsub("^equip: ", "")
 
                     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
                         if pat.p and not pat.func then
@@ -431,13 +434,14 @@ function MSC:BeautifyTooltip(tooltip)
                                 if pat.fixedStat and MSC.StatShortNames then
                                     finalName = MSC.StatShortNames[pat.fixedStat]
                                 elseif rawName and MSC.Scanner.TermMap then
-                                    local nameKey = string.gsub(rawName, "your ", "")
-                                    nameKey = string.gsub(nameKey, "^%s*(.-)%s*$", "%1")
+                                    local nameKey = rawName:gsub("your ", ""):gsub("^%s*(.-)%s*$", "%1")
                                     local internalKey = MSC.Scanner.TermMap[nameKey]
+                                    
                                     if not internalKey then
-                                        local titleCase = string.gsub(" "..nameKey, "%W%l", string.upper):sub(2)
+                                        local titleCase = (" " .. nameKey):gsub("%W%l", string.upper):sub(2)
                                         internalKey = MSC.Scanner.TermMap[titleCase]
                                     end
+                                    
                                     if internalKey and MSC.StatShortNames then
                                         finalName = MSC.StatShortNames[internalKey]
                                     end
@@ -445,17 +449,13 @@ function MSC:BeautifyTooltip(tooltip)
 
                                 if val and finalName then
                                     if not SGJ_Settings.SimplifyStats then
-                                        if SHORT_TO_LONG[finalName] then
-                                            finalName = SHORT_TO_LONG[finalName]
-                                        end
+                                        finalName = SHORT_TO_LONG[finalName] or finalName
                                     end
                                     
-                                    local prefix = "Equip: "
-                                    if pat.isPercent or string.find(text, "%%") then
-                                        newText = prefix .. "+" .. val .. "% " .. Colorize(finalName)
-                                    else
-                                        newText = prefix .. "+" .. val .. " " .. Colorize(finalName)
-                                    end
+                                    local prefixStr = "Equip: "
+                                    local valStr = (pat.isPercent or string.find(text, "%%")) and ("+" .. val .. "% ") or ("+" .. val .. " ")
+                                    
+                                    newText = prefixStr .. valStr .. Colorize(finalName)
                                     lineChanged = true
                                     break 
                                 end
@@ -465,25 +465,23 @@ function MSC:BeautifyTooltip(tooltip)
                 end
 
                 -- [[ PHASE 2: WORD HIGHLIGHTING ]]
-                -- Runs on Base Stats and anything Phase 1 didn't catch (like Resistances)
                 if not lineChanged and MSC.Scanner.BaseStatMap then
+                    local lowerNewText = newText:lower()
+                    
                     for localName, internalKey in pairs(MSC.Scanner.BaseStatMap) do
-                        
-                        -- Find the stat name in the text
-                        local s, e = string.find(string.lower(newText), string.lower(localName), 1, true)
+                        local s, e = string.find(lowerNewText, localName:lower(), 1, true)
                         
                         if s then
-                             -- We found it!
                              local actualText = string.sub(newText, s, e)
                              local replacement = actualText
                              
-                             -- 1. SHORTEN (Only if Simplify ON & ShortName exists)
+                             -- 1. SHORTEN
                              local shortName = MSC.StatShortNames and MSC.StatShortNames[internalKey]
                              if SGJ_Settings.SimplifyStats and shortName then 
                                  replacement = shortName 
                              end
                              
-                             -- 2. COLOR (Look up by ShortName, LocalName, or ActualText)
+                             -- 2. COLOR
                              local color = nil
                              if shortName and VISUAL_COLORS[shortName] then
                                  color = VISUAL_COLORS[shortName]
@@ -500,6 +498,7 @@ function MSC:BeautifyTooltip(tooltip)
                              -- 3. REPLACE
                              if replacement ~= actualText then
                                  newText = string.sub(newText, 1, s-1) .. replacement .. string.sub(newText, e+1)
+                                 lowerNewText = newText:lower() 
                              end
                         end
                     end
