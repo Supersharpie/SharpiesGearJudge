@@ -505,22 +505,20 @@ function MSC.UpdateQuestOverlays()
             local showOverlay = false
 
             -- [[ OPTIMIZATION: INSTANT FILTER ]]
-            -- usage: GetItemInfoInstant returns data without waiting for the server.
-            -- If 'equipLoc' is empty, it's not gear. Skip the heavy math.
             if link then
                 local _, _, _, equipLoc = GetItemInfoInstant(link)
                 
-                -- Only proceed if it is actual equipment (Head, Chest, Weapon, etc.)
+                -- [[ NEW OPTIMIZATION: SKIP UNUSABLE ITEMS ]]
                 if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                    
-                    -- Now it's safe to run the heavy engine
-                    local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                    if slotID then
-                         local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
-                         -- Precision check to avoid floating point errors (e.g. 10.00001 vs 10.0)
-                         if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                             showOverlay = true
-                         end
+                    if MSC.IsItemUsable(link) then 
+                        -- Now it's safe to run the heavy engine
+                        local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                        if slotID then
+                             local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
+                             if newScore and oldScore and (newScore > (oldScore + 0.1)) then
+                                 showOverlay = true
+                             end
+                        end
                     end
                 end
             end

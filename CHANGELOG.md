@@ -1,10 +1,25 @@
 # Sharpie's Gear Judge - Version History
 
 ## 🚀 v2.4.1
+
+**Introduce caching and optimized scanning to reduce repeated work and improve responsiveness.**
+**These changes aim to reduce expensive recalculations and UI churn while keeping behavior intact.**
+
 ### Key changes:
+** Skipped non-equip and unusable items in UpdateQuestOverlays so the heavy EvaluateUpgrade path only runs for relevant gear.**
+** Added lightweight caches and early-filtering to reduce expensive scans and UI churn.** 
+** Added MSC.UsableCache and update MSC.IsItemUsable to short-circuit checks, cache results, and only run tooltip restriction parsing when necessary.**
+** Added MSC.SlotCache, register PLAYER_EQUIPMENT_CHANGED, clear slot cache on relevant events, and use the slot cache in MSC.GetComparisonSlot for finger/trinket and weapon comparisons.** 
+** Added unpack fallback; implement MSC.BagCache with a BAG_UPDATE watcher and internal scan functions (Internal_ScanBestMainHand / Internal_ScanBestOffHand).** 
+** Replace direct bag scans with cached getters that rescan only when bags or spec change.**  
+** Add MSC.EvaluationCache and a CacheCleaner to invalidate on relevant events; EvaluateUpgrade now checks/stores results in the cache and returns cached unpacked results.**  
+** Cleanup and clarify MH/OH swap logic and comments.** 
+** BAG_UPDATE mark the new bag cache dirty and safely call RequestUpdate; make GET_ITEM_INFO_RECEIVED context-aware (update quest overlays if quest frame visible, only RequestUpdate when tooltip item matches).**  
+** Optimize quest reward overlays by early-filtering non-equip items with GetItemInfoInstant, lazy-creating overlay textures, and adding a small score delta threshold to avoid floating-point noise.** 
+** extract Colorize helper, refactor BeautifyTooltip for performance and readability (reuse prefix, chain gsub calls, minimize repeated lowercasing, update lowerNewText when mutating).**  
 ** Introduce locale enhanced setting off by defualt, harden parsing, improve gem/enchant/proc handling, and refine tooltip/UI behavior and saved Pawn import handling.** 
 ** Fixed Driud Hit cap handling.** 
-** Fixed Paladin AoE Armor scaling** 
+** Fixed Paladin AoE Armor scaling, also small cleanup changes (CleanText tweak, tooltip hook newline) and add a Paladin relic entry (item 28065) in Classes/TBC/Paladin.lua.** 
 ** Fixed Chance on hit Trinket scoring triple dipping calculations** 
 ------------------------------------------------------------------------------------------------
 

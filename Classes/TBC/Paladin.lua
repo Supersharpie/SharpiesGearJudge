@@ -699,6 +699,7 @@ Paladin.Relics = {
     [23006] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 83 }, -- Libram of Light
     [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Libram of Hope
     [22402] = { ITEM_MOD_ARMOR_SHORT = 50 }, -- Libram of Truth (Armor buff)
+	[28065] = { ITEM_MOD_SPELL_POWER_SHORT = 20, note = "Undead/Demon" },
 
     -- [[ TBC LEVELING / DUNGEON (60-70) ]]
     [25644] = { ITEM_MOD_ATTACK_POWER_SHORT = 12 }, -- Libram of Righteous Power (Crusader Strike AP)

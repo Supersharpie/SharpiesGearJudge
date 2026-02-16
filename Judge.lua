@@ -22,17 +22,16 @@ local C_AddOns = C_AddOns
 
 local function CleanText(text)
     if not text then return "" end
-    -- 1. Remove color codes (|cff... and |r)
     local clean = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
-    -- 2. Remove textures/icons (|T...|t)
     clean = clean:gsub("|T.-|t", "")
-    -- 3. Trim extra whitespace from the ends
     return clean:match("^%s*(.-)%s*$")
 end
 
 -- =============================================================
 -- 1. INITIALIZATION & EVENTS
 -- =============================================================
+MSC.SlotCache = {}
+
 local EventFrame = CreateFrame("Frame")
 EventFrame:RegisterEvent("ADDON_LOADED")
 EventFrame:RegisterEvent("PLAYER_LOGIN")
@@ -40,6 +39,7 @@ EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 EventFrame:RegisterEvent("PLAYER_LEVEL_UP")
 EventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
 EventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+EventFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
 EventFrame:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == addonName then
@@ -53,7 +53,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
 		if SGJ_Settings.SimplifyStats == nil then SGJ_Settings.SimplifyStats = true end
 		if SGJ_Settings.ColorizeStats == nil then SGJ_Settings.ColorizeStats = true end
-        if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end -- Controls "Equip: +20..." rewriting
+        if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end
 		
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
@@ -74,9 +74,10 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         local _, startSpec = MSC.GetCurrentWeights()
         MSC.LastActiveSpec = startSpec
         
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_LEVEL_UP" or event == "PLAYER_TALENT_UPDATE" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_LEVEL_UP" or event == "PLAYER_TALENT_UPDATE" or event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "PLAYER_EQUIPMENT_CHANGED" then
         MSC.CachedWeights = nil
-        -- Re-check initialization just in case
+        wipe(MSC.SlotCache)
+        
         if event == "PLAYER_TALENT_UPDATE" and MSC.ForceInit then MSC:ForceInit() end
 
         if MSCLabFrame and MSCLabFrame:IsShown() and MSC.UpdateLabCalc then 
@@ -120,12 +121,13 @@ StaticPopupDialogs["SGJ_RELOAD_REQUIRED"] = {
 }
 
 -- =============================================================
--- 2. SMART SLOT LOGIC (Comparison)
+-- 2. SMART SLOT LOGIC (Optimized with Cache)
 -- =============================================================
 function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
     local defaultSlot = MSC.SlotMap and MSC.SlotMap[equipLoc] or nil
     if not defaultSlot then return nil end
 
+    -- [[ OPTIMIZATION: USE CACHED "WORSE" SLOT ]]
     if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
         local s1, s2 = 11, 12
         if equipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
@@ -133,18 +135,22 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
         local l1 = GetInventoryItemLink("player", s1)
         local l2 = GetInventoryItemLink("player", s2)
         
+        if itemLink == l1 then return s2 end
+        if itemLink == l2 then return s1 end
+		
+        if MSC.SlotCache[equipLoc] then return MSC.SlotCache[equipLoc] end
+
         if not l1 then return s1 end
         if not l2 then return s2 end
         
-        if itemLink == l1 then return s2 end
-        if itemLink == l2 then return s1 end
-
         local stats1 = MSC.SafeGetItemStats(l1, s1, weights, specName)
         local stats2 = MSC.SafeGetItemStats(l2, s2, weights, specName)
         local score1 = MSC.GetItemScore(stats1, weights, specName, s1)
         local score2 = MSC.GetItemScore(stats2, weights, specName, s2)
         
-        return (score2 < score1) and s2 or s1
+        local winner = (score2 < score1) and s2 or s1
+        MSC.SlotCache[equipLoc] = winner
+        return winner
     end
 
     if equipLoc == "INVTYPE_WEAPON" then
@@ -155,6 +161,11 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
             local l1 = GetInventoryItemLink("player", 16)
             local l2 = GetInventoryItemLink("player", 17)
             
+            if itemLink == l1 then return 17 end
+            if itemLink == l2 then return 16 end
+            
+            if MSC.SlotCache[equipLoc] then return MSC.SlotCache[equipLoc] end
+
             if l1 and l2 then
                 local _,_,_,_,_,_,_,_, loc2 = GetItemInfo(l2)
                 if loc2 == "INVTYPE_WEAPON" or loc2 == "INVTYPE_WEAPONOFFHAND" then
@@ -163,7 +174,9 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
                     local score1 = MSC.GetItemScore(stats1, weights, specName, 16)
                     local score2 = MSC.GetItemScore(stats2, weights, specName, 17)
                     
-                    return (score2 < score1) and 17 or 16
+                    local winner = (score2 < score1) and 17 or 16
+                    MSC.SlotCache[equipLoc] = winner
+                    return winner
                 end
             end
         end

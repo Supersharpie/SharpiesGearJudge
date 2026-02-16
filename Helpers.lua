@@ -53,20 +53,28 @@ function MSC:SafeCopy(orig)
     return copy
 end
 
+-- [[ OPTIMIZATION: CACHE USABILITY ]]
+MSC.UsableCache = {} 
+
 function MSC.IsItemUsable(itemLink)
     if not itemLink then return false end
+    
+    -- Check Cache First
+    if MSC.UsableCache[itemLink] ~= nil then return MSC.UsableCache[itemLink] end
+    
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     local localizedClass, playerClass = UnitClass("player")
+    local result = true -- Default to true, prove false
 
     -- 1. WEAPON CHECK
     if classID == 2 then 
         if MSC.CurrentClass and MSC.CurrentClass.ValidWeapons then
-            if not MSC.CurrentClass.ValidWeapons[subClassID] then return false end
+            if not MSC.CurrentClass.ValidWeapons[subClassID] then result = false end
         end
     end
 
     -- 2. ARMOR CHECK
-    if classID == 4 then 
+    if result and classID == 4 then 
         local level = UnitLevel("player")
         local maxArmor = 1 -- Cloth
         
@@ -79,33 +87,38 @@ function MSC.IsItemUsable(itemLink)
         end
         
         if subClassID == 6 then -- Shield
-            if playerClass ~= "WARRIOR" and playerClass ~= "PALADIN" and playerClass ~= "SHAMAN" then return false end
+            if playerClass ~= "WARRIOR" and playerClass ~= "PALADIN" and playerClass ~= "SHAMAN" then result = false end
         elseif subClassID > 0 and subClassID <= 4 then
-             if subClassID > maxArmor then return false end
+             if subClassID > maxArmor then result = false end
         end
     end
 
-    -- 3. RESTRICTION SCAN
-    local tip = _G["MSC_ScannerTooltip"] or CreateFrame("GameTooltip", "MSC_ScannerTooltip", nil, "GameTooltipTemplate")
-    tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
-    local status = pcall(function() tip:SetHyperlink(itemLink) end)
-    
-    if status then
-        for i = 2, tip:NumLines() do
-            local line = _G["MSC_ScannerTooltipTextLeft"..i]
-            local text = line and line:GetText()
-            if text then
-                if string_find(text, "Classes:") or (ITEM_CLASSES_ALLOWED and string_find(text, string_gsub(ITEM_CLASSES_ALLOWED, "%%s", ""))) then
-                    if not string_find(text, localizedClass) then return false end
-                end
-                if string_find(text, "Races:") or (ITEM_RACES_ALLOWED and string_find(text, string_gsub(ITEM_RACES_ALLOWED, "%%s", ""))) then
-                      local localizedRace = UnitRace("player")
-                      if not string_find(text, localizedRace) then return false end
+    -- 3. RESTRICTION SCAN (Only runs if passed previous checks)
+    if result then
+        local tip = _G["MSC_ScannerTooltip"] or CreateFrame("GameTooltip", "MSC_ScannerTooltip", nil, "GameTooltipTemplate")
+        tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
+        local status = pcall(function() tip:SetHyperlink(itemLink) end)
+        
+        if status then
+            for i = 2, tip:NumLines() do
+                local line = _G["MSC_ScannerTooltipTextLeft"..i]
+                local text = line and line:GetText()
+                if text then
+                    if string_find(text, "Classes:") or (ITEM_CLASSES_ALLOWED and string_find(text, string_gsub(ITEM_CLASSES_ALLOWED, "%%s", ""))) then
+                        if not string_find(text, localizedClass) then result = false; break end
+                    end
+                    if string_find(text, "Races:") or (ITEM_RACES_ALLOWED and string_find(text, string_gsub(ITEM_RACES_ALLOWED, "%%s", ""))) then
+                          local localizedRace = UnitRace("player")
+                          if not string_find(text, localizedRace) then result = false; break end
+                    end
                 end
             end
         end
     end
-    return true
+    
+    -- Save to Cache
+    MSC.UsableCache[itemLink] = result
+    return result
 end
 
 -- =============================================================
