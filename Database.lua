@@ -306,20 +306,20 @@ MSC.EnchantDB = {
     [2656] = { name = MSC.L["Cat's Swiftness"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 6, MSC_SPEED_BONUS = 8 } },
     [3232] = { name = MSC.L["Surefooted"], slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10, ITEM_MOD_CRIT_RATING_SHORT = 5 } }, 
     [2564] = { name = MSC.L["Agility +7"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 7 } },
-    [911]  = { name = MSC.L["Minor Agility (+1]"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
+    [911]  = { name = MSC.L["Minor Agility (+1)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
     [910]  = { name = MSC.L["Minor Speed"], slot = 8, stats = { MSC_SPEED_BONUS = 8 } },
-    [859]  = { name = MSC.L["Spirit (+5]"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } },
-    [860]  = { name = MSC.L["Lesser Spirit (+3]"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } },
-    [273]  = { name = MSC.L["Minor Spirit (+1]"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } },
-    [858]  = { name = MSC.L["Greater Stamina (+7]"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 7 } },
-    [845]  = { name = MSC.L["Stamina (+5"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 5 } },
-    [844]  = { name = MSC.L["Lesser Stamina (+3"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 3 } },
-    [274]  = { name = MSC.L["Minor Stamina (+1"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 1 } },
-    [849]  = { name = MSC.L["Agility (+5"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, 
-    [842]  = { name = MSC.L["Lesser Agility (+3"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 3 } },
-    [2654] = { name = MSC.L["Fortitude (+12 Stam"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 12 } },
-    [2657] = { name = MSC.L["Dexterity (+12 Agi"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2658] = { name = MSC.L["Surefooted (+5% Resist"], slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } },
+    [859]  = { name = MSC.L["Spirit (+5)"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } },
+    [860]  = { name = MSC.L["Lesser Spirit (+3)"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } },
+    [273]  = { name = MSC.L["Minor Spirit (+1)"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } },
+    [858]  = { name = MSC.L["Greater Stamina (+7)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 7 } },
+    [845]  = { name = MSC.L["Stamina (+5)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 5 } },
+    [844]  = { name = MSC.L["Lesser Stamina (+3)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 3 } },
+    [274]  = { name = MSC.L["Minor Stamina (+1)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 1 } },
+    [849]  = { name = MSC.L["Agility (+5)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, 
+    [842]  = { name = MSC.L["Lesser Agility (+3)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 3 } },
+    [2654] = { name = MSC.L["Fortitude (+12 Stam)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 12 } },
+    [2657] = { name = MSC.L["Dexterity (+12 Agi)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
+    [2658] = { name = MSC.L["Surefooted (+5% Resist)"], slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } },
 
     -- [[ RINGS ]]
     [2931] = { name = MSC.L["Spellpower"], slot = 11, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } }, 
@@ -334,12 +334,12 @@ MSC.EnchantDB = {
 
     -- [[ WEAPON (CASTER / SPIRIT) ]]
     -- Great budget options for Level 40-60 casters
-    [2443] = { name = MSC.L["Winter's Might (+7 SP"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 7, ITEM_MOD_FROST_DAMAGE_SHORT = 7 } },
-    [804]  = { name = MSC.L["Lesser Intellect (+6"], stats = { ITEM_MOD_INTELLECT_SHORT = 6 } },
-    [2566] = { name = MSC.L["Major Intellect (+22"], stats = { ITEM_MOD_INTELLECT_SHORT = 22 } }, -- Classic Endgame
-    [2565] = { name = MSC.L["Major Spirit (+20"], stats = { ITEM_MOD_SPIRIT_SHORT = 20 } },    -- Classic Endgame
+    [2443] = { name = MSC.L["Winter's Might (+7 SP)"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 7, ITEM_MOD_FROST_DAMAGE_SHORT = 7 } },
+    [804]  = { name = MSC.L["Lesser Intellect (+6)"], stats = { ITEM_MOD_INTELLECT_SHORT = 6 } },
+    [2566] = { name = MSC.L["Major Intellect (+22)"], stats = { ITEM_MOD_INTELLECT_SHORT = 22 } }, -- Classic Endgame
+    [2565] = { name = MSC.L["Major Spirit (+20)"], stats = { ITEM_MOD_SPIRIT_SHORT = 20 } },    -- Classic Endgame
     -- [[ 2H WEAPON ]]
-    [1899] = { name = MSC.L["Impact (+5 Dmg"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.4 }, requires2H = true },   
+    [1899] = { name = MSC.L["Impact (+5 Dmg)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.4 }, requires2H = true },   
     -- [[ CHEST ]]
     [1951] = { name = MSC.L["Lesser Absorption"], stats = { MSC_EHP_MOD = 5 } }, -- (Abstracted value for proc)
     -- [[ SHOULDER: NAXXRAMAS / SAPPHIRON ]]
@@ -785,195 +785,166 @@ local function AddOverrides(db)
 end
 
 AddOverrides({
-    -- [[ JEWELCRAFTING FIGURINES ]]
-    [24126] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 32, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=21 }, note = MSC.L["Use: 21 Avg Dodge (based on uptime)"] },
-    [24124] = { ITEM_MOD_INTELLECT_SHORT = 14, _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = MSC.L["Use: Mana restore avg to ~15 mp5"] },
-    [24125] = { ITEM_MOD_INTELLECT_SHORT = 33, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = MSC.L["Use: 25 Avg SP (based on uptime)"] },
-    [24128] = { ITEM_MOD_STAMINA_SHORT = 18, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = MSC.L["Use: 55 Avg AP (based on uptime)"] },
-    [24129] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Use: 60 Avg AP + Pet Heal utility"] },
-    [24127] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=45 }, note = MSC.L["Use: 45 Avg AP + Pet Heal utility"] },
-    [24123] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=34 }, note = MSC.L["Use: ~34 Avg SP"] },
-    [35702] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = MSC.L["Use: 46 Avg AP (Defensive)"] },
-    [35700] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = MSC.L["Use: ~23 mp5"] },
-    [35693] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = MSC.L["Use: 80 Avg AP"] },
-    [35694] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46 }, note = MSC.L["Use: Avg Summon Dmg"] },
-    [25829] = { ITEM_MOD_INTELLECT_SHORT = 25, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = MSC.L["Use: 21 Avg SP"] },
 
-    -- [[ QUEST REWARDS - PRE-RAID ]]
-    [28041] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33 Avg AP"] },
-    [28040] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = MSC.L["Use: 20 Avg SP"] },
-    [30300] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=150 }, note = MSC.L["Use: 150 Avg Armor"] },
-    [25620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33 Avg SP"] }, -- Ancient Crystal Talisman
-    [25619] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33 Avg AP"] }, -- Ancient War Talisman
-    [29370] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=22.5 }, note = MSC.L["Use: 22.5 Avg AP"] }, -- Terokkar Tablet Precision
-    [29376] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=150 }, note = MSC.L["Use: HP valued flat"] },
-    [29776] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33 Avg SP"] }, -- Core of Ar'kelos
-    [30340] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33 Avg AP"] }, -- Starkiller's
-    [30348] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = MSC.L["Use: 23 Avg SP"] }, -- Heavenly Inspiration
-    [25633] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=29 }, note = MSC.L["Use: 29 Avg AP"] }, -- Uniting Charm (Fixed: AP)
-    [25634] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=43 }, note = MSC.L["Use: 43 Avg HSP"] }, -- Ocarina (Fixed: Added Healing Version)
-    [25628] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Use: 30 Avg AP"] },
-    [32658] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=200 }, note = MSC.L["Use: HP valued flat"] },
-    [30351] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=12 }, note = MSC.L["Use: ~12 mp5"] },
-    [30345] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=14 }, note = MSC.L["Use: ~14 Avg SP"] },
-    [25937] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = MSC.L["Use: 10 Avg AP (3.3% Uptime)"] },
-    [27924] = { _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=15 }, note = MSC.L["Use: Heal Valued as flat Stam"] },
-    [29179] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = MSC.L["Use: 25 Avg SP"] },
-    [29180] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=39 }, note = MSC.L["Use: 39 Avg HSP"] },
-
-    -- [[ BADGE OF JUSTICE / REPUTATION ]]
-    [29384] = { ITEM_MOD_ATTACK_POWER_SHORT = 72, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46.3 }, note = MSC.L["Use: 46 Avg AP"] },
-    [29305] = { ITEM_MOD_SPELL_POWER_SHORT = 43, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25.8 }, note = MSC.L["Use: 26 Avg SP"] },
-    [38287] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 35, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=20 }, note = MSC.L["Use: 20 Avg Dodge"] },
-    [29181] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=20 }, note = MSC.L["Use: Aggro reduction utility"] },
-    [32654] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=35 }, note = MSC.L["Use: Heal"] },
-    [30841] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=46.6 }, note = MSC.L["Use: 46.6 Avg Agi"] },
-    [32864] = { ITEM_MOD_STAMINA_SHORT = 45, note = MSC.L["Proc: ~100 Avg Dodge (High Uptime)"] },
-
-    -- [[ DUNGEON DROPS ]]
-    [27891] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=216 }, note = MSC.L["Use: 216 Avg Armor"] },
-    [28121] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=100 }, note = MSC.L["Use: 600 ArP (Avg 100)"] },
-    [24390] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = MSC.L["Use: 22 Avg SP"] },
-    [27416] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = MSC.L["Use: 25 Avg SP"] },
-    [26055] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=16.6 }, note = MSC.L["Use: 16.6 Avg SP"] },
-    [25786] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=16.6 }, note = MSC.L["Use: 16.6 Avg SP"] },
-    [25936] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = MSC.L["Use: 25 Avg SP"] },
-    [24376] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = MSC.L["Use: Absorb valued as Health"] },
-    [27529] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=15 }, note = MSC.L["Use: Heal avg to 15 BV"] },
-    [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=38 }, note = MSC.L["Proc: 38 Avg Haste"] },
-  --  [28034] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = MSC.L["Proc: 50 Avg AP"] },
-    [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.6 }, note = MSC.L["Use: 21 Avg Haste"] },
-    [28726] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=38 }, note = MSC.L["Proc: 38 Avg Haste"] },
-    [28370] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = MSC.L["Proc: ~15 mp5"] },
-    [31617] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=58 }, note = MSC.L["Proc: 300 AP (Internal CD)"] },
-    [28240] = { ITEM_MOD_STAMINA_SHORT = 45, note = MSC.L["Use: Absorb valued as Stam"] },
-    [27770] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=19 }, note = MSC.L["Proc: ~19 Avg SP"] },
-    [30542] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=14 }, note = MSC.L["Use: 14 Avg Agi"] },
-    [28190] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=26.6 }, note = MSC.L["Proc: 160 Haste (15% spell proc) = ~26 Avg"] },
-
-    -- [[ RAID DROPS: T4 (KARA/GRUUL/MAG) ]]
-    [29383] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = MSC.L["Use: 25 Avg SP"] },
-    [28727] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=21 }, note = MSC.L["Proc: ~21 mp5"] },
-    [28579] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=65 }, note = MSC.L["Proc: ~65 Avg AP"] },
-    [28830] = { ITEM_MOD_ATTACK_POWER_SHORT = 40, _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=108 }, note = MSC.L["Proc: 108 Avg Haste"] },
-    [29132] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49.5 }, note = MSC.L["Use: 49.5 Avg HSP"] },
-    [28789] = { ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=28 }, note = MSC.L["Use: 170 SP"] },
-    [28528] = { ITEM_MOD_DODGE_RATING_SHORT = 38, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=50 }, note = MSC.L["Use: 300 Dodge"] },
-    [28590] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 73, _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=22 }, note = MSC.L["Use: 22 Avg mp5"] },
-    [28823] = { ITEM_MOD_MANA_REGENERATION_SHORT = 45, note = MSC.L["Proc: Chance to reduce mana cost avg to 45 mp5"] },
-    [28766] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=55 }, note = MSC.L["Proc: Lightning Capacitor Dmg avg to 55 SP"] },
-
-    -- [[ RAID DROPS: T5 (SSC/TK) ]]
-    [29923] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Proc: Rage/Energy gain avg to 30 AP"] },
-    [30726] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=53 }, note = MSC.L["Use: 53 Avg AP"] },
-    [30627] = { ITEM_MOD_CRIT_RATING_SHORT = 38, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=68 }, note = MSC.L["Proc: 340 AP (10s duration)"] },
-    [30665] = { _AUTO_PROC = { stat="ITEM_MOD_SPIRIT_SHORT", val=50 }, note = MSC.L["Use: 300 Spirit"] },
-    [30620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = MSC.L["Use: 130 SP"] },
-    [30629] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=40 }, note = MSC.L["Use: 145 Dodge"] },
-    [30448] = { ITEM_MOD_STAMINA_SHORT = 57, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=43 }, note = MSC.L["Proc: 130 SP"] },
-
-    -- [[ RAID DROPS: T6 / ZA / SUNWELL ]]
-    [32483] = { ITEM_MOD_SPELL_HASTE_RATING_SHORT = 25, ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=29 }, note = MSC.L["Use: 175 Haste"] },
-    [34429] = { ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=53 }, note = MSC.L["Use: 320 Haste (Decaying)"] },
-    [33829] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=35 }, note = MSC.L["Use: 211 SP"] },
-    [33831] = { ITEM_MOD_ATTACK_POWER_SHORT = 90, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Use: 360 AP"] },
-    [33830] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=43 }, note = MSC.L["Use: 260 Haste"] },
-    [32694] = { ITEM_MOD_DODGE_RATING_SHORT = 40, note = MSC.L["Use: 1750 HP"] },
-    [34428] = { ITEM_MOD_SPELL_POWER_SHORT = 54, _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=32 }, note = MSC.L["Use: 2000 Armor (Valued as defensive)"] },
-    [34471] = { ITEM_MOD_STAMINA_SHORT = 57, note = MSC.L["Proc: 152 Dodge"] },
-    [34430] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 119, _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=25 }, note = MSC.L["Use: Sustain"] },
-    [34050] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = MSC.L["Use: ~23 Avg SP"] },
-    [34579] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=22 }, note = MSC.L["Proc: ~22 Avg SP"] },
-    [33828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49 }, note = MSC.L["Proc: Heal Stacks avg to 49 Heal"] },
-    [34473] = { ITEM_MOD_STAMINA_SHORT = 57, _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=25 }, note = MSC.L["Proc: 152 Dodge for 10s (Low rate) = ~25 Avg"] },
-
-    -- [[ LEGACY / CLASSIC ]]
-    [11811] = { ITEM_MOD_SPELL_POWER_SHORT = 12, ITEM_MOD_INTELLECT_SHORT = 5, note = MSC.L["Passive: Resistances not valued"] },
-    [11815] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=22 }, note = MSC.L["Proc: 1.33% Proc @ 70 (Nerfed in TBC)"] },
-    [18820] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=29.1 }, note = MSC.L["Use: 29 Avg SP"] },
-    [19950] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=34 }, note = MSC.L["Use: Decaying stacks avg to ~34 SP"] },
-    [23035] = { ITEM_MOD_HIT_RATING_SHORT = 12.6, _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=16.6 }, note = MSC.L["Use: 16.6 Avg Haste"] },
-    [23041] = { ITEM_MOD_ATTACK_POWER_SHORT = 64, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43.3 }, note = MSC.L["Use: 43 Avg AP"] },
-    [22954] = { ITEM_MOD_CRIT_RATING_SHORT = 14, _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=33.3 }, note = MSC.L["Use: 33 Avg Haste"] },
-    [21670] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=140 }, note = MSC.L["Proc: ArP"] },
-    [19379] = { ITEM_MOD_SPELL_POWER_SHORT = 44, ITEM_MOD_SPELL_HIT_RATING_SHORT = 25.2, note = MSC.L["Passive: 25.2 Hit"] },
-    [23046] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = MSC.L["Use: 130 SP"] },
-    [23047] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25 }, note = MSC.L["Use: 450 Heal (Decaying)"] },
-    [23042] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = MSC.L["Use: 260 Def"] },
-    [23040] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=20 }, note = MSC.L["Use: 235 Block"] },
-    [23570] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43 }, note = MSC.L["Use: AP (Stacking)"] },
-    [21579] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=28 }, note = MSC.L["Proc: Dmg"] },
-    [23558] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = MSC.L["Use: Absorb"] },
-    [21647] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=75 }, note = MSC.L["Use: Threat Drop"] },
-    [21625] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=15 }, note = MSC.L["Use: Heal/Shield"] },
-    [21180] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Use: 280 AP"] },
-    [19339] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=55 }, note = MSC.L["Use: 330 Haste"] },
-    [19340] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, note = MSC.L["Use: Mana"] },
-    [19341] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Use: 1500 HP"] },
-    [19342] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = MSC.L["Use: Poison Dmg"] },
-    [19343] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = MSC.L["Use: 250 SP"] },
-    [19344] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Use: 250 SP (Hunter)"] },
-    [19345] = { _AUTO_PROC = { stat="ITEM_MOD_DODGE_RATING_SHORT", val=20 }, note = MSC.L["Use: Heal"] },
-    [13965] = { ITEM_MOD_CRIT_RATING_SHORT = 28, note = MSC.L["Passive: 2% Legacy Crit converts to 28 Rating"] },
-    [13968] = { ITEM_MOD_SPELL_CRIT_RATING_SHORT = 28, note = MSC.L["Passive: 2% Legacy Spell Crit converts to 28 Rating"] },
-    [19120] = { ITEM_MOD_ATTACK_POWER_SHORT = 15, note = MSC.L["Passive: Weighted average vs Undead/Demon"] },
-    [13209] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = MSC.L["Proc: Cannon dmg avg to ~10 AP"] },
-    [17774] = { _AUTO_PROC = { stat="ITEM_MOD_ALL_STATS_SHORT", val=8.3 }, note = MSC.L["Proc: 25 Stats with ~33% uptime"] },
-    [11810] = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 10, _AUTO_PROC = { stat="ITEM_MOD_STAMINA_SHORT", val=10 }, note = MSC.L["Proc: Dmg reduction value avg to Stam"] },
-    [12930] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=15 }, note = MSC.L["Passive: 29 SP"] },
-    [22678] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=12 }, note = MSC.L["Use: Dmg/Heal"] },
-
-    -- [[ DARKMOON / SPECIAL ]]
-    [31856] = { ITEM_MOD_ATTACK_POWER_SHORT = 120, ITEM_MOD_SPELL_POWER_SHORT = 80, note = MSC.L["Passive: Max Stacks (120 AP / 80 SP)"] },
-    [31858] = { ITEM_MOD_STAMINA_SHORT = 51, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = MSC.L["Proc: Holy Dmg avg to ~10 AP"] },
-    [31857] = { ITEM_MOD_STAMINA_SHORT = 51, note = MSC.L["Passive: 51 Stamina Base"] },
-    [19288] = { ITEM_MOD_MANA_REGENERATION_SHORT = 60, note = MSC.L["Proc: 100% Regen (Blue Dragon) avg to 60mp5"] },
-    [19491] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=20 }, note = MSC.L["Use: SP"] },
-
-    -- [[ UTILITY / ENGINEERING / BREWFEST ]]
-    [24096] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=36.6 }, note = MSC.L["Use: 36.6 Avg AP"] },
-    [24460] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=24 }, note = MSC.L["Use: Health valued as Defense"] },
-    [28134] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=23 }, note = MSC.L["Use: ~23 Avg SP"] },
-    [32770] = { ITEM_MOD_STAMINA_SHORT = 35, _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=100 }, note = MSC.L["Use: 1000 HP (Shared CD)"] },
-    [32771] = { ITEM_MOD_CRIT_RATING_SHORT = 24, _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Use: 30 Avg AP"] },
-    [23836] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10 }, note = MSC.L["Use: Stun/Dmg utility"] },
-    [23835] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=20 }, note = MSC.L["Use: Haste"] },
-    [32695] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Use: HP"] },
-    [37220] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = MSC.L["Use: Avg 20 BV"] },
-    [37128] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Use: 30 Avg AP"] },
-    [37127] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=45 }, note = MSC.L["Use: 265 Heal"] },
-    [37129] = { _AUTO_PROC = { stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=30 }, note = MSC.L["Use: Shield"] },
-    [37195] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=20 }, note = MSC.L["Use: Block value avg to 20"] },
-    [10645] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=50 }, note = MSC.L["Use: Dmg"] },
-    [10725] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=50 }, note = MSC.L["Use: Pet"] },
-    [10577] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=50 }, note = MSC.L["Use: Poly"] },
-
+	[30542] = { note = MSC.L["Use: Teleport (8 possible malfunctions!)"] },
+	[28789] = { note = MSC.L["Proc: 170 SP (On Resist Only)"] }, 
+	[34471] = { note = MSC.L["Passive: 15 mp5 + Heal Battery"] },
+	[30449] = { note = MSC.L["Pet Proc"] }, 
+	[11811] = { note = MSC.L["Passive: Resistances not valued"] },
+	
     -- [[ WEAPONS & CHAMPION ]]
-    [11684] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=30 }, note = MSC.L["Proc: Extra Swing value avg to 30 AP"] },
     [9449]  = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=150 }, note = MSC.L["Use: 50% Haste - Burst Value"] },
     [8345]  = { _AUTO_PROC = { stat="ITEM_MOD_FERAL_ATTACK_POWER_SHORT", val=80 }, note = MSC.L["Powershift: Energy Refund valued as 80 AP"] },
-    [23207] = { ITEM_MOD_SPELL_POWER_SHORT = 85, note = MSC.L["Passive: 85 SP vs Demon/Undead"] },
-    [23206] = { ITEM_MOD_ATTACK_POWER_SHORT = 150, note = MSC.L["Passive: 150 AP vs Demon/Undead"] },
+	
+	[833] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=1.38 }, note = MSC.L["Use: 500 Avg Heal (30m CD)"] }, -- Lifestone
+	[11819] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=1.67 }, note = MSC.L["Use: 1.67 Avg mp5 (15m CD)"] },
+    [11832] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2.8 }, note = MSC.L["Use: ~2.8 Avg mp5 from cost reduction (15m CD)"] },-- Burst of Knowledge: Assuming ~5 casts in 10s = 500 mana saved. Over 15m (900s), 500 / 180 = 2.8 MP5.
+    [17759] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=1.39 }, note = MSC.L["Use: ~1.4 Avg hp5 (30m CD)"] },
+    [21777] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=12 }, note = MSC.L["Use: 12 Avg mp5 (5m CD)"] }, 
+	[24390] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=6 }, note = MSC.L["Use: 6 Avg mp5 (3m CD)"] }, -- Auslese's Light Channeler (215 Mana / 180s)
+    [30841] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=18.3 }, note = MSC.L["Use: ~18.3 Avg mp5 from cost reduction (1m CD)"] },-- Lower City Prayerbook: Assuming ~10 casts during the 15s window = 220 mana saved. 220 mana / 60s CD = 18.3 mp5
+	
+    -- Pet/Minor damage effects assigned proxy Spell Power or Attack Power equivalents.
+    [18354] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=10 }, note = MSC.L["Equip: Imp Firebolt Dmg +8.1 (10 SP Proxy)"] }, 
+    [18355] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Equip: Pet Dmg +4% (20 AP Proxy)"] },
+    [18815] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=15 }, note = MSC.L["Equip: 13 Fire Thorns (15 SP Proxy)"] }, 
+    [18951] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=1 }, note = MSC.L["Equip: Reduced Fall Dmg (1 Agi Proxy)"] }, 
+
+    -- Direct Damage: (Avg Dmg / Cooldown Seconds) = DPS. DPS * 14 = AP Equivalent.
+    [23836] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=140 }, note = MSC.L["Use: 1200 Dmg (2m CD / ~140 AP Proxy)"] }, -- 10 DPS * 14
+    [10577] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10.5 }, note = MSC.L["Use: 450 AoE Dmg (10m CD / ~10.5 AP Proxy)"] }, -- 0.75 DPS * 14
+    
+    -- Small token utility scores so they don't read as 0.
+    [21756] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=5 }, note = MSC.L["Use: 30% Speed + Snare Immune (5 Agi Proxy)"] }, 
+    [21758] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=4.5 }, note = MSC.L["Use: 4.5 Avg AP (5m CD)"] }, 
+
+    -- Damage Reduction -> Block Value Proxy: DR * (Duration / Cooldown).
+    [21760] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=1.33 }, note = MSC.L["Use: 1.33 Avg DR (5m CD / Block Proxy)"] }, -- 20 DR * (20s/300s)
+    [21763] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=14 }, note = MSC.L["Use: Summon Truesilver Boar (14 AP Proxy)"] }, -- Assuming ~1 DPS avg over 15m
+    [21784] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=2.33 }, note = MSC.L["Use: 2.33 Avg DR (5m CD / Block Proxy)"] }, -- 35 DR * (20s/300s)
+    [22954] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=25 }, note = MSC.L["Use: 25 Avg Haste (2m CD)"] }, 
+    [23001] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=5 }, note = MSC.L["Use: Threat Reduction (5 Agi Proxy)"] }, 
+    [23040] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=39.2 }, note = MSC.L["Use: 39.2 Avg Block Value (2m CD)"] },
+
+	-- Procs and Proxies
+    [22321] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=35 }, note = MSC.L["Equip: Fire Dmg Proc (~35 AP Proxy)"] }, -- Heart of Wyrmthalak (Assuming ~1 PPM)
+    
+    -- Conditional vs Undead/Demons (Calculated at full value, note explains condition)
+    [23206] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=150 }, note = MSC.L["Equip: 150 AP (vs Undead/Demons)"] }, -- Mark of the Champion (Melee)
+    [23207] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=85 }, note = MSC.L["Equip: 85 SP (vs Undead/Demons)"] }, -- Mark of the Champion (Caster)
+
+    -- Standard Cooldown Averages (Stat * Duration / CD)
+    [23041] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43.3 }, note = MSC.L["Use: 43.3 Avg AP (2m CD)"] }, -- Slayer's Crest (260 AP / 20s / 120s)
+    [23046] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21.7 }, note = MSC.L["Use: 21.7 Avg SP (2m CD)"] }, -- Restrained Essence of Sapphiron (130 SP / 20s / 120s)
+    [24124] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Use: Summon Felsteel Boar (20 AP Proxy)"] }, -- Figurine - Felsteel Boar
+    [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.7 }, note = MSC.L["Use: 21.7 Avg Haste (2m CD)"] }, -- Abacus of Violent Odds (Item ID)
+    [29383] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46.3 }, note = MSC.L["Use: 46.3 Avg AP (2m CD)"] }, -- Bloodlust Brooch (278 AP / 20s / 120s)
+    [29776] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33.3 Avg AP (2m CD)"] }, -- Core of Ar'kelos (200 AP / 20s / 120s)
+    [30293] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=39.7 }, note = MSC.L["Use: 39.7 Avg Heal / 13.2 Avg SP (90s CD)"] }, -- Heavenly Inspiration (238 Heal / 15s / 90s)
+    [30665] = { _AUTO_PROC = { stat="ITEM_MOD_SPIRIT_SHORT", val=50 }, note = MSC.L["Use: 50 Avg Spirit (2m CD)"] }, -- Earring of Soulful Meditation (300 Spirit / 20s / 120s)
+    
+	-- Charge-based Cooldowns
+    [23047] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=37.5 }, note = MSC.L["Use: 5 Spell Charges (37.5 Avg Heal Proxy / 2m CD)"] }, -- Eye of the Dead (450 Heal * 5)
+    
+    -- Identical Faction Quest Rewards
+    [25619] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=17.3 }, note = MSC.L["Use: 17.3 Avg SP (2m CD)"] }, -- Glowing Crystal Insignia (Horde)
+    [25620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=17.3 }, note = MSC.L["Use: 17.3 Avg SP (2m CD)"] }, -- Ancient Crystal Talisman (Alliance)
+    
+    -- Identical Faction PvP Trinkets
+    [25628] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=23.1 }, note = MSC.L["Use: 23.1 Avg AP (2m CD)"] }, -- Ogre Mauler's Badge (185 AP / 15s / 120s)
+    [25633] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=23.1 }, note = MSC.L["Use: 23.1 Avg AP (2m CD)"] }, -- Uniting Charm (185 AP / 15s / 120s)
+    
+    [25634] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=35.5 }, note = MSC.L["Use: 35.5 Avg Heal / 11.8 Avg SP (2m CD)"] }, -- Oshu'gun Relic (213 Heal / 20s / 120s)
+    [27828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=47 }, note = MSC.L["Use: 47 Avg Heal / 15.6 Avg SP (2m CD)"] }, -- Warp-Scarab Brooch (282 Heal / 20s / 120s)
+    
+    -- Conditional On-Kill Restores (Assumes optimal usage on Cooldown for Max Potential)
+    [26055] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=37.5 }, note = MSC.L["Use: 37.5 Max mp5 (Requires Killingblow / 2m CD)"] }, -- Oculus of the Hidden Eye (900 Mana / 120s)
+    [27416] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=37.5 }, note = MSC.L["Use: 37.5 Max hp5 (Requires Killingblow / 2m CD)"] }, -- Fetish of the Fallen (900 Health / 120s)
+    [28108] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=100 }, note = MSC.L["Equip: 100 Max mp5 (Requires Killingblows / 10s CD)"] }, -- Power Infused Mushroom
+    [28109] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=100 }, note = MSC.L["Equip: 100 Max hp5 (Requires Killingblows / 10s CD)"] }, -- Essence Infused Mushroom
+  
+    -- Faction Equivalent Proc Trinkets
+    [27920] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, note = MSC.L["Equip: Melee Heal or Ranged Mana Proc (~10 mp5 Proxy)"] }, -- Mark of Conquest
+    [27921] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, note = MSC.L["Equip: Melee Heal or Ranged Mana Proc (~10 mp5 Proxy)"] }, -- Mark of Conquest
+
+    -- Stacking/Complex Healing Cooldowns
+    -- Ribbon of Sacrifice: Max stacks yield 150 bonus healing received. Very hard to average, assigning proxy.
+    [28590] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=30 }, note = MSC.L["Use: Stacking Heal Bonus (~30 Heal Proxy)"] },
+
+    -- Class Specific / Unique Procs
+    [30446] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=70 }, note = MSC.L["Equip: +70 AP to Battle Shout"] }, -- Solarian's Sapphire (Warrior)
+    [30448] = { _AUTO_PROC = { stat="ITEM_MOD_RANGED_ATTACK_POWER_SHORT", val=40 }, note = MSC.L["Equip: Shot Dmg Bonus (~40 RAP Proxy)"] }, -- Talon of Al'ar (Hunter)
+    [30621] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=5 }, note = MSC.L["Equip: Threat Reduction on Crits (5 Agi Proxy)"] }, -- Prism of Inner Calm
+    [30720] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=28.1 }, note = MSC.L["Equip: 28.1 Avg SP / ~25 mp5 via Mana Gems"] },-- Serpent-Coil Braid (Mage): Gems have 2m CD. 225 SP / 15s / 120s = 28.1 SP. 25% gem mana is ~600 extra mana every 2m = ~25 mp5.
+
+	-- High-End Raid / Badge Trinkets
+    [32483] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=29.2 }, note = MSC.L["Use: 29.2 Avg Haste (2m CD)"] }, -- The Skull of Gul'dan (175 Haste / 20s / 120s)
+    [32654] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=36 }, note = MSC.L["Use: 36 Avg AP (1m CD)"] }, -- Crystalforged Trinket (216 AP / 10s / 60s)
+    [33828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=66 }, note = MSC.L["Use: 66 Avg Heal / 22 Avg SP (2m CD)"] }, -- Tome of Diabolic Remedy (396 Heal / 20s / 120s)
+    [33829] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=35.2 }, note = MSC.L["Use: 35.2 Avg SP (2m CD)"] }, -- Hex Shrunken Head (211 SP / 20s / 120s)
+    [33831] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Use: 60 Avg AP (2m CD)"] }, -- Berserker's Call (360 AP / 20s / 120s)
+    [34430] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=33.3 }, note = MSC.L["Use: 33.3 Avg mp5 (5m CD)"] }, -- Glimmering Naaru Sliver (2000 Total Mana / 300s)
+
+    -- Battlemaster's Trinkets (1750 Max HP / 15s / 180s = 145.8 Avg Health)
+    [33832] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Determination
+    [34049] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Audacity
+    [34050] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Perseverance
+    [34578] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Determination
+    [34579] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Audacity
+    [34580] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Perseverance
+
+    -- Jewelcrafting Figurines (Phase 5 IDs)
+    [35694] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Use: Summon Khorium Boar (20 AP Proxy)"] }, 
+    [35702] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=53.3 }, note = MSC.L["Use: 53.3 Avg AP (90s CD)"] }, -- Figurine - Shadowsong Panther (320 AP / 15s / 90s)
+    [35703] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=25 }, note = MSC.L["Use: 25 Avg mp5 (3m CD)"] }, -- Figurine - Seaspray Albatross (900 Mana / 180s)
+
+    -- Brewfest Event Trinkets
+    [38287] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46.3 }, note = MSC.L["Use: 46.3 Avg AP (2m CD)"] }, -- Empty Mug of Direbrew (278 AP / 20s / 120s)
+    [38288] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49.5 }, note = MSC.L["Use: 49.5 Avg Heal / 16.5 Avg SP (2m CD)"] }, -- Direbrew Hops (297 Heal / 20s / 120s)
+    [38289] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=33.3 }, note = MSC.L["Use: 33.3 Avg Block Value (2m CD)"] }, -- Coren's Lucky Coin (200 BV / 20s / 120s)
+    [38290] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25.8 }, note = MSC.L["Use: 25.8 Avg SP (2m CD)"] }, -- Dark Iron Smoking Pipe (155 SP / 20s / 120s)
+
+    -- Starter / TBC Classic Boost Item
+    [185988] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=3.3 }, note = MSC.L["Use: 3.3 Avg hp5 (10m CD)"] }, -- Communal Stone of Stoicism (400 Avg Health / 600s)
+
 })
 
 -- [[ PVP UTILITY OVERRIDES ]]
 local function AddPvPTrinkets()
+    -- Rank 1 (Classic Insignias - Class Specific CC Breaks)
     local pvpIDs = {18854, 18856, 18849, 18851, 18852, 18853, 18850, 18846, 18834, 18845, 18841, 18839, 18832, 18835, 18837, 18838}
     for _, id in ipairs(pvpIDs) do
-        -- Wrap the note here:
-        MSC.ItemOverrides[id] = { MSC_PVP_UTILITY = 60, estimate = true, note = MSC.L["CC Break (Rank 1)"] }
+        -- Initialize if nil, otherwise merge to avoid wiping base stats
+        MSC.ItemOverrides[id] = MSC.ItemOverrides[id] or {}
+        MSC.ItemOverrides[id].MSC_PVP_UTILITY = 60
+        MSC.ItemOverrides[id].estimate = true
+        MSC.ItemOverrides[id].note = MSC.L["CC Break (Rank 1)"]
+        
         MSC.TrinketDB[id] = MSC.ItemOverrides[id]
     end
     
-    -- Wrap the note here:
-    local r2 = { MSC_PVP_UTILITY = 80, estimate = true, note = MSC.L["CC Break (Rank 2)"] }
-    MSC.ItemOverrides[28234] = r2; MSC.TrinketDB[28234] = r2
-    MSC.ItemOverrides[28235] = r2; MSC.TrinketDB[28235] = r2
-    
-    -- Wrap the note here:
-    local r3 = { MSC_PVP_UTILITY = 100, estimate = true, note = MSC.L["CC Break (Rank 3)"] }
-    MSC.ItemOverrides[37864] = r3; MSC.TrinketDB[37864] = r3
-    MSC.ItemOverrides[37865] = r3; MSC.TrinketDB[37865] = r3
+    -- Rank 2 (TBC Level 70 Medallions - All CC Break + Resilience)
+    -- Includes your previously commented TBC IDs (30348, 30351, 30345, 28240)
+    local r2_ids = {28234, 28235, 30348, 30351, 30345, 28240}
+    for _, id in ipairs(r2_ids) do
+        MSC.ItemOverrides[id] = MSC.ItemOverrides[id] or {}
+        MSC.ItemOverrides[id].MSC_PVP_UTILITY = 80
+        MSC.ItemOverrides[id].estimate = true
+        MSC.ItemOverrides[id].note = MSC.L["CC Break (Rank 2)"]
+        
+        MSC.TrinketDB[id] = MSC.ItemOverrides[id]
+    end
+
+    -- Rank 3 (WotLK/Late TBC - e.g., Titan-Forged / Level 80 variants)
+    local r3_ids = {37864, 37865}
+    for _, id in ipairs(r3_ids) do
+        MSC.ItemOverrides[id] = MSC.ItemOverrides[id] or {}
+        MSC.ItemOverrides[id].MSC_PVP_UTILITY = 100
+        MSC.ItemOverrides[id].estimate = true
+        MSC.ItemOverrides[id].note = MSC.L["CC Break (Rank 3)"]
+        
+        MSC.TrinketDB[id] = MSC.ItemOverrides[id]
+    end
 end
 AddPvPTrinkets()
 
@@ -984,7 +955,7 @@ AddPvPTrinkets()
 -- We define these here, but Data_Sets.lua populates them.
 if not MSC.ItemSetMap then MSC.ItemSetMap = {} end
 MSC.SetNameToID = {}
-MSC.RawSetData = {} -- Deprecated, but kept to prevent nil errors if referenced elsewhere
+MSC.RawSetData = {}
 
 function MSC:GetSetBonusDefinition(setID, count)
     if MSC.SetBonusScores and MSC.SetBonusScores[setID] and MSC.SetBonusScores[setID][count] then

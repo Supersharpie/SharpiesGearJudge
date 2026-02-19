@@ -65,15 +65,9 @@ function MSC:ApplyDynamicAdjustments()
     -- 1. CHECK FOR MANUAL OVERRIDE 
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
         specKey = MSC.ManualSpec
+        local found = false
         
-        -- [[ FORCE DYNAMIC CALCULATION FOR MANUAL SELECTION ]]
-        if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
-            local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights(specKey)
-            if dynWeights then
-                return dynWeights, dynKey 
-            end
-        end
-
+        -- [[ A. PRIORITY 1: CHECK CUSTOM DATABASE (Pawn Imports) ]]
         if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[specKey] then
              local data = SharpiesGearJudgeDB.customWeights[specKey]
              
@@ -83,10 +77,26 @@ function MSC:ApplyDynamicAdjustments()
              else
                  rawWeights = data
              end
-        elseif MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
-            rawWeights = MSC.CurrentClass.Weights[specKey]
-        elseif MSC.CurrentClass and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
-            rawWeights = MSC.CurrentClass.LevelingWeights[specKey]
+             found = true
+        end
+        
+        -- [[ B. PRIORITY 2: FORCE DYNAMIC CALCULATION ]]
+        if not found and MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
+            local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights(specKey)
+            if dynWeights then
+                rawWeights = dynWeights
+                specKey = dynKey
+                found = true
+            end
+        end
+        
+        -- [[ C. PRIORITY 3: FALLBACK TO STATIC ]]
+        if not found then
+            if MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
+                rawWeights = MSC.CurrentClass.Weights[specKey]
+            elseif MSC.CurrentClass and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
+                rawWeights = MSC.CurrentClass.LevelingWeights[specKey]
+            end
         end
         
     else

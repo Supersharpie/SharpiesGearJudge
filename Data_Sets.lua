@@ -577,72 +577,117 @@ end
 -- =============================================================
 MSC.ProcDB = {
     -- [[ CLASSIC / ERA ]]
-    [11815] = { score=20, note = MSC.L["ERA BiS for Melee (HoJ)"] }, 
-    [19379] = { score=35, note = MSC.L["ERA BiS Caster (Nelth's Tear)"] },
-    [19406] = { score=35, note = MSC.L["ERA BiS Physical (DFT)"] },
-    [19019] = { score=30, note = MSC.L["Legendary Threat Gen (TF)"] },
-    [871]   = { score=40, note = MSC.L["ERA Top Tier Prot Pally"] }, -- Flurry Axe
-    [7717]  = { ppm=1.0, val=15, stat="MSC_WEAPON_DPS", note = MSC.L["Bladestorm Proc"] },
+
+    [19379] = { score=35, note = MSC.L["Classic Caster BiS"] }, -- Nelth's Tear
+    [19406] = { score=35, note = MSC.L["Classic Physical BiS"] }, -- Drake Fang Talisman
+    [19019] = { score=30, note = MSC.L["Legendary Threat Generation"] }, -- Thunderfury
+    [871]   = { score=40, note = MSC.L["Classic Top Tier (Prot Pally)"] }, -- Flurry Axe
+    [7717]  = { ppm=1.0, val=15, stat="MSC_WEAPON_DPS", note = MSC.L["Chance to Trigger Bladestorm"] },
+
+    -- [[ ERA TRINKETS: DROPS & QUESTS ]]
+    [21670] = { ppm=1.0, val=200, dur=15, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", note = MSC.L["Armor Penetration Proc"] }, -- Badge of the Swarmguard
+    [22954] = { ppm=0.5, val=200, dur=15, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["Haste Use Effect"] }, -- Kiss of the Spider
+    [23041] = { score=50, note = MSC.L["Attack Power Use Effect"] }, -- Slayer's Crest
+    [23570] = { score=45, note = MSC.L["Ramping Attack Power"] }, -- Jom Gabbar
+    [19339] = { ppm=0.5, val=330, dur=20, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["Haste Use Effect (Mage Only)"] }, -- MQG
+    [21625] = { score=40, note = MSC.L["Heals Grant Shield"] }, -- Scarab Brooch
+    [23047] = { score=60, note = MSC.L["Healing/Damage Charge System"] }, -- Eye of the Dead
+    [18820] = { score=30, note = MSC.L["Spell Power Use Effect"] }, -- TOEP
+    [23046] = { score=55, note = MSC.L["Spell Power Use Effect"] }, -- Restrained Essence
+    [19341] = { score=40, note = MSC.L["Health Use Effect"] }, -- Lifegiving Gem
+    [21180] = { score=45, note = MSC.L["Attack Power Use Effect"] }, -- Earthstrike
+    [18469] = { score=35, note = MSC.L["Decreasing Spell Power/Damage"] }, -- Zandalarian Hero Charm
+    [20130] = { score=100, note = MSC.L["High Regen Scaling (Warrior)"] }, -- Diamond Flask
+
+    -- [[ ERA TRINKETS: UTILITY & ENGINEERING ]]
+    [10725] = { score=15, note = MSC.L["Summons Battle Chicken (Haste Buff)"] },
+    [16022] = { score=10, note = MSC.L["Summons Dragonling (Fire Vuln.)"] },
+    [10645] = { score=10, note = MSC.L["Burst Damage (Life Cost)"] },
+    [2820]  = { score=5,  note = MSC.L["Run Speed Use Effect"] },
+    [11905] = { score=10, note = MSC.L["Ranged Damage/Stun/Daze"] },
+	
 }
 
 if not MSC.IsEra then
     local tbcProcs = {
+	-- Extra Attacks & Weapon Procs
+    [11684] = { ppm=1.0, val=0, stat="ITEM_MOD_MELEE_ATTACK_POWER_SHORT", note = MSC.L["Chance on hit: 2 Extra Attacks"] }, -- Ironfoe
+    [11815] = { ppm=1.0, val=0, stat="ITEM_MOD_MELEE_ATTACK_POWER_SHORT", note = MSC.L["Chance on hit: 1 Extra Attack (2s CD)"] }, -- Hand of Justice
 
-        [28223] = { ppm=1.5, val=320, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Abacus (Fixed Stat: It's Haste, not AP)
-        [28190] = { ppm=1.0, val=160, dur=6,  stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Scarab of the Infinite Cycle
-        [28528] = { score=40, note = MSC.L["Moroes' Watch (Dodge Use)"] }, 
-        [24460] = { score=35, note = MSC.L["Talisman of Tenacity (Use: HP)"] },
-		
-        -- [[ TBC PHASE 2 (SSC/TK) ]]
-        [30449] = { ppm=1.5, val=130, dur=10, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Pet Proc"] },
-        [29923] = { score=65, note = MSC.L["Rage/Energy Proc"] }, 
-        [29996] = { score=80, note = MSC.L["BiS (Infinite Energy Proc)"] }, -- Rod of the Sun King
-		
-        -- [[ TBC PHASE 3 (Hyjal/BT) ]]
-        [32471] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Shard of Contempt 
-        [32361] = { ppm=1.0, val=200, dur=15, stat="ITEM_MOD_SPELL_POWER_SHORT" }, -- Skull of Gul'dan (Actually Haste Use, but valued high)
-        [32375] = { ppm=0.5, val=2000, dur=10, stat="ITEM_MOD_ARMOR_SHORT", note = MSC.L["BiS Tank (Proc)"] }, -- Bulwark
-        [32336] = { ppm=1.0, val=25, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["BiS Hunter (Mana Proc)"] }, -- Black Bow
-        [32236] = { ppm=1.0, val=40, stat="MSC_WEAPON_DPS" }, -- Syphon of the Nathrezim
+    -- Damage Procs (Val is the Raw Damage)
+    [12805] = { ppm=1.0, val=60, stat="MSC_WEAPON_DPS", note = MSC.L["Chance on hit: 60 Avg Fire Dmg"] }, -- Orb of Fire
+    [19289] = { ppm=1.0, val=250, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: 250 Nature Dmg Proc"] }, -- DMC: Maelstrom
+    [28579] = { ppm=1.0, val=277, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: 277 Nature Poison Dmg Proc"] }, -- Romulo's Poison Vial
+    [34470] = { ppm=4.0, val=380, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Equip: 380 Avg Dmg on DoT tick (15s CD)"] }, -- Timbal's Focusing Crystal
+    [28785] = { ppm=24.0, val=750, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Equip: 750 Avg Dmg every 3 Crits (2.5s CD)"] }, -- The Lightning Capacitor
 
-        -- [[ TBC PHASE 4 (ZA) ]]
-       
-        [28767] = { score=40 }, -- The Decapitator
+    -- Struck in Combat / Defensive Procs
+    [11302] = { score=20, note = MSC.L["Equip: 2% Chance on Struck for Holy Shield"] }, -- Uther's Strength
+    [11810] = { ppm=0.3, val=25, stat="ITEM_MOD_BLOCK_VALUE_SHORT", note = MSC.L["Equip: 1% Chance on Struck for -25 Dmg Taken"] }, -- Force of Will
+    [14557] = { ppm=0.3, val=250, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", note = MSC.L["Equip: 1% Chance on Struck for 250 Party Armor"] }, -- Lion Horn of Stormwind
+    [17774] = { ppm=0.5, val=25, stat="ITEM_MOD_ALL_STATS", note = MSC.L["Equip: 2% Chance on Struck for +25 All Stats"] }, -- Mark of the Chosen
+    [34473] = { ppm=2.0, val=152, stat="ITEM_MOD_DODGE_RATING_SHORT", note = MSC.L["Equip: 152 Dodge at <35% HP (30s CD)"] }, -- Commendation of Kael'thas
+    [185986]= { ppm=0.5, val=350, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", note = MSC.L["Equip: 2% Chance on Struck for 350 Armor"] }, -- Communal Stone
 
-        -- [[ TBC PHASE 5 (Sunwell) ]]
-        [34472] = { ppm=1.0, val=230, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" }, -- Shard of Contempt (Actually this ID is Grey Tongue's)
-        [34427] = { score=100, note = MSC.L["BiS (Mechanic)"] }, -- Blackened Naaru Sliver
-        [34334] = { score=500, note = MSC.L["LEGENDARY"] }, -- Thori'dal
+    -- Healing & Mana Procs / Darkmoon Cards
+    [19287] = { ppm=1.0, val=150, stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", note = MSC.L["Equip: 150 Avg Heal on melee"] }, -- DMC: Heroism
+    [19288] = { score=50, note = MSC.L["Equip: 100% Mana Regen while casting (15s)"] }, -- DMC: Blue Dragon
+    [19290] = { score=20, note = MSC.L["Chance to Self-Resurrect"] }, -- DMC: Twisting Nether
+    [27896] = { ppm=0.5, val=260, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 260 Mana on Struck"] }, -- Alembic of Infernal Power
+    [27922] = { ppm=3.5, val=150, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 150 Avg Mana (17s CD)"] }, -- Mark of Defiance
+    [27924] = { ppm=3.5, val=150, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 150 Avg Mana (17s CD)"] }, -- Mark of Defiance
+    [27926] = { ppm=2.4, val=150, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 150 Avg Mana (25s CD)"] }, -- Mark of Vindication
+    [27927] = { ppm=2.4, val=150, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 150 Avg Mana (25s CD)"] }, -- Mark of Vindication
+    [28823] = { ppm=1.0, val=450, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 2% Chance on Heal for Free Cast (450 Mana)"] }, -- Eye of Gruul
+    [30619] = { ppm=4.0, val=500, stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", note = MSC.L["Equip: 500 HoT (15s CD)"] }, -- Fel Reaver's Piston
+    [30663] = { ppm=1.5, val=335, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 335 Mana (40s CD)"] }, -- Fathom-Brooch
+    [32496] = { ppm=1.2, val=76, stat="ITEM_MOD_MANA_REGENERATION_SHORT", note = MSC.L["Equip: 76 mp5 proc (50s CD)"] }, -- Memento of Tyrande
 
-        -- [[ CRAFTED WEAPONS ]]
-        [28437] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonmaw
-        [28438] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike   
-        [28429] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart    
-        [28433] = { score=50, note = MSC.L["Stun Proc PvP BiS"] }, -- Stormherald
-    [28830] = { ppm=1.0, val=325, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["BiS Physical"] },-- Dragonspine Trophy (Gruul)
-    [30627] = { ppm=1.33, val=340, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },-- Tsunami Talisman (Leotheras)
-    [32505] = { ppm=1.0, val=300, dur=10, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },-- Madness of the Betrayer (Council)
-    [33830] = { ppm=0.5, val=360, dur=20, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Use Effect"] }, -- Berserker's Call (Zul'Aman)
-    [28034] = { ppm=1.2, val=300, dur=10, stat="ITEM_MOD_ATTACK_POWER_SHORT" },-- Hourglass of the Unraveller (Black Morass)
-    [29383] = { ppm=0.5, val=278, dur=20, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Use Effect"] },-- Bloodlust Brooch (Badges)
+    -- Stat Procs (Val is the Full Stat Amount)
+    [27683] = { ppm=1.33, val=320, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", note = MSC.L["Equip: 320 Haste (45s CD)"] }, -- Quagmirran's Eye
+    [28370] = { score=40, note = MSC.L["Equip: Mana Regen Proc (50s CD)"] }, -- Bangle of Endless Blessings (Complex Regen % Formula)
+    [28034] = { ppm=1.2, val=300, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: 300 AP (50s CD)"] }, -- Hourglass of the Unraveller
+    [28190] = { ppm=1.33, val=320, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", note = MSC.L["Equip: 320 Haste (45s CD)"] }, -- Scarab of the Infinite Cycle
+    [28418] = { ppm=1.33, val=225, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Equip: 225 SP (45s CD)"] }, -- Shiffar's Nexus-Horn
+    [30450] = { ppm=2.0, val=1000, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", note = MSC.L["Equip: 1000 ArP (30s CD)"] }, -- Warp-Spring Coil
+    [30447] = { ppm=1.33, val=290, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Equip: 290 SP (45s CD)"] }, -- Tome of Fiery Redemption
+    [28830] = { ppm=3.0, val=325, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["Equip: 325 Haste (20s CD)"] }, -- Dragonspine Trophy
+    [30626] = { ppm=1.33, val=190, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Equip: 190 SP (45s CD)"] }, -- Sextant of Unstable Currents
+    [30627] = { ppm=1.33, val=340, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: 340 AP (45s CD)"] }, -- Tsunami Talisman
+    [32505] = { ppm=1.0, val=300, stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", note = MSC.L["Equip: 300 ArP (~20% Uptime)"] }, -- Madness of the Betrayer
+    [34427] = { ppm=1.33, val=440, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: Stacking AP Proc (440 Max / 45s CD)"] }, -- Blackened Naaru Sliver
+    [34472] = { ppm=1.33, val=230, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: 230 AP (45s CD)"] }, -- Shard of Contempt
 
-    -- [[ 2. CASTER TRINKETS ]]
-    [32483] = { ppm=0.5, val=175, dur=20, stat="ITEM_MOD_HASTE_RATING_SHORT", note = MSC.L["BiS Caster"] },-- The Skull of Gul'dan (Illidan)
-    [33829] = { ppm=0.5, val=211, dur=20, stat="ITEM_MOD_SPELL_POWER_SHORT", note = MSC.L["Use Effect"] },-- Hex Shrunken Head (Zul'Aman)
-    [27683] = { ppm=1.33, val=320, dur=6, stat="ITEM_MOD_HASTE_RATING_SHORT" },-- Quagmirran's Eye (Slave Pens)
-    [29370] = { ppm=0.5, val=155, dur=20, stat="ITEM_MOD_SPELL_POWER_SHORT" },-- Icon of the Silver Crescent (Badges)
-    [30626] = { ppm=1.33, val=190, dur=15, stat="ITEM_MOD_SPELL_POWER_SHORT" },-- Sextant of Unstable Currents (Vashj)
+    -- Stacking High-Uptime Procs (Assumes Max Stacks Reached Quickly)
+    [31856] = { ppm=10.0, val=120, stat="ITEM_MOD_ATTACK_POWER_SHORT", note = MSC.L["Equip: 120 Max AP / 80 Max SP (Stacking)"] }, -- DMC: Crusade
+    [31857] = { ppm=10.0, val=50, stat="ITEM_MOD_CRIT_RATING_SHORT", note = MSC.L["Equip: Stacking Crit"] }, -- DMC: Wrath
 
-    -- [[ 3. TANK / DEFENSIVE ]]
-    [34473] = { ppm=2.0, val=152, dur=10, stat="ITEM_MOD_DODGE_RATING_SHORT" },-- Commendation of Kael'thas (MgT)
-    [32501] = { ppm=0.5, val=1750, dur=20, stat="ITEM_MOD_HEALTH_SHORT", note = MSC.L["Use: +1750 HP"] },-- Shadowmoon Insignia (Gurtogg)
+    -- Conditional & On-Kill Stats (Score Assigned instead of PPM)
+    [13209] = { score=40, note = MSC.L["Equip: 81 AP (vs Undead)"] }, -- Seal of the Dawn
+    [31859] = { score=20, note = MSC.L["Equip: Random Stat Buff on Kill"] }, -- DMC: Madness
+    [32770] = { score=30, note = MSC.L["Equip: 140 Max AP (Requires Killingblows)"] }, -- Skyguard Silver Cross
+    [32771] = { score=30, note = MSC.L["Equip: 80 Max SP (Requires Killingblows)"] }, -- Airman's Ribbon of Gallantry
 
-    -- [[ 4. CRAFTED WEAPONS (Examples) ]]
-    [28439] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
-    [28430] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" }, -- Lionheart Executioner
-}
- 
+    -- Ashtongue Talismans (Flat Score Assigned for Class Procs)
+    [32485] = { score=40, note = MSC.L["Equip: Warrior Proc (Heal + 55 Str)"] },
+    [32486] = { score=40, note = MSC.L["Equip: Druid Proc (Str / SP / Heal)"] },
+    [32487] = { score=40, note = MSC.L["Equip: Hunter Proc (275 AP)"] },
+    [32488] = { score=40, note = MSC.L["Equip: Mage Proc (145 Haste)"] },
+    [32489] = { score=40, note = MSC.L["Equip: Paladin Proc (Heal / Dmg)"] },
+    [32490] = { score=40, note = MSC.L["Equip: Priest Proc (220 SP / Heal)"] },
+    [32491] = { score=40, note = MSC.L["Equip: Shaman Proc (Mana / 275 AP)"] },
+    [32492] = { score=40, note = MSC.L["Equip: Rogue Proc (145 Crit)"] },
+    [32493] = { score=40, note = MSC.L["Equip: Warlock Proc (220 SP)"] },
+    [30664] = { score=30, note = MSC.L["Equip: Druid Blessing (3% Proc)"] },
 
+	-- Crafted Weapons (Haste Procs are Melee Haste)
+	[28437] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonmaw
+	[28438] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
+	[28439] = { ppm=1.0, val=212, dur=10, stat="ITEM_MOD_HASTE_RATING_SHORT" }, -- Dragonstrike
+	[28429] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" },     -- Lionheart Champ
+	[28430] = { ppm=1.0, val=100, dur=10, stat="ITEM_MOD_STRENGTH_SHORT" },     -- Lionheart Exec
+
+ }
     -- Merge TBC Procs into Main Table
     for k, v in pairs(tbcProcs) do MSC.ProcDB[k] = v end
 end

@@ -335,15 +335,19 @@ function MSC.InitReceiptView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     f.Info = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Info:SetPoint("TOPLEFT", 40, -10)
     f.Score = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Score:SetPoint("TOPRIGHT", -40, -10)
-    local c = CreateFrame("Frame", nil, f); c:SetSize(400, 340); c:SetPoint("TOP", 0, -60)
+    
+    local c = CreateFrame("Frame", nil, f); c:SetSize(400, 340); c:SetPoint("TOP", 0, -50) 
+    
     local function CreatePanel(name, w, h, point, relTo, relPoint, x, y)
         local p = CreateFrame("Frame", nil, c, "BackdropTemplate"); p:SetSize(w, h); p:SetPoint(point, relTo, relPoint, x, y)
         p:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1}); p:SetBackdropColor(unpack(MSC.Colors.BgPanel)); p:SetBackdropBorderColor(0,0,0,0.5)
         local lbl = p:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); lbl:SetPoint("BOTTOMLEFT", p, "TOPLEFT", 0, 4); lbl:SetText(name); lbl:SetTextColor(0.7, 0.7, 0.7); return p
     end
+    
     local pArmor = CreatePanel(MSC.L["ARMOR"], 220, 240, "TOPLEFT", c, "TOPLEFT", 0, 0)
     local pJewel = CreatePanel(MSC.L["ACCESSORIES"], 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 20, 0)
-    local pWeap  = CreatePanel(MSC.L["WEAPONS"], 465, 75, "TOP", c, "TOP", 0, -260)
+    
+    local pWeap  = CreatePanel(MSC.L["WEAPONS"], 465, 75, "TOP", c, "TOP", 0, -250)
 
     local function CreateSlot(id, parentPanel, x, y, label)
         local btn = CreateFrame("Button", nil, f, "ItemButtonTemplate"); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
@@ -364,10 +368,14 @@ function MSC.InitReceiptView(parent)
     CreateSlot(2, pJewel, 10, -10, MSC.L["Neck"]); CreateSlot(11, pJewel, 10, -55, MSC.L["Ring 1"]); CreateSlot(12, pJewel, 10, -100, MSC.L["Ring 2"]); CreateSlot(13, pJewel, 10, -145, MSC.L["Trinket 1"]); CreateSlot(14, pJewel, 10, -190, MSC.L["Trinket 2"])
     CreateSlot(16, pWeap, 30, -20, MSC.L["Main Hand"]); CreateSlot(17, pWeap, 160, -20, MSC.L["Off Hand"]); CreateSlot(18, pWeap, 290, -20, MSC.L["Ranged"])
     
-    f.SummaryBox = CreateFrame("Frame", nil, f, "BackdropTemplate"); f.SummaryBox:SetPoint("TOP", pWeap, "BOTTOM", 0, -20); f.SummaryBox:SetSize(450, 100)
+    f.SummaryBox = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    f.SummaryBox:SetPoint("TOP", pWeap, "BOTTOM", 0, -15) 
+    f.SummaryBox:SetSize(450, 120)
+    
     f.SummaryBox.Title = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryBox.Title:SetPoint("TOP", 0, 0); f.SummaryBox.Title:SetText(MSC.L["COMBINED GEAR STAT TOTALS"]); f.SummaryBox.Title:SetTextColor(1, 0.82, 0)
     MSC.SummaryRows = {}
-    for i=1, 12 do
+    
+    for i=1, 14 do
         local row = CreateFrame("Frame", nil, f.SummaryBox); row:SetSize(200, 16)
         row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", 0, 0)
         row.Value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Value:SetPoint("RIGHT", 0, 0)
@@ -916,7 +924,12 @@ function MSC.UpdateLogic()
     local yOff = -135
     local sorted = {}
     local maxW = 0
-    for k, v in pairs(weights) do if v > 0 then table_insert(sorted, {k=k, v=v}); if v > maxW then maxW = v end end end
+    for k, v in pairs(weights) do 
+        if type(v) == "number" and v > 0 then 
+            table_insert(sorted, {k=k, v=v})
+            if v > maxW then maxW = v end 
+        end 
+    end
     table_sort(sorted, function(a,b) return a.v > b.v end)
 
     for _, s in ipairs(sorted) do
@@ -1084,6 +1097,42 @@ function MSC.InitSettingsView(parent)
 
     local profileTip = MSC.L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."]
     local ddProfile = CreateDropdown(MSC.L["Active Scoring Profile"], "Mode", specOptions, h2, -10, profileTip)
+    
+    -- [[ DELETE CUSTOM PROFILE BUTTON ]]
+    local bDeleteProfile = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    bDeleteProfile:SetSize(80, 22)
+    bDeleteProfile:SetPoint("LEFT", ddProfile, "RIGHT", 0, -7)
+    bDeleteProfile:SetText(MSC.L["Delete"])
+    bDeleteProfile:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(MSC.L["Delete Custom Profile"], 1, 1, 1)
+        GameTooltip:AddLine(MSC.L["Deletes the currently selected custom Pawn profile."], nil, nil, nil, true)
+        GameTooltip:Show()
+    end)
+    bDeleteProfile:SetScript("OnLeave", GameTooltip_Hide)
+    bDeleteProfile:SetScript("OnClick", function()
+        local selected = SGJ_Settings.Mode
+        if selected and SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[selected] then
+            -- 1. Remove from DB
+            SharpiesGearJudgeDB.customWeights[selected] = nil
+            
+            -- 2. Remove from active class weights
+            if MSC.CurrentClass and MSC.CurrentClass.Weights then
+                MSC.CurrentClass.Weights[selected] = nil
+            end
+            
+            -- 3. Reset mode to AUTO
+            SGJ_Settings.Mode = "AUTO"
+            MSC.ManualSpec = "AUTO"
+            MSC.CachedWeights = nil
+            
+            print(string.format("|cff00ff00SGJ:|r Deleted custom profile: %s", selected))
+            StaticPopup_Show("SGJ_RELOAD_REQUIRED")
+        else
+            print("|cffff0000SGJ:|r You can only delete custom imported profiles. Select a Pawn profile from the dropdown first.")
+        end
+    end)
+
     local h3 = CreateHeader(MSC.L["Interface Options"], ddProfile, -20)    
     local cb1 = CreateCheck(MSC.L["Hide Minimap Button"], "HideMinimap", MSC.L["Hides the circular button on your minimap."], h3, 0, -10)  
     local cb2 = CreateCheck(MSC.L["Hide Tooltip Verdict"], "HideTooltips", MSC.L["Stops the addon from adding scores to item tooltips."], cb1, 0, -5)   
@@ -1180,7 +1229,7 @@ function MSC.ToggleMainMenu()
     end
 
     local f = CreateFrame("Frame", "SGJ_MainFrame", UIParent, "BackdropTemplate")
-    f:SetSize(650, 600); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+    f:SetSize(650, 650); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
     
     f:SetScript("OnHide", function() 
         if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end 
@@ -1488,18 +1537,6 @@ loader:SetScript("OnEvent", function(self, event, name)
         for key, value in pairs(defaults) do
             if SGJ_Settings[key] == nil then
                 SGJ_Settings[key] = value
-            end
-        end
-
-        -- 4. LOAD CUSTOM PAWN STRINGS
-        if SharpiesGearJudgeDB.customWeights and MSC.CurrentClass then
-            MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
-            for profileName, data in pairs(SharpiesGearJudgeDB.customWeights) do
-                if type(data) == "table" and data.weights then
-                    MSC.CurrentClass.Weights[profileName] = data.weights
-                else
-                    MSC.CurrentClass.Weights[profileName] = data
-                end
             end
         end
 

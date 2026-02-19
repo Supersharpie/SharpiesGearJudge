@@ -138,7 +138,6 @@ function MSC:ParsePawnString(pawnString)
     return weights, profileName
 end
 
--- Changed to a colon call to match self:ParsePawnString
 function MSC:ImportAndSavePawnString(pawnString)
     local weights, name = self:ParsePawnString(pawnString)
     
@@ -166,12 +165,6 @@ function MSC:SavePawnProfile(profileName, rawWeights, baseSpec)
         weights = rawWeights,
         BaseSpec = baseSpec 
     }
-    
-    -- Sync to active weights for the current session's dropdown
-    if MSC.CurrentClass then
-        MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
-        MSC.CurrentClass.Weights[uniqueName] = rawWeights
-    end
     
     print(string.format("|cff00ff00SGJ:|r Successfully imported %s", uniqueName))
     StaticPopup_Show("SGJ_RELOAD_REQUIRED")
