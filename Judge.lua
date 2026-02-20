@@ -426,7 +426,7 @@ function MSC:BeautifyTooltip(tooltip)
                 local lineType = MSC.Scanner.ClassifyLine(text)
                 
                 -- [[ PHASE 1: COMPACT EQUIP ]]
-                if SGJ_Settings.CompactEquip and (lineType == "EQUIP") then
+                if SGJ_Settings.CompactEquip and (lineType == "EQUIP") and not isRelic then
                     
                     local cleanText = text:lower()
                         :gsub("|c%x%x%x%x%x%x%x%x", "")
@@ -436,41 +436,59 @@ function MSC:BeautifyTooltip(tooltip)
                         :gsub("^%s*(.-)%s*$", "%1")
                         :gsub("^equip: ", "")
 
-                    for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
-                        if pat.p and not pat.func then
-                            local m1, m2 = string.match(cleanText, pat.p)
-                            if m1 then
-                                local val = tonumber(pat.valIdx == 1 and m1 or m2)
-                                local rawName = (pat.nameIdx == 1 and m1 or m2)
-                                local finalName = nil
+                    -- 1. SKIP CONDITIONAL TEXT
+                    local isConditional = false
+                    if string.find(cleanText, " against ") or string.find(cleanText, "by your ") or string.find(cleanText, "of your ") then
+                        isConditional = true
+                    end
 
-                                if pat.fixedStat and MSC.StatShortNames then
-                                    finalName = MSC.StatShortNames[pat.fixedStat]
-                                elseif rawName and MSC.Scanner.TermMap then
-                                    local nameKey = rawName:gsub("your ", ""):gsub("^%s*(.-)%s*$", "%1")
-                                    local internalKey = MSC.Scanner.TermMap[nameKey]
-                                    
-                                    if not internalKey then
-                                        local titleCase = (" " .. nameKey):gsub("%W%l", string.upper):sub(2)
-                                        internalKey = MSC.Scanner.TermMap[titleCase]
-                                    end
-                                    
-                                    if internalKey and MSC.StatShortNames then
-                                        finalName = MSC.StatShortNames[internalKey]
-                                    end
-                                end
+                    if not isConditional then
+                        -- 2. HANDLE HYBRID HEAL/DAMAGE 
+                        local heal, dmg = string.match(cleanText, "healing.-up to (%d+).-damage.-up to (%d+)")
+                        if heal and dmg then
+                            local healName = SGJ_Settings.SimplifyStats and "Heal" or "Healing"
+                            local dmgName  = SGJ_Settings.SimplifyStats and "SP" or "Spell Power"
+                            newText = "Equip: +" .. heal .. " " .. Colorize(healName) .. ", +" .. dmg .. " " .. Colorize(dmgName)
+                            lineChanged = true
+                        else
+                            -- 3. STANDARD SINGLE STAT COMPACTION
+                            for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
+                                if pat.p and not pat.func then
+                                    local m1, m2 = string.match(cleanText, pat.p)
+                                    if m1 then
+                                        local val = tonumber(pat.valIdx == 1 and m1 or m2)
+                                        local rawName = (pat.nameIdx == 1 and m1 or m2)
+                                        local finalName = nil
 
-                                if val and finalName then
-                                    if not SGJ_Settings.SimplifyStats then
-                                        finalName = SHORT_TO_LONG[finalName] or finalName
+                                        if pat.fixedStat and MSC.StatShortNames then
+                                            finalName = MSC.StatShortNames[pat.fixedStat]
+                                        elseif rawName and MSC.Scanner.TermMap then
+                                            local nameKey = rawName:gsub("your ", ""):gsub("^%s*(.-)%s*$", "%1")
+                                            local internalKey = MSC.Scanner.TermMap[nameKey]
+                                            
+                                            if not internalKey then
+                                                local titleCase = (" " .. nameKey):gsub("%W%l", string.upper):sub(2)
+                                                internalKey = MSC.Scanner.TermMap[titleCase]
+                                            end
+                                            
+                                            if internalKey and MSC.StatShortNames then
+                                                finalName = MSC.StatShortNames[internalKey]
+                                            end
+                                        end
+
+                                        if val and finalName then
+                                            if not SGJ_Settings.SimplifyStats then
+                                                finalName = SHORT_TO_LONG[finalName] or finalName
+                                            end
+                                            
+                                            local prefixStr = "Equip: "
+                                            local valStr = (pat.isPercent or string.find(text, "%%")) and ("+" .. val .. "% ") or ("+" .. val .. " ")
+                                            
+                                            newText = prefixStr .. valStr .. Colorize(finalName)
+                                            lineChanged = true
+                                            break 
+                                        end
                                     end
-                                    
-                                    local prefixStr = "Equip: "
-                                    local valStr = (pat.isPercent or string.find(text, "%%")) and ("+" .. val .. "% ") or ("+" .. val .. " ")
-                                    
-                                    newText = prefixStr .. valStr .. Colorize(finalName)
-                                    lineChanged = true
-                                    break 
                                 end
                             end
                         end

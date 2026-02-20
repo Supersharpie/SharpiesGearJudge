@@ -2,6 +2,17 @@
 
 ## 🚀 v2.4.2
 
+* **Multiple fixes and refactors across classes and core systems.**
+* **Standardizes relic handling across classes, improves tooltip accuracy, hardens parsing for relics, and optimizes item-stat memory usage.**
+
+### Key changes:
+* **Prevent CompactEquip from compacting relic tooltips and refactor Equip-line compaction to skip conditional text, special-case hybrid healing/damage lines into a single summarized line, and  retain the existing single-stat pattern matching. **
+* **Druid: cleaned up talent/spec logic and comments, fixed Living Spirit scaling, lowered spell hit overcap threshold (was +15, now +5), added a comprehensive Relics table (idols) and implemented Druid:GetRelicBonus(itemID, currentSpec) to return interpreted stats (handles dynamic Idol of the Raven Goddess).**
+* **Paladin: replaced/expanded Libram definitions, normalized relic data, added Paladin:GetRelicBonus for consistent relic interpretation, minor GetSpec/GetDynamicWeights comment/flow tweaks, and small ApplyScalers/GetWeaponBonus cleanup.**
+* **Shaman: updated Totem/Relic definitions, added GetRelicBonus to return parsed relic stats, and reorganized PvP/communal entries.**
+* **Evaluator: avoid mutating cached item stats by copying SafeGetItemStats into a scratch table when scoring gear; also copy parsed stats in EvaluateUpgrade to finalize item stats (memory/safety optimization).**
+* **Judge (tooltip): use the new per-class GetRelicBonus API when available; use StatShortNames mapping; update tooltip label to "Evaluated As:" and surface raw relic notes when present.**
+* ** Parse: detect relic items (equip location/class/subclass) and skip treating relic tooltip lines as normal STAT/EQUIP/USE/PROC entries to prevent mis-parsing of relic tooltips.**
 * **Refactor dynamic weight resolution and caching: manual spec selection now consults dynamic calculators, custom Pawn profiles (SharpiesGearJudgeDB.customWeights) and static fallbacks; ApplyScalers can return a cap text which is now cached and returned by MSC.GetCurrentWeights.** 
 * **Fix talent/talent-cache helpers and minor cleanup in Dynamic_Engine.** 
 * **Enhance Pawn parsing and import flow: improved string handling and stat mappings, change Parse/Import functions to methods, add SavePawnProfile to persist imports with a BaseSpec tag, and add a small spec-selection UI so imported Pawn profiles can be assigned a base spec before saving.** 
