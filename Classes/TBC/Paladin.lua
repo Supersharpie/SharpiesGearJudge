@@ -690,56 +690,74 @@ Paladin.StatToCritMatrix = {
 }
 
 -- =============================================================
--- PALADIN SPECIFIC ITEMS (Librams)
+-- CLASS SPECIFIC ITEMS (Librams)
 -- =============================================================
+-- Note: Proc uptime, conditional buffs, and mana savings are averaged 
+-- into standard stats (e.g., MP5 for mana reduction, AP for proc damage).
 Paladin.Relics = {
--- [[ 7. PALADIN LIBRAMS (MANUAL OVERRIDES) ]]
-    -- [[ CLASSIC / LEVELING (1-60) ]]
+    [22400] = { ITEM_MOD_ARMOR_SHORT = 110 }, -- Libram of Truth (Devotion Aura)
+    [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Libram of Hope (Avg MP5 from seals)
+    [22402] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Libram of Grace (Avg MP5 from cleanse)
     [23201] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 53 }, -- Libram of Divinity
+    [23203] = { ITEM_MOD_ATTACK_POWER_SHORT = 48, ITEM_MOD_HOLY_DAMAGE_SHORT = 33 }, -- Libram of Fervor
+    [24386] = { ITEM_MOD_HEALTH_REGENERATION_SHORT = 15 }, -- Libram of Saints Departed (Avg HP5)
+    [25644] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 79 }, -- Blessed Book of Nagrand
+    [27484] = { ITEM_MOD_CRIT_RATING_SHORT = 26 }, -- Libram of Avengement (Avg 50% uptime)
+    [27917] = { ITEM_MOD_HOLY_DAMAGE_SHORT = 47 }, -- Libram of the Eternal Rest
+    [27949] = { ITEM_MOD_ATTACK_POWER_SHORT = 68, ITEM_MOD_HOLY_DAMAGE_SHORT = 47 }, -- Libram of Zeal
+    [27983] = { ITEM_MOD_ATTACK_POWER_SHORT = 68, ITEM_MOD_HOLY_DAMAGE_SHORT = 47 }, -- Libram of Zeal (Duplicate)
+    [28065] = { ITEM_MOD_HOLY_DAMAGE_SHORT = 60 }, -- Libram of Wracking (Situational, halved value)
+    [28296] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Libram of the Lightbringer
+    [28592] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 90 }, -- Libram of Souls Redeemed (Avg between FoL/HL)
+    [30063] = { ITEM_MOD_MANA_REGENERATION_SHORT = 17 }, -- Libram of Absolute Truth (Avg MP5)
+    [31033] = { ITEM_MOD_ATTACK_POWER_SHORT = 54 }, -- Libram of Righteous Power (CS Dmg to AP equivalent)
+    [33502] = { ITEM_MOD_MANA_REGENERATION_SHORT = 22 }, -- Libram of Mending (Near 100% uptime MP5)
+    [33503] = { ITEM_MOD_ATTACK_POWER_SHORT = 80 }, -- Libram of Divine Judgement (40% proc 200 AP)
+    [33504] = { ITEM_MOD_HOLY_DAMAGE_SHORT = 94 }, -- Libram of Divine Purpose
     [23006] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 83 }, -- Libram of Light
-    [22401] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Libram of Hope
-    [22402] = { ITEM_MOD_ARMOR_SHORT = 50 }, -- Libram of Truth (Armor buff)
-	[28065] = { ITEM_MOD_SPELL_POWER_SHORT = 20, note = "Undead/Demon" },
-
-    -- [[ TBC LEVELING / DUNGEON (60-70) ]]
-    [25644] = { ITEM_MOD_ATTACK_POWER_SHORT = 12 }, -- Libram of Righteous Power (Crusader Strike AP)
-    [27917] = { ITEM_MOD_SPELL_POWER_SHORT = 20, note = "BiS" }, -- Libram of Divine Purpose (Seal/Judgement Dmg)
-
-    -- [[ TBC RAID (Holy) ]]
-    [30991] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Libram of Mending (Holy Light)
-    [29388] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 40 }, -- Libram of the Lightbringer (Flash of Light)
-    [34231] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Libram of Divine Judgement (Holy Light)
-    [28592] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 113, note = "BiS" }, -- Libram of Souls Redeemed (Flash of Light)
-    [30063] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87, note = "BiS" }, -- Libram of Absolute Truth (Holy Light)
-
-    -- [[ TBC RAID (Retribution) ]]
-    [27484] = { ITEM_MOD_CRIT_RATING_SHORT = 53, note = "BiS Crit" }, -- Libram of Avengement
-    [31033] = { ITEM_MOD_ATTACK_POWER_SHORT = 60 }, -- Libram of Righteousness
-    [33503] = { ITEM_MOD_ATTACK_POWER_SHORT = 120 }, -- Libram of Divine Judgement
-
-    -- [[ TBC RAID (Protection) ]]
-    [29386] = { ITEM_MOD_BLOCK_VALUE_SHORT = 42 }, -- Libram of Repentance
-    [30642] = { ITEM_MOD_SPELL_POWER_SHORT = 47 }, -- Libram of the Eternal Rest (Consecration Dmg)
-    [32489] = { ITEM_MOD_BLOCK_VALUE_SHORT = 100 }, -- Tome of the Lightbringer
-    [27958] = { ITEM_MOD_BLOCK_VALUE_SHORT = 53 }, -- Libram of the Sacred Shield
-
-    -- [[ PREVIOUSLY MISSING ITEMS (FILLED) ]]
-    -- Libram of the Lightbringer (+47 Block Value on Holy Shield)
-    [28296] = { ITEM_MOD_BLOCK_VALUE_SHORT = 47, note = "BiS" }, 
+    [29388] = { ITEM_MOD_BLOCK_RATING_SHORT = 42 }, -- Libram of Repentance (High uptime for Prot)
+    [32368] = { ITEM_MOD_BLOCK_VALUE_SHORT = 93 }, -- Tome of the Lightbringer (Avg 50% uptime)
     
-    -- Libram of the Eternal Rest (+47 Consecration Dmg)
-    -- This is crucial for Prot Paladin AoE threat.
-    [24386] = { ITEM_MOD_SPELL_POWER_SHORT = 47, note = "BiS AoE" }, 
+    -- [[ PvP Healer (Flash of Light) ]]
+    [28356] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Libram of Justice
+    [33077] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Libram of Justice
+    [33842] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Libram of Justice
+    [35040] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Libram of Justice
 
-    -- [[ PVP LIBRAMS (Seasons 1-4) ]]
-    [28358] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 17 }, -- S1
-    [33077] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 21 }, -- S2
-    [33844] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 23 }, -- S3
-    [35026] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- S4
-    
-    [42612] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Deadly Gladiator (Wrath)
-    [42613] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 29 }, -- Furious Gladiator (Wrath)
+    -- [[ PvP Retribution (Judgement) ]]
+    [33936] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Libram of Fortitude
+    [33937] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Libram of Fortitude
+    [33938] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Libram of Fortitude
+    [35039] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Libram of Fortitude
+
+    -- [[ PvP Protection (Holy Shield) ]]
+    [33948] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Libram of Vengeance
+    [33949] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Libram of Vengeance
+    [33950] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Libram of Vengeance
+    [35041] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Libram of Vengeance
+
+    -- [[ Communal (Boost Gear) ]]
+    [186065] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 10 }, -- Communal Book of Healing
+    [186066] = { ITEM_MOD_ARMOR_SHORT = 50 }, -- Communal Book of Protection
+    [186067] = { ITEM_MOD_MANA_REGENERATION_SHORT = 2 }, -- Communal Book of Righteousness
 }
+
+-- [[ DYNAMIC RELIC HANDLER ]]
+-- Returns the interpreted stats for the Evaluator and Tooltip engines
+function Paladin:GetRelicBonus(itemID, currentSpec)
+    local bonus = {}
+    
+    -- Currently Paladins do not have complex multi-spec librams like the Druid's Raven Goddess,
+    -- but use this function to maintain architectural consistency across all classes.
+    if Paladin.Relics[itemID] then
+        for k, v in pairs(Paladin.Relics[itemID]) do 
+            bonus[k] = v 
+        end
+    end
+    
+    return bonus
+end
+
 
 -- =============================================================
 -- LOGIC
@@ -791,10 +809,7 @@ function Paladin:GetSpec()
 
     local specificKey = role .. suffix
     
-    -- Check BRACKETS first (New System)
     if Paladin.LevelingBrackets and Paladin.LevelingBrackets[specificKey] then return specificKey end
-    
-    -- Check WEIGHTS second (Old System / Static Profiles)
     if Paladin.LevelingWeights[specificKey] then return specificKey end
     if Paladin.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix end
 
@@ -802,9 +817,7 @@ function Paladin:GetSpec()
 end
 
 function Paladin:GetDynamicWeights(forceKey)
-    -- [[ FIX 1: TRANSLATOR ]]
-    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
-    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    -- [[ 1: TRANSLATOR ]]
     if forceKey and not Paladin.LevelingBrackets[forceKey] and not Paladin.Weights[forceKey] then
         if Paladin.PrettyNames then
             for key, name in pairs(Paladin.PrettyNames) do
@@ -826,9 +839,7 @@ function Paladin:GetDynamicWeights(forceKey)
         -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
         
-        -- [[ FIX 2: PREVIEW CLAMPING ]]
-        -- If previewing a different level bracket, force progress to 0 or 1 
-        -- to prevent "Negative Stats" from vanishing.
+        -- [[ 2: PREVIEW CLAMPING ]]
         if forceKey then
             if level < bracket.min then progress = 0 end -- Show Start weights
             if level > bracket.max then progress = 1 end -- Show End weights
@@ -840,8 +851,7 @@ function Paladin:GetDynamicWeights(forceKey)
 
         local dynamicWeights = {}
         
-        -- [[ FIX 3: ROBUSTNESS ]]
-        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
+        -- [[ 3: ROBUSTNESS ]]
         local allStats = {}
         if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
         if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
@@ -1016,7 +1026,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
             table.insert(activeCaps, "Def (Safe)")
 
-            -- [NEW] EFFECTIVE HEALTH PIVOT
+            -- EFFECTIVE HEALTH PIVOT
             -- Once safe, Stamina and Armor become the new Kings for survival
             weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.3
             weights["ITEM_MOD_ARMOR_SHORT"]   = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.5
@@ -1077,7 +1087,6 @@ function Paladin:GetWeaponBonus(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    -- FIX: Use select(2, UnitRace) for safe ID check
     local _, raceID = UnitRace("player")
 
     if raceID == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then 

@@ -590,7 +590,7 @@ Druid.Talents = {
     ["FERAL_CHARGE"]="Feral Charge",
 	["INSECT_SWARM"]="Insect Swarm",
 	["LUNAR_GUIDANCE"]="Lunar Guidance",
-    ["PREDATORY_INSTINCTS"]="Predatory Instincts" -- ADDED
+    ["PREDATORY_INSTINCTS"]="Predatory Instincts"
 }
 
 -- =============================================================
@@ -622,7 +622,6 @@ function Druid:GetSpec()
     -- Determine Role
     local role = "Leveling" 
     if Rank("MOONKIN_FORM") > 0 then role = "Leveling_Caster"
-    -- FIX: Check for Tree (50+) OR Nature's Swiftness (21+) OR Insect Swarm (21+)
     elseif Rank("TREE_OF_LIFE") > 0 or Rank("NATURES_SWIFTNESS") > 0 or Rank("INSECT_SWARM") > 0 then 
         role = "Leveling_Healer"
     elseif Rank("FERAL_CHARGE") > 0 or Rank("THICK_HIDE") >= 3 then role = "Leveling_Bear"
@@ -637,9 +636,7 @@ function Druid:GetSpec()
 end
 
 function Druid:GetDynamicWeights(forceKey)
-    -- [[ FIX 1: TRANSLATOR ]]
-    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
-    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    -- [[ TRANSLATOR ]]
     if forceKey and not Druid.LevelingBrackets[forceKey] and not Druid.Weights[forceKey] then
         if Druid.PrettyNames then
             for key, name in pairs(Druid.PrettyNames) do
@@ -661,9 +658,7 @@ function Druid:GetDynamicWeights(forceKey)
         -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
         
-        -- [[ FIX 2: PREVIEW CLAMPING ]]
-        -- If previewing a different level bracket, force progress to 0 or 1 
-        -- to prevent "Negative Stats" from vanishing.
+        -- [[ PREVIEW CLAMPING ]]
         if forceKey then
             if level < bracket.min then progress = 0 end -- Show Start weights
             if level > bracket.max then progress = 1 end -- Show End weights
@@ -675,8 +670,7 @@ function Druid:GetDynamicWeights(forceKey)
 
         local dynamicWeights = {}
         
-        -- [[ FIX 3: ROBUSTNESS ]]
-        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
+        -- [[ ROBUSTNESS ]]
         local allStats = {}
         if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
         if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
@@ -721,13 +715,13 @@ function Druid:ApplyScalers(weights, currentSpec)
         w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.04)) 
     end
     
-    -- Living Spirit (Spirit) - FIX: 5% per rank, not 3%
+    -- Living Spirit (Spirit) - 5% per rank
     local rLiv = Rank("LIVING_SPIRIT")
     if rLiv > 0 and w["ITEM_MOD_SPIRIT_SHORT"] then 
         w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLiv * 0.05)) 
     end
 
-    -- [[ NEW: DREAMSTATE (Int -> Mp5) ]]
+    -- [[ DREAMSTATE (Int -> Mp5) ]]
     -- Regenerate mana equal to 4/7/10% of Int.
     local rDream = Rank("DREAMSTATE")
     if rDream > 0 and w["ITEM_MOD_INTELLECT_SHORT"] then
@@ -755,7 +749,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         w["ITEM_MOD_INTELLECT_SHORT"] = w["ITEM_MOD_INTELLECT_SHORT"] + (ratio * spWeight)
     end
 
-    -- [[ NEW: PREDATORY INSTINCTS (Crit Dmg) ]]
+    -- [[ PREDATORY INSTINCTS (Crit Dmg) ]]
     -- Increases Crit Dmg by 3/7/10%.
     -- This makes Crit Rating more valuable.
     local rPred = Rank("PREDATORY_INSTINCTS")
@@ -778,7 +772,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- [[ 2. COVARIANCE (Synergy) ]]
     if currentSpec:find("BALANCE") or currentSpec:find("Caster") then
         if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
-            -- [[ NEW: MANA SAFETY ]]
+            -- [[ MANA SAFETY ]]
             -- If max mana is too low (<7000), Haste burns you out.
             local maxMana = UnitPowerMax("player", 0)
             if maxMana < 7000 then
@@ -828,7 +822,7 @@ function Druid:ApplyScalers(weights, currentSpec)
             -- 3. Convert to Score
             local mp5Weight = w["ITEM_MOD_MANA_REGENERATION_SHORT"] or 2.0
             
-            -- New Spirit Weight = (MP5 gained) * (Value of MP5) * (Combat Uptime)
+            -- Spirit Weight = (MP5 gained) * (Value of MP5) * (Combat Uptime)
             w["ITEM_MOD_SPIRIT_SHORT"] = mp5Value * mp5Weight * combatMult
         end
     end
@@ -837,13 +831,13 @@ function Druid:ApplyScalers(weights, currentSpec)
     
     -- A. BALANCE HIT CAP (Spell Hit)
     if (currentSpec:find("BALANCE") or currentSpec:find("Caster")) and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) -- CR_HIT_SPELL
+        local hitRating = GetCombatRating(8) 
         local baseCap = 202 
         local talentBonus = Rank("BALANCE_OF_POWER") * 25.2 -- 2% per rank
         local finalCap = baseCap - talentBonus
         if finalCap < 0 then finalCap = 0 end
         
-        if hitRating >= (finalCap + 15) then
+        if hitRating >= (finalCap + 5) then
             w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, "Hit")
         elseif hitRating >= finalCap then
@@ -925,65 +919,78 @@ function Druid:GetWeaponBonus(itemLink) return 0 end
 -- =============================================================
 -- CLASS SPECIFIC ITEMS (Idols)
 -- =============================================================
+-- Note: Proc uptime and mana savings are averaged to standard stats 
+-- (e.g., MP5 for mana reduction, AP for proc damage).
 Druid.Relics = {
+    [22397] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Ferocity
+    [22398] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 }, -- Idol of Rejuvenation
+    [22399] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 100 }, -- Idol of Health
+    [23197] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 33 }, -- Idol of the Moon
+    [23198] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 50 }, -- Idol of Brutality
+    [25643] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 86 }, -- Harold's Rejuvenating Broach
+    [25667] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 }, -- Idol of the Beast (Averaged FB dmg)
+    [25940] = { ITEM_MOD_HEALTH_REGENERATION_SHORT = 20 }, -- Idol of the Claw (Minor survival)
+    [27518] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 55 }, -- Ivory Idol of the Moongoddess
+    [27744] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 }, -- Idol of Ursoc
+    [27886] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 88 }, -- Idol of the Emerald Queen
+    [27989] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 }, -- Idol of Savagery
+    [27990] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 }, -- Idol of Savagery
+    [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 38 }, -- Idol of the Wild (Averaged Cat/Bear)
+    [28355] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Gladiator's Idol of Tenacity
+    [28372] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 }, -- Idol of Feral Shadows
+    [28568] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 136 }, -- Idol of the Avian Heart
+    [29390] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 88 }, -- Everbloom Idol
+    [30051] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25 }, -- Idol of the Crescent Goddess (Avg MP5)
+    [31025] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 25 }, -- Idol of the Avenger
+    [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 80 }, -- Idol of the White Stag (Avg proc AP)
+    [33076] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 105 }, -- Merciless Gladiator's Idol of Tenacity
+    [33508] = { ITEM_MOD_MANA_REGENERATION_SHORT = 15 }, -- Idol of Budding Life (Avg MP5)
+    [33509] = { ITEM_MOD_AGILITY_SHORT = 45 }, -- Idol of Terror (Avg proc Agi)
+    [33510] = { ITEM_MOD_SPELL_POWER_SHORT = 70 }, -- Idol of the Unseen Moon (Avg proc SP)
+    [33841] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 116 }, -- Vengeful Gladiator's Idol of Tenacity
     
-    -- [[ LEVELING / CLASSIC IDOLS ]]
-    [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Ferocity
-    [22396] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Brutality (Classic)
-    [22397] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 },      -- Idol of Rejuvenation
-    [22330] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 },      -- Idol of Health
-    [23197] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 33 },      -- Idol of the Moon (Starfire)
-
-    -- [[ TBC DUNGEON / QUEST ]]
-    [25643] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 86 },      -- Idol of the Emerald Queen (Rejuv)
-    [28064] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40 }, -- Idol of Brutality (TBC Maul)
-    [27526] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 }, -- Idol of the Wild (Mangle)
-    [27483] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 24 }, -- Idol of Savagery
-    [27886] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 47, note = "BiS" }, -- Idol of the Avian Heart (Healing Touch)
-    [31037] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 25 },      -- Idol of the Avenger (Wrath)
-
-    -- [[ TBC RAID ]]
-    [29390] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 136 },     -- Idol of the Emerald Queen (Lifebloom)
-    [29391] = { ITEM_MOD_AGILITY_SHORT = 55, estimate = true, note = "BiS (Agility Proc)" }, -- Idol of Terror
+    -- PvP Moonfire Resil
+    [33942] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Idol of Steadfastness
+    [33943] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Idol of Steadfastness
+    [33944] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Idol of Steadfastness
+    [35020] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Idol of Steadfastness
     
-    -- [[ NEW: DYNAMIC IDOL (Raven Goddess) ]]
-    -- We list ALL stats. The weight filter will ignore the useless ones for your spec.
-    [32387] = { 
-        ITEM_MOD_SPELL_HEALING_DONE_SHORT = 44,    -- Tree of Life (Resto)
-        ITEM_MOD_CRIT_RATING_SHORT = 20,      -- Leader of Pack (Feral)
-        ITEM_MOD_SPELL_CRIT_RATING_SHORT = 20 -- Moonkin (Balance)
-    }, 
+    -- PvP Mangle Resil
+    [33945] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Idol of Resolve
+    [33946] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Idol of Resolve
+    [33947] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Idol of Resolve
+    [35019] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Idol of Resolve
     
-    [30652] = { ITEM_MOD_AGILITY_SHORT = 45, ITEM_MOD_DODGE_RATING_SHORT = 45 }, -- Idol of the Crescent Goddess
-    [32257] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 70, note = "BiS" }, -- Idol of the White Stag
-
-    -- [[ PVP IDOLS ]]
-    [28355] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 },
-    [33076] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 105 },
-    [33841] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 116 },
-    [35021] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 131 },
-    [28356] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
-    [33074] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
-    [33840] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
-    [35020] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
-    [28357] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 },
-    [33075] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 },
-    [33842] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 },
-    [35019] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 },
-    
-    -- Ivory Idol of the Moongoddess (+55 Starfire Dmg) -> Best Moonkin Starfire Idol
-    [27518] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 55, note = "BiS" },    
-    -- Idol of the Claw (+20 Bear Ability Dmg) -> Solid Dungeon Tank Idol
-    [25940] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 25, note = "BiS" }, 
-    -- Idol of Ursoc (+Lacerate Dmg) -> T5/T6 Tanking Threat Idol
-    [27744] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 55, note = "BiS" }, 
-    -- Idol of Feral Shadows (+Rip Dmg) -> Cat Bleed Idol
-    [28372] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 40, note = "BiS" }, 
-    -- Idol of the Avian Heart (Proc: 120 SP) -> Averaged to ~65 SP for scoring
-    [28568] = { ITEM_MOD_SPELL_POWER_SHORT = 65, note = "BiS" }, 
-    -- Idol of the Crescent Goddess (-87 Regrowth Cost) -> Converted to Mp5/Value
-    [30051] = { ITEM_MOD_MANA_REGENERATION_SHORT = 22, note = "BiS" },
+    [35021] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 131 }, -- Brutal Gladiator's Idol of Tenacity
+    [186052] = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 10 }, -- Communal Idol of Wrath
+    [186053] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 5 }, -- Communal Idol of the Wild
+    [186054] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 15 }, -- Communal Idol of Life
+    [23004] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Idol of Longevity (Avg MP5)
 }
+
+-- [[ DYNAMIC RELIC HANDLER ]]
+function Druid:GetRelicBonus(itemID, currentSpec)
+    local bonus = {}
+    
+    -- 1. Handle Dynamic Idols
+    if itemID == 32387 then -- Idol of the Raven Goddess
+        if currentSpec:find("RESTO") or currentSpec:find("Healer") then 
+            bonus.ITEM_MOD_SPELL_HEALING_DONE_SHORT = 44
+        elseif currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear") then 
+            bonus.ITEM_MOD_CRIT_RATING_SHORT = 20
+        elseif currentSpec:find("BALANCE") or currentSpec:find("Caster") then 
+            bonus.ITEM_MOD_SPELL_CRIT_RATING_SHORT = 20 
+        end
+        return bonus
+    end
+    
+    -- 2. Handle Static Idols
+    if Druid.Relics[itemID] then
+        for k, v in pairs(Druid.Relics[itemID]) do bonus[k] = v end
+    end
+    
+    return bonus
+end
 
 -- =============================================================
 -- REGISTER PROFILES FOR INIT (UI LIST ONLY)

@@ -604,14 +604,13 @@ local function OnTooltipSetItem(tooltip)
                 local noteDisplayed = false
 
                 -- Class Specific Check
-                if MSC.CurrentClass then
-                    local classDB = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols
-                    if classDB and classDB[itemID] then
-                        local dbStats = classDB[itemID]
+                if MSC.CurrentClass and MSC.CurrentClass.GetRelicBonus then
+                    local dbStats = MSC.CurrentClass:GetRelicBonus(itemID, specName)
+                    if dbStats and next(dbStats) then
                         local statStr = ""
                         for key, val in pairs(dbStats) do
                             if key ~= "note" and type(val) == "number" and val > 0 then
-                                local name = (MSC.ShortNames and MSC.ShortNames[key]) 
+                                local name = (MSC.StatShortNames and MSC.StatShortNames[key]) 
                                 if not name then name = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower() end
                                 if statStr ~= "" then statStr = statStr .. ", " end
                                 statStr = statStr .. string_format("+%d %s", val, name)
@@ -619,10 +618,12 @@ local function OnTooltipSetItem(tooltip)
                         end
                         if statStr ~= "" then
                             tooltip:AddLine(" ")
-                            tooltip:AddLine(MSC.L["Class Bonus: "] .. statStr, 0, 1, 1, true) 
+                            tooltip:AddLine(MSC.L["Evaluated As: "] .. "|cff00ff00" .. statStr .. "|r", 1, 1, 1, true) 
                         end
-                        if dbStats.note then
-                            tooltip:AddDoubleLine(MSC.L["Judge's Note:"], dbStats.note, 0.85, 0.6, 1.0, 0.64, 0.21, 0.93)
+                        
+                        local rawRelicTable = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols
+                        if rawRelicTable and rawRelicTable[itemID] and rawRelicTable[itemID].note then
+                            tooltip:AddDoubleLine(MSC.L["Judge's Note:"], rawRelicTable[itemID].note, 0.85, 0.6, 1.0, 0.64, 0.21, 0.93)
                             noteDisplayed = true
                         end
                     end

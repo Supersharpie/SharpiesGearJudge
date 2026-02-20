@@ -607,7 +607,10 @@ end
 function MSC.Scanner.Scan(itemLink)
     local result = CreateItemObject()
     if not itemLink then return result end
-    
+	
+    local itemID, _, _, equipLoc, _, classID, subClassID = GetItemInfoInstant(itemLink)
+    local isRelic = (equipLoc == "INVTYPE_RELIC") or (classID == 4 and (subClassID == 7 or subClassID == 8 or subClassID == 9 or subClassID == 11))
+
     local tip = _G["MSC_NewScannerTooltip"] or CreateFrame("GameTooltip", "MSC_NewScannerTooltip", nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
     pcall(function() tip:SetHyperlink(itemLink) end)
@@ -630,17 +633,17 @@ function MSC.Scanner.Scan(itemLink)
             
             if type == "SET_HEADER" or type == "SET" then 
                 MSC.Scanner.ParseSetHeader(fullText, result.Meta)
-            elseif type == "STAT" then 
+            elseif type == "STAT" and not isRelic then 
                 MSC.Scanner.ParseStatLine(fullText, result.Stats)
-            elseif type == "EQUIP" then 
+            elseif type == "EQUIP" and not isRelic then 
                 MSC.Scanner.ParseEquipLine(fullText, result.Stats, result.Procs)
-            elseif type == "USE" then 
+            elseif type == "USE" and not isRelic then 
                 MSC.Scanner.ParseUseLine(fullText, result.UseEffects)
             elseif type == "SOCKET_BONUS" then 
                 if g > 0.9 and r < 0.2 then result.Meta.SocketBonusActive = true end
                 if not result.Meta.BonusStats then result.Meta.BonusStats = {} end
                 MSC.Scanner.ParseStatLine(fullText, result.Meta.BonusStats)
-            elseif type == "PROC" then 
+            elseif type == "PROC" and not isRelic then 
                 MSC.Scanner.ParseProcLine(fullText, result.Procs)
             end
         end

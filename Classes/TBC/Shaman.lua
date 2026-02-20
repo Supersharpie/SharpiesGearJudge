@@ -878,51 +878,69 @@ end
 -- =============================================================
 -- CLASS SPECIFIC ITEMS (Totems)
 -- =============================================================
+-- Note: Proc uptime, conditional buffs, and mana savings are averaged 
+-- into standard stats (e.g., MP5 for mana reduction, AP for proc damage).
 Shaman.Relics = {
-	-- [[ CLASSIC / LEVELING (1-60) ]]
-    [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 }, -- Totem of the Storm (Lightning/Chain)
-    [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of the Void (Classic version?) Or Storm?
-    [22394] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Totem of Rebirth
-    [22393] = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 }, -- Totem of Life (Lesser Healing Wave cost?)
-    [23200] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 10 }, -- Totem of Flowing Water (Stream Totem)
+    [22345] = { note = "Reduces Reincarnation CD by 10 min." }, -- Totem of Rebirth (Utility)
+    [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 15 }, -- Totem of Rage (Averaged shock dmg)
+    [22396] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Totem of Life
+    [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 }, -- Totem of the Storm
+    [24413] = { ITEM_MOD_MANA_REGENERATION_SHORT = 15 }, -- Totem of the Thunderhead (Avg MP5 from shield triggers)
+    [25645] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 79 }, -- Totem of the Plains
+    [27544] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 88 }, -- Totem of Spontaneous Regrowth
+    [27815] = { ITEM_MOD_ATTACK_POWER_SHORT = 40 }, -- Totem of the Astral Winds (Avg AP for WF uptime)
+    [27947] = { ITEM_MOD_SPELL_POWER_SHORT = 23 }, -- Totem of Impact (Averaged shock dmg)
+    [28066] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25 }, -- Totem of Lightning (Avg MP5 from LB spam)
+    [28248] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 55 }, -- Totem of the Void
+    [28523] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Totem of Healing Rains
+    [29389] = { ITEM_MOD_MANA_REGENERATION_SHORT = 35 }, -- Totem of the Pulsing Earth (Avg MP5 from LB spam)
+    [30023] = { ITEM_MOD_MANA_REGENERATION_SHORT = 15 }, -- Totem of the Maelstrom (Avg MP5 from HW)
+    [31031] = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 }, -- Stormfury Totem (Avg MP5 from SS)
+    [33506] = { ITEM_MOD_SPELL_HASTE_RATING_SHORT = 35 }, -- Skycall Totem (Avg uptime haste from LB)
+    [33507] = { ITEM_MOD_ATTACK_POWER_SHORT = 55 }, -- Stonebreaker's Totem (Avg 50% uptime 110 AP)
+    [23005] = { ITEM_MOD_MANA_REGENERATION_SHORT = 15 }, -- Totem of Flowing Water (Avg MP5)
+    [23200] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 53 }, -- Totem of Sustaining
+    [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 23 }, -- Totem of Impact (Duplicate itemID)
+    [32330] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 85 }, -- Totem of Ancestral Guidance
+    [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25 }, -- Totem of Living Water (Avg MP5 from CH)
 
-    -- [[ TBC LEVELING / DUNGEON (60-70) ]]
-    [25645] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of the Plains (Shock Dmg)
-    [27949] = { ITEM_MOD_SPELL_POWER_SHORT = 48 }, -- Totem of Impact (Shock Dmg)
-    [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 46 }, -- Totem of the Void (Lightning Dmg - Dungeon)
-    [27523] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 88 }, -- Totem of the Healer (Healing Wave)
-    [28248] = { ITEM_MOD_SPELL_POWER_SHORT = 55, note = "BiS" }, -- Totem of the Void (Lightning Dmg - Kara)
+    -- [[ PvP Healer (Lesser Healing Wave) ]]
+    [28357] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Totem of the Third Wind
+    [33078] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Totem of the Third Wind
+    [33843] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Totem of the Third Wind
+    [35106] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Totem of the Third Wind
 
-    -- [[ TBC RAID ]]
-    [27815] = { ITEM_MOD_ATTACK_POWER_SHORT = 80, note = "BiS" }, -- Totem of the Astral Winds (Windfury Bonus)
-    [33507] = { ITEM_MOD_ATTACK_POWER_SHORT = 40 }, -- Stonebreaker's Totem (Shock proc)
-    [34072] = { ITEM_MOD_ATTACK_POWER_SHORT = 100 }, -- Totem of Splintering (Windfury Bonus)
-    [33506] = { ITEM_MOD_HASTE_RATING_SHORT = 101 }, -- Skycall Totem
-    [32330] = { ITEM_MOD_SPELL_POWER_SHORT = 85, note = "BiS" }, -- Totem of Ancestral Guidance (Lightning Dmg)
-    [34539] = { ITEM_MOD_SPELL_POWER_SHORT = 60 }, -- Totem of the Maelstrom (Lightning Bolt Haste/Dmg?)
-    [28227] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87 }, -- Totem of Healing Rains (Chain Heal)
-    [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 20 }, -- Totem of Living Water (Chain Heal cost reduction, val as MP5)
+    -- [[ PvP Enhancement (Stormstrike) ]]
+    [33939] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Totem of Indomitability
+    [33940] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Totem of Indomitability
+    [33941] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Totem of Indomitability
+    [35104] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Totem of Indomitability
 
-    -- [[ PVP TOTEMS ]]
-    [28359] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- S1
-    [33078] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- S2
-    [33838] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- S3
-    [35022] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- S4
-    [38367] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 40 }, -- Wrath
+    -- [[ PvP Elemental (Shocks) ]]
+    [33951] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Totem of Survival
+    [33952] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 31 }, -- Merciless Gladiator's Totem of Survival
+    [33953] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 34 }, -- Vengeful Gladiator's Totem of Survival
+    [35105] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 39 }, -- Brutal Gladiator's Totem of Survival
 
-    -- Totem of the Thunderhead (Lightning Shield Dmg)
-    -- Extremely niche, mostly for farming or boosting, but if you want it:
-    [24413] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33, note = "Farm BiS" }, 
-
-    -- Totem of Spontaneous Regrowth (+88 Healing Wave)
-    -- Strong single-target Tank healing totem.
-    [27544] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 88, note = "BiS Tank Heal" }, 
-
-    -- Totem of Healing Rains (+87 Chain Heal)
-    -- The absolute King of TBC Resto Shaman items.
-    [28523] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 87, note = "BiS Raid" },
-	
+    -- [[ Communal (Boost Gear) ]]
+    [186071] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 10 }, -- Communal Totem of Lightning
+    [186072] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 10 }, -- Communal Totem of Restoration
+    [186073] = { ITEM_MOD_MANA_REGENERATION_SHORT = 2 }, -- Communal Totem of the Storm
 }
+
+-- [[ DYNAMIC RELIC HANDLER ]]
+-- Returns the interpreted stats for the Evaluator and Tooltip engines
+function Shaman:GetRelicBonus(itemID, currentSpec)
+    local bonus = {}
+    
+    if Shaman.Relics[itemID] then
+        for k, v in pairs(Shaman.Relics[itemID]) do 
+            bonus[k] = v 
+        end
+    end
+    
+    return bonus
+end
 
 -- =============================================================
 -- REGISTER PROFILES FOR INIT (UI LIST ONLY)

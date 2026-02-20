@@ -112,7 +112,13 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
     for slotID, itemLink in pairs(gearTable) do
         if itemLink then
             -- [[ 1. GET BASE STATS ]] 
-            local stats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
+            local cachedStats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
+
+            wipe(Scratch_Stats)
+            for k, v in pairs(cachedStats) do
+                Scratch_Stats[k] = v
+            end
+            local stats = Scratch_Stats
             
             -- [[ 2. GET GEM DATA ]]
             local itemGemIDs = {}
@@ -380,9 +386,11 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local originalOH   = Scratch_Gear[17]
     local contextMsg   = nil
 
-    -- [[ 3. PRE-CALCULATE ITEM STATS ]]
-    local finalNewStats = MSC.SafeGetItemStats(newItemLink, targetSlotID, weights, specName)
-    
+-- [[ 3. PRE-CALCULATE ITEM STATS ]]
+    local parsedNewStats = MSC.SafeGetItemStats(newItemLink, targetSlotID, weights, specName)
+    local finalNewStats = {}
+    for k, v in pairs(parsedNewStats) do finalNewStats[k] = v end
+
     -- [[ MEMORY OPTIMIZATION ]]
     wipe(Scratch_Stats_Old)
     local finalOldStats = Scratch_Stats_Old
