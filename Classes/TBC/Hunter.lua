@@ -478,26 +478,26 @@ Hunter.LevelingBrackets = {
 Hunter.Specs = { [1]="BeastMastery", [2]="Marksmanship", [3]="Survival" }
 
 Hunter.PrettyNames = {
-    ["RAID_BM"]          = "Raid: Beast Mastery",
-    ["RAID_SURV"]        = "Raid: Survival (Expose Weakness)",
-    ["RAID_MM"]          = "Raid: Marksmanship",
-    ["PVP_MM"]           = "PvP: Marksmanship",
+    ["RAID_BM"]          = MSC.L["Raid: Beast Mastery"],
+    ["RAID_SURV"]        = MSC.L["Raid: Survival (Expose Weakness)"],
+    ["RAID_MM"]          = MSC.L["Raid: Marksmanship"],
+    ["PVP_MM"]           = MSC.L["PvP: Marksmanship"],
     
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
     
-    ["Leveling_Melee_21_40"] = "Survival Melee (21-40)",
-    ["Leveling_Melee_41_51"] = "Survival Melee (41-51)",
-    ["Leveling_Melee_52_59"] = "Survival Melee (52-59)",
-    ["Leveling_Melee_60_70"] = "Survival Melee (Outland)",
-	
-	["Leveling_Survival_21_40"] = "Survival Leveling (21-40)",
-    ["Leveling_Survival_41_51"] = "Survival Leveling (41-51)",
-    ["Leveling_Survival_52_59"] = "Survival Leveling (52-59)",
-    ["Leveling_Survival_60_70"] = "Survival Leveling (Outland)",
+    ["Leveling_Melee_21_40"] = MSC.L["Survival Melee (21-40)"],
+    ["Leveling_Melee_41_51"] = MSC.L["Survival Melee (41-51)"],
+    ["Leveling_Melee_52_59"] = MSC.L["Survival Melee (52-59)"],
+    ["Leveling_Melee_60_70"] = MSC.L["Survival Melee (Outland)"],
+    
+    ["Leveling_Survival_21_40"] = MSC.L["Survival Leveling (21-40)"],
+    ["Leveling_Survival_41_51"] = MSC.L["Survival Leveling (41-51)"],
+    ["Leveling_Survival_52_59"] = MSC.L["Survival Leveling (52-59)"],
+    ["Leveling_Survival_60_70"] = MSC.L["Survival Leveling (Outland)"],
 }
 
 Hunter.SpeedChecks = { 
@@ -518,126 +518,23 @@ Hunter.StatToCritMatrix = {
 }
 
 Hunter.Talents = { 
-    ["SUREFOOTED"] = "Surefooted",
-    ["BESTIAL_WRATH"]="Bestial Wrath", 
-    ["BEAST_WITHIN"]="The Beast Within", 
-    ["TRUESHOT_AURA"]="Trueshot Aura", 
-    ["SILENCING_SHOT"]="Silencing Shot", 
-    ["SCATTER_SHOT"]="Scatter Shot", 
-    ["WYVERN_STING"]="Wyvern Sting", 
-    ["READYNESS"]="Readiness", 
-    ["EXPOSE_WEAKNESS"]="Expose Weakness", 
-    ["CAREFUL_AIM"]="Careful Aim", 
-	["SAVAGE_STRIKES"] = "Savage Strikes",
-    ["SURVIVAL_INST"]="Survival Instincts" 
+    ["SUREFOOTED"] = MSC.L["Surefooted"],
+    ["BESTIAL_WRATH"]= MSC.L["Bestial Wrath"], 
+    ["BEAST_WITHIN"]= MSC.L["The Beast Within"], 
+    ["TRUESHOT_AURA"]= MSC.L["Trueshot Aura"], 
+    ["SILENCING_SHOT"]= MSC.L["Silencing Shot"], 
+    ["SCATTER_SHOT"]= MSC.L["Scatter Shot"], 
+    ["WYVERN_STING"]= MSC.L["Wyvern Sting"], 
+    ["READYNESS"]= MSC.L["Readiness"], 
+    ["EXPOSE_WEAKNESS"]= MSC.L["Expose Weakness"], 
+    ["CAREFUL_AIM"]= MSC.L["Careful Aim"], 
+    ["SAVAGE_STRIKES"] = MSC.L["Savage Strikes"],
+    ["SURVIVAL_INST"]= MSC.L["Survival Instincts"] 
 }
 
 -- =============================================================
 -- LOGIC
 -- =============================================================
-function Hunter:GetSpec()
-    local function Rank(k) return MSC:GetTalentRank(k) end
-    local level = UnitLevel("player")
-    
-    -- [[ ENDGAME DETECTION ]]
-    if level >= 60 then
-        if Rank("BEAST_WITHIN") > 0 or Rank("BESTIAL_WRATH") > 0 then return "RAID_BM" end
-        if Rank("EXPOSE_WEAKNESS") > 0 or Rank("WYVERN_STING") > 0 then return "RAID_SURV" end
-        if Rank("TRUESHOT_AURA") > 0 or Rank("SILENCING_SHOT") > 0 then
-            if Rank("SURVIVAL_INST") > 0 then return "PVP_MM" end
-            return "RAID_MM"
-        end
-        return "RAID_BM"
-    end
-
-    -- [[ LEVELING BRACKET CALCULATION ]]
-    local suffix = ""
-    if level <= 20 then suffix = "_1_20"
-    elseif level <= 40 then suffix = "_21_40"
-    elseif level < 52 then suffix = "_41_51"
-    elseif level < 60 then suffix = "_52_59" 
-    else suffix = "_60_70" end
-
-    -- Determine Role
-    local role = "Leveling" 
-    if Rank("SURVIVAL_INST") > 0 and Rank("WYVERN_STING") == 0 then role = "Leveling_Melee" end 
-
-    local specificKey = role .. suffix
-    if Hunter.LevelingBrackets and Hunter.LevelingBrackets[specificKey] then return specificKey end
-    if Hunter.LevelingWeights[specificKey] then return specificKey end
-    return "Leveling" .. suffix
-end
-
-function Hunter:GetDynamicWeights(forceKey)
-    -- [[ FIX 1: TRANSLATOR ]]
-    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
-    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
-    if forceKey and not Hunter.LevelingBrackets[forceKey] and not Hunter.Weights[forceKey] then
-        if Hunter.PrettyNames then
-            for key, name in pairs(Hunter.PrettyNames) do
-                if name == forceKey then
-                    forceKey = key
-                    break
-                end
-            end
-        end
-    end
-
-    local level = UnitLevel("player")
-    local specKey = forceKey or self:GetSpec() 
-
-    -- 1. Check Leveling Brackets
-    if Hunter.LevelingBrackets and Hunter.LevelingBrackets[specKey] then
-        local bracket = Hunter.LevelingBrackets[specKey]
-        
-        -- Calculate progress
-        local progress = (level - bracket.min) / (bracket.max - bracket.min)
-        
-        -- [[ FIX 2: PREVIEW CLAMPING ]]
-        -- If previewing a different level bracket, force progress to 0 or 1 
-        -- to prevent "Negative Stats" from vanishing.
-        if forceKey then
-            if level < bracket.min then progress = 0 end -- Show Start weights
-            if level > bracket.max then progress = 1 end -- Show End weights
-        else
-            -- Normal play strict clamping
-            if progress < 0 then progress = 0 end
-            if progress > 1 then progress = 1 end
-        end
-
-        local dynamicWeights = {}
-        
-        -- [[ FIX 3: ROBUSTNESS ]]
-        -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
-        local allStats = {}
-        if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
-        if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
-
-        for stat, _ in pairs(allStats) do
-            local startValue = (bracket.Start and bracket.Start[stat]) or 0
-            local endValue = (bracket.End and bracket.End[stat]) or 0
-            
-            local result = startValue + ((endValue - startValue) * progress)
-            
-            -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
-            
-            dynamicWeights[stat] = result
-        end
-        
-        return dynamicWeights, specKey
-    end
-
-    -- 2. Static Weights Fallback
-    if Hunter.Weights and Hunter.Weights[specKey] then 
-        return Hunter.Weights[specKey], specKey
-    elseif Hunter.LevelingWeights and Hunter.LevelingWeights[specKey] then 
-        return Hunter.LevelingWeights[specKey], specKey
-    end
-
-    return nil, specKey
-end
-
 function Hunter:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
@@ -671,6 +568,69 @@ function Hunter:GetSpec()
     local specificKey = role .. suffix
     if Hunter.LevelingBrackets and Hunter.LevelingBrackets[specificKey] then return specificKey end
     return "Leveling" .. suffix
+end
+
+function Hunter:GetDynamicWeights(forceKey)
+
+    if forceKey and not Hunter.LevelingBrackets[forceKey] and not Hunter.Weights[forceKey] then
+        if Hunter.PrettyNames then
+            for key, name in pairs(Hunter.PrettyNames) do
+                if name == forceKey then
+                    forceKey = key
+                    break
+                end
+            end
+        end
+    end
+
+    local level = UnitLevel("player")
+    local specKey = forceKey or self:GetSpec() 
+
+    -- 1. Check Leveling Brackets
+    if Hunter.LevelingBrackets and Hunter.LevelingBrackets[specKey] then
+        local bracket = Hunter.LevelingBrackets[specKey]
+        
+        -- Calculate progress
+        local progress = (level - bracket.min) / (bracket.max - bracket.min)
+        
+        if forceKey then
+            if level < bracket.min then progress = 0 end -- Show Start weights
+            if level > bracket.max then progress = 1 end -- Show End weights
+        else
+            -- Normal play strict clamping
+            if progress < 0 then progress = 0 end
+            if progress > 1 then progress = 1 end
+        end
+
+        local dynamicWeights = {}
+        
+        local allStats = {}
+        if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
+        if bracket.End then for k in pairs(bracket.End) do allStats[k] = true end end
+
+        for stat, _ in pairs(allStats) do
+            local startValue = (bracket.Start and bracket.Start[stat]) or 0
+            local endValue = (bracket.End and bracket.End[stat]) or 0
+            
+            local result = startValue + ((endValue - startValue) * progress)
+            
+            -- Safety: Never return negative weight
+            if result < 0 then result = 0 end
+            
+            dynamicWeights[stat] = result
+        end
+        
+        return dynamicWeights, specKey
+    end
+
+    -- 2. Static Weights Fallback
+    if Hunter.Weights and Hunter.Weights[specKey] then 
+        return Hunter.Weights[specKey], specKey
+    elseif Hunter.LevelingWeights and Hunter.LevelingWeights[specKey] then 
+        return Hunter.LevelingWeights[specKey], specKey
+    end
+
+    return nil, specKey
 end
 
 function Hunter:ApplyScalers(weights, currentSpec)
@@ -713,12 +673,12 @@ function Hunter:ApplyScalers(weights, currentSpec)
         if finalCap < 0 then finalCap = 0 end
 
         if hitRating >= (finalCap + 15) then
-            w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-            table.insert(activeCaps, "Hit")
-        elseif hitRating >= finalCap then
-            w["ITEM_MOD_HIT_RATING_SHORT"] = w["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
-            table.insert(activeCaps, "Hit (Soft)")
-        end
+			w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
+			table.insert(activeCaps, MSC.L["Hit"])
+		elseif hitRating >= finalCap then
+			w["ITEM_MOD_HIT_RATING_SHORT"] = w["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

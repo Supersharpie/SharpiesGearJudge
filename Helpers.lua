@@ -130,7 +130,8 @@ function MSC:IsJewelcrafter()
     if GetNumSkillLines then
         for i = 1, GetNumSkillLines() do
             local skillName = GetSkillLineInfo(i)
-            if skillName and (skillName == "Jewelcrafting" or string.find(skillName, "Jewelcrafting")) then
+            local localizedJC = MSC.L["Jewelcrafting"] or "Jewelcrafting"
+			if skillName and (skillName == localizedJC or string.find(skillName, localizedJC)) then
                 return true
             end
         end
@@ -247,22 +248,22 @@ local Scratch_GemColors = {}
 local Scratch_ProjectedColors = { RED=0, YELLOW=0, BLUE=0 }
 
 MSC.StatShortNames = {
-    ["MSC_WAND_DPS"] = "Wand DPS", ["MSC_WEAPON_DPS"] = "Weapon DPS", ["MSC_WEAPON_SPEED"] = "Speed", ["MSC_OH_WEAPON_SPEED"] = "OH Speed",
-    ["ITEM_MOD_STAMINA_SHORT"] = "Stam", ["ITEM_MOD_INTELLECT_SHORT"] = "Int",
-    ["ITEM_MOD_AGILITY_SHORT"] = "Agi", ["ITEM_MOD_STRENGTH_SHORT"] = "Str",
-    ["ITEM_MOD_SPIRIT_SHORT"] = "Spt", ["ITEM_MOD_SPELL_POWER_SHORT"] = "SP",
-    ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = "Heal", ["ITEM_MOD_MANA_REGENERATION_SHORT"] = "Mp5",
-    ["ITEM_MOD_ATTACK_POWER_SHORT"] = "AP", ["ITEM_MOD_CRIT_RATING_SHORT"] = "Crit",
-    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = "Spell Crit", ["ITEM_MOD_HIT_RATING_SHORT"] = "Hit",
-    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = "Spell Hit", ["ITEM_MOD_HASTE_RATING_SHORT"] = "Haste",
-    ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = "Exp", ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = "Def",
-    ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = "Resil", ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = "ArP",
-    ["ITEM_MOD_BLOCK_VALUE_SHORT"] = "BlockVal", ["ITEM_MOD_BLOCK_RATING_SHORT"] = "Block",
-    ["ITEM_MOD_DODGE_RATING_SHORT"] = "Dodge", ["ITEM_MOD_PARRY_RATING_SHORT"] = "Parry",
-    ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = "Shadow", ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = "Fire",
-    ["ITEM_MOD_FROST_DAMAGE_SHORT"] = "Frost", ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = "Arcane",
-    ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = "Nature", ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = "Holy",
-    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = "Dmg", ["ITEM_MOD_ARMOR_SHORT"] = "Armor"
+    ["MSC_WAND_DPS"] = MSC.L["Wand DPS"], ["MSC_WEAPON_DPS"] = MSC.L["Weapon DPS"], ["MSC_WEAPON_SPEED"] = MSC.L["Speed"], ["MSC_OH_WEAPON_SPEED"] = MSC.L["OH Speed"],
+    ["ITEM_MOD_STAMINA_SHORT"] = MSC.L["Stam"], ["ITEM_MOD_INTELLECT_SHORT"] = MSC.L["Int"],
+    ["ITEM_MOD_AGILITY_SHORT"] = MSC.L["Agi"], ["ITEM_MOD_STRENGTH_SHORT"] = MSC.L["Str"],
+    ["ITEM_MOD_SPIRIT_SHORT"] = MSC.L["Spt"], ["ITEM_MOD_SPELL_POWER_SHORT"] = MSC.L["SP"],
+    ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = MSC.L["Heal"], ["ITEM_MOD_MANA_REGENERATION_SHORT"] = MSC.L["Mp5"],
+    ["ITEM_MOD_ATTACK_POWER_SHORT"] = MSC.L["AP"], ["ITEM_MOD_CRIT_RATING_SHORT"] = MSC.L["Crit"],
+    ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = MSC.L["Spell Crit"], ["ITEM_MOD_HIT_RATING_SHORT"] = MSC.L["Hit"],
+    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = MSC.L["Spell Hit"], ["ITEM_MOD_HASTE_RATING_SHORT"] = MSC.L["Haste"],
+    ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = MSC.L["Exp"], ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = MSC.L["Def"],
+    ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = MSC.L["Resil"], ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = MSC.L["ArP"],
+    ["ITEM_MOD_BLOCK_VALUE_SHORT"] = MSC.L["BlockVal"], ["ITEM_MOD_BLOCK_RATING_SHORT"] = MSC.L["Block"],
+    ["ITEM_MOD_DODGE_RATING_SHORT"] = MSC.L["Dodge"], ["ITEM_MOD_PARRY_RATING_SHORT"] = MSC.L["Parry"],
+    ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = MSC.L["Shadow"], ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = MSC.L["Fire"],
+    ["ITEM_MOD_FROST_DAMAGE_SHORT"] = MSC.L["Frost"], ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = MSC.L["Arcane"],
+    ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = MSC.L["Nature"], ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = MSC.L["Holy"],
+    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = MSC.L["Dmg"], ["ITEM_MOD_ARMOR_SHORT"] = MSC.L["Armor"]
 }
 
 function MSC.Round(num, numDecimalPlaces)
@@ -604,7 +605,7 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                         end
                     end
                     finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = eqData.name .. " (Equipped)"
+                    finalStats.ENCHANT_TEXT = eqData.name .. " " .. MSC.L["(Equipped)"]
                 end
             end
             
@@ -756,7 +757,7 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                     if type(cType) == "string" then cType = cType:sub(1,1)..cType:sub(2):lower() end
                     if not gName then 
                         local g = MSC.GetGemStatsByID(id)
-                        gName = g and (MSC.StatShortNames[g.stat] or "Gem") or "Gem"
+                        gName = g and (MSC.StatShortNames[g.stat] or MSC.L["Gem"]) or MSC.L["Gem"]
                     end
                     if not Scratch_GemCounts[gName] then
                         Scratch_GemCounts[gName] = 0; Scratch_GemColors[gName] = cType; table_insert(Scratch_GemOrder, gName)
@@ -773,11 +774,11 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                 if bonusActive and next(bonusStats) then
                     local bParts = {}
                     for k, v in pairs(bonusStats) do table_insert(bParts, "+" .. v .. " " .. ((MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat")) end
-                    finalStats.PROJECTION_DATA.Bonus = "Socket Bonus: " .. table_concat(bParts, ", ")
+                    finalStats.PROJECTION_DATA.Bonus = MSC.L["Socket Bonus: "] .. table_concat(bParts, ", ")
                 end
                 local statParts = {}
                 for k, v in pairs(Scratch_GemStats) do
-                    local short = (MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat"
+                    local short = (MSC.StatShortNames and MSC.StatShortNames[k]) or MSC.L["Stat"]
                     table_insert(statParts, "+" .. v .. " " .. short)
                 end
                 if #statParts > 0 then finalStats.PROJECTION_DATA.Stats = "(" .. table_concat(statParts, ", ") .. ")" end
@@ -877,14 +878,13 @@ function MSC:GetItemSetID(itemIDOrLink)
         for i = 2, tip:NumLines() do
             local line = _G[tipName.."TextLeft"..i]
             local text = line and line:GetText()
-            if text then
-                 if string_find(text, "Set: ") then
-                     local setName = string_match(text, "Set: (.*) %(")
-                     return setName
-                 end
+            local setPattern = MSC.L["^Set: (.*) %("] or "^Set: (.*) %("
+				if string_find(text, MSC.L["Set: "] or "Set: ") then
+					local setName = string_match(text, setPattern)
+					return setName
+				end
             end
         end
-    end
     return nil
 end
 
@@ -926,15 +926,15 @@ end
 function MSC:DebugItem()
     local tip = GameTooltip
     local _, link = tip:GetItem()
-    if not link then print("|cffff0000SGJ: Please hover over an item to debug.|r") return end
+    if not link then print(MSC.L["|cffff0000SGJ: Please hover over an item to debug.|r"]) return end
     local weights, specName = MSC.GetCurrentWeights()
-    if not weights then print("|cffff0000SGJ: No weights loaded.|r") return end
+    if not weights then print(MSC.L["|cffff0000SGJ: No weights loaded.|r"]) return end
     local stats = MSC.SafeGetItemStats(link, nil, weights, specName)
     local score = 0
     print(" ")
-    print("|cff00ccff--- SGJ DEBUG REPORT ---|r")
-    print("Item: " .. link)
-    print("Profile: |cffffd100" .. (specName or "Unknown") .. "|r")
+    print(MSC.L["|cff00ccff--- SGJ DEBUG REPORT ---|r"])
+	print(MSC.L["Item: "] .. link)
+	print(MSC.L["Profile: "] .. "|cffffd100" .. (specName or MSC.L["Unknown"]) .. "|r")
     for stat, val in pairs(stats) do
         if type(val) == "number" then
             local w = weights[stat]
@@ -942,10 +942,10 @@ function MSC:DebugItem()
                 local lineScore = val * w
                 score = score + lineScore
                 local statName = string_gsub(string_gsub(stat, "ITEM_MOD_", ""), "_SHORT", "")
-                print(string_format("|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r", statName, val, w, lineScore))
+                print(string_format(MSC.L["|cffffffff%s:|r %.1f x %.2f = |cff00ff00%.1f|r"], statName, val, w, lineScore))
             else
                 local statName = string_gsub(string_gsub(stat, "ITEM_MOD_", ""), "_SHORT", "")
-                print(string_format("|cff888888%s: %.1f (Weight: 0)|r", statName, val))
+                print(string_format(MSC.L["|cff888888%s: %.1f (Weight: 0)|r"], statName, val))
             end
         end
     end
@@ -955,10 +955,13 @@ function MSC:DebugItem()
             if (weights[stat] or 0) >= 0.1 then useful = useful + val else useless = useless + val end
         end
     end
-    print("Ratio Check: " .. string_format("Useful: %.1f / Useless: %.1f", useful, useless))
-    if useless > (useful * 2) then print("|cffff0000[FAIL] Item rejected by Bouncer (Mostly Junk)|r")
-    else print("|cff00ff00[PASS] Item accepted|r") end
-    print("Final Score: |cff00ccff" .. MSC.Round(score, 1) .. "|r")
+		print(MSC.L["Ratio Check: "] .. string_format(MSC.L["Useful: %.1f / Useless: %.1f"], useful, useless))
+		if useless > (useful * 2) then 
+			print(MSC.L["|cffff0000[FAIL] Item rejected by Bouncer (Mostly Junk)|r"])
+		else 
+			print(MSC.L["|cff00ff00[PASS] Item accepted|r"]) 
+		end
+		print(MSC.L["Final Score: "] .. "|cff00ccff" .. MSC.Round(score, 1) .. "|r")
 end
 
 -- =============================================================

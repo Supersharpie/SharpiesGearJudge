@@ -401,9 +401,9 @@ end
 
 local function ParseCooldown(text)
     local lowerText = string_lower(text)
-    local min = string_match(lowerText, "%((%d+)%s*min[s%a]*%s*cooldown%)")
-    if min then return tonumber(min) * 60 end
-    local sec = string_match(lowerText, "%((%d+)%s*sec[s%a]*%s*cooldown%)")
+    local min = string_match(lowerText, MSC.L["%((%d+)%s*min[s%a]*%s*cooldown%)"] or "%((%d+)%s*min[s%a]*%s*cooldown%)")
+	if min then return tonumber(min) * 60 end
+	local sec = string_match(lowerText, MSC.L["%((%d+)%s*sec[s%a]*%s*cooldown%)"] or "%((%d+)%s*sec[s%a]*%s*cooldown%)")
     if sec then return tonumber(sec) end
     return 120 
 end

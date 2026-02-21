@@ -567,28 +567,28 @@ Shaman.LevelingBrackets = {
 Shaman.Specs = { [1]="Elemental", [2]="Enhancement", [3]="Restoration" }
 
 Shaman.PrettyNames = {
-    ["ELE_PVE"]         = "Raid: Elemental",
-    ["ELE_PVP"]         = "PvP: Elemental",
-    ["ENH_PVE"]         = "Raid: Enhancement",
-    ["RESTO_PVE"]       = "Raid: Restoration",
-    ["SHAMAN_TANK"]     = "Tank: Warden",
+    ["ELE_PVE"]         = MSC.L["Raid: Elemental"],
+    ["ELE_PVP"]         = MSC.L["PvP: Elemental"],
+    ["ENH_PVE"]         = MSC.L["Raid: Enhancement"],
+    ["RESTO_PVE"]       = MSC.L["Raid: Restoration"],
+    ["SHAMAN_TANK"]     = MSC.L["Tank: Warden"],
     -- Leveling Brackets
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
-	["Leveling_Caster_40_51"] = "Elemental (40-51)",
-    ["Leveling_Caster_52_59"] = "Elemental (52-59)",
-    ["Leveling_Caster_60_70"] = "Elemental (Outland)",
-	["Leveling_Healer_40_51"] = "Resto Dungeon (40-51)",
-    ["Leveling_Healer_52_59"] = "Resto Dungeon (52-59)",
-    ["Leveling_Healer_60_70"] = "Resto Dungeon (Outland)",
-    ["Leveling_Tank_1_20"]    = "Shaman Tank (1-20)",
-    ["Leveling_Tank_21_40"]   = "Shaman Tank (21-40)",
-    ["Leveling_Tank_41_51"]   = "Shaman Tank (41-51)",
-    ["Leveling_Tank_52_59"]   = "Shaman Tank (52-59)",
-    ["Leveling_Tank_60_70"]   = "Shaman Tank (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
+    ["Leveling_Caster_40_51"] = MSC.L["Elemental (40-51)"],
+    ["Leveling_Caster_52_59"] = MSC.L["Elemental (52-59)"],
+    ["Leveling_Caster_60_70"] = MSC.L["Elemental (Outland)"],
+    ["Leveling_Healer_40_51"] = MSC.L["Resto Dungeon (40-51)"],
+    ["Leveling_Healer_52_59"] = MSC.L["Resto Dungeon (52-59)"],
+    ["Leveling_Healer_60_70"] = MSC.L["Resto Dungeon (Outland)"],
+    ["Leveling_Tank_1_20"]    = MSC.L["Shaman Tank (1-20)"],
+    ["Leveling_Tank_21_40"]   = MSC.L["Shaman Tank (21-40)"],
+    ["Leveling_Tank_41_51"]   = MSC.L["Shaman Tank (41-51)"],
+    ["Leveling_Tank_52_59"]   = MSC.L["Shaman Tank (52-59)"],
+    ["Leveling_Tank_60_70"]   = MSC.L["Shaman Tank (Outland)"],
 }
 
 Shaman.SpeedChecks = {
@@ -610,20 +610,21 @@ Shaman.StatToCritMatrix = {
 }
 
 Shaman.Talents = { 
-    ["ELEMENTAL_MASTERY"]="Elemental Mastery", 
-    ["TOTEM_OF_WRATH"]="Totem of Wrath", 
-    ["LIGHTNING_MASTERY"]="Lightning Mastery", 
-    ["STORMSTRIKE"]="Stormstrike", 
-    ["SHAMANISTIC_RAGE"]="Shamanistic Rage", 
-    ["MANA_TIDE"]="Mana Tide Totem", 
-    ["EARTH_SHIELD"]="Earth Shield", 
-	["ELEMENTAL_PRECISION"] = "Elemental Precision",
-    ["NATURE_GUIDANCE"]="Nature's Guidance", 
-    ["ANCESTRAL_KNOW"]="Ancestral Knowledge", 
-    ["MENTAL_QUICKNESS"]="Mental Quickness", 
-    ["SHIELD_SPEC"]="Shield Specialization", 
-    ["ANTICIPATION"]="Anticipation",
-    ["DUAL_WIELD_SPEC"]="Dual Wield Specialization"
+    ["ELEMENTAL_MASTERY"]	= MSC.L["Elemental Mastery"], 
+    ["TOTEM_OF_WRATH"]		= MSC.L["Totem of Wrath"], 
+    ["LIGHTNING_MASTERY"]	= MSC.L["Lightning Mastery"], 
+    ["STORMSTRIKE"]			= MSC.L["Stormstrike"], 
+    ["SHAMANISTIC_RAGE"]	= MSC.L["Shamanistic Rage"], 
+    ["MANA_TIDE"]			= MSC.L["Mana Tide Totem"], 
+    ["EARTH_SHIELD"]		= MSC.L["Earth Shield"], 
+    ["ELEMENTAL_PRECISION"] = MSC.L["Elemental Precision"],
+    ["NATURE_GUIDANCE"]		= MSC.L["Nature's Guidance"], 
+    ["ANCESTRAL_KNOW"]		= MSC.L["Ancestral Knowledge"], 
+    ["MENTAL_QUICKNESS"]	= MSC.L["Mental Quickness"], 
+    ["SHIELD_SPEC"]			= MSC.L["Shield Specialization"], 
+    ["ANTICIPATION"]		= MSC.L["Anticipation"],
+    ["DUAL_WIELD_SPEC"]		= MSC.L["Dual Wield Specialization"],
+	["NATURES_BLESSING"]	= MSC.L["NATURES_BLESSING"]
 }
 
 -- =============================================================
@@ -662,7 +663,7 @@ function Shaman:GetSpec()
 end
 
 function Shaman:GetDynamicWeights(forceKey)
-    -- [[ FIX 1: TRANSLATOR ]]
+    -- [[ TRANSLATOR ]]
     -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
     -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
     if forceKey and not Shaman.LevelingBrackets[forceKey] and not Shaman.Weights[forceKey] then
@@ -686,7 +687,7 @@ function Shaman:GetDynamicWeights(forceKey)
         -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
         
-        -- [[ FIX 2: PREVIEW CLAMPING ]]
+        -- [[ PREVIEW CLAMPING ]]
         -- If previewing a different level bracket, force progress to 0 or 1 
         -- to prevent "Negative Stats" from vanishing.
         if forceKey then
@@ -700,7 +701,7 @@ function Shaman:GetDynamicWeights(forceKey)
 
         local dynamicWeights = {}
         
-        -- [[ FIX 3: ROBUSTNESS ]]
+        -- [[ ROBUSTNESS ]]
         -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
         local allStats = {}
         if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
@@ -804,12 +805,12 @@ function Shaman:ApplyScalers(weights, currentSpec)
          if specialCap < 0 then specialCap = 0 end
          
          if hitRating >= (specialCap + 20) then
-             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
-             table.insert(activeCaps, "Yellow Hit")
-         elseif hitRating >= specialCap then
-             weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
-             table.insert(activeCaps, "Y-Hit (Soft)")
-         end
+			weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
+			table.insert(activeCaps, MSC.L["Yellow Hit"])
+		elseif hitRating >= specialCap then
+			weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
+			table.insert(activeCaps, MSC.L["Y-Hit (Soft)"])
+		end
 
     -- B. 2H / TANK HIT (Hard Cap)
     elseif weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
@@ -818,12 +819,12 @@ function Shaman:ApplyScalers(weights, currentSpec)
          if cap < 0 then cap = 0 end
          
          if hitRating >= (cap + 15) then
-             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
-             table.insert(activeCaps, "Hit")
-         elseif hitRating >= cap then
-             weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
-             table.insert(activeCaps, "Hit (Soft)")
-         end
+			weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
+			table.insert(activeCaps, MSC.L["Hit"])
+		elseif hitRating >= cap then
+			weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
     
     -- C. SPELL HIT (Elemental)
@@ -849,12 +850,12 @@ function Shaman:ApplyScalers(weights, currentSpec)
          if spellCap < 0 then spellCap = 0 end
          
          if hitRating >= (spellCap + 15) then
-             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-             table.insert(activeCaps, "Spell Hit")
-         elseif hitRating >= spellCap then
-             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-             table.insert(activeCaps, "Hit (Soft)")
-         end
+			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
+			table.insert(activeCaps, MSC.L["Spell Hit"])
+		elseif hitRating >= spellCap then
+			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
@@ -881,7 +882,7 @@ end
 -- Note: Proc uptime, conditional buffs, and mana savings are averaged 
 -- into standard stats (e.g., MP5 for mana reduction, AP for proc damage).
 Shaman.Relics = {
-    [22345] = { note = "Reduces Reincarnation CD by 10 min." }, -- Totem of Rebirth (Utility)
+    [22345] = { note = MSC.L["Reduces Reincarnation CD by 10 min."] }, -- Totem of Rebirth (Utility)
     [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 15 }, -- Totem of Rage (Averaged shock dmg)
     [22396] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Totem of Life
     [23199] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 33 }, -- Totem of the Storm

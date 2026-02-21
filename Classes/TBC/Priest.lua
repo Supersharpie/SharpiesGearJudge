@@ -395,25 +395,25 @@ Priest.LevelingBrackets = {
 Priest.Specs = { [1]="Discipline", [2]="Holy", [3]="Shadow" }
 
 Priest.PrettyNames = {
-    ["HOLY_DEEP"]       = "Healer: Circle of Healing",
-    ["DISC_SUPPORT"]    = "Healer: Discipline (Pain Supp)",
-    ["SMITE_DPS"]       = "DPS: Smite (Holy Fire)",
-    ["SHADOW_PVE"]      = "DPS: Shadow (Mana Battery)",
-    ["SHADOW_PVP"]      = "PvP: Shadow",
+    ["HOLY_DEEP"]       = MSC.L["Healer: Circle of Healing"],
+    ["DISC_SUPPORT"]    = MSC.L["Healer: Discipline (Pain Supp)"],
+    ["SMITE_DPS"]       = MSC.L["DPS: Smite (Holy Fire)"],
+    ["SHADOW_PVE"]      = MSC.L["DPS: Shadow (Mana Battery)"],
+    ["SHADOW_PVP"]      = MSC.L["PvP: Shadow"],
     
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
     
-    ["Leveling_Smite_21_40"] = "Smite DPS (21-40)",
-    ["Leveling_Smite_41_51"] = "Smite DPS (41-51)",
-    ["Leveling_Smite_52_59"] = "Smite DPS (52-59)",
-    ["Leveling_Smite_60_70"] = "Smite DPS (Outland)",
+    ["Leveling_Smite_21_40"] = MSC.L["Smite DPS (21-40)"],
+    ["Leveling_Smite_41_51"] = MSC.L["Smite DPS (41-51)"],
+    ["Leveling_Smite_52_59"] = MSC.L["Smite DPS (52-59)"],
+    ["Leveling_Smite_60_70"] = MSC.L["Smite DPS (Outland)"],
     
-    ["Leveling_Healer_52_59"] = "Dungeon Healer (52-59)",
-    ["Leveling_Healer_60_70"] = "Dungeon Healer (Outland)",
+    ["Leveling_Healer_52_59"] = MSC.L["Dungeon Healer (52-59)"],
+    ["Leveling_Healer_60_70"] = MSC.L["Dungeon Healer (Outland)"],
 }
 
 Priest.SpeedChecks = { ["Default"]={} }
@@ -431,17 +431,17 @@ Priest.StatToCritMatrix = {
 }
 
 Priest.Talents = { 
-    ["POWER_INFUSION"]  ="Power Infusion", 
-    ["PAIN_SUPP"]       ="Pain Suppression", 
-    ["SPIRIT_GUIDANCE"] ="Spiritual Guidance", 
-    ["CIRCLE_HEALING"]  ="Circle of Healing", 
-    ["SEARING_LIGHT"]   ="Searing Light", 
-    ["SPIRIT_OF_REDEMPTION"]="Spirit of Redemption", 
-    ["SHADOWFORM"]      ="Shadowform", 
-    ["VAMPIRIC_TOUCH"]  ="Vampiric Touch",
-    ["ENLIGHTENMENT"]   ="Enlightenment",
-    ["SHADOW_FOCUS"]    ="Shadow Focus",
-	["SPIRIT_TAP"] = "Spirit Tap"
+    ["POWER_INFUSION"]  = MSC.L["Power Infusion"], 
+    ["PAIN_SUPP"]       = MSC.L["Pain Suppression"], 
+    ["SPIRIT_GUIDANCE"] = MSC.L["Spiritual Guidance"], 
+    ["CIRCLE_HEALING"]  = MSC.L["Circle of Healing"], 
+    ["SEARING_LIGHT"]   = MSC.L["Searing Light"], 
+    ["SPIRIT_OF_REDEMPTION"]= MSC.L["Spirit of Redemption"], 
+    ["SHADOWFORM"]      = MSC.L["Shadowform"], 
+    ["VAMPIRIC_TOUCH"]  = MSC.L["Vampiric Touch"],
+    ["ENLIGHTENMENT"]   = MSC.L["Enlightenment"],
+    ["SHADOW_FOCUS"]    = MSC.L["Shadow Focus"],
+    ["SPIRIT_TAP"]      = MSC.L["Spirit Tap"]
 }
 
 -- =============================================================
@@ -576,7 +576,7 @@ function Priest:ApplyScalers(weights, currentSpec)
         -- [[ B. SPIRIT TAP TURBO-CHARGER ]]
         -- If user has Spirit Tap (Talent), Spirit is worth double 50% of the time while leveling.
         -- We apply a 1.5x multiplier to the Spirit weight to reflect this massive uptime value.
-        local rTap = MSC:GetTalentRank("Spirit Tap") -- You might need to add "Spirit Tap" to Priest.Talents
+        local rTap = Rank("SPIRIT_TAP") 
         if rTap and rTap > 0 and (currentSpec:find("Leveling") or currentSpec:find("Smite")) then
             w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] * 1.5
         end
@@ -635,12 +635,12 @@ function Priest:ApplyScalers(weights, currentSpec)
         if finalCap < 0 then finalCap = 0 end
         
         if hitRating >= (finalCap + 15) then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, "Hit")
-        elseif hitRating >= finalCap then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "Hit (Soft)")
-        end
+			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
+			table.insert(activeCaps, MSC.L["Hit"])
+		elseif hitRating >= finalCap then
+			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

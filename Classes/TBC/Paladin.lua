@@ -620,39 +620,39 @@ Paladin.LevelingBrackets = {
 -- CLASS METADATA
 -- =============================================================
 Paladin.PrettyNames = {
-    ["HOLY_RAID"]       = "Healer: Holy (Illumination)",
-    ["PROT_DEEP"]       = "Tank: Deep Protection",
-    ["PROT_AOE"]        = "Farming: AoE Grinding (Strat)",
-    ["RET_STANDARD"]    = "DPS: Retribution",
-    ["SHOCKADIN_PVP"]   = "PvP: Shockadin",
+    ["HOLY_RAID"]       = MSC.L["Healer: Holy (Illumination)"],
+    ["PROT_DEEP"]       = MSC.L["Tank: Deep Protection"],
+    ["PROT_AOE"]        = MSC.L["Farming: AoE Grinding (Strat)"],
+    ["RET_STANDARD"]    = MSC.L["DPS: Retribution"],
+    ["SHOCKADIN_PVP"]   = MSC.L["PvP: Shockadin"],
     
     -- Leveling Brackets
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
     
-    ["Leveling_RET_1_20"]  = "Retribution (1-20)",
-    ["Leveling_RET_21_40"] = "Retribution (21-40)",
-    ["Leveling_RET_41_51"] = "Retribution (41-51)",
-    ["Leveling_RET_52_59"] = "Retribution (52-59)",
-    ["Leveling_RET_60_70"] = "Retribution (Outland)",
+    ["Leveling_RET_1_20"]  = MSC.L["Retribution (1-20)"],
+    ["Leveling_RET_21_40"] = MSC.L["Retribution (21-40)"],
+    ["Leveling_RET_41_51"] = MSC.L["Retribution (41-51)"],
+    ["Leveling_RET_52_59"] = MSC.L["Retribution (52-59)"],
+    ["Leveling_RET_60_70"] = MSC.L["Retribution (Outland)"],
     
-    ["Leveling_PROT_AOE_21_40"] = "Prot AoE Grind (21-40)",
-    ["Leveling_PROT_AOE_41_51"] = "Prot AoE Grind (41-51)",
-    ["Leveling_PROT_AOE_52_59"] = "Prot AoE Grind (52-59)",
-    ["Leveling_PROT_AOE_60_70"] = "Prot AoE Grind (Outland)",
+    ["Leveling_PROT_AOE_21_40"] = MSC.L["Prot AoE Grind (21-40)"],
+    ["Leveling_PROT_AOE_41_51"] = MSC.L["Prot AoE Grind (41-51)"],
+    ["Leveling_PROT_AOE_52_59"] = MSC.L["Prot AoE Grind (52-59)"],
+    ["Leveling_PROT_AOE_60_70"] = MSC.L["Prot AoE Grind (Outland)"],
     
-    ["Leveling_HOLY_DUNGEON_21_40"] = "Holy Dungeon (21-40)",
-    ["Leveling_HOLY_DUNGEON_41_51"] = "Holy Dungeon (41-51)",
-    ["Leveling_HOLY_DUNGEON_52_59"] = "Holy Dungeon (52-59)",
-    ["Leveling_HOLY_DUNGEON_60_70"] = "Holy Dungeon (Outland)",
-	
-	["Leveling_PROT_DUNGEON_21_40"] = "Prot Dungeon (21-40)",
-    ["Leveling_PROT_DUNGEON_41_51"] = "Prot Dungeon (41-51)",
-    ["Leveling_PROT_DUNGEON_52_59"] = "Prot Dungeon (52-59)",
-    ["Leveling_PROT_DUNGEON_60_70"] = "Prot Dungeon (Outland)",
+    ["Leveling_HOLY_DUNGEON_21_40"] = MSC.L["Holy Dungeon (21-40)"],
+    ["Leveling_HOLY_DUNGEON_41_51"] = MSC.L["Holy Dungeon (41-51)"],
+    ["Leveling_HOLY_DUNGEON_52_59"] = MSC.L["Holy Dungeon (52-59)"],
+    ["Leveling_HOLY_DUNGEON_60_70"] = MSC.L["Holy Dungeon (Outland)"],
+    
+    ["Leveling_PROT_DUNGEON_21_40"] = MSC.L["Prot Dungeon (21-40)"],
+    ["Leveling_PROT_DUNGEON_41_51"] = MSC.L["Prot Dungeon (41-51)"],
+    ["Leveling_PROT_DUNGEON_52_59"] = MSC.L["Prot Dungeon (52-59)"],
+    ["Leveling_PROT_DUNGEON_60_70"] = MSC.L["Prot Dungeon (Outland)"],
 }
 
 Paladin.SpeedChecks = { 
@@ -663,18 +663,19 @@ Paladin.SpeedChecks = {
 }
 
 Paladin.Talents = { 
-    ["PRECISION"]       = "Precision",
-    ["HOLY_SHOCK"]      = "Holy Shock", 
-    ["DIVINE_ILLUM"]    = "Divine Illumination", 
-    ["HOLY_SHIELD"]     = "Holy Shield", 
-    ["AVENGERS_SHIELD"] = "Avenger's Shield", 
-    ["REPENTANCE"]      = "Repentance", 
-    ["CRUSADER_STRIKE"] = "Crusader Strike", 
-    ["SANCTITY_AURA"]   = "Sanctity Aura", 
-    ["DIVINE_STR"]      = "Divine Strength", 
-    ["DIVINE_INT"]      = "Divine Intellect", 
-    ["COMBAT_EXPERTISE"]= "Combat Expertise",
-    ["SACRED_DUTY"]     = "Sacred Duty"
+    ["PRECISION"]       = MSC.L["Precision"],
+    ["HOLY_SHOCK"]      = MSC.L["Holy Shock"], 
+    ["DIVINE_ILLUM"]    = MSC.L["Divine Illumination"], 
+    ["HOLY_SHIELD"]     = MSC.L["Holy Shield"], 
+    ["AVENGERS_SHIELD"] = MSC.L["Avenger's Shield"], 
+    ["REPENTANCE"]      = MSC.L["Repentance"], 
+    ["CRUSADER_STRIKE"] = MSC.L["Crusader Strike"], 
+    ["SANCTITY_AURA"]   = MSC.L["Sanctity Aura"], 
+    ["DIVINE_STR"]      = MSC.L["Divine Strength"], 
+    ["DIVINE_INT"]      = MSC.L["Divine Intellect"], 
+    ["COMBAT_EXPERTISE"]= MSC.L["Combat Expertise"],
+    ["SACRED_DUTY"]     = MSC.L["Sacred Duty"],
+	["HOLY_GUIDANCE"] 	= MSC.L["HOLY_GUIDANCE"]
 }
 
 Paladin.ValidWeapons = {
@@ -992,10 +993,10 @@ function Paladin:ApplyScalers(weights, currentSpec)
         
         if hitRating >= (finalCap + 15) then
             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
-            table.insert(activeCaps, "Hit")
+            table.insert(activeCaps, MSC.L["Hit"])
         elseif hitRating >= finalCap then
             weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "Hit (Soft)")
+            table.insert(activeCaps, MSC.L["Hit (Soft)"])
         end
     end
 
@@ -1008,10 +1009,10 @@ function Paladin:ApplyScalers(weights, currentSpec)
         
         if hitRating >= (cap + 15) then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, "Spell Hit")
+            table.insert(activeCaps, MSC.L["Spell Hit"])
         elseif hitRating >= cap then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "S-Hit (Soft)")
+            table.insert(activeCaps, MSC.L["S-Hit (Soft)"])
         end
     end
 
@@ -1024,7 +1025,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
         -- Tier 1: SAFELY CAPPED (Hysteresis Buffer)
         if currentDef >= 495 then
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
-            table.insert(activeCaps, "Def (Safe)")
+            table.insert(activeCaps, MSC.L["Def (Safe)"])
 
             -- EFFECTIVE HEALTH PIVOT
             -- Once safe, Stamina and Armor become the new Kings for survival
@@ -1035,7 +1036,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
         elseif currentDef >= 490 then
             -- Keep Defense valuable enough to hold the cap, but allow huge Stam upgrades to win
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.6
-            table.insert(activeCaps, "Def (Soft)")
+            table.insert(activeCaps, MSC.L["Def (Soft)"])
             
         -- Tier 3: UNDER CAP (Default weights apply, typically > 2.0)
         end

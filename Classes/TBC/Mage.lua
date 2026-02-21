@@ -369,27 +369,27 @@ Mage.LevelingBrackets = {
 Mage.Specs = { [1]="Arcane", [2]="Fire", [3]="Frost" }
 
 Mage.PrettyNames = {
-    ["FIRE_RAID"]        = "Raid: Deep Fire",
-    ["ARCANE_RAID"]      = "Raid: Arcane (Mind Mastery)",
-    ["FROST_PVE"]        = "Raid: Deep Frost",
-    ["FROST_PVP"]        = "PvP: Frost",
-    ["FROST_AOE"]        = "Farming: AoE Blizzard",
+    ["FIRE_RAID"]        = MSC.L["Raid: Deep Fire"],
+    ["ARCANE_RAID"]      = MSC.L["Raid: Arcane (Mind Mastery)"],
+    ["FROST_PVE"]        = MSC.L["Raid: Deep Frost"],
+    ["FROST_PVP"]        = MSC.L["PvP: Frost"],
+    ["FROST_AOE"]        = MSC.L["Farming: AoE Blizzard"],
     
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
     
-    ["Leveling_Fire_21_40"] = "Fire (21-40)",
-    ["Leveling_Fire_41_51"] = "Fire (41-51)",
-    ["Leveling_Fire_52_59"] = "Fire (52-59)",
-    ["Leveling_Fire_60_70"] = "Fire (Outland)",
+    ["Leveling_Fire_21_40"] = MSC.L["Fire (21-40)"],
+    ["Leveling_Fire_41_51"] = MSC.L["Fire (41-51)"],
+    ["Leveling_Fire_52_59"] = MSC.L["Fire (52-59)"],
+    ["Leveling_Fire_60_70"] = MSC.L["Fire (Outland)"],
     
-    ["Leveling_AoE_21_40"] = "Frost AoE Grind (21-40)",
-    ["Leveling_AoE_41_51"] = "Frost AoE Grind (41-51)",
-    ["Leveling_AoE_52_59"] = "Frost AoE Grind (52-59)",
-    ["Leveling_AoE_60_70"] = "Frost AoE Grind (Outland)",
+    ["Leveling_AoE_21_40"] = MSC.L["Frost AoE Grind (21-40)"],
+    ["Leveling_AoE_41_51"] = MSC.L["Frost AoE Grind (41-51)"],
+    ["Leveling_AoE_52_59"] = MSC.L["Frost AoE Grind (52-59)"],
+    ["Leveling_AoE_60_70"] = MSC.L["Frost AoE Grind (Outland)"],
 }
 
 Mage.SpeedChecks = { 
@@ -409,20 +409,20 @@ Mage.StatToCritMatrix = {
 }
 
 Mage.Talents = { 
-    ["ELEMENTAL_PRECISION"] = "Elemental Precision",
-    ["ARCANE_POWER"]    ="Arcane Power", 
-    ["SLOW"]            ="Slow", 
-    ["COMBUSTION"]      ="Combustion", 
-    ["DRAGONS_BREATH"]  ="Dragon's Breath", 
-    ["ICE_BARRIER"]     ="Ice Barrier", 
-    ["SUMMON_WELE"]     ="Summon Water Elemental", 
-    ["WINTERS_CHILL"]   ="Winter's Chill", 
-    ["IMP_BLIZZARD"]    ="Improved Blizzard", 
-    ["ARCANE_MIND"]     ="Arcane Mind", 
-    ["MOLTEN_ARMOR"]    ="Molten Armor", 
-    ["ICY_VEINS"]       ="Icy Veins",
-    ["ARCANE_FOCUS"]    ="Arcane Focus",
-    ["MIND_MASTERY"]    ="Mind Mastery"
+    ["ELEMENTAL_PRECISION"] = MSC.L["Elemental Precision"],
+    ["ARCANE_POWER"]    = MSC.L["Arcane Power"], 
+    ["SLOW"]            = MSC.L["Slow"], 
+    ["COMBUSTION"]      = MSC.L["Combustion"], 
+    ["DRAGONS_BREATH"]  = MSC.L["Dragon's Breath"], 
+    ["ICE_BARRIER"]     = MSC.L["Ice Barrier"], 
+    ["SUMMON_WELE"]     = MSC.L["Summon Water Elemental"], 
+    ["WINTERS_CHILL"]   = MSC.L["Winter's Chill"], 
+    ["IMP_BLIZZARD"]    = MSC.L["Improved Blizzard"], 
+    ["ARCANE_MIND"]     = MSC.L["Arcane Mind"], 
+    ["MOLTEN_ARMOR"]    = MSC.L["Molten Armor"], 
+    ["ICY_VEINS"]       = MSC.L["Icy Veins"],
+    ["ARCANE_FOCUS"]    = MSC.L["Arcane Focus"],
+    ["MIND_MASTERY"]    = MSC.L["Mind Mastery"]
 }
 
 -- =============================================================
@@ -465,9 +465,7 @@ function Mage:GetSpec()
 end
 
 function Mage:GetDynamicWeights(forceKey)
-    -- [[ FIX 1: TRANSLATOR ]]
-    -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
-    -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
+    -- [[ TRANSLATOR ]]
     if forceKey and not Mage.LevelingBrackets[forceKey] and not Mage.Weights[forceKey] then
         if Mage.PrettyNames then
             for key, name in pairs(Mage.PrettyNames) do
@@ -595,12 +593,12 @@ function Mage:ApplyScalers(weights, currentSpec)
         if hitCapNeeded < 0 then hitCapNeeded = 0 end
 
         if spellHitRating >= (hitCapNeeded + 15) then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
-            table.insert(activeCaps, "Hit")
-        elseif spellHitRating >= hitCapNeeded then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "Hit (Soft)")
-        end
+			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
+			table.insert(activeCaps, MSC.L["Hit"])
+		elseif spellHitRating >= hitCapNeeded then
+			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

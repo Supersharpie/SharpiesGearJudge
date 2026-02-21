@@ -486,26 +486,26 @@ Warlock.LevelingBrackets = {
 Warlock.Specs = { [1]="Affliction", [2]="Demonology", [3]="Destruction" }
 
 Warlock.PrettyNames = {
-    ["DESTRUCT_SHADOW"]  = "Raid: Destruction (Shadow)",
-    ["DESTRUCT_FIRE"]    = "Raid: Destruction (Fire)",
-    ["RAID_AFFLICTION"]  = "Raid: Affliction (UA)",
-    ["DEMO_PVE"]         = "Raid: Demonology (Felguard)",
-    ["PVP_SL_SL"]        = "PvP: Soul Link / Siphon Life",
+    ["DESTRUCT_SHADOW"]  = MSC.L["Raid: Destruction (Shadow)"],
+    ["DESTRUCT_FIRE"]    = MSC.L["Raid: Destruction (Fire)"],
+    ["RAID_AFFLICTION"]  = MSC.L["Raid: Affliction (UA)"],
+    ["DEMO_PVE"]         = MSC.L["Raid: Demonology (Felguard)"],
+    ["PVP_SL_SL"]        = MSC.L["PvP: Soul Link / Siphon Life"],
     -- Leveling Brackets
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
-    ["Leveling_Fire_21_40"] = "Destro Fire (21-40)",
-    ["Leveling_Fire_41_51"] = "Destro Fire (41-51)",
-    ["Leveling_Fire_52_59"] = "Destro Fire (52-59)",
-    ["Leveling_Fire_60_70"] = "Destro Fire (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
+    ["Leveling_Fire_21_40"] = MSC.L["Destro Fire (21-40)"],
+    ["Leveling_Fire_41_51"] = MSC.L["Destro Fire (41-51)"],
+    ["Leveling_Fire_52_59"] = MSC.L["Destro Fire (52-59)"],
+    ["Leveling_Fire_60_70"] = MSC.L["Destro Fire (Outland)"],
     
-    ["Leveling_Demo_21_40"] = "Demonology (21-40)",
-    ["Leveling_Demo_41_51"] = "Demonology (41-51)",
-    ["Leveling_Demo_52_59"] = "Demonology (52-59)",
-    ["Leveling_Demo_60_70"] = "Demonology (Outland)",
+    ["Leveling_Demo_21_40"] = MSC.L["Demonology (21-40)"],
+    ["Leveling_Demo_41_51"] = MSC.L["Demonology (41-51)"],
+    ["Leveling_Demo_52_59"] = MSC.L["Demonology (52-59)"],
+    ["Leveling_Demo_60_70"] = MSC.L["Demonology (Outland)"],
 }
 
 Warlock.SpeedChecks = { ["Default"]={} }
@@ -523,20 +523,20 @@ Warlock.StatToCritMatrix = {
 }
 
 Warlock.Talents = { 
-    ["DARK_PACT"]       = "Dark Pact", 
-    ["UNSTABLE_AFF"]    = "Unstable Affliction", 
-    ["SIPHON_LIFE"]     = "Siphon Life", 
-    ["SOUL_LINK"]       = "Soul Link", 
-    ["SUMMON_FELGUARD"] = "Summon Felguard", 
-    ["CONFLAGRATE"]     = "Conflagrate", 
-    ["RUIN"]            = "Ruin", 
-    ["SHADOWFURY"]      = "Shadowfury", 
-    ["DEMONIC_EMBRACE"] = "Demonic Embrace", 
-    ["FEL_INTELLECT"]   = "Fel Intellect",
-    ["EMBERSTORM"]      = "Emberstorm",
-    ["SUPPRESSION"]     = "Suppression",
-	["DEMONIC_AEGIS"]     = "Demonic Aegis",
-    ["DEMONIC_KNOWLEDGE"] = "Demonic Knowledge" -- Added for Logic
+    ["DARK_PACT"]       = MSC.L["Dark Pact"], 
+    ["UNSTABLE_AFF"]    = MSC.L["Unstable Affliction"], 
+    ["SIPHON_LIFE"]     = MSC.L["Siphon Life"], 
+    ["SOUL_LINK"]       = MSC.L["Soul Link"], 
+    ["SUMMON_FELGUARD"] = MSC.L["Summon Felguard"], 
+    ["CONFLAGRATE"]     = MSC.L["Conflagrate"], 
+    ["RUIN"]            = MSC.L["Ruin"], 
+    ["SHADOWFURY"]      = MSC.L["Shadowfury"], 
+    ["DEMONIC_EMBRACE"] = MSC.L["Demonic Embrace"], 
+    ["FEL_INTELLECT"]   = MSC.L["Fel Intellect"],
+    ["EMBERSTORM"]      = MSC.L["Emberstorm"],
+    ["SUPPRESSION"]     = MSC.L["Suppression"],
+    ["DEMONIC_AEGIS"]     = MSC.L["Demonic Aegis"],
+    ["DEMONIC_KNOWLEDGE"] = MSC.L["Demonic Knowledge"]
 }
 
 -- =============================================================
@@ -725,13 +725,13 @@ function Warlock:ApplyScalers(weights, currentSpec)
         if finalCap < 0 then finalCap = 0 end
         
         -- BUFFER LOGIC
-        if hitRating >= (finalCap + 10) then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
-            table.insert(activeCaps, "Hit (Capped)")
-        elseif hitRating >= finalCap then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.2
-            table.insert(activeCaps, "Hit (Soft)")
-        end
+        if hitRating >= (finalCap + 5) then
+			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
+			table.insert(activeCaps, MSC.L["Hit (Capped)"])
+		elseif hitRating >= finalCap then
+			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.2
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

@@ -406,28 +406,28 @@ Rogue.LevelingBrackets = {
 Rogue.Specs = { [1]="Assassination", [2]="Combat", [3]="Subtlety" }
 
 Rogue.PrettyNames = {
-    ["RAID_COMBAT"]     = "Raid: Combat (Swords/Maces)",
-    ["RAID_MUTILATE"]   = "Raid: Mutilate (Daggers)",
-    ["PVP_SUBTLETY"]    = "PvP: Shadowstep / Hemo",
+    ["RAID_COMBAT"]     = MSC.L["Raid: Combat (Swords/Maces)"],
+    ["RAID_MUTILATE"]   = MSC.L["Raid: Mutilate (Daggers)"],
+    ["PVP_SUBTLETY"]    = MSC.L["PvP: Shadowstep / Hemo"],
     
     -- Leveling Brackets
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_60_70"] = "Standard Leveling (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
     
-    ["Leveling_Dagger_1_20"]  = "Dagger/Ambush (1-20)",
-    ["Leveling_Dagger_21_40"] = "Dagger/Ambush (21-40)",
-    ["Leveling_Dagger_41_51"] = "Dagger/Ambush (41-51)",
-    ["Leveling_Dagger_52_59"] = "Dagger/Ambush (52-59)",
-    ["Leveling_Dagger_60_70"] = "Dagger/Ambush (Outland)",              
+    ["Leveling_Dagger_1_20"]  = MSC.L["Dagger/Ambush (1-20)"],
+    ["Leveling_Dagger_21_40"] = MSC.L["Dagger/Ambush (21-40)"],
+    ["Leveling_Dagger_41_51"] = MSC.L["Dagger/Ambush (41-51)"],
+    ["Leveling_Dagger_52_59"] = MSC.L["Dagger/Ambush (52-59)"],
+    ["Leveling_Dagger_60_70"] = MSC.L["Dagger/Ambush (Outland)"],              
     
-    ["Leveling_Hemo_1_20"]    = "Hemorrhage (1-20)",
-    ["Leveling_Hemo_21_40"]   = "Hemorrhage (21-40)",
-    ["Leveling_Hemo_41_51"]   = "Hemorrhage (41-51)",
-    ["Leveling_Hemo_52_59"]   = "Hemorrhage (52-59)",
-    ["Leveling_Hemo_60_70"]   = "Hemorrhage (Outland)",
+    ["Leveling_Hemo_1_20"]    = MSC.L["Hemorrhage (1-20)"],
+    ["Leveling_Hemo_21_40"]   = MSC.L["Hemorrhage (21-40)"],
+    ["Leveling_Hemo_41_51"]   = MSC.L["Hemorrhage (41-51)"],
+    ["Leveling_Hemo_52_59"]   = MSC.L["Hemorrhage (52-59)"],
+    ["Leveling_Hemo_60_70"]   = MSC.L["Hemorrhage (Outland)"],
 }
 
 Rogue.SpeedChecks = { 
@@ -446,22 +446,22 @@ Rogue.StatToCritMatrix = {
 }
 
 Rogue.Talents = { 
-    ["PRECISION"]       = "Precision",
-    ["MUTILATE"]        = "Mutilate", 
-    ["ADRENALINE_RUSH"] = "Adrenaline Rush", 
-    ["SURPRISE_ATTACK"] = "Surprise Attack", 
-    ["COMBAT_POTENCY"]  = "Combat Potency", 
-    ["HEMORRHAGE"]      = "Hemorrhage", 
-    ["SHADOWSTEP"]      = "Shadowstep", 
-    ["CHEAT_DEATH"]     = "Cheat Death", 
-    ["VITALITY"]        = "Vitality", 
-    ["SINISTER_CALLING"]= "Sinister Calling",
-    ["DAGGER_SPEC"]     = "Dagger Specialization",
-    ["FIST_SPEC"]       = "Fist Weapon Specialization",
-    ["SWORD_SPEC"]      = "Sword Specialization",
-    ["MACE_SPEC"]       = "Mace Specialization",
-    ["WEAPON_EXPERTISE"]= "Weapon Expertise",
-	["DUAL_WIELD_SPEC"] = "Dual Wield Specialization"	
+    ["PRECISION"]       = MSC.L["Precision"],
+    ["MUTILATE"]        = MSC.L["Mutilate"], 
+    ["ADRENALINE_RUSH"] = MSC.L["Adrenaline Rush"], 
+    ["SURPRISE_ATTACK"] = MSC.L["Surprise Attack"], 
+    ["COMBAT_POTENCY"]  = MSC.L["Combat Potency"], 
+    ["HEMORRHAGE"]      = MSC.L["Hemorrhage"], 
+    ["SHADOWSTEP"]      = MSC.L["Shadowstep"], 
+    ["CHEAT_DEATH"]     = MSC.L["Cheat Death"], 
+    ["VITALITY"]        = MSC.L["Vitality"], 
+    ["SINISTER_CALLING"]= MSC.L["Sinister Calling"],
+    ["DAGGER_SPEC"]     = MSC.L["Dagger Specialization"],
+    ["FIST_SPEC"]       = MSC.L["Fist Weapon Specialization"],
+    ["SWORD_SPEC"]      = MSC.L["Sword Specialization"],
+    ["MACE_SPEC"]       = MSC.L["Mace Specialization"],
+    ["WEAPON_EXPERTISE"]= MSC.L["Weapon Expertise"],
+    ["DUAL_WIELD_SPEC"] = MSC.L["Dual Wield Specialization"]    
 }
 
 -- =============================================================
@@ -637,21 +637,18 @@ function Rogue:ApplyScalers(weights, currentSpec)
 
         -- Hysteresis Buffer: 15 Rating
         if hitRating >= (finalCap + 15) then
-            -- Safely Capped (Yellow)
-            if currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling") then
-                -- Combat still wants hit for White Damage (Dual Wield Cap is 28%)
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.0 
-                table.insert(activeCaps, "Yellow Hit")
-            else
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-                table.insert(activeCaps, "Hit")
-            end
-        elseif hitRating >= finalCap then
-            -- "Twilight Zone" (Softened Weight)
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.8
-            table.insert(activeCaps, "Hit (Soft)")
-        end
-    end
+			if currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling") then
+				weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.0 
+				table.insert(activeCaps, MSC.L["Yellow Hit"])
+			else
+				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
+				table.insert(activeCaps, MSC.L["Hit"])
+			end
+		elseif hitRating >= finalCap then
+			weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.8
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
+	end
     
     -- [[ 4. EXPERTISE CAP ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
@@ -674,12 +671,12 @@ function Rogue:ApplyScalers(weights, currentSpec)
         local totalExp = expRating + humanBonus + talentBonus
         
         if totalExp >= (103 + 10) then
-             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
-             table.insert(activeCaps, "Exp")
-        elseif totalExp >= 103 then
-             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
-             table.insert(activeCaps, "Exp (Soft)")
-        end
+			weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
+			table.insert(activeCaps, MSC.L["Exp"])
+		elseif totalExp >= 103 then
+			weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
+			table.insert(activeCaps, MSC.L["Exp (Soft)"])
+		end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

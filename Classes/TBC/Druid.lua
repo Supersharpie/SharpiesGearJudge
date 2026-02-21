@@ -530,30 +530,30 @@ Druid.LevelingBrackets = {
 Druid.Specs = { [1]="Balance", [2]="FeralCombat", [3]="Restoration" }
 
 Druid.PrettyNames = {
-    ["BALANCE_PVE"]       = "DPS: Balance (Boomkin)",
-    ["RESTO_TREE"]        = "Healer: Tree of Life",
-    ["FERAL_CAT"]         = "DPS: Feral Cat",
-    ["FERAL_BEAR"]        = "Tank: Feral Bear",
+    ["BALANCE_PVE"]       = MSC.L["DPS: Balance (Boomkin)"],
+    ["RESTO_TREE"]        = MSC.L["Healer: Tree of Life"],
+    ["FERAL_CAT"]         = MSC.L["DPS: Feral Cat"],
+    ["FERAL_BEAR"]        = MSC.L["Tank: Feral Bear"],
     
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_21_40"] = "Feral Cat (21-40)",
-    ["Leveling_41_51"] = "Feral Cat (41-51)",
-    ["Leveling_52_59"] = "Feral Cat (52-59)",
-    ["Leveling_60_70"] = "Feral Cat (Outland)",
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_21_40"] = MSC.L["Feral Cat (21-40)"],
+    ["Leveling_41_51"] = MSC.L["Feral Cat (41-51)"],
+    ["Leveling_52_59"] = MSC.L["Feral Cat (52-59)"],
+    ["Leveling_60_70"] = MSC.L["Feral Cat (Outland)"],
     
-    ["Leveling_Bear_21_40"]    = "Feral Bear (21-40)",
-    ["Leveling_Bear_41_51"]    = "Feral Bear (41-51)",
-    ["Leveling_Bear_52_59"]    = "Feral Bear (52-59)",
-    ["Leveling_Bear_60_70"]    = "Feral Bear (Outland)",
+    ["Leveling_Bear_21_40"]    = MSC.L["Feral Bear (21-40)"],
+    ["Leveling_Bear_41_51"]    = MSC.L["Feral Bear (41-51)"],
+    ["Leveling_Bear_52_59"]    = MSC.L["Feral Bear (52-59)"],
+    ["Leveling_Bear_60_70"]    = MSC.L["Feral Bear (Outland)"],
     
-    ["Leveling_Caster_41_51"] = "Balance (41-51)",
-    ["Leveling_Caster_52_59"] = "Balance (52-59)",
-    ["Leveling_Caster_60_70"] = "Balance (Outland)",
-	
-	["Leveling_Healer_21_40"] = "Resto Dungeon (21-40)",
-    ["Leveling_Healer_41_51"] = "Resto Dungeon (41-51)",
-    ["Leveling_Healer_52_59"] = "Resto Dungeon (52-59)",
-    ["Leveling_Healer_60_70"] = "Resto Dungeon (Outland)",
+    ["Leveling_Caster_41_51"] = MSC.L["Balance (41-51)"],
+    ["Leveling_Caster_52_59"] = MSC.L["Balance (52-59)"],
+    ["Leveling_Caster_60_70"] = MSC.L["Balance (Outland)"],
+    
+    ["Leveling_Healer_21_40"] = MSC.L["Resto Dungeon (21-40)"],
+    ["Leveling_Healer_41_51"] = MSC.L["Resto Dungeon (41-51)"],
+    ["Leveling_Healer_52_59"] = MSC.L["Resto Dungeon (52-59)"],
+    ["Leveling_Healer_60_70"] = MSC.L["Resto Dungeon (Outland)"],
 }
 
 Druid.SpeedChecks = { 
@@ -573,24 +573,24 @@ Druid.StatToCritMatrix = {
 }
 
 Druid.Talents = { 
-    ["MOONKIN_FORM"]="Moonkin Form", 
-    ["FORCE_OF_NATURE"]="Force of Nature", 
-    ["MANGLE"]="Mangle", 
-    ["TREE_OF_LIFE"]="Tree of Life", 
-    ["NATURES_GRACE"]="Nature's Grace", 
-    ["HEART_WILD"]="Heart of the Wild", 
-    ["LIVING_SPIRIT"]="Living Spirit", 
-    ["DREAMSTATE"]="Dreamstate", 
-    ["MOONGLOW"]="Moonglow", 
-    ["NATURES_SWIFTNESS"]="Nature's Swiftness", 
-    ["FERAL_INSTINCT"]="Feral Instinct",
-    ["BALANCE_OF_POWER"] = "Balance of Power",  
-    ["THICK_HIDE"]="Thick Hide",
-    ["SURVIVAL_OF_FITTEST"] = "Survival of the Fittest",
-    ["FERAL_CHARGE"]="Feral Charge",
-	["INSECT_SWARM"]="Insect Swarm",
-	["LUNAR_GUIDANCE"]="Lunar Guidance",
-    ["PREDATORY_INSTINCTS"]="Predatory Instincts"
+    ["MOONKIN_FORM"]=MSC.L["Moonkin Form"], 
+    ["FORCE_OF_NATURE"]=MSC.L["Force of Nature"], 
+    ["MANGLE"]=MSC.L["Mangle"], 
+    ["TREE_OF_LIFE"]=MSC.L["Tree of Life"], 
+    ["NATURES_GRACE"]=MSC.L["Nature's Grace"], 
+    ["HEART_WILD"]=MSC.L["Heart of the Wild"], 
+    ["LIVING_SPIRIT"]=MSC.L["Living Spirit"], 
+    ["DREAMSTATE"]=MSC.L["Dreamstate"], 
+    ["MOONGLOW"]=MSC.L["Moonglow"], 
+    ["NATURES_SWIFTNESS"]=MSC.L["Nature's Swiftness"], 
+    ["FERAL_INSTINCT"]=MSC.L["Feral Instinct"],
+    ["BALANCE_OF_POWER"] = MSC.L["Balance of Power"],  
+    ["THICK_HIDE"]=MSC.L["Thick Hide"],
+    ["SURVIVAL_OF_FITTEST"] = MSC.L["Survival of the Fittest"],
+    ["FERAL_CHARGE"]=MSC.L["Feral Charge"],
+    ["INSECT_SWARM"]=MSC.L["Insect Swarm"],
+    ["LUNAR_GUIDANCE"]=MSC.L["Lunar Guidance"],
+    ["PREDATORY_INSTINCTS"]=MSC.L["Predatory Instincts"]
 }
 
 -- =============================================================
@@ -838,12 +838,12 @@ function Druid:ApplyScalers(weights, currentSpec)
         if finalCap < 0 then finalCap = 0 end
         
         if hitRating >= (finalCap + 5) then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, "Hit")
-        elseif hitRating >= finalCap then
-            w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "Hit (Soft)")
-        end
+			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
+			table.insert(activeCaps, MSC.L["Hit"])
+		elseif hitRating >= finalCap then
+			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
+			table.insert(activeCaps, MSC.L["Hit (Soft)"])
+		end
     end
 
     -- B. FERAL HIT CAP (Melee Hit 9%)
@@ -851,13 +851,13 @@ function Druid:ApplyScalers(weights, currentSpec)
         local hitRating = GetCombatRating(6)
         local cap = 142
         
-        if hitRating >= (cap + 5) then -- Smaller buffer
-        w["ITEM_MOD_HIT_RATING_SHORT"] = 0.01 -- Drop to near zero
-        table.insert(activeCaps, "Hit")
-    elseif hitRating >= cap then
-        w["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 -- Significant drop at cap
-        table.insert(activeCaps, "Hit (Soft)")
-    end
+        if hitRating >= (cap + 5) then 
+		w["ITEM_MOD_HIT_RATING_SHORT"] = 0.01 
+		table.insert(activeCaps, MSC.L["Hit"])
+	elseif hitRating >= cap then
+		w["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 
+		table.insert(activeCaps, MSC.L["Hit (Soft)"])
+	end
 end
     
     -- [[ NEW: EXPERTISE CAP (6.5% Dodge) ]]
@@ -867,12 +867,12 @@ end
         local cap = 103 
         
         if expRating >= (cap + 12) then
-            w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.2
-            table.insert(activeCaps, "Exp")
-        elseif expRating >= cap then
-            w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = w["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, "Exp (Soft)")
-        end
+			w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.2
+			table.insert(activeCaps, MSC.L["Exp"])
+		elseif expRating >= cap then
+			w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = w["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.4
+			table.insert(activeCaps, MSC.L["Exp (Soft)"])
+		end
     end
 
     -- C. BEAR CRIT IMMUNITY (Def/Resil)
@@ -895,7 +895,7 @@ end
         if currentReduction >= (reductionNeeded + 0.2) then
              w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.6
              w["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5
-             table.insert(activeCaps, "Crit Immune")
+             table.insert(activeCaps, MSC.L["Crit Immune"])
              
              w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * 1.2
              w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * 1.2
@@ -903,7 +903,7 @@ end
         elseif currentReduction >= reductionNeeded then
              w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0
              w["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.8
-             table.insert(activeCaps, "Immune (Soft)")
+             table.insert(activeCaps, MSC.L["Immune (Soft)"])
         else
              w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5
              w["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 2.5

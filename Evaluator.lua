@@ -517,7 +517,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
                 if currentVal >= trueCap and futureVal < (trueCap - 0.1) then
                     newScore = newScore - rule.penalty
                     local deficit = futureVal - trueCap
-                    local name = STAT_DISPLAY[rule.stat] or "Cap"
+                    local name = STAT_DISPLAY[rule.stat] or MSC.L["Cap"]
                     local msg = string_format(MSC.L[" |cffff0000(Cap %.1f %s)|r"], deficit, name)
                     contextMsg = (contextMsg or "") .. msg
                 end

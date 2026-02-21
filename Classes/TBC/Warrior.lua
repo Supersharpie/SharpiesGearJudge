@@ -501,29 +501,33 @@ Warrior.LevelingBrackets = {
     }
 }
 
+-- =============================================================
+-- CLASS METADATA
+-- =============================================================
 
 Warrior.Specs = { [1]="Arms", [2]="Fury", [3]="Protection" }
 
 Warrior.PrettyNames = {
-    ["FURY_2H"]             = "Raid: Arms/Fury (2H)",
-    ["FURY_DW"]             = "Raid: Fury (Dual Wield)",
-    ["ARMS_PVP"]            = "PvP: Arms (Mortal Strike)",
-    ["ARMS_PVE"]            = "Raid: Arms (Blood Frenzy)",
-    ["DEEP_PROT"]           = "Tank: Deep Protection",
-    ["Leveling_1_20"]  = "Starter (1-20)",
-    ["Leveling_2H_21_40"] = "Standard Leveling (21-40)",
-    ["Leveling_2H_41_51"] = "Standard Leveling (41-51)",
-    ["Leveling_2H_52_59"] = "Standard Leveling (52-59)",
-    ["Leveling_2H_60_70"] = "Standard Leveling (Outland)",
-    ["Leveling_DW_21_40"]    = "Fury/DW (21-40)",
-    ["Leveling_DW_41_51"]    = "Fury/DW (41-51)",
-    ["Leveling_DW_52_59"]    = "Fury/DW (52-59)",
-    ["Leveling_DW_60_70"]    = "Fury/DW (Outland)",
-    ["Leveling_Tank_21_40"] = "Dungeon Tank (21-40)",
-    ["Leveling_Tank_41_51"] = "Dungeon Tank (41-51)",
-    ["Leveling_Tank_52_59"] = "Dungeon Tank (52-59)",
-    ["Leveling_Tank_60_70"] = "Dungeon Tank (Outland)",
+    ["FURY_2H"]             = MSC.L["Raid: Arms/Fury (2H)"],
+    ["FURY_DW"]             = MSC.L["Raid: Fury (Dual Wield)"],
+    ["ARMS_PVP"]            = MSC.L["PvP: Arms (Mortal Strike)"],
+    ["ARMS_PVE"]            = MSC.L["Raid: Arms (Blood Frenzy)"],
+    ["DEEP_PROT"]           = MSC.L["Tank: Deep Protection"],
+    ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
+    ["Leveling_2H_21_40"] = MSC.L["Standard Leveling (21-40)"],
+    ["Leveling_2H_41_51"] = MSC.L["Standard Leveling (41-51)"],
+    ["Leveling_2H_52_59"] = MSC.L["Standard Leveling (52-59)"],
+    ["Leveling_2H_60_70"] = MSC.L["Standard Leveling (Outland)"],
+    ["Leveling_DW_21_40"]    = MSC.L["Fury/DW (21-40)"],
+    ["Leveling_DW_41_51"]    = MSC.L["Fury/DW (41-51)"],
+    ["Leveling_DW_52_59"]    = MSC.L["Fury/DW (52-59)"],
+    ["Leveling_DW_60_70"]    = MSC.L["Fury/DW (Outland)"],
+    ["Leveling_Tank_21_40"] = MSC.L["Dungeon Tank (21-40)"],
+    ["Leveling_Tank_41_51"] = MSC.L["Dungeon Tank (41-51)"],
+    ["Leveling_Tank_52_59"] = MSC.L["Dungeon Tank (52-59)"],
+    ["Leveling_Tank_60_70"] = MSC.L["Dungeon Tank (Outland)"],
 }
+
 Warrior.SpeedChecks = { 
     ["Default"]={ MH_Slow=true }, 
     ["FURY_DW"]={ MH_Slow=true, OH_Fast=true }, 
@@ -535,12 +539,22 @@ Warrior.ValidWeapons = {
 }
 
 Warrior.StatToCritMatrix = { Agi = { {1, 4.0}, {60, 20.0}, {70, 33.0} } }
+
 Warrior.Talents = { 
-    ["PRECISION"]="Precision", ["MORTAL_STRIKE"]="Mortal Strike", ["ENDLESS_RAGE"]="Endless Rage",
-    ["BLOOD_FRENZY"]="Blood Frenzy", ["SECOND_WIND"]="Second Wind", ["BLOODTHIRST"]="Bloodthirst",
-    ["RAMPAGE"]="Rampage", ["SHIELD_SLAM"]="Shield Slam", ["DEVASTATE"]="Devastate", ["VITALITY"]="Vitality",
-    ["POLEAXE_SPEC"]="Poleaxe Specialization", ["SWORD_SPEC"]="Sword Specialization", ["MACE_SPEC"]="Mace Specialization",
-    ["DUAL_WIELD_SPEC"]="Dual Wield Specialization" -- ADDED for early detection
+    ["PRECISION"]=MSC.L["Precision"], 
+    ["MORTAL_STRIKE"]=MSC.L["Mortal Strike"], 
+    ["ENDLESS_RAGE"]=MSC.L["Endless Rage"],
+    ["BLOOD_FRENZY"]=MSC.L["Blood Frenzy"], 
+    ["SECOND_WIND"]=MSC.L["Second Wind"], 
+    ["BLOODTHIRST"]=MSC.L["Bloodthirst"],
+    ["RAMPAGE"]=MSC.L["Rampage"], 
+    ["SHIELD_SLAM"]=MSC.L["Shield Slam"], 
+    ["DEVASTATE"]=MSC.L["Devastate"], 
+    ["VITALITY"]=MSC.L["Vitality"],
+    ["POLEAXE_SPEC"]=MSC.L["Poleaxe Specialization"], 
+    ["SWORD_SPEC"]=MSC.L["Sword Specialization"], 
+    ["MACE_SPEC"]=MSC.L["Mace Specialization"],
+    ["DUAL_WIELD_SPEC"]=MSC.L["Dual Wield Specialization"]
 }
 
 function Warrior:GetSpec()
@@ -591,7 +605,7 @@ function Warrior:GetSpec()
 end
 
 function Warrior:GetDynamicWeights(forceKey)
-    -- [[ FIX 1: TRANSLATOR ]]
+    -- [[ TRANSLATOR ]]
     -- If the dropdown sends a "Pretty Name" (e.g. "Standard Leveling..."), 
     -- we reverse-lookup the "Code Key" (e.g. "Leveling_2H...").
     if forceKey and not Warrior.LevelingBrackets[forceKey] and not Warrior.Weights[forceKey] then
@@ -615,7 +629,7 @@ function Warrior:GetDynamicWeights(forceKey)
         -- Calculate progress
         local progress = (level - bracket.min) / (bracket.max - bracket.min)
         
-        -- [[ FIX 2: PREVIEW CLAMPING ]]
+        -- [[ PREVIEW CLAMPING ]]
         -- If previewing a different level bracket, force progress to 0 or 1 
         -- to prevent "Negative Stats" from vanishing.
         if forceKey then
@@ -629,7 +643,7 @@ function Warrior:GetDynamicWeights(forceKey)
 
         local dynamicWeights = {}
         
-        -- [[ FIX 3: ROBUSTNESS ]]
+        -- [[ ROBUSTNESS ]]
         -- Collect ALL keys so nothing vanishes if you made a typo in Start vs End
         local allStats = {}
         if bracket.Start then for k in pairs(bracket.Start) do allStats[k] = true end end
@@ -696,21 +710,21 @@ function Warrior:ApplyScalers(weights, currentSpec)
         local finalCap = baseCap - talentBonus
         if finalCap < 0 then finalCap = 0 end
         
-        if hitRating >= (finalCap + 15) then
-            if currentSpec:find("FURY") or currentSpec:find("DW") then
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8
-                table.insert(activeCaps, "Y-Hit (Rage)")
-            else
-                weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
-                table.insert(activeCaps, "Hit")
-            end
-        elseif hitRating >= finalCap then
+       if hitRating >= (finalCap + 15) then
+			if currentSpec:find("FURY") or currentSpec:find("DW") then
+				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8
+				table.insert(activeCaps, MSC.L["Y-Hit (Rage)"])
+			else
+				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
+				table.insert(activeCaps, MSC.L["Hit"])
+			end
+		elseif hitRating >= finalCap then
             if currentSpec:find("FURY") or currentSpec:find("DW") then
                  weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
             else
                  weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
             end
-            table.insert(activeCaps, "Hit (Soft)")
+            table.insert(activeCaps, MSC.L["Hit (Soft)"])
         end
     end
 
@@ -718,7 +732,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
         local baseDef, armorDef = UnitDefense("player")
         if (baseDef + armorDef) >= 490 then
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
-            table.insert(activeCaps, "Def")
+            table.insert(activeCaps, MSC.L["Def"])
             weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.3
             weights["ITEM_MOD_ARMOR_SHORT"] = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.5
         end
@@ -728,7 +742,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
         local expRating = GetCombatRating(24)
         local _, raceID = UnitRace("player")
         
-        -- [[ RACIAL EXPERTISE FIX ]]
+        -- [[ RACIAL EXPERTISE ]]
         local racialBonus = 0
         local itemLink = GetInventoryItemLink("player", 16)
         if itemLink then
@@ -744,7 +758,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
 
         if (expRating + racialBonus) >= 103 then
             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.5
-            table.insert(activeCaps, "Exp")
+            table.insert(activeCaps, MSC.L["Exp"])
         end
     end
 

@@ -224,7 +224,7 @@ function MSC.InitLabView(parent)
             end)
             btn:SetScript("OnEnter", function(self) 
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
-                if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText("Empty Slot", 1,1,1) end 
+                if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(MSC.L["Empty Slot"], 1,1,1) end
                 GameTooltip:Show() 
             end)
             btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -881,7 +881,8 @@ function MSC.UpdateLogic()
             local xPos = 60 + ((i-1) * 140)
             local f = MSC.GetFromPool("Rings", content, function(p) return CreateStatRing(p, 0, 0, 80, "TEMP") end)
             f:ClearAllPoints(); f:SetPoint("TOPLEFT", xPos, -20)
-            f.lbl:SetText(ring.l:upper())
+            local locLabel = MSC.L[ring.l] or ring.l
+			f.lbl:SetText(locLabel:upper())
             f.val:SetText(string_format(ring.fmt, ring.v))
             MSC.ApplyRingArt(f, ring.l) 
             local fillPct = 0
@@ -897,7 +898,8 @@ function MSC.UpdateLogic()
             f:EnableMouse(true)
             f:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(ring.l, 1, 1, 1)
+                local locLabel = MSC.L[ring.l] or ring.l
+				GameTooltip:SetText(locLabel, 1, 1, 1)
                 GameTooltip:AddLine(" ")
                 if ring.rawVal and ring.rawCap and ring.rawCap > 0 then
                     GameTooltip:AddDoubleLine(MSC.L["Rating:"], string_format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
@@ -1131,10 +1133,10 @@ function MSC.InitSettingsView(parent)
             MSC.ManualSpec = "AUTO"
             MSC.CachedWeights = nil
             
-            print(string.format("|cff00ff00SGJ:|r Deleted custom profile: %s", selected))
+            print(string.format(MSC.L["|cff00ff00SGJ:|r Deleted custom profile: %s"], selected))
             StaticPopup_Show("SGJ_RELOAD_REQUIRED")
         else
-            print("|cffff0000SGJ:|r You can only delete custom imported profiles. Select a Pawn profile from the dropdown first.")
+			print(MSC.L["|cffff0000SGJ:|r You can only delete custom imported profiles. Select a Pawn profile from the dropdown first."])
         end
     end)
 
@@ -1458,7 +1460,7 @@ function MSC.ShowImportWindow()
 			-- We only call the function; the messages are handled in SavePawnProfile
 			MSC:ImportAndSavePawnString(text)
 		else 
-			print("|cffff0000SGJ Error:|r ImportAndSavePawnString missing.") 
+			print(MSC.L["|cffff0000SGJ Error:|r ImportAndSavePawnString missing."]) 
 		end
 		f:Hide() -- Hide the paste window immediately
 	end)

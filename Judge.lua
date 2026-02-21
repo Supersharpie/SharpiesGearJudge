@@ -90,17 +90,20 @@ SLASH_SHARPIESGEARJUDGE1 = "/sgj"
 SLASH_SHARPIESGEARJUDGE2 = "/judge"
 SlashCmdList["SHARPIESGEARJUDGE"] = function(msg) 
     local cmd = msg:lower()
+    local onText = MSC.L["ON"] or "ON"
+    local offText = MSC.L["OFF"] or "OFF"
+
     if cmd == "clean" or cmd == "simple" then
         SGJ_Settings.SimplifyStats = not SGJ_Settings.SimplifyStats
-        print("|cff00ff00SGJ:|r Text Simplification is now " .. (SGJ_Settings.SimplifyStats and "ON" or "OFF"))
+        print(MSC.L["|cff00ff00SGJ:|r Text Simplification is now "] .. (SGJ_Settings.SimplifyStats and onText or offText))
     elseif cmd == "colors" then
         SGJ_Settings.ColorizeStats = not SGJ_Settings.ColorizeStats
-        print("|cff00ff00SGJ:|r Stat Coloring is now " .. (SGJ_Settings.ColorizeStats and "ON" or "OFF"))
+        print(MSC.L["|cff00ff00SGJ:|r Stat Coloring is now "] .. (SGJ_Settings.ColorizeStats and onText or offText))
     elseif cmd == "debug" then
         MSC:DebugItem()
-	elseif cmd == "jc" then
+    elseif cmd == "jc" then
         SGJ_Settings.IsJC = not SGJ_Settings.IsJC
-        print("|cff00ff00SGJ:|r Jewelcrafter evaluation is now " .. (SGJ_Settings.IsJC and "ON" or "OFF"))
+        print(MSC.L["|cff00ff00SGJ:|r Jewelcrafter evaluation is now "] .. (SGJ_Settings.IsJC and onText or offText))
     elseif cmd == "options" or cmd == "config" then 
         if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end 
     elseif cmd == "import" then
@@ -212,13 +215,14 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     end
 
     local _, class = UnitClass("player")
+	local _, race = UnitRace("player")
     local function Rank(name) return (MSC.GetTalentRank and MSC:GetTalentRank(name)) or 0 end
 
     -- === A. STAMINA -> HEALTH ===
-    local stam = dest["ITEM_MOD_STAMINA_SHORT"] or 0
+	local stam = dest["ITEM_MOD_STAMINA_SHORT"] or 0
     if stam > 0 then
-        local hpPerStam = 10; if class == "TAUREN" then hpPerStam = 10.5 end
-        if class == "DRUID" then local r = Rank("HEART_OF_THE_WILD"); if r > 0 then hpPerStam = hpPerStam * (1 + (0.04 * r)) end end
+        local hpPerStam = 10; if race == "Tauren" then hpPerStam = 10.5 end 
+        if class == "DRUID" then local r = Rank("HEART_WILD"); if r > 0 then hpPerStam = hpPerStam * (1 + (0.04 * r)) end end
         dest["ITEM_MOD_HEALTH_SHORT"] = (dest["ITEM_MOD_HEALTH_SHORT"] or 0) + (stam * hpPerStam)
     end
 
@@ -226,7 +230,7 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     local int = dest["ITEM_MOD_INTELLECT_SHORT"] or 0
     if int > 0 then
         -- 1. Mana
-        local manaPerInt = 15; if class == "GNOME" then manaPerInt = 15.75 end
+        local manaPerInt = 15; if race == "Gnome" then manaPerInt = 15.75 end
         dest["ITEM_MOD_MANA_SHORT"] = (dest["ITEM_MOD_MANA_SHORT"] or 0) + (int * manaPerInt)
 
         -- 2. Spell Power (Talents)
@@ -284,7 +288,7 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     -- === E. SPIRIT -> SPELL POWER ===
     local spt = dest["ITEM_MOD_SPIRIT_SHORT"] or 0
     if spt > 0 then
-        if class == "PRIEST" then local r=Rank("SPIRITUAL_GUIDANCE"); if r>0 then local b=spt*(0.05*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=(dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0)+b end end
+        if class == "PRIEST" then local r=Rank("SPIRIT_GUIDANCE"); if r>0 then local b=spt*(0.05*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=(dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0)+b end end
     end
     
     -- === F. ATTACK POWER ===
@@ -345,17 +349,17 @@ local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.pn
 
 -- Map: Short Name -> Long Name
 local SHORT_TO_LONG = {
-    ["Str"] = "Strength",   ["Agi"] = "Agility",    ["Stam"] = "Stamina",
-    ["Int"] = "Intellect",  ["Spt"] = "Spirit",
-    ["AP"]  = "Attack Power", ["SP"] = "Spell Power",
-    ["Hp5"] = "Health per 5 sec", ["Mp5"] = "Mana per 5 sec",
-    ["Hit"] = "Hit Rating", ["Crit"] = "Critical Strike Rating",
-    ["Haste"] = "Haste Rating", ["Exp"] = "Expertise Rating",
-    ["Def"] = "Defense Rating", ["Resil"] = "Resilience Rating",
-    ["Dodge"] = "Dodge Rating", ["Parry"] = "Parry Rating", 
-    ["Block"] = "Block Rating", ["BlockVal"] = "Block Value",
-    ["ArP"] = "Armor Penetration", ["Heal"] = "Healing",
-    ["Spell Hit"] = "Spell Hit Rating", ["Spell Crit"] = "Spell Crit Rating",
+    [MSC.L["Str"]] = MSC.L["Strength"],   [MSC.L["Agi"]] = MSC.L["Agility"],    [MSC.L["Stam"]] = MSC.L["Stamina"],
+    [MSC.L["Int"]] = MSC.L["Intellect"],  [MSC.L["Spt"]] = MSC.L["Spirit"],
+    [MSC.L["AP"]]  = MSC.L["Attack Power"], [MSC.L["SP"]] = MSC.L["Spell Power"],
+    [MSC.L["Hp5"]] = MSC.L["Health per 5 sec"], [MSC.L["Mp5"]] = MSC.L["Mana per 5 sec"],
+    [MSC.L["Hit"]] = MSC.L["Hit Rating"], [MSC.L["Crit"]] = MSC.L["Critical Strike Rating"],
+    [MSC.L["Haste"]] = MSC.L["Haste Rating"], [MSC.L["Exp"]] = MSC.L["Expertise Rating"],
+    [MSC.L["Def"]] = MSC.L["Defense Rating"], [MSC.L["Resil"]] = MSC.L["Resilience Rating"],
+    [MSC.L["Dodge"]] = MSC.L["Dodge Rating"], [MSC.L["Parry"]] = MSC.L["Parry Rating"], 
+    [MSC.L["Block"]] = MSC.L["Block Rating"], [MSC.L["BlockVal"]] = MSC.L["Block Value"],
+    [MSC.L["ArP"]] = MSC.L["Armor Penetration"], [MSC.L["Heal"]] = MSC.L["Healing"],
+    [MSC.L["Spell Hit"]] = MSC.L["Spell Hit Rating"], [MSC.L["Spell Crit"]] = MSC.L["Spell Crit Rating"],
 }
 
 -- Map: Text -> Color Hex (Unified & Localized)
@@ -397,8 +401,12 @@ local VISUAL_COLORS = {
     [MSC.L["all resistances"]]   = "ffffffff", ["All Resistances"] = "ffffffff",
 
     -- [[ WEAPON SKILLS ]]
-    ["Swords"] = "ffffd100", ["Axes"] = "ffffd100", ["Maces"] = "ffffd100",
-    ["Daggers"] = "ffffd100", ["Bows"] = "ffffd100", ["Guns"] = "ffffd100",
+    ["Swords"] = "ffffd100", [MSC.L["swords"]] = "ffffd100",
+    ["Axes"] = "ffffd100", [MSC.L["axes"]] = "ffffd100", 
+    ["Maces"] = "ffffd100", [MSC.L["maces"]] = "ffffd100",
+    ["Daggers"] = "ffffd100", [MSC.L["daggers"]] = "ffffd100", 
+    ["Bows"] = "ffffd100", [MSC.L["bows"]] = "ffffd100", 
+    ["Guns"] = "ffffd100", [MSC.L["guns"]] = "ffffd100",
 }
 
 
@@ -428,7 +436,7 @@ function MSC:BeautifyTooltip(tooltip)
                 
                 local lineType = MSC.Scanner.ClassifyLine(text)
                 
-                -- [[ PHASE 1: COMPACT EQUIP ]]
+				-- [[ PHASE 1: COMPACT EQUIP ]]
                 if SGJ_Settings.CompactEquip and (lineType == "EQUIP") and not isRelic then
                     
                     local cleanText = text:lower()
@@ -437,21 +445,21 @@ function MSC:BeautifyTooltip(tooltip)
                         :gsub("[\n\t]", " ")
                         :gsub("%s+", " ")
                         :gsub("^%s*(.-)%s*$", "%1")
-                        :gsub("^equip: ", "")
+                        :gsub(MSC.L["^equip: "] or "^equip: ", "")
 
                     -- 1. SKIP CONDITIONAL TEXT
                     local isConditional = false
-                    if string.find(cleanText, " against ") or string.find(cleanText, "by your ") or string.find(cleanText, "of your ") then
+                    if string.find(cleanText, MSC.L[" against "] or " against ") or string.find(cleanText, MSC.L["by your "] or "by your ") or string.find(cleanText, MSC.L["of your "] or "of your ") then
                         isConditional = true
                     end
 
                     if not isConditional then
                         -- 2. HANDLE HYBRID HEAL/DAMAGE 
-                        local heal, dmg = string.match(cleanText, "healing.-up to (%d+).-damage.-up to (%d+)")
+                        local heal, dmg = string.match(cleanText, MSC.L["healing.-up to (%d+).-damage.-up to (%d+)"] or "healing.-up to (%d+).-damage.-up to (%d+)")
                         if heal and dmg then
-                            local healName = SGJ_Settings.SimplifyStats and "Heal" or "Healing"
-                            local dmgName  = SGJ_Settings.SimplifyStats and "SP" or "Spell Power"
-                            newText = "Equip: +" .. heal .. " " .. Colorize(healName) .. ", +" .. dmg .. " " .. Colorize(dmgName)
+                            local healName = SGJ_Settings.SimplifyStats and (MSC.L["Heal"] or "Heal") or (MSC.L["Healing"] or "Healing")
+                            local dmgName  = SGJ_Settings.SimplifyStats and (MSC.L["SP"] or "SP") or (MSC.L["Spell Power"] or "Spell Power")
+                            newText = (MSC.L["Equip: "] or "Equip: ") .. "+" .. heal .. " " .. Colorize(healName) .. ", +" .. dmg .. " " .. Colorize(dmgName)
                             lineChanged = true
                         else
                             -- 3. STANDARD SINGLE STAT COMPACTION
@@ -466,7 +474,7 @@ function MSC:BeautifyTooltip(tooltip)
                                         if pat.fixedStat and MSC.StatShortNames then
                                             finalName = MSC.StatShortNames[pat.fixedStat]
                                         elseif rawName and MSC.Scanner.TermMap then
-                                            local nameKey = rawName:gsub("your ", ""):gsub("^%s*(.-)%s*$", "%1")
+                                            local nameKey = rawName:gsub(MSC.L["your "] or "your ", ""):gsub("^%s*(.-)%s*$", "%1")
                                             local internalKey = MSC.Scanner.TermMap[nameKey]
                                             
                                             if not internalKey then
@@ -484,7 +492,7 @@ function MSC:BeautifyTooltip(tooltip)
                                                 finalName = SHORT_TO_LONG[finalName] or finalName
                                             end
                                             
-                                            local prefixStr = "Equip: "
+                                            local prefixStr = MSC.L["Equip: "] or "Equip: "
                                             local valStr = (pat.isPercent or string.find(text, "%%")) and ("+" .. val .. "% ") or ("+" .. val .. " ")
                                             
                                             newText = prefixStr .. valStr .. Colorize(finalName)
@@ -748,7 +756,7 @@ local function OnTooltipSetItem(tooltip)
                 if not MSC.IsEra and itemNewStats.PROJECTION_DATA then
                     local data = itemNewStats.PROJECTION_DATA
                     for i, gem in ipairs(data.Gems) do
-                        local label = (i == 1) and MSC.L["Projected Gems:"] or " "
+                        local label = (i == 1) and MSC.L["Projected Gems:"] or MSC.L[" "] or " "
                         local leftR, leftG, leftB = (i == 1) and 0 or 0, (i == 1) and 1 or 0, (i == 1) and 1 or 0
                         tooltip:AddDoubleLine(label, gem.text .. " (" .. gem.color .. ")", leftR, leftG, leftB, 1, 1, 1)
                     end

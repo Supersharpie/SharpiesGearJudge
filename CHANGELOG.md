@@ -1,12 +1,14 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.4.2
+## 🚀 v2.4.2 - Supports DE,ES,FR,BR,RU
 
 * **Multiple fixes and refactors across classes and core systems.**
 * **Refactors relic handling and tooltip parsing across the addon and restructures the gem database. Database.lua: large rework of leveling/phase gem tables and IDs.**
 * **Standardizes relic handling across classes, improves tooltip accuracy, hardens parsing for relics, and optimizes item-stat memory usage.**
 
 ### Key changes:
+* **Refactor and simplify Hunter spec/leveling detection and GetDynamicWeights handling.**
+* **Applied minor formatting/weight-scaler tweaks across several classes.**
 * **Prevent CompactEquip from compacting relic tooltips and refactor Equip-line compaction to skip conditional text, special-case hybrid healing/damage lines into a single summarized line, and  retain the existing single-stat pattern matching.**
 * **Druid: cleaned up talent/spec logic and comments, fixed Living Spirit scaling, lowered spell hit overcap threshold (was +15, now +5), added a comprehensive Relics table (idols) and implemented Druid:GetRelicBonus(itemID, currentSpec) to return interpreted stats (handles dynamic Idol of the Raven Goddess).**
 * **Paladin: replaced/expanded Libram definitions, normalized relic data, added Paladin:GetRelicBonus for consistent relic interpretation, minor GetSpec/GetDynamicWeights comment/flow tweaks, and small ApplyScalers/GetWeaponBonus cleanup.**
@@ -19,6 +21,10 @@
 * **Enhance Pawn parsing and import flow: improved string handling and stat mappings, change Parse/Import functions to methods, add SavePawnProfile to persist imports with a BaseSpec tag, and add a small spec-selection UI so imported Pawn profiles can be assigned a base spec before saving.** 
 * **Expand and reorganize ProcDB entries for Classic/TBC with many added/clarified proc definitions and notes.** 
 * **Misc: multiple data fixes in Database (fixed enchant name typos and formatting) and general cleanup across files.**
+
+### Localization for language support 
+* **Replace hard-coded English names/labels with MSC.L localization keys across TBC class files (Druid, Hunter, Mage, Paladin, Priest, Rogue, Shaman, Warlock, Warrior) and update cap/activeCap text to use localized strings.**
+
 ------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.4.1
