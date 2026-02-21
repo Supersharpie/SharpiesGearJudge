@@ -773,23 +773,39 @@ local function OnTooltipSetItem(tooltip)
                 end
             end
 
-            -- [[ 7. STAT COMPARISON (Gains / Losses) ]]
-            local newExpanded = MSC.ExpandDerivedStats(newStatsTotal or {}, link, Scratch_Tooltip_New)
-            local oldExpanded = MSC.ExpandDerivedStats(oldStatsTotal or {}, nil, Scratch_Tooltip_Old)
-            local diffs = MSC.GetStatDifferences(newExpanded, oldExpanded, Scratch_Tooltip_Diffs)
+			-- [[ 7. STAT COMPARISON (Gains / Losses) ]]
+            local totalNewExpanded = MSC.ExpandDerivedStats(newStatsTotal or {}, link, Scratch_Tooltip_New)
+            local totalOldExpanded = MSC.ExpandDerivedStats(oldStatsTotal or {}, nil, Scratch_Tooltip_Old)
+            local totalDiffs = MSC.GetStatDifferences(totalNewExpanded, totalOldExpanded, Scratch_Tooltip_Diffs)
 
-            local gains, losses = {}, {}
-            for _, d in ipairs(diffs) do
+            local totalGains, totalLosses = {}, {}
+            for _, d in ipairs(totalDiffs) do
                 if math_abs(d.val) > 0.1 then
                     local w = weights[d.key] or 0
                     if w > 0.02 then
-                        if d.val > 0 then table_insert(gains, d) else table_insert(losses, d) end 
+                        if d.val > 0 then table_insert(totalGains, d) else table_insert(totalLosses, d) end 
                     end
                 end
             end
 
             local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
-            table_sort(gains, StableSort); table_sort(losses, StableSort)
+            table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
+
+            -- Detect if a Multi-Slot Weapon Swap occurred
+            local isWeaponSetSwap = false
+            if targetSlotID == 16 or targetSlotID == 17 then
+                local currentMH = GetInventoryItemLink("player", 16)
+                local currentOH = GetInventoryItemLink("player", 17)
+                local _,_,_,_,_,_,_,_, currLoc = nil
+                if currentMH then _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH) end
+                
+                local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
+                local isNew2H = (equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_STAFF" or equipLoc == "INVTYPE_POLEARM")
+                
+                if isNew2H and currentOH then isWeaponSetSwap = true end
+                if isCurrent2H and not isNew2H then isWeaponSetSwap = true end
+                if contextMsg and string_find(contextMsg, "w/ ") then isWeaponSetSwap = true end
+            end
 
             local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
@@ -813,10 +829,39 @@ local function OnTooltipSetItem(tooltip)
                 end
             end
 
-            PrintList(MSC.L["Gains:"], gains, 0, 1, 0)
-            PrintList(MSC.L["Losses:"], losses, 1, 0, 0)
+            if isWeaponSetSwap then
+                -- Generate Isolated Item Diffs
+                local itemNewExpanded = MSC.ExpandDerivedStats(itemNewStats or {}, link, {})
+                local itemOldExpanded = MSC.ExpandDerivedStats(itemOldStats or {}, nil, {})
+                local itemDiffs = MSC.GetStatDifferences(itemNewExpanded, itemOldExpanded, {})
+                
+                local itemGains, itemLosses = {}, {}
+                for _, d in ipairs(itemDiffs) do
+                    if math_abs(d.val) > 0.1 then
+                        local w = weights[d.key] or 0
+                        if w > 0.02 then
+                            if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
+                        end
+                    end
+                end
+                table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
+
+                -- Print Both
+                PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
+                PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
+                
+                if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
+                    tooltip:AddLine(" ")
+                end
+
+                PrintList(MSC.L["Set Gains (w/ Off-hand):"], totalGains, 0, 1, 0)
+                PrintList(MSC.L["Set Losses:"], totalLosses, 1, 0, 0)
+            else
+                -- Print Normal Total Gains (Ensures Armor Set Bonuses still work correctly!)
+                PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
+                PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
+            end
         end
-        -- ====================================================================
 
         tooltip:Show()
     end)
