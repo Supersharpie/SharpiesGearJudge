@@ -121,6 +121,23 @@ function MSC.IsItemUsable(itemLink)
     return result
 end
 
+function MSC:IsJewelcrafter()
+    -- Allow the user to force this on via settings
+    if SGJ_Settings and type(SGJ_Settings.IsJC) == "boolean" then
+        return SGJ_Settings.IsJC
+    end
+    -- Fallback: Scan Professions
+    if GetNumSkillLines then
+        for i = 1, GetNumSkillLines() do
+            local skillName = GetSkillLineInfo(i)
+            if skillName and (skillName == "Jewelcrafting" or string.find(skillName, "Jewelcrafting")) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 -- =============================================================
 -- 2. API SHIMS
 -- =============================================================
@@ -408,7 +425,7 @@ function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights
     return (bestScore > 0) and bestID or nil
 end
 
-function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
+function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList, isJC)
     local bestGem, bestScore = nil, 0
     local db = (level >= 60 and MSC.GemOptions) and MSC.GemOptions or MSC.GemOptions_Leveling
     if not db or not weights then return nil, 0 end
@@ -433,7 +450,9 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList)
     for _, list in ipairs(lists) do
         for _, gem in ipairs(list) do
             local isUniqueBlocked = (gem.unique and excludeList and excludeList[gem.id])
-            if not isUniqueBlocked then
+            local isJCBlocked = (gem.isJC and not isJC) -- Block JC gems if player isn't a JC
+
+            if not isUniqueBlocked and not isJCBlocked then
                 local score = 0
                 if gem.stat and weights[gem.stat] then score = score + (gem.val * weights[gem.stat]) end
                 if gem.stat2 and weights[gem.stat2] then score = score + (gem.val2 * weights[gem.stat2]) end
@@ -520,7 +539,7 @@ function MSC.SolveColorMatch(gemIDs, baseLink)
     return MatchRecursive(1, sockets)
 end
 
-function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
+function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques)
     if not itemLink then return {} end
     
     local rawStats = MSC.GetRawItemStats(itemLink)
@@ -538,31 +557,37 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
 
     if not weights then return finalStats end
     
-    local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
+local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local level = UnitLevel("player")
     
-    if slotId and enchantMode ~= 1 then
-        local physicalEnchantID = 0
-        local itemString = string_match(itemLink, "item[%-?%d:]+")
-        if itemString then
-            local _, _, eid = strsplit(":", itemString)
-            physicalEnchantID = tonumber(eid) or 0
-        end
+    local derivedSlotId = slotId
+    if not derivedSlotId and MSC.SlotMap then
+        local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(itemLink)
+        if equipLoc then derivedSlotId = MSC.SlotMap[equipLoc] end
+    end
+    
+    local physicalEnchantID = 0
+    local itemString = string_match(itemLink, "item[%-?%d:]+")
+    if itemString then
+        local _, _, eid = strsplit(":", itemString)
+        physicalEnchantID = tonumber(eid) or 0
+    end
 
-        if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
-            local pData = MSC.EnchantDB[physicalEnchantID]
-            if pData.stats then
-                for k, v in pairs(pData.stats) do
-                    if type(v) == "number" and (finalStats[k] or 0) >= v then
-                        finalStats[k] = finalStats[k] - v
-                    end
+    if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
+        local pData = MSC.EnchantDB[physicalEnchantID]
+        if pData.stats then
+            for k, v in pairs(pData.stats) do
+                if type(v) == "number" and (finalStats[k] or 0) >= v then
+                    finalStats[k] = finalStats[k] - v
                 end
             end
         end
+    end
 
+    if derivedSlotId and enchantMode ~= 1 then
         if enchantMode == 2 then
-            local equippedLink = GetInventoryItemLink("player", slotId)
+            local equippedLink = GetInventoryItemLink("player", derivedSlotId)
             if equippedLink then
                 local eqEnchantID = 0
                 local eqStr = string_match(equippedLink, "item[%-?%d:]+")
@@ -585,8 +610,8 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
             
         elseif enchantMode == 3 then
             local enchantType = MSC:GetValidEnchantType(itemLink)
-            if not enchantType and slotId then
-                  local s = slotId
+            if not enchantType and derivedSlotId then
+                  local s = derivedSlotId
                   if s==1 or s==3 or s==5 or s==6 or s==7 or s==8 or s==9 or s==10 then enchantType = "Armor"
                   elseif s==15 then enchantType = "Armor" 
                   elseif s==17 then enchantType = "Shield"
@@ -594,7 +619,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
             end
 
             if enchantType then
-                local bestID = MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
+                local bestID = MSC.GetBestEnchantForSlot(derivedSlotId, level, specName, enchantType, weights)
                 if bestID and MSC.EnchantDB[bestID] then
                     local bestData = MSC.EnchantDB[bestID]
                     if bestData.stats then
@@ -614,6 +639,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
         wipe(Scratch_GemStats); wipe(Scratch_GemColors); wipe(Scratch_ProjectedColors)
         Scratch_ProjectedColors.RED=0; Scratch_ProjectedColors.YELLOW=0; Scratch_ProjectedColors.BLUE=0
         local projectedMeta = nil
+        local isJC = MSC:IsJewelcrafter() -- Grabbing JC Status
 
         if gemMode == 1 then
             for k, v in pairs(bonusStats) do finalStats[k] = (finalStats[k] or 0) + v end
@@ -647,11 +673,11 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 local matchScore = 0; local pureScore = 0
                 local socketKeys = {"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}
 
-                local uniqueTrackerMatch = {} 
+                local uniqueTrackerMatch = globalUniques and MSC:SafeCopy(globalUniques) or {} 
                 for _, colorKey in ipairs(socketKeys) do
                     local count = socketsToFill[colorKey] or 0
                     for i=1, count do
-                        local bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights, uniqueTrackerMatch)
+                        local bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights, uniqueTrackerMatch, isJC)
                         if bestGem then 
                             matchScore = matchScore + score
                             table_insert(Scratch_MatchGems, bestGem)
@@ -667,12 +693,12 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 end
 
                 if gemMode == 3 then
-                    local uniqueTrackerPure = {}
+                    local uniqueTrackerPure = globalUniques and MSC:SafeCopy(globalUniques) or {}
                     for _, colorKey in ipairs(socketKeys) do
                         local count = socketsToFill[colorKey] or 0
                         for i=1, count do
                             local searchKey = (colorKey == "EMPTY_SOCKET_META") and "EMPTY_SOCKET_META" or "ANY"
-                            local bestGem, score = MSC.GetBestGemForSocket(searchKey, level, weights, uniqueTrackerPure)
+                            local bestGem, score = MSC.GetBestGemForSocket(searchKey, level, weights, uniqueTrackerPure, isJC)
                             if bestGem then 
                                 pureScore = pureScore + score
                                 table_insert(Scratch_PureGems, bestGem)
@@ -691,6 +717,12 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName)
                 local usePure = (gemMode == 3) and (pureScore > matchScore)
                 local chosenGems = usePure and Scratch_PureGems or Scratch_MatchGems
                 local bonusActive = usePure and (MSC.SolveColorMatch(MSC:SafeCopy(existingGems), baseLink)) or matchBonusActive 
+                
+                if globalUniques then
+                    for _, gem in ipairs(chosenGems) do
+                        if gem.unique then globalUniques[gem.id] = true end
+                    end
+                end 
                 if usePure then
                     local allGems = { unpack(existingGems) }
                     for _, g in ipairs(Scratch_PureGems) do table_insert(allGems, g.id) end

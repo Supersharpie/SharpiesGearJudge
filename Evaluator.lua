@@ -102,6 +102,7 @@ end
 -- =============================================================
 function MSC:GetTotalCharacterScore(gearTable, weights, specName)
     local totalScore = 0
+    local globalUniques = {} -- Tracking Table
     
     wipe(Scratch_SetCounts)
     wipe(Scratch_Accumulator)
@@ -109,10 +110,12 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
     
     local metaGemID = nil 
 
-    for slotID, itemLink in pairs(gearTable) do
+    -- Use ipairs(GEAR_SLOTS) instead of pairs(gearTable) so unique distribution is deterministic!
+    for _, slotID in ipairs(GEAR_SLOTS) do
+        local itemLink = gearTable[slotID]
         if itemLink then
             -- [[ 1. GET BASE STATS ]] 
-            local cachedStats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName)
+            local cachedStats = MSC.SafeGetItemStats(itemLink, slotID, weights, specName, globalUniques)
 
             wipe(Scratch_Stats)
             for k, v in pairs(cachedStats) do

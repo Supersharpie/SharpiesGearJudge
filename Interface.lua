@@ -1042,11 +1042,16 @@ function MSC.InitSettingsView(parent)
         local lbl = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); lbl:SetPoint("TOPLEFT", 0, 0); lbl:SetText(label); lbl:SetTextColor(0.6, 0.6, 0.6)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
         local function OnClick(self) 
-            UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
+            UIDropDownMenu_SetSelectedID(dd, self:GetID()); 
+            SGJ_Settings[key] = self.value
+            
             if key == "Mode" then 
                 MSC.ManualSpec = self.value; MSC.CachedWeights = nil
-                RequestUpdate()
             end 
+            
+            if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+            MSC.BagCacheDirty = true
+            if RequestUpdate then RequestUpdate() end
         end
         local function Init(self, level) 
             for _, opt in ipairs(options) do 

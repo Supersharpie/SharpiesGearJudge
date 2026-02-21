@@ -61,6 +61,7 @@ function MSC:ApplyDynamicAdjustments()
     local _, class = UnitClass("player")
     local specKey = "Default"
     local rawWeights = {}
+    local mathSpec = nil
 
     -- 1. CHECK FOR MANUAL OVERRIDE 
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
@@ -73,7 +74,7 @@ function MSC:ApplyDynamicAdjustments()
              
              if type(data) == "table" and data.weights then
                  rawWeights = data.weights
-                 if data.BaseSpec then specKey = data.BaseSpec end
+                 if data.BaseSpec then mathSpec = data.BaseSpec end -- Only set mathSpec, leave specKey alone!
              else
                  rawWeights = data
              end
@@ -130,7 +131,8 @@ function MSC:ApplyDynamicAdjustments()
     -- 5. APPLY SCALERS & HIT CAPS
     local capText = nil 
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
-        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
+        -- Pass mathSpec if it exists, otherwise pass specKey
+        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, mathSpec or specKey)
     end
 
     return finalWeights, specKey, capText 
@@ -147,6 +149,10 @@ function MSC.GetCurrentWeights()
     MSC.CachedWeights = w
     MSC.CachedSpecKey = key
     MSC.CachedCapText = capText
+    
+    -- [[ NUKE TOOLTIP CACHE WHEN PROFILE CHANGES ]]
+    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    if MSC.SlotCache then wipe(MSC.SlotCache) end
     
     return w, key, capText
 end

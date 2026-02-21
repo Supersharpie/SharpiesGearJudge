@@ -98,6 +98,9 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         print("|cff00ff00SGJ:|r Stat Coloring is now " .. (SGJ_Settings.ColorizeStats and "ON" or "OFF"))
     elseif cmd == "debug" then
         MSC:DebugItem()
+	elseif cmd == "jc" then
+        SGJ_Settings.IsJC = not SGJ_Settings.IsJC
+        print("|cff00ff00SGJ:|r Jewelcrafter evaluation is now " .. (SGJ_Settings.IsJC and "ON" or "OFF"))
     elseif cmd == "options" or cmd == "config" then 
         if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end 
     elseif cmd == "import" then
