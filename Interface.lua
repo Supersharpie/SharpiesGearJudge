@@ -159,7 +159,18 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         if QuestInfoFrame and QuestInfoFrame:IsVisible() then
              if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
         end
+		
+        if MerchantFrame and MerchantFrame:IsVisible() then
+             if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end
+        end
         
+        for i = 1, 13 do
+            local container = _G["ContainerFrame"..i]
+            if container and container:IsVisible() and MSC.UpdateBagOverlays then
+                MSC.UpdateBagOverlays(container)
+            end
+        end
+		
         if GameTooltip:IsVisible() then
             local _, link = GameTooltip:GetItem()
             if link and string.find(link, "item:" .. itemID) then
@@ -508,9 +519,9 @@ function MSC.UpdateQuestOverlays()
         -- Reset state (important for reusing frames)
         if btn and btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
 
-        if btn and btn:IsVisible() then
+        if btn and btn:IsShown() then
             local link = GetQuestItemLink("choice", i)
-            local showOverlay = false
+            local overlayType = nil -- Track if it's "UP" or "DOWN"
 
             -- [[ OPTIMIZATION: INSTANT FILTER ]]
             if link then
@@ -523,8 +534,12 @@ function MSC.UpdateQuestOverlays()
                         local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
                         if slotID then
                              local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
-                             if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                                 showOverlay = true
+                             if newScore and oldScore then
+                                 if (newScore > (oldScore + 0.1)) then
+                                     overlayType = "UP"
+                                 elseif (oldScore > (newScore + 0.1)) then
+                                     overlayType = "DOWN"
+                                 end
                              end
                         end
                     end
@@ -532,19 +547,245 @@ function MSC.UpdateQuestOverlays()
             end
 
             -- [[ DRAW OVERLAY ]]
-            if showOverlay then
+            if overlayType then
                 if not btn.SGJ_Overlay then
                     -- Create only when needed (Lazy Load)
                     btn.SGJ_Overlay = btn:CreateTexture(nil, "OVERLAY", nil, 7)
                     btn.SGJ_Overlay:SetSize(26, 26)
                     btn.SGJ_Overlay:SetPoint("TOPRIGHT", 0, 0)
-                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
                 end
+                
+                -- Swap the texture based on the result
+                if overlayType == "UP" then
+                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                elseif overlayType == "DOWN" then
+                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png")
+                end
+                
                 btn.SGJ_Overlay:Show()
             end
         end
     end
 end
+
+-- =============================================================
+-- MERCHANT REWARD OVERLAYS
+-- =============================================================
+function MSC.UpdateMerchantOverlays()
+    if not MerchantFrame or not MerchantFrame:IsShown() then return end
+
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights then return end
+
+    -- The Merchant frame displays up to MERCHANT_ITEMS_PER_PAGE (usually 10) items at a time
+    for i = 1, MERCHANT_ITEMS_PER_PAGE do
+        local index = (((MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE) + i)
+        local itemButton = _G["MerchantItem" .. i .. "ItemButton"]
+        
+        if itemButton then
+            -- Reset state 
+            if itemButton.SGJ_Overlay then itemButton.SGJ_Overlay:Hide() end
+            
+            -- Make sure the slot actually contains an item
+            if itemButton:IsShown() and index <= GetMerchantNumItems() then
+                local link = GetMerchantItemLink(index)
+                local overlayType = nil
+
+                if link then
+                    local _, _, _, equipLoc = GetItemInfoInstant(link)
+                    
+                    if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+                        if MSC.IsItemUsable(link) then 
+                            local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                            if slotID then
+                                 local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
+                                 if newScore and oldScore then
+                                     if (newScore > (oldScore + 0.1)) then
+                                         overlayType = "UP"
+                                     elseif (oldScore > (newScore + 0.1)) then
+                                         overlayType = "DOWN"
+                                     end
+                                 end
+                            end
+                        end
+                    end
+                end
+
+                -- Draw Overlay
+                if overlayType then
+                    if not itemButton.SGJ_Overlay then
+                        itemButton.SGJ_Overlay = itemButton:CreateTexture(nil, "OVERLAY", nil, 7)
+                        -- Merchant icons are slightly smaller, so we use 22x22 instead of 26x26
+                        itemButton.SGJ_Overlay:SetSize(22, 22) 
+                        itemButton.SGJ_Overlay:SetPoint("TOPRIGHT", 2, 2)
+                    end
+                    
+                    if overlayType == "UP" then
+                        itemButton.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                    elseif overlayType == "DOWN" then
+                        itemButton.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png")
+                    end
+                    
+                    itemButton.SGJ_Overlay:Show()
+                end
+            end
+        end
+    end
+end
+
+-- =============================================================
+-- BAG / INVENTORY UPGRADE OVERLAYS
+-- =============================================================
+function MSC.UpdateBagOverlays(frame)
+    if not frame or not frame:IsShown() then return end
+    
+    local name = frame:GetName()
+    if not name or not string.find(name, "ContainerFrame") then return end
+
+    local bagID = frame:GetID()
+    local numSlots = GetContainerNumSlots(bagID) -- Safer than relying on frame.size
+    
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights then return end
+
+    -- ContainerFrame items are numbered 1 to however many slots the bag has
+    for i = 1, 36 do
+        local button = _G[name .. "Item" .. i]
+        
+        if button and button:IsShown() then
+            -- Reset overlay on every refresh
+            if button.SGJ_Overlay then button.SGJ_Overlay:Hide() end
+
+            local slotID = button:GetID()
+            if slotID and slotID > 0 and slotID <= numSlots then
+                local link = GetContainerItemLink(bagID, slotID)
+                
+                if link then
+                    local _, _, _, equipLoc = GetItemInfoInstant(link)
+                    
+                    if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+                        if MSC.IsItemUsable(link) then
+                            -- This is completely safe and won't break your MH/OH logic
+                            local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                            if compSlot then
+                                local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                                
+                                if newScore and oldScore and (newScore > (oldScore + 0.1)) then
+                                    if not button.SGJ_Overlay then
+                                        button.SGJ_Overlay = button:CreateTexture(nil, "OVERLAY", nil, 7)
+                                        -- Slightly smaller and tucked inside the border to avoid clipping
+                                        button.SGJ_Overlay:SetSize(18, 18)
+                                        button.SGJ_Overlay:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2) 
+                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                                    end
+                                    button.SGJ_Overlay:Show()
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- =============================================================
+-- THIRD-PARTY BAG INTEGRATION (ElvUI, Bagnon, Baganator)
+-- =============================================================
+local BagHookFrame = CreateFrame("Frame")
+BagHookFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+BagHookFrame:SetScript("OnEvent", function(self, event)
+    if self.Loaded then return end
+    self.Loaded = true
+    
+    local CheckAddOnLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
+
+    -- [[ HELPER: THE DRAWING ENGINE ]]
+    local function EvaluateAndDraw(button, link)
+        -- We wait 0.05 seconds so ElvUI finishes drawing its custom rarity borders first
+        C_Timer.After(0.05, function()
+            if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+            if not link then return end
+            
+            local weights, specName = MSC.GetCurrentWeights()
+            if not weights then return end
+
+            local _, _, _, equipLoc = GetItemInfoInstant(link)
+            if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+                if MSC.IsItemUsable(link) then
+                    local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                    if compSlot then
+                        local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                        
+                        if newScore and oldScore and (newScore > (oldScore + 0.1)) then
+                            if not button.SGJ_OverlayFrame then
+                                -- Dedicated child frame to force a high Z-index
+                                button.SGJ_OverlayFrame = CreateFrame("Frame", nil, button)
+                                button.SGJ_OverlayFrame:SetAllPoints(button)
+                                
+                                button.SGJ_Overlay = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY", nil, 7)
+                                button.SGJ_Overlay:SetSize(18, 18)
+                                button.SGJ_Overlay:SetPoint("TOPRIGHT", button.SGJ_OverlayFrame, "TOPRIGHT", -2, -2)
+                                button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                            end
+                            
+                            -- Guarantee it sits above ElvUI's strict layering system
+                            button.SGJ_OverlayFrame:SetFrameLevel(math.max(10, button:GetFrameLevel() + 5))
+                            button.SGJ_OverlayFrame:Show()
+                        end
+                    end
+                end
+            end
+        end)
+    end
+
+    -- [[ 1. ELVUI SUPPORT (FIXED) ]]
+    if CheckAddOnLoaded("ElvUI") then
+        local E = unpack(ElvUI)
+        if E then
+            local B = E:GetModule('Bags')
+            if B and B.UpdateSlot then
+                hooksecurefunc(B, "UpdateSlot", function(self, frame, bagID, slotID)
+                    -- 'frame' is the ElvUI Bag Window. The actual slot button is nested deep inside.
+                    if frame and frame.Bags and frame.Bags[bagID] and frame.Bags[bagID][slotID] then 
+                        local itemButton = frame.Bags[bagID][slotID]
+                        local link = GetContainerItemLink(bagID, slotID)
+                        EvaluateAndDraw(itemButton, link) 
+                    end
+                end)
+            end
+        end
+    end
+
+    -- [[ 2. BAGNON SUPPORT ]]
+    if CheckAddOnLoaded("Bagnon") and Bagnon and Bagnon.ItemSlot then
+        hooksecurefunc(Bagnon.ItemSlot, "Update", function(self)
+            if self:IsShown() then
+                -- Backup link retrieval methods just in case Bagnon API changes
+                local link = self.GetItem and self:GetItem()
+                if not link and self.bag and self.slot then link = GetContainerItemLink(self.bag, self.slot) end
+                EvaluateAndDraw(self, link)
+            end
+        end)
+    end
+
+    -- [[ 3. BAGANATOR SUPPORT ]]
+    if CheckAddOnLoaded("Baganator") and Baganator then
+        if Baganator.ItemButtonUtil and Baganator.ItemButtonUtil.UpdateItemButton then
+            hooksecurefunc(Baganator.ItemButtonUtil, "UpdateItemButton", function(self)
+                if self and self:IsShown() then
+                    local bagID = self.bagID or self.bag
+                    local slotID = self.slotID or self.slotIndex
+                    if bagID and slotID then
+                        local link = GetContainerItemLink(bagID, slotID)
+                        EvaluateAndDraw(self, link)
+                    end
+                end
+            end)
+        end
+    end
+
+end)
 
 local function GetStatReason(stat, class, profileName)
     if not profileName then profileName = "" end
@@ -1416,6 +1657,30 @@ hooksecurefunc("HandleModifiedItemClick", function(link) if link and IsShiftKeyD
 hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
 hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
 
+if hooksecurefunc and QuestInfo_Display then
+    hooksecurefunc("QuestInfo_Display", function(template, parentFrame, acceptButton, material)
+        C_Timer.After(0.05, function()
+            if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
+        end)
+    end)
+end
+
+if hooksecurefunc and MerchantFrame_UpdateMerchantInfo then
+    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
+        C_Timer.After(0.05, function()
+            if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end
+        end)
+    end)
+end
+
+if hooksecurefunc and ContainerFrame_Update then
+    hooksecurefunc("ContainerFrame_Update", function(frame)
+        C_Timer.After(0.01, function()
+            if MSC.UpdateBagOverlays then MSC.UpdateBagOverlays(frame) end
+        end)
+    end)
+end
+
 function MSC.CreatePopupFrame(title)
     local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     f:SetSize(500, 400); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG")
@@ -1648,4 +1913,23 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     totalLine:SetText(MSC.L["Total Score: "] .. string_format("|cff00ff00%.1f|r", totalScore))
     totalLine:Show()
     f:SetHeight(math_abs(yOff) + 100)
+end
+
+-- =============================================================
+-- TITAN PANEL / LIBDATABROKER COMPATIBILITY
+-- =============================================================
+local ldb = LibStub and LibStub:GetLibrary("LibDataBroker-1.1", true)
+if ldb then
+    ldb:NewDataObject("SharpiesGearJudge", {
+        type = "launcher",
+        text = "Gear Judge",
+        icon = "Interface\\Icons\\INV_Misc_Spyglass_02",
+        OnClick = function(self, button)
+            MSC.ToggleMainMenu()
+        end,
+        OnTooltipShow = function(tooltip)
+            tooltip:AddLine("|cffffd100Sharpie's Gear Judge|r")
+            tooltip:AddLine("Click to open the interface.", 1, 1, 1)
+        end,
+    })
 end

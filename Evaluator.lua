@@ -359,11 +359,25 @@ CacheCleaner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 CacheCleaner:RegisterEvent("PLAYER_TALENT_UPDATE")
 CacheCleaner:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 CacheCleaner:RegisterEvent("PLAYER_LEVEL_UP")
-CacheCleaner:RegisterEvent("BAG_UPDATE") -- Context might change (best bag item)
+CacheCleaner:RegisterEvent("BAG_UPDATE") 
+CacheCleaner:RegisterEvent("PLAYER_ENTERING_WORLD") 
+CacheCleaner:RegisterEvent("GET_ITEM_INFO_RECEIVED") 
+
+local wipeTimer = nil
 
 CacheCleaner:SetScript("OnEvent", function(self, event)
-    -- We clear the cache whenever the basis of comparison (current gear/spec) changes
-    wipe(MSC.EvaluationCache)
+    if event == "GET_ITEM_INFO_RECEIVED" then
+        -- Debounce the cache wipe by 0.5 seconds to prevent lag during heavy load-ins
+        if not wipeTimer then
+            wipeTimer = C_Timer.After(0.5, function()
+                wipe(MSC.EvaluationCache)
+                wipeTimer = nil
+            end)
+        end
+    else
+        -- Standard instant wipe for deliberate player actions
+        wipe(MSC.EvaluationCache)
+    end
 end)
 
 

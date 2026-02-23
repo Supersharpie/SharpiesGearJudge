@@ -193,6 +193,10 @@ L["|cffff0000(No MH found)|r"] = "|cffff0000(No MH found)|r"
 L["|cff00ff00(Set Bonus %s)|r"] = "|cff00ff00(Set Bonus %s)|r"
 L[" |cffff0000(Cap %.1f %s)|r"] = " |cffff0000(Cap %.1f %s)|r"
 L[" |cffff0000(Cap %.1f Def)|r"] = " |cffff0000(Cap %.1f Def)|r"
+L["Item Gains:"] = "Item Gains:"
+L["Item Losses:"] = "Item Losses:"
+L["Set Gains (w/ Off-hand):"] = "Set Gains (w/ Off-hand):"
+L["Set Losses:"] = "Set Losses:"
 
 -- Debug / Developer Tooltips
 L["|cffff0000SGJ: Please hover over an item to debug.|r"] = "|cffff0000SGJ: Please hover over an item to debug.|r"
