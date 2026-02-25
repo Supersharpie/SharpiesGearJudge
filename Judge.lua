@@ -557,39 +557,40 @@ end
 local function OnTooltipSetItem(tooltip)
     -- [[ 1. INSTANT CHECKS ]]
     if MSC.IsCalculating then return end
-
-    -- [[ 2. SETTINGS CHECKS ]]
     if tooltip:GetName() and string_find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
+    
     if SGJ_Settings then
         if SGJ_Settings.HideTooltips then return end
         if SGJ_Settings.ShiftOnlyTooltip and not IsShiftKeyDown() then return end
     end
 
-    -- [[ 3. LOCK THE ENGINE ]]
-    MSC.IsCalculating = true 
-
-    -- [[ 4. GET ITEM LINK ]]
+    -- [[ 2. GET ITEM LINK ]]
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
 
-    -- [[ 5. VALIDATE ITEM ]]
+    -- [[ 3. VALIDATE ITEM ]]
     if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
-        MSC.IsCalculating = false 
         return 
     end
 
-    -- [[ 6. RUN VISUAL UPDATES ]]
-    if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
+    -- [[ 4. THE TSM FIX: DELAYED EXECUTION ]]
+    C_Timer.After(0, function()
+        if not tooltip:IsVisible() then return end
+        
+        MSC.IsCalculating = true 
 
-    -- [[ 7. RUN SCORING ENGINE ]]
-    local _, playerClass = UnitClass("player")
-    if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
-        if MSC.ForceInit then MSC:ForceInit() end
-        if not MSC.CurrentClass then 
-            MSC.IsCalculating = false -- Unlock
-            return 
+        -- [[ 5. RUN VISUAL UPDATES ]]
+        if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
+
+        -- [[ 6. RUN SCORING ENGINE ]]
+        local _, playerClass = UnitClass("player")
+        if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
+            if MSC.ForceInit then MSC:ForceInit() end
+            if not MSC.CurrentClass then 
+                MSC.IsCalculating = false 
+                return 
+            end
         end
-    end
 
     local status, err = pcall(function()
         local weights, specName = MSC.GetCurrentWeights()
@@ -791,7 +792,6 @@ local function OnTooltipSetItem(tooltip)
 			local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
 			table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
 
-			-- [[ FIX: Changed targetSlotID to slotId below ]]
 			local isWeaponSetSwap = false
 			if slotId == 16 or slotId == 17 then
 				local currentMH = GetInventoryItemLink("player", 16)
@@ -829,43 +829,44 @@ local function OnTooltipSetItem(tooltip)
 				end
 			end
 
-			if isWeaponSetSwap then
-				-- Generate Isolated Item Diffs
-				local itemNewExpanded = MSC.ExpandDerivedStats(itemNewStats or {}, link, {})
-				local itemOldExpanded = MSC.ExpandDerivedStats(itemOldStats or {}, nil, {})
-				local itemDiffs = MSC.GetStatDifferences(itemNewExpanded, itemOldExpanded, {})
-				
-				local itemGains, itemLosses = {}, {}
-				for _, d in ipairs(itemDiffs) do
-					if math_abs(d.val) > 0.1 then
-						local w = weights[d.key] or 0
-						if w > 0.02 then
-							if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
+				if isWeaponSetSwap then
+					-- Generate Isolated Item Diffs
+					local itemNewExpanded = MSC.ExpandDerivedStats(itemNewStats or {}, link, {})
+					local itemOldExpanded = MSC.ExpandDerivedStats(itemOldStats or {}, nil, {})
+					local itemDiffs = MSC.GetStatDifferences(itemNewExpanded, itemOldExpanded, {})
+					
+					local itemGains, itemLosses = {}, {}
+					for _, d in ipairs(itemDiffs) do
+						if math_abs(d.val) > 0.1 then
+							local w = weights[d.key] or 0
+							if w > 0.02 then
+								if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
+							end
 						end
 					end
-				end
-				table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
+					table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
 
-				-- Print Both
-				PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
-				PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
-				
-				if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
-					tooltip:AddLine(" ")
-				end
+					-- Print Both
+					PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
+					PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
+					
+					if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
+						tooltip:AddLine(" ")
+					end
 
-				PrintList(MSC.L["Set Gains (w/ Off-hand):"], totalGains, 0, 1, 0)
-				PrintList(MSC.L["Set Losses:"], totalLosses, 1, 0, 0)
-			else
-				PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
-				PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
+					PrintList(MSC.L["Set Gains (w/ Off-hand):"], totalGains, 0, 1, 0)
+					PrintList(MSC.L["Set Losses:"], totalLosses, 1, 0, 0)
+				else
+					PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
+					PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
+				end
 			end
-        end
 
-        tooltip:Show()
-    end)
-    MSC.IsCalculating = false
-    if not status then geterrorhandler()(err) end
+				tooltip:Show()
+			end)
+		MSC.IsCalculating = false
+		if not status then geterrorhandler()(err) end
+	end)
 end
 
 -- Hooks

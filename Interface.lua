@@ -142,17 +142,27 @@ end
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("BAG_UPDATE")
 eventFrame:RegisterEvent("QUEST_COMPLETE")         
-eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED") 
+eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+eventFrame:RegisterEvent("TRADE_SKILL_SHOW")
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1) 
     if event == "BAG_UPDATE" then 
         MSC.BagCache.Dirty = true
         if RequestUpdate then RequestUpdate() end
 
-    elseif event == "QUEST_COMPLETE" then
+		elseif event == "QUEST_COMPLETE" then
         if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
+		
+		elseif event == "TRADE_SKILL_SHOW" then
+        local numRecipes = GetNumTradeSkills()
+        for i = 1, numRecipes do
+            local link = GetTradeSkillItemLink(i)
+            if link then
+                GetItemInfo(link) 
+            end
+        end
         
-elseif event == "GET_ITEM_INFO_RECEIVED" then
+		elseif event == "GET_ITEM_INFO_RECEIVED" then
         local itemID = arg1
         
         --  Quest/Merchant checks...

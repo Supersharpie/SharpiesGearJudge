@@ -2,6 +2,10 @@
 
 ## 🚀 v2.4.3
 
+### Key changes:
+* **Registered TRADE_SKILL_SHOW and prefetch trade-skill item links (GetTradeSkillItemLink/GetItemInfo) so item info is available when the trade UI opens.** 
+* **In Judge.lua defer tooltip evaluation using C_Timer.After(0) to avoid timing conflicts (e.g. with other addons), check tooltip visibility before running, and move MSC.IsCalculating lock/unlock inside the delayed callback.** 
+* **Also improved weapon-set diff handling and printing: generate isolated item diffs, sort and print item gains/losses and set gains/losses with proper spacing, and perform minor formatting/flow cleanups.**
 * **Update overlay refresh logic when GET_ITEM_INFO_RECEIVED fires: refresh quest, merchant and trade-skill overlays and add TSM crafting-window compatibility.**
 	**Also add a hook to TradeSkillFrame_SetSelection to run UpdateTradeSkillOverlays after a short delay to ensure overlays update correctly when selection changes.**
 	**Includes minor conditional/formatting cleanup for the event handler.**
