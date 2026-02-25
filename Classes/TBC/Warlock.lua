@@ -536,7 +536,16 @@ Warlock.Talents = {
     ["EMBERSTORM"]      = MSC.L["Emberstorm"],
     ["SUPPRESSION"]     = MSC.L["Suppression"],
     ["DEMONIC_AEGIS"]     = MSC.L["Demonic Aegis"],
-    ["DEMONIC_KNOWLEDGE"] = MSC.L["Demonic Knowledge"]
+    ["DEMONIC_KNOWLEDGE"] = MSC.L["Demonic Knowledge"],
+-- Combat Lab DPET Modifiers:
+    ["SHADOW_MASTERY"]  = MSC.L["Shadow Mastery"],
+    ["IMP_CORRUPTION"]  = MSC.L["Improved Corruption"],
+    ["BANE"]            = MSC.L["Bane"],
+    ["SHADOW_AND_FLAME"]= MSC.L["Shadow and Flame"],
+    ["EMP_CORRUPTION"]  = MSC.L["Empowered Corruption"],
+    ["CONTAGION"]       = MSC.L["Contagion"],
+    ["IMP_IMMOLATE"]    = MSC.L["Improved Immolate"],
+    ["SHADOWBURN"]      = MSC.L["Shadowburn"]
 }
 
 -- =============================================================

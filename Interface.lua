@@ -642,6 +642,16 @@ function MSC.UpdateBagOverlays(frame)
     local name = frame:GetName()
     if not name or not string.find(name, "ContainerFrame") then return end
 
+    -- [[ CHECK THE SETTING ]]
+    if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then
+        -- If disabled, ensure we hide any arrows that might already be drawn
+        for i = 1, 36 do
+            local btn = _G[name .. "Item" .. i]
+            if btn and btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
+        end
+        return 
+    end
+
     local bagID = frame:GetID()
     local numSlots = GetContainerNumSlots(bagID) -- Safer than relying on frame.size
     
@@ -700,11 +710,15 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
     
     local CheckAddOnLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
 
-    -- [[ HELPER: THE DRAWING ENGINE ]]
+-- [[ HELPER: THE DRAWING ENGINE ]]
     local function EvaluateAndDraw(button, link)
         -- We wait 0.05 seconds so ElvUI finishes drawing its custom rarity borders first
         C_Timer.After(0.05, function()
             if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+            
+            -- [[ CHECK THE SETTING ]]
+            if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
+            
             if not link then return end
             
             local weights, specName = MSC.GetCurrentWeights()
@@ -1387,6 +1401,11 @@ function MSC.InitSettingsView(parent)
     local cbShift = CreateCheck(MSC.L["Show Only via Shift Key"], "ShiftOnlyTooltip", MSC.L["Only shows the Judge score in tooltips while holding the SHIFT key."], cb2, 20, -5)
     local cb3 = CreateCheck(MSC.L["Mute Error Sounds"], "MuteSounds", MSC.L["Stops the error sound when clicking invalid items."], cbShift, -20, -5)
     local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
+	local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
+    cbBagArrows:HookScript("OnClick", function()
+        MSC.BagCacheDirty = true
+        if RequestUpdate then RequestUpdate() end
+    end)
     cb2:HookScript("OnClick", function(self)
         if self:GetChecked() then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end
     end)
@@ -1801,7 +1820,8 @@ loader:SetScript("OnEvent", function(self, event, name)
             CompactEquip = false,
             ColorizeStats = true,
             SimplifyStats = false,
-            TrackedSpecs = {}
+            TrackedSpecs = {},
+			ShowBagArrows = false
         }
 
         -- 3. FILL MISSING SETTINGS ONLY

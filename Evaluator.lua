@@ -367,16 +367,16 @@ local wipeTimer = nil
 
 CacheCleaner:SetScript("OnEvent", function(self, event)
     if event == "GET_ITEM_INFO_RECEIVED" then
-        -- Debounce the cache wipe by 0.5 seconds to prevent lag during heavy load-ins
         if not wipeTimer then
             wipeTimer = C_Timer.After(0.5, function()
                 wipe(MSC.EvaluationCache)
+                wipe(MSC.StatCache)
                 wipeTimer = nil
             end)
         end
     else
-        -- Standard instant wipe for deliberate player actions
         wipe(MSC.EvaluationCache)
+        wipe(MSC.StatCache)
     end
 end)
 

@@ -1,5 +1,26 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.3
+
+* **Added a user setting to toggle showing bag upgrade arrows (ShowBagArrows) with a settings checkbox, defaulting to false, and short-circuit drawing when disabled (also marks bag cache dirty and requests update on change).** 
+* **Ensured the bag overlay drawing respects the setting by checking it in UpdateBagOverlays and the drawing helper.** 
+* **Extended cache cleaning to also wipe MSC.StatCache (debounced for GET_ITEM_INFO_RECEIVED and immediate for other events).** 
+* **Added several Warlock talent keys (Combat Lab / DPET modifiers) to Warlock.Talents and update Spanish locale strings for "chance on hit" and the equip phrase.**
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.4.2
+
+* **Add UI overlays and refresh hooks across quest, merchant and bag views and integrate with third-party bag addons.** 
+
+* **Introduced UpdateMerchantOverlays and UpdateBagOverlays, draws up/down upgrade icons (different sizes/positions for merchants and containers), and lazy-creates overlay textures/frames.** 
+* **Added hooks and timed refreshes for QuestInfo, Merchant updates and ContainerFrame updates; supports ElvUI, Bagnon and Baganator via hooksecurefunc wrappers.** 
+* **Added corresponding localization strings for new labels and register a LibDataBroker launcher entry; supports Titan Panel for minimap button now.**
+* **Fixed a bug in tooltip weapon-swap detection by using slotId instead of targetSlotID.**
+* **Fixed a bug in Evaluator to debounce cache wipes (0.5s) while keeping instant wipes for player actions.** 
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.4.2 - Supports DE,ES,FR,BR,RU
 
 * **Multiple fixes and refactors across classes and core systems.**
