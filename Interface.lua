@@ -152,16 +152,21 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
     elseif event == "QUEST_COMPLETE" then
         if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
         
-    elseif event == "GET_ITEM_INFO_RECEIVED" then
+elseif event == "GET_ITEM_INFO_RECEIVED" then
         local itemID = arg1
         
-        -- [[ OPTIMIZATION: CONTEXT AWARENESS ]]
-        if QuestInfoFrame and QuestInfoFrame:IsVisible() then
-             if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
+        --  Quest/Merchant checks...
+        if QuestInfoFrame and QuestInfoFrame:IsVisible() then MSC.UpdateQuestOverlays() end
+        if MerchantFrame and MerchantFrame:IsVisible() then MSC.UpdateMerchantOverlays() end
+
+        -- [[ CRAFTING/TRADE SKILL CHECK ]]
+        if TradeSkillFrame and TradeSkillFrame:IsShown() then
+            if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
         end
-		
-        if MerchantFrame and MerchantFrame:IsVisible() then
-             if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end
+
+        -- [[ TSM COMPATIBILITY ]]
+        if TSM_API and TSM_API.IsWindowVisible and TSM_API.IsWindowVisible("CRAFTING") then
+            if MSC.UpdateTSMOverlays then MSC.UpdateTSMOverlays() end
         end
         
         for i = 1, 13 do
@@ -1952,4 +1957,13 @@ if ldb then
             tooltip:AddLine("Click to open the interface.", 1, 1, 1)
         end,
     })
+end
+
+-- [[ TRADE SKILL HOOKS ]]
+if TradeSkillFrame_SetSelection then
+    hooksecurefunc("TradeSkillFrame_SetSelection", function(id)
+        C_Timer.After(0.1, function()
+            if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+        end)
+    end)
 end

@@ -2,6 +2,9 @@
 
 ## 🚀 v2.4.3
 
+* **Update overlay refresh logic when GET_ITEM_INFO_RECEIVED fires: refresh quest, merchant and trade-skill overlays and add TSM crafting-window compatibility.**
+	**Also add a hook to TradeSkillFrame_SetSelection to run UpdateTradeSkillOverlays after a short delay to ensure overlays update correctly when selection changes.**
+	**Includes minor conditional/formatting cleanup for the event handler.**
 * **Added a user setting to toggle showing bag upgrade arrows (ShowBagArrows) with a settings checkbox, defaulting to false, and short-circuit drawing when disabled (also marks bag cache dirty and requests update on change).** 
 * **Ensured the bag overlay drawing respects the setting by checking it in UpdateBagOverlays and the drawing helper.** 
 * **Extended cache cleaning to also wipe MSC.StatCache (debounced for GET_ITEM_INFO_RECEIVED and immediate for other events).** 
