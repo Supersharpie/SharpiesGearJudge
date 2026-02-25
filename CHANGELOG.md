@@ -2,6 +2,8 @@
 
 ## 🚀 v2.4.3
 
+* **Various Spanish localization fixes and wording improvements for esES: translate untranslated terms (e.g. "Capped" → "Límite"), refine downgrade/sidegrade labels ("Inferior", "Equivalente"), correct grammar/phrasing (e.g. "golpea a", "Penetración de hechizos", gem/diamond names), and normalize usage abbreviations from "Promedio" to "Prom." for consistency.**  
+* **Also fixed a regex pattern spacing for the healing/damage capture, adjusted many "Use:/Equip:" lines for clearer Spanish, and added a translation for "Spell Power Use Effect".**  
 ### Key changes:
 * **Registered TRADE_SKILL_SHOW and prefetch trade-skill item links (GetTradeSkillItemLink/GetItemInfo) so item info is available when the trade UI opens.** 
 * **In Judge.lua defer tooltip evaluation using C_Timer.After(0) to avoid timing conflicts (e.g. with other addons), check tooltip visibility before running, and move MSC.IsCalculating lock/unlock inside the delayed callback.** 
