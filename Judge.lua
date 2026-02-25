@@ -573,14 +573,24 @@ local function OnTooltipSetItem(tooltip)
         return 
     end
 
-    -- [[ 4. THE TSM FIX: DELAYED EXECUTION ]]
-    C_Timer.After(0, function()
-        if not tooltip:IsVisible() then return end
-        
-        MSC.IsCalculating = true 
+-- [[ 4. SYNCHRONOUS EXECUTION (Fixes TSM Loop & Bleeding Text) ]]
+    if not tooltip:IsVisible() then return end
+    
+    -- Prevent duplicate processing if another addon forces a redraw
+    local tooltipName = tooltip:GetName()
+    if tooltipName then
+        for i = 2, tooltip:NumLines() do
+            local leftLine = _G[tooltipName .. "TextLeft" .. i]
+            if leftLine and leftLine:GetText() and string.find(leftLine:GetText(), MSC.L["Judge's Score:"] or "Judge's Score:") then
+                return 
+            end
+        end
+    end
 
-        -- [[ 5. RUN VISUAL UPDATES ]]
-        if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
+    MSC.IsCalculating = true 
+
+    -- [[ 5. RUN VISUAL UPDATES ]]
+    if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
 
         -- [[ 6. RUN SCORING ENGINE ]]
         local _, playerClass = UnitClass("player")
@@ -862,11 +872,9 @@ local function OnTooltipSetItem(tooltip)
 				end
 			end
 
-				tooltip:Show()
 			end)
 		MSC.IsCalculating = false
 		if not status then geterrorhandler()(err) end
-	end)
 end
 
 -- Hooks
