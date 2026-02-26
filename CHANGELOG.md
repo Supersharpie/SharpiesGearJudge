@@ -2,6 +2,17 @@
 
 ## 🚀 v2.4.3
 
+### TSM Fix: tooltip scoring synchronous
+### Tooltip Flicker
+* **Removed the C_Timer.After(0) delayed wrapper and run the tooltip scoring path immediately.** 
+* **Added a guard that scans existing tooltip lines for "Judge's Score:" to prevent duplicate processing when other addons force redraws.** 
+* **Set MSC.IsCalculating before running BeautifyTooltip and the scoring engine, and remove the deferred tooltip:Show() call.** 
+* **These changes fix TSM-induced loops and "bleeding" text caused by the asynchronous delay while preserving existing error handling.**
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.4.3
+
 * **Various Spanish localization fixes and wording improvements for esES: translate untranslated terms (e.g. "Capped" → "Límite"), refine downgrade/sidegrade labels ("Inferior", "Equivalente"), correct grammar/phrasing (e.g. "golpea a", "Penetración de hechizos", gem/diamond names), and normalize usage abbreviations from "Promedio" to "Prom." for consistency.**  
 * **Also fixed a regex pattern spacing for the healing/damage capture, adjusted many "Use:/Equip:" lines for clearer Spanish, and added a translation for "Spell Power Use Effect".**  
 ### Key changes:
