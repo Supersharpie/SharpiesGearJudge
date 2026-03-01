@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+
+Multiple UX and class-detection improvements across the addon:
+
+- Classes/TBC/Warlock.lua: Reworked endgame spec detection and leveling role logic to check additional talents and return more specific spec keys.
+- Helpers.lua: Added MSC.IsValuableOnUseTrinket(itemID) to detect offensive on-use trinkets from existing trinket/item DBs.
+- Interface.lua: Large overhaul of UI event handling and overlay refreshes — adds ADDON_LOADED handling, robust TradeSkill hooks, GET_ITEM_INFO_RECEIVED caching wipes, delayed rechecks, and new/rewritten overlay functions (UpdateQuestAcceptOverlays, UpdateQuestOverlays, UpdateQuestLogOverlays, UpdateTradeSkillOverlays). Also tightened item caching checks (use GetItemInfo gating) and cleaned up bag/merchant overlay drawing.
+- Judge.lua: Tooltip item-link fallback for quest/NPC frames so tooltips on QuestInfo/QuestLog items resolve correctly.
+
+These changes improve reliability when items are not yet cached, reduce false evaluations, and add more comprehensive UI overlay coverage (trade skills, quest accept/log, merchant, bags).
+
 ## 🚀 v2.4.3
 
 ### TSM Fix: tooltip scoring synchronous

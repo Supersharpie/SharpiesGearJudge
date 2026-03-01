@@ -555,9 +555,14 @@ function MSC:BeautifyTooltip(tooltip)
 end
 
 local function OnTooltipSetItem(tooltip)
-    -- [[ 1. INSTANT CHECKS ]]
+    -- [[ 1. INSTANT CHECKS & LAYOUT PROTECTION ]]
     if MSC.IsCalculating then return end
-    if tooltip:GetName() and string_find(tooltip:GetName(), "MSC_ScannerTooltip") then return end
+    
+    local tooltipName = tooltip:GetName()
+    if tooltipName then
+        if string_find(tooltipName, "MSC_ScannerTooltip") then return end
+        if string_find(tooltipName, "ShoppingTooltip") then return end
+    end
     
     if SGJ_Settings then
         if SGJ_Settings.HideTooltips then return end
@@ -568,36 +573,25 @@ local function OnTooltipSetItem(tooltip)
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
 
-    -- [[ QUEST WINDOW FALLBACK ]]
-    -- GetItem() often fails on Quest Log/NPC frames in TBC/Era.
-    if not link then
-        local owner = tooltip:GetOwner()
-        if owner and owner.type and type(owner.GetID) == "function" then
-            local ownerName = owner:GetName()
-            if ownerName then
-                if string_find(ownerName, "^QuestLogItem") then
-                    link = GetQuestLogItemLink(owner.type, owner:GetID())
-                elseif string_find(ownerName, "^QuestInfoItem") then
-                    link = GetQuestItemLink(owner.type, owner:GetID())
-                end
-            end
-        end
+    if not link and MSC.HoveredQuestLink then
+        link = MSC.HoveredQuestLink
     end
 
-    -- [[ 3. VALIDATE ITEM ]]
+    -- [[ 3. VALIDATE ITEM & SERVER GATEKEEPER ]]
     if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
         return 
     end
-
--- [[ 4. SYNCHRONOUS EXECUTION (Fixes TSM Loop & Bleeding Text) ]]
-    if not tooltip:IsVisible() then return end
     
-    -- Prevent duplicate processing if another addon forces a redraw
-    local tooltipName = tooltip:GetName()
+    local itemName = GetItemInfo(link)
+    if not itemName then return end
+
+    -- [[ 4. SYNCHRONOUS EXECUTION ]]
+    if not tooltip:IsVisible() and not MSC.IsQuestHook then return end
+    
     if tooltipName then
         for i = 2, tooltip:NumLines() do
             local leftLine = _G[tooltipName .. "TextLeft" .. i]
-            if leftLine and leftLine:GetText() and string.find(leftLine:GetText(), MSC.L["Judge's Score:"] or "Judge's Score:") then
+            if leftLine and leftLine:GetText() and string_find(leftLine:GetText(), MSC.L["Judge's Score:"] or "Judge's Score:") then
                 return 
             end
         end
@@ -608,15 +602,15 @@ local function OnTooltipSetItem(tooltip)
     -- [[ 5. RUN VISUAL UPDATES ]]
     if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
 
-        -- [[ 6. RUN SCORING ENGINE ]]
-        local _, playerClass = UnitClass("player")
-        if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
-            if MSC.ForceInit then MSC:ForceInit() end
-            if not MSC.CurrentClass then 
-                MSC.IsCalculating = false 
-                return 
-            end
+    -- [[ 6. RUN SCORING ENGINE ]]
+    local _, playerClass = UnitClass("player")
+    if not MSC.CurrentClass or MSC.CurrentClass.Name ~= playerClass then
+        if MSC.ForceInit then MSC:ForceInit() end
+        if not MSC.CurrentClass then 
+            MSC.IsCalculating = false 
+            return 
         end
+    end
 
     local status, err = pcall(function()
         local weights, specName = MSC.GetCurrentWeights()
@@ -639,7 +633,6 @@ local function OnTooltipSetItem(tooltip)
         local displayName = specName
         if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName] then displayName = MSC.CurrentClass.PrettyNames[specName] end
         
-        -- Cap Info
         local _, _, capInfo = MSC.GetCurrentWeights()
         if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " " .. MSC.L["Capped"] .. ")|r" end
         tooltip:AddDoubleLine(MSC.L["Verdict Profile:"], "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
@@ -648,7 +641,6 @@ local function OnTooltipSetItem(tooltip)
         if isEquipped then
             tooltip:AddLine(MSC.L["|cff00ffff* EQUIPPED *|r"])
         else
-            -- "VS" Text
             if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
                 local comparedItemLink = GetInventoryItemLink("player", slotId)
                 if comparedItemLink then tooltip:AddDoubleLine(MSC.L["vs."], comparedItemLink, 0.6, 0.6, 0.6, 1, 1, 1) end
@@ -659,7 +651,6 @@ local function OnTooltipSetItem(tooltip)
                 local itemID = tonumber(string_match(link, "item:(%d+)"))
                 local noteDisplayed = false
 
-                -- Class Specific Check
                 if MSC.CurrentClass and MSC.CurrentClass.GetRelicBonus then
                     local dbStats = MSC.CurrentClass:GetRelicBonus(itemID, specName)
                     if dbStats and next(dbStats) then
@@ -679,13 +670,13 @@ local function OnTooltipSetItem(tooltip)
                         
                         local rawRelicTable = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols
                         if rawRelicTable and rawRelicTable[itemID] and rawRelicTable[itemID].note then
-                            tooltip:AddDoubleLine(MSC.L["Judge's Note:"], rawRelicTable[itemID].note, 0.85, 0.6, 1.0, 0.64, 0.21, 0.93)
+                            tooltip:AddLine(" ")
+                            tooltip:AddLine(MSC.L["Judge's Note: "] .. "|cffA335ED" .. rawRelicTable[itemID].note .. "|r", 0.85, 0.6, 1.0, true)
                             noteDisplayed = true
                         end
                     end
                 end
 
-                -- Global Database Checks
                 if not noteDisplayed then
                     local entry = nil
                     local cL = {r=0.85, g=0.6, b=1.0}; local cR = {r=0.64, g=0.21, b=0.93}
@@ -702,7 +693,8 @@ local function OnTooltipSetItem(tooltip)
 
                     if entry and entry.note then
                         tooltip:AddLine(" ")
-                        tooltip:AddDoubleLine(MSC.L["Judge's Note:"], entry.note, cL.r, cL.g, cL.b, cR.r, cR.g, cR.b)
+                        local hexColor = string.format("ff%02x%02x%02x", cR.r*255, cR.g*255, cR.b*255)
+                        tooltip:AddLine(MSC.L["Judge's Note: "] .. "|c" .. hexColor .. entry.note .. "|r", cL.r, cL.g, cL.b, true)
                     end
                 end
             end
@@ -713,7 +705,6 @@ local function OnTooltipSetItem(tooltip)
             elseif delta < -0.1 then tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f / %.1f%%)|r"], TEX_DOWN, delta, percentDiff))
             else tooltip:AddLine(MSC.L["|cff888888= Sidegrade (0.0)|r"]) end
 
-            -- MAIN SPEC SET TRACKING (GAINED & BROKEN)
             if MSC.SetBonusScores and oldSetCounts and newSetCounts then
                 for setID, scores in pairs(MSC.SetBonusScores) do
                     local oC = oldSetCounts[setID] or 0
@@ -769,7 +760,7 @@ local function OnTooltipSetItem(tooltip)
                 end
             end
 
-            -- [[ 6. PROJECTIONS (TBC Only for Gems/Metas) ]]
+            -- [[ 6. PROJECTIONS ]]
             if itemNewStats and (itemNewStats.IS_PROJECTED or itemNewStats.GEMS_PROJECTED) then
                 tooltip:AddLine(" ")
                 
@@ -800,101 +791,139 @@ local function OnTooltipSetItem(tooltip)
                 end
             end
 
-			-- [[ 7. STAT COMPARISON (Gains / Losses) ]]
-			local totalNewExpanded = MSC.ExpandDerivedStats(newStatsTotal or {}, link, Scratch_Tooltip_New)
-			local totalOldExpanded = MSC.ExpandDerivedStats(oldStatsTotal or {}, nil, Scratch_Tooltip_Old)
-			local totalDiffs = MSC.GetStatDifferences(totalNewExpanded, totalOldExpanded, Scratch_Tooltip_Diffs)
+            -- [[ 7. STAT COMPARISON ]]
+            local totalNewExpanded = MSC.ExpandDerivedStats(newStatsTotal or {}, link, Scratch_Tooltip_New)
+            local totalOldExpanded = MSC.ExpandDerivedStats(oldStatsTotal or {}, nil, Scratch_Tooltip_Old)
+            local totalDiffs = MSC.GetStatDifferences(totalNewExpanded, totalOldExpanded, Scratch_Tooltip_Diffs)
 
-			local totalGains, totalLosses = {}, {}
-			for _, d in ipairs(totalDiffs) do
-				if math_abs(d.val) > 0.1 then
-					local w = weights[d.key] or 0
-					if w > 0.02 then
-						if d.val > 0 then table_insert(totalGains, d) else table_insert(totalLosses, d) end 
-					end
-				end
-			end
+            local totalGains, totalLosses = {}, {}
+            for _, d in ipairs(totalDiffs) do
+                if math_abs(d.val) > 0.1 then
+                    local w = weights[d.key] or 0
+                    if w > 0.02 then
+                        if d.val > 0 then table_insert(totalGains, d) else table_insert(totalLosses, d) end 
+                    end
+                end
+            end
 
-			local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
-			table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
+            local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
+            table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
 
-			local isWeaponSetSwap = false
-			if slotId == 16 or slotId == 17 then
-				local currentMH = GetInventoryItemLink("player", 16)
-				local currentOH = GetInventoryItemLink("player", 17)
-				local _,_,_,_,_,_,_,_, currLoc = nil
-				if currentMH then _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH) end
-				
-				local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
-				local isNew2H = (equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_STAFF" or equipLoc == "INVTYPE_POLEARM")
-				
-				if isNew2H and currentOH then isWeaponSetSwap = true end
-				if isCurrent2H and not isNew2H then isWeaponSetSwap = true end
-				if contextMsg and string_find(contextMsg, "w/ ") then isWeaponSetSwap = true end
-			end
+            local isWeaponSetSwap = false
+            if slotId == 16 or slotId == 17 then
+                local currentMH = GetInventoryItemLink("player", 16)
+                local currentOH = GetInventoryItemLink("player", 17)
+                local _,_,_,_,_,_,_,_, currLoc = nil
+                if currentMH then _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH) end
+                
+                local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
+                local isNew2H = (equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_STAFF" or equipLoc == "INVTYPE_POLEARM")
+                
+                if isNew2H and currentOH then isWeaponSetSwap = true end
+                if isCurrent2H and not isNew2H then isWeaponSetSwap = true end
+                
+                if contextMsg and (string_find(contextMsg, "w/ ") or string_find(contextMsg, "No OH found") or string_find(contextMsg, "No MH found") or string_find(contextMsg, "Not 2Hander")) then 
+                    isWeaponSetSwap = true 
+                end
+            end
 
-			local function PrintList(label, list, cR, cG, cB)
-				local hp, lp = false, 0
-				for _, d in ipairs(list) do
-					if lp < 8 then 
-						if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
-						local name = (MSC.GetCleanStatName(d.key) or d.key)
-						local level = UnitLevel("player")
-						if MSC.GetRatingPercent then
-							 local percentVal = MSC:GetRatingPercent(d.key, math_abs(d.val), level)
-							 if percentVal and percentVal > 0.01 then
-								 name = name .. string_format(" |cff888888(%.2f%%)|r", percentVal)
-							 end
-						end
-						name = name .. (d.nameSuffix or "")
-						local valStr = (d.val%1==0) and string_format("%d", math_abs(d.val)) or string_format("%.1f", math_abs(d.val))
-						if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
-						tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)
-						lp = lp + 1
-					end
-				end
-			end
+            local function PrintList(label, list, cR, cG, cB)
+                local hp, lp = false, 0
+                for _, d in ipairs(list) do
+                    if lp < 8 then 
+                        if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
+                        local name = (MSC.GetCleanStatName(d.key) or d.key)
+                        local level = UnitLevel("player")
+                        if MSC.GetRatingPercent then
+                             local percentVal = MSC:GetRatingPercent(d.key, math_abs(d.val), level)
+                             if percentVal and percentVal > 0.01 then
+                                 name = name .. string_format(" |cff888888(%.2f%%)|r", percentVal)
+                             end
+                        end
+                        name = name .. (d.nameSuffix or "")
+                        local valStr = (d.val%1==0) and string_format("%d", math_abs(d.val)) or string_format("%.1f", math_abs(d.val))
+                        if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
+                        tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)
+                        lp = lp + 1
+                    end
+                end
+            end
 
-				if isWeaponSetSwap then
-					-- Generate Isolated Item Diffs
-					local itemNewExpanded = MSC.ExpandDerivedStats(itemNewStats or {}, link, {})
-					local itemOldExpanded = MSC.ExpandDerivedStats(itemOldStats or {}, nil, {})
-					local itemDiffs = MSC.GetStatDifferences(itemNewExpanded, itemOldExpanded, {})
-					
-					local itemGains, itemLosses = {}, {}
-					for _, d in ipairs(itemDiffs) do
-						if math_abs(d.val) > 0.1 then
-							local w = weights[d.key] or 0
-							if w > 0.02 then
-								if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
-							end
-						end
-					end
-					table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
+            if isWeaponSetSwap then
+                local itemNewExpanded = MSC.ExpandDerivedStats(itemNewStats or {}, link, {})
+                local itemOldExpanded = MSC.ExpandDerivedStats(itemOldStats or {}, nil, {})
+                local itemDiffs = MSC.GetStatDifferences(itemNewExpanded, itemOldExpanded, {})
+                
+                local itemGains, itemLosses = {}, {}
+                for _, d in ipairs(itemDiffs) do
+                    if math_abs(d.val) > 0.1 then
+                        local w = weights[d.key] or 0
+                        if w > 0.02 then
+                            if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
+                        end
+                    end
+                end
+                table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
 
-					-- Print Both
-					PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
-					PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
-					
-					if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
-						tooltip:AddLine(" ")
-					end
+                PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
+                PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
+                
+                if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
+                    tooltip:AddLine(" ")
+                end
 
-					PrintList(MSC.L["Set Gains (w/ Off-hand):"], totalGains, 0, 1, 0)
-					PrintList(MSC.L["Set Losses:"], totalLosses, 1, 0, 0)
-				else
-					PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
-					PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
-				end
-			end
+                PrintList(MSC.L["Set Gains (w/ Off-hand):"], totalGains, 0, 1, 0)
+                PrintList(MSC.L["Set Losses:"], totalLosses, 1, 0, 0)
+            else
+                PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
+                PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
+            end
+        end -- END OF isEquipped BLOCK
+    end) -- END OF pcall
 
-			end)
-		MSC.IsCalculating = false
-		if not status then geterrorhandler()(err) end
+    MSC.IsCalculating = false
+    if not status then geterrorhandler()(err) end
+    
+    -- [[ 8. THE MAGIC SNAP ]]
+    if tooltip:IsVisible() then
+        tooltip:Show()
+    end
 end
+-- =============================================================
+-- HOOKS & EVENT HIJACKING
+-- =============================================================
 
--- Hooks
+-- 1. Standard Tooltip Hooks
 GameTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
 ItemRefTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", OnTooltipSetItem) end
-if ShoppingTooltip2 then ShoppingTooltip2:HookScript("OnTooltipSetItem", OnTooltipSetItem) end
+
+-- [[ 2. QUEST WINDOW TOOLTIP HOOKS (TBC/Era ]]
+local function TriggerQuestTooltip(tooltip, link)
+    if link then
+        MSC.HoveredQuestLink = link
+        MSC.IsQuestHook = true 
+
+        OnTooltipSetItem(tooltip)
+        
+        MSC.IsQuestHook = false
+        
+        tooltip:Show()
+    end
+end
+
+if GameTooltip.SetQuestItem then
+    hooksecurefunc(GameTooltip, "SetQuestItem", function(self, itemType, index)
+        TriggerQuestTooltip(self, GetQuestItemLink(itemType, index))
+    end)
+end
+
+if GameTooltip.SetQuestLogItem then
+    hooksecurefunc(GameTooltip, "SetQuestLogItem", function(self, itemType, index)
+        TriggerQuestTooltip(self, GetQuestLogItemLink(itemType, index))
+    end)
+end
+
+-- Clear the saved link when the mouse moves away to prevent bleeding
+GameTooltip:HookScript("OnTooltipCleared", function()
+    MSC.HoveredQuestLink = nil
+end)

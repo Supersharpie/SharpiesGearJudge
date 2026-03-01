@@ -238,8 +238,8 @@ end
 -- 4. BAG SCANNERS (Cached & Optimized)
 -- =============================================================
 
-	-- [[ A. CACHE STORAGE ]]
-	MSC.BagCache = {
+	-- [[ A. CACHE STORAGE (Namespace Fixed) ]]
+	MSC.WeaponBagCache = {
 		MainHand = nil,
 		OffHand = nil,
 		Dirty = true,  
@@ -250,7 +250,7 @@ end
 	local CacheWatcher = CreateFrame("Frame")
 	CacheWatcher:RegisterEvent("BAG_UPDATE")
 	CacheWatcher:SetScript("OnEvent", function() 
-		MSC.BagCache.Dirty = true 
+		MSC.WeaponBagCache.Dirty = true 
 	end)
 
 	-- [[ C. INTERNAL SCANNERS (The heavy lifting) ]]
@@ -327,25 +327,133 @@ end
 
 	-- [[ D. PUBLIC GETTERS  ]]
 	function MSC:GetBestMainHandInBags(weights, specName)
-		-- If bags changed OR spec changed, re-scan
-		if MSC.BagCache.Dirty or MSC.BagCache.LastSpec ~= specName then
-			MSC.BagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
-			MSC.BagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
-			MSC.BagCache.Dirty = false
-			MSC.BagCache.LastSpec = specName
+		if MSC.WeaponBagCache.Dirty or MSC.WeaponBagCache.LastSpec ~= specName then
+			MSC.WeaponBagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
+			MSC.WeaponBagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
+			MSC.WeaponBagCache.Dirty = false
+			MSC.WeaponBagCache.LastSpec = specName
 		end
-		return MSC.BagCache.MainHand
+		return MSC.WeaponBagCache.MainHand
 	end
 
 	function MSC:GetBestOffHandInBags(weights, specName)
-		-- If bags changed OR spec changed, re-scan
-		if MSC.BagCache.Dirty or MSC.BagCache.LastSpec ~= specName then
-			MSC.BagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
-			MSC.BagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
-			MSC.BagCache.Dirty = false
-			MSC.BagCache.LastSpec = specName
+		if MSC.WeaponBagCache.Dirty or MSC.WeaponBagCache.LastSpec ~= specName then
+			MSC.WeaponBagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
+			MSC.WeaponBagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
+			MSC.WeaponBagCache.Dirty = false
+			MSC.WeaponBagCache.LastSpec = specName
 		end
-		return MSC.BagCache.OffHand
+		return MSC.WeaponBagCache.OffHand
+	end-- =============================================================
+-- 4. BAG SCANNERS (Cached & Optimized)
+-- =============================================================
+
+	-- [[ A. CACHE STORAGE (Namespace Fixed) ]]
+	MSC.WeaponBagCache = {
+		MainHand = nil,
+		OffHand = nil,
+		Dirty = true,  
+		LastSpec = nil 
+	}
+
+	-- [[ B. EVENT LISTENER ]]
+	local CacheWatcher = CreateFrame("Frame")
+	CacheWatcher:RegisterEvent("BAG_UPDATE")
+	CacheWatcher:SetScript("OnEvent", function() 
+		MSC.WeaponBagCache.Dirty = true 
+	end)
+
+	-- [[ C. INTERNAL SCANNERS (The heavy lifting) ]]
+	function MSC:Internal_ScanBestMainHand(weights, specName)
+		local bestLink = nil
+		local bestScore = -1
+
+		for bag = 0, 4 do
+			local numSlots = GetBagSlots(bag) 
+			for slot = 1, numSlots do
+				local link = GetBagLink(bag, slot)
+				if link and MSC.IsItemUsable(link) then 
+					local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
+					if (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND") and IsEquippableItem(link) then
+						local stats = MSC.SafeGetItemStats(link, 16, weights, specName)
+						local score = MSC.GetItemScore(stats, weights, specName, 16)
+						if score > bestScore then
+							bestScore = score
+							bestLink = link
+						end
+					end
+				end
+			end
+		end
+		return bestLink
+	end
+
+	function MSC:Internal_ScanBestOffHand(weights, specName)
+		local bestLink = nil
+		local bestScore = -1
+		local _, playerClass = UnitClass("player")
+		local playerLevel = UnitLevel("player")
+		
+		-- Check Dual Wield capabilities
+		local canDualWield = false
+		if playerClass == "ROGUE" or playerClass == "WARRIOR" then
+			if playerLevel >= 10 then canDualWield = true end
+		elseif playerClass == "HUNTER" then
+			if playerLevel >= 20 then canDualWield = true end
+		elseif playerClass == "SHAMAN" and MSC.GetTalentRank then
+			if MSC:GetTalentRank("DUAL_WIELD") > 0 then canDualWield = true end
+		end
+
+		for bag = 0, 4 do
+			local numSlots = GetBagSlots(bag) 
+			for slot = 1, numSlots do
+				local link = GetBagLink(bag, slot)
+				if link and MSC.IsItemUsable(link) then
+					local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
+					
+					local isWeapon   = (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONOFFHAND")
+					local isStandard = (loc == "INVTYPE_SHIELD" or loc == "INVTYPE_HOLDABLE")
+					
+					local allowed = false
+					if isStandard then
+						allowed = true
+					elseif isWeapon and canDualWield then
+						allowed = true
+					end
+
+					if allowed and IsEquippableItem(link) then
+						local stats = MSC.SafeGetItemStats(link, 17, weights, specName)
+						local score = MSC.GetItemScore(stats, weights, specName, 17)
+						if score > bestScore then
+							bestScore = score
+							bestLink = link
+						end
+					end
+				end
+			end
+		end
+		return bestLink
+	end
+
+	-- [[ D. PUBLIC GETTERS  ]]
+	function MSC:GetBestMainHandInBags(weights, specName)
+		if MSC.WeaponBagCache.Dirty or MSC.WeaponBagCache.LastSpec ~= specName then
+			MSC.WeaponBagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
+			MSC.WeaponBagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
+			MSC.WeaponBagCache.Dirty = false
+			MSC.WeaponBagCache.LastSpec = specName
+		end
+		return MSC.WeaponBagCache.MainHand
+	end
+
+	function MSC:GetBestOffHandInBags(weights, specName)
+		if MSC.WeaponBagCache.Dirty or MSC.WeaponBagCache.LastSpec ~= specName then
+			MSC.WeaponBagCache.MainHand = MSC:Internal_ScanBestMainHand(weights, specName)
+			MSC.WeaponBagCache.OffHand  = MSC:Internal_ScanBestOffHand(weights, specName)
+			MSC.WeaponBagCache.Dirty = false
+			MSC.WeaponBagCache.LastSpec = specName
+		end
+		return MSC.WeaponBagCache.OffHand
 	end
 
 -- =============================================================
@@ -408,9 +516,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local finalNewStats = {}
     for k, v in pairs(parsedNewStats) do finalNewStats[k] = v end
 
-    -- [[ MEMORY OPTIMIZATION ]]
-    wipe(Scratch_Stats_Old)
-    local finalOldStats = Scratch_Stats_Old
+    local finalOldStats = {}
     
     local oldItemLink = GetInventoryItemLink("player", targetSlotID)
     if oldItemLink then 
