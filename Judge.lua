@@ -568,6 +568,22 @@ local function OnTooltipSetItem(tooltip)
     local _, link = nil, nil
     if tooltip.GetItem then _, link = tooltip:GetItem() end
 
+    -- [[ QUEST WINDOW FALLBACK ]]
+    -- GetItem() often fails on Quest Log/NPC frames in TBC/Era.
+    if not link then
+        local owner = tooltip:GetOwner()
+        if owner and owner.type and type(owner.GetID) == "function" then
+            local ownerName = owner:GetName()
+            if ownerName then
+                if string_find(ownerName, "^QuestLogItem") then
+                    link = GetQuestLogItemLink(owner.type, owner:GetID())
+                elseif string_find(ownerName, "^QuestInfoItem") then
+                    link = GetQuestItemLink(owner.type, owner:GetID())
+                end
+            end
+        end
+    end
+
     -- [[ 3. VALIDATE ITEM ]]
     if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
         return 

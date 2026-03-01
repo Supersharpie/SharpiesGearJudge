@@ -555,12 +555,22 @@ function Warlock:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
-    -- [[ ENDGAME DETECTION ]]
-    if level == 70 then
-        if Rank("SHADOW_MASTERY") > 0 then return "AFFLICTION_RAID" end
-        if Rank("RUIN") > 0 then return "DESTRUCTION_RAID" end
-        return "AFFLICTION_RAID"
+-- [[ ENDGAME DETECTION ]]
+if level == 70 then
+    if Rank("UNSTABLE_AFF") > 0 or Rank("SHADOW_MASTERY") > 0 then 
+        return "RAID_AFFLICTION" 
     end
+    if Rank("SUMMON_FELGUARD") > 0 then 
+        return "DEMO_PVE" 
+    end
+    if Rank("EMBERSTORM") > 0 then 
+        return "DESTRUCT_FIRE" 
+    end
+    if Rank("SHADOW_AND_FLAME") > 0 then 
+        return "DESTRUCT_SHADOW" 
+    end
+    return "DESTRUCT_SHADOW"
+end
 
     -- [[ LEVELING BRACKET CALCULATION ]]
     local suffix = ""
@@ -571,9 +581,13 @@ function Warlock:GetSpec()
     else suffix = "_60_70" end
 
     local role = "Leveling" 
-    if Rank("CONFLAGRATE") > 0 or Rank("SHADOWBURN") > 0 then role = "Leveling_Fire"
-    elseif Rank("SOUL_LINK") > 0 or Rank("FEL_DOMINATION") > 0 then role = "Leveling_Demo"
-    end 
+	if Rank("CONFLAGRATE") > 0 then 
+		role = "Leveling_Fire"
+	elseif Rank("SHADOW_AND_FLAME") > 0 then 
+		role = "Leveling"
+	elseif Rank("SOUL_LINK") > 0 or Rank("FEL_DOMINATION") > 0 then 
+		role = "Leveling_Demo"
+end 
 
     local specificKey = role .. suffix
     if Warlock.LevelingBrackets and Warlock.LevelingBrackets[specificKey] then return specificKey end

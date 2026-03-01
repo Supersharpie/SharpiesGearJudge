@@ -984,3 +984,33 @@ dbLoader:SetScript("OnEvent", function()
         end
     end)
 end)
+
+-- =============================================================
+-- 14. COMBAT LAB: ON-USE TRINKET DETECTION
+-- =============================================================
+function MSC.IsValuableOnUseTrinket(itemID)
+    if not itemID then return false end
+
+    -- Search the three primary databases where you store trinket data
+    local data = MSC.TrinketDB[itemID] or MSC.ItemOverrides[itemID] or MSC.ProcDB[itemID]
+
+    if data and data.note then
+        local noteStr = tostring(data.note)
+        
+        -- We only care about trinkets that have an active "Use:" effect
+        if string.find(noteStr, "Use:") then
+            -- We want to pop throughput stats during Burn Phases. 
+            -- This filters out Defensive/Health/Utility trinkets.
+            if string.find(noteStr, "AP") or 
+               string.find(noteStr, "SP") or 
+               string.find(noteStr, "Haste") or 
+               string.find(noteStr, "Heal") or 
+               string.find(noteStr, "Damage") or
+               string.find(noteStr, "Crit") then
+                return true
+            end
+        end
+    end
+    
+    return false
+end
