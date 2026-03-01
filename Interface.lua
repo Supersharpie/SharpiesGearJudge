@@ -225,9 +225,13 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             local _, link = GameTooltip:GetItem()
             if link and string.find(link, "item:" .. itemID) then
                  if RequestUpdate then RequestUpdate() end
+                 -- MAGIC FIX: Force the tooltip to evaluate now that the cache is loaded
+                 if MSC.EvaluateAndDrawTooltip then 
+                     MSC.EvaluateAndDrawTooltip(GameTooltip) 
+                 end
             end
         end
-    end
+	end	
 end)
 
 function MSC.GetClassColor()

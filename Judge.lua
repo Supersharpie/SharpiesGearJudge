@@ -554,7 +554,7 @@ function MSC:BeautifyTooltip(tooltip)
     end
 end
 
-local function OnTooltipSetItem(tooltip)
+function MSC.EvaluateAndDrawTooltip(tooltip)
     -- [[ 1. INSTANT CHECKS & LAYOUT PROTECTION ]]
     if MSC.IsCalculating then return end
     
@@ -894,19 +894,18 @@ end
 -- =============================================================
 
 -- 1. Standard Tooltip Hooks
-GameTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
-ItemRefTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+GameTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
+ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
 
--- [[ 2. QUEST WINDOW TOOLTIP HOOKS (TBC/Era ]]
+-- [[ 2. QUEST WINDOW TOOLTIP HOOKS (TBC/Era) ]]
 local function TriggerQuestTooltip(tooltip, link)
     if link then
         MSC.HoveredQuestLink = link
-        MSC.IsQuestHook = true 
-
-        OnTooltipSetItem(tooltip)
+        MSC.IsQuestHook = true
         
-        MSC.IsQuestHook = false
+        MSC.EvaluateAndDrawTooltip(tooltip)
         
+        MSC.IsQuestHook = false    
         tooltip:Show()
     end
 end
