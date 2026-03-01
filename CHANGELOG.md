@@ -1,16 +1,28 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.5
 
-Multiple UX and class-detection improvements across the addon:
+### Multiple UX and class-detection improvements across the addon:
+* **These changes improve reliability when items are not yet cached, reduce false evaluations, and add more comprehensive UI overlay coverage (trade skills, quest accept/log, merchant, bags).**
 
-- Classes/TBC/Warlock.lua: Reworked endgame spec detection and leveling role logic to check additional talents and return more specific spec keys.
-- Helpers.lua: Added MSC.IsValuableOnUseTrinket(itemID) to detect offensive on-use trinkets from existing trinket/item DBs.
-- Interface.lua: Large overhaul of UI event handling and overlay refreshes — adds ADDON_LOADED handling, robust TradeSkill hooks, GET_ITEM_INFO_RECEIVED caching wipes, delayed rechecks, and new/rewritten overlay functions (UpdateQuestAcceptOverlays, UpdateQuestOverlays, UpdateQuestLogOverlays, UpdateTradeSkillOverlays). Also tightened item caching checks (use GetItemInfo gating) and cleaned up bag/merchant overlay drawing.
-- Judge.lua: Tooltip item-link fallback for quest/NPC frames so tooltips on QuestInfo/QuestLog items resolve correctly.
+* **Classes/TBC/Warlock.lua: Reworked endgame spec detection and leveling role logic to check additional talents and return more specific spec keys.**
+* **Evaluator.lua:**
+	**Rename MSC.BagCache to MSC.WeaponBagCache and centralize/fix weapon bag scanning.** 
+	**Add internal MainHand/OffHand scanners with dual-wield/level checks, event-driven dirty flag, and public getters; replace a memory-wipe with an isolated finalOldStats table.**
+* **Helpers.lua: Added MSC.IsValuableOnUseTrinket(itemID) to detect offensive on-use trinkets from existing trinket/item DBs.**
+* **Interface.lua:** 
+	**Large overhaul of UI event handling and overlay refreshes — adds ADDON_LOADED handling, robust TradeSkill hooks, GET_ITEM_INFO_RECEIVED caching wipes, delayed rechecks, and new/rewritten overlay functions.** 
+	**now calls MSC.EvaluateAndDrawTooltip when RequestUpdate fires to fix tooltip stale-cache issues.**
+	**Also tightened item caching checks (use GetItemInfo gating) and cleaned up bag/merchant overlay drawing.**
+* **Judge.lua:**
+	**Tooltip item-link fallback for quest/NPC frames so tooltips on QuestInfo/QuestLog items resolve correctly.**
+	**Exposed the tooltip handler as MSC.EvaluateAndDrawTooltip and use it for GameTooltip/ItemRefTooltip hooks so the tooltip can be forced to evaluate/draw when item cache updates.**
+	**Harden tooltip processing and layout protection, add GetItemInfo gating and server fallback for quest/NPC frames via hooked quest tooltip functions, avoid duplicate inserts, improve note rendering and stat-comparison logic, better weapon set-swap detection, and ensure tooltip visibility to prevent negative interactions with other addons.**
+	**Quest tooltip triggering was adjusted to call the new function and correctly toggle MSC.IsQuestHook.**
+	
+------------------------------------------------------------------------------------------------
 
-These changes improve reliability when items are not yet cached, reduce false evaluations, and add more comprehensive UI overlay coverage (trade skills, quest accept/log, merchant, bags).
-
-## 🚀 v2.4.3
+## 🚀 v2.4.4
 
 ### TSM Fix: tooltip scoring synchronous
 ### Tooltip Flicker
