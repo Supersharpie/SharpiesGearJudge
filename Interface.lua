@@ -142,6 +142,9 @@ end
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("BAG_UPDATE")
 eventFrame:RegisterEvent("QUEST_COMPLETE")         
+eventFrame:RegisterEvent("QUEST_DETAIL")         
+eventFrame:RegisterEvent("QUEST_PROGRESS")         
+eventFrame:RegisterEvent("QUEST_ITEM_UPDATE")         
 eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 eventFrame:RegisterEvent("TRADE_SKILL_SHOW")
 eventFrame:RegisterEvent("ADDON_LOADED")
@@ -151,10 +154,13 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         MSC.BagCache.Dirty = true
         if RequestUpdate then RequestUpdate() end
 
-		elseif event == "QUEST_COMPLETE" then
-        if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
-		
-		elseif event == "ADDON_LOADED" and arg1 == "Blizzard_TradeSkillUI" then
+    elseif event == "QUEST_COMPLETE" or event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_ITEM_UPDATE" then
+        -- We use a 0.15s delay to ensure the server has populated the item links to the UI
+        C_Timer.After(0.15, function()
+            if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
+        end)
+        
+    elseif event == "ADDON_LOADED" and arg1 == "Blizzard_TradeSkillUI" then
             if not MSC.TradeSkillHooked then
                 hooksecurefunc("TradeSkillFrame_Update", function()
                     if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
@@ -206,7 +212,10 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
 
         -- [[ CRAFTING/TRADE SKILL CHECK ]]
         if TradeSkillFrame and TradeSkillFrame:IsShown() then
-            if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+            -- Small defer ensures the Blizzard UI is ready to provide the link
+            C_Timer.After(0.1, function()
+                if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+            end)
         end
 
         -- [[ TSM COMPATIBILITY ]]
@@ -548,215 +557,109 @@ function MSC.UpdateReceipt()
 end
 
 -- =============================================================
--- QUEST ACCEPT / LOGISTICS OVERLAYS
+-- UNIFIED QUEST OVERLAYS (Log, Accept, and Turn-In)
 -- =============================================================
-function MSC.UpdateQuestAcceptOverlays()
-    if not QuestInfoFrame or not QuestInfoFrame:IsVisible() then return end
-
+function MSC.UpdateAllQuestOverlays()
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then return end
 
-    local numItems = GetNumQuestItems() 
-    if numItems <= 0 then return end
+    local buttonsToScan = {}
+    local isLog = QuestInfoFrame and QuestInfoFrame.questLog
 
-    for i = 1, numItems do
-        local btn = _G["QuestInfoItem"..i]
-        if btn and btn:IsShown() then
-            if btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
+    -- Aggressive grab function that checks every possible WoW link type
+    local function AddButton(btn)
+        if not btn or not btn:IsShown() then return end
+        if btn.SGJ_Seen then return end 
+        btn.SGJ_Seen = true
 
-            local link = GetQuestItemLink("reward", i) or GetQuestItemLink("required", i)
-            local overlayType = nil
-
-            if link then
-                -- GATEKEEPER: Ensure item is fully cached
-                local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                
-                if not itemName then
-                    -- Await GET_ITEM_INFO_RECEIVED
-                elseif equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                    if MSC.IsItemUsable(link) then
-                        local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                        if slotID then
-                            local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
-                            if newScore and oldScore then
-                                if (newScore > (oldScore + 0.1)) then
-                                    overlayType = "UP"
-                                elseif (oldScore > (newScore + 0.1)) then
-                                    overlayType = "DOWN"
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-
-            if overlayType then
-                if not btn.SGJ_Overlay then
-                    btn.SGJ_Overlay = btn:CreateTexture(nil, "OVERLAY", nil, 7)
-                    btn.SGJ_Overlay:SetSize(26, 26)
-                    btn.SGJ_Overlay:SetPoint("TOPRIGHT", 0, 0)
-                end
-                btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
-                btn.SGJ_Overlay:Show()
-            end
+        local id = btn:GetID()
+        if not id or id == 0 then
+            local name = btn:GetName()
+            if name then id = tonumber(name:match("%d+")) end
         end
-    end
-end
+        if not id then return end
 
--- =============================================================
--- QUEST REWARD OVERLAYS (TBC/Era Compatible)
--- =============================================================
-function MSC.UpdateQuestOverlays()
-    if not QuestInfoFrame or not QuestInfoFrame:IsVisible() then return end
-
-    local weights, specName = MSC.GetCurrentWeights()
-    if not weights then return end
-
-    -- Determine if we are looking at the Quest Log or an NPC dialog
-    local isQuestLog = QuestInfoFrame.questLog
-    
-    local numChoices = isQuestLog and GetNumQuestLogChoices() or GetNumQuestChoices()
-    local numRewards = isQuestLog and GetNumQuestLogRewards() or GetNumQuestRewards()
-    local totalButtons = numChoices + numRewards
-
-    -- Blizzard UI sequentially uses QuestInfoItem1, QuestInfoItem2, etc.
-    for i = 1, totalButtons do
-        local btn = _G["QuestInfoItem"..i]
-        if not btn and QuestInfoRewardsFrame and QuestInfoRewardsFrame.RewardButtons then
-            btn = QuestInfoRewardsFrame.RewardButtons[i]
-        end
-
-        if btn and btn:IsShown() then
-            if btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
-            
-            local link = nil
-            -- SAFEGUARD: Only process items, ignore 'spell' or other frame types
-            if btn.type and (btn.type == "choice" or btn.type == "reward") then
-                if isQuestLog then
-                    link = GetQuestLogItemLink(btn.type, btn:GetID())
-                else
-                    link = GetQuestItemLink(btn.type, btn:GetID())
-                end
-            end
-
-            local overlayType = nil
-
-            if link then
-                -- GATEKEEPER: GetItemInfo returns nil if the item is not fully cached.
-                -- We use this instead of GetItemInfoInstant to ensure the tooltip is ready to be scanned.
-                local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                
-                if not itemName then
-                    -- The item is not cached. Do NOT evaluate it or we will cache a 0 score.
-                    -- The API has automatically requested the info from the server.
-                    -- GET_ITEM_INFO_RECEIVED will fire in a few milliseconds to try again.
-                elseif equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                    if MSC.IsItemUsable(link) then 
-                        local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                        if slotID then
-                             local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
-                             if newScore and oldScore then
-                                 if (newScore > (oldScore + 0.1)) then
-                                     overlayType = "UP"
-                                 elseif (oldScore > (newScore + 0.1)) then
-                                     overlayType = "DOWN"
-                                 end
-                             end
-                        end
-                    end
-                end
-            end
-
-            -- [[ DRAW OVERLAY ]]
-            if overlayType then
-                if not btn.SGJ_Overlay then
-                    btn.SGJ_Overlay = btn:CreateTexture(nil, "OVERLAY", nil, 7)
-                    btn.SGJ_Overlay:SetSize(26, 26)
-                    btn.SGJ_Overlay:SetPoint("TOPRIGHT", 0, 0)
-                end
-                
-                if overlayType == "UP" then
-                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                elseif overlayType == "DOWN" then
-                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png")
-                end
-                
-                btn.SGJ_Overlay:Show()
-            end
-        end
-    end
-end
-
--- =============================================================
--- QUEST LOG OVERLAYS (The 'L' Menu)
--- =============================================================
-function MSC.UpdateQuestLogOverlays()
-    if not QuestLogFrame or not QuestLogFrame:IsVisible() then return end
-
-    local weights, specName = MSC.GetCurrentWeights()
-    if not weights then return end
-
-    local numChoices = GetNumQuestLogChoices()
-    local numRewards = GetNumQuestLogRewards()
-    local totalButtons = numChoices + numRewards
-
-    for i = 1, totalButtons do
-        local btn = _G["QuestLogItem"..i]
+        local link = nil
+        local bType = btn.type
         
-        if btn and btn:IsShown() then
-            if btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
+        if isLog then
+            link = GetQuestLogItemLink(bType or "choice", id) or GetQuestLogItemLink(bType or "reward", id) or GetQuestLogItemLink("choice", id) or GetQuestLogItemLink("reward", id)
+        else
+            link = GetQuestItemLink(bType or "choice", id) or GetQuestItemLink(bType or "reward", id) or GetQuestItemLink("choice", id) or GetQuestItemLink("reward", id) or GetQuestItemLink("required", id)
+        end
+        
+        if link then table_insert(buttonsToScan, {btn = btn, link = link}) end
+    end
 
-            local link = nil
-            -- SAFEGUARD: Only process choices and rewards
-            if btn.type and (btn.type == "choice" or btn.type == "reward") then
-                link = GetQuestLogItemLink(btn.type, btn:GetID())
-            end
+    -- 1. Scan global named buttons
+    for i = 1, 15 do
+        AddButton(_G["QuestLogItem"..i])
+        AddButton(_G["QuestRewardItem"..i])
+        AddButton(_G["QuestChoiceItem"..i])
+        AddButton(_G["QuestDetailItem"..i])
+        AddButton(_G["QuestProgressItem"..i])
+        AddButton(_G["QuestInfoItem"..i])
+        
+        -- 2. Scan dynamically pooled buttons (This fixes the Default UI turn-in window!)
+        if QuestInfoRewardsFrame and QuestInfoRewardsFrame.RewardButtons and QuestInfoRewardsFrame.RewardButtons[i] then
+            AddButton(QuestInfoRewardsFrame.RewardButtons[i])
+        end
+    end
+    
+    -- Cleanup seen tags for the next scan
+    for _, data in ipairs(buttonsToScan) do data.btn.SGJ_Seen = nil end
 
-            local overlayType = nil
-
-            if link then
-                -- GATEKEEPER: Ensure item is fully cached from the server
-                local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                
-                if not itemName then
-                    -- Item not cached yet; await GET_ITEM_INFO_RECEIVED
-                elseif equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                    if MSC.IsItemUsable(link) then 
-                        local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                        if slotID then
-                             local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
-                             if newScore and oldScore then
-                                 if (newScore > (oldScore + 0.1)) then
-                                     overlayType = "UP"
-                                 elseif (oldScore > (newScore + 0.1)) then
-                                     overlayType = "DOWN"
-                                 end
-                             end
-                        end
+    -- 3. Evaluate and Draw
+    for _, data in ipairs(buttonsToScan) do
+        local btn = data.btn
+        local link = data.link
+        
+        if btn.SGJ_OverlayFrame then btn.SGJ_OverlayFrame:Hide() end
+        
+        local overlayType = nil
+        local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+        
+        if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+            if MSC.IsItemUsable(link) then
+                local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                if slotID then
+                    local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
+                    if newScore and oldScore then
+                        if (newScore > (oldScore + 0.1)) then overlayType = "UP"
+                        elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
                     end
                 end
             end
+        end
 
-            -- [[ DRAW OVERLAY ]]
-            if overlayType then
-                if not btn.SGJ_Overlay then
-                    btn.SGJ_Overlay = btn:CreateTexture(nil, "OVERLAY", nil, 7)
-                    btn.SGJ_Overlay:SetSize(26, 26)
-                    btn.SGJ_Overlay:SetPoint("TOPRIGHT", 0, 0)
+        if overlayType then
+            if not btn.SGJ_OverlayFrame then
+                btn.SGJ_OverlayFrame = CreateFrame("Frame", nil, btn)
+                
+                -- Anchor safely to the Icon bounds to prevent ElvUI clipping later
+                local icon = (btn.GetName and btn:GetName() and _G[btn:GetName() .. "IconTexture"]) or btn.Icon or btn.icon
+                if icon then
+                    btn.SGJ_OverlayFrame:SetAllPoints(icon)
+                else
+                    btn.SGJ_OverlayFrame:SetAllPoints(btn)
                 end
                 
-                if overlayType == "UP" then
-                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                elseif overlayType == "DOWN" then
-                    btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png")
-                end
-                
-                btn.SGJ_Overlay:Show()
+                btn.SGJ_Overlay = btn.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY")
+                btn.SGJ_Overlay:SetSize(22, 22)
+                btn.SGJ_Overlay:SetPoint("TOPRIGHT", btn.SGJ_OverlayFrame, "TOPRIGHT", 2, 2)
             end
+            
+            -- Set Z-Index high enough to sit safely above backgrounds
+            btn.SGJ_OverlayFrame:SetFrameLevel(btn:GetFrameLevel() + 10)
+            btn.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+            btn.SGJ_OverlayFrame:Show()
         end
     end
 end
 
+MSC.UpdateQuestAcceptOverlays = MSC.UpdateAllQuestOverlays
+MSC.UpdateQuestOverlays       = MSC.UpdateAllQuestOverlays
+MSC.UpdateQuestLogOverlays    = MSC.UpdateAllQuestOverlays
 -- =============================================================
 -- MERCHANT REWARD OVERLAYS
 -- =============================================================
@@ -839,6 +742,10 @@ function MSC.UpdateTradeSkillOverlays()
                 if skillType ~= "header" then 
                     local link = GetTradeSkillItemLink(skillIndex)
                     if link then
+                        local itemName = GetItemInfo(link)
+                        if not itemName then
+                            MSC_ScannerTooltip:SetHyperlink(link) 
+                        else
                         -- GATEKEEPER
                         local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
                         if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
@@ -863,6 +770,7 @@ function MSC.UpdateTradeSkillOverlays()
             end
         end
     end
+end
     
     -- 2. Selected Icon at Top
     local selectedIcon = _G["TradeSkillSkillIcon"]
@@ -1057,7 +965,6 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
             end)
         end
     end
-
 end)
 
 local function GetStatReason(stat, class, profileName)
@@ -1936,19 +1843,28 @@ hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and
 hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
 
 if hooksecurefunc then
-    if QuestInfo_Display then
-        hooksecurefunc("QuestInfo_Display", function()
+    local function TriggerQuestUpdate()
+        C_Timer.After(0.15, function()
+            if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
+        end)
+    end
+
+    if QuestInfo_Display then hooksecurefunc("QuestInfo_Display", TriggerQuestUpdate) end
+    if QuestLog_Update then hooksecurefunc("QuestLog_Update", TriggerQuestUpdate) end
+    if QuestFrameItems_Update then hooksecurefunc("QuestFrameItems_Update", TriggerQuestUpdate) end
+    
+    if MerchantFrame_UpdateMerchantInfo then
+        hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
             C_Timer.After(0.05, function()
-                if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
-                if MSC.UpdateQuestAcceptOverlays then MSC.UpdateQuestAcceptOverlays() end
+                if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end
             end)
         end)
     end
-    
-    if QuestLog_Update then
-        hooksecurefunc("QuestLog_Update", function()
-            C_Timer.After(0.05, function()
-                if MSC.UpdateQuestLogOverlays then MSC.UpdateQuestLogOverlays() end
+
+    if ContainerFrame_Update then
+        hooksecurefunc("ContainerFrame_Update", function(frame)
+            C_Timer.After(0.01, function()
+                if MSC.UpdateBagOverlays then MSC.UpdateBagOverlays(frame) end
             end)
         end)
     end

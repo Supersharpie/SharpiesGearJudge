@@ -424,6 +424,17 @@ function MSC:BeautifyTooltip(tooltip)
     local tooltipName = tooltip:GetName()
     local numLines = tooltip:NumLines()
     
+    -- 1. Grab link to check for Relics safely
+    local _, link = nil, nil
+    if tooltip.GetItem then _, link = tooltip:GetItem() end
+    if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
+
+    local isRelic = false
+    if link then
+        local _, _, _, equipLoc, _, classID, subClassID = GetItemInfo(link)
+        isRelic = (equipLoc == "INVTYPE_RELIC") or (classID == 4 and (subClassID == 7 or subClassID == 8 or subClassID == 9 or subClassID == 11))
+    end
+
     local prefix = tooltipName .. "TextLeft"
 
     for i = 2, numLines do
@@ -455,7 +466,7 @@ function MSC:BeautifyTooltip(tooltip)
 
                     if not isConditional then
                         -- 2. HANDLE HYBRID HEAL/DAMAGE 
-                        local heal, dmg = string.match(cleanText, MSC.L["healing.-up to (%d+).-damage.-up to (%d+)"] or "healing.-up to (%d+).-damage.-up to (%d+)")
+                        local heal, dmg = string.match(cleanText, MSC.L["healing.-(%d+).-damage.-(%d+)"] or "healing.-(%d+).-damage.-(%d+)")
                         if heal and dmg then
                             local healName = SGJ_Settings.SimplifyStats and (MSC.L["Heal"] or "Heal") or (MSC.L["Healing"] or "Healing")
                             local dmgName  = SGJ_Settings.SimplifyStats and (MSC.L["SP"] or "SP") or (MSC.L["Spell Power"] or "Spell Power")
@@ -577,15 +588,10 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         link = MSC.HoveredQuestLink
     end
 
-    -- [[ 3. VALIDATE ITEM & SERVER GATEKEEPER ]]
-    if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
-        return 
-    end
-    
-    local itemName = GetItemInfo(link)
-    if not itemName then return end
+    -- [[ 3. RUN VISUAL UPDATES FIRST ]]
+    if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
 
-    -- [[ 4. SYNCHRONOUS EXECUTION ]]
+    -- [[ 4. SCORING VISIBILITY CHECK ]]
     if not tooltip:IsVisible() and not MSC.IsQuestHook then return end
     
     if tooltipName then
@@ -597,10 +603,15 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         end
     end
 
-    MSC.IsCalculating = true 
+    -- [[ 5. VALIDATE ITEM & SERVER GATEKEEPER ]]
+    if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
+        return 
+    end
+    
+    local itemName = GetItemInfo(link)
+    if not itemName then return end
 
-    -- [[ 5. RUN VISUAL UPDATES ]]
-    if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
+    MSC.IsCalculating = true 
 
     -- [[ 6. RUN SCORING ENGINE ]]
     local _, playerClass = UnitClass("player")
@@ -899,15 +910,13 @@ ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
 
 -- [[ 2. QUEST WINDOW TOOLTIP HOOKS (TBC/Era) ]]
 local function TriggerQuestTooltip(tooltip, link)
-    if link then
-        MSC.HoveredQuestLink = link
-        MSC.IsQuestHook = true
-        
-        MSC.EvaluateAndDrawTooltip(tooltip)
-        
-        MSC.IsQuestHook = false    
-        tooltip:Show()
-    end
+    MSC.HoveredQuestLink = link
+    MSC.IsQuestHook = true
+    
+    MSC.EvaluateAndDrawTooltip(tooltip)
+    
+    MSC.IsQuestHook = false    
+    tooltip:Show()
 end
 
 if GameTooltip.SetQuestItem then
