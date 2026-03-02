@@ -1,5 +1,16 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.6
+
+* **Register additional quest events and consolidate quest overlay logic into a single MSC.UpdateAllQuestOverlays handler.** 
+* **Add short C_Timer delays to ensure item links are populated before evaluation and defer TradeSkill updates similarly.**
+* **Replace previous separate UpdateQuestAccept/UpdateQuest/UpdateQuestLog implementations with a unified scanner that aggressively collects quest-related buttons, avoids double-caching, anchors overlay frames to item icons, and sets frame levels to prevent UI clipping.** 
+* **Add backward-compatible aliases for the old overlay functions. Improve TradeSkill caching by forcing tooltip population when needed. Refactor tooltip handling to detect relics, adjust healing/damage parsing, run visual beautification earlier, and simplify quest tooltip triggering.** 
+* **Expand and reorganize parsing patterns (Parse.lua) to support hybrid heal/damage, resources (MP5/HP5), additional stat phrasings and Era/TBC compatibility.** 
+* **Overall changes improve reliability of overlays, reduce false caching, and broaden text parsing coverage.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.4.5
 
 ### Multiple UX and class-detection improvements across the addon:
