@@ -67,6 +67,11 @@ MSC.Scanner.BaseStatMap = {
     [MSC.L["all stats"]] = "ITEM_MOD_ALL_STATS_SHORT", -- "of the Ancestors" or generic buffs
     [MSC.L["magic resistance"]] = "ITEM_MOD_RESISTANCE_ALL_SHORT", -- "of Resistance" (rare white text)
     
+	-- Resources
+    [MSC.L["mana per 5 sec."]] = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    [MSC.L["mana per 5 sec"]] = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    [MSC.L["health per 5 sec."]] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
+    [MSC.L["health per 5 sec"]] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
     [MSC.L["mana"]]            = "ITEM_MOD_MANA_SHORT",
     [MSC.L["health"]]          = "ITEM_MOD_HEALTH_SHORT",
     [MSC.L["hp"]]              = "ITEM_MOD_HEALTH_SHORT",
@@ -233,7 +238,7 @@ MSC.Scanner.StatPatterns = {
     -- Catches: "Strength +14", "Agility 14", "Speed 2.80"
     { p = MSC.L["^(.-)%s+[%+:]?%s*(%d+%.?%d*)[%s%.]*$"], valIdx = 2, nameIdx = 1 },
     
-    -- [[ 3. FIXED SHORT STATS ]]
+    -- [[ 3. SHORT STATS ]]
     -- These specific strings don't need dictionary lookups
     { p = MSC.L["^(%d+) armor$"], valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
     { p = MSC.L["^(%d+) block$"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
@@ -249,6 +254,9 @@ MSC.Scanner.StatPatterns = {
     -- [[ 5. ENCHANT/SCOPE FORMATS ]]
     { p = MSC.L["scope %([%+:]*(%d+) (.*)%)"], valIdx = 1, nameIdx = 2 },
     { p = MSC.L["enchant:? [%+:]*(%d+) (.*)"], valIdx = 1, nameIdx = 2 },
+	
+	-- [[ 6. SPLIT ENCHANTS ]]
+    { p = MSC.L["(%d+) hit rating and .*snare"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
 }
 
 MSC.Scanner.EquipPatterns = {
@@ -517,12 +525,69 @@ end
 function MSC.Scanner.ParseStatLine(text, outputTable)
     if not text then return end
 
-    -- [[ OPTIMIZATION: DIGIT CHECK ]]
-    if not string_find(text, "%d") then return end
-    
     local cleanText = string_lower(text)
     cleanText = string_gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
     cleanText = string_gsub(cleanText, "|r", "")
+    
+    -- [[ 1. INTERCEPT NAMED, PROC & HYBRID ENCHANTS ]]
+    if string_find(cleanText, "^enchant: ") then
+        
+        -- A. Proc Averages (Uptime Math)
+        if string_find(cleanText, "mongoose") then
+            -- 1 PPM * 15s = 25% Uptime. 120 Agi * 0.25 = 30 Agi.
+            outputTable["ITEM_MOD_AGILITY_SHORT"] = (outputTable["ITEM_MOD_AGILITY_SHORT"] or 0) + 30
+            outputTable["ITEM_MOD_HASTE_RATING_SHORT"] = (outputTable["ITEM_MOD_HASTE_RATING_SHORT"] or 0) + 30
+            return
+        elseif string_find(cleanText, "executioner") then
+            -- 1 PPM * 15s = 25% Uptime. 840 ArP * 0.25 = 210 ArP.
+            outputTable["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = (outputTable["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] or 0) + 210
+            return
+        elseif string_find(cleanText, "crusader") then
+            -- 1 PPM * 15s = 25% Uptime. 100 Str * 0.25 = 25 Str.
+            outputTable["ITEM_MOD_STRENGTH_SHORT"] = (outputTable["ITEM_MOD_STRENGTH_SHORT"] or 0) + 25
+            return
+        elseif string_find(cleanText, "spellsurge") then
+            outputTable["ITEM_MOD_MANA_REGENERATION_SHORT"] = (outputTable["ITEM_MOD_MANA_REGENERATION_SHORT"] or 0) + 15
+            return
+            
+        -- B. Flat Named Enchants
+        elseif string_find(cleanText, "sunfire") then
+            outputTable["ITEM_MOD_FIRE_DAMAGE_SHORT"] = (outputTable["ITEM_MOD_FIRE_DAMAGE_SHORT"] or 0) + 50
+            outputTable["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = (outputTable["ITEM_MOD_ARCANE_DAMAGE_SHORT"] or 0) + 50
+            return
+        elseif string_find(cleanText, "soulfrost") then
+            outputTable["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = (outputTable["ITEM_MOD_SHADOW_DAMAGE_SHORT"] or 0) + 54
+            outputTable["ITEM_MOD_FROST_DAMAGE_SHORT"] = (outputTable["ITEM_MOD_FROST_DAMAGE_SHORT"] or 0) + 54
+            return
+        elseif string_find(cleanText, "savagery") then
+            outputTable["ITEM_MOD_ATTACK_POWER_SHORT"] = (outputTable["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + 70
+            return
+            
+        -- C. Hybrid / Split Enchants
+        elseif string_find(cleanText, "healing and") then
+            local heal, dmg = string_match(cleanText, "(%d+) healing and %+(%d+) spell")
+            if heal and dmg then
+                outputTable["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputTable["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + tonumber(heal)
+                outputTable["ITEM_MOD_SPELL_POWER_SHORT"] = (outputTable["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + tonumber(dmg)
+                return
+            end
+        elseif string_find(cleanText, "speed and") then
+            -- Catches "minor speed and +6 agility" or "boar's speed and +9 stamina"
+            local val, stat = string_match(cleanText, "speed and %+(%d+) (.*)")
+            if val and stat then
+                local cleanName = string_gsub(stat, "[%s%.]+$", "")
+                local key = MSC.Scanner.BaseStatMap[cleanName]
+                if key then 
+                    outputTable[key] = (outputTable[key] or 0) + tonumber(val)
+                    return 
+                end
+            end
+        end
+    end
+
+    -- [[ OPTIMIZATION: DIGIT CHECK ]]
+    if not string_find(text, "%d") then return end
+    
     cleanText = string_gsub(cleanText, "|t.-|t", "") 
     cleanText = string_gsub(cleanText, "\194\160", " ") 
     cleanText = string_gsub(cleanText, "\160", " ") 

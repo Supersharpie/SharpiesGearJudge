@@ -1,5 +1,22 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.7 
+
+### Several reliability and parsing fixes:
+
+* **Interface.lua:** 
+	**Prevent permanent button lockouts by using a local seenButtons table instead of mutating button.SGJ_Seen; brute-force quest link lookup via GetQuestLogItemLink then fallback to GetQuestItemLink to avoid fragile frame state assumptions; suppress default cooldown text by setting noCooldownCount and noOCC on created cooldown frames.**
+* **Judge.lua: BIG THANKS to  BlastTyrant for the fix**
+	**Reorder and tighten tooltip evaluation: validate equippable/usable items early, defer evaluation until GetItemInfo is available (using C_Timer.After) to avoid flicker for uncached items, and keep duplicate-score guard.**
+	**Sets MSC.IsCalculating only after gatekeepers pass.**
+* **Parse.lua:** 
+	**Expand stat map with mana/health regen entries.**
+	**Added patterns for split enchants, and add an early intercept in ParseStatLine to handle named procs, flat enchants and hybrid/split enchants before numeric parsing.**
+	
+* **These changes improve robustness around quest reward link detection, reduce tooltip flicker/delay for uncached items, and enhance stat parsing coverage for named and hybrid enchants.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.4.6
 
 * **Register additional quest events and consolidate quest overlay logic into a single MSC.UpdateAllQuestOverlays handler.** 

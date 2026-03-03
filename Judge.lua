@@ -591,27 +591,37 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
     -- [[ 3. RUN VISUAL UPDATES FIRST ]]
     if MSC.BeautifyTooltip then MSC:BeautifyTooltip(tooltip) end
 
-    -- [[ 4. SCORING VISIBILITY CHECK ]]
-    if not tooltip:IsVisible() and not MSC.IsQuestHook then return end
-    
+    -- [[ 4. VALIDATE ITEM (synchronous -- no item data needed) ]]
+    if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then
+        return
+    end
+
+    -- [[ 5. ITEM DATA GATEKEEPER ]]
+    -- Defer when EITHER the item data isn't cached yet (GetItemInfo nil) OR the tooltip
+    -- isn't visible yet (chat links / ItemRefTooltip still being constructed).
+    -- Bag/inventory items satisfy both synchronously -> no deferral, no flicker.
+    local itemName = GetItemInfo(link)
+    if not itemName or (not tooltip:IsVisible() and not MSC.IsQuestHook) then
+        C_Timer.After(0, function()
+            if tooltip:IsVisible() or MSC.IsQuestHook then
+                MSC.EvaluateAndDrawTooltip(tooltip)
+            end
+        end)
+        return
+    end
+
+    -- [[ 6. SCORING DUPLICATE GUARD ]]
+    -- (visibility is guaranteed by the gatekeeper above)
     if tooltipName then
         for i = 2, tooltip:NumLines() do
             local leftLine = _G[tooltipName .. "TextLeft" .. i]
             if leftLine and leftLine:GetText() and string_find(leftLine:GetText(), MSC.L["Judge's Score:"] or "Judge's Score:") then
-                return 
+                return
             end
         end
     end
 
-    -- [[ 5. VALIDATE ITEM & SERVER GATEKEEPER ]]
-    if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then 
-        return 
-    end
-    
-    local itemName = GetItemInfo(link)
-    if not itemName then return end
-
-    MSC.IsCalculating = true 
+    MSC.IsCalculating = true
 
     -- [[ 6. RUN SCORING ENGINE ]]
     local _, playerClass = UnitClass("player")

@@ -564,13 +564,13 @@ function MSC.UpdateAllQuestOverlays()
     if not weights then return end
 
     local buttonsToScan = {}
-    local isLog = QuestInfoFrame and QuestInfoFrame.questLog
+    local seenButtons = {} -- FIX 1: Local tracking prevents permanent button lockouts
 
     -- Aggressive grab function that checks every possible WoW link type
     local function AddButton(btn)
         if not btn or not btn:IsShown() then return end
-        if btn.SGJ_Seen then return end 
-        btn.SGJ_Seen = true
+        if seenButtons[btn] then return end 
+        seenButtons[btn] = true
 
         local id = btn:GetID()
         if not id or id == 0 then
@@ -579,13 +579,20 @@ function MSC.UpdateAllQuestOverlays()
         end
         if not id then return end
 
-        local link = nil
         local bType = btn.type
         
-        if isLog then
-            link = GetQuestLogItemLink(bType or "choice", id) or GetQuestLogItemLink(bType or "reward", id) or GetQuestLogItemLink("choice", id) or GetQuestLogItemLink("reward", id)
-        else
-            link = GetQuestItemLink(bType or "choice", id) or GetQuestItemLink(bType or "reward", id) or GetQuestItemLink("choice", id) or GetQuestItemLink("reward", id) or GetQuestItemLink("required", id)
+        -- FIX 2: Brute-force both APIs to guarantee we find the link, ignoring fragile frame states
+        local link = GetQuestLogItemLink(bType or "choice", id) 
+                  or GetQuestLogItemLink(bType or "reward", id) 
+                  or GetQuestLogItemLink("choice", id) 
+                  or GetQuestLogItemLink("reward", id)
+        
+        if not link then
+            link = GetQuestItemLink(bType or "choice", id) 
+                or GetQuestItemLink(bType or "reward", id) 
+                or GetQuestItemLink("choice", id) 
+                or GetQuestItemLink("reward", id) 
+                or GetQuestItemLink("required", id)
         end
         
         if link then table_insert(buttonsToScan, {btn = btn, link = link}) end
@@ -605,9 +612,6 @@ function MSC.UpdateAllQuestOverlays()
             AddButton(QuestInfoRewardsFrame.RewardButtons[i])
         end
     end
-    
-    -- Cleanup seen tags for the next scan
-    for _, data in ipairs(buttonsToScan) do data.btn.SGJ_Seen = nil end
 
     -- 3. Evaluate and Draw
     for _, data in ipairs(buttonsToScan) do
@@ -1048,6 +1052,8 @@ local function CreateStatRing(parent, x, y, size, label)
     f.cooldown:SetHideCountdownNumbers(true); f.cooldown:SetDrawEdge(false); f.cooldown:SetReverse(true)
     f.cooldown:SetUseCircularEdge(true)
     f.cooldown:SetAlpha(0.2) 
+	f.cooldown.noCooldownCount = true -- Ignores Blizzard's default cooldown text
+    f.cooldown.noOCC = true           -- Ignores OmniCC and TullaCC
 
     return f
 end

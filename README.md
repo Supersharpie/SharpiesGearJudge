@@ -85,5 +85,5 @@ This addon features a unified codebase that automatically detects your game clie
 * **Author:** SuperSharpie
 * **Version:** 2.4.5 (TBC Anniversary Ready)
 * **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
-* **Discord:** [Join the Theorycrafting Hub](https://discord.gg/yTSX8Us6WE)
+* **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 * **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
