@@ -3,7 +3,7 @@
 ## 🚀 v2.4.7 
 
 ### Several reliability and parsing fixes:
-
+* **These changes improve robustness around quest reward link detection, reduce tooltip flicker/delay for uncached items, and enhance stat parsing coverage for named and hybrid enchants.**
 * **Interface.lua:** 
 	**Prevent permanent button lockouts by using a local seenButtons table instead of mutating button.SGJ_Seen; brute-force quest link lookup via GetQuestLogItemLink then fallback to GetQuestItemLink to avoid fragile frame state assumptions; suppress default cooldown text by setting noCooldownCount and noOCC on created cooldown frames.**
 * **Judge.lua: BIG THANKS to  BlastTyrant for the fix**
@@ -12,8 +12,11 @@
 * **Parse.lua:** 
 	**Expand stat map with mana/health regen entries.**
 	**Added patterns for split enchants, and add an early intercept in ParseStatLine to handle named procs, flat enchants and hybrid/split enchants before numeric parsing.**
-	
-* **These changes improve robustness around quest reward link detection, reduce tooltip flicker/delay for uncached items, and enhance stat parsing coverage for named and hybrid enchants.**
+### Minor Fixes
+
+* **Add a ListsAreDifferent helper and adjust weapon-set detection so off-hand combining only occurs when actively combining 1H items (avoid forcing dual-list for 2H swaps).** 
+* **Move/reuse StableSort and re-sort lists after the weapon logic. Update tooltip display to only show separate item and combined (off-hand) lists when they differ, otherwise present a single concise gains/losses listing and use clearer labels.** 
+* **Minor whitespace/newline cleanup.**
 
 ------------------------------------------------------------------------------------------------
 

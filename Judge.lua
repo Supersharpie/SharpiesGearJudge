@@ -830,6 +830,15 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
             table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
 
+            -- [[ HELPER: Check for duplicate lists ]]
+            local function ListsAreDifferent(l1, l2)
+                if #l1 ~= #l2 then return true end
+                for i = 1, #l1 do
+                    if l1[i].key ~= l2[i].key or math_abs(l1[i].val - l2[i].val) > 0.1 then return true end
+                end
+                return false
+            end
+
             local isWeaponSetSwap = false
             if slotId == 16 or slotId == 17 then
                 local currentMH = GetInventoryItemLink("player", 16)
@@ -840,13 +849,15 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
                 local isNew2H = (equipLoc == "INVTYPE_2HWEAPON" or equipLoc == "INVTYPE_STAFF" or equipLoc == "INVTYPE_POLEARM")
                 
-                if isNew2H and currentOH then isWeaponSetSwap = true end
-                if isCurrent2H and not isNew2H then isWeaponSetSwap = true end
-                
-                if contextMsg and (string_find(contextMsg, "w/ ") or string_find(contextMsg, "No OH found") or string_find(contextMsg, "No MH found") or string_find(contextMsg, "Not 2Hander")) then 
-                    isWeaponSetSwap = true 
+                -- [[ THE FIX: ONLY dual-list if we are actively combining 1H items ]]
+                if not isNew2H then
+                    if isCurrent2H then isWeaponSetSwap = true end
+                    if contextMsg and string_find(contextMsg, "w/ ") then isWeaponSetSwap = true end
                 end
             end
+
+            local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
+            table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
 
             local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
@@ -886,15 +897,21 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
                 table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
 
-                PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
-                PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
-                
-                if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
-                    tooltip:AddLine(" ")
-                end
+                -- [[ SMART DISPLAY: Only show dual lists if they actually differ ]]
+                if ListsAreDifferent(itemGains, totalGains) or ListsAreDifferent(itemLosses, totalLosses) then
+                    PrintList(MSC.L["Item Gains:"], itemGains, 0, 1, 0)
+                    PrintList(MSC.L["Item Losses:"], itemLosses, 1, 0, 0)
+                    
+                    if (#itemGains > 0 or #itemLosses > 0) and (#totalGains > 0 or #totalLosses > 0) then
+                        tooltip:AddLine(" ")
+                    end
 
-                PrintList(MSC.L["Set Gains (w/ Off-hand):"], totalGains, 0, 1, 0)
-                PrintList(MSC.L["Set Losses:"], totalLosses, 1, 0, 0)
+                    PrintList(MSC.L["Combined Gains (Net):"], totalGains, 0, 1, 0)
+                    PrintList(MSC.L["Combined Losses (Net):"], totalLosses, 1, 0, 0)
+                else
+                    PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
+                    PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
+                end
             else
                 PrintList(MSC.L["Gains:"], totalGains, 0, 1, 0)
                 PrintList(MSC.L["Losses:"], totalLosses, 1, 0, 0)
@@ -910,6 +927,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         tooltip:Show()
     end
 end
+
 -- =============================================================
 -- HOOKS & EVENT HIJACKING
 -- =============================================================
