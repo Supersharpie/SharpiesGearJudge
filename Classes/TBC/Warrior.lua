@@ -737,6 +737,30 @@ function Warrior:ApplyScalers(weights, currentSpec)
             weights["ITEM_MOD_ARMOR_SHORT"] = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.5
         end
     end
+	
+	-- [[ E. CRUSH CAP (Prot) ]]
+    if currentSpec:find("PROT") and weights["ITEM_MOD_BLOCK_RATING_SHORT"] then
+        -- 5% Base Miss + Dodge + Parry + Block + 75% Shield Block
+        local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + 75.0
+        
+        -- Tier 1: SAFELY CAPPED (102.8%+)
+        if avoidance >= 102.8 then
+            -- Block Rating is completely dead weight now
+            weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5
+            weights["ITEM_MOD_DODGE_RATING_SHORT"] = (weights["ITEM_MOD_DODGE_RATING_SHORT"] or 1.0) * 0.8
+            weights["ITEM_MOD_PARRY_RATING_SHORT"] = (weights["ITEM_MOD_PARRY_RATING_SHORT"] or 1.0) * 0.8
+            table.insert(activeCaps, MSC.L["Crush (Safe)"])
+
+            -- PIVOT TO EFFECTIVE HEALTH
+            weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.2
+            weights["ITEM_MOD_ARMOR_SHORT"]   = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.2
+
+        -- Tier 2: DANGER ZONE / SOFT CAP (102.4% - 102.79%)
+        elseif avoidance >= 102.4 then
+            weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.8
+            table.insert(activeCaps, MSC.L["Crush (Soft)"])
+        end
+    end
 
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24)

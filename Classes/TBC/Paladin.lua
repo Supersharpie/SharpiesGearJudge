@@ -1042,7 +1042,31 @@ function Paladin:ApplyScalers(weights, currentSpec)
         end
     end
 
--- D. EXPERTISE CAP (Ret/Prot)
+-- [[ D. CRUSH CAP (Prot) ]]
+    if currentSpec:find("PROT") and weights["ITEM_MOD_BLOCK_RATING_SHORT"] then
+        -- 5% Base Miss + Dodge + Parry + Block + 30% Holy Shield
+        local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + 30.0
+        
+        -- Tier 1: SAFELY CAPPED (102.8%+) - Buffer against missing Agility/Defense buffs
+        if avoidance >= 102.8 then
+            weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5
+            weights["ITEM_MOD_BLOCK_VALUE_SHORT"] = (weights["ITEM_MOD_BLOCK_VALUE_SHORT"] or 1.0) * 0.8
+            table.insert(activeCaps, MSC.L["Crush (Safe)"])
+
+            -- PIVOT TO EFFECTIVE HEALTH: Stamina and Armor scale up
+            weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.2
+            weights["ITEM_MOD_ARMOR_SHORT"]   = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.2
+
+        -- Tier 2: DANGER ZONE / SOFT CAP (102.4% - 102.79%)
+        elseif avoidance >= 102.4 then
+            weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0 -- Value drops, but keeps you pushing for the safe zone
+            table.insert(activeCaps, MSC.L["Crush (Soft)"])
+            
+        -- Tier 3: UNDER CAP (Default weights apply)
+        end
+    end	
+
+-- E. EXPERTISE CAP (Ret/Prot)
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24) 
         local _, raceID = UnitRace("player")

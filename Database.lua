@@ -149,7 +149,7 @@ MSC.EnchantDB = {
     [10548] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=2}, name = MSC.L["Sniper Scope"] }, 
     [33]    = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=1}, name = MSC.L["Accurate Scope"] },
     [664]   = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=0.5}, name = MSC.L["Standard Scope"] },
-    [2523]  = { slot = 18, isScope = true, stats = {ITEM_MOD_HIT_RATING_SHORT=10}, name = MSC.L["Biznicks Accurascope"] },
+    [2523]  = { slot = 18, isScope = true, stats = {ITEM_MOD_HIT_RATING_SHORT=30}, name = MSC.L["Biznicks Accurascope"] },
 
     -- [[ SHIELD & SPIKES ]]
     [2655] = { name = MSC.L["Major Stamina"], slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 18 } },

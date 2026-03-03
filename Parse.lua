@@ -529,21 +529,22 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
     cleanText = string_gsub(cleanText, "|c%x%x%x%x%x%x%x%x", "")
     cleanText = string_gsub(cleanText, "|r", "")
     
+    -- [[ STRIP SOCKET BONUS PREFIX ]]
+    -- This allows the scanner to read "+4 Strength" instead of "Socket Bonus: +4 Strength"
+    cleanText = string_gsub(cleanText, "^socket bonus:%s*", "")
+    
     -- [[ 1. INTERCEPT NAMED, PROC & HYBRID ENCHANTS ]]
     if string_find(cleanText, "^enchant: ") then
         
         -- A. Proc Averages (Uptime Math)
         if string_find(cleanText, "mongoose") then
-            -- 1 PPM * 15s = 25% Uptime. 120 Agi * 0.25 = 30 Agi.
             outputTable["ITEM_MOD_AGILITY_SHORT"] = (outputTable["ITEM_MOD_AGILITY_SHORT"] or 0) + 30
             outputTable["ITEM_MOD_HASTE_RATING_SHORT"] = (outputTable["ITEM_MOD_HASTE_RATING_SHORT"] or 0) + 30
             return
         elseif string_find(cleanText, "executioner") then
-            -- 1 PPM * 15s = 25% Uptime. 840 ArP * 0.25 = 210 ArP.
             outputTable["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = (outputTable["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] or 0) + 210
             return
         elseif string_find(cleanText, "crusader") then
-            -- 1 PPM * 15s = 25% Uptime. 100 Str * 0.25 = 25 Str.
             outputTable["ITEM_MOD_STRENGTH_SHORT"] = (outputTable["ITEM_MOD_STRENGTH_SHORT"] or 0) + 25
             return
         elseif string_find(cleanText, "spellsurge") then
@@ -563,16 +564,8 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
             outputTable["ITEM_MOD_ATTACK_POWER_SHORT"] = (outputTable["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + 70
             return
             
-        -- C. Hybrid / Split Enchants
-        elseif string_find(cleanText, "healing and") then
-            local heal, dmg = string_match(cleanText, "(%d+) healing and %+(%d+) spell")
-            if heal and dmg then
-                outputTable["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputTable["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + tonumber(heal)
-                outputTable["ITEM_MOD_SPELL_POWER_SHORT"] = (outputTable["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + tonumber(dmg)
-                return
-            end
+        -- C. Weird Word-Only Enchants
         elseif string_find(cleanText, "speed and") then
-            -- Catches "minor speed and +6 agility" or "boar's speed and +9 stamina"
             local val, stat = string_match(cleanText, "speed and %+(%d+) (.*)")
             if val and stat then
                 local cleanName = string_gsub(stat, "[%s%.]+$", "")
@@ -582,6 +575,18 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
                     return 
                 end
             end
+        end
+    end
+
+    -- [[ THE DUAL-STAT SPLITTER ]]
+    -- If a line has "and" (but isn't standard spell damage), split it into two lines and process both!
+    if string_find(cleanText, " and ") and not string_find(cleanText, "damage and healing") then
+        local part1, part2 = string_match(cleanText, "^(.-) and (.*)$")
+        if part1 and part2 then
+            -- Recursively pass both halves back through the scanner individually!
+            MSC.Scanner.ParseStatLine(part1, outputTable)
+            MSC.Scanner.ParseStatLine(part2, outputTable)
+            return
         end
     end
 

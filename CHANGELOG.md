@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.8
+
+* **Added Crush Cap logic for Protection Paladins and Warriors (tiered safe/soft/under cap behavior) and pivot weights toward EHP when safely capped.** 
+* **Expose a new "Crush Cap" ring in the stat rings, renamed "Def Cap" -> "Current Defense", improved cap math to use player level-based base defense, account for talents (Druid Survival of the Fittest, Paladin Holy Shield / Warrior Shield Block) and compute display/tooltip appropriately.** 
+* **Update ApplyRingArt visuals: texture/color tweaks, allow special coloring for Crush Cap, change energy tint and ring spacings, enable hiding Blizzard countdown numbers on cooldown frames.** 
+* **Parser enhancements: strip "Socket Bonus:" prefix so lines like "+4 Strength" are scanned, add dual-stat splitter to parse lines with "and" into two sub-lines, and other small enchant parsing refinements.** 
+* **Overall improves tank cap visibility, UI clarity, and item parsing.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.4.7 
 
 ### Several reliability and parsing fixes:

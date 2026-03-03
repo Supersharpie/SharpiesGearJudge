@@ -1054,7 +1054,7 @@ local function CreateStatRing(parent, x, y, size, label)
     f.cooldown:SetAlpha(0.2) 
 	f.cooldown.noCooldownCount = true -- Ignores Blizzard's default cooldown text
     f.cooldown.noOCC = true           -- Ignores OmniCC and TullaCC
-
+	f.cooldown:SetHideCountdownNumbers(true) -- Ignores Blizzard's native UI text
     return f
 end
 
@@ -1062,13 +1062,20 @@ function MSC.ApplyRingArt(f, statType)
     f.AnimGroup:Stop()
     f.Spin:SetDuration(0)
     f.Energy:SetRotation(0)
-    
-    f.Energy:SetVertexColor(0.8, 0.8, 0.8, 1) 
+    f.Energy:SetVertexColor(1, 1, 1, 1) -- Set to pure white to show default texture colors
 
-    if statType == "Def Cap" or statType == "Defense" then
+    -- 1. TANK STATS (Rune Style)
+    if statType == "Current Defense" or statType == "Crush Cap" or statType == "Defense" then
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Rune.tga") 
          f.Spin:SetDegrees(360); f.Spin:SetDuration(60); f.AnimGroup:Play()
 
+         -- ONLY override the color if it is the Crush Cap
+         if statType == "Crush Cap" then
+            f.Energy:SetVertexColor(1.0, 0.8, 0.2, 1) -- Golden/Amber for Crush Cap
+         end
+         -- "Current Defense" stays default (1, 1, 1, 1)
+
+    -- 2. OFFENSIVE STATS (Swirl Style)
     elseif string_find(statType, "Hit") or string_find(statType, "Haste") then
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Swirl.tga")
          f.Spin:SetDegrees(-360); f.Spin:SetDuration(30); f.AnimGroup:Play()
@@ -1081,20 +1088,22 @@ function MSC.ApplyRingArt(f, statType)
             f.Energy:SetVertexColor(0.2, 1.0, 0.2, 1)
          end
 
-    elseif statType == "Expertise" then
+    -- 3. CRITICAL STATS (Sun Style)
+    elseif string_find(statType, "Crit") or statType == "Expertise" then
          f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
-         f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) 
-
-    elseif string_find(statType, "Crit") then
-         f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
-         f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
-         f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
-         f.AnimGroup:Play()
          
-         if string_find(statType, "Spell") then
-             f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1) 
-         else
-             f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1) 
+         if string_find(statType, "Crit") then
+            f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
+            f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
+            f.AnimGroup:Play()
+            
+            if string_find(statType, "Spell") then
+                f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1) 
+            else
+                f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1) 
+            end
+         else -- Expertise
+            f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) 
          end
     else
          f.Energy:SetTexture("Interface\\Common\\RingBorder")
@@ -1102,17 +1111,17 @@ function MSC.ApplyRingArt(f, statType)
 end
 
 local function GetClassRings(class, stats, weights)
-    local rings = {}
+    local playerLevel = UnitLevel("player")
+	local rings = {}
     local CAP_HIT_MELEE = 9
     local CAP_HIT_SPELL = 16
     local CAP_EXP = 26
-    local CAP_DEF = 490
-    
+	local maxBaseDef = playerLevel * 5
+	local CAP_DEF = maxBaseDef + 140
     local spellHitBonus = 0
     local meleeHitBonus = 0
     local expertBonus = 0
     local critBonus = 0
-    
     local isTBC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
     local _, playerRace = UnitRace("player")
 
@@ -1139,33 +1148,20 @@ local function GetClassRings(class, stats, weights)
         spellHitBonus = elePrec + natGuid
         meleeHitBonus = natGuid
     elseif class == "DRUID" then
-        if isTBC then 
-            spellHitBonus = GetTalentRank(1, "Balance of Power") * 2 
-            local sotf = GetTalentRank(2, "Survival of the Fittest")
-            if sotf == 3 then CAP_DEF = 415
-            elseif sotf == 2 then CAP_DEF = 440
-            elseif sotf == 1 then CAP_DEF = 465 
-            end
+    if isTBC then 
+        spellHitBonus = GetTalentRank(1, "Balance of Power") * 2 
+        local sotf = GetTalentRank(2, "Survival of the Fittest")
+        if sotf == 3 then CAP_DEF = maxBaseDef + 65
+        elseif sotf == 2 then CAP_DEF = maxBaseDef + 90
+        elseif sotf == 1 then CAP_DEF = maxBaseDef + 115 
         end
+    end
     elseif class == "ROGUE" then
         meleeHitBonus = GetTalentRank(2, "Precision") * 1
         local wepExp = GetTalentRank(2, "Weapon Expertise")
         expertBonus = expertBonus + (wepExp * 5)
     elseif class == "HUNTER" then
         meleeHitBonus = GetTalentRank(3, "Surefooted") * 1
-    elseif class == "PALADIN" then
-        local prec = GetTalentRank(2, "Precision") * 1
-        meleeHitBonus = prec; spellHitBonus = prec
-        local ant = GetTalentRank(2, "Anticipation") * 4
-        CAP_DEF = math_max(350, CAP_DEF - ant)
-    elseif class == "WARRIOR" then
-        meleeHitBonus = GetTalentRank(2, "Precision") * 1
-        local ant = GetTalentRank(3, "Anticipation") * 4
-        CAP_DEF = math_max(350, CAP_DEF - ant)
-        if isTBC then
-            local def = GetTalentRank(3, "Defiance") 
-            expertBonus = expertBonus + (def * 2) 
-        end
     end
 
     local mhLink = GetInventoryItemLink("player", 16)
@@ -1203,41 +1199,83 @@ local function GetClassRings(class, stats, weights)
 
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
         local val = stats[statKey] or 0
-        local level = UnitLevel("player"); if level > 70 then level = 70 end
-        local scalar = 0
-        if label == "Expertise" then
-            scalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]) and MSC.CombatRatingScalars[level][1] or 3.94
-        elseif label == "Def Cap" then
-            scalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]) and MSC.CombatRatingScalars[level][2] or 2.37
-        else
-            local idx = MSC.RatingIndexMap and MSC.RatingIndexMap[statKey]
-            if idx and MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] then scalar = MSC.CombatRatingScalars[level][idx] else scalar = 15.8 end
+        local currentDisplay = 0; local capRating = 0; local scalar = 0
+        local isCustomCap = false
+
+        if statKey == "CRUSH_CAP" then
+			isCustomCap = true
+			local buffBonus = 0
+			
+			if class == "PALADIN" and GetTalentRank(2, "Holy Shield") > 0 then
+				buffBonus = 30.0
+			elseif class == "WARRIOR" and UnitLevel("player") >= 10 then
+				buffBonus = 75.0
+			end
+			
+			-- 5% Base Miss + Avoidance Stats + Active Buff
+			val = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + buffBonus
+			currentDisplay = val
+			capRating = capTarget
+            
+        elseif statKey == "ITEM_MOD_HIT_RATING_SHORT" then val = GetCombatRating(6)
+        elseif statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then val = GetCombatRating(8)
+        elseif statKey == "ITEM_MOD_EXPERTISE_RATING_SHORT" then val = GetCombatRating(24)
+        elseif statKey == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then val = GetCombatRating(2)
+        elseif statKey == "ITEM_MOD_CRIT_RATING_SHORT" then val = GetCombatRating(9)
+        elseif statKey == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then val = GetCombatRating(11)
+        elseif statKey == "ITEM_MOD_HASTE_RATING_SHORT" then val = GetCombatRating(18)
+        elseif statKey == "ITEM_MOD_SPELL_HASTE_RATING_SHORT" then val = GetCombatRating(20)
         end
 
-        local currentDisplay = 0; local capRating = 0
-        if isSkill then
-            if label == "Def Cap" then
-                local skillAdded = math_floor(val / scalar)
-                currentDisplay = 350 + skillAdded
-                capRating = (capTarget - 350) * scalar
+        if not isCustomCap then
+            local level = UnitLevel("player"); if level > 70 then level = 70 end
+            if label == "Expertise" then
+                scalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]) and MSC.CombatRatingScalars[level][1] or 3.94
+            elseif label == "Current Defense" then
+                scalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]) and MSC.CombatRatingScalars[level][2] or 2.37
             else
-                currentDisplay = math_floor(val / scalar)
-                capRating = capTarget * scalar
+                local idx = MSC.RatingIndexMap and MSC.RatingIndexMap[statKey]
+                if idx and MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] then scalar = MSC.CombatRatingScalars[level][idx] else scalar = 15.8 end
             end
-        else
-            currentDisplay = val / scalar; capRating = capTarget * scalar
-        end
-        
-        if label == "Crit" or string_find(label, "Crit") then
-            currentDisplay = currentDisplay + critBonus
+    
+            if isSkill then
+				if label == "Current Defense" then
+					-- 1. Safely grab ONLY the base leveled skill
+					local baseDef = UnitDefense("player")
+					
+					-- Fallback in case the API fires before the player is fully loaded
+					if not baseDef or baseDef == 0 then
+						baseDef = UnitLevel("player") * 5
+					end
+					
+					-- 2. Add your true base skill to the addon's evaluated gear skill
+					local skillAdded = math_floor(val / scalar)
+					currentDisplay = baseDef + skillAdded
+					
+					-- 3. Calculate the shortfall gap based on your true total
+					local skillShortfall = math_max(0, capTarget - currentDisplay)
+					
+					-- 4. Set the visual target cap
+					capRating = val + (skillShortfall * scalar)
+				else
+					currentDisplay = math_floor(val / scalar)
+					capRating = capTarget * scalar
+				end
+
+            end
+            
+            if label == "Crit" or string_find(label, "Crit") then
+                currentDisplay = currentDisplay + critBonus
+            end
         end
 
-        table_insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar })
+        table_insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar, isCustom = isCustomCap })
     end
 
     if class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" then
         if class == "WARRIOR" and (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5 then
-            AddRing("Def Cap", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
+            AddRing("Current Defense", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
+            AddRing("Crush Cap", "CRUSH_CAP", 102.4, "%.2f%%")
             AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
             AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
         else
@@ -1252,12 +1290,13 @@ local function GetClassRings(class, stats, weights)
         AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
         AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%") 
         AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")      
-    elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
+   elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
         local isTank = (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5
         local isCaster = (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
         
         if isTank then
-            AddRing("Def Cap", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
+            AddRing("Current Defense", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
+            AddRing("Crush Cap", "CRUSH_CAP", 102.4, "%.2f%%")
             if isCaster and class == "PALADIN" then 
                 AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%") 
             else 
@@ -1304,12 +1343,12 @@ function MSC.UpdateLogic()
     local rings = GetClassRings(select(2, UnitClass("player")), stats, weights)
     
     for i, ring in ipairs(rings) do
-        if i <= 3 then
-            local xPos = 60 + ((i-1) * 140)
+        if i <= 4 then -- Allow 4 rings for tanks!
+            local xPos = 25 + ((i-1) * 110) -- Tighter spacing to fit perfectly
             local f = MSC.GetFromPool("Rings", content, function(p) return CreateStatRing(p, 0, 0, 80, "TEMP") end)
             f:ClearAllPoints(); f:SetPoint("TOPLEFT", xPos, -20)
             local locLabel = MSC.L[ring.l] or ring.l
-			f.lbl:SetText(locLabel:upper())
+            f.lbl:SetText(locLabel:upper())
             f.val:SetText(string_format(ring.fmt, ring.v))
             MSC.ApplyRingArt(f, ring.l) 
             local fillPct = 0
@@ -1326,9 +1365,19 @@ function MSC.UpdateLogic()
             f:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 local locLabel = MSC.L[ring.l] or ring.l
-				GameTooltip:SetText(locLabel, 1, 1, 1)
+                GameTooltip:SetText(locLabel, 1, 1, 1)
                 GameTooltip:AddLine(" ")
-                if ring.rawVal and ring.rawCap and ring.rawCap > 0 then
+                
+                -- Custom Tooltip logic for Crush Cap
+                if ring.isCustom then
+                    GameTooltip:AddDoubleLine(MSC.L["Current Avoidance:"], string_format("%.2f%%", ring.v), 1, 0.82, 0, 1, 1, 1)
+                    local diff = ring.m - ring.v
+                    if diff > 0 then 
+                        GameTooltip:AddLine(string_format(MSC.L["Need %.2f%% more to cap."], diff), 1, 0.5, 0.5) 
+                    else 
+                        GameTooltip:AddLine(MSC.L["Uncrushable!"], 0, 1, 0) 
+                    end
+                elseif ring.rawVal and ring.rawCap and ring.rawCap > 0 then
                     GameTooltip:AddDoubleLine(MSC.L["Rating:"], string_format("%d / %d", ring.rawVal, ring.rawCap), 1, 0.82, 0, 1, 1, 1)
                     local diff = ring.rawCap - ring.rawVal
                     if diff > 0 then 
@@ -1339,7 +1388,7 @@ function MSC.UpdateLogic()
                 else
                     GameTooltip:AddDoubleLine(MSC.L["Current Rating:"], string_format("%d", ring.rawVal), 1, 0.82, 0, 1, 1, 1)
                 end
-                if ring.scalar then 
+                if ring.scalar and ring.scalar > 1 then 
                     GameTooltip:AddLine(" ")
                     GameTooltip:AddLine(string_format(MSC.L["1%% requires %.2f Rating"], ring.scalar), 0.6, 0.6, 0.6) 
                 end
