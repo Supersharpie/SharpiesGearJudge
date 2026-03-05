@@ -3,14 +3,21 @@
 
 ## 🚀 v2.4.9
 
-###⚖️ Scoring & Evaluator Logic
+### 📺 UI & User Experience
+* **Restructured ApplyRingArt to centralize texture selection and styling decisions into a single flow.** 
+* **Introduced targetTexture and f.CurrentArt caching to avoid redundant texture resets and animation stutter, only stopping/starting animations when the art actually changes.** 
+* **Reset rotation/pulse and applies Spin/Pulse degrees, durations and per-stat vertex colors (including Spell Power, Haste, Spell Hit and Crush Cap) in a clearer branch structure.**
+* **Also renamed a local flag from isCustomCap to isSpellPower in GetClassRings and tightens the tooltip condition in UpdateLogic so the "Current Avoidance" line is shown only for rings marked as custom and with label "Crush Cap".**
+* **These changes reduce visual glitches and correct when the crush-cap tooltip is displayed.**
+
+### ⚖️ UI, Scoring & Evaluator Logic
 * **Added a new equip pattern to capture phrasing like "attack power ... in cat" and map it to feral attack power.**  
 * **Introduce an "ALL STATS EXPLODER" in ParseStatLine that detects "+X All Stats", extracts the numeric value, and distributes it into Strength, Agility, Stamina, Intellect and Spirit in the output table (then returns early to avoid double-parsing).** 
 	**This ensures "+All Stats" bonuses are represented as the five individual attributes and improves parsing for cat-form attack power variants.** 
 * **Compute a custom Spell Power value (max spell bonus across schools) and add a 'Spell Power' ring for casters, marking it as a custom cap/display.** 
 * **Also apply melee and spell hit talent bonuses to the Hit Cap and Spell Hit displays.**
 
-###⚔️ Class Specific Highlights
+### ⚔️ Class Specific Highlights
 * **Refactor TBC class scalers to use level-based CombatRatingScalars and percent-based caps with hysteresis.** 
 * **Hit, spell-hit, expertise and defense caps are now computed from dynamic rating scalars per level, account for talent/racial percent reductions, and apply hysteresis buffers to avoid weight thrashing.** 
 * **Weapon specialization bonuses (GetWeaponBonus) were updated to accept weights and scale racials/talent effects by relevant stat weights (AP/crit/etc.), and Evaluator:GetWeaponSpecBonus now forwards weights.** 

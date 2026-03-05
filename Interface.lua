@@ -1059,54 +1059,49 @@ local function CreateStatRing(parent, x, y, size, label)
 end
 
 function MSC.ApplyRingArt(f, statType)
-    f.AnimGroup:Stop()
-    f.Spin:SetDuration(0)
-    f.Energy:SetRotation(0)
-    f.Energy:SetVertexColor(1, 1, 1, 1) -- Set to pure white to show default texture colors
-
-    -- 1. TANK STATS (Rune Style)
+    -- 1. IDENTIFY THE TARGET TEXTURE
+    local targetTexture
     if statType == "Current Defense" or statType == "Crush Cap" or statType == "Defense" then
-         f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Rune.tga") 
-         f.Spin:SetDegrees(360); f.Spin:SetDuration(60); f.AnimGroup:Play()
-
-         -- ONLY override the color if it is the Crush Cap
-         if statType == "Crush Cap" then
-            f.Energy:SetVertexColor(1.0, 0.8, 0.2, 1) -- Golden/Amber for Crush Cap
-         end
-         -- "Current Defense" stays default (1, 1, 1, 1)
-
-    -- 2. OFFENSIVE STATS (Swirl Style)
-    elseif string_find(statType, "Hit") or string_find(statType, "Haste") then
-         f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Swirl.tga")
-         f.Spin:SetDegrees(-360); f.Spin:SetDuration(30); f.AnimGroup:Play()
-         
-         if string_find(statType, "Haste") then
-            f.Energy:SetVertexColor(1.0, 0.8, 0.0, 1)
-         elseif string_find(statType, "Spell") then 
-            f.Energy:SetVertexColor(0.2, 1.0, 0.8, 1) 
-         else
-            f.Energy:SetVertexColor(0.2, 1.0, 0.2, 1)
-         end
-
-    -- 3. CRITICAL STATS (Sun Style)
+        targetTexture = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Rune.tga"
+    elseif string_find(statType, "Hit") or string_find(statType, "Haste") or string_find(statType, "Power") then
+        targetTexture = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Swirl.tga"
     elseif string_find(statType, "Crit") or statType == "Expertise" then
-         f.Energy:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga")
-         
-         if string_find(statType, "Crit") then
-            f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
-            f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
-            f.AnimGroup:Play()
-            
-            if string_find(statType, "Spell") then
-                f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1) 
-            else
-                f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1) 
-            end
-         else -- Expertise
-            f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) 
-         end
+        targetTexture = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Sun.tga"
     else
-         f.Energy:SetTexture("Interface\\Common\\RingBorder")
+        targetTexture = "Interface\\Common\\RingBorder"
+    end
+
+    -- 2. ONLY APPLY IF DIFFERENT (Prevents Stutter)
+    if f.CurrentArt == targetTexture then return end
+    f.CurrentArt = targetTexture
+
+    -- 3. RESET & STOP ONLY ON ACTUAL CHANGE
+    if f.AnimGroup:IsPlaying() then f.AnimGroup:Stop() end
+    f.Spin:SetDuration(0)
+    f.Pulse:SetDuration(0)
+    f.Energy:SetRotation(0)
+    f.Energy:SetTexture(targetTexture)
+
+    -- 4. APPLY SPECIFIC STYLE LOGIC
+    if targetTexture:find("Ring_Rune") then
+        f.Spin:SetDegrees(360); f.Spin:SetDuration(60)
+        if statType == "Crush Cap" then f.Energy:SetVertexColor(1.0, 0.8, 0.2, 1) end
+    elseif targetTexture:find("Ring_Swirl") then
+        f.Spin:SetDegrees(-360); f.Spin:SetDuration(30)
+        if statType == "Spell Power" then f.Energy:SetVertexColor(0.2, 0.7, 1.0, 1)
+        elseif statType:find("Haste") then f.Energy:SetVertexColor(1.0, 0.8, 0.0, 1)
+        elseif statType == "Spell Hit" then f.Energy:SetVertexColor(0.2, 1.0, 0.8, 1)
+        else f.Energy:SetVertexColor(0.2, 1.0, 0.2, 1) end
+    elseif targetTexture:find("Ring_Sun") then
+        f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
+        f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
+        if statType:find("Spell") then f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1)
+        elseif statType:find("Crit") then f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1)
+        else f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) end
+    end
+
+    if (f.Spin:GetDuration() > 0 or f.Pulse:GetDuration() > 0) then
+        f.AnimGroup:Play()
     end
 end
 
@@ -1233,7 +1228,7 @@ local function GetClassRings(class, stats, weights)
             local maxSP = 0
             for i=2, 7 do maxSP = math_max(maxSP, GetSpellBonusDamage(i)) end
             val = maxSP
-            isCustomCap = true
+            isSpellPower = true
             currentDisplay = val
             capRating = capTarget
         end
@@ -1385,7 +1380,7 @@ function MSC.UpdateLogic()
                 GameTooltip:AddLine(" ")
                 
                 -- Custom Tooltip logic for Crush Cap
-                if ring.isCustom then
+                if ring.isCustom and ring.l == "Crush Cap" then
                     GameTooltip:AddDoubleLine(MSC.L["Current Avoidance:"], string_format("%.2f%%", ring.v), 1, 0.82, 0, 1, 1, 1)
                     local diff = ring.m - ring.v
                     if diff > 0 then 
