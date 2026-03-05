@@ -1159,8 +1159,13 @@ local function GetClassRings(class, stats, weights)
         meleeHitBonus = GetTalentRank(3, "Surefooted") * 1
     elseif class == "PALADIN" or class == "WARRIOR" then
         meleeHitBonus = GetTalentRank(2, "Precision") * 1
-        if class == "PALADIN" then spellHitBonus = meleeHitBonus end
-        if class == "WARRIOR" and isTBC then expertBonus = expertBonus + (GetTalentRank(3, "Defiance") * 2) end
+        if class == "PALADIN" then 
+            spellHitBonus = meleeHitBonus 
+            if isTBC then expertBonus = expertBonus + GetTalentRank(2, "Combat Expertise") end
+        end
+        if class == "WARRIOR" and isTBC then 
+            expertBonus = expertBonus + (GetTalentRank(3, "Defiance") * 2) 
+        end
     end
 
     local mhLink = GetInventoryItemLink("player", 16)
@@ -1192,14 +1197,11 @@ local function GetClassRings(class, stats, weights)
         meleeHitBonus = meleeHitBonus + 1
     end
 
-    CAP_HIT_MELEE = math_max(0, CAP_HIT_MELEE - meleeHitBonus)
-    CAP_HIT_SPELL = math_max(0, CAP_HIT_SPELL - spellHitBonus)
-    CAP_EXP       = math_max(0, CAP_EXP - expertBonus)
-
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
         local val = stats[statKey] or 0
         local currentDisplay = 0; local capRating = 0; local scalar = 0
         local isCustomCap = false
+        local isRating = false
 
         if statKey == "CRUSH_CAP" then
 			isCustomCap = true
@@ -1216,19 +1218,19 @@ local function GetClassRings(class, stats, weights)
 			currentDisplay = val
 			capRating = capTarget
             
-        elseif statKey == "ITEM_MOD_HIT_RATING_SHORT" then val = GetCombatRating(6)
-        elseif statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then val = GetCombatRating(8)
-        elseif statKey == "ITEM_MOD_EXPERTISE_RATING_SHORT" then val = GetCombatRating(24)
-        elseif statKey == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then val = GetCombatRating(2)
-        elseif statKey == "ITEM_MOD_CRIT_RATING_SHORT" then val = GetCombatRating(9)
-        elseif statKey == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then val = GetCombatRating(11)
-        elseif statKey == "ITEM_MOD_HASTE_RATING_SHORT" then val = GetCombatRating(18)
-        elseif statKey == "ITEM_MOD_SPELL_HASTE_RATING_SHORT" then val = GetCombatRating(20)
+        elseif statKey == "ITEM_MOD_HIT_RATING_SHORT" then val = GetCombatRating(6); isRating = true
+        elseif statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then val = GetCombatRating(8); isRating = true
+        elseif statKey == "ITEM_MOD_EXPERTISE_RATING_SHORT" then val = GetCombatRating(24); isRating = true
+        elseif statKey == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then val = GetCombatRating(2); isRating = true
+        elseif statKey == "ITEM_MOD_CRIT_RATING_SHORT" then val = GetCombatRating(9); isRating = true
+        elseif statKey == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then val = GetCombatRating(11); isRating = true
+        elseif statKey == "ITEM_MOD_HASTE_RATING_SHORT" then val = GetCombatRating(18); isRating = true
+        elseif statKey == "ITEM_MOD_SPELL_HASTE_RATING_SHORT" then val = GetCombatRating(20); isRating = true
+        elseif statKey == "ITEM_MOD_DODGE_RATING_SHORT" then val = GetCombatRating(3); isRating = true
         elseif statKey == "ITEM_MOD_SPELL_POWER_SHORT" then 
             local maxSP = 0
             for i=2, 7 do maxSP = math_max(maxSP, GetSpellBonusDamage(i)) end
             val = maxSP
-            isSpellPower = true
             currentDisplay = val
             capRating = capTarget
         end
@@ -1264,18 +1266,34 @@ local function GetClassRings(class, stats, weights)
 					-- 4. Set the visual target cap
 					capRating = val + (skillShortfall * scalar)
 				else
-					currentDisplay = math_floor(val / scalar)
-					capRating = capTarget * scalar
+					local skillAdded = math_floor(val / scalar)
+					currentDisplay = skillAdded + expertBonus
+					local skillShortfall = math_max(0, capTarget - currentDisplay)
+					capRating = capTarget > 0 and (val + (skillShortfall * scalar)) or 0
 				end
-
-            end
-            
-            if label == "Crit" or string_find(label, "Crit") then
-                currentDisplay = currentDisplay + critBonus
-            elseif label == "Hit Cap" then
-                currentDisplay = currentDisplay + meleeHitBonus
-            elseif label == "Spell Hit" then
-                currentDisplay = currentDisplay + spellHitBonus
+            elseif isRating then
+                if label == "Dodge" then
+                    currentDisplay = GetDodgeChance()
+                elseif string_find(label, "Spell Crit") then
+                    currentDisplay = GetSpellCritChance(2)
+                elseif string_find(label, "Crit") then
+                    if class == "HUNTER" and GetRangedCritChance then
+                        currentDisplay = GetRangedCritChance() + critBonus
+                    else
+                        currentDisplay = GetCritChance() + critBonus
+                    end
+                else
+                    currentDisplay = val / scalar
+                    if label == "Hit Cap" then
+                        currentDisplay = currentDisplay + meleeHitBonus
+                    elseif label == "Spell Hit" then
+                        currentDisplay = currentDisplay + spellHitBonus
+                    end
+                end
+                
+                -- Safely map out Rating shortfalls for tooltips 
+                local shortfall = math_max(0, capTarget - currentDisplay)
+                capRating = capTarget > 0 and (val + (shortfall * scalar)) or 0
             end
         end
 

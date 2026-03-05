@@ -1,5 +1,13 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.4.10
+
+* **Refactored AddRing logic to explicitly mark and handle rating-based stats (isRating) and special cases (dodge, crit, spell crit, hunter ranged crit).** 
+* **Recomputed currentDisplay and capRating for ratings using appropriate API calls or scaled values, and map rating shortfalls back to rating amounts for tooltips.** 
+* **Also adjusted skill/cap calculations to include expertBonus and fix capRating computation for non-rating skills.** 
+* **Removed earlier global CAP_HIT/EXP adjustments and cleaned up spell power handling.**
+
+------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.4.9
 
