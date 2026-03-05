@@ -791,23 +791,27 @@ function Shaman:ApplyScalers(weights, currentSpec)
     end
     
     -- [[ 5. CAPS with HYSTERESIS ]]
-    local baseCap = 142 
-    local talentBonus = Rank("NATURE_GUIDANCE") * 15.8
+    local level = UnitLevel("player")
+    if level > 70 then level = 70 end
     
-    -- Draenei Check
+    local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
+    local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
+    
     local _, race = UnitRace("player")
-    if race == "Draenei" then talentBonus = talentBonus + 15.8 end
+    local racialHitPct = (race == "Draenei") and 1 or 0
+    local natureGuidancePct = Rank("NATURE_GUIDANCE") * 1
 
     -- A. DUAL WIELD HIT (Enhancement)
     if currentSpec:find("ENH") and Rank("DUAL_WIELD_SPEC") > 0 then
          local hitRating = GetCombatRating(6)
-         local specialCap = baseCap - talentBonus
-         if specialCap < 0 then specialCap = 0 end
+         -- DW wants 9% to cap specials, but continues scaling well up to ~24% for white damage
+         local specialCapPct = math.max(0, 9 - natureGuidancePct - racialHitPct)
+         local specialCapRating = specialCapPct * hitScalar
          
-         if hitRating >= (specialCap + 20) then
+         if hitRating >= (specialCapRating + (2 * hitScalar)) then
 			weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8 
 			table.insert(activeCaps, MSC.L["Yellow Hit"])
-		elseif hitRating >= specialCap then
+		elseif hitRating >= specialCapRating then
 			weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
 			table.insert(activeCaps, MSC.L["Y-Hit (Soft)"])
 		end
@@ -815,13 +819,13 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- B. 2H / TANK HIT (Hard Cap)
     elseif weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
          local hitRating = GetCombatRating(6)
-         local cap = baseCap - talentBonus
-         if cap < 0 then cap = 0 end
+         local baseCapPct = currentSpec:find("Leveling") and 5 or 9
+         local capRating = math.max(0, baseCapPct - natureGuidancePct - racialHitPct) * hitScalar
          
-         if hitRating >= (cap + 15) then
+         if hitRating >= (capRating + hitScalar) then
 			weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
 			table.insert(activeCaps, MSC.L["Hit"])
-		elseif hitRating >= cap then
+		elseif hitRating >= capRating then
 			weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
 			table.insert(activeCaps, MSC.L["Hit (Soft)"])
 		end
@@ -830,29 +834,18 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- C. SPELL HIT (Elemental)
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
          local hitRating = GetCombatRating(8)
-         local baseCap = 202 
+         local baseCapPct = 16 
          
-         -- Calculate exact reduction from talents
-         -- 1% Spell Hit = 12.6 Rating
-         local precisionBonus = Rank("ELEMENTAL_PRECISION") * 25.2 -- 2% per rank
-         local guidanceBonus = Rank("NATURE_GUIDANCE") * 12.6 -- 1% per rank
+         local precisionPct = Rank("ELEMENTAL_PRECISION") * 2 
+         local wrathPct = (Rank("TOTEM_OF_WRATH") > 0) and 3 or 0
          
-         local spellCap = baseCap - precisionBonus - guidanceBonus
+         local spellCapPct = math.max(0, baseCapPct - precisionPct - natureGuidancePct - wrathPct - racialHitPct)
+         local spellCapRating = spellCapPct * spellHitScalar
          
-         -- Totem of Wrath Check
-         if Rank("TOTEM_OF_WRATH") > 0 then
-             spellCap = spellCap - 37.8 -- 3%
-         end
-
-         -- Draenei Racial
-         if race == "Draenei" then spellCap = spellCap - 12.6 end
-         
-         if spellCap < 0 then spellCap = 0 end
-         
-         if hitRating >= (spellCap + 15) then
+         if hitRating >= (spellCapRating + spellHitScalar) then
 			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
 			table.insert(activeCaps, MSC.L["Spell Hit"])
-		elseif hitRating >= spellCap then
+		elseif hitRating >= spellCapRating then
 			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
 			table.insert(activeCaps, MSC.L["Hit (Soft)"])
 		end
@@ -862,16 +855,19 @@ function Shaman:ApplyScalers(weights, currentSpec)
     return weights, capText
 end
 
-function Shaman:GetWeaponBonus(itemLink) 
-    if not itemLink then return 0 end
+function Shaman:GetWeaponBonus(itemLink, weights) 
+    if not itemLink or not weights then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
     local _, race = UnitRace("player")
+    local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
 
     -- Racial: Orc (Axe/Fist)
-    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then bonus = bonus + 40 end
+    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then 
+        bonus = bonus + (40 * apScoreValue) 
+    end
     
     return bonus
 end

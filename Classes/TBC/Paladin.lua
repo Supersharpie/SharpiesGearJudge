@@ -979,22 +979,25 @@ function Paladin:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 3. CAPS with HYSTERESIS ]]
+    local level = UnitLevel("player")
+    if level > 70 then level = 70 end
     
     -- A. MELEE HIT CAP (Ret/Prot)
     local _, raceID = UnitRace("player")
-	local racialBonus = (raceID == "Draenei") and 15.8 or 0 -- Approx 1% hit in rating
+	local racialHitPct = (raceID == "Draenei") and 1 or 0 
 
 	if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-    local hitRating = GetCombatRating(6) 
-    local baseCap = 142 
-    local talentBonus = Rank("PRECISION") * 15.8
-    -- Subtract racial from the required cap
-    local finalCap = baseCap - talentBonus - racialBonus
+        local hitRating = GetCombatRating(6) 
+        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
+        local baseCapPct = currentSpec:find("Leveling") and 5 or 9
+        local talentHitPct = Rank("PRECISION") * 1
         
-        if hitRating >= (finalCap + 15) then
+        local finalCapRating = math.max(0, baseCapPct - talentHitPct - racialHitPct) * hitScalar
+        
+        if hitRating >= (finalCapRating + hitScalar) then
             weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
             table.insert(activeCaps, MSC.L["Hit"])
-        elseif hitRating >= finalCap then
+        elseif hitRating >= finalCapRating then
             weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
             table.insert(activeCaps, MSC.L["Hit (Soft)"])
         end
@@ -1002,101 +1005,80 @@ function Paladin:ApplyScalers(weights, currentSpec)
 
     -- B. SPELL HIT CAP (Shockadin / Prot)
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) -- Spell Hit
-        -- 4% PvP Cap (roughly 50 rating). 16% PvE Cap (202).
-        local cap = 202
-        if currentSpec == "SHOCKADIN_PVP" then cap = 50 end 
+        local hitRating = GetCombatRating(8) 
+        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
         
-        if hitRating >= (cap + 15) then
+        local baseCapPct = 16
+        if currentSpec == "SHOCKADIN_PVP" then baseCapPct = 4 end 
+        local finalCapRating = baseCapPct * spellHitScalar
+        
+        if hitRating >= (finalCapRating + spellHitScalar) then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
             table.insert(activeCaps, MSC.L["Spell Hit"])
-        elseif hitRating >= cap then
+        elseif hitRating >= finalCapRating then
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
             table.insert(activeCaps, MSC.L["S-Hit (Soft)"])
         end
     end
 
--- [[ C. DEFENSE CAP (Prot) ]]
-    -- If we are in a tanking spec (Defense weighted high)
+    -- C. DEFENSE CAP (Prot)
     if weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] > 1.0 then
         local baseDef, armorDef = UnitDefense("player")
         local currentDef = baseDef + armorDef
+        local dynamicDefCap = (level * 5) + 140
         
-        -- Tier 1: SAFELY CAPPED (Hysteresis Buffer)
-        if currentDef >= 495 then
+        if currentDef >= (dynamicDefCap + 5) then
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
             table.insert(activeCaps, MSC.L["Def (Safe)"])
-
-            -- EFFECTIVE HEALTH PIVOT
-            -- Once safe, Stamina and Armor become the new Kings for survival
             weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.3
             weights["ITEM_MOD_ARMOR_SHORT"]   = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.5
-
-        -- Tier 2: DANGER ZONE / SOFT CAP
-        elseif currentDef >= 490 then
-            -- Keep Defense valuable enough to hold the cap, but allow huge Stam upgrades to win
+        elseif currentDef >= dynamicDefCap then
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.6
             table.insert(activeCaps, MSC.L["Def (Soft)"])
-            
-        -- Tier 3: UNDER CAP (Default weights apply, typically > 2.0)
         end
     end
 
--- [[ D. CRUSH CAP (Prot) ]]
+    -- D. CRUSH CAP (Prot) - (Remains purely Avoidance Percentage, no rating scalars needed!)
     if currentSpec:find("PROT") and weights["ITEM_MOD_BLOCK_RATING_SHORT"] then
-        -- 5% Base Miss + Dodge + Parry + Block + 30% Holy Shield
         local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + 30.0
-        
-        -- Tier 1: SAFELY CAPPED (102.8%+) - Buffer against missing Agility/Defense buffs
         if avoidance >= 102.8 then
             weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5
             weights["ITEM_MOD_BLOCK_VALUE_SHORT"] = (weights["ITEM_MOD_BLOCK_VALUE_SHORT"] or 1.0) * 0.8
             table.insert(activeCaps, MSC.L["Crush (Safe)"])
-
-            -- PIVOT TO EFFECTIVE HEALTH: Stamina and Armor scale up
             weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.2
             weights["ITEM_MOD_ARMOR_SHORT"]   = (weights["ITEM_MOD_ARMOR_SHORT"] or 0.1) * 1.2
-
-        -- Tier 2: DANGER ZONE / SOFT CAP (102.4% - 102.79%)
         elseif avoidance >= 102.4 then
-            weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0 -- Value drops, but keeps you pushing for the safe zone
+            weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0 
             table.insert(activeCaps, MSC.L["Crush (Soft)"])
-            
-        -- Tier 3: UNDER CAP (Default weights apply)
         end
     end	
 
--- E. EXPERTISE CAP (Ret/Prot)
+    -- E. EXPERTISE CAP (Ret/Prot)
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24) 
-        local _, raceID = UnitRace("player")
+        local expScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][1]) or 3.94
         
-        local racialBonus = 0
+        local racialBonusExpSkill = 0
         if raceID == "Human" then
             local itemLink = GetInventoryItemLink("player", 16)
             if itemLink then
                 local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-                -- ClassID 2 = Weapon. 
-                -- SubClass: 4=1H Mace, 5=2H Mace, 7=1H Sword, 8=2H Sword
                 if classID == 2 and (subClassID == 4 or subClassID == 5 or subClassID == 7 or subClassID == 8) then
-                    racialBonus = 5 * 3.94 -- 5 Expertise Skill converted to Rating (~19.7)
+                    racialBonusExpSkill = 5 
                 end
             end
         elseif raceID == "Orc" then
              local itemLink = GetInventoryItemLink("player", 16)
              if itemLink then
                 local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-                -- SubClass: 0=Axe 1H, 1=Axe 2H
                 if classID == 2 and (subClassID == 0 or subClassID == 1) then
-                    racialBonus = 5 * 3.94 
+                    racialBonusExpSkill = 5 
                 end
              end
-        elseif raceID == "Dwarf" then
-
         end
 
-        -- Check cap against (Rating + Racial Bonus)
-        if (expRating + racialBonus) >= 103 then -- 26 Expertise Cap (approx 103 rating)
+        local totalExpSkill = (expRating / expScalar) + racialBonusExpSkill
+        if totalExpSkill >= 26 then 
             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.5
             table.insert(activeCaps, "Exp")
         end
@@ -1106,16 +1088,17 @@ function Paladin:ApplyScalers(weights, currentSpec)
     return weights, capText
 end
 
-function Paladin:GetWeaponBonus(itemLink)
-    if not itemLink then return 0 end
+function Paladin:GetWeaponBonus(itemLink, weights)
+    if not itemLink or not weights then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
     local _, raceID = UnitRace("player")
+    local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
 
     if raceID == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then 
-        bonus = bonus + 40 
+        bonus = bonus + (40 * apScoreValue) 
     end
     
     return bonus

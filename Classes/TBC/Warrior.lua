@@ -703,14 +703,19 @@ function Warrior:ApplyScalers(weights, currentSpec)
         end
     end
 
+	-- [[ D. HIT CAP ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(6) 
-        local baseCap = 142
-        local talentBonus = Rank("PRECISION") * 15.8
-        local finalCap = baseCap - talentBonus
-        if finalCap < 0 then finalCap = 0 end
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
         
-       if hitRating >= (finalCap + 15) then
+        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
+        local baseCapPct = currentSpec:find("Leveling") and 5 or 9 
+        local talentHitPct = Rank("PRECISION") * 1
+        
+        local finalCapRating = math.max(0, baseCapPct - talentHitPct) * hitScalar
+        
+       if hitRating >= (finalCapRating + hitScalar) then
 			if currentSpec:find("FURY") or currentSpec:find("DW") then
 				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.8
 				table.insert(activeCaps, MSC.L["Y-Hit (Rage)"])
@@ -718,7 +723,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
 				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
 				table.insert(activeCaps, MSC.L["Hit"])
 			end
-		elseif hitRating >= finalCap then
+		elseif hitRating >= finalCapRating then
             if currentSpec:find("FURY") or currentSpec:find("DW") then
                  weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.4
             else
@@ -730,7 +735,10 @@ function Warrior:ApplyScalers(weights, currentSpec)
 
     if weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] > 1.0 then
         local baseDef, armorDef = UnitDefense("player")
-        if (baseDef + armorDef) >= 490 then
+        local playerLevel = UnitLevel("player")
+        local dynamicDefCap = (playerLevel * 5) + 140
+        
+        if (baseDef + armorDef) >= dynamicDefCap then
             weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8
             table.insert(activeCaps, MSC.L["Def"])
             weights["ITEM_MOD_STAMINA_SHORT"] = (weights["ITEM_MOD_STAMINA_SHORT"] or 1.5) * 1.3
@@ -761,26 +769,36 @@ function Warrior:ApplyScalers(weights, currentSpec)
             table.insert(activeCaps, MSC.L["Crush (Soft)"])
         end
     end
-
+	
+	-- [[ F. The Expertise Cap ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24)
-        local _, raceID = UnitRace("player")
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
+        local expScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][1]) or 3.94
         
-        -- [[ RACIAL EXPERTISE ]]
-        local racialBonus = 0
+        local _, raceID = UnitRace("player")
+        local racialBonusExpSkill = 0
         local itemLink = GetInventoryItemLink("player", 16)
+        
         if itemLink then
              local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-             if classID == 2 then -- Weapon
+             if classID == 2 then 
                  if raceID == "Human" and (subClassID == 4 or subClassID == 5 or subClassID == 7 or subClassID == 8) then
-                    racialBonus = 20 -- 5 Skill ~ 20 Rating
+                    racialBonusExpSkill = 5 
                  elseif raceID == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then
-                    racialBonus = 20 
+                    racialBonusExpSkill = 5 
                  end
              end
         end
 
-        if (expRating + racialBonus) >= 103 then
+        local totalExpSkill = (expRating / expScalar) + racialBonusExpSkill
+        -- Defiance (Prot Talent) gives Expertise
+        if currentSpec:find("PROT") or currentSpec:find("Tank") then
+             totalExpSkill = totalExpSkill + (Rank("DEFIANCE") * 2)
+        end
+
+        if totalExpSkill >= 26 then
             weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.5
             table.insert(activeCaps, MSC.L["Exp"])
         end
@@ -790,29 +808,31 @@ function Warrior:ApplyScalers(weights, currentSpec)
     return weights, capText
 end
 
-function Warrior:GetWeaponBonus(itemLink)
-    if not itemLink then return 0 end
+function Warrior:GetWeaponBonus(itemLink, weights)
+    if not itemLink or not weights then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
     local _, race = UnitRace("player")
+    local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
+    local critScoreValue = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 1.0) * 22.1 -- rough fallback if scalar fails
 
-    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then bonus = bonus + 40 end
-    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then bonus = bonus + 40 end
+    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then bonus = bonus + (40 * apScoreValue) end
+    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then bonus = bonus + (40 * apScoreValue) end
 
     local function Rank(k) return MSC:GetTalentRank(k) end
     if subClassID == 0 or subClassID == 1 or subClassID == 6 then
         local rank = Rank("POLEAXE_SPEC")
-        if rank > 0 then bonus = bonus + (rank * 35.0) end
+        if rank > 0 then bonus = bonus + (rank * 1.0 * critScoreValue) end -- 1% Crit per rank
     end
     if subClassID == 7 or subClassID == 8 then
         local rank = Rank("SWORD_SPEC")
-        if rank > 0 then bonus = bonus + (rank * 35.0) end
+        if rank > 0 then bonus = bonus + (rank * 35.0 * apScoreValue) end
     end
     if subClassID == 4 or subClassID == 5 then
         local rank = Rank("MACE_SPEC")
-        if rank > 0 then bonus = bonus + (rank * 10.0) end
+        if rank > 0 then bonus = bonus + (rank * 10.0 * apScoreValue) end
     end
 
     return bonus

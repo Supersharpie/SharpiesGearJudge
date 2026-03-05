@@ -624,20 +624,27 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- [[ 3. HIT CAP ]]
     if w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(8) 
-        local baseCap = 202 
-        local talentBonus = 0
-        if currentSpec:find("SHADOW") then
-             talentBonus = Rank("SHADOW_FOCUS") * 25.2
-        end
-        local finalCap = baseCap - talentBonus
-        local _, race = UnitRace("player")
-        if race == "Draenei" then finalCap = finalCap - 12.6 end
-        if finalCap < 0 then finalCap = 0 end
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
         
-        if hitRating >= (finalCap + 15) then
+        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
+        
+        local baseCapPct = 16 
+        local talentBonusPct = 0
+        
+        if currentSpec:find("SHADOW") then
+             talentBonusPct = Rank("SHADOW_FOCUS") * 2
+        end
+        
+        local _, race = UnitRace("player")
+        if race == "Draenei" then talentBonusPct = talentBonusPct + 1 end
+        
+        local finalCapRating = math.max(0, baseCapPct - talentBonusPct) * spellHitScalar
+        
+        if hitRating >= (finalCapRating + spellHitScalar) then
 			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
 			table.insert(activeCaps, MSC.L["Hit"])
-		elseif hitRating >= finalCap then
+		elseif hitRating >= finalCapRating then
 			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
 			table.insert(activeCaps, MSC.L["Hit (Soft)"])
 		end

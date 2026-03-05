@@ -629,14 +629,17 @@ function Rogue:ApplyScalers(weights, currentSpec)
     -- [[ 3. HIT CAP (With Hysteresis) ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(6) 
-        local baseCap = 142
-        local talentBonus = Rank("PRECISION") * 15.8 
-        local finalCap = baseCap - talentBonus
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
         
-        if finalCap < 0 then finalCap = 0 end
+        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
+        local baseCapPct = currentSpec:find("Leveling") and 5 or 9 
+        local talentHitPct = Rank("PRECISION") * 1
+        
+        local finalCapRating = math.max(0, baseCapPct - talentHitPct) * hitScalar
 
         -- Hysteresis Buffer: 15 Rating
-        if hitRating >= (finalCap + 15) then
+        if hitRating >= (finalCapRating + hitScalar) then
 			if currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling") then
 				weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.0 
 				table.insert(activeCaps, MSC.L["Yellow Hit"])
@@ -644,7 +647,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
 				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
 				table.insert(activeCaps, MSC.L["Hit"])
 			end
-		elseif hitRating >= finalCap then
+		elseif hitRating >= finalCapRating then
 			weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.8
 			table.insert(activeCaps, MSC.L["Hit (Soft)"])
 		end
@@ -653,27 +656,30 @@ function Rogue:ApplyScalers(weights, currentSpec)
     -- [[ 4. EXPERTISE CAP ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
         local expRating = GetCombatRating(24)
-        local _, race = UnitRace("player")
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
+        local expScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][1]) or 3.94
         
-        -- Check if we are using a Racial weapon
+        local _, race = UnitRace("player")
         local humanBonus = 0
         if race == "Human" then
              local itemLink = GetInventoryItemLink("player", 16)
              if itemLink then
                  local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
                  if classID == 2 and (subClassID == 7 or subClassID == 4) then -- Sword/Mace
-                     humanBonus = 20
+                     humanBonus = 5 -- 5 Expertise Skill
                  end
              end
         end
         
-        local talentBonus = Rank("WEAPON_EXPERTISE") * 20 
-        local totalExp = expRating + humanBonus + talentBonus
+        local talentBonus = Rank("WEAPON_EXPERTISE") * 5 -- 5 Expertise Skill per rank
+        local totalExpSkill = (expRating / expScalar) + humanBonus + talentBonus
         
-        if totalExp >= (103 + 10) then
+        -- Cap is 6.5% Dodge (which requires 26 Expertise Skill)
+        if totalExpSkill >= 28 then -- Safety buffer
 			weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5
 			table.insert(activeCaps, MSC.L["Exp"])
-		elseif totalExp >= 103 then
+		elseif totalExpSkill >= 26 then
 			weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.8
 			table.insert(activeCaps, MSC.L["Exp (Soft)"])
 		end
@@ -683,35 +689,34 @@ function Rogue:ApplyScalers(weights, currentSpec)
     return weights, capText
 end
 
-function Rogue:GetWeaponBonus(itemLink)
-    if not itemLink then return 0 end
+function Rogue:GetWeaponBonus(itemLink, weights)
+    if not itemLink or not weights then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
     local _, race = UnitRace("player")
-
-    -- Racial: Human (Sword/Mace)
-    if race == "Human" and (subClassID == 7 or subClassID == 4) then 
-        bonus = bonus + 40 
-    end
+    local level = UnitLevel("player")
+    if level > 70 then level = 70 end
     
-    -- Racial: Troll (Bow/Thrown)
-    if race == "Troll" and (subClassID == 2 or subClassID == 16) then
-        bonus = bonus + 35
-    end
-    -- Racial: Dwarf (Gun)
-    if race == "Dwarf" and subClassID == 3 then
-        bonus = bonus + 35
-    end
+    -- Dynamically calculate how much score 1% Crit is worth right now
+    local critScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][9]) or 22.1
+    local critScoreValue = critScalar * (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 1.0)
 
-    -- Talents
+    -- Racial: Troll (Bow/Thrown) / Dwarf (Gun) give +1% Crit
+    if race == "Troll" and (subClassID == 2 or subClassID == 16) then bonus = bonus + critScoreValue end
+    if race == "Dwarf" and subClassID == 3 then bonus = bonus + critScoreValue end
+
+    -- Human Racial and Weapon Spec Talents give Extra Swings or flat damage, we can keep these as fixed high-value numbers or scale them to AP
+    local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
+    
+    if race == "Human" and (subClassID == 7 or subClassID == 4) then bonus = bonus + (40 * apScoreValue) end
+
     local function Rank(k) return MSC:GetTalentRank(k) end
-    
-    if subClassID == 15 and Rank("DAGGER_SPEC") > 0 then bonus = bonus + (Rank("DAGGER_SPEC") * 35.0) end
-    if subClassID == 13 and Rank("FIST_SPEC") > 0 then bonus = bonus + (Rank("FIST_SPEC") * 35.0) end
-    if subClassID == 7 and Rank("SWORD_SPEC") > 0 then bonus = bonus + (Rank("SWORD_SPEC") * 35.0) end
-    if subClassID == 4 and Rank("MACE_SPEC") > 0 then bonus = bonus + (Rank("MACE_SPEC") * 25.0) end
+    if subClassID == 15 and Rank("DAGGER_SPEC") > 0 then bonus = bonus + (Rank("DAGGER_SPEC") * 1.0 * critScoreValue) end -- 1% Crit per rank
+    if subClassID == 13 and Rank("FIST_SPEC") > 0 then bonus = bonus + (Rank("FIST_SPEC") * 1.0 * critScoreValue) end -- 1% Crit per rank
+    if subClassID == 7 and Rank("SWORD_SPEC") > 0 then bonus = bonus + (Rank("SWORD_SPEC") * 35.0 * apScoreValue) end -- Extra Swing
+    if subClassID == 4 and Rank("MACE_SPEC") > 0 then bonus = bonus + (Rank("MACE_SPEC") * 25.0 * apScoreValue) end -- Armor Pen / Stun
 
     return bonus
 end

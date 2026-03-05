@@ -827,88 +827,35 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
     
-    -- [[ 3. CAPS with HYSTERESIS ]]
-    
-    -- A. BALANCE HIT CAP (Spell Hit)
-    if (currentSpec:find("BALANCE") or currentSpec:find("Caster")) and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) 
-        local baseCap = 202 
-        local talentBonus = Rank("BALANCE_OF_POWER") * 25.2 -- 2% per rank
-        local finalCap = baseCap - talentBonus
-        if finalCap < 0 then finalCap = 0 end
-        
-        if hitRating >= (finalCap + 5) then
-			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-			table.insert(activeCaps, MSC.L["Hit"])
-		elseif hitRating >= finalCap then
-			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+    function Warrior:GetWeaponBonus(itemLink, weights)
+    if not itemLink or not weights then return 0 end
+    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
+    if classID ~= 2 then return 0 end 
+
+    local bonus = 0
+    local _, race = UnitRace("player")
+    local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
+    local critScoreValue = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 1.0) * 22.1 -- rough fallback if scalar fails
+
+    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then bonus = bonus + (40 * apScoreValue) end
+    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then bonus = bonus + (40 * apScoreValue) end
+
+    local function Rank(k) return MSC:GetTalentRank(k) end
+    if subClassID == 0 or subClassID == 1 or subClassID == 6 then
+        local rank = Rank("POLEAXE_SPEC")
+        if rank > 0 then bonus = bonus + (rank * 1.0 * critScoreValue) end -- 1% Crit per rank
+    end
+    if subClassID == 7 or subClassID == 8 then
+        local rank = Rank("SWORD_SPEC")
+        if rank > 0 then bonus = bonus + (rank * 35.0 * apScoreValue) end
+    end
+    if subClassID == 4 or subClassID == 5 then
+        local rank = Rank("MACE_SPEC")
+        if rank > 0 then bonus = bonus + (rank * 10.0 * apScoreValue) end
     end
 
-    -- B. FERAL HIT CAP (Melee Hit 9%)
-    if (currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear")) and w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(6)
-        local cap = 142
-        
-        if hitRating >= (cap + 5) then 
-		w["ITEM_MOD_HIT_RATING_SHORT"] = 0.01 
-		table.insert(activeCaps, MSC.L["Hit"])
-	elseif hitRating >= cap then
-		w["ITEM_MOD_HIT_RATING_SHORT"] = 0.1 
-		table.insert(activeCaps, MSC.L["Hit (Soft)"])
-	end
+    return bonus
 end
-    
-    -- [[ NEW: EXPERTISE CAP (6.5% Dodge) ]]
-    if (currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear")) and w["ITEM_MOD_EXPERTISE_RATING_SHORT"] then
-        local expRating = GetCombatRating(24) -- CR_EXPERTISE
-        -- Cap is 6.5% Dodge. 1 Exp = 3.94 rating. 26 Exp = 102.5 rating.
-        local cap = 103 
-        
-        if expRating >= (cap + 12) then
-			w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.2
-			table.insert(activeCaps, MSC.L["Exp"])
-		elseif expRating >= cap then
-			w["ITEM_MOD_EXPERTISE_RATING_SHORT"] = w["ITEM_MOD_EXPERTISE_RATING_SHORT"] * 0.4
-			table.insert(activeCaps, MSC.L["Exp (Soft)"])
-		end
-    end
-
-    -- C. BEAR CRIT IMMUNITY (Def/Resil)
-    if (currentSpec:find("FERAL_BEAR") or currentSpec:find("Bear")) and w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] then
-        local baseDef, armorDef = UnitDefense("player")
-        local defenseSkill = baseDef + armorDef
-        local resil = GetCombatRating(15) 
-        
-        local reductionNeeded = 5.6
-        if Rank("SURVIVAL_OF_FITTEST") >= 3 then 
-            reductionNeeded = 2.6 
-        end
-        
-        local defReduction = (defenseSkill - 350) * 0.04
-        if defReduction < 0 then defReduction = 0 end
-        local resilReduction = resil / 39.4
-        local currentReduction = defReduction + resilReduction
-        
-        -- HYSTERESIS
-        if currentReduction >= (reductionNeeded + 0.2) then
-             w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.6
-             w["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.5
-             table.insert(activeCaps, MSC.L["Crit Immune"])
-             
-             w["ITEM_MOD_STAMINA_SHORT"] = w["ITEM_MOD_STAMINA_SHORT"] * 1.2
-             w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * 1.2
-             
-        elseif currentReduction >= reductionNeeded then
-             w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.0
-             w["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 0.8
-             table.insert(activeCaps, MSC.L["Immune (Soft)"])
-        else
-             w["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.5
-             w["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 2.5
-        end
-    end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
     return w, capText

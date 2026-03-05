@@ -726,32 +726,34 @@ function Warlock:ApplyScalers(weights, currentSpec)
         end
     end
     
-    -- [[ 4. HIT CAP with HYSTERESIS ]]
+    -- [[ 2. HIT CAP ]]
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) 
-        local baseCap = 202 -- TBC Standard
+        local hitRating = GetCombatRating(8)
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
         
+        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
+        
+        local baseCapPct = 16 
         if currentSpec:find("PVP") then
-            baseCap = 51 
+            baseCapPct = 4 
         end
         
-        local talentBonus = 0
+        local talentBonusPct = 0
         if (currentSpec:find("AFFLICTION") or currentSpec:find("Leveling")) and not currentSpec:find("Fire") then
-         talentBonus = Rank("SUPPRESSION") * 25.2 
+             talentBonusPct = Rank("SUPPRESSION") * 2 
         end
-        
-        local finalCap = baseCap - talentBonus
 
         local _, race = UnitRace("player")
-        if race == "Draenei" then finalCap = finalCap - 12.6 end
-
-        if finalCap < 0 then finalCap = 0 end
+        if race == "Draenei" then talentBonusPct = talentBonusPct + 1 end
         
-        -- BUFFER LOGIC
-        if hitRating >= (finalCap + 5) then
+        local finalCapRating = math.max(0, baseCapPct - talentBonusPct) * spellHitScalar
+
+        -- BUFFER LOGIC (Using ~0.5% buffer for Warlocks as previously defined)
+        if hitRating >= (finalCapRating + (spellHitScalar * 0.5)) then
 			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
 			table.insert(activeCaps, MSC.L["Hit (Capped)"])
-		elseif hitRating >= finalCap then
+		elseif hitRating >= finalCapRating then
 			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.2
 			table.insert(activeCaps, MSC.L["Hit (Soft)"])
 		end

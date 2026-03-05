@@ -65,9 +65,9 @@ function MSC:SafeCopy(orig, dest)
     return copy
 end
 
-function MSC:GetWeaponSpecBonus(itemLink, class, specName)
+function MSC:GetWeaponSpecBonus(itemLink, class, specName, weights)
     if MSC.CurrentClass and MSC.CurrentClass.GetWeaponBonus then
-        return MSC.CurrentClass:GetWeaponBonus(itemLink)
+        return MSC.CurrentClass:GetWeaponBonus(itemLink, weights)
     end
     return 0
 end
@@ -214,8 +214,8 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
 
     -- [[ 8. WEAPON SPECIALIZATION BONUS ]]
     local mh = gearTable[16]; local oh = gearTable[17]
-    if mh then totalScore = totalScore + MSC:GetWeaponSpecBonus(mh, MSC.CurrentClass, specName) end
-    if oh then totalScore = totalScore + MSC:GetWeaponSpecBonus(oh, MSC.CurrentClass, specName) end
+    if mh then totalScore = totalScore + MSC:GetWeaponSpecBonus(mh, MSC.CurrentClass, specName, weights) end
+    if oh then totalScore = totalScore + MSC:GetWeaponSpecBonus(oh, MSC.CurrentClass, specName, weights) end
 
     -- [[ 9. META GEM ACTIVATION CHECK (TBC Only) ]]
     if not MSC.IsEra and metaGemID and MSC.CheckMetaRequirements then

@@ -654,48 +654,59 @@ function Hunter:ApplyScalers(weights, currentSpec)
         w["ITEM_MOD_AGILITY_SHORT"] = w["ITEM_MOD_AGILITY_SHORT"] * 1.2 
     end
 
-    -- [[ 3. HIT CAP (Uses Ranged Hit) ]]
+	-- [[ 3. HIT CAP (Uses Ranged Hit) ]]
     if w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         local hitRating = GetCombatRating(7) -- Ranged Hit
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
         
-        -- Leveling Cap: 5% (~79 Rating)
-        -- Raid Cap: 9% (~142 Rating)
-        local baseCap = 142 
-        if currentSpec:find("Leveling") then baseCap = 79 end
+        -- Get the dynamic scalar for Hit Rating (Index 6)
+        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
         
-        local talentBonus = Rank("SUREFOOTED") * 15.8 
-        local finalCap = baseCap - talentBonus
+        -- Base Cap: 5% for Leveling/Dungeons, 9% for Raid Bosses
+        local baseCapPct = currentSpec:find("Leveling") and 5 or 9 
         
+        -- Talent & Racial Flat Percentages
+        local talentHitPct = Rank("SUREFOOTED") * 1
         local _, race = UnitRace("player")
-        if race == "Draenei" then finalCap = finalCap - 15.8 end -- Heroic Presence applies to self
-        if race == "Troll" and IsEquippedItemType("Bow") then finalCap = finalCap - 15.8 end -- Bow Spec (Hidden hit bonus)
-        
-        if finalCap < 0 then finalCap = 0 end
+        if race == "Draenei" then talentHitPct = talentHitPct + 1 end 
+        -- (Removed Troll Bow Spec from here, as it gives Crit in TBC, not Hit!)
 
-        if hitRating >= (finalCap + 15) then
-			w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-			table.insert(activeCaps, MSC.L["Hit"])
-		elseif hitRating >= finalCap then
-			w["ITEM_MOD_HIT_RATING_SHORT"] = w["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+        -- Calculate the exact dynamic rating cap for their current level
+        local finalCapRating = math.max(0, baseCapPct - talentHitPct) * hitScalar
+
+        -- If they are over cap by more than 1%, severely devalue hit
+        if hitRating >= (finalCapRating + hitScalar) then
+            w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
+            table.insert(activeCaps, MSC.L["Hit"])
+        elseif hitRating >= finalCapRating then
+            w["ITEM_MOD_HIT_RATING_SHORT"] = w["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
+            table.insert(activeCaps, MSC.L["Hit (Soft)"])
+        end
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
     return w, capText
 end
 
-function Hunter:GetWeaponBonus(itemLink) 
-    if not itemLink then return 0 end
+function Hunter:GetWeaponBonus(itemLink, weights) 
+    if not itemLink or not weights then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
     local _, race = UnitRace("player")
+    local level = UnitLevel("player")
+    if level > 70 then level = 70 end
+    
+    -- Dynamically calculate how much score 1% Crit is worth right now
+    local critScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][9]) or 22.1
+    local critWeight = weights["ITEM_MOD_CRIT_RATING_SHORT"] or 1.0
+    local scoreValue = critScalar * critWeight
 
-    -- Racial: Troll (Bow) / Dwarf (Gun) (+1% Crit ~ 35 rating score equivalent)
-    if race == "Dwarf" and subClassID == 3 then bonus = bonus + 35 end
-    if race == "Troll" and subClassID == 2 then bonus = bonus + 35 end
+    -- TBC Racials: Troll (Bow) / Dwarf (Gun) give +1% Crit
+    if race == "Dwarf" and subClassID == 3 then bonus = bonus + scoreValue end
+    if race == "Troll" and subClassID == 2 then bonus = bonus + scoreValue end
     
     return bonus
 end

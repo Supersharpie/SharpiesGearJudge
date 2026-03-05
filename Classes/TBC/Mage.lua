@@ -562,40 +562,45 @@ function Mage:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- [[ 3. HIT CAP (Smart Leveling Detection) ]]
+    -- [[ 3. HIT CAP (With Hysteresis) ]]
     if w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local spellHitRating = GetCombatRating(8) 
+        local spellHitRating = GetCombatRating(8)
+        local level = UnitLevel("player")
+        if level > 70 then level = 70 end
         
-        -- Default to Raid Cap (16% ~ 202 Rating)
-        local hitCapNeeded = 202 
+        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
         
-        -- [[ LEVELING ADJUSTMENT ]]
-        -- If we are in a Leveling bracket, we only need ~6% hit (Level + 2 mobs max)
-        -- 6% Hit * 12.6 Rating = ~76 Rating
-        if currentSpec:find("Leveling") then
-            hitCapNeeded = 76
+        -- Default to Raid Cap
+        local baseCapPct = 16
+        
+        -- Adjust for PvP Cap
+        if currentSpec:find("PVP") then
+            baseCapPct = 4
         end
         
-        -- PvP Adjustment
-        if currentSpec:find("PVP") then hitCapNeeded = 50 end -- ~4%
+        -- Adjust for Leveling Cap
+        if currentSpec:find("Leveling") then
+            baseCapPct = 6
+        end
         
-        -- Talent Reductions
-        local arcaneBonus = Rank("ARCANE_FOCUS") * 25.2    -- 2% per rank
-        local frostFireBonus = Rank("ELEMENTAL_PRECISION") * 12.6 -- 1% per rank
+        -- 2% per rank of Arcane Focus, 1% per rank of Elemental Precision
+        local arcaneBonusPct = Rank("ARCANE_FOCUS") * 2    
+        local frostFireBonusPct = Rank("ELEMENTAL_PRECISION") * 1 
         
         -- Subtract the best active talent (usually don't have both active for main nuke)
-        hitCapNeeded = hitCapNeeded - math.max(arcaneBonus, frostFireBonus)
+        local talentBonusPct = math.max(arcaneBonusPct, frostFireBonusPct)
         
         -- Draenei Racial
         local _, race = UnitRace("player")
-        if race == "Draenei" then hitCapNeeded = hitCapNeeded - 12.6 end
+        if race == "Draenei" then talentBonusPct = talentBonusPct + 1 end
         
-        if hitCapNeeded < 0 then hitCapNeeded = 0 end
+        local finalCapRating = math.max(0, baseCapPct - talentBonusPct) * spellHitScalar
 
-        if spellHitRating >= (hitCapNeeded + 15) then
+        -- Hysteresis Buffer
+        if spellHitRating >= (finalCapRating + spellHitScalar) then
 			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
 			table.insert(activeCaps, MSC.L["Hit"])
-		elseif spellHitRating >= hitCapNeeded then
+		elseif spellHitRating >= finalCapRating then
 			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
 			table.insert(activeCaps, MSC.L["Hit (Soft)"])
 		end
