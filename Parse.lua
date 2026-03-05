@@ -313,6 +313,7 @@ MSC.Scanner.EquipPatterns = {
     -- [[ ATTACK POWER (Feral/Ranged MUST be checked before General) ]]
     { p = MSC.L["ranged attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
     { p = MSC.L["feral attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+	{ p = MSC.L["attack power.-(%d+).-in cat"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
     { p = MSC.L["attack power in cat.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, -- Era forms
     { p = MSC.L["attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
 
@@ -586,6 +587,20 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
             -- Recursively pass both halves back through the scanner individually!
             MSC.Scanner.ParseStatLine(part1, outputTable)
             MSC.Scanner.ParseStatLine(part2, outputTable)
+            return
+        end
+    end
+	
+	-- [[ ALL STATS EXPLODER ]]
+    -- Instantly breaks "+X All Stats" into the big 5 attributes
+    if string_find(cleanText, "all stats") then
+        local val = tonumber(string_match(cleanText, "%d+"))
+        if val then
+            outputTable["ITEM_MOD_STRENGTH_SHORT"]  = (outputTable["ITEM_MOD_STRENGTH_SHORT"] or 0) + val
+            outputTable["ITEM_MOD_AGILITY_SHORT"]   = (outputTable["ITEM_MOD_AGILITY_SHORT"] or 0) + val
+            outputTable["ITEM_MOD_STAMINA_SHORT"]   = (outputTable["ITEM_MOD_STAMINA_SHORT"] or 0) + val
+            outputTable["ITEM_MOD_INTELLECT_SHORT"] = (outputTable["ITEM_MOD_INTELLECT_SHORT"] or 0) + val
+            outputTable["ITEM_MOD_SPIRIT_SHORT"]    = (outputTable["ITEM_MOD_SPIRIT_SHORT"] or 0) + val
             return
         end
     end
