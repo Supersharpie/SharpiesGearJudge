@@ -2,6 +2,10 @@
 
 ## 🚀 v2.4.10
 
+* **Add a modifiers table and AddMod helper to collect human-readable sources for rings.**
+* **Instrument various class/talent/race branches to call AddMod.**
+* **Record expertise/crit/hit/spell/expertise sources and a string note for Druid Survival of the Fittest cap reduction.**
+* **Attach collected modifiers to ring objects (mods = modifiers[label]) and render them in the GameTooltip with source and formatted value.**
 * **Refactored AddRing logic to explicitly mark and handle rating-based stats (isRating) and special cases (dodge, crit, spell crit, hunter ranged crit).** 
 * **Recomputed currentDisplay and capRating for ratings using appropriate API calls or scaled values, and map rating shortfalls back to rating amounts for tooltips.** 
 * **Also adjusted skill/cap calculations to include expertBonus and fix capRating computation for non-rating skills.** 

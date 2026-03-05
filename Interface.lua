@@ -1129,42 +1129,74 @@ local function GetClassRings(class, stats, weights)
         return 0
     end
 
+    -- NEW: Tracking table for Tooltips
+    local modifiers = {}
+    local function AddMod(ringLabel, sourceName, value, isPercent)
+        if value and (type(value) == "string" or value > 0) then
+            if not modifiers[ringLabel] then modifiers[ringLabel] = {} end
+            table_insert(modifiers[ringLabel], { source = sourceName, val = value, isPct = isPercent })
+        end
+    end
+
     if class == "MAGE" then
         local arcane = GetTalentRank(1, "Arcane Focus") * 2
         local frost = GetTalentRank(3, "Elemental Precision") * (isTBC and 1 or 2)
         spellHitBonus = math_max(arcane, frost)
+        if arcane >= frost and arcane > 0 then AddMod("Spell Hit", "Arcane Focus", arcane, true)
+        elseif frost > arcane then AddMod("Spell Hit", "Elemental Precision", frost, true) end
     elseif class == "WARLOCK" then
         spellHitBonus = GetTalentRank(1, "Suppression") * 2
+        AddMod("Spell Hit", "Suppression", spellHitBonus, true)
     elseif class == "PRIEST" then
         spellHitBonus = GetTalentRank(3, "Shadow Focus") * 2
+        AddMod("Spell Hit", "Shadow Focus", spellHitBonus, true)
     elseif class == "SHAMAN" then
         local elePrec = GetTalentRank(1, "Elemental Precision") * 2
         local natGuid = GetTalentRank(3, "Nature's Guidance") * 1
         spellHitBonus = elePrec + natGuid
         meleeHitBonus = natGuid
+        AddMod("Spell Hit", "Elemental Precision", elePrec, true)
+        AddMod("Spell Hit", "Nature's Guidance", natGuid, true)
+        AddMod("Hit Cap", "Nature's Guidance", natGuid, true)
     elseif class == "DRUID" then
-    if isTBC then 
-        spellHitBonus = GetTalentRank(1, "Balance of Power") * 2 
-        local sotf = GetTalentRank(2, "Survival of the Fittest")
-        if sotf == 3 then CAP_DEF = maxBaseDef + 65
-        elseif sotf == 2 then CAP_DEF = maxBaseDef + 90
-        elseif sotf == 1 then CAP_DEF = maxBaseDef + 115 
+        if isTBC then 
+            spellHitBonus = GetTalentRank(1, "Balance of Power") * 2 
+            AddMod("Spell Hit", "Balance of Power", spellHitBonus, true)
+            local sotf = GetTalentRank(2, "Survival of the Fittest")
+            if sotf > 0 then
+                local reduction = (sotf == 3 and 75) or (sotf == 2 and 50) or (sotf == 1 and 25) or 0
+                AddMod("Current Defense", "Survival of the Fittest", "Cap reduced by " .. reduction, false)
+            end
+            if sotf == 3 then CAP_DEF = maxBaseDef + 65
+            elseif sotf == 2 then CAP_DEF = maxBaseDef + 90
+            elseif sotf == 1 then CAP_DEF = maxBaseDef + 115 
+            end
         end
-    end
     elseif class == "ROGUE" then
         meleeHitBonus = GetTalentRank(2, "Precision") * 1
+        AddMod("Hit Cap", "Precision", meleeHitBonus, true)
         local wepExp = GetTalentRank(2, "Weapon Expertise")
         expertBonus = expertBonus + (wepExp * 5)
+        AddMod("Expertise", "Weapon Expertise", wepExp * 5, false)
     elseif class == "HUNTER" then
         meleeHitBonus = GetTalentRank(3, "Surefooted") * 1
+        AddMod("Hit Cap", "Surefooted", meleeHitBonus, true)
     elseif class == "PALADIN" or class == "WARRIOR" then
         meleeHitBonus = GetTalentRank(2, "Precision") * 1
+        AddMod("Hit Cap", "Precision", meleeHitBonus, true)
         if class == "PALADIN" then 
             spellHitBonus = meleeHitBonus 
-            if isTBC then expertBonus = expertBonus + GetTalentRank(2, "Combat Expertise") end
+            AddMod("Spell Hit", "Precision", spellHitBonus, true)
+            if isTBC then 
+                local cbExp = GetTalentRank(2, "Combat Expertise")
+                expertBonus = expertBonus + cbExp 
+                AddMod("Expertise", "Combat Expertise", cbExp, false)
+            end
         end
         if class == "WARRIOR" and isTBC then 
-            expertBonus = expertBonus + (GetTalentRank(3, "Defiance") * 2) 
+            local def = GetTalentRank(3, "Defiance") * 2
+            expertBonus = expertBonus + def
+            AddMod("Expertise", "Defiance", def, false)
         end
     end
 
@@ -1174,10 +1206,12 @@ local function GetClassRings(class, stats, weights)
         if playerRace == "Human" then
             if subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5 then
                 expertBonus = expertBonus + 5
+                AddMod("Expertise", "Mace/Sword Spec (Human)", 5, false)
             end
         elseif playerRace == "Orc" then
             if subClassID == 0 or subClassID == 1 then
                 expertBonus = expertBonus + 5
+                AddMod("Expertise", "Axe Spec (Orc)", 5, false)
             end
         end
     end
@@ -1186,15 +1220,23 @@ local function GetClassRings(class, stats, weights)
     if rangedLink then
         local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(rangedLink)
         if playerRace == "Dwarf" then
-            if subClassID == 3 then critBonus = critBonus + 1 end 
+            if subClassID == 3 then 
+                critBonus = critBonus + 1 
+                AddMod("Crit", "Gun Spec (Dwarf)", 1, true)
+            end 
         elseif playerRace == "Troll" then
-            if subClassID == 2 then critBonus = critBonus + 1 end 
+            if subClassID == 2 then 
+                critBonus = critBonus + 1 
+                AddMod("Crit", "Bow Spec (Troll)", 1, true)
+            end 
         end
     end
 
     if isTBC and playerRace == "Draenei" then
         spellHitBonus = spellHitBonus + 1
         meleeHitBonus = meleeHitBonus + 1
+        AddMod("Hit Cap", "Heroic Presence (Draenei)", 1, true)
+        AddMod("Spell Hit", "Inspiring Presence (Draenei)", 1, true)
     end
 
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
@@ -1209,8 +1251,10 @@ local function GetClassRings(class, stats, weights)
 			
 			if class == "PALADIN" and GetTalentRank(2, "Holy Shield") > 0 then
 				buffBonus = 30.0
+                AddMod("Crush Cap", "Holy Shield", 30.0, true)
 			elseif class == "WARRIOR" and UnitLevel("player") >= 10 then
 				buffBonus = 75.0
+                AddMod("Crush Cap", "Shield Block", 75.0, true)
 			end
 			
 			-- 5% Base Miss + Avoidance Stats + Active Buff
@@ -1297,7 +1341,7 @@ local function GetClassRings(class, stats, weights)
             end
         end
 
-        table_insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar, isCustom = isCustomCap })
+        table_insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar, isCustom = isCustomCap, mods = modifiers[label] })
     end
 
    -- [[ ROLE SELECTOR ]]
@@ -1421,8 +1465,25 @@ function MSC.UpdateLogic()
                     GameTooltip:AddLine(" ")
                     GameTooltip:AddLine(string_format(MSC.L["1%% requires %.2f Rating"], ring.scalar), 0.6, 0.6, 0.6) 
                 end
+
+                -- NEW: Draw Modifiers if they exist
+                if ring.mods and #ring.mods > 0 then
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddLine(MSC.L["Active Modifiers:"], 0.2, 1, 0.8) -- Distinct Teal Color
+                    for _, mod in ipairs(ring.mods) do
+                        local modValStr = ""
+                        if type(mod.val) == "string" then
+                            modValStr = mod.val
+                        else
+                            modValStr = string_format(mod.isPct and "+%.0f%%" or "+%d", mod.val)
+                        end
+                        GameTooltip:AddDoubleLine(mod.source, modValStr, 0.8, 0.8, 0.8, 0, 1, 0)
+                    end
+                end
+
                 GameTooltip:Show(); self:SetAlpha(1)
             end)
+
             f:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(1) end)
             table_insert(content.children, f)
         end
