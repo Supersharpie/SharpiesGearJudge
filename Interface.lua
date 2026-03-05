@@ -1162,6 +1162,10 @@ local function GetClassRings(class, stats, weights)
         expertBonus = expertBonus + (wepExp * 5)
     elseif class == "HUNTER" then
         meleeHitBonus = GetTalentRank(3, "Surefooted") * 1
+    elseif class == "PALADIN" or class == "WARRIOR" then
+        meleeHitBonus = GetTalentRank(2, "Precision") * 1
+        if class == "PALADIN" then spellHitBonus = meleeHitBonus end
+        if class == "WARRIOR" and isTBC then expertBonus = expertBonus + (GetTalentRank(3, "Defiance") * 2) end
     end
 
     local mhLink = GetInventoryItemLink("player", 16)
@@ -1225,6 +1229,13 @@ local function GetClassRings(class, stats, weights)
         elseif statKey == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then val = GetCombatRating(11)
         elseif statKey == "ITEM_MOD_HASTE_RATING_SHORT" then val = GetCombatRating(18)
         elseif statKey == "ITEM_MOD_SPELL_HASTE_RATING_SHORT" then val = GetCombatRating(20)
+        elseif statKey == "ITEM_MOD_SPELL_POWER_SHORT" then 
+            local maxSP = 0
+            for i=2, 7 do maxSP = math_max(maxSP, GetSpellBonusDamage(i)) end
+            val = maxSP
+            isCustomCap = true
+            currentDisplay = val
+            capRating = capTarget
         end
 
         if not isCustomCap then
@@ -1266,12 +1277,17 @@ local function GetClassRings(class, stats, weights)
             
             if label == "Crit" or string_find(label, "Crit") then
                 currentDisplay = currentDisplay + critBonus
+            elseif label == "Hit Cap" then
+                currentDisplay = currentDisplay + meleeHitBonus
+            elseif label == "Spell Hit" then
+                currentDisplay = currentDisplay + spellHitBonus
             end
         end
 
         table_insert(rings, { l=label, v=currentDisplay, m=capTarget, fmt=formatStr, rawVal = val, rawCap = capRating, scalar = scalar, isCustom = isCustomCap })
     end
 
+   -- [[ ROLE SELECTOR ]]
     if class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" then
         if class == "WARRIOR" and (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5 then
             AddRing("Current Defense", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
@@ -1281,34 +1297,34 @@ local function GetClassRings(class, stats, weights)
         else
             AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
             AddRing("Crit", "ITEM_MOD_CRIT_RATING_SHORT", 35, "%.1f%%") 
-            local wantsExpertise = (weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) > 0
-            if class ~= "HUNTER" or wantsExpertise then
-                AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
-            end
+            AddRing("Haste", "ITEM_MOD_HASTE_RATING_SHORT", 20, "%.1f%%")
+            -- Hunters don't use Expertise, so they just get 3 clean rings!
+            if class ~= "HUNTER" then AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true) end
         end
     elseif class == "MAGE" or class == "WARLOCK" or class == "PRIEST" then
         AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
         AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%") 
-        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")      
+        AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")  
+        AddRing("Spell Power", "ITEM_MOD_SPELL_POWER_SHORT", 0, "%d")    
    elseif class == "PALADIN" or class == "SHAMAN" or class == "DRUID" then
         local isTank = (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0.5
         local isCaster = (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0)
         
         if isTank then
             AddRing("Current Defense", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", CAP_DEF, "%d", true)
-            AddRing("Crush Cap", "CRUSH_CAP", 102.4, "%.2f%%")
-            if isCaster and class == "PALADIN" then 
-                AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%") 
-            else 
-                AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%") 
-            end
+            -- Druids can't block/parry, so give them Dodge instead of a broken Crush Cap!
+            if class == "DRUID" then AddRing("Dodge", "ITEM_MOD_DODGE_RATING_SHORT", 40, "%.1f%%") else AddRing("Crush Cap", "CRUSH_CAP", 102.4, "%.2f%%") end
+            AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%") 
             AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
         elseif isCaster then
             AddRing("Spell Hit", "ITEM_MOD_HIT_SPELL_RATING_SHORT", CAP_HIT_SPELL, "%.1f%%")
             AddRing("Spell Crit", "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 30, "%.1f%%")
+            AddRing("Haste", "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 20, "%.1f%%")
+            AddRing("Spell Power", "ITEM_MOD_SPELL_POWER_SHORT", 0, "%d")
         else
             AddRing("Hit Cap", "ITEM_MOD_HIT_RATING_SHORT", CAP_HIT_MELEE, "%.1f%%")
             AddRing("Crit", "ITEM_MOD_CRIT_RATING_SHORT", 35, "%.1f%%")
+            AddRing("Haste", "ITEM_MOD_HASTE_RATING_SHORT", 20, "%.1f%%")
             AddRing("Expertise", "ITEM_MOD_EXPERTISE_RATING_SHORT", CAP_EXP, "%d", true)
         end
     end
