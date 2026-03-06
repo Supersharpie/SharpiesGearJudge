@@ -827,38 +827,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
     
-    function Warrior:GetWeaponBonus(itemLink, weights)
-    if not itemLink or not weights then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
-    local critScoreValue = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 1.0) * 22.1 -- rough fallback if scalar fails
-
-    if race == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then bonus = bonus + (40 * apScoreValue) end
-    if race == "Orc" and (subClassID == 0 or subClassID == 1 or subClassID == 13) then bonus = bonus + (40 * apScoreValue) end
-
-    local function Rank(k) return MSC:GetTalentRank(k) end
-    if subClassID == 0 or subClassID == 1 or subClassID == 6 then
-        local rank = Rank("POLEAXE_SPEC")
-        if rank > 0 then bonus = bonus + (rank * 1.0 * critScoreValue) end -- 1% Crit per rank
-    end
-    if subClassID == 7 or subClassID == 8 then
-        local rank = Rank("SWORD_SPEC")
-        if rank > 0 then bonus = bonus + (rank * 35.0 * apScoreValue) end
-    end
-    if subClassID == 4 or subClassID == 5 then
-        local rank = Rank("MACE_SPEC")
-        if rank > 0 then bonus = bonus + (rank * 10.0 * apScoreValue) end
-    end
-
-    return bonus
-end
-    
-    local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
-    return w, capText
+    return w
 end
 
 function Druid:GetWeaponBonus(itemLink) return 0 end

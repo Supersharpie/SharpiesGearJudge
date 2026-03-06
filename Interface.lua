@@ -297,8 +297,12 @@ function MSC.InitLabView(parent)
                 MSC.UpdateLabCalc()
             end)
             btn:SetScript("OnEnter", function(self) 
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); 
-                if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(MSC.L["Empty Slot"], 1,1,1) end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                if self.link then 
+                    GameTooltip:SetHyperlink(self.link) 
+                else 
+                    GameTooltip:SetText(title, 1, 1, 1) 
+                end 
                 GameTooltip:Show() 
             end)
             btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -429,7 +433,7 @@ function MSC.InitReceiptView(parent)
         btn.ScoreFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"}); btn.ScoreFrame:SetBackdropColor(0,0,0,0.5)
         btn.ScoreText = btn.ScoreFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); btn.ScoreText:SetPoint("CENTER"); btn.ScoreText:SetTextColor(1, 0.9, 0)
         btn.Alert = btn:CreateTexture(nil, "OVERLAY"); btn.Alert:SetSize(16, 16); btn.Alert:SetPoint("LEFT", btn.ScoreFrame, "RIGHT", 2, 0); btn.Alert:Hide()
-        btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label, 1, 1, 1) end if self.AlertMode then GameTooltip:AddLine(" "); GameTooltip:AddLine(self.AlertText or "Alert", 1, 0, 0) end GameTooltip:Show() end); btn:SetScript("OnLeave", GameTooltip_Hide)
+		btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label, 1, 1, 1) end if self.AlertMode then GameTooltip:AddLine(" "); GameTooltip:AddLine(self.AlertText or MSC.L["Alert"], 1, 0, 0) end GameTooltip:Show() end); btn:SetScript("OnLeave", GameTooltip_Hide)
         
         btn:RegisterForClicks("AnyUp")
         btn:SetScript("OnClick", function(self) if self.link then MSC:ShowScoreBreakdown(self.link, self.SlotID) end end)
@@ -750,21 +754,22 @@ function MSC.UpdateTradeSkillOverlays()
                         if not itemName then
                             MSC_ScannerTooltip:SetHyperlink(link) 
                         else
-                        -- GATEKEEPER
-                        local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                        if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                            if MSC.IsItemUsable(link) then
-                                local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                                if compSlot then
-                                    local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                                    if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                                        if not skillButton.SGJ_Overlay then
-                                            skillButton.SGJ_Overlay = skillButton:CreateTexture(nil, "OVERLAY", nil, 7)
-                                            skillButton.SGJ_Overlay:SetSize(16, 16)
-                                            skillButton.SGJ_Overlay:SetPoint("RIGHT", skillButton, "RIGHT", -2, 0)
-                                            skillButton.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                            -- GATEKEEPER
+                            local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                            if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+                                if MSC.IsItemUsable(link) then
+                                    local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                                    if compSlot then
+                                        local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                                        if newScore and oldScore and (newScore > (oldScore + 0.1)) then
+                                            if not skillButton.SGJ_Overlay then
+                                                skillButton.SGJ_Overlay = skillButton:CreateTexture(nil, "OVERLAY", nil, 7)
+                                                skillButton.SGJ_Overlay:SetSize(16, 16)
+                                                skillButton.SGJ_Overlay:SetPoint("RIGHT", skillButton, "RIGHT", -2, 0)
+                                                skillButton.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                                            end
+                                            skillButton.SGJ_Overlay:Show()
                                         end
-                                        skillButton.SGJ_Overlay:Show()
                                     end
                                 end
                             end
@@ -774,7 +779,6 @@ function MSC.UpdateTradeSkillOverlays()
             end
         end
     end
-end
     
     -- 2. Selected Icon at Top
     local selectedIcon = _G["TradeSkillSkillIcon"]
@@ -2280,7 +2284,7 @@ if ldb then
         end,
         OnTooltipShow = function(tooltip)
             tooltip:AddLine("|cffffd100Sharpie's Gear Judge|r")
-            tooltip:AddLine("Click to open the interface.", 1, 1, 1)
+            tooltip:AddLine(MSC.L["Click to open the interface."], 1, 1, 1)
         end,
     })
 end

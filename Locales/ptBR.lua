@@ -1351,3 +1351,23 @@ L["Equip: Shaman Proc (Mana / 275 AP)"] = "Equipar: Proc Xamã (Mana / 275 PA)"
 L["Equip: Rogue Proc (145 Crit)"] = "Equipar: Proc Ladino (145 Crítico)"
 L["Equip: Warlock Proc (220 SP)"] = "Equipar: Proc Bruxo (220 PM)"
 L["Equip: Druid Blessing (3% Proc)"] = "Equipar: Bênção de Druida (3% Proc)"
+
+-- =============================================================
+-- 10. MISSING UI & META GEM EFFECTS
+-- =============================================================
+L["Click to open the interface."] = "Clique para abrir a interface."
+L["Alert"] = "Alerta"
+L["1% Spell Reflect"] = "1% de Reflexão de Feitiço"
+L["Chance to Increase Spell Cast Speed"] = "Chance de aumentar a velocidade de lançamento"
+L["Minor Run Speed"] = "Velocidade de corrida menor"
+L["5% Snare/Root Resist"] = "5% de Resistência a lerdeza/enraizamento"
+L["5% Stun Resist"] = "5% de Resistência a atordoamento"
+L["2% Reduced Threat"] = "2% de Redução de Ameaça"
+L["Chance to Restore 120-180 HP on melee"] = "Chance de restaurar 120-180 PV corpo a corpo"
+L["Chance to Stun Target"] = "Chance de atordoar o alvo"
+L["5% chance to restore 300 mana"] = "5% de chance de restaurar 300 de mana"
+L["3% Increased Crit Damage"] = "3% de Aumento de Dano Crítico"
+L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"] = "Chance de +240 Aceleração corpo a corpo/longo alcance (6s, 40s recarga)"
+L["5% Stun Resistance"] = "5% de Resistência a Atordoamentos"
+L["+10% Shield Block Value"] = "+10% de Valor de Bloqueio de Escudo"
+L["+2% Intellect"] = "+2% de Intelecto"

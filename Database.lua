@@ -700,22 +700,22 @@ if MSC.IsTBC then
 		    -- ========================================================================
 			-- [[ PHASE 1: STANDARD METAS ]]
 			-- ========================================================================
-			{ id=25890, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=14, special="1% Spell Reflect", name=MSC.L["Destructive Skyfire Diamond"], isMeta=true, colorType="META" },
-			{ id=25893, special="Chance to Increase Spell Cast Speed", name=MSC.L["Mystical Skyfire Diamond"], isMeta=true, colorType="META" }, 
-			{ id=25894, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special="Minor Run Speed", name=MSC.L["Swift Skyfire Diamond"], isMeta=true, colorType="META" },
-			{ id=25895, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, special="5% Snare/Root Resist", name=MSC.L["Enigmatic Skyfire Diamond"], isMeta=true, colorType="META" },
-			{ id=25896, stat="ITEM_MOD_STAMINA_SHORT", val=18, special="5% Stun Resist", name=MSC.L["Powerful Earthstorm Diamond"], isMeta=true, colorType="META" },
-			{ id=25897, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=9, special="2% Reduced Threat", name=MSC.L["Bracing Earthstorm Diamond"], isMeta=true, colorType="META" },
-			{ id=25898, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special="Chance to Restore 120-180 HP on melee", name=MSC.L["Tenacious Earthstorm Diamond"], isMeta=true, colorType="META" },
-			{ id=25899, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", val=3, special="Chance to Stun Target", name=MSC.L["Brutal Earthstorm Diamond"], isMeta=true, colorType="META" }, -- Note: Mapped to DPS/Melee Damage
-			{ id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, special="5% chance to restore 300 mana", name=MSC.L["Insightful Earthstorm Diamond"], isMeta=true, colorType="META" },
-			{ id=32409, stat="ITEM_MOD_AGILITY_SHORT", val=12, special="3% Increased Crit Damage", name=MSC.L["Relentless Earthstorm Diamond"], isMeta=true, colorType="META" },
-			{ id=32410, special="Chance for +240 Melee/Ranged Haste (6s, 40s CD)", name=MSC.L["Thundering Skyfire Diamond"], isMeta=true, colorType="META" },
-			{ id=34220, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, special="3% Increased Crit Damage", name=MSC.L["Chaotic Skyfire Diamond"], isMeta=true, colorType="META" },
-			{ id=28556, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, special="Minor Run Speed", name=MSC.L["Swift Windfire Diamond"], isMeta=true, colorType="META", unique=true },
-            { id=28557, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, special="Minor Run Speed", name=MSC.L["Swift Starfire Diamond"], isMeta=true, colorType="META", unique=true },
-            { id=32640, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special="5% Stun Resistance", name=MSC.L["Potent Unstable Diamond"], isMeta=true, colorType="META", unique=true },
-            { id=32641, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special="5% Stun Resistance", name=MSC.L["Imbued Unstable Diamond"], isMeta=true, colorType="META", unique=true },
+			{ id=25890, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=14, special=MSC.L["1% Spell Reflect"], name=MSC.L["Destructive Skyfire Diamond"], isMeta=true, colorType="META" },
+			{ id=25893, special=MSC.L["Chance to Increase Spell Cast Speed"], name=MSC.L["Mystical Skyfire Diamond"], isMeta=true, colorType="META" }, 
+			{ id=25894, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Skyfire Diamond"], isMeta=true, colorType="META" },
+			{ id=25895, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, special=MSC.L["5% Snare/Root Resist"], name=MSC.L["Enigmatic Skyfire Diamond"], isMeta=true, colorType="META" },
+			{ id=25896, stat="ITEM_MOD_STAMINA_SHORT", val=18, special=MSC.L["5% Stun Resist"], name=MSC.L["Powerful Earthstorm Diamond"], isMeta=true, colorType="META" },
+			{ id=25897, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=9, special=MSC.L["2% Reduced Threat"], name=MSC.L["Bracing Earthstorm Diamond"], isMeta=true, colorType="META" },
+			{ id=25898, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special=MSC.L["Chance to Restore 120-180 HP on melee"], name=MSC.L["Tenacious Earthstorm Diamond"], isMeta=true, colorType="META" },
+			{ id=25899, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", val=3, special=MSC.L["Chance to Stun Target"], name=MSC.L["Brutal Earthstorm Diamond"], isMeta=true, colorType="META" },
+			{ id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, special=MSC.L["5% chance to restore 300 mana"], name=MSC.L["Insightful Earthstorm Diamond"], isMeta=true, colorType="META" },
+			{ id=32409, stat="ITEM_MOD_AGILITY_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name=MSC.L["Relentless Earthstorm Diamond"], isMeta=true, colorType="META" },
+			{ id=32410, special=MSC.L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"], name=MSC.L["Thundering Skyfire Diamond"], isMeta=true, colorType="META" },
+			{ id=34220, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name=MSC.L["Chaotic Skyfire Diamond"], isMeta=true, colorType="META" },
+			{ id=28556, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Windfire Diamond"], isMeta=true, colorType="META", unique=true },
+            { id=28557, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Starfire Diamond"], isMeta=true, colorType="META", unique=true },
+            { id=32640, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["5% Stun Resistance"], name=MSC.L["Potent Unstable Diamond"], isMeta=true, colorType="META", unique=true },
+            { id=32641, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["5% Stun Resistance"], name=MSC.L["Imbued Unstable Diamond"], isMeta=true, colorType="META", unique=true },
         },
 		
 		RED_P3 = {
@@ -833,8 +833,8 @@ if MSC.IsTBC then
 			-- ========================================================================
             -- [[ PHASE 5 METAS ]]
             -- ========================================================================
-			{ id=35501, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special="+10% Shield Block Value", name=MSC.L["Eternal Earthstorm Diamond"], isMeta=true, colorType="META" },
-            { id=35503, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special="+2% Intellect", name=MSC.L["Ember Skyfire Diamond"], isMeta=true, colorType="META" },	
+			{ id=35501, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special=MSC.L["+10% Shield Block Value"], name=MSC.L["Eternal Earthstorm Diamond"], isMeta=true, colorType="META" },
+            { id=35503, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["+2% Intellect"], name=MSC.L["Ember Skyfire Diamond"], isMeta=true, colorType="META" },	
 		},
 		
 		JC_RED = {

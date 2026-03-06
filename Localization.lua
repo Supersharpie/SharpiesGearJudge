@@ -1360,3 +1360,23 @@ L["Equip: Shaman Proc (Mana / 275 AP)"] = "Equip: Shaman Proc (Mana / 275 AP)"
 L["Equip: Rogue Proc (145 Crit)"] = "Equip: Rogue Proc (145 Crit)"
 L["Equip: Warlock Proc (220 SP)"] = "Equip: Warlock Proc (220 SP)"
 L["Equip: Druid Blessing (3% Proc)"] = "Equip: Druid Blessing (3% Proc)"
+
+-- =============================================================
+-- 10. Added UI & META GEM EFFECTS
+-- =============================================================
+L["Click to open the interface."] = "Click to open the interface."
+L["Alert"] = "Alert"
+L["1% Spell Reflect"] = "1% Spell Reflect"
+L["Chance to Increase Spell Cast Speed"] = "Chance to Increase Spell Cast Speed"
+L["Minor Run Speed"] = "Minor Run Speed"
+L["5% Snare/Root Resist"] = "5% Snare/Root Resist"
+L["5% Stun Resist"] = "5% Stun Resist"
+L["2% Reduced Threat"] = "2% Reduced Threat"
+L["Chance to Restore 120-180 HP on melee"] = "Chance to Restore 120-180 HP on melee"
+L["Chance to Stun Target"] = "Chance to Stun Target"
+L["5% chance to restore 300 mana"] = "5% chance to restore 300 mana"
+L["3% Increased Crit Damage"] = "3% Increased Crit Damage"
+L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"] = "Chance for +240 Melee/Ranged Haste (6s, 40s CD)"
+L["5% Stun Resistance"] = "5% Stun Resistance"
+L["+10% Shield Block Value"] = "+10% Shield Block Value"
+L["+2% Intellect"] = "+2% Intellect"

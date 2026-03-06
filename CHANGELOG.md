@@ -2,6 +2,16 @@
 
 ## 🚀 v2.4.10
 
+### 🐛 Minor Fixes
+* **Localized various UI strings and meta gem "special" effects by switching literal text to MSC.L lookups in Database.lua and adding the missing localization keys in Localization.lua and deDE/esES/frFR/ptBR locale files.** 
+* **Fixed an accidental Warrior:GetWeaponBonus block left inside Classes/TBC/Druid.lua (removed stray code and ensure Druid:GetWeaponBonus returns 0).**
+* **Improved tooltip behavior in Interface.lua (use localized text for empty slots and alert lines, tidy tooltip show logic, and adjust trade-skill overlay handling).**
+* **Added regex patterns for mana/health-per-5 to deDE.**
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.4.10
+
 * **Add a modifiers table and AddMod helper to collect human-readable sources for rings.**
 * **Instrument various class/talent/race branches to call AddMod.**
 * **Record expertise/crit/hit/spell/expertise sources and a string note for Druid Survival of the Fittest cap reduction.**
