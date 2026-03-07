@@ -1,6 +1,6 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.4.10
+## 🚀 v2.4.11
 
 ### 🐛 Minor Fixes
 * **Localized various UI strings and meta gem "special" effects by switching literal text to MSC.L lookups in Database.lua and adding the missing localization keys in Localization.lua and deDE/esES/frFR/ptBR locale files.** 
