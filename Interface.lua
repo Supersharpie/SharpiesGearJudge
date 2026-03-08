@@ -576,27 +576,35 @@ function MSC.UpdateAllQuestOverlays()
         if seenButtons[btn] then return end 
         seenButtons[btn] = true
 
+        -- SILENCE ELVUI & BLIZZARD NATIVE ARROWS
+        if btn.UpgradeIcon then btn.UpgradeIcon:SetAlpha(0); btn.UpgradeIcon:Hide() end
+        if btn.IconOverlay then btn.IconOverlay:SetAlpha(0); btn.IconOverlay:Hide() end
+
         local id = btn:GetID()
+        local name = btn:GetName()
         if not id or id == 0 then
-            local name = btn:GetName()
             if name then id = tonumber(name:match("%d+")) end
         end
         if not id then return end
 
         local bType = btn.type
+        if not bType and name then
+            if name:find("Choice") then bType = "choice"
+            else bType = "reward" end
+        end
+
+        local link = nil
         
-        -- FIX 2: Brute-force both APIs to guarantee we find the link, ignoring fragile frame states
-        local link = GetQuestLogItemLink(bType or "choice", id) 
-                  or GetQuestLogItemLink(bType or "reward", id) 
-                  or GetQuestLogItemLink("choice", id) 
-                  or GetQuestLogItemLink("reward", id)
+        -- The foolproof way to know if the UI is looking at the Log or an NPC
+        if QuestInfoFrame and QuestInfoFrame.questLog then
+            link = GetQuestLogItemLink(bType, id)
+        else
+            link = GetQuestItemLink(bType, id)
+        end
         
+        -- Fallback safety net
         if not link then
-            link = GetQuestItemLink(bType or "choice", id) 
-                or GetQuestItemLink(bType or "reward", id) 
-                or GetQuestItemLink("choice", id) 
-                or GetQuestItemLink("reward", id) 
-                or GetQuestItemLink("required", id)
+            link = GetQuestItemLink(bType, id) or GetQuestLogItemLink(bType, id)
         end
         
         if link then table_insert(buttonsToScan, {btn = btn, link = link}) end

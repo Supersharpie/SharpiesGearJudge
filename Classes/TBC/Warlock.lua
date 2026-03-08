@@ -366,7 +366,119 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-
+-- [[ DESTRUCTION (SHADOW) LEVELING ]]
+    -- Focus: Crit / Shadow Dmg / Int (Mana hungry).
+    ["Leveling_Destro_Shadow_21_40"] = {
+        min = 21, max = 40,
+        Start = { 
+            ["MSC_WAND_DPS"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.3, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,    
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,      
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.8,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        },
+        End = { 
+            ["MSC_WAND_DPS"] = 1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.6, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        }
+    },
+    ["Leveling_Destro_Shadow_41_51"] = {
+        min = 41, max = 51,
+        Start = { 
+            ["MSC_WAND_DPS"] = 1.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.6, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        },
+        End = { 
+            ["MSC_WAND_DPS"] = 0.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.3, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.2, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        }
+    },
+    ["Leveling_Destro_Shadow_52_59"] = {
+        min = 52, max = 59,
+        Start = { 
+            ["MSC_WAND_DPS"] = 0.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.3, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.2,
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        },
+        End = { 
+            ["MSC_WAND_DPS"] = 0.4, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.6, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        }
+    },
+    ["Leveling_Destro_Shadow_60_70"] = {
+        min = 60, max = 70,
+        Start = { 
+            ["MSC_WAND_DPS"] = 0.4, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.6, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5,
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.5,    
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4, 
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        },
+        End = { 
+            ["MSC_WAND_DPS"] = 0.1, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 3.6, 
+            ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 3.5, 
+            ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 2.5, 
+            ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
+            ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
+            ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
+            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
+            ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
+        }
+    },
+	
     -- [[ DEMO LEVELING ]]
     -- Focus: Stamina (Pet Scaling) / SP.
     ["Leveling_Demo_21_40"] = {
@@ -497,11 +609,17 @@ Warlock.PrettyNames = {
     ["Leveling_41_51"] = MSC.L["Standard Leveling (41-51)"],
     ["Leveling_52_59"] = MSC.L["Standard Leveling (52-59)"],
     ["Leveling_60_70"] = MSC.L["Standard Leveling (Outland)"],
+	
     ["Leveling_Fire_21_40"] = MSC.L["Destro Fire (21-40)"],
     ["Leveling_Fire_41_51"] = MSC.L["Destro Fire (41-51)"],
     ["Leveling_Fire_52_59"] = MSC.L["Destro Fire (52-59)"],
     ["Leveling_Fire_60_70"] = MSC.L["Destro Fire (Outland)"],
     
+	["Leveling_Destro_Shadow_21_40"] = MSC.L["Destro Shadow (21-40)"],
+    ["Leveling_Destro_Shadow_41_51"] = MSC.L["Destro Shadow (41-51)"],
+    ["Leveling_Destro_Shadow_52_59"] = MSC.L["Destro Shadow (52-59)"],
+    ["Leveling_Destro_Shadow_60_70"] = MSC.L["Destro Shadow (Outland)"],
+	
     ["Leveling_Demo_21_40"] = MSC.L["Demonology (21-40)"],
     ["Leveling_Demo_41_51"] = MSC.L["Demonology (41-51)"],
     ["Leveling_Demo_52_59"] = MSC.L["Demonology (52-59)"],
@@ -584,10 +702,10 @@ end
 	if Rank("CONFLAGRATE") > 0 then 
 		role = "Leveling_Fire"
 	elseif Rank("SHADOW_AND_FLAME") > 0 then 
-		role = "Leveling"
+		role = "Leveling_Destro_Shadow" -- FIXED!
 	elseif Rank("SOUL_LINK") > 0 or Rank("FEL_DOMINATION") > 0 then 
 		role = "Leveling_Demo"
-end 
+    end 
 
     local specificKey = role .. suffix
     if Warlock.LevelingBrackets and Warlock.LevelingBrackets[specificKey] then return specificKey end

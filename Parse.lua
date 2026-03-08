@@ -532,7 +532,7 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
     
     -- [[ STRIP SOCKET BONUS PREFIX ]]
     -- This allows the scanner to read "+4 Strength" instead of "Socket Bonus: +4 Strength"
-    cleanText = string_gsub(cleanText, "^socket bonus:%s*", "")
+    cleanText = string_gsub(cleanText, MSC.L["^socket bonus:%s*"] or "^socket bonus:%s*", "")
     
     -- [[ 1. INTERCEPT NAMED, PROC & HYBRID ENCHANTS ]]
     if string_find(cleanText, "^enchant: ") then
