@@ -144,7 +144,8 @@ eventFrame:RegisterEvent("BAG_UPDATE")
 eventFrame:RegisterEvent("QUEST_COMPLETE")         
 eventFrame:RegisterEvent("QUEST_DETAIL")         
 eventFrame:RegisterEvent("QUEST_PROGRESS")         
-eventFrame:RegisterEvent("QUEST_ITEM_UPDATE")         
+eventFrame:RegisterEvent("QUEST_ITEM_UPDATE")
+eventFrame:RegisterEvent("START_LOOT_ROLL")         
 eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 eventFrame:RegisterEvent("TRADE_SKILL_SHOW")
 eventFrame:RegisterEvent("ADDON_LOADED")
@@ -158,6 +159,12 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         -- We use a 0.15s delay to ensure the server has populated the item links to the UI
         C_Timer.After(0.15, function()
             if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
+        end)
+		
+	elseif event == "START_LOOT_ROLL" then
+        -- A tiny 0.1s delay ensures the Blizzard UI has finished creating the frame and assigning the rollID
+        C_Timer.After(0.1, function()
+            if MSC.UpdateLootRollOverlays then MSC.UpdateLootRollOverlays() end
         end)
         
     elseif event == "ADDON_LOADED" and arg1 == "Blizzard_TradeSkillUI" then
@@ -192,7 +199,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
         if MSC.StatCache then wipe(MSC.StatCache) end
 
-        C_Timer.After(0.05, function()
+        C_Timer.After(0.15, function()
             -- NPC Windows
             if QuestInfoFrame and QuestInfoFrame:IsVisible() then 
                 if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end 
@@ -572,7 +579,7 @@ function MSC.UpdateAllQuestOverlays()
 
     -- Aggressive grab function that checks every possible WoW link type
     local function AddButton(btn)
-        if not btn or not btn:IsShown() then return end
+        if not btn or not btn:IsVisible() then return end
         if seenButtons[btn] then return end 
         seenButtons[btn] = true
 
@@ -618,10 +625,18 @@ function MSC.UpdateAllQuestOverlays()
         AddButton(_G["QuestDetailItem"..i])
         AddButton(_G["QuestProgressItem"..i])
         AddButton(_G["QuestInfoItem"..i])
-        
-        -- 2. Scan dynamically pooled buttons (This fixes the Default UI turn-in window!)
-        if QuestInfoRewardsFrame and QuestInfoRewardsFrame.RewardButtons and QuestInfoRewardsFrame.RewardButtons[i] then
-            AddButton(QuestInfoRewardsFrame.RewardButtons[i])
+    end
+
+    -- 2. Scan dynamically pooled buttons safely WITHOUT triggering Blizzard's frame creation
+    if QuestInfoRewardsFrame and QuestInfoRewardsFrame.RewardButtons then
+        for i = 1, #QuestInfoRewardsFrame.RewardButtons do
+            -- rawget prevents the UI from accidentally generating missing buttons
+            local rewardBtn = rawget(QuestInfoRewardsFrame.RewardButtons, i)
+            
+            -- STRICT CHECK: Ensure the button exists, is shown, AND has its Blizzard item link populated
+            if rewardBtn and rewardBtn:IsVisible() and rewardBtn.type then
+                AddButton(rewardBtn)
+            end
         end
     end
 
@@ -727,6 +742,66 @@ function MSC.UpdateMerchantOverlays()
                     end
                     itemButton.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
                     itemButton.SGJ_Overlay:Show()
+                end
+            end
+        end
+    end
+end
+
+-- =============================================================
+-- GROUP LOOT / ROLL OVERLAYS
+-- =============================================================
+function MSC.UpdateLootRollOverlays()
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights then return end
+
+    -- WoW Classic defaults to a maximum of 4 concurrent loot roll frames
+    for i = 1, NUM_GROUP_LOOT_FRAMES or 4 do
+        local frame = _G["GroupLootFrame" .. i]
+        
+        if frame and frame:IsShown() then
+            local rollID = frame.rollID
+            local iconFrame = _G["GroupLootFrame" .. i .. "IconFrame"]
+
+            if rollID and iconFrame then
+                if iconFrame.SGJ_OverlayFrame then iconFrame.SGJ_OverlayFrame:Hide() end
+
+                local link = GetLootRollItemLink(rollID)
+                if link then
+                    local overlayType = nil
+                    local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                    
+                    if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+                        if MSC.IsItemUsable(link) then
+                            local slotID = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                            if slotID then
+                                local newScore, oldScore = MSC:EvaluateUpgrade(link, slotID, weights, specName)
+                                if newScore and oldScore then
+                                    if (newScore > (oldScore + 0.1)) then
+                                        overlayType = "UP"
+                                    elseif (oldScore > (newScore + 0.1)) then
+                                        overlayType = "DOWN"
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    if overlayType then
+                        if not iconFrame.SGJ_OverlayFrame then
+                            -- Create a parent frame to ensure it sits safely above the loot frame's background
+                            iconFrame.SGJ_OverlayFrame = CreateFrame("Frame", nil, iconFrame)
+                            iconFrame.SGJ_OverlayFrame:SetAllPoints(iconFrame)
+                            iconFrame.SGJ_OverlayFrame:SetFrameLevel(iconFrame:GetFrameLevel() + 5)
+                            
+                            iconFrame.SGJ_Overlay = iconFrame.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY")
+                            iconFrame.SGJ_Overlay:SetSize(20, 20)
+                            iconFrame.SGJ_Overlay:SetPoint("TOPRIGHT", iconFrame.SGJ_OverlayFrame, "TOPRIGHT", 4, 4)
+                        end
+                        
+                        iconFrame.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+                        iconFrame.SGJ_OverlayFrame:Show()
+                    end
                 end
             end
         end
@@ -2043,6 +2118,14 @@ if hooksecurefunc and ContainerFrame_Update then
     end)
 end
 
+if GroupLootFrame_OpenNewFrame then
+        hooksecurefunc("GroupLootFrame_OpenNewFrame", function()
+            C_Timer.After(0.1, function()
+                if MSC.UpdateLootRollOverlays then MSC.UpdateLootRollOverlays() end
+            end)
+        end)
+    end
+
 function MSC.CreatePopupFrame(title)
     local f = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     f:SetSize(500, 400); f:SetPoint("CENTER"); f:SetFrameStrata("DIALOG")
@@ -2310,5 +2393,42 @@ if IsLoaded("Blizzard_TradeSkillUI") and not MSC.TradeSkillHooked then
             end)
         end)
         MSC.TradeSkillHooked = true
+    end
+end
+
+-- =============================================================
+-- BLIZZARD UI HOTFIX
+-- PREVENTS 3RD PARTY ADDONS FROM CRASHING THE QUEST REWARD FRAME (MAINLY WEAKAURAS)
+-- =============================================================
+if QuestInfo_ShowRewards then
+    local original_QuestInfo_ShowRewards = QuestInfo_ShowRewards
+    
+    QuestInfo_ShowRewards = function(...)
+        local rewardsFrame = QuestInfoFrame.rewardsFrame or QuestInfoRewardsFrame
+        
+        if rewardsFrame and rewardsFrame.RewardButtons then
+            -- 1. Prevent the "Button Height" crash by ensuring Button 1 always exists
+            if not rewardsFrame.RewardButtons[1] then
+                QuestInfo_GetRewardButton(rewardsFrame, 1)
+            end
+            
+            -- 2. Find if the mystery addon left any "holes" in the table
+            local maxIndex = 0
+            for k, v in pairs(rewardsFrame.RewardButtons) do
+                if type(k) == "number" and k > maxIndex then
+                    maxIndex = k
+                end
+            end
+            
+            -- 3. Fill the holes with real buttons so Blizzard's loop doesn't hit a nil value
+            for i = 1, maxIndex do
+                if not rewardsFrame.RewardButtons[i] then
+                    QuestInfo_GetRewardButton(rewardsFrame, i)
+                end
+            end
+        end
+        
+        -- Safely resume the original Blizzard function
+        return original_QuestInfo_ShowRewards(...)
     end
 end

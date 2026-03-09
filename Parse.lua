@@ -88,7 +88,10 @@ MSC.Scanner.BaseStatMap = {
     [MSC.L["resilience rating"]] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
     [MSC.L["defense rating"]]     = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
     [MSC.L["expertise rating"]]   = "ITEM_MOD_EXPERTISE_RATING_SHORT",
-    [MSC.L["armor penetration rating"]] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"
+    [MSC.L["armor penetration rating"]] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
+	[MSC.L["spell hit rating"]]   = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    [MSC.L["spell crit rating"]]  = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    [MSC.L["spell haste rating"]] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT"
 }
 
 -- [[ B. GREEN TEXT MAP (Equip / Use / Proc Effects) ]]

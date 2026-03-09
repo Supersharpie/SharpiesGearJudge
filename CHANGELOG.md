@@ -1,5 +1,14 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.0
+Added new Warlock leveling brackets for Destruction (Shadow) across level ranges (21-70) and register PrettyNames for those brackets. 
+Fixed role detection to use "Leveling_Destro_Shadow" when SHADOW_AND_FLAME is present. 
+Improved quest UI overlay handling by hiding ElvUI/Blizzard arrow overlays and making quest item link retrieval more robust (use QuestInfoFrame.questLog to choose GetQuestLogItemLink vs GetQuestItemLink with a fallback). 
+Added/adjusted localization patterns in Localization.lua and Locales/deDE.lua (socket bonus regex, several German pattern fixes and punctuation adjustments for mana/health per 5 sec, armor/feral/cat power patterns) and update Parse.lua to strip socket bonuses using the localized regex. 
+Minor UI/comment and whitespace adjustments.
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.4.11
 
 ### 🐛 Minor Fixes
