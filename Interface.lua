@@ -1015,10 +1015,10 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
     if CheckAddOnLoaded("ElvUI") then
         local E = unpack(ElvUI)
         if E then
+            -- ElvUI Bags Hook (Existing)
             local B = E:GetModule('Bags')
             if B and B.UpdateSlot then
                 hooksecurefunc(B, "UpdateSlot", function(self, frame, bagID, slotID)
-                    -- 'frame' is the ElvUI Bag Window. The actual slot button is nested deep inside.
                     if frame and frame.Bags and frame.Bags[bagID] and frame.Bags[bagID][slotID] then 
                         local itemButton = frame.Bags[bagID][slotID]
                         local link = GetContainerItemLink(bagID, slotID)
@@ -1026,10 +1026,52 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                     end
                 end)
             end
+
+            -- ElvUI Loot Roll Hook
+            local M = E:GetModule('Misc')
+            if M and M.START_LOOT_ROLL then
+                hooksecurefunc(M, "START_LOOT_ROLL", function(self, event, rollID, rollTime)
+                    -- Wait 0.05s to ensure ElvUI has fully shown the frame and populated the link
+                    C_Timer.After(0.05, function()
+                        -- ElvUI stores its custom loot frames in M.RollBars
+                        if self.RollBars then
+                            for _, bar in ipairs(self.RollBars) do
+                                -- Ensure the frame is actively showing a roll
+                                if bar:IsShown() and bar.rollID and bar.button and bar.button.link then
+                                    -- bar.button is the square icon frame in ElvUI's loot roll
+                                    EvaluateAndDraw(bar.button, bar.button.link)
+                                end
+                            end
+                        end
+                    end)
+                end)
+            end
+        end
+    end
+	
+	-- [[ 2. XLOOT GROUP SUPPORT ]]
+    if CheckAddOnLoaded("XLoot_Group") and _G.XLootGroup then
+        local XLG = _G.XLootGroup
+        if XLG.START_LOOT_ROLL then
+            hooksecurefunc(XLG, "START_LOOT_ROLL", function(self, id)
+                -- Wait 0.05s to ensure XLoot has fully built the frame and assigned the link
+                C_Timer.After(0.05, function()
+                    -- XLoot stores active roll frames inside its anchor's children table
+                    if self.anchor and self.anchor.children then
+                        for _, frame in pairs(self.anchor.children) do
+                            -- Match the frame to the roll ID that triggered the event
+                            if frame:IsShown() and frame.rollid == id and frame.link and frame.icon_frame then
+                                -- frame.icon_frame is the square icon container
+                                EvaluateAndDraw(frame.icon_frame, frame.link)
+                            end
+                        end
+                    end
+                end)
+            end)
         end
     end
 
-    -- [[ 2. BAGNON SUPPORT ]]
+    -- [[ 3. BAGNON SUPPORT ]]
     if CheckAddOnLoaded("Bagnon") and Bagnon and Bagnon.ItemSlot then
         hooksecurefunc(Bagnon.ItemSlot, "Update", function(self)
             if self:IsShown() then
@@ -1041,7 +1083,7 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         end)
     end
 
-    -- [[ 3. BAGANATOR SUPPORT ]]
+    -- [[ 4. BAGANATOR SUPPORT ]]
     if CheckAddOnLoaded("Baganator") and Baganator then
         if Baganator.ItemButtonUtil and Baganator.ItemButtonUtil.UpdateItemButton then
             hooksecurefunc(Baganator.ItemButtonUtil, "UpdateItemButton", function(self)
