@@ -1,11 +1,23 @@
 # Sharpie's Gear Judge - Version History
 
 ## 🚀 v2.5.0
-Added new Warlock leveling brackets for Destruction (Shadow) across level ranges (21-70) and register PrettyNames for those brackets. 
-Fixed role detection to use "Leveling_Destro_Shadow" when SHADOW_AND_FLAME is present. 
-Improved quest UI overlay handling by hiding ElvUI/Blizzard arrow overlays and making quest item link retrieval more robust (use QuestInfoFrame.questLog to choose GetQuestLogItemLink vs GetQuestItemLink with a fallback). 
-Added/adjusted localization patterns in Localization.lua and Locales/deDE.lua (socket bonus regex, several German pattern fixes and punctuation adjustments for mana/health per 5 sec, armor/feral/cat power patterns) and update Parse.lua to strip socket bonuses using the localized regex. 
-Minor UI/comment and whitespace adjustments.
+* **Introduced (still a work in progress)loot roll overlay support and improve quest/reward UI robustness.**
+
+### 📺 UI & User Experience 
+* **Added a ShowLootArrows setting and UI checkbox to enable/disable green upgrade arrows on group loot popups.** 
+* **Localization strings for the new option were added to the main and several locale files.**
+* **Added START_LOOT_ROLL handling, MSC.UpdateLootRollOverlays (creates upgrade/downgrade icons on GroupLoot frames) and a GroupLootFrame_OpenNewFrame hook.** 
+* **Added hooks to support ElvUI's custom loot roll frames and XLoot, with a short C_Timer.After(0.05) delay to let frames populate before calling EvaluateAndDraw on the icon frames.**
+* **Harden UpdateAllQuestOverlays by using IsVisible, safe iteration of QuestInfoRewardsFrame.RewardButtons via rawget, and increased timing delays to avoid race conditions.** 
+* **Added a Blizzard UI hotfix wrapping QuestInfo_ShowRewards to prefill missing reward buttons (prevents crashes from 3rd-party addons).** 
+* **Added new Warlock leveling brackets for Destruction (Shadow) across level ranges (21-70) and register PrettyNames for those brackets.** 
+* **Improved quest UI overlay handling by hiding ElvUI/Blizzard arrow overlays and making quest item link retrieval more robust (use QuestInfoFrame.questLog to choose GetQuestLogItemLink vs GetQuestItemLink with a fallback).** 
+* **Added/adjusted localization patterns in Localization.lua and Locales/deDE.lua (socket bonus regex, several German pattern fixes and punctuation adjustments for mana/health per 5 sec, armor/feral/cat power patterns) and update Parse.lua to strip socket bonuses using the localized regex.** 
+
+### 🐛 Minor Fixes
+* **Fixed spell rating mappings in Parse.lua.
+* **Fixed role detection to use "Leveling_Destro_Shadow" when SHADOW_AND_FLAME is present.
+* **Minor UI/comment and whitespace adjustments.**
 
 ------------------------------------------------------------------------------------------------
 

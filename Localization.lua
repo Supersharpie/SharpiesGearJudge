@@ -142,6 +142,10 @@ L["Shorten Stat Names"] = "Shorten Stat Names"
 L["Shorten Stat Tooltip"] = "Abbreviates stat names to save space.\n\nExamples:\nStrength > Str\nAttack Power > AP"
 L["Colorize Stats"] = "Colorize Stats"
 L["Colorize Stats Tooltip"] = "Applies colors to stats."
+L["Show Bag Upgrade Arrows"] = "Show Bag Upgrade Arrows"
+L["Shows green upgrade arrows on items in your bags."] = "Shows green upgrade arrows on items in your bags."
+L["Show Loot Roll Arrows"] = "Show Loot Roll Arrows"
+L["Shows green upgrade arrows on group loot popups."] = "Shows green upgrade arrows on group loot popups."
 
 -- Long Popups
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."

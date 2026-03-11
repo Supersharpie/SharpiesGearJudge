@@ -127,6 +127,10 @@ L["Shorten Stat Names"] = "Werte-Namen abkürzen"
 L["Shorten Stat Tooltip"] = "Kürzt Werte-Namen ab, um Platz zu sparen.\n\nBeispiele:\nStärke > Str\nAngriffskraft > AP"
 L["Colorize Stats"] = "Werte einfärben"
 L["Colorize Stats Tooltip"] = "Wendet Farben auf Werte an."
+L["Show Bag Upgrade Arrows"] = "Upgrade-Pfeile in Taschen anzeigen"
+L["Shows green upgrade arrows on items in your bags."] = "Zeigt grüne Upgrade-Pfeile auf Gegenständen in deinen Taschen an."
+L["Show Loot Roll Arrows"] = "Upgrade-Pfeile beim Beuterollen anzeigen"
+L["Shows green upgrade arrows on group loot popups."] = "Zeigt grüne Upgrade-Pfeile bei Gruppenbeute-Fenstern an."
 
 -- Long Popups
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\nProfil erfolgreich importiert!\n\nDu musst das UI neu laden, damit die Änderungen wirksam werden."

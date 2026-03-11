@@ -752,6 +752,14 @@ end
 -- GROUP LOOT / ROLL OVERLAYS
 -- =============================================================
 function MSC.UpdateLootRollOverlays()
+    if SGJ_Settings and SGJ_Settings.ShowLootArrows == false then 
+        for i = 1, NUM_GROUP_LOOT_FRAMES or 4 do
+            local iconFrame = _G["GroupLootFrame" .. i .. "IconFrame"]
+            if iconFrame and iconFrame.SGJ_OverlayFrame then iconFrame.SGJ_OverlayFrame:Hide() end
+        end
+        return 
+    end
+
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then return end
 
@@ -789,7 +797,6 @@ function MSC.UpdateLootRollOverlays()
 
                     if overlayType then
                         if not iconFrame.SGJ_OverlayFrame then
-                            -- Create a parent frame to ensure it sits safely above the loot frame's background
                             iconFrame.SGJ_OverlayFrame = CreateFrame("Frame", nil, iconFrame)
                             iconFrame.SGJ_OverlayFrame:SetAllPoints(iconFrame)
                             iconFrame.SGJ_OverlayFrame:SetFrameLevel(iconFrame:GetFrameLevel() + 5)
@@ -1037,8 +1044,14 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                         if self.RollBars then
                             for _, bar in ipairs(self.RollBars) do
                                 -- Ensure the frame is actively showing a roll
-                                if bar:IsShown() and bar.rollID and bar.button and bar.button.link then
-                                    -- bar.button is the square icon frame in ElvUI's loot roll
+                                if bar:IsShown() and bar.rollID == rollID and bar.button and bar.button.link then
+                                -- CHECK THE NEW SETTING FIRST
+                                if SGJ_Settings and SGJ_Settings.ShowLootArrows == false then 
+                                    if bar.button.SGJ_OverlayFrame then bar.button.SGJ_OverlayFrame:Hide() end
+                                    return 
+                                end
+                                
+                                local btn = bar.button
                                     EvaluateAndDraw(bar.button, bar.button.link)
                                 end
                             end
@@ -1842,6 +1855,7 @@ function MSC.InitSettingsView(parent)
     local cb3 = CreateCheck(MSC.L["Mute Error Sounds"], "MuteSounds", MSC.L["Stops the error sound when clicking invalid items."], cbShift, -20, -5)
     local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
 	local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
+	local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbBagArrows, 0, -5)
     cbBagArrows:HookScript("OnClick", function()
         MSC.BagCacheDirty = true
         if RequestUpdate then RequestUpdate() end
@@ -2289,7 +2303,8 @@ loader:SetScript("OnEvent", function(self, event, name)
             ColorizeStats = true,
             SimplifyStats = false,
             TrackedSpecs = {},
-			ShowBagArrows = false
+			ShowBagArrows = false,
+			ShowLootArrows = false,
         }
 
         -- 3. FILL MISSING SETTINGS ONLY

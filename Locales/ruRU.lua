@@ -127,6 +127,10 @@ L["Shorten Stat Names"] = "Сокращать названия характер�
 L["Shorten Stat Tooltip"] = "Сокращает названия характеристик для экономии места.\n\nПример:\nСила > Сил\nСила атаки > СА"
 L["Colorize Stats"] = "Окрашивать характеристики"
 L["Colorize Stats Tooltip"] = "Применяет цвета к характеристикам."
+L["Show Bag Upgrade Arrows"] = "Стрелки улучшения в сумках"
+L["Shows green upgrade arrows on items in your bags."] = "Отображает зеленые стрелки улучшения на предметах в ваших сумках."
+L["Show Loot Roll Arrows"] = "Стрелки улучшения при розыгрыше"
+L["Shows green upgrade arrows on group loot popups."] = "Отображает зеленые стрелки улучшения в окнах розыгрыша добычи."
 
 -- Long Popups
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\nПрофиль успешно импортирован!\n\nВам необходимо перезагрузить интерфейс (UI), чтобы изменения вступили в силу."
