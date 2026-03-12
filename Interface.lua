@@ -1784,10 +1784,18 @@ function MSC.InitSettingsView(parent)
     local h1 = CreateHeader(MSC.L["Comparison Logic"], nil, 0)
     local enchantTip = MSC.L["Controls how item enchantments affect the score.\n\n|cffffffffOff:|r Scores items based on base stats only.\n|cffffffffCurrent:|r Includes the value of the enchant currently on the item.\n|cffffffffProject:|r Simulates the best possible enchant for that item level."]
     local ddEnchant = CreateDropdown(MSC.L["Enchant Mode"], "EnchantMode", {{ text = MSC.L["Off (Raw Stats)"], val = 1 }, { text = MSC.L["Current Only"], val = 2 }, { text = MSC.L["Project Best"], val = 3 }}, h1, -10, enchantTip)
-    local gemTip = MSC.L["Controls how empty sockets are scored.\n\n|cffffffffSkeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffCasual:|r Assumes empty sockets are filled with Rare (Blue) quality gems.\n|cffffffffPro:|r Assumes empty sockets are filled with Epic/Best-in-Slot gems."]
+    local gemTip = MSC.L["Controls how empty sockets are scored.\n\n|cffffffffThe Skeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffThe Casual:|r Simple gemming logic, usually respects socket colors.\n|cffffffffThe Pro:|r Min-max gemming logic, prioritizes absolute highest score."]
     local ddGem = CreateDropdown(MSC.L["Gemming Logic"], "GemMode", {{ text = MSC.L["The Skeptic"], val = 1 }, { text = MSC.L["The Casual"], val = 2 }, { text = MSC.L["The Pro"], val = 3 }}, ddEnchant, -5, gemTip)
+    local gemQualTip = MSC.L["Selects the quality tier of gems the Judge will use when projecting empty sockets."]
+    local ddGemQuality = CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {
+        { text = MSC.L["Common (White/Vendor)"], val = 1 }, 
+        { text = MSC.L["Uncommon (Green)"], val = 2 }, 
+        { text = MSC.L["Rare (Blue)"], val = 3 }, 
+        { text = MSC.L["Epic (Purple)"], val = 4 }
+    }, ddGem, -5, gemQualTip)
 
-    local h2 = CreateHeader(MSC.L["Character Profile"], ddGem, -20)
+    -- UPDATE THIS LINE: Anchor h2 to ddGemQuality instead of ddGem
+    local h2 = CreateHeader(MSC.L["Character Profile"], ddGemQuality, -20)
     local specOptions = { { text = MSC.L["Auto-Detect"], val = "AUTO" } }; local seen = { ["AUTO"] = true }
     
     local profileList = {}
@@ -2295,6 +2303,7 @@ loader:SetScript("OnEvent", function(self, event, name)
         local defaults = {
             EnchantMode = 1,       -- Off
             GemMode = 1,           -- Skeptic
+            GemQuality = 3,        -- NEW: Rare (Blue) Default
             Mode = "AUTO",         -- Auto-Detect
             HideMinimap = false,
             HideTooltips = false,
@@ -2303,8 +2312,8 @@ loader:SetScript("OnEvent", function(self, event, name)
             ColorizeStats = true,
             SimplifyStats = false,
             TrackedSpecs = {},
-			ShowBagArrows = false,
-			ShowLootArrows = false,
+            ShowBagArrows = false,
+            ShowLootArrows = false,
         }
 
         -- 3. FILL MISSING SETTINGS ONLY

@@ -46,13 +46,13 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         
         -- [[ 1. INITIALIZE DATABASE ]]
         if MSC.BuildDatabase then MSC:BuildDatabase() end
-
-        if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45, TrackedSpecs = {} } end
+		if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45, TrackedSpecs = {} } end
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
+        if SGJ_Settings.GemQuality == nil then SGJ_Settings.GemQuality = 3 end
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
-		if SGJ_Settings.SimplifyStats == nil then SGJ_Settings.SimplifyStats = true end
-		if SGJ_Settings.ColorizeStats == nil then SGJ_Settings.ColorizeStats = true end
+        if SGJ_Settings.SimplifyStats == nil then SGJ_Settings.SimplifyStats = true end
+        if SGJ_Settings.ColorizeStats == nil then SGJ_Settings.ColorizeStats = true end
         if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end
 		
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]

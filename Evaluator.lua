@@ -344,7 +344,9 @@ end
 			MSC.WeaponBagCache.LastSpec = specName
 		end
 		return MSC.WeaponBagCache.OffHand
-	end-- =============================================================
+	end
+	
+-- =============================================================
 -- 4. BAG SCANNERS (Cached & Optimized)
 -- =============================================================
 

@@ -430,6 +430,9 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList, isJC)
     local bestGem, bestScore = nil, 0
     local db = (level >= 60 and MSC.GemOptions) and MSC.GemOptions or MSC.GemOptions_Leveling
     if not db or not weights then return nil, 0 end
+    
+    -- Fetch the player's selected quality budget (Defaults to 3 / Rare)
+    local maxQual = SGJ_Settings and SGJ_Settings.GemQuality or 3
 
     local lists = {}
     if socketColor == "ANY" then
@@ -451,9 +454,13 @@ function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList, isJC)
     for _, list in ipairs(lists) do
         for _, gem in ipairs(list) do
             local isUniqueBlocked = (gem.unique and excludeList and excludeList[gem.id])
-            local isJCBlocked = (gem.isJC and not isJC) -- Block JC gems if player isn't a JC
+            local isJCBlocked = (gem.isJC and not isJC)
+            
+            -- Verify if the gem exceeds the player's chosen budget
+            local gemQual = gem.quality or 3
+            local isQualityBlocked = (gemQual > maxQual)
 
-            if not isUniqueBlocked and not isJCBlocked then
+            if not isUniqueBlocked and not isJCBlocked and not isQualityBlocked then
                 local score = 0
                 if gem.stat and weights[gem.stat] then score = score + (gem.val * weights[gem.stat]) end
                 if gem.stat2 and weights[gem.stat2] then score = score + (gem.val2 * weights[gem.stat2]) end

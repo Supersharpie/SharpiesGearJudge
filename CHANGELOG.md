@@ -1,5 +1,16 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.1
+
+### 💎 Gemming System & Database Overhaul
+* **Introduced a new "Gem Quality" setting, allowing users to set a budget limit (Common, Uncommon, Rare, Epic) for how empty sockets are scored and projected.**
+* **Separated the Gemming Algorithm (The Casual vs. The Pro) from the Gem Quality to allow flexible combinations (e.g., using "Pro" min-max logic with "Uncommon" budget gems for leveling or fresh 70s).**
+* **Restructured the Gem Database to explicitly tag vendor gems (Tourmaline, Zircon, Amber) as Common (`quality=1`) and crafted leveling gems as Uncommon (`quality=2`).**
+* **Injected lower-tier leveling gems into the Level 70 endgame arrays, ensuring budget gemming settings work correctly for max-level characters trying to save gold.**
+* **Updated the Evaluator logic to respect the new Gem Quality setting, automatically filtering out gems that exceed the player's chosen budget limit.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.0
 * **Introduced (still a work in progress)loot roll overlay support and improve quest/reward UI robustness.**
 
