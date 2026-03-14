@@ -168,8 +168,49 @@ function MSC:GetWeaponSpecBonus(itemLink, class, specKey)
 end
 
 -- =========================================================================
--- 4. EVENT LISTENER (Cache Invalidation)
+-- 4. EVENT LISTENER (Cache Invalidation & Auto-Snapshot)
 -- =========================================================================
+
+-- [[ BACKGROUND SNAPSHOT ENGINE ]]
+local snapshotTimer = nil
+local isGearDirty = false
+
+local function PerformSnapshot()
+    snapshotTimer = nil 
+    
+    if InCombatLockdown() then
+        isGearDirty = true
+        return
+    end
+
+    if not SGJ_Settings or not SGJ_Settings.GearProfiles then return end
+    
+    local weights, currentSpec = MSC.GetCurrentWeights()
+    if not currentSpec then return end
+    
+    local newGear = MSC:GetEquippedGear()
+    
+    -- [[ SANITY CHECK ]]
+    if SGJ_Settings.GearProfiles[currentSpec] then
+        local oldScore = MSC:GetTotalCharacterScore(SGJ_Settings.GearProfiles[currentSpec], weights, currentSpec)
+        local newScore = MSC:GetTotalCharacterScore(newGear, weights, currentSpec)
+        
+        -- Prevent saving if they massively downgraded their gear before a respec
+        if oldScore > 0 and (newScore < (oldScore * 0.75)) then
+            return 
+        end
+    end
+    
+    SGJ_Settings.GearProfiles[currentSpec] = newGear
+    isGearDirty = false
+end
+
+function MSC:QueueGearSnapshot()
+    if snapshotTimer then snapshotTimer:Cancel() end
+    snapshotTimer = C_Timer.NewTimer(2.0, PerformSnapshot)
+end
+
+-- [[ THE EVENT LISTENER ]]
 local talentTracker = CreateFrame("Frame")
 talentTracker:RegisterEvent("CHARACTER_POINTS_CHANGED")
 talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")
@@ -177,11 +218,11 @@ talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
 talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
 talentTracker:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+talentTracker:RegisterEvent("PLAYER_REGEN_ENABLED") -- Added for Combat Recovery
 
 talentTracker:SetScript("OnEvent", function(self, event, unit)
     if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
 
-    -- [[ LOGIC: Wipe Cache on Spec Swap ]]
     if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
@@ -189,6 +230,15 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
 
     MSC.CachedWeights = nil
     MSC.CachedSpecKey = nil
+    
+    -- [[ TRIGGER SNAPSHOT LOGIC ]]
+    if event == "PLAYER_EQUIPMENT_CHANGED" or event == "UNIT_INVENTORY_CHANGED" or event == "PLAYER_ENTERING_WORLD" then
+        MSC:QueueGearSnapshot()
+    elseif event == "PLAYER_TALENT_UPDATE" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+        MSC:QueueGearSnapshot() -- Lock in gear on successful respec
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        if isGearDirty then MSC:QueueGearSnapshot() end
+    end
     
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()
