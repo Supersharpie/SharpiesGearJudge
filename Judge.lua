@@ -51,6 +51,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
         if SGJ_Settings.GemQuality == nil then SGJ_Settings.GemQuality = 3 end
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
+		if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
         if SGJ_Settings.SimplifyStats == nil then SGJ_Settings.SimplifyStats = true end
         if SGJ_Settings.ColorizeStats == nil then SGJ_Settings.ColorizeStats = true end
         if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end
@@ -753,26 +754,41 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         if tWeights then
                             local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
                             if tSlotId then
-                                local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec)
-                                local tDelta = tNewScore - tOldScore
+                                local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
                                 
-                                if tDelta > 0.1 then
-                                    local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
-                                    tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format(MSC.L["|cff00ff00+%s (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
+                                -- Fetch the silent snapshot if it exists
+                                local baselineGear = SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[tSpec]
+                                
+                                if baselineGear then
+                                    -- A SNAPSHOT EXISTS: Calculate true Delta Upgrade
+                                    local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
+                                    local tDelta = tNewScore - tOldScore
                                     
-                                    if oSC and nSC and MSC.SetBonusScores then
-                                        for setID, scores in pairs(MSC.SetBonusScores) do
-                                            local oC = oSC[setID] or 0
-                                            local nC = nSC[setID] or 0
-                                            if nC < oC then
-                                                for req, _ in pairs(scores) do
-                                                    local rN = tonumber(req)
-                                                    if rN and oC >= rN and nC < rN then
-                                                        tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN))
+                                    if tDelta > 0.1 then
+                                        tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
+                                        
+                                        if oSC and nSC and MSC.SetBonusScores then
+                                            for setID, scores in pairs(MSC.SetBonusScores) do
+                                                local oC = oSC[setID] or 0
+                                                local nC = nSC[setID] or 0
+                                                if nC < oC then
+                                                    for req, _ in pairs(scores) do
+                                                        local rN = tonumber(req)
+                                                        if rN and oC >= rN and nC < rN then
+                                                            tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN))
+                                                        end
                                                     end
                                                 end
                                             end
                                         end
+                                    end
+                                else
+                                    -- NO SNAPSHOT YET: Fallback to Raw Item Score
+                                    local itemNewStats = MSC.SafeGetItemStats(link, tSlotId, tWeights, tSpec)
+                                    local rawScore = MSC.GetItemScore(itemNewStats, tWeights, tSpec, tSlotId)
+                                    
+                                    if rawScore > 0 then
+                                        tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format("|cffffffff%.1f|r |cff888888(Raw Score)|r", rawScore), 1, 1, 1, 1, 1, 1)
                                     end
                                 end
                             end
