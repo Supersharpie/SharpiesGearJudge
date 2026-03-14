@@ -491,12 +491,11 @@ CacheCleaner:SetScript("OnEvent", function(self, event)
 end)
 
 
-function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
+function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, customBaselineGear)
     if not newItemLink then return 0, 0, {}, {}, {} end
     if not weights then weights, specName = MSC.GetCurrentWeights() end
 
     -- [[ 1. CACHE CHECK ]]
-    -- We include slotID and specName in key because an item's score depends on where it goes and who uses it
     local cacheKey = (newItemLink or "nil") .. "_" .. (targetSlotID or "0") .. "_" .. (specName or "Default")
     
     if MSC.EvaluationCache[cacheKey] then
@@ -504,7 +503,12 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     end
 
     -- [[ 2. SETUP & CURRENT SCORE ]]
-    MSC:GetEquippedGear(Scratch_Gear)
+    -- Use the ghost gear if provided, otherwise grab the live gear
+    if customBaselineGear then
+        MSC:SafeCopy(customBaselineGear, Scratch_Gear)
+    else
+        MSC:GetEquippedGear(Scratch_Gear)
+    end
     
     local currentScore, currentStatsTotal, _, oldSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
@@ -513,14 +517,16 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName)
     local originalOH   = Scratch_Gear[17]
     local contextMsg   = nil
 
--- [[ 3. PRE-CALCULATE ITEM STATS ]]
+    -- [[ 3. PRE-CALCULATE ITEM STATS ]]
     local parsedNewStats = MSC.SafeGetItemStats(newItemLink, targetSlotID, weights, specName)
     local finalNewStats = {}
     for k, v in pairs(parsedNewStats) do finalNewStats[k] = v end
 
     local finalOldStats = {}
     
-    local oldItemLink = GetInventoryItemLink("player", targetSlotID)
+    -- Check ghost gear for the old item instead of the live paper doll
+    local oldItemLink = customBaselineGear and customBaselineGear[targetSlotID] or GetInventoryItemLink("player", targetSlotID)
+    
     if oldItemLink then 
         local fs = MSC.SafeGetItemStats(oldItemLink, targetSlotID, weights, specName) 
         for k,v in pairs(fs) do finalOldStats[k] = v end
