@@ -1718,56 +1718,58 @@ end
 
 function MSC.InitSettingsView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
+    
+    -- [[ FIXED ACTION BUTTONS (Always visible at the bottom) ]]
+    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    bImp:SetSize(140, 30); bImp:SetPoint("BOTTOMRIGHT", -40, 40)
+    bImp:SetText(MSC.L["Import Pawn String"])
+    bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
+
+    local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    bExport:SetSize(140, 30); bExport:SetPoint("BOTTOMRIGHT", -190, 40)
+    bExport:SetText(MSC.L["Export Data"])
+    bExport:SetScript("OnClick", function() MSC.ShowHistory() end)
+
+    -- [[ MASTER SCROLL FRAME ]]
+    local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint("TOPLEFT", 10, -10)
+    scroll:SetPoint("BOTTOMRIGHT", -40, 80) -- Leaves 80px of room at the bottom for the buttons
+    
+    local sChild = CreateFrame("Frame", nil, scroll)
+    sChild:SetSize(500, 1000) -- Height expands dynamically below
+    scroll:SetScrollChild(sChild)
+
+    -- [[ UI HELPERS (Now parented to sChild) ]]
     local function CreateHeader(text, relTo, yOff, xOverride, yOverride, tooltip)
-        local h = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); h:SetText(text); h:SetTextColor(1, 0.82, 0)
+        local h = sChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); h:SetText(text); h:SetTextColor(1, 0.82, 0)
         if xOverride then h:SetPoint("TOPLEFT", xOverride, yOverride) 
         elseif relTo then h:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff) 
-        else h:SetPoint("TOPLEFT", 40, -30) end
+        else h:SetPoint("TOPLEFT", 30, -20) end
         if tooltip then
-            local hitRect = CreateFrame("Frame", nil, f)
-            hitRect:SetPoint("TOPLEFT", h, "TOPLEFT", -10, 10)
-            hitRect:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 50, -10)
+            local hitRect = CreateFrame("Frame", nil, sChild)
+            hitRect:SetPoint("TOPLEFT", h, "TOPLEFT", -10, 10); hitRect:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 50, -10)
             hitRect:EnableMouse(true)
-            hitRect:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(text, 1, 1, 1)
-                GameTooltip:AddLine(tooltip, nil, nil, nil, true)
-                GameTooltip:Show()
-            end)
+            hitRect:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(text, 1, 1, 1); GameTooltip:AddLine(tooltip, nil, nil, nil, true); GameTooltip:Show() end)
             hitRect:SetScript("OnLeave", GameTooltip_Hide)
         end
         return h
     end
 
     local function CreateDropdown(label, key, options, relTo, yOff, tooltip)
-        local frame = CreateFrame("Frame", nil, f); frame:SetSize(200, 50); frame:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff)
-        frame:EnableMouse(true)
+        local frame = CreateFrame("Frame", nil, sChild); frame:SetSize(200, 50); frame:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff); frame:EnableMouse(true)
         if tooltip then
-            frame:SetScript("OnEnter", function(self) 
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(label, 1, 1, 1)
-                GameTooltip:AddLine(tooltip, nil, nil, nil, true); GameTooltip:Show() 
-            end)
+            frame:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(label, 1, 1, 1); GameTooltip:AddLine(tooltip, nil, nil, nil, true); GameTooltip:Show() end)
             frame:SetScript("OnLeave", GameTooltip_Hide)
         end
         local lbl = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); lbl:SetPoint("TOPLEFT", 0, 0); lbl:SetText(label); lbl:SetTextColor(0.6, 0.6, 0.6)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
         local function OnClick(self) 
-            UIDropDownMenu_SetSelectedID(dd, self:GetID()); 
-            SGJ_Settings[key] = self.value
-            
-            if key == "Mode" then 
-                MSC.ManualSpec = self.value; MSC.CachedWeights = nil
-            end 
-            
+            UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
+            if key == "Mode" then MSC.ManualSpec = self.value; MSC.CachedWeights = nil end 
             if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-            MSC.BagCacheDirty = true
-            if RequestUpdate then RequestUpdate() end
+            MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end
         end
-        local function Init(self, level) 
-            for _, opt in ipairs(options) do 
-                local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val); UIDropDownMenu_AddButton(info, level) 
-            end 
-        end
+        local function Init(self, level) for _, opt in ipairs(options) do local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val); UIDropDownMenu_AddButton(info, level) end end
         UIDropDownMenu_Initialize(dd, Init)
         local currentText = MSC.L["Select..."]; for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
         UIDropDownMenu_SetText(dd, currentText); if key == "Mode" then f.ProfileDD = dd end
@@ -1775,30 +1777,50 @@ function MSC.InitSettingsView(parent)
     end
 
     local function CreateCheck(label, key, tooltip, relTo, xOff, yOff)
-        local cb = CreateFrame("CheckButton", nil, f, "ChatConfigCheckButtonTemplate"); cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff); cb.Text:SetText(label); cb.Text:SetTextColor(0.9, 0.9, 0.9); cb:SetChecked(SGJ_Settings[key])
+        local cb = CreateFrame("CheckButton", nil, sChild, "ChatConfigCheckButtonTemplate"); cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff); cb.Text:SetText(label); cb.Text:SetTextColor(0.9, 0.9, 0.9); cb:SetChecked(SGJ_Settings[key])
         cb:SetScript("OnClick", function(self) SGJ_Settings[key] = self:GetChecked(); if key == "HideMinimap" then MSC.UpdateMinimapPosition() end end)
         if tooltip then cb:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tooltip, nil, nil, nil, nil, true); GameTooltip:Show() end); cb:SetScript("OnLeave", GameTooltip_Hide) end
         return cb
     end
     
-    local h1 = CreateHeader(MSC.L["Comparison Logic"], nil, 0)
+    -- ==========================================
+    -- SECTION 1: INTERFACE OPTIONS
+    -- ==========================================
+    local hInterface = CreateHeader(MSC.L["Interface Options"], nil, 0)    
+    local cb1 = CreateCheck(MSC.L["Hide Minimap Button"], "HideMinimap", MSC.L["Hides the circular button on your minimap."], hInterface, 0, -10)  
+    local cb2 = CreateCheck(MSC.L["Hide Tooltip Verdict"], "HideTooltips", MSC.L["Stops the addon from adding scores to item tooltips."], cb1, 0, -5)   
+    local cbShift = CreateCheck(MSC.L["Show Only via Shift Key"], "ShiftOnlyTooltip", MSC.L["Only shows the Judge score in tooltips while holding the SHIFT key."], cb2, 20, -5)
+    cb2:HookScript("OnClick", function(self) if self:GetChecked() then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end end)
+    local cb3 = CreateCheck(MSC.L["Mute Error Sounds"], "MuteSounds", MSC.L["Stops the error sound when clicking invalid items."], cbShift, -20, -5)
+    local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
+    local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
+    cbBagArrows:HookScript("OnClick", function() MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end end)
+    local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbBagArrows, 0, -5)
+    
+    -- ==========================================
+    -- SECTION 2: TOOLTIP VISUALS
+    -- ==========================================
+    local hVisuals = CreateHeader(MSC.L["Tooltip Visuals"], cbLootArrows, -25)
+    local cbCompact = CreateCheck(MSC.L["Compact Equip Text"], "CompactEquip", MSC.L["Makes the text smaller and cleaner."], hVisuals, 0, -10)
+    local cbSimple = CreateCheck(MSC.L["Shorten Stat Names"], "SimplifyStats", MSC.L["Changes 'Spell Power' to 'SP', etc."], cbCompact, 0, -5)
+    local cbColor = CreateCheck(MSC.L["Colorize Stats"], "ColorizeStats", MSC.L["Applies class/role colors to text."], cbSimple, 0, -5)
+
+    -- ==========================================
+    -- SECTION 3: COMPARISON LOGIC
+    -- ==========================================
+    local hLogic = CreateHeader(MSC.L["Comparison Logic"], cbColor, -25)
     local enchantTip = MSC.L["Controls how item enchantments affect the score.\n\n|cffffffffOff:|r Scores items based on base stats only.\n|cffffffffCurrent:|r Includes the value of the enchant currently on the item.\n|cffffffffProject:|r Simulates the best possible enchant for that item level."]
-    local ddEnchant = CreateDropdown(MSC.L["Enchant Mode"], "EnchantMode", {{ text = MSC.L["Off (Raw Stats)"], val = 1 }, { text = MSC.L["Current Only"], val = 2 }, { text = MSC.L["Project Best"], val = 3 }}, h1, -10, enchantTip)
+    local ddEnchant = CreateDropdown(MSC.L["Enchant Mode"], "EnchantMode", {{ text = MSC.L["Off (Raw Stats)"], val = 1 }, { text = MSC.L["Current Only"], val = 2 }, { text = MSC.L["Project Best"], val = 3 }}, hLogic, -10, enchantTip)
     local gemTip = MSC.L["Controls how empty sockets are scored.\n\n|cffffffffThe Skeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffThe Casual:|r Simple gemming logic, usually respects socket colors.\n|cffffffffThe Pro:|r Min-max gemming logic, prioritizes absolute highest score."]
     local ddGem = CreateDropdown(MSC.L["Gemming Logic"], "GemMode", {{ text = MSC.L["The Skeptic"], val = 1 }, { text = MSC.L["The Casual"], val = 2 }, { text = MSC.L["The Pro"], val = 3 }}, ddEnchant, -5, gemTip)
     local gemQualTip = MSC.L["Selects the quality tier of gems the Judge will use when projecting empty sockets."]
-    local ddGemQuality = CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {
-        { text = MSC.L["Common (White/Vendor)"], val = 1 }, 
-        { text = MSC.L["Uncommon (Green)"], val = 2 }, 
-        { text = MSC.L["Rare (Blue)"], val = 3 }, 
-        { text = MSC.L["Epic (Purple)"], val = 4 }
-    }, ddGem, -5, gemQualTip)
+    local ddGemQuality = CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {{ text = MSC.L["Common (White/Vendor)"], val = 1 }, { text = MSC.L["Uncommon (Green)"], val = 2 }, { text = MSC.L["Rare (Blue)"], val = 3 }, { text = MSC.L["Epic (Purple)"], val = 4 }}, ddGem, -5, gemQualTip)
 
-    -- UPDATE THIS LINE: Anchor h2 to ddGemQuality instead of ddGem
-    local h2 = CreateHeader(MSC.L["Character Profile"], ddGemQuality, -20)
-    local specOptions = { { text = MSC.L["Auto-Detect"], val = "AUTO" } }; local seen = { ["AUTO"] = true }
-    
-    local profileList = {}
+    -- ==========================================
+    -- SECTION 4: CHARACTER PROFILE
+    -- ==========================================
+    local hProfile = CreateHeader(MSC.L["Character Profile"], ddGemQuality, -25)
+    local specOptions = { { text = MSC.L["Auto-Detect"], val = "AUTO" } }; local seen = { ["AUTO"] = true }; local profileList = {}
     if MSC.CurrentClass then
         local function AddList(listSource)
             if not listSource then return end
@@ -1813,111 +1835,94 @@ function MSC.InitSettingsView(parent)
             end
         end
         if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights then AddList(SharpiesGearJudgeDB.customWeights) end
-        AddList(MSC.CurrentClass.Weights)
-        AddList(MSC.CurrentClass.LevelingWeights)
-        AddList(MSC.CurrentClass.Profiles)
+        AddList(MSC.CurrentClass.Weights); AddList(MSC.CurrentClass.LevelingWeights); AddList(MSC.CurrentClass.Profiles)
     end 
-
     local profileTip = MSC.L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."]
-    local ddProfile = CreateDropdown(MSC.L["Active Scoring Profile"], "Mode", specOptions, h2, -10, profileTip)
+    local ddProfile = CreateDropdown(MSC.L["Active Scoring Profile"], "Mode", specOptions, hProfile, -10, profileTip)
     
-    -- [[ DELETE CUSTOM PROFILE BUTTON ]]
-    local bDeleteProfile = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    bDeleteProfile:SetSize(80, 22)
-    bDeleteProfile:SetPoint("LEFT", ddProfile, "RIGHT", 0, -7)
-    bDeleteProfile:SetText(MSC.L["Delete"])
-    bDeleteProfile:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(MSC.L["Delete Custom Profile"], 1, 1, 1)
-        GameTooltip:AddLine(MSC.L["Deletes the currently selected custom Pawn profile."], nil, nil, nil, true)
-        GameTooltip:Show()
-    end)
-    bDeleteProfile:SetScript("OnLeave", GameTooltip_Hide)
+    local bDeleteProfile = CreateFrame("Button", nil, sChild, "UIPanelButtonTemplate")
+    bDeleteProfile:SetSize(80, 22); bDeleteProfile:SetPoint("LEFT", ddProfile, "RIGHT", 0, -7); bDeleteProfile:SetText(MSC.L["Delete"])
     bDeleteProfile:SetScript("OnClick", function()
         local selected = SGJ_Settings.Mode
         if selected and SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[selected] then
-            -- 1. Remove from DB
             SharpiesGearJudgeDB.customWeights[selected] = nil
-            
-            -- 2. Remove from active class weights
-            if MSC.CurrentClass and MSC.CurrentClass.Weights then
-                MSC.CurrentClass.Weights[selected] = nil
-            end
-            
-            -- 3. Reset mode to AUTO
-            SGJ_Settings.Mode = "AUTO"
-            MSC.ManualSpec = "AUTO"
-            MSC.CachedWeights = nil
-            
+            if MSC.CurrentClass and MSC.CurrentClass.Weights then MSC.CurrentClass.Weights[selected] = nil end
+            SGJ_Settings.Mode = "AUTO"; MSC.ManualSpec = "AUTO"; MSC.CachedWeights = nil
             print(string.format(MSC.L["|cff00ff00SGJ:|r Deleted custom profile: %s"], selected))
             StaticPopup_Show("SGJ_RELOAD_REQUIRED")
-        else
-			print(MSC.L["|cffff0000SGJ:|r You can only delete custom imported profiles. Select a Pawn profile from the dropdown first."])
-        end
+        else print(MSC.L["|cffff0000SGJ:|r You can only delete custom imported profiles."]) end
     end)
 
-    local h3 = CreateHeader(MSC.L["Interface Options"], ddProfile, -20)    
-    local cb1 = CreateCheck(MSC.L["Hide Minimap Button"], "HideMinimap", MSC.L["Hides the circular button on your minimap."], h3, 0, -10)  
-    local cb2 = CreateCheck(MSC.L["Hide Tooltip Verdict"], "HideTooltips", MSC.L["Stops the addon from adding scores to item tooltips."], cb1, 0, -5)   
-    local cbShift = CreateCheck(MSC.L["Show Only via Shift Key"], "ShiftOnlyTooltip", MSC.L["Only shows the Judge score in tooltips while holding the SHIFT key."], cb2, 20, -5)
-    local cb3 = CreateCheck(MSC.L["Mute Error Sounds"], "MuteSounds", MSC.L["Stops the error sound when clicking invalid items."], cbShift, -20, -5)
-    local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
-	local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
-	local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbBagArrows, 0, -5)
-    cbBagArrows:HookScript("OnClick", function()
-        MSC.BagCacheDirty = true
-        if RequestUpdate then RequestUpdate() end
-    end)
-    cb2:HookScript("OnClick", function(self)
-        if self:GetChecked() then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end
-    end)
-    local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nIf an item is an upgrade for a checked profile, a small notification will appear at the bottom of the item tooltip."]
-    local hSpec = CreateHeader(MSC.L["Secondary Spec Tracking"], nil, nil, 320, -30, specTip)
+-- ==========================================
+    -- SECTION 5: MULTI-SPEC TRACKING & BASELINES
+    -- ==========================================
+    local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec gear, rather than your live paper doll."]
+    local hSpec = CreateHeader(MSC.L["Secondary Specs & Baselines"], ddProfile, -25, nil, nil, specTip)
     
-    local trackFrame = CreateFrame("Frame", nil, f, "BackdropTemplate")
-    trackFrame:SetSize(230, 280)
-    trackFrame:SetPoint("TOPLEFT", hSpec, "BOTTOMLEFT", 0, -10)
-    trackFrame:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8", edgeFile="Interface\\Buttons\\WHITE8X8", edgeSize=1})
-    trackFrame:SetBackdropColor(0,0,0,0.3); trackFrame:SetBackdropBorderColor(0,0,0,0.5)
-    
-    local scroll = CreateFrame("ScrollFrame", nil, trackFrame, "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 5, -5); scroll:SetPoint("BOTTOMRIGHT", -25, 5)
-    local sChild = CreateFrame("Frame", nil, scroll); sChild:SetSize(200, 400); scroll:SetScrollChild(sChild)
-    
-    local ty = 0
+    local lastAnchor = hSpec
     for _, p in ipairs(profileList) do
+        -- 1. The Tracking Checkbox
         local cb = CreateFrame("CheckButton", nil, sChild, "ChatConfigCheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", 5, ty)
+        if lastAnchor == hSpec then cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -10) else cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -5) end
         cb.Text:SetText(p.text); cb.Text:SetTextColor(0.8, 0.8, 0.8)
         cb:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val])
         cb:SetScript("OnClick", function(self) 
             if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
             SGJ_Settings.TrackedSpecs[p.val] = self:GetChecked()
         end)
-        ty = ty - 20
+        
+        -- 2. The "Save Gear" Button (Aligned in a perfect column)
+        local btnSave = CreateFrame("Button", nil, sChild, "UIPanelButtonTemplate")
+        btnSave:SetSize(90, 22)
+        btnSave:SetPoint("LEFT", cb, "RIGHT", 150, 0) 
+        btnSave:SetText(MSC.L["Save Gear"])
+        btnSave:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(MSC.L["Lock Baseline Gear"], 1, 1, 1)
+            GameTooltip:AddLine(MSC.L["Saves your currently equipped gear as the baseline for this spec.\n\nMake sure you put on your off-spec gear before clicking this!"], nil, nil, nil, true)
+            GameTooltip:Show()
+        end)
+        btnSave:SetScript("OnLeave", GameTooltip_Hide)
+
+        -- 3. The Status Label (Shows the score of the saved gear)
+        local statusLbl = sChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        statusLbl:SetPoint("LEFT", btnSave, "RIGHT", 10, 0)
+        
+        local function UpdateStatusLabel()
+            local pk = MSC:GetPlayerKey()
+            if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[pk] and SGJ_Settings.GearProfiles[pk][p.val] then
+                local savedGear = SGJ_Settings.GearProfiles[pk][p.val]
+                local weights = MSC.GetWeightsByName(p.val)
+                if weights then
+                    local score = MSC:GetTotalCharacterScore(savedGear, weights, p.val)
+                    statusLbl:SetText(string.format("|cff00ff00" .. MSC.L["Saved:"] .. "|r %.1f", score))
+                else
+                    statusLbl:SetText("|cff00ff00" .. MSC.L["Saved"] .. "|r")
+                end
+            else
+                statusLbl:SetText("|cff888888" .. MSC.L["Not Set"] .. "|r")
+            end
+        end
+        UpdateStatusLabel() -- Initialize the text when the menu opens
+        
+        -- Link the button click to the save function and refresh the label
+        btnSave:SetScript("OnClick", function()
+            MSC:SaveBaselineProfile(p.val)
+            UpdateStatusLabel() 
+        end)
+
+        lastAnchor = cb
     end
-    sChild:SetHeight(math_abs(ty) + 20)
-	
-	local hVisuals = CreateHeader(MSC.L["Tooltip Visuals"], trackFrame, -20)
-    
-    local cbCompact = CreateCheck(MSC.L["Compact Equip Text"], "CompactEquip", MSC.L["Compact Equip Tooltip"], hVisuals, 0, -10)
-    
-    local cbSimple = CreateCheck(MSC.L["Shorten Stat Names"], "SimplifyStats", MSC.L["Shorten Stat Tooltip"], cbCompact, 0, -5)
-    
-    local cbColor = CreateCheck(MSC.L["Colorize Stats"], "ColorizeStats", MSC.L["Colorize Stats Tooltip"], cbSimple, 0, -5)
 
-    -- [[ BUTTONS SECTION ]]
-    local bImp = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    bImp:SetSize(140, 30)
-    bImp:SetPoint("BOTTOMRIGHT", -40, 40)
-    bImp:SetText(MSC.L["Import Pawn String"])
-    bImp:SetScript("OnClick", function() MSC.ShowImportWindow() end)
-
-    local bExport = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    bExport:SetSize(140, 30)
-    bExport:SetPoint("BOTTOMRIGHT", -190, 40)
-    bExport:SetText(MSC.L["Export Data"])
-    bExport:SetScript("OnClick", function() MSC.ShowHistory() end)
+    -- Dynamically set the height of the scroll child so it perfectly fits all content
+    sChild:SetScript("OnUpdate", function(self)
+        if lastAnchor then
+            local bottom = lastAnchor:GetBottom()
+            local top = self:GetTop()
+            if top and bottom then self:SetHeight(top - bottom + 20) end
+            self:SetScript("OnUpdate", nil) -- Only run once
+        end
+    end)
     
     MSC.ViewSettings = f
 end

@@ -491,21 +491,23 @@ CacheCleaner:SetScript("OnEvent", function(self, event)
 end)
 
 
-function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, customBaselineGear)
+function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, baselineGear)
     if not newItemLink then return 0, 0, {}, {}, {} end
     if not weights then weights, specName = MSC.GetCurrentWeights() end
 
     -- [[ 1. CACHE CHECK ]]
-    local cacheKey = (newItemLink or "nil") .. "_" .. (targetSlotID or "0") .. "_" .. (specName or "Default")
+    -- Add a flag to the cache key so Saved profiles don't cross-pollinate with Live gear
+    local cacheType = baselineGear and "_Saved" or "_Live"
+    local cacheKey = (newItemLink or "nil") .. "_" .. (targetSlotID or "0") .. "_" .. (specName or "Default") .. cacheType
     
     if MSC.EvaluationCache[cacheKey] then
         return unpack(MSC.EvaluationCache[cacheKey])
     end
 
     -- [[ 2. SETUP & CURRENT SCORE ]]
-    -- Use the ghost gear if provided, otherwise grab the live gear
-    if customBaselineGear then
-        MSC:SafeCopy(customBaselineGear, Scratch_Gear)
+    -- Use the saved gear if provided, otherwise fallback to the live paper doll
+    if baselineGear then
+        MSC:SafeCopy(baselineGear, Scratch_Gear)
     else
         MSC:GetEquippedGear(Scratch_Gear)
     end
@@ -524,8 +526,8 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, custo
 
     local finalOldStats = {}
     
-    -- Check ghost gear for the old item instead of the live paper doll
-    local oldItemLink = customBaselineGear and customBaselineGear[targetSlotID] or GetInventoryItemLink("player", targetSlotID)
+    -- Pull the old item from the baseline if it exists, otherwise the live paper doll
+    local oldItemLink = baselineGear and baselineGear[targetSlotID] or GetInventoryItemLink("player", targetSlotID)
     
     if oldItemLink then 
         local fs = MSC.SafeGetItemStats(oldItemLink, targetSlotID, weights, specName) 
@@ -549,7 +551,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, custo
             Scratch_Gear[17] = nil 
         else
             local needsOH = false
-            local currentMH = GetInventoryItemLink("player", 16)
+            local currentMH = originalMH
             if currentMH then
                 local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
                 local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
@@ -579,7 +581,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, custo
 			end
 		end
 	elseif targetSlotID == 17 then
-		local currentMH = GetInventoryItemLink("player", 16)
+		local currentMH = originalMH
 		if currentMH then
 			local _,_,_,_,_,_,_,_, currLoc = GetItemInfo(currentMH)
 			local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
@@ -636,7 +638,13 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, custo
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
                 
-                local currentVal = MSC:GetPlayerStat(rule.stat == "ITEM_MOD_HIT_RATING_SHORT" and "HIT" or "SPELL_HIT")
+                local currentVal = 0
+                if baselineGear then
+                    currentVal = currentStatsTotal[rule.stat] or 0
+                else
+                    currentVal = MSC:GetPlayerStat(rule.stat == "ITEM_MOD_HIT_RATING_SHORT" and "HIT" or "SPELL_HIT")
+                end
+                
                 local oldGearVal = currentStatsTotal[rule.stat] or 0
                 local newGearVal = newStatsTotal[rule.stat] or 0
                 local diff = newGearVal - oldGearVal
@@ -653,7 +661,15 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, custo
             elseif rule.stat == "DEFENSE_FLOOR" and MSC.IsTBC then
                 local defWeight = weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                 if defWeight > 0 then
-                    local currentDef = MSC:GetPlayerStat("DEFENSE")
+                    local currentDef = 0
+                    if baselineGear then
+                        local defRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
+                        local baseDef = UnitLevel("player") * 5
+                        currentDef = baseDef + math_floor(defRating / 2.36)
+                    else
+                        currentDef = MSC:GetPlayerStat("DEFENSE")
+                    end
+                    
                     local oldDefRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     local newDefRating = newStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     
@@ -661,11 +677,11 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, custo
                     local futureDef = currentDef + diffSkill
                     
                     if currentDef >= rule.base and futureDef < (rule.base - 0.1) then
-                     newScore = newScore - rule.penalty
-                     local deficit = futureDef - rule.base
-                     local msg = string_format(MSC.L[" |cffff0000(Cap %.1f Def)|r"], deficit)
-                     contextMsg = (contextMsg or "") .. msg
-                end
+                         newScore = newScore - rule.penalty
+                         local deficit = futureDef - rule.base
+                         local msg = string_format(MSC.L[" |cffff0000(Cap %.1f Def)|r"], deficit)
+                         contextMsg = (contextMsg or "") .. msg
+                    end
                 end
             end
         end

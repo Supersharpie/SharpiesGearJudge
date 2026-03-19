@@ -1395,3 +1395,20 @@ L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"] = "Chance for +240 Melee/Ra
 L["5% Stun Resistance"] = "5% Stun Resistance"
 L["+10% Shield Block Value"] = "+10% Shield Block Value"
 L["+2% Intellect"] = "+2% Intellect"
+
+-- [[ PROTOCOL UI UPDATES ]]
+L["Makes the text smaller and cleaner."] = "Makes the text smaller and cleaner."
+L["Changes 'Spell Power' to 'SP', etc."] = "Changes 'Spell Power' to 'SP', etc."
+L["Applies class/role colors to text."] = "Applies class/role colors to text."
+
+-- [[ BASELINE MANAGER (MULTI-SPEC) ]]
+L["Secondary Specs & Baselines"] = "Secondary Specs & Baselines"
+L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec gear, rather than your live paper doll."] = "Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec gear, rather than your live paper doll."
+
+L["Save Gear"] = "Save Gear"
+L["Lock Baseline Gear"] = "Lock Baseline Gear"
+L["Saves your currently equipped gear as the baseline for this spec.\n\nMake sure you put on your off-spec gear before clicking this!"] = "Saves your currently equipped gear as the baseline for this spec.\n\nMake sure you put on your off-spec gear before clicking this!"
+L["|cff00ff00SGJ:|r Locked in current gear as the baseline for %s!"] = "|cff00ff00SGJ:|r Locked in current gear as the baseline for %s!"
+L["Saved:"] = "Saved:"
+L["Saved"] = "Saved"
+L["Not Set"] = "Not Set"

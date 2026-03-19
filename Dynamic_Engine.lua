@@ -218,7 +218,6 @@ talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
 talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
 talentTracker:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-talentTracker:RegisterEvent("PLAYER_REGEN_ENABLED") -- Added for Combat Recovery
 
 talentTracker:SetScript("OnEvent", function(self, event, unit)
     if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
@@ -230,15 +229,6 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
 
     MSC.CachedWeights = nil
     MSC.CachedSpecKey = nil
-    
-    -- [[ TRIGGER SNAPSHOT LOGIC ]]
-    if event == "PLAYER_EQUIPMENT_CHANGED" or event == "UNIT_INVENTORY_CHANGED" or event == "PLAYER_ENTERING_WORLD" then
-        MSC:QueueGearSnapshot()
-    elseif event == "PLAYER_TALENT_UPDATE" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
-        MSC:QueueGearSnapshot() -- Lock in gear on successful respec
-    elseif event == "PLAYER_REGEN_ENABLED" then
-        if isGearDirty then MSC:QueueGearSnapshot() end
-    end
     
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()
@@ -288,3 +278,37 @@ setCalcFrame:SetScript("OnEvent", function(self, event)
         end
     end)
 end)
+
+-- =========================================================================
+-- BASELINE PROFILE MANAGER
+-- =========================================================================
+
+-- Generates a unique key for the current character
+function MSC:GetPlayerKey()
+    local name = UnitName("player") or "Unknown"
+    local realm = GetRealmName() or "Local"
+    return name .. "-" .. realm
+end
+
+-- Saves the currently equipped gear to the specific spec for this character
+function MSC:SaveBaselineProfile(specName)
+    if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
+    
+    local playerKey = MSC:GetPlayerKey()
+    
+    -- Initialize this specific character's sub-table if it doesn't exist
+    if not SGJ_Settings.GearProfiles[playerKey] then 
+        SGJ_Settings.GearProfiles[playerKey] = {} 
+    end
+    
+    -- Save the gear into their personal namespace
+    SGJ_Settings.GearProfiles[playerKey][specName] = MSC:GetEquippedGear()
+    
+    -- [[ FLUSH THE MEMORY CACHE ]]
+    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    if MSC.SlotCache then wipe(MSC.SlotCache) end
+    if MSC.StatCache then wipe(MSC.StatCache) end
+    
+    local prettyName = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName]) or specName
+    print(string.format(MSC.L["|cff00ff00SGJ:|r Locked in current gear as the baseline for %s!"], prettyName))
+end

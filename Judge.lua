@@ -130,22 +130,25 @@ StaticPopupDialogs["SGJ_RELOAD_REQUIRED"] = {
 -- =============================================================
 -- 2. SMART SLOT LOGIC (Optimized with Cache)
 -- =============================================================
-function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
+function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName, baselineGear)
     local defaultSlot = MSC.SlotMap and MSC.SlotMap[equipLoc] or nil
     if not defaultSlot then return nil end
+
+    -- Make the cache key unique per spec to prevent crossover bugs
+    local cacheKey = equipLoc .. "_" .. (specName or "Live") .. (baselineGear and "_Base" or "")
 
     -- [[ OPTIMIZATION: USE CACHED "WORSE" SLOT ]]
     if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
         local s1, s2 = 11, 12
         if equipLoc == "INVTYPE_TRINKET" then s1, s2 = 13, 14 end
         
-        local l1 = GetInventoryItemLink("player", s1)
-        local l2 = GetInventoryItemLink("player", s2)
+        local l1 = baselineGear and baselineGear[s1] or GetInventoryItemLink("player", s1)
+        local l2 = baselineGear and baselineGear[s2] or GetInventoryItemLink("player", s2)
         
         if itemLink == l1 then return s2 end
         if itemLink == l2 then return s1 end
 		
-        if MSC.SlotCache[equipLoc] then return MSC.SlotCache[equipLoc] end
+        if MSC.SlotCache[cacheKey] then return MSC.SlotCache[cacheKey] end
 
         if not l1 then return s1 end
         if not l2 then return s2 end
@@ -156,7 +159,7 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
         local score2 = MSC.GetItemScore(stats2, weights, specName, s2)
         
         local winner = (score2 < score1) and s2 or s1
-        MSC.SlotCache[equipLoc] = winner
+        MSC.SlotCache[cacheKey] = winner
         return winner
     end
 
@@ -165,13 +168,13 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
         local canDW = (class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" or class == "SHAMAN")
         
         if canDW then
-            local l1 = GetInventoryItemLink("player", 16)
-            local l2 = GetInventoryItemLink("player", 17)
+            local l1 = baselineGear and baselineGear[16] or GetInventoryItemLink("player", 16)
+            local l2 = baselineGear and baselineGear[17] or GetInventoryItemLink("player", 17)
             
             if itemLink == l1 then return 17 end
             if itemLink == l2 then return 16 end
             
-            if MSC.SlotCache[equipLoc] then return MSC.SlotCache[equipLoc] end
+            if MSC.SlotCache[cacheKey] then return MSC.SlotCache[cacheKey] end
 
             if l1 and l2 then
                 local _,_,_,_,_,_,_,_, loc2 = GetItemInfo(l2)
@@ -182,7 +185,7 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName)
                     local score2 = MSC.GetItemScore(stats2, weights, specName, 17)
                     
                     local winner = (score2 < score1) and 17 or 16
-                    MSC.SlotCache[equipLoc] = winner
+                    MSC.SlotCache[cacheKey] = winner
                     return winner
                 end
             end
@@ -746,53 +749,58 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
-            -- [[ 5. MULTI-SPEC TRACKING ]]
+			-- [[ 5. MULTI-SPEC TRACKING ]]
             if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
                 for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
                     if isActive and tSpec ~= specName then
+
                         local tWeights = MSC.GetWeightsByName(tSpec)
                         if tWeights then
-                            local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec)
+                            
+                            -- 1. Fetch the explicit baseline gear FIRST
+                            local playerKey = MSC:GetPlayerKey()
+                            local baselineGear = nil
+                            
+                            if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[playerKey] then
+                                baselineGear = SGJ_Settings.GearProfiles[playerKey][tSpec]
+                            end
+
+                            -- 2. Pass the baselineGear into the slot check so it knows which saved ring is weakest!
+                            local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec, baselineGear)
+                            
                             if tSlotId then
-                                local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
+                                -- 3. Evaluate the upgrade
+                                local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
+                                local tDelta = tNewScore - tOldScore
                                 
-                                -- Fetch the silent snapshot if it exists
-                                local baselineGear = SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[tSpec]
-                                
-                                if baselineGear then
-                                    -- A SNAPSHOT EXISTS: Calculate true Delta Upgrade
-                                    local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
-                                    local tDelta = tNewScore - tOldScore
+                                if tDelta > 0.1 then
+                                    local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
                                     
-                                    if tDelta > 0.1 then
-                                        tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
-                                        
-                                        if oSC and nSC and MSC.SetBonusScores then
-                                            for setID, scores in pairs(MSC.SetBonusScores) do
-                                                local oC = oSC[setID] or 0
-                                                local nC = nSC[setID] or 0
-                                                if nC < oC then
-                                                    for req, _ in pairs(scores) do
-                                                        local rN = tonumber(req)
-                                                        if rN and oC >= rN and nC < rN then
-                                                            tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN))
-                                                        end
+                                    -- Add a small visual hint so the user knows if it's comparing against the bank or their live gear
+                                    local label = "|cff00ccff" .. prettySpec .. ":|r"
+                                    if baselineGear then 
+                                        label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" 
+                                    end
+                                    
+                                    tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
+                                    
+                                    if oSC and nSC and MSC.SetBonusScores then
+                                        for setID, scores in pairs(MSC.SetBonusScores) do
+                                            local oC = oSC[setID] or 0
+                                            local nC = nSC[setID] or 0
+                                            if nC < oC then
+                                                for req, _ in pairs(scores) do
+                                                    local rN = tonumber(req)
+                                                    if rN and oC >= rN and nC < rN then
+                                                        tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN))
                                                     end
                                                 end
                                             end
                                         end
                                     end
-                                else
-                                    -- NO SNAPSHOT YET: Fallback to Raw Item Score
-                                    local itemNewStats = MSC.SafeGetItemStats(link, tSlotId, tWeights, tSpec)
-                                    local rawScore = MSC.GetItemScore(itemNewStats, tWeights, tSpec, tSlotId)
-                                    
-                                    if rawScore > 0 then
-                                        tooltip:AddDoubleLine("|cff00ccff" .. prettySpec .. ":|r", string_format("|cffffffff%.1f|r |cff888888(Raw Score)|r", rawScore), 1, 1, 1, 1, 1, 1)
-                                    end
                                 end
                             end
-                        end
+                        end 
                     end
                 end
             end
