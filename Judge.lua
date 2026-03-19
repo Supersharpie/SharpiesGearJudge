@@ -864,7 +864,8 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             for _, d in ipairs(totalDiffs) do
                 if math_abs(d.val) > 0.1 then
                     local w = weights[d.key] or 0
-                    if w > 0.02 then
+                    -- Bypass the weight check if the stat is Armor
+                    if w > 0.02 or d.key == "ITEM_MOD_ARMOR_SHORT" then
                         if d.val > 0 then table_insert(totalGains, d) else table_insert(totalLosses, d) end 
                     end
                 end
@@ -933,7 +934,8 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 for _, d in ipairs(itemDiffs) do
                     if math_abs(d.val) > 0.1 then
                         local w = weights[d.key] or 0
-                        if w > 0.02 then
+                        -- Bypass the weight check if the stat is Armor
+                        if w > 0.02 or d.key == "ITEM_MOD_ARMOR_SHORT" then
                             if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
                         end
                     end

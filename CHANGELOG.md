@@ -11,8 +11,12 @@
 * **Made Slot-cache keys spec-aware and allow GetComparisonSlot to consult baselineGear when comparing rings/trinkets and weapons.** 
 * **Expanded tooltip multi-spec tracking to load saved baselines and show saved vs. live comparisons with a Saved label.** 
 * **Refactored settings UI into a scrollable pane, reorganize sections, add Save Gear buttons for each tracked profile, improve dropdown/check behavior, and streamline custom-profile deletion.** 
+
+### 🐛 Minor Fixes
 * **Updated localization strings to support new UI text.**
 * **Removed PLAYER_REGEN_ENABLED snapshot branch and related trigger code.**
+* **Fixed When the GameTooltip is visible, fall back to MSC.HoveredQuestLink if no item link is returned so tooltip matching works for quest-linked items and the tooltip is re-evaluated.**
+* **Adjusted weight checks to bypass the minimum-weight threshold for the Armor stat in both total and item diff handling so Armor contributions are not incorrectly ignored.**
 
 ------------------------------------------------------------------------------------------------
 

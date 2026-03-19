@@ -239,9 +239,10 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
 		
         if GameTooltip:IsVisible() then
             local _, link = GameTooltip:GetItem()
+            if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
+            
             if link and string.find(link, "item:" .. itemID) then
                  if RequestUpdate then RequestUpdate() end
-                 -- MAGIC FIX: Force the tooltip to evaluate now that the cache is loaded
                  if MSC.EvaluateAndDrawTooltip then 
                      MSC.EvaluateAndDrawTooltip(GameTooltip) 
                  end
