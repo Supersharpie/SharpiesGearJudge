@@ -1360,3 +1360,20 @@ L["Equip: Shaman Proc (Mana / 275 AP)"] = "Экип: Прок Шамана (Ма
 L["Equip: Rogue Proc (145 Crit)"] = "Экип: Прок Разбойника (145 Крита)"
 L["Equip: Warlock Proc (220 SP)"] = "Экип: Прок Чернокнижника (220 СЗ)"
 L["Equip: Druid Blessing (3% Proc)"] = "Экип: Благословение друида (3% Прок)"
+
+-- [[ PROTOCOL UI UPDATES ]]
+L["Makes the text smaller and cleaner."] = "Делает текст меньше и аккуратнее."
+L["Changes 'Spell Power' to 'SP', etc."] = "Заменяет 'Сила заклинаний' на 'СЗ' и т.д."
+L["Applies class/role colors to text."] = "Применяет цвета класса/роли к тексту."
+
+-- [[ BASELINE MANAGER (MULTI-SPEC) ]]
+L["Secondary Specs & Baselines"] = "Вторичные специализации и базовые наборы"
+L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."] = "Выберите дополнительные профили для отслеживания в подсказках.\n\nВы также можете зафиксировать текущую экипировку и таланты как 'Базовую' для этой специализации. Это гарантирует, что аддон будет сравнивать новую добычу с вашей реальной конфигурацией для вторичной специализации, а не с тем, что надето на вас сейчас."
+
+L["Save Profile"] = "Сохранить профиль"
+L["Lock Baseline Profile"] = "Зафиксировать базовый профиль"
+L["Saves your currently equipped gear AND active talents as the baseline for this spec.\n\nMake sure you are actively in this spec and wearing its gear before clicking this!"] = "Сохраняет вашу текущую экипировку И активные таланты как базовые для этой специализации.\n\nУбедитесь, что вы находитесь в этой специализации и надели соответствующую экипировку перед тем, как нажать на это!"
+L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"] = "|cff00ff00SGJ:|r Текущая экипировка и таланты зафиксированы как базовые для %s!"
+L["Saved:"] = "Сохранено:"
+L["Saved"] = "Сохранено"
+L["Not Set"] = "Не задано"

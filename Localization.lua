@@ -1403,12 +1403,12 @@ L["Applies class/role colors to text."] = "Applies class/role colors to text."
 
 -- [[ BASELINE MANAGER (MULTI-SPEC) ]]
 L["Secondary Specs & Baselines"] = "Secondary Specs & Baselines"
-L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec gear, rather than your live paper doll."] = "Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec gear, rather than your live paper doll."
+L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."] = "Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."
 
-L["Save Gear"] = "Save Gear"
-L["Lock Baseline Gear"] = "Lock Baseline Gear"
-L["Saves your currently equipped gear as the baseline for this spec.\n\nMake sure you put on your off-spec gear before clicking this!"] = "Saves your currently equipped gear as the baseline for this spec.\n\nMake sure you put on your off-spec gear before clicking this!"
-L["|cff00ff00SGJ:|r Locked in current gear as the baseline for %s!"] = "|cff00ff00SGJ:|r Locked in current gear as the baseline for %s!"
+L["Save Profile"] = "Save Profile"
+L["Lock Baseline Profile"] = "Lock Baseline Profile"
+L["Saves your currently equipped gear AND active talents as the baseline for this spec.\n\nMake sure you are actively in this spec and wearing its gear before clicking this!"] = "Saves your currently equipped gear AND active talents as the baseline for this spec.\n\nMake sure you are actively in this spec and wearing its gear before clicking this!"
+L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"] = "|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"
 L["Saved:"] = "Saved:"
 L["Saved"] = "Saved"
 L["Not Set"] = "Not Set"

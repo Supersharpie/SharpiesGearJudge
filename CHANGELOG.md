@@ -1,6 +1,22 @@
 # Sharpie's Gear Judge - Version History
 
-## 🚀 v2.5.2
+## 🚀 v2.5.3
+
+### ⚖️ UI, Scoring & Off Spec Logic
+* **Added TalentProfiles storage, build & copy talent cache when saving a profile, and flush evaluation caches.**  
+* **GetWeightsByName now copies raw weight tables and applies class scalers to avoid mutating core data; tooltip evaluation injects saved off-spec talents into MSC.TalentCache to get correct scaled weights, then restores the live cache.**  
+* **Introduced per-character baseline gear profiles and UI to save/compare off-spec gear.** 
+* **Added MSC:GetPlayerKey and MSC:SaveBaselineProfile to store equipped gear by character/spec and flush relevant caches.**
+* **Updated Evaluator:GetEvaluateUpgrade to accept a baselineGear parameter, include a Live/Saved flag in cache keys, and use baseline stats when present (adjusts hit/defense calculations and one/two-hand logic).** 
+* **Made Slot-cache keys spec-aware and allow GetComparisonSlot to consult baselineGear when comparing rings/trinkets and weapons.** 
+* **Expanded tooltip multi-spec tracking to load saved baselines and show saved vs. live comparisons with a Saved label.** 
+* **Refactored settings UI into a scrollable pane, reorganize sections, add Save Gear buttons for each tracked profile, improve dropdown/check behavior, and streamline custom-profile deletion.** 
+* **Updated localization strings to support new UI text.**
+* **Removed PLAYER_REGEN_ENABLED snapshot branch and related trigger code.**
+
+------------------------------------------------------------------------------------------------
+
+## 🚀 v2.5.2 - Unreleased
 
 ### ⚖️ UI, Scoring & Evaluator Logic
 * **Added an optional customBaselineGear parameter to MSC:EvaluateUpgrade so upgrades can be evaluated against a ghost/virtual gear set.**

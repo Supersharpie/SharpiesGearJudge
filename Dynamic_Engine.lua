@@ -290,25 +290,28 @@ function MSC:GetPlayerKey()
     return name .. "-" .. realm
 end
 
--- Saves the currently equipped gear to the specific spec for this character
+-- Saves the currently equipped gear AND talents to the specific spec
 function MSC:SaveBaselineProfile(specName)
     if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
+    if not SGJ_Settings.TalentProfiles then SGJ_Settings.TalentProfiles = {} end
     
     local playerKey = MSC:GetPlayerKey()
     
-    -- Initialize this specific character's sub-table if it doesn't exist
-    if not SGJ_Settings.GearProfiles[playerKey] then 
-        SGJ_Settings.GearProfiles[playerKey] = {} 
-    end
+    if not SGJ_Settings.GearProfiles[playerKey] then SGJ_Settings.GearProfiles[playerKey] = {} end
+    if not SGJ_Settings.TalentProfiles[playerKey] then SGJ_Settings.TalentProfiles[playerKey] = {} end
     
-    -- Save the gear into their personal namespace
+    -- 1. Save Gear
     SGJ_Settings.GearProfiles[playerKey][specName] = MSC:GetEquippedGear()
     
-    -- [[ FLUSH THE MEMORY CACHE ]]
+    -- 2. Save Talents (Force a rebuild just to be safe, then copy it)
+    MSC:BuildTalentCache()
+    SGJ_Settings.TalentProfiles[playerKey][specName] = MSC:SafeCopy(MSC.TalentCache)
+    
+    -- 3. Flush the cache
     if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
     if MSC.SlotCache then wipe(MSC.SlotCache) end
     if MSC.StatCache then wipe(MSC.StatCache) end
     
     local prettyName = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName]) or specName
-    print(string.format(MSC.L["|cff00ff00SGJ:|r Locked in current gear as the baseline for %s!"], prettyName))
+    print(string.format(MSC.L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"], prettyName))
 end

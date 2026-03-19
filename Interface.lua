@@ -1853,10 +1853,10 @@ function MSC.InitSettingsView(parent)
         else print(MSC.L["|cffff0000SGJ:|r You can only delete custom imported profiles."]) end
     end)
 
--- ==========================================
+	-- ==========================================
     -- SECTION 5: MULTI-SPEC TRACKING & BASELINES
     -- ==========================================
-    local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec gear, rather than your live paper doll."]
+    local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."]
     local hSpec = CreateHeader(MSC.L["Secondary Specs & Baselines"], ddProfile, -25, nil, nil, specTip)
     
     local lastAnchor = hSpec
@@ -1871,15 +1871,15 @@ function MSC.InitSettingsView(parent)
             SGJ_Settings.TrackedSpecs[p.val] = self:GetChecked()
         end)
         
-        -- 2. The "Save Gear" Button (Aligned in a perfect column)
+        -- 2. The "Save Profile" Button
         local btnSave = CreateFrame("Button", nil, sChild, "UIPanelButtonTemplate")
         btnSave:SetSize(90, 22)
-        btnSave:SetPoint("LEFT", cb, "RIGHT", 150, 0) 
-        btnSave:SetText(MSC.L["Save Gear"])
+        btnSave:SetPoint("LEFT", cb, "LEFT", 220, 0) 
+        btnSave:SetText(MSC.L["Save Profile"])
         btnSave:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(MSC.L["Lock Baseline Gear"], 1, 1, 1)
-            GameTooltip:AddLine(MSC.L["Saves your currently equipped gear as the baseline for this spec.\n\nMake sure you put on your off-spec gear before clicking this!"], nil, nil, nil, true)
+            GameTooltip:SetText(MSC.L["Lock Baseline Profile"], 1, 1, 1)
+            GameTooltip:AddLine(MSC.L["Saves your currently equipped gear AND active talents as the baseline for this spec.\n\nMake sure you are actively in this spec and wearing its gear before clicking this!"], nil, nil, nil, true)
             GameTooltip:Show()
         end)
         btnSave:SetScript("OnLeave", GameTooltip_Hide)

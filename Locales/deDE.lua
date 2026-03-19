@@ -1394,3 +1394,20 @@ L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"] = "Chance auf +240 Nah-/Fer
 L["5% Stun Resistance"] = "5% Betäubungswiderstand"
 L["+10% Shield Block Value"] = "+10% Schildblockwert"
 L["+2% Intellect"] = "+2% Intelligenz"
+
+-- [[ PROTOCOL UI UPDATES ]]
+L["Makes the text smaller and cleaner."] = "Macht den Text kleiner und übersichtlicher."
+L["Changes 'Spell Power' to 'SP', etc."] = "Ändert 'Zaubermacht' zu 'ZM', etc."
+L["Applies class/role colors to text."] = "Wendet Klassen-/Rollenfarben auf den Text an."
+
+-- [[ BASELINE MANAGER (MULTI-SPEC) ]]
+L["Secondary Specs & Baselines"] = "Sekundäre Spezialisierungen & Basiswerte"
+L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."] = "Wähle zusätzliche Profile, die in Tooltips verfolgt werden sollen.\n\nDu kannst auch deine aktuelle Ausrüstung und Talente als 'Basiswert' für diese Spezialisierung speichern. Dies stellt sicher, dass das Addon neue Beute mit deinem tatsächlichen Off-Spec-Setup vergleicht und nicht mit den aktuell angelegten Gegenständen."
+
+L["Save Profile"] = "Profil speichern"
+L["Lock Baseline Profile"] = "Basis-Profil festlegen"
+L["Saves your currently equipped gear AND active talents as the baseline for this spec.\n\nMake sure you are actively in this spec and wearing its gear before clicking this!"] = "Speichert deine aktuell angelegte Ausrüstung UND aktiven Talente als Basiswert für diese Spezialisierung.\n\nStelle sicher, dass du dich in dieser Spezialisierung befindest und die entsprechende Ausrüstung trägst, bevor du hier klickst!"
+L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"] = "|cff00ff00SGJ:|r Aktuelle Ausrüstung und Talente als Basiswert für %s festgelegt!"
+L["Saved:"] = "Gespeichert:"
+L["Saved"] = "Gespeichert"
+L["Not Set"] = "Nicht festgelegt"

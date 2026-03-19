@@ -200,10 +200,24 @@ end
 -- =============================================================
 function MSC.GetWeightsByName(profileName)
     if not MSC.CurrentClass then return nil end
-    if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[profileName] then return MSC.CurrentClass.Weights[profileName] end
-    if MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[profileName] then return MSC.CurrentClass.LevelingWeights[profileName] end
-    if MSC.CurrentClass.Profiles and MSC.CurrentClass.Profiles[profileName] then return MSC.CurrentClass.Profiles[profileName] end
-    return nil
+    local rawWeights = nil
+    
+    if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[profileName] then rawWeights = MSC.CurrentClass.Weights[profileName] end
+    if not rawWeights and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[profileName] then rawWeights = MSC.CurrentClass.LevelingWeights[profileName] end
+    if not rawWeights and MSC.CurrentClass.Profiles and MSC.CurrentClass.Profiles[profileName] then rawWeights = MSC.CurrentClass.Profiles[profileName] end
+    
+    if not rawWeights then return nil end
+    
+    -- Copy to avoid editing the core database
+    local finalWeights = {}
+    for k,v in pairs(rawWeights) do finalWeights[k] = v end
+    
+    -- Run the weights through the talent scalers!
+    if MSC.CurrentClass.ApplyScalers then
+        finalWeights = MSC.CurrentClass:ApplyScalers(finalWeights, profileName)
+    end
+    
+    return finalWeights
 end
 
 -- =============================================================
@@ -753,34 +767,37 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
                 for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
                     if isActive and tSpec ~= specName then
+                        
+                        -- [[ THE BRAIN SWAP: Mock the Talent Tree ]]
+                        local playerKey = MSC:GetPlayerKey()
+                        local originalTalentCache = MSC.TalentCache
+                        
+                        if SGJ_Settings.TalentProfiles and SGJ_Settings.TalentProfiles[playerKey] and SGJ_Settings.TalentProfiles[playerKey][tSpec] then
+                            -- Inject the saved off-spec talents into the live engine!
+                            MSC.TalentCache = SGJ_Settings.TalentProfiles[playerKey][tSpec]
+                        end
 
+                        -- Fetch weights (which now correctly uses the injected talents for scaling)
                         local tWeights = MSC.GetWeightsByName(tSpec)
                         if tWeights then
                             
-                            -- 1. Fetch the explicit baseline gear FIRST
-                            local playerKey = MSC:GetPlayerKey()
                             local baselineGear = nil
-                            
                             if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[playerKey] then
                                 baselineGear = SGJ_Settings.GearProfiles[playerKey][tSpec]
                             end
 
-                            -- 2. Pass the baselineGear into the slot check so it knows which saved ring is weakest!
                             local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec, baselineGear)
                             
                             if tSlotId then
-                                -- 3. Evaluate the upgrade
+                                -- Evaluate the upgrade (Hit/Def Cap guardians will now read the injected talents)
                                 local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
                                 local tDelta = tNewScore - tOldScore
                                 
                                 if tDelta > 0.1 then
                                     local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
                                     
-                                    -- Add a small visual hint so the user knows if it's comparing against the bank or their live gear
                                     local label = "|cff00ccff" .. prettySpec .. ":|r"
-                                    if baselineGear then 
-                                        label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" 
-                                    end
+                                    if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" end
                                     
                                     tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
                                     
@@ -791,9 +808,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                                             if nC < oC then
                                                 for req, _ in pairs(scores) do
                                                     local rN = tonumber(req)
-                                                    if rN and oC >= rN and nC < rN then
-                                                        tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN))
-                                                    end
+                                                    if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN)) end
                                                 end
                                             end
                                         end
@@ -801,6 +816,10 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                                 end
                             end
                         end 
+                        
+                        -- [[ RESTORE REALITY ]]
+                        -- Put the live talents back so the rest of the game works normally
+                        MSC.TalentCache = originalTalentCache
                     end
                 end
             end
