@@ -153,7 +153,7 @@ MSC.EnchantDB = {
 
     -- [[ SHIELD & SPIKES ]]
     [2655] = { name = MSC.L["Major Stamina"], slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 18 } },
-    [2658] = { name = MSC.L["Intellect"], slot = 17, isShield = true, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
+    [2654] = { name = MSC.L["Intellect"], slot = 17, isShield = true, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
     [2659] = { name = MSC.L["Shield Block"], slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 15 } },
     [1071] = { name = MSC.L["Lesser Stamina"], slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 3 } }, 
     [1880] = { name = MSC.L["Greater Spirit"], slot = 17, isShield = true, stats = { ITEM_MOD_SPIRIT_SHORT = 9 } },
@@ -317,7 +317,7 @@ MSC.EnchantDB = {
     [274]  = { name = MSC.L["Minor Stamina (+1)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 1 } },
     [849]  = { name = MSC.L["Agility (+5)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, 
     [842]  = { name = MSC.L["Lesser Agility (+3)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 3 } },
-    [2654] = { name = MSC.L["Fortitude (+12 Stam)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 12 } },
+    [371] = { name = MSC.L["Fortitude (+12 Stam)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 12 } },
     [2657] = { name = MSC.L["Dexterity (+12 Agi)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
     [2658] = { name = MSC.L["Surefooted (+5% Resist)"], slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } },
 
@@ -374,7 +374,7 @@ MSC.EnchantCandidates = {
     -- [[ LEGS ]]
     [7] = { 3154, 3153, 2953, 2952, 2427, 2741, 2743, 3016, 2543, 2544, 2545, 1503, 1504 },
     -- [[ FEET ]]
-    [8] = { 2939, 2656, 3232, 2564, 911, 910, 2654, 2657, 2658, 859, 860, 858, 845, 849 },
+    [8] = { 2939, 2656, 3232, 2564, 911, 910, 371, 2657, 2658, 859, 860, 858, 845, 849 },
     -- [[ WRIST ]]
     [9] = { 2647, 2650, 2651, 2649, 2646, 2655, 1883, 1884, 905, 1885, 1886, 1893, 2508, 2793, 2794, 852, 851 },
     -- [[ HANDS ]]
@@ -387,7 +387,7 @@ MSC.EnchantCandidates = {
     -- [[ WEAPON (MAIN/2H) ]]
     [16] = { 2673, 2674, 2675, 3225, 2669, 2642, 2671, 2666, 2667, 2668, 3222, 2621, 1897, 803, 1900, 2563, 1898, 2504, 2505, 943, 2672, 2670, 805, 1896, 963 },
     -- [[ OFFHAND / SHIELD ]]
-    [17] = { 2655, 2658, 2659, 1071, 1880, 1881, 2748, 2747, 2746, 2745, 2673, 2674, 2675, 3225, 2669, 2642, 2666, 2668, 2621, 803 },
+    [17] = { 2655, 2654, 2659, 1071, 1880, 1881, 2748, 2747, 2746, 2745, 2673, 2674, 2675, 3225, 2669, 2642, 2666, 2668, 2621, 803 },
     -- [[ RANGED ]]
     [18] = { 23766, 23764, 23765, 10548, 33, 664, 2523 } 
 }
