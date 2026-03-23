@@ -554,12 +554,13 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
     local finalStats = {}
     for k,v in pairs(rawStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
     local bonusStats = rawStats._BONUS_STATS or {}
+    local baseLink = MSC.GetBaseLink and MSC.GetBaseLink(itemLink) or nil
+    local baseRaw = nil
 
-    if not next(bonusStats) and MSC.GetBaseLink then
-        local baseLink = MSC.GetBaseLink(itemLink)
-        if baseLink and baseLink ~= itemLink then
-            local baseRaw = MSC.GetRawItemStats(baseLink)
-            if baseRaw._BONUS_STATS and next(baseRaw._BONUS_STATS) then bonusStats = baseRaw._BONUS_STATS end
+    if baseLink and baseLink ~= itemLink then
+        baseRaw = MSC.GetRawItemStats(baseLink)
+        if not next(bonusStats) and baseRaw._BONUS_STATS and next(baseRaw._BONUS_STATS) then
+            bonusStats = baseRaw._BONUS_STATS
         end
     end
 
@@ -631,6 +632,16 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                 if bestID and MSC.EnchantDB[bestID] then
                     local bestData = MSC.EnchantDB[bestID]
                     if bestData.stats then
+                        if not currentEnchantData and baseRaw then
+                            for k, v in pairs(bestData.stats) do
+                                if type(v) == "number" then
+                                    local rawDelta = math_max(0, (rawStats[k] or 0) - (baseRaw[k] or 0))
+                                    if rawDelta > 0 then
+                                        finalStats[k] = math_max(0, (finalStats[k] or 0) - math_min(v, rawDelta))
+                                    end
+                                end
+                            end
+                        end
                         for k, v in pairs(bestData.stats) do 
                             if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end
                         end
