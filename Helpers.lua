@@ -426,6 +426,53 @@ function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights
     return (bestScore > 0) and bestID or nil
 end
 
+local function InferCurrentEnchantFromDelta(slotId, rawStats, baseRaw)
+    if not slotId or not rawStats or not baseRaw or not MSC.EnchantDB then return nil end
+
+    local candidates = MSC.EnchantCandidates and MSC.EnchantCandidates[slotId]
+    if not candidates then return nil end
+
+    local bestMatch, bestTotal = nil, 0
+
+    for _, enchantID in ipairs(candidates) do
+        local data = MSC.EnchantDB[enchantID]
+        if data and data.stats then
+            local matched = true
+            local total = 0
+
+            for statKey, statVal in pairs(data.stats) do
+                if type(statVal) == "number" then
+                    local rawDelta = math_max(0, (rawStats[statKey] or 0) - (baseRaw[statKey] or 0))
+                    if math_abs(rawDelta - statVal) > 0.01 then
+                        matched = false
+                        break
+                    end
+                    total = total + statVal
+                end
+            end
+
+            if matched then
+                for statKey, rawVal in pairs(rawStats) do
+                    if type(rawVal) == "number" then
+                        local rawDelta = math_max(0, rawVal - (baseRaw[statKey] or 0))
+                        local enchantVal = data.stats[statKey] or 0
+                        if math_abs(rawDelta - enchantVal) > 0.01 then
+                            matched = false
+                            break
+                        end
+                    end
+                end
+            end
+
+            if matched and total > bestTotal then
+                bestMatch, bestTotal = data, total
+            end
+        end
+    end
+
+    return bestMatch
+end
+
 function MSC.GetBestGemForSocket(socketColor, level, weights, excludeList, isJC)
     local bestGem, bestScore = nil, 0
     local db = (level >= 60 and MSC.GemOptions) and MSC.GemOptions or MSC.GemOptions_Leveling
@@ -586,19 +633,22 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
 
     if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
         currentEnchantData = MSC.EnchantDB[physicalEnchantID]
-        if currentEnchantData.stats then
-            for k, v in pairs(currentEnchantData.stats) do
-                if type(v) == "number" then
-                    local removable = v
-                    if baseRaw then
-                        removable = math_min(v, math_max(0, (rawStats[k] or 0) - (baseRaw[k] or 0)))
-                    elseif (finalStats[k] or 0) < v then
-                        removable = 0
-                    end
+    elseif baseRaw then
+        currentEnchantData = InferCurrentEnchantFromDelta(derivedSlotId, rawStats, baseRaw)
+    end
 
-                    if removable > 0 then
-                        finalStats[k] = math_max(0, (finalStats[k] or 0) - removable)
-                    end
+    if currentEnchantData and currentEnchantData.stats then
+        for k, v in pairs(currentEnchantData.stats) do
+            if type(v) == "number" then
+                local removable = v
+                if baseRaw then
+                    removable = math_min(v, math_max(0, (rawStats[k] or 0) - (baseRaw[k] or 0)))
+                elseif (finalStats[k] or 0) < v then
+                    removable = 0
+                end
+
+                if removable > 0 then
+                    finalStats[k] = math_max(0, (finalStats[k] or 0) - removable)
                 end
             end
         end
@@ -642,16 +692,6 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                 if bestID and MSC.EnchantDB[bestID] then
                     local bestData = MSC.EnchantDB[bestID]
                     if bestData.stats then
-                        if not currentEnchantData and baseRaw then
-                            for k, v in pairs(bestData.stats) do
-                                if type(v) == "number" then
-                                    local rawDelta = math_max(0, (rawStats[k] or 0) - (baseRaw[k] or 0))
-                                    if rawDelta > 0 then
-                                        finalStats[k] = math_max(0, (finalStats[k] or 0) - math_min(v, rawDelta))
-                                    end
-                                end
-                            end
-                        end
                         for k, v in pairs(bestData.stats) do 
                             if type(v) == "number" then finalStats[k] = (finalStats[k] or 0) + v end
                         end
