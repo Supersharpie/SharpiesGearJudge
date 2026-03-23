@@ -577,6 +577,7 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
     end
     
     local physicalEnchantID = 0
+    local currentEnchantData = nil
     local itemString = string_match(itemLink, "item[%-?%d:]+")
     if itemString then
         local _, _, eid = strsplit(":", itemString)
@@ -584,11 +585,20 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
     end
 
     if physicalEnchantID > 0 and MSC.EnchantDB and MSC.EnchantDB[physicalEnchantID] then
-        local pData = MSC.EnchantDB[physicalEnchantID]
-        if pData.stats then
-            for k, v in pairs(pData.stats) do
-                if type(v) == "number" and (finalStats[k] or 0) >= v then
-                    finalStats[k] = finalStats[k] - v
+        currentEnchantData = MSC.EnchantDB[physicalEnchantID]
+        if currentEnchantData.stats then
+            for k, v in pairs(currentEnchantData.stats) do
+                if type(v) == "number" then
+                    local removable = v
+                    if baseRaw then
+                        removable = math_min(v, math_max(0, (rawStats[k] or 0) - (baseRaw[k] or 0)))
+                    elseif (finalStats[k] or 0) < v then
+                        removable = 0
+                    end
+
+                    if removable > 0 then
+                        finalStats[k] = math_max(0, (finalStats[k] or 0) - removable)
+                    end
                 end
             end
         end
