@@ -558,7 +558,7 @@ function MSC.GetGemColor(gemID)
 end
 
 function MSC.SolveColorMatch(gemIDs, baseLink)
-    local template = GetItemStats(baseLink)
+    local template = GetItemStats(baseLink) or {}
     local sockets = {}
     for i=1, (template["EMPTY_SOCKET_RED"] or 0) do table_insert(sockets, "RED") end
     for i=1, (template["EMPTY_SOCKET_YELLOW"] or 0) do table_insert(sockets, "YELLOW") end

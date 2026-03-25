@@ -1,5 +1,14 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.4
+
+### 🐛 Minor Fixes
+* **By ckhatri - Fix Project Best enchant double counting on pre-enchanted items; attempts to strip existing enchants off an item by comparing the item's raw stats against its base template, which is super helpful for accurate comparisons if Blizzard's API hides the enchant ID.**
+* **Avoid nil-index errors in MSC.SolveColorMatch by defaulting the result of GetItemStats(baseLink) to an empty table.** 
+* **This ensures subsequent accesses like template["EMPTY_SOCKET_RED"] are safe when GetItemStats returns nil (e.g., for invalid or stat-less items).**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.3
 
 ### ⚖️ UI, Scoring & Off Spec Logic
