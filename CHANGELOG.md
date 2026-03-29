@@ -1,4 +1,8 @@
 # Sharpie's Gear Judge - Version History
+## 🚀 v2.5.5
+
+### 🐛 Minor Fixes
+* ** Fix Minimap button drift*
 
 ## 🚀 v2.5.4
 

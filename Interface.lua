@@ -2073,7 +2073,11 @@ mb:SetScript("OnDragStop", function(self)
     self:StopMovingOrSizing()
     if not SGJ_Settings then SGJ_Settings = {} end
     local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint()
-    SGJ_Settings.MinimapPos = { point, relativePoint, xOfs, yOfs }
+
+    local cleanX = math.floor(xOfs + 0.5)
+    local cleanY = math.floor(yOfs + 0.5)
+    
+    SGJ_Settings.MinimapPos = { point, relativePoint, cleanX, cleanY }
 end)
 mb:RegisterForClicks("AnyUp")
 mb:SetScript("OnClick", function(self) MSC.ToggleMainMenu() end)
