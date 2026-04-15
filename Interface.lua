@@ -1885,9 +1885,15 @@ function MSC.InitSettingsView(parent)
         end)
         btnSave:SetScript("OnLeave", GameTooltip_Hide)
 
-        -- 3. The Status Label (Shows the score of the saved gear)
+        -- 3. The "Clear Baseline" Button (NEW)
+        local btnClear = CreateFrame("Button", nil, sChild, "UIPanelButtonTemplate")
+        btnClear:SetSize(60, 22)
+        btnClear:SetPoint("LEFT", btnSave, "RIGHT", 5, 0)
+        btnClear:SetText(MSC.L["Clear"])
+        
+        -- 4. The Status Label
         local statusLbl = sChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-        statusLbl:SetPoint("LEFT", btnSave, "RIGHT", 10, 0)
+        statusLbl:SetPoint("LEFT", btnClear, "RIGHT", 10, 0)
         
         local function UpdateStatusLabel()
             local pk = MSC:GetPlayerKey()
@@ -1900,15 +1906,32 @@ function MSC.InitSettingsView(parent)
                 else
                     statusLbl:SetText("|cff00ff00" .. MSC.L["Saved"] .. "|r")
                 end
+                btnClear:Enable()
             else
                 statusLbl:SetText("|cff888888" .. MSC.L["Not Set"] .. "|r")
+                btnClear:Disable()
             end
         end
+        
+        -- Link the clear button
+        btnClear:SetScript("OnClick", function()
+            local pk = MSC:GetPlayerKey()
+            if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[pk] then
+                SGJ_Settings.GearProfiles[pk][p.val] = nil
+            end
+            if SGJ_Settings.TalentProfiles and SGJ_Settings.TalentProfiles[pk] then
+                SGJ_Settings.TalentProfiles[pk][p.val] = nil
+            end
+            if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+            UpdateStatusLabel()
+        end)
+        
         UpdateStatusLabel() -- Initialize the text when the menu opens
         
         -- Link the button click to the save function and refresh the label
         btnSave:SetScript("OnClick", function()
             MSC:SaveBaselineProfile(p.val)
+            if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
             UpdateStatusLabel() 
         end)
 

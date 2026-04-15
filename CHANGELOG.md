@@ -1,6 +1,12 @@
 # Sharpie's Gear Judge - Version History
 
 ## 🚀 v2.5.6
+
+* **Added a "Clear" button next to the Save button in MSC.InitSettingsView and reposition the status label to the right of it.** 
+	*The new button clears the saved gear and talent profiles for the current player key (SGJ_Settings.GearProfiles and SGJ_Settings.TalentProfiles), wipes MSC.EvaluationCache, and updates the status label.** 
+		*The Clear button is enabled only when a baseline is set.**
+			 *Also wipes the evaluation cache after saving a baseline so evaluations refresh immediately.**
+
 * **Adjusted parsing and evaluation to correctly handle hybrid items that list both healing and damage/spell power.** 
 * **Parse.lua: updated two equip patterns to record the full spell power value as ITEM_MOD_SPELL_POWER_SHORT and only add the excess (healing minus spell power) to ITEM_MOD_SPELL_HEALING_DONE_SHORT when positive.**
 * **Judge.lua: added derived-stat logic to convert existing spell power into healing (TBC logic) by adding ITEM_MOD_SPELL_POWER_SHORT into ITEM_MOD_SPELL_HEALING_DONE_SHORT.**
