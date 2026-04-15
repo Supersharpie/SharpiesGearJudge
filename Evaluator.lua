@@ -171,7 +171,13 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
             end
             
             -- [[ 4. SCORE THE ITEM ]]
-            local itemScore = MSC.GetItemScore(stats, weights, specName, slotID)
+            local evalStats = stats
+            if stats["ITEM_MOD_SPELL_POWER_SHORT"] then
+                evalStats = MSC:SafeCopy(stats, {})
+                evalStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (evalStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + evalStats["ITEM_MOD_SPELL_POWER_SHORT"]
+            end
+            
+            local itemScore = MSC.GetItemScore(evalStats, weights, specName, slotID)
             totalScore = totalScore + itemScore
 
             -- [[ 5. ACCUMULATE TOTALS ]]

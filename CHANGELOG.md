@@ -1,4 +1,13 @@
 # Sharpie's Gear Judge - Version History
+
+## 🚀 v2.5.6
+* **Adjusted parsing and evaluation to correctly handle hybrid items that list both healing and damage/spell power.** 
+* **Parse.lua: updated two equip patterns to record the full spell power value as ITEM_MOD_SPELL_POWER_SHORT and only add the excess (healing minus spell power) to ITEM_MOD_SPELL_HEALING_DONE_SHORT when positive.**
+* **Judge.lua: added derived-stat logic to convert existing spell power into healing (TBC logic) by adding ITEM_MOD_SPELL_POWER_SHORT into ITEM_MOD_SPELL_HEALING_DONE_SHORT.**
+* **Evaluator.lua: ensured item scoring uses a modified stat table (copied via SafeCopy) that includes spell power added into healing before computing the item score.**
+* **This prevents double-counting and yields correct scoring for hybrid heal/damage items.**
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.5
 
 ### 🐛 Minor Fixes

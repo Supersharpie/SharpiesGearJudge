@@ -267,12 +267,17 @@ MSC.Scanner.EquipPatterns = {
     -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority / Lazy Matching) ]]
     -- ========================================================================
     
-    -- [[ HYBRID HEAL/DAMAGE SPLIT (Must be at the absolute top!) ]]
+    -- [[ HYBRID HEAL/DAMAGE SPLIT ]]
     { p = MSC.L["healing.-(%d+).-damage.-(%d+)"], 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
-              outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + tonumber(heal)
-              outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + tonumber(dmg)
+              local h = tonumber(heal) or 0
+              local d = tonumber(dmg) or 0
+              outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + d
+              local bonus = h - d
+              if bonus > 0 then
+                  outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + bonus
+              end
           end
       end 
     },
@@ -346,12 +351,17 @@ MSC.Scanner.EquipPatterns = {
     -- [[ 2. COMPLEX / LOGIC PATTERNS (Cannot be Lazy) ]]
     -- ========================================================================
 
-    -- [[ HYBRID HEAL/DAMAGE SPLIT (e.g. "Whitemend") ]]
-    { p = MSC.L["healing.-up to (%d+).-damage.-up to (%d+)"], 
+    -- [[ HYBRID HEAL/DAMAGE SPLIT ]]
+    { p = MSC.L["healing.-(%d+).-damage.-(%d+)"], 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
-              outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + tonumber(heal)
-              outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + tonumber(dmg)
+              local h = tonumber(heal) or 0
+              local d = tonumber(dmg) or 0
+              outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + d
+              local bonus = h - d
+              if bonus > 0 then
+                  outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (outputStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + bonus
+              end
           end
       end 
     },

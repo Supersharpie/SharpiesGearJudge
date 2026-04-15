@@ -309,7 +309,13 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
         if class == "PRIEST" then local r=Rank("SPIRIT_GUIDANCE"); if r>0 then local b=spt*(0.05*r); dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+b; dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=(dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0)+b end end
     end
     
-    -- === F. ATTACK POWER ===
+    -- === F. SPELL POWER -> HEALING (TBC Logic) ===
+    local sp = dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0
+    if sp > 0 then
+        dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (dest["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + sp
+    end
+    
+    -- === G. ATTACK POWER ===
     local apFromStr = 0
     local apFromAgi = 0
     
