@@ -695,7 +695,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
     end
 
     if weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
-        local arPen = GetCombatRating(25)
+        local arPen = GetCombatRating(25) or 0
         if arPen > 100 then
             local scaler = 1 + (arPen / 1000) 
             if scaler > 1.4 then scaler = 1.4 end

@@ -1,4 +1,13 @@
 # Sharpie's Gear Judge - Version History
+## 🚀 v2.5.7
+
+* **Druid/Rogue/Warrior: default GetCombatRating(25) to 0 (arPen = GetCombatRating(25) or 0) to avoid nil errors before ARP scaling.**
+* **Interface: ensure manual spec override is loaded into engine by assigning MSC.ManualSpec = SGJ_Settings.Mode on ADDON_LOADED.**
+* **Judge: add visual color entry for "Spell Dmg, Heal".**
+* **Parse: add scanner term mapping for MSC.L["spell dmg, heal"] => ITEM_MOD_SPELL_POWER_SHORT so that the parser recognizes the new label.**
+
+* **These changes fix potential runtime errors, ensure the manual spec setting takes effect, and support a new spell-damage label in parsing and display.**
+------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.5.6
 

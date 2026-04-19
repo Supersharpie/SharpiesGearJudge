@@ -404,6 +404,7 @@ local VISUAL_COLORS = {
     ["Crit"] = "ffff0000", ["Crit Rating"] = "ffff0000", [MSC.L["crit rating"]] = "ffff0000",
     ["Haste"] = "ffffd100", ["Haste Rating"] = "ffffd100", [MSC.L["haste rating"]] = "ffffd100",
     ["ArP"] = "ffbf8040", ["Armor Penetration"] = "ffbf8040",
+	["Spell Dmg, Heal"] = "ff69ccf0", [MSC.L["spell dmg, heal"]] = "ff69ccf0",
 
     -- Defensive
     ["Def"] = "ff6666ff", ["Defense Rating"] = "ff6666ff", [MSC.L["defense rating"]] = "ff6666ff",

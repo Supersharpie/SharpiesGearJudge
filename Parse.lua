@@ -158,6 +158,7 @@ MSC.Scanner.TermMap = {
     
     [MSC.L["spell damage rating"]]            = "ITEM_MOD_SPELL_POWER_SHORT",
     [MSC.L["spell damage and healing"]]       = "ITEM_MOD_SPELL_POWER_SHORT",
+	[MSC.L["spell dmg, heal"]] = "ITEM_MOD_SPELL_POWER_SHORT",
     [MSC.L["damage done by magical spells and effects"]] = "ITEM_MOD_SPELL_POWER_SHORT",
     [MSC.L["damage and healing done by magical spells and effects"]] = "ITEM_MOD_SPELL_POWER_SHORT",
     [MSC.L["damage and healing done by magical spells and effects by up to"]] = "ITEM_MOD_SPELL_POWER_SHORT", 

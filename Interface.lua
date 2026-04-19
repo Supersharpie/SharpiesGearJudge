@@ -2357,6 +2357,9 @@ loader:SetScript("OnEvent", function(self, event, name)
             end
         end
 
+        -- NEW: Ensure the manual spec override is actually loaded into the engine!
+        MSC.ManualSpec = SGJ_Settings.Mode
+
         -- Clean up the loader
         self:UnregisterEvent("ADDON_LOADED")
     end
