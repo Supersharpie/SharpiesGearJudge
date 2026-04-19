@@ -17,6 +17,8 @@ Locales/ruRU.lua
 ## Locales/zhTW.lua
 
 Init.lua
+CacheManager.lua
+TooltipManager.lua
 ConflictManager.lua
 Database.lua
 Data_Sets.lua

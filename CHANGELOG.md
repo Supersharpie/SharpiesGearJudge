@@ -1,5 +1,11 @@
 # Sharpie's Gear Judge - Version History
+
 ## 🚀 v2.5.7
+
+* **Introduced CacheManager.lua and TooltipManager.lua to handle dynamic cache invalidation and prevent 0-score tooltip evaluations.** 
+* **CacheManager wipes evaluation, slot, and stat caches on equipment, talent, stance, and world-entry events so items are re-scored when baseline stats change.** 
+* **TooltipManager wraps the tooltip evaluation to wait for GET_ITEM_INFO for uncached items (including quest rewards), shows a "Fetching item data..." indicator, and refreshes evaluation when data arrives; it supports modern TooltipDataProcessor and falls back to legacy hooks.** 
+* **Added the new localization string and register both new files in the TBC and Vanilla .toc files.**
 
 * **Druid/Rogue/Warrior: default GetCombatRating(25) to 0 (arPen = GetCombatRating(25) or 0) to avoid nil errors before ARP scaling.**
 * **Interface: ensure manual spec override is loaded into engine by assigning MSC.ManualSpec = SGJ_Settings.Mode on ADDON_LOADED.**

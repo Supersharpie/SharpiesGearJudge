@@ -1379,6 +1379,7 @@ L["Equip: Druid Blessing (3% Proc)"] = "Equip: Druid Blessing (3% Proc)"
 -- =============================================================
 -- 10. Added UI & META GEM EFFECTS
 -- =============================================================
+L["Fetching item data..."] = "Fetching item data..."
 L["Click to open the interface."] = "Click to open the interface."
 L["Alert"] = "Alert"
 L["1% Spell Reflect"] = "1% Spell Reflect"
