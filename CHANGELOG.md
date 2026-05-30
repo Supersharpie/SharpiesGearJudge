@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.8
+
+* **UI: Fix EditBox focus for popup windows — enable mouse, focus on click (including empty ScrollFrame area), and hide frame on Escape (Interface.lua).**
+* **Parser: Add missing stat entries and adjust term mapping (rename holy damage key), add a "procs/buffs escape hatch" to detect duration markers and record temporary effects into outputProcs instead of treating them as permanent stats, plus minor pattern/whitespace tweaks.**
+* **Changed Swift Starfire Diamond (id 28557) quality from 3 to 4.** 
+* **Added a set of TBC-era _AUTO_PROC overrides that provide averaged uptime stat equivalents for various proc trinkets and weapons (e.g., Dragonspine Trophy, Quagmirran's Eye, Sextant of Unstable Currents, Madness of the Betrayer, assorted rings and weapons).** 
+* **These entries include stat keys, averaged values, and notes to improve equip-proc stat estimation in calculations.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.7
 
 * **Introduced CacheManager.lua and TooltipManager.lua to handle dynamic cache invalidation and prevent 0-score tooltip evaluations.** 

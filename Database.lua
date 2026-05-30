@@ -722,7 +722,7 @@ LEVELING_PRISMATIC = {
 			{ id=32410, special=MSC.L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"], name=MSC.L["Thundering Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
 			{ id=34220, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name=MSC.L["Chaotic Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
 			{ id=28556, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Windfire Diamond"], isMeta=true, colorType="META", unique=true, quality=3 },
-            { id=28557, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Starfire Diamond"], isMeta=true, colorType="META", unique=true, quality=3 },
+            { id=28557, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Starfire Diamond"], isMeta=true, colorType="META", unique=true, quality=4 },
             { id=32640, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["5% Stun Resistance"], name=MSC.L["Potent Unstable Diamond"], isMeta=true, colorType="META", unique=true, quality=4 },
             { id=32641, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["5% Stun Resistance"], name=MSC.L["Imbued Unstable Diamond"], isMeta=true, colorType="META", unique=true, quality=4 },
         },
@@ -1155,6 +1155,22 @@ AddOverrides({
 
     -- Starter / TBC Classic Boost Item
     [185988] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=3.3 }, note = MSC.L["Use: 3.3 Avg hp5 (10m CD)"] }, -- Communal Stone of Stoicism (400 Avg Health / 600s)
+
+    -- [[ TBC PROC TRINKETS & WEAPONS (Averaged Uptime) ]]
+    [28830] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=160 }, note = MSC.L["Equip: 160 Avg Haste (DST Proxy)"] }, -- Dragonspine Trophy
+    [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=42 }, note = MSC.L["Equip: 42 Avg Spell Haste (Quagmirran's)"] }, -- Quagmirran's Eye
+    [30626] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=63 }, note = MSC.L["Equip: 63 Avg SP (Sextant)"] }, -- Sextant of Unstable Currents
+    [30627] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=75 }, note = MSC.L["Equip: 75 Avg AP (Tsunami)"] }, -- Tsunami Talisman
+    [32505] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=186 }, note = MSC.L["Equip: 186 Avg ArP (Madness)"] }, -- Madness of the Betrayer
+    [34472] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=102 }, note = MSC.L["Equip: 102 Avg AP (Shard of Contempt)"] }, -- Shard of Contempt
+    [28773] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = MSC.L["Equip: 55 Avg AP (Don Santos)"] }, -- Don Santos' Famous Hunting Rifle
+    [28573] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Equip: 60 Avg AP (Despair)"] }, -- Despair
+    [28729] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = MSC.L["Equip: 50 Avg AP (Blight)"] }, -- Blight
+    [32262] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Equip: 60 Avg AP (Syphon of the Nathrezim)"] }, -- Syphon of the Nathrezim
+    [29301] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=26 }, note = MSC.L["Equip: 26 Avg AP (Band of Eternal Champion)"] },
+    [29305] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = MSC.L["Equip: 21 Avg SP (Band of Eternal Sage)"] },
+    [29309] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=37 }, note = MSC.L["Equip: 37 Avg Heal (Band of Eternal Restorer)"] },
+    [29313] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=133 }, note = MSC.L["Equip: 133 Avg Armor (Band of Eternal Defender)"] },
 
 })
 
