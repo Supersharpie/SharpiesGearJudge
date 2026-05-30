@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 2.5.7-Era
+## Version: 2.5.8-Era
 ## SavedVariables: SGJ_History
 ## SavedVariablesPerCharacter: SGJ_Settings, SharpiesGearJudgeDB
 

@@ -61,6 +61,7 @@ MSC.Scanner.BaseStatMap = {
     [MSC.L["holy spell damage"]]    = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     [MSC.L["spell damage and healing"]] = "ITEM_MOD_SPELL_POWER_SHORT",  -- Fixes "of the Crusade", "of the Sorcerer"
     [MSC.L["damage and healing spells"]] = "ITEM_MOD_SPELL_POWER_SHORT", -- rare variation    
+    
     -- Hunter / Range missing entries
     [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", -- Critical for "of the Falcon" variants if they split stats
     [MSC.L["spell penetration"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
@@ -168,7 +169,7 @@ MSC.Scanner.TermMap = {
     [MSC.L["damage done by frost spells and effects"]]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
     [MSC.L["damage done by arcane spells and effects"]] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
     [MSC.L["damage done by nature spells and effects"]] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
-    [MSC.L["damage done by holy spells and effects"]]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    [MSC.L["holy damage"]]     = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     
     -- TBC Short Forms
     [MSC.L["shadow damage"]] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
@@ -441,6 +442,7 @@ MSC.Scanner.UsePatterns = {
     -- Misc
     { p = MSC.L["adds (%d+) damage"], valIdx=1, fixedStat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", type="BUFF", defaultDur=15 }
 }
+
 -- =============================================================
 -- 3. UTILITIES
 -- =============================================================
@@ -502,6 +504,25 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), MSC.L["^equip: "], "")
     cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), MSC.L["^%s*equip:%s*"], "")
     
+    -- [[ PROCS & BUFFS ESCAPE HATCH ]]
+    -- Prevents temporary buffs from being read as permanent passive stats.
+    local isTemporary = false
+    local durationMarkers = {
+        " for %d+ sec", " f r %d+ sek", " pendant %d+ s", 
+        " durante %d+ s", "  %d+ ", " por %d+ s"
+    }
+    for _, marker in ipairs(durationMarkers) do
+        if string_match(cleanText, marker) then
+            isTemporary = true
+            break
+        end
+    end
+    
+    if isTemporary then
+        if outputProcs then table_insert(outputProcs, { type = "Equip Proc", desc = text }) end
+        return
+    end
+
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
         local match1, match2, match3 = string_match(cleanText, pat.p)
         if match1 then
@@ -605,7 +626,7 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
         end
     end
 	
-	-- [[ ALL STATS EXPLODER ]]
+    -- [[ ALL STATS EXPLODER ]]
     -- Instantly breaks "+X All Stats" into the big 5 attributes
     if string_find(cleanText, "all stats") then
         local val = tonumber(string_match(cleanText, "%d+"))

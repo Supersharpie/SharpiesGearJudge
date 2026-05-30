@@ -2248,6 +2248,17 @@ function MSC.CreatePopupFrame(title)
     local eb = CreateFrame("EditBox", nil, sf)
     eb:SetMultiLine(true); eb:SetSize(440, 350); eb:SetFontObject("ChatFontNormal")
     eb:SetAutoFocus(false)
+    
+    -- [ FIX FOR STATIC WINDOW ] --
+    eb:EnableMouse(true)
+    eb:SetScript("OnMouseDown", function(self) self:SetFocus() end)
+    eb:SetScript("OnEscapePressed", function(self) self:ClearFocus() f:Hide() end) 
+    
+    -- Let clicking the empty space in the ScrollFrame also focus the EditBox
+    sf:EnableMouse(true)
+    sf:SetScript("OnMouseDown", function() eb:SetFocus() end)
+    -------------------------------
+    
     sf:SetScrollChild(eb)
     
     f.EditBox = eb
