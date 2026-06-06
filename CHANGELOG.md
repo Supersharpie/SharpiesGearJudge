@@ -1,5 +1,13 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.9
+
+### 🐛 Minor Fixes
+* **Extended TermMap with additional spell hit/crit synonyms and remove duplicate entries; add mappings for various era phrasings so spell hit/crit are recognized consistently.**
+* **Reordered and expand EquipPatterns so critical-related patterns are checked before hit (prevents "critical hit" from being matched as plain "hit") and add several regexes to catch alternate phrasings (e.g. "critical hit with spells", "critical hit rating").**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.8
 
 * **UI: Fix EditBox focus for popup windows — enable mouse, focus on click (including empty ScrollFrame area), and hide frame on Escape (Interface.lua).**

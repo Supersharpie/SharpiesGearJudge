@@ -100,23 +100,21 @@ MSC.Scanner.TermMap = {
     -- [[ 1. OFFENSIVE RATINGS ]]
     [MSC.L["hit rating"]]         = "ITEM_MOD_HIT_RATING_SHORT",
     [MSC.L["chance to hit"]]      = "ITEM_MOD_HIT_RATING_SHORT", -- Era
-    
+    [MSC.L["spell hit rating"]]   = "ITEM_MOD_HIT_SPELL_RATING_SHORT",	
+    [MSC.L["chance to hit with spells"]] = "ITEM_MOD_HIT_SPELL_RATING_SHORT", -- Era Long	
+    [MSC.L["critical hit with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    [MSC.L["spell critical hit rating"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    [MSC.L["chance to get a critical hit with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",	
     [MSC.L["critical strike rating"]] = "ITEM_MOD_CRIT_RATING_SHORT",
     [MSC.L["chance to get a critical strike"]] = "ITEM_MOD_CRIT_RATING_SHORT", -- Era
-    
-    [MSC.L["spell hit rating"]]   = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
-    [MSC.L["chance to hit with spells"]] = "ITEM_MOD_HIT_SPELL_RATING_SHORT", -- Era Long
-
-    [MSC.L["spell critical strike rating"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
-    [MSC.L["critical strike with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era
-    [MSC.L["chance to get a critical strike with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", -- Era Long
-    
+	[MSC.L["spell critical strike rating"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    [MSC.L["critical strike with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    [MSC.L["chance to get a critical strike with spells"]] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", 
     [MSC.L["haste rating"]]        = "ITEM_MOD_HASTE_RATING_SHORT",
     [MSC.L["spell haste rating"]] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT",
     [MSC.L["spell penetration"]]   = "ITEM_MOD_SPELL_PENETRATION_SHORT",
     [MSC.L["magical resistances"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Key for "Decreases" pattern
     [MSC.L["magical resistances of your spell targets"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Era Long
-
     [MSC.L["armor penetration rating"]] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
     [MSC.L["expertise rating"]]    = "ITEM_MOD_EXPERTISE_RATING_SHORT",
     [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
@@ -300,20 +298,25 @@ MSC.Scanner.EquipPatterns = {
     { p = MSC.L["restores (%d+) mana"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
     { p = MSC.L["restores (%d+) health"], valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
 
-    -- [[ HIT & CRIT (Spell/Ranged MUST be checked before Melee) ]]
+    -- [[ CRIT (Must be checked BEFORE Hit because "critical hit" contains the word "hit") ]]
+    { p = MSC.L["spell critical hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = MSC.L["spell critical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = MSC.L["spell crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = MSC.L["critical hit with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = MSC.L["critical strike with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
+    { p = MSC.L["ranged critical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = MSC.L["ranged crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = MSC.L["critical hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = MSC.L["critical strike rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
+    { p = MSC.L["critical hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" }, 
+    { p = MSC.L["critical strike.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" }, -- Era
+
+    -- [[ HIT (Spell/Ranged MUST be checked before Melee) ]]
     { p = MSC.L["spell hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
     { p = MSC.L["hit with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
     { p = MSC.L["ranged hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, 
     { p = MSC.L["hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
     { p = MSC.L["chance to hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Era
-
-    { p = MSC.L["spell critical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["spell crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical strike with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["ranged critical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["ranged crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical strike rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical strike.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" }, -- Era
 
     -- [[ HASTE ]]
     { p = MSC.L["spell haste.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
