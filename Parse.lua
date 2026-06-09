@@ -325,10 +325,13 @@ MSC.Scanner.EquipPatterns = {
 
     -- [[ ATTACK POWER (Feral/Ranged MUST be checked before General) ]]
     { p = MSC.L["ranged attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
+    { p = MSC.L["%+(%d+) ranged attack power"], valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" }, -- Era
     { p = MSC.L["feral attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-	{ p = MSC.L["attack power.-(%d+).-in cat"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = MSC.L["attack power in cat.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, -- Era forms
+    { p = MSC.L["%+(%d+) feral attack power"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, -- Era
+    { p = MSC.L["attack power.-(%d+).-in cat"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+    { p = MSC.L["attack power in cat.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, 
     { p = MSC.L["attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    { p = MSC.L["%+(%d+) attack power"], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" }, -- Era
 
     -- [[ MELEE & TANKING ]]
     { p = MSC.L["expertise rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
@@ -552,7 +555,8 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
                 outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + (val or 1)
                 return
             elseif val and name then
-                local cleanName = string_gsub(string_gsub(name, "your ", ""), "%s+$", "")
+                -- Use "[%s%.]+$" to strip trailing spaces AND periods
+                local cleanName = string_gsub(string_gsub(name, "your ", ""), "[%s%.]+$", "")
                 local key = MSC.Scanner.TermMap[cleanName]
                 if key then outputStats[key] = (outputStats[key] or 0) + val; return end
             end

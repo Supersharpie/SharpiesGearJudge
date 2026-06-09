@@ -1,5 +1,13 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.10
+
+### 🐛 Minor Fixes
+* **Update Parse.lua to recognize Era-style stat lines by adding patterns for "+%d+ ranged/feral/attack power", and reorder related feral patterns for correct matching.** 
+* **Also tighten proc name cleanup to strip trailing spaces and periods (use "[%s%.]+$"), improving stat/proc parsing accuracy.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.9
 
 ### 🐛 Minor Fixes
