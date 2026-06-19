@@ -985,8 +985,16 @@ end
 -- =============================================================
 
 -- 1. Standard Tooltip Hooks
-GameTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
-ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
+GameTooltip:HookScript("OnTooltipSetItem", function(self)
+    if MSC.EvaluateAndDrawTooltip then
+        MSC.EvaluateAndDrawTooltip(self)
+    end
+end)
+ItemRefTooltip:HookScript("OnTooltipSetItem", function(self)
+    if MSC.EvaluateAndDrawTooltip then
+        MSC.EvaluateAndDrawTooltip(self)
+    end
+end)
 
 -- [[ 2. QUEST WINDOW TOOLTIP HOOKS (TBC/Era) ]]
 local function TriggerQuestTooltip(tooltip, link)

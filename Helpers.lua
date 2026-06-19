@@ -182,7 +182,7 @@ function MSC:GetSpiritValueInMP5(level, spirit)
         if not level or level > 70 then level = 70 end
         local base = MSC.BaseRegenTable[level] or 0.009327
         local intel = UnitStat("player", 4) or 100
-        return 5 * (base * math_sqrt(intel))
+        return 5 * (base * math_sqrt(intel)) * spirit
     end
 end
 

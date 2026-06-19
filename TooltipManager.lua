@@ -101,9 +101,20 @@ TooltipManager:SetScript("OnEvent", function(self, event)
         end)
     else
         -- Legacy Client Fallback
-        GameTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
-        ItemRefTooltip:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip)
-        if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip) end
-        if ShoppingTooltip2 then ShoppingTooltip2:HookScript("OnTooltipSetItem", MSC.EvaluateAndDrawTooltip) end
+        -- GameTooltip and ItemRefTooltip are already hooked using wrappers in Judge.lua
+        if ShoppingTooltip1 then
+            ShoppingTooltip1:HookScript("OnTooltipSetItem", function(self)
+                if MSC.EvaluateAndDrawTooltip then
+                    MSC.EvaluateAndDrawTooltip(self)
+                end
+            end)
+        end
+        if ShoppingTooltip2 then
+            ShoppingTooltip2:HookScript("OnTooltipSetItem", function(self)
+                if MSC.EvaluateAndDrawTooltip then
+                    MSC.EvaluateAndDrawTooltip(self)
+                end
+            end)
+        end
     end
 end)

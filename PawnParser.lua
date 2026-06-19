@@ -41,6 +41,7 @@ MSC.PawnStatMap = {
     ["SpellHitRating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
     ["SpellHasteRating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 
     ["Mp5"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
+	["SpellPenetration"] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
     
     -- Tank
     ["DefenseRating"] = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", 
@@ -54,10 +55,16 @@ MSC.PawnStatMap = {
     ["BlockValue"] = "ITEM_MOD_BLOCK_VALUE_SHORT", 
     ["ExpertiseRating"] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
     ["Expertise"] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+	["Armor"] = "ITEM_MOD_ARMOR_SHORT",
+    ["SpellPenetration"] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
 
     -- Weapon
     ["Dps"] = "MSC_WEAPON_DPS", 
     ["Speed"] = "MSC_WEAPON_SPEED",
+	["MeleeDps"] = "MSC_WEAPON_DPS",
+    ["RangedDps"] = "MSC_WEAPON_DPS",
+    ["MeleeSpeed"] = "MSC_WEAPON_SPEED",
+    ["RangedSpeed"] = "MSC_WEAPON_SPEED",
 
 -- =============================================================
 -- 2. GERMAN PAWN KEYWORDS
@@ -108,7 +115,7 @@ function MSC:ParsePawnString(pawnString)
     local clean = string_gsub(string_gsub(pawnString, "%)", ""), "%(", "")
     
     -- 2. EXTRACT PROFILE NAME
-    local namePattern = "v1:%s*\"([^\"]+)\":"
+    local namePattern = "v1:%s*\"([^\"]+)\""
     local profileName = string_match(clean, namePattern)
     
     if not profileName then 
@@ -141,8 +148,12 @@ end
 function MSC:ImportAndSavePawnString(pawnString)
     local weights, name = self:ParsePawnString(pawnString)
     
+    if not weights and self.ParseSixtyUpgradesString then
+        weights, name = self:ParseSixtyUpgradesString(pawnString)
+    end
+    
     if not weights then 
-        print(MSC.L["|cffff0000SGJ: Invalid Pawn string format or empty stats.|r"])
+        print(MSC.L["|cffff0000SGJ: Invalid Pawn or Sixty Upgrades string format.|r"])
         return false 
     end
 
@@ -171,6 +182,16 @@ function MSC:SavePawnProfile(profileName, rawWeights, baseSpec)
 end
 
 function MSC:ShowSpecSelectionUI(profileName, weights)
+    if not MSC.CurrentClass and MSC.ForceInit then
+        MSC:ForceInit()
+    end
+
+    local specs = MSC.CurrentClass and MSC.CurrentClass.PrettyNames or {}
+    if not next(specs) then
+        print(MSC.L["|cffff0000SGJ Error: Class profiles not loaded yet. Try again in a few seconds.|r"])
+        return
+    end
+
     if not SGJ_SpecSelectFrame then
         local f = CreateFrame("Frame", "SGJ_SpecSelectFrame", UIParent, "BasicFrameTemplateWithInset")
         f:SetSize(260, 200)

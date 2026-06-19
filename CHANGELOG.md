@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v2.5.11
+
+* **Added support for Sixty Upgrades EP imports (JSON, URL, and CSV formats) via the standard import window.**
+* **Fixed missing downgrade arrow overlays on items in standard Blizzard bags.**
+* **Fixed missing downgrade arrow overlays on items in third-party bag addons (Bagnon, ElvUI, Baganator, XLoot, etc.).**
+* **Applied initialization safety checks to the Pawn importer and fixed duplicate scanner logic.**
+* **Corrected the TBC Spirit-to-MP5 formula.**
+
+------------------------------------------------------------------------------------------------
+
 ## 🚀 v2.5.10
 
 ### 🐛 Minor Fixes

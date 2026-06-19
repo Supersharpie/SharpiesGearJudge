@@ -947,14 +947,20 @@ function MSC.UpdateBagOverlays(frame)
                             if compSlot then
                                 local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
                                 
-                                if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                                    if not button.SGJ_Overlay then
-                                        button.SGJ_Overlay = button:CreateTexture(nil, "OVERLAY", nil, 7)
-                                        button.SGJ_Overlay:SetSize(18, 18)
-                                        button.SGJ_Overlay:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2) 
-                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                                if newScore and oldScore then
+                                    local overlayType = nil
+                                    if (newScore > (oldScore + 0.1)) then overlayType = "UP"
+                                    elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
+                                    
+                                    if overlayType then
+                                        if not button.SGJ_Overlay then
+                                            button.SGJ_Overlay = button:CreateTexture(nil, "OVERLAY", nil, 7)
+                                            button.SGJ_Overlay:SetSize(18, 18)
+                                            button.SGJ_Overlay:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2) 
+                                        end
+                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+                                        button.SGJ_Overlay:Show()
                                     end
-                                    button.SGJ_Overlay:Show()
                                 end
                             end
                         end
@@ -997,21 +1003,27 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                     if compSlot then
                         local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
                         
-                        if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                            if not button.SGJ_OverlayFrame then
-                                -- Dedicated child frame to force a high Z-index
-                                button.SGJ_OverlayFrame = CreateFrame("Frame", nil, button)
-                                button.SGJ_OverlayFrame:SetAllPoints(button)
-                                
-                                button.SGJ_Overlay = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY", nil, 7)
-                                button.SGJ_Overlay:SetSize(18, 18)
-                                button.SGJ_Overlay:SetPoint("TOPRIGHT", button.SGJ_OverlayFrame, "TOPRIGHT", -2, -2)
-                                button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                            end
+                        if newScore and oldScore then
+                            local overlayType = nil
+                            if (newScore > (oldScore + 0.1)) then overlayType = "UP"
+                            elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
                             
-                            -- Guarantee it sits above ElvUI's strict layering system
-                            button.SGJ_OverlayFrame:SetFrameLevel(math.max(10, button:GetFrameLevel() + 5))
-                            button.SGJ_OverlayFrame:Show()
+                            if overlayType then
+                                if not button.SGJ_OverlayFrame then
+                                    -- Dedicated child frame to force a high Z-index
+                                    button.SGJ_OverlayFrame = CreateFrame("Frame", nil, button)
+                                    button.SGJ_OverlayFrame:SetAllPoints(button)
+                                    
+                                    button.SGJ_Overlay = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY", nil, 7)
+                                    button.SGJ_Overlay:SetSize(18, 18)
+                                    button.SGJ_Overlay:SetPoint("TOPRIGHT", button.SGJ_OverlayFrame, "TOPRIGHT", -2, -2)
+                                end
+                                button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+                                
+                                -- Guarantee it sits above ElvUI's strict layering system
+                                button.SGJ_OverlayFrame:SetFrameLevel(math.max(10, button:GetFrameLevel() + 5))
+                                button.SGJ_OverlayFrame:Show()
+                            end
                         end
                     end
                 end
@@ -2267,8 +2279,8 @@ end
 
 function MSC.ShowImportWindow()
     if MSC.ImportFrame then MSC.ImportFrame:Show(); return end
-    local f = MSC.CreatePopupFrame(MSC.L["Import Pawn String"])
-    f.EditBox:SetText(MSC.L["Paste Pawn string here..."])
+    local f = MSC.CreatePopupFrame(MSC.L["Import Pawn/Sixty Upgrades String"])
+    f.EditBox:SetText(MSC.L["Paste Pawn or Sixty Upgrades string here..."])
     f.EditBox:HighlightText()
     local b = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     b:SetSize(120, 25); b:SetPoint("BOTTOM", 0, 15); b:SetText(MSC.L["Import"])

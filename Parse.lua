@@ -557,7 +557,7 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             elseif val and name then
                 -- Use "[%s%.]+$" to strip trailing spaces AND periods
                 local cleanName = string_gsub(string_gsub(name, "your ", ""), "[%s%.]+$", "")
-                local key = MSC.Scanner.TermMap[cleanName]
+                local key = MSC.Scanner.TermMap[cleanName] or MSC.Scanner.BaseStatMap[cleanName]
                 if key then outputStats[key] = (outputStats[key] or 0) + val; return end
             end
         end
@@ -742,8 +742,8 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                 if pat.fixedStat then 
                     effect.statKey = pat.fixedStat
                 elseif name then
-                    local cleanName = string_gsub(string_gsub(name, "your ", ""), "%s+$", "")
-                    effect.statKey = MSC.Scanner.TermMap[cleanName]
+                    local cleanName = string_gsub(string_gsub(name, "your ", ""), "[%s%.]+$", "")
+                    effect.statKey = MSC.Scanner.TermMap[cleanName] or MSC.Scanner.BaseStatMap[cleanName]
                 end
                 effect.type = "Stat"
             elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then

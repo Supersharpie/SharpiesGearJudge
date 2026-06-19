@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 2.5.10-TBC
+## Version: 2.5.11-TBC
 ## SavedVariables: SGJ_History
 ## SavedVariablesPerCharacter: SGJ_Settings, SharpiesGearJudgeDB
 
@@ -24,6 +24,7 @@ Database.lua
 Data_Sets.lua
 Parse.lua
 PawnParser.lua
+SixtyUpgradesParser.lua
 Helpers.lua
 Dynamic_Engine.lua
 Evaluator.lua
