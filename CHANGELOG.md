@@ -8,6 +8,11 @@
 * **Applied initialization safety checks to the Pawn importer and fixed duplicate scanner logic.**
 * **Corrected the TBC Spirit-to-MP5 formula.**
 
+### 🐛 Bug Fixes
+* **Bag Addon Overlays
+* **Fixed an issue where downgrade arrows were entirely omitted from the codebase for both standard Blizzard bags and third-party bag addons (Bagnon, ElvUI, Baganator, etc.).**
+* **The bag interfaces will now properly overlay both green Upgrade arrows and red Downgrade arrows exactly like the quest windows do.**
+
 ------------------------------------------------------------------------------------------------
 
 ## 🚀 v2.5.10

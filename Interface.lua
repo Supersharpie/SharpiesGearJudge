@@ -984,87 +984,122 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
 
 -- [[ HELPER: THE DRAWING ENGINE ]]
     local function EvaluateAndDraw(button, link)
-        -- We wait 0.05 seconds so ElvUI finishes drawing its custom rarity borders first
-        C_Timer.After(0.05, function()
-            if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
-            
-            -- [[ CHECK THE SETTING ]]
-            if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
-            
-            if not link then return end
-            
-            local weights, specName = MSC.GetCurrentWeights()
-            if not weights then return end
+        -- Hide any existing overlay first
+        if button.SGJ_Overlay then button.SGJ_Overlay:Hide() end
 
-            local _, _, _, equipLoc = GetItemInfo(link)
-            if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                if MSC.IsItemUsable(link) then
-                    local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                    if compSlot then
-                        local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                        
-                        if newScore and oldScore then
-                            local overlayType = nil
-                            if (newScore > (oldScore + 0.1)) then overlayType = "UP"
-                            elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
-                            
-                            if overlayType then
-                                if not button.SGJ_OverlayFrame then
-                                    -- Dedicated child frame to force a high Z-index
-                                    button.SGJ_OverlayFrame = CreateFrame("Frame", nil, button)
-                                    button.SGJ_OverlayFrame:SetAllPoints(button)
-                                    
-                                    button.SGJ_Overlay = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY", nil, 7)
-                                    button.SGJ_Overlay:SetSize(18, 18)
-                                    button.SGJ_Overlay:SetPoint("TOPRIGHT", button.SGJ_OverlayFrame, "TOPRIGHT", -2, -2)
-                                end
-                                button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
-                                
-                                -- Guarantee it sits above ElvUI's strict layering system
-                                button.SGJ_OverlayFrame:SetFrameLevel(math.max(10, button:GetFrameLevel() + 5))
-                                button.SGJ_OverlayFrame:Show()
+        -- [[ CHECK THE SETTING ]]
+        if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
+        if not link then return end
+
+        local weights, specName = MSC.GetCurrentWeights()
+        if not weights then return end
+
+        local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+        if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
+            if MSC.IsItemUsable(link) then
+                local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                if compSlot then
+                    local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                    if newScore and oldScore then
+                        local overlayType = nil
+                        if (newScore > (oldScore + 0.1)) then overlayType = "UP"
+                        elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
+
+                        if overlayType then
+                            -- Use the same direct-texture approach as the working standard bag code
+                            if not button.SGJ_Overlay then
+                                button.SGJ_Overlay = button:CreateTexture(nil, "OVERLAY", nil, 7)
+                                button.SGJ_Overlay:SetSize(18, 18)
+                                button.SGJ_Overlay:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
                             end
+                            button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+                            button.SGJ_Overlay:SetAlpha(1)
+                            button.SGJ_Overlay:Show()
                         end
                     end
                 end
             end
-        end)
+        end
     end
 
-    -- [[ 1. ELVUI SUPPORT (FIXED) ]]
+
+    -- [[ 1. ELVUI SUPPORT ]]
+    -- Bypass ElvUI/Eltruism internals entirely by looking up slot frames by their
+    -- known global names: "ElvUIMainBag{bagID}Slot{slotID}"
     if CheckAddOnLoaded("ElvUI") then
-        local E = unpack(ElvUI)
+        local elvScanner = CreateFrame("Frame")
+        elvScanner:RegisterEvent("BAG_UPDATE_DELAYED")
+        elvScanner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+        elvScanner:RegisterEvent("EQUIPMENT_SWAP_FINISHED")
+
+        local scanPending = false
+        local function ScanElvUIBags()
+            scanPending = false
+            if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
+
+            local E = ElvUI and unpack(ElvUI)
+            if not E then return end
+            local B = E:GetModule('Bags')
+            local f = B and B.BagFrame
+            if not f or not f.Bags then return end
+
+            for bagID = 0, 4 do
+                local bag = f.Bags[bagID]
+                if bag then
+                    local numSlots = GetContainerNumSlots(bagID)
+                    for slotID = 1, numSlots do
+                        local slot = bag[slotID]
+                        if slot and slot.IsShown and slot:IsShown() then
+                            local link = slot.itemLink or GetContainerItemLink(bagID, slotID)
+                            EvaluateAndDraw(slot, link)
+                        end
+                    end
+                end
+            end
+        end
+
+        elvScanner:SetScript("OnEvent", function()
+            if not scanPending then
+                scanPending = true
+                C_Timer.After(0.15, ScanElvUIBags)
+            end
+        end)
+
+        -- Also scan when the bag frame is shown/toggled
+        local bagFrame = _G["ElvUI_ContainerFrame"]
+        if bagFrame then
+            bagFrame:HookScript("OnShow", function()
+                C_Timer.After(0.2, ScanElvUIBags)
+            end)
+        end
+
+        -- Hook the ElvUI module's UpdateSlot
+        local E = ElvUI and unpack(ElvUI)
         if E then
-            -- ElvUI Bags Hook (Existing)
             local B = E:GetModule('Bags')
             if B and B.UpdateSlot then
                 hooksecurefunc(B, "UpdateSlot", function(self, frame, bagID, slotID)
-                    if frame and frame.Bags and frame.Bags[bagID] and frame.Bags[bagID][slotID] then 
-                        local itemButton = frame.Bags[bagID][slotID]
-                        local link = GetContainerItemLink(bagID, slotID)
-                        EvaluateAndDraw(itemButton, link) 
+                    -- Signature is: B:UpdateSlot(frame, bagID, slotID)
+                    -- When hooked via hooksecurefunc, the first arg passed is self (B), second is frame, third is bagID, fourth is slotID
+                    local slot = frame and frame.Bags and frame.Bags[bagID] and frame.Bags[bagID][slotID]
+                    if slot then
+                        EvaluateAndDraw(slot, slot.itemLink or GetContainerItemLink(bagID, slotID))
                     end
                 end)
             end
 
-            -- ElvUI Loot Roll Hook
+            -- Loot Roll Hook
             local M = E:GetModule('Misc')
             if M and M.START_LOOT_ROLL then
                 hooksecurefunc(M, "START_LOOT_ROLL", function(self, event, rollID, rollTime)
-                    -- Wait 0.05s to ensure ElvUI has fully shown the frame and populated the link
                     C_Timer.After(0.05, function()
-                        -- ElvUI stores its custom loot frames in M.RollBars
                         if self.RollBars then
                             for _, bar in ipairs(self.RollBars) do
-                                -- Ensure the frame is actively showing a roll
                                 if bar:IsShown() and bar.rollID == rollID and bar.button and bar.button.link then
-                                -- CHECK THE NEW SETTING FIRST
-                                if SGJ_Settings and SGJ_Settings.ShowLootArrows == false then 
-                                    if bar.button.SGJ_OverlayFrame then bar.button.SGJ_OverlayFrame:Hide() end
-                                    return 
-                                end
-                                
-                                local btn = bar.button
+                                    if SGJ_Settings and SGJ_Settings.ShowLootArrows == false then
+                                        if bar.button.SGJ_Overlay then bar.button.SGJ_Overlay:Hide() end
+                                        return
+                                    end
                                     EvaluateAndDraw(bar.button, bar.button.link)
                                 end
                             end
