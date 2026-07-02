@@ -66,7 +66,7 @@ MSC.Scanner.BaseStatMap = {
     [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", -- Critical for "of the Falcon" variants if they split stats
     [MSC.L["spell penetration"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
     [MSC.L["all stats"]] = "ITEM_MOD_ALL_STATS_SHORT", -- "of the Ancestors" or generic buffs
-    [MSC.L["magic resistance"]] = "ITEM_MOD_RESISTANCE_ALL_SHORT", -- "of Resistance" (rare white text)
+    [MSC.L["magic resistance"]] = "ITEM_MOD_ALL_RESISTANCE_SHORT", -- "of Resistance" (rare white text)
     
 	-- Resources
     [MSC.L["mana per 5 sec."]] = "ITEM_MOD_MANA_REGENERATION_SHORT",
@@ -224,7 +224,7 @@ MSC.Scanner.TermMap = {
         
     -- [[ WEIRD / EDGE CASE CATCHERS ]]
     [MSC.L["all stats"]]                      = "ITEM_MOD_ALL_STATS_SHORT",
-    [MSC.L["magic resistance"]]               = "ITEM_MOD_RESISTANCE_ALL_SHORT",
+    [MSC.L["magic resistance"]]               = "ITEM_MOD_ALL_RESISTANCE_SHORT",
     [MSC.L["chance to resist mechanic mechanics"]] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
 }
 
@@ -480,6 +480,8 @@ function MSC.Scanner.ClassifyLine(text)
     if string_find(lower, MSC.L["equip"]) then return "EQUIP" end
     if string_find(lower, MSC.L["use:"]) then return "USE" end
     if string_find(lower, MSC.L["set:"]) then return "SET" end
+    local cleanForSet = string_gsub(string_gsub(lower, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
+    if string_match(cleanForSet, "%((%d+)/(%d+)%)") then return "SET" end
     if string_find(lower, MSC.L["socket"]) then 
         if string_find(lower, MSC.L["bonus"]) then return "SOCKET_BONUS" else return "SOCKET_INFO" end
     end
@@ -708,9 +710,9 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
                 procObj.val = tonumber(m1)
             elseif pat.valIdx then
                 procObj.type = "Stat"
-                procObj.val = tonumber(m2)
-                procObj.duration = tonumber(m3)
-                procObj.statName = m1 
+                procObj.val = tonumber(pat.valIdx == 1 and m1 or m2)
+                procObj.duration = tonumber(pat.valIdx == 1 and m2 or m3)
+                procObj.statName = pat.nameIdx and (pat.nameIdx == 1 and m1 or m2) or m1
             else 
                 procObj.type = "Generic" 
             end

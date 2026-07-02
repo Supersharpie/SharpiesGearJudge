@@ -55,7 +55,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if SGJ_Settings.SimplifyStats == nil then SGJ_Settings.SimplifyStats = true end
         if SGJ_Settings.ColorizeStats == nil then SGJ_Settings.ColorizeStats = true end
         if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end
-		
+        if MSC.BuffEngine then MSC.BuffEngine:InitSettings() end
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
         
@@ -165,7 +165,10 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName, baselineGe
 
     if equipLoc == "INVTYPE_WEAPON" then
         local _, class = UnitClass("player")
-        local canDW = (class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" or class == "SHAMAN")
+        local canDW = (class == "WARRIOR" or class == "ROGUE" or class == "HUNTER")
+        if class == "SHAMAN" and MSC.GetTalentRank then
+            canDW = MSC:GetTalentRank("DUAL_WIELD") > 0
+        end
         
         if canDW then
             local l1 = baselineGear and baselineGear[16] or GetInventoryItemLink("player", 16)
@@ -199,25 +202,7 @@ end
 -- HELPER: GET WEIGHTS BY NAME (FOR OFF-SPEC TRACKING)
 -- =============================================================
 function MSC.GetWeightsByName(profileName)
-    if not MSC.CurrentClass then return nil end
-    local rawWeights = nil
-    
-    if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[profileName] then rawWeights = MSC.CurrentClass.Weights[profileName] end
-    if not rawWeights and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[profileName] then rawWeights = MSC.CurrentClass.LevelingWeights[profileName] end
-    if not rawWeights and MSC.CurrentClass.Profiles and MSC.CurrentClass.Profiles[profileName] then rawWeights = MSC.CurrentClass.Profiles[profileName] end
-    
-    if not rawWeights then return nil end
-    
-    -- Copy to avoid editing the core database
-    local finalWeights = {}
-    for k,v in pairs(rawWeights) do finalWeights[k] = v end
-    
-    -- Run the weights through the talent scalers!
-    if MSC.CurrentClass.ApplyScalers then
-        finalWeights = MSC.CurrentClass:ApplyScalers(finalWeights, profileName)
-    end
-    
-    return finalWeights
+    return MSC:GetProfileWeights(profileName)
 end
 
 -- =============================================================
@@ -770,63 +755,54 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
-			-- [[ 5. MULTI-SPEC TRACKING ]]
             if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
                 for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
                     if isActive and tSpec ~= specName then
-                        
-                        -- [[ THE BRAIN SWAP: Mock the Talent Tree ]]
                         local playerKey = MSC:GetPlayerKey()
                         local originalTalentCache = MSC.TalentCache
-                        
-                        if SGJ_Settings.TalentProfiles and SGJ_Settings.TalentProfiles[playerKey] and SGJ_Settings.TalentProfiles[playerKey][tSpec] then
-                            -- Inject the saved off-spec talents into the live engine!
-                            MSC.TalentCache = SGJ_Settings.TalentProfiles[playerKey][tSpec]
-                        end
+                        local function evalTrackedSpec()
+                            if SGJ_Settings.TalentProfiles and SGJ_Settings.TalentProfiles[playerKey] and SGJ_Settings.TalentProfiles[playerKey][tSpec] then
+                                MSC.TalentCache = SGJ_Settings.TalentProfiles[playerKey][tSpec]
+                            end
 
-                        -- Fetch weights (which now correctly uses the injected talents for scaling)
-                        local tWeights = MSC.GetWeightsByName(tSpec)
-                        if tWeights then
-                            
+                            local tWeights = MSC.GetWeightsByName(tSpec)
+                            if not tWeights then return end
+
                             local baselineGear = nil
                             if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[playerKey] then
                                 baselineGear = SGJ_Settings.GearProfiles[playerKey][tSpec]
                             end
 
                             local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec, baselineGear)
-                            
-                            if tSlotId then
-                                -- Evaluate the upgrade (Hit/Def Cap guardians will now read the injected talents)
-                                local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
-                                local tDelta = tNewScore - tOldScore
-                                
-                                if tDelta > 0.1 then
-                                    local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
-                                    
-                                    local label = "|cff00ccff" .. prettySpec .. ":|r"
-                                    if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" end
-                                    
-                                    tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
-                                    
-                                    if oSC and nSC and MSC.SetBonusScores then
-                                        for setID, scores in pairs(MSC.SetBonusScores) do
-                                            local oC = oSC[setID] or 0
-                                            local nC = nSC[setID] or 0
-                                            if nC < oC then
-                                                for req, _ in pairs(scores) do
-                                                    local rN = tonumber(req)
-                                                    if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN)) end
-                                                end
+                            if not tSlotId then return end
+
+                            local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
+                            local tDelta = tNewScore - tOldScore
+
+                            if tDelta > 0.1 then
+                                local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
+                                local label = "|cff00ccff" .. prettySpec .. ":|r"
+                                if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" end
+                                tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
+
+                                if oSC and nSC and MSC.SetBonusScores then
+                                    for setID, scores in pairs(MSC.SetBonusScores) do
+                                        local oC = oSC[setID] or 0
+                                        local nC = nSC[setID] or 0
+                                        if nC < oC then
+                                            for req, _ in pairs(scores) do
+                                                local rN = tonumber(req)
+                                                if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN)) end
                                             end
                                         end
                                     end
                                 end
                             end
-                        end 
-                        
-                        -- [[ RESTORE REALITY ]]
-                        -- Put the live talents back so the rest of the game works normally
+                        end
+
+                        local ok, err = xpcall(evalTrackedSpec, function(e) return debugstack(e, 2) end)
                         MSC.TalentCache = originalTalentCache
+                        if not ok and MSC.Debug then print("|cff00ccffSGJ|r tracked-spec error:", err) end
                     end
                 end
             end
@@ -996,30 +972,4 @@ ItemRefTooltip:HookScript("OnTooltipSetItem", function(self)
     end
 end)
 
--- [[ 2. QUEST WINDOW TOOLTIP HOOKS (TBC/Era) ]]
-local function TriggerQuestTooltip(tooltip, link)
-    MSC.HoveredQuestLink = link
-    MSC.IsQuestHook = true
-    
-    MSC.EvaluateAndDrawTooltip(tooltip)
-    
-    MSC.IsQuestHook = false    
-    tooltip:Show()
-end
-
-if GameTooltip.SetQuestItem then
-    hooksecurefunc(GameTooltip, "SetQuestItem", function(self, itemType, index)
-        TriggerQuestTooltip(self, GetQuestItemLink(itemType, index))
-    end)
-end
-
-if GameTooltip.SetQuestLogItem then
-    hooksecurefunc(GameTooltip, "SetQuestLogItem", function(self, itemType, index)
-        TriggerQuestTooltip(self, GetQuestLogItemLink(itemType, index))
-    end)
-end
-
--- Clear the saved link when the mouse moves away to prevent bleeding
-GameTooltip:HookScript("OnTooltipCleared", function()
-    MSC.HoveredQuestLink = nil
-end)
+-- Quest tooltip hooks live in TooltipManager.lua

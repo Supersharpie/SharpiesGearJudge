@@ -441,7 +441,8 @@ Priest.Talents = {
     ["VAMPIRIC_TOUCH"]  = MSC.L["Vampiric Touch"],
     ["ENLIGHTENMENT"]   = MSC.L["Enlightenment"],
     ["SHADOW_FOCUS"]    = MSC.L["Shadow Focus"],
-    ["SPIRIT_TAP"]      = MSC.L["Spirit Tap"]
+    ["SPIRIT_TAP"]      = MSC.L["Spirit Tap"],
+    ["MEDITATION"]      = MSC.L["Meditation"],
 }
 
 -- =============================================================
@@ -561,12 +562,11 @@ function Priest:ApplyScalers(weights, currentSpec)
     if w["ITEM_MOD_SPIRIT_SHORT"] then
         -- A. Calculate Base Value (Regen)
         local level = UnitLevel("player")
-        local intellect = UnitStat("player", 4) 
-        local mp5Value = MSC:GetSpiritValueInMP5(level, intellect)
+        local mp5Value = MSC:GetSpiritValueInMP5(level, 1)
         
-        -- Multiplier based on spec (Disc gets 15% Int -> Spirit in TBC)
-        local combatMult = 0.65
-        if currentSpec:find("DISC") then combatMult = 0.60 end
+        -- Meditation: 15/30/45% spirit regen while casting
+        local rMed = Rank("MEDITATION")
+        local combatMult = (rMed > 0) and (rMed * 0.15) or 0.0
         
         local mp5Weight = w["ITEM_MOD_MANA_REGENERATION_SHORT"] or 2.5
         local baseSpiritWeight = mp5Value * mp5Weight * combatMult
@@ -622,32 +622,10 @@ function Priest:ApplyScalers(weights, currentSpec)
     end
     
     -- [[ 3. HIT CAP ]]
-    if w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) 
-        local level = UnitLevel("player")
-        if level > 70 then level = 70 end
-        
-        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
-        
-        local baseCapPct = 16 
+    if MSC.BuffEngine and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local talentBonusPct = 0
-        
-        if currentSpec:find("SHADOW") then
-             talentBonusPct = Rank("SHADOW_FOCUS") * 2
-        end
-        
-        local _, race = UnitRace("player")
-        if race == "Draenei" then talentBonusPct = talentBonusPct + 1 end
-        
-        local finalCapRating = math.max(0, baseCapPct - talentBonusPct) * spellHitScalar
-        
-        if hitRating >= (finalCapRating + spellHitScalar) then
-			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-			table.insert(activeCaps, MSC.L["Hit"])
-		elseif hitRating >= finalCapRating then
-			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+        if currentSpec:find("SHADOW") then talentBonusPct = Rank("SHADOW_FOCUS") * 2 end
+        MSC.BuffEngine:ApplySpellHitCap(w, activeCaps, currentSpec, talentBonusPct, { hardVal = 0.02 })
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

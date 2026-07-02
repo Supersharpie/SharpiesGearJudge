@@ -167,7 +167,6 @@ MSC.SetDefinitions = {
     [471] = { {20059,20045,20052} }, -- Highlander's Purpose
     [483] = { {20158,20150,20154} }, -- Defiler's Determination
     [487] = { {20212,20204,20208} }, -- Defiler's Resolution
-    [383] = { {16542,16544,16541,16548,16543,16545} }, -- Warlord's Battlegear
     [588] = { {28853,28855,28851,28852,28854} }, -- High Warlord (Plate)
 }
 
@@ -265,10 +264,10 @@ if not MSC.IsEra then
         [621] = { {29044, 29047, 29045, 29048, 29046} }, -- Netherblade (Rogue)
         [640] = { {29098, 29100, 29096, 29097, 29099} }, -- Malorne (Feral)
         [638] = { {29086, 29089, 29087, 29090, 29088} }, -- Malorne (Boomkin)
-        [641] = { {29093, 29095, 29091, 29092, 29094} }, -- Malorne (Resto) -- *Corrected ID from previous map*
-        [639] = { {29038, 29039, 29040, 29042, 29043} }, -- Cyclone (Enhance) -- *Corrected ID*
+        [641] = { {29093, 29095, 29091, 29092, 29094} }, -- Malorne (Resto)
+        [631] = { {29033, 29034, 29035, 29036, 29037} }, -- Cyclone (Enh)
         [633] = { {29028, 29031, 29029, 29032, 29030} }, -- Cyclone (Ele)
-        [632] = { {29033, 29034, 29035, 29036, 29037} }, -- Cyclone (Resto)
+        [632] = { {29038, 29039, 29040, 29041, 29042} }, -- Cyclone (Resto)
         [648] = { {29076, 29079, 29077, 29080, 29078} }, -- Aldor (Mage)
         [645] = { {28963, 28967, 28964, 28968, 28966} }, -- Voidheart (Warlock)
         [663] = { {29049, 29054, 29050, 29055, 29053} }, -- Incarnate (Shadow)
@@ -282,7 +281,7 @@ if not MSC.IsEra then
         [629] = { {30131, 30133, 30129, 30130, 30132} }, -- Crystalforge (Heal)
         [652] = { {30141, 30143, 30139, 30140, 30142} }, -- Rift Stalker
         [622] = { {30146, 30149, 30144, 30145, 30148} }, -- Deathmantle
-        [641] = { {30228, 30230, 30222, 30223, 30229} }, -- Nordrassil (Resto)
+        [602] = { {30228, 30230, 30222, 30223, 30229} }, -- Nordrassil (Resto)
         [642] = { {30216, 30217, 30219, 30220, 30221} }, -- Nordrassil (Feral)
         [643] = { {30231, 30232, 30233, 30234, 30235} }, -- Nordrassil (Balance)
         [649] = { {30206, 30210, 30196, 30205, 30207} }, -- Tirisfal (Mage)
@@ -294,23 +293,23 @@ if not MSC.IsEra then
         [636] = { {30171, 30172, 30173, 30169, 30170} }, -- Cataclysm (Resto)
 
         -- TIER 6
-        [672] = { {30972, 30979, 30975, 34441, 30969, 34560, 34543, 34441} }, -- Onslaught (DPS)
-        [673] = { {30974, 30980, 30976, 34442, 30970, 34561, 34544, 34442} }, -- Onslaught (Tank)
-        [679] = { {30987, 30998, 30991, 34433, 30985, 34564, 34529, 34433} }, -- Lightbringer (Heal)
-        [681] = { {30988, 30996, 30992, 34432, 30983, 34565, 34530, 34432} }, -- Lightbringer (Ret)
-        [680] = { {30990, 30995, 30997, 34431, 30989, 34566, 34528, 34431} }, -- Lightbringer (Tank)
-        [669] = { {31003, 31006, 31004, 34443, 31001, 34549, 34570, 34443} }, -- Gronnstalker
-        [668] = { {31027, 31030, 31028, 34448, 31026, 34558, 34575, 34448} }, -- Slayer
-        [676] = { {31039, 31048, 31042, 34444, 31034, 34556, 34573, 34444} }, -- Thunderheart (Feral)
-        [677] = { {31040, 31046, 31049, 34446, 31037, 34554, 34571, 34446} }, -- Thunderheart (Resto)
-        [678] = { {31035, 31041, 31045, 34445, 31043, 34555, 34572, 34445} }, -- Thunderheart (Balance)
-        [671] = { {31056, 31059, 31057, 34447, 31055, 34557, 34574, 34447} }, -- Tempest (Mage)
-        [670] = { {31051, 31054, 31052, 34436, 31050, 34563, 34528, 34436} }, -- Malefic (Warlock)
-        [675] = { {31063, 31069, 31066, 34435, 31060, 34559, 34527, 34435} }, -- Absolution (Heal)
-        [674] = { {31061, 31064, 31065, 34434, 31067, 34562, 34526, 34434} }, -- Absolution (Shadow)
-        [682] = { {31015, 31024, 31018, 34439, 31011, 34546, 34567, 34439} }, -- Skyshatter (Ele)
-        [683] = { {31012, 31019, 31022, 34437, 31014, 34547, 34568, 34437} }, -- Skyshatter (Enh)
-        [684] = { {31016, 31020, 31023, 34438, 31017, 34545, 34569, 34438} }, -- Skyshatter (Resto)
+        [672] = { {30972, 30979, 30975, 34441, 30969, 34560, 34543} }, -- Onslaught (DPS)
+        [673] = { {30974, 30980, 30976, 34442, 30970, 34561, 34544} }, -- Onslaught (Tank)
+        [679] = { {30987, 30998, 30991, 34433, 30985, 34564, 34529} }, -- Lightbringer (Heal)
+        [681] = { {30988, 30996, 30992, 34432, 30983, 34565, 34530} }, -- Lightbringer (Ret)
+        [680] = { {30990, 30995, 30997, 34431, 30989, 34566, 34528} }, -- Lightbringer (Tank)
+        [669] = { {31003, 31006, 31004, 34443, 31001, 34549, 34570} }, -- Gronnstalker
+        [668] = { {31027, 31030, 31028, 34448, 31026, 34558, 34575} }, -- Slayer
+        [676] = { {31039, 31048, 31042, 34444, 31034, 34556, 34573} }, -- Thunderheart (Feral)
+        [677] = { {31040, 31046, 31049, 34446, 31037, 34554, 34571} }, -- Thunderheart (Resto)
+        [678] = { {31035, 31041, 31045, 34445, 31043, 34555, 34572} }, -- Thunderheart (Balance)
+        [671] = { {31056, 31059, 31057, 34447, 31055, 34557, 34574} }, -- Tempest (Mage)
+        [670] = { {31051, 31054, 31052, 34436, 31050, 34563, 34527} }, -- Malefic (Warlock)
+        [675] = { {31063, 31069, 31066, 34435, 31060, 34559, 34526} }, -- Absolution (Heal)
+        [674] = { {31061, 31064, 31065, 34434, 31067, 34562, 34525} }, -- Absolution (Shadow)
+        [682] = { {31015, 31024, 31018, 34439, 31011, 34546, 34567} }, -- Skyshatter (Ele)
+        [683] = { {31012, 31019, 31022, 34437, 31014, 34547, 34568} }, -- Skyshatter (Enh)
+        [684] = { {31016, 31020, 31023, 34438, 31017, 34545, 34569} }, -- Skyshatter (Resto)
 
         -- LEGENDARY
         [699] = { {32837, 32838} }, -- Warglaives of Azzinoth
@@ -376,7 +375,7 @@ if not MSC.IsEra then
         [769] = { {35103,35104,35105,35106,35107} }, -- Shaman (Enh)
         [770] = { {35108,35109,35110,35111,35112} }, -- Shaman (Resto)
         [771] = { {35071,35072,35073,35074,35075} }, -- Mage
-        [772] = { {35076,35077,35078,35079,35107} }, -- Priest (Heal)
+        [772] = { {35076,35077,35078,35079,35080} }, -- Priest (Heal)
         [773] = { {35129,35130,35131,35132,35133} }, -- Priest (Shadow)
         [774] = { {35118,35119,35120,35121,35122} }, -- Warlock
         [775] = { {35113,35114,35115,35116,35117} }, -- Druid (Bal)
@@ -471,8 +470,9 @@ if not MSC.IsEra then
         [648] = { [2] = { score=15 }, [4] = { stats={["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]=35} } }, -- Aldor
         [640] = { [2] = { score=30 }, [4] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} } }, -- Malorne Feral
         [638] = { [2] = { score=20 }, [4] = { score=40 } }, -- Malorne Balance
-        [639] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=8} }, [4] = { score=45 } }, -- Cyclone Enh
-        [633] = { [2] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} }, [4] = { score=50 } }, -- Cyclone Ele
+        [641] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=8} }, [4] = { score=45 } }, -- Malorne Resto
+        [631] = { [2] = { stats={["ITEM_MOD_STRENGTH_SHORT"]=20} }, [4] = { score=50 } }, -- Cyclone Enh
+        [633] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=8} }, [4] = { score=45 } }, -- Cyclone Ele
         [632] = { [2] = { score=25 }, [4] = { stats={["ITEM_MOD_SPELL_POWER_SHORT"]=40} } }, -- Cyclone Resto
         [663] = { [2] = { score=25 }, [4] = { score=40 } }, -- Incarnate Shadow
         [664] = { [2] = { score=25 }, [4] = { score=40 } }, -- Incarnate Heal
@@ -487,7 +487,25 @@ if not MSC.IsEra then
         [627] = { [2] = { score=30 }, [4] = { score=50 } }, -- Crystalforge Ret
         [628] = { [2] = { score=40 }, [4] = { score=60 } }, -- Crystalforge Tank
         [642] = { [2] = { score=30 }, [4] = { score=50 } }, -- Nordrassil Feral
+        [643] = { [2] = { score=25 }, [4] = { score=45 } }, -- Nordrassil Balance
+        [602] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=10} }, [4] = { score=50 } }, -- Nordrassil Resto
+        [629] = { [2] = { score=35 }, [4] = { score=50 } }, -- Crystalforge Heal
+        [634] = { [2] = { score=25 }, [4] = { score=45 } }, -- Cataclysm Ele
         [635] = { [2] = { score=30 }, [4] = { score=50 } }, -- Cataclysm Enh
+        [636] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=10} }, [4] = { score=50 } }, -- Cataclysm Resto
+        [665] = { [2] = { score=25 }, [4] = { score=40 } }, -- Avatar Heal
+        [666] = { [2] = { score=25 }, [4] = { score=40 } }, -- Avatar Shadow
+        [617] = { [3] = { stats={["ITEM_MOD_AGILITY_SHORT"]=20} } }, -- Netherstrike
+        [618] = { [3] = { stats={["ITEM_MOD_INTELLECT_SHORT"]=20} } }, -- Windhawk
+        [623] = { [2] = { score=25 }, [4] = { score=40 } }, -- Righteous
+        [661] = { [2] = { score=20 }, [4] = { score=35 } }, -- Doomplate
+        [677] = { [2] = { score=40 }, [4] = { score=100 } }, -- Thunderheart Resto
+        [678] = { [2] = { score=30 }, [4] = { score=90 } }, -- Thunderheart Balance
+        [674] = { [2] = { score=40 }, [4] = { score=100 } }, -- Absolution Shadow
+        [675] = { [2] = { score=35 }, [4] = { score=100 } }, -- Absolution Heal
+        [682] = { [2] = { score=40 }, [4] = { score=90 } }, -- Skyshatter Ele
+        [684] = { [2] = { stats={["ITEM_MOD_MANA_REGENERATION_SHORT"]=10} }, [4] = { score=85 } }, -- Skyshatter Resto
+        [772] = { [2]={stats={["ITEM_MOD_RESILIENCE_RATING_SHORT"]=35}}, [4]={stats={["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=40}} }, -- S4 Priest Heal
 
         -- TIER 6
         [669] = { [2] = { score=40 }, [4] = { score=120 } }, -- Gronnstalker
@@ -574,6 +592,8 @@ end
 
 -- =============================================================
 -- PROC DATABASE (Dynamic PPM / Cooldown Logic)
+-- Scoring lookup: ProcDB -> WeaponDB -> TrinketDB in Helpers.GetRawItemStats.
+-- Set data and static set scores live in SetDefinitions / SetBonusScores above.
 -- =============================================================
 MSC.ProcDB = {
     -- [[ CLASSIC / ERA ]]
@@ -696,27 +716,48 @@ end
 -- ============================================================================
 
 function MSC:BuildDatabase()
-    -- Safety: Ensure the target table exists
-    MSC.ItemSetMap = {} 
-
-    -- We use MSC.SetDefinitions as the source since it holds your master list
+    MSC.ItemSetMap = {}
     if not MSC.SetDefinitions then return end
 
+    local collisions = {}
+    local seenItems = {}
+    local definedSets = {}
+
     for setID, itemList in pairs(MSC.SetDefinitions) do
-        -- Iterate over the top level { {id, id} }
+        definedSets[setID] = true
         for _, entry in ipairs(itemList) do
-            -- If it's the inner table {id, id, id}, map each ID to the setID
             if type(entry) == "table" then
                 for _, itemID in ipairs(entry) do
+                    if seenItems[itemID] and seenItems[itemID] ~= setID then
+                        collisions[itemID] = { seenItems[itemID], setID }
+                    else
+                        seenItems[itemID] = setID
+                    end
                     MSC.ItemSetMap[itemID] = setID
                 end
             else
-                -- Fallback for standard single-table {id, id}
+                if seenItems[entry] and seenItems[entry] ~= setID then
+                    collisions[entry] = { seenItems[entry], setID }
+                else
+                    seenItems[entry] = setID
+                end
                 MSC.ItemSetMap[entry] = setID
             end
         end
     end
 
-    -- [[ OPTIMIZATION: FREE MEMORY ]]
-    MSC.SetDefinitions = nil 
+    if MSC.Debug then
+        for itemID, sets in pairs(collisions) do
+            print(string.format("|cffff0000SGJ|r Item %d mapped to sets %d and %d", itemID, sets[1], sets[2]))
+        end
+        if MSC.SetBonusScores then
+            for setID, _ in pairs(definedSets) do
+                if not MSC.SetBonusScores[setID] then
+                    print(string.format("|cffff8800SGJ|r Set %d has no SetBonusScores entry", setID))
+                end
+            end
+        end
+    end
+
+    MSC.SetDefinitions = nil
 end

@@ -21,6 +21,96 @@ MSC.TalentCacheLoaded = false
 
 MSC.CachedWeights = nil
 MSC.CachedSpecKey = nil
+MSC.CachedWeightsBySpec = {}
+MSC.ScoringRevision = 0
+MSC.EquippedSlotScoreCache = {}
+
+function MSC:BumpScoringRevision()
+    MSC.ScoringRevision = (MSC.ScoringRevision or 0) + 1
+    MSC.CachedWeights = nil
+    MSC.CachedSpecKey = nil
+    MSC.CachedCapText = nil
+    if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
+    if MSC.EquippedSlotScoreCache then wipe(MSC.EquippedSlotScoreCache) end
+    if MSC.ProcessedStatCache then wipe(MSC.ProcessedStatCache) end
+    if MSC.ColorMatchCache then wipe(MSC.ColorMatchCache) end
+    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    if MSC.UsableCache then wipe(MSC.UsableCache) end
+    if MSC.UpdateSetBonusScores and MSC.GetCurrentWeights then
+        local weights = MSC.GetCurrentWeights()
+        if weights then MSC:UpdateSetBonusScores(weights) end
+    end
+end
+
+function MSC:ApplyWeightPipeline(rawWeights, specKey)
+    local finalWeights = {}
+    if rawWeights then
+        for k, v in pairs(rawWeights) do finalWeights[k] = v end
+    end
+    local capText = nil
+    if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
+        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
+    end
+    if MSC.BuffEngine and MSC.BuffEngine.ApplyStatSynergy then
+        MSC.BuffEngine:ApplyStatSynergy(finalWeights, specKey)
+    end
+    return finalWeights, capText
+end
+
+function MSC:LookupRawWeights(profileName)
+    if not profileName or not MSC.CurrentClass then return nil, profileName end
+    local rawWeights, specKey, mathSpec = nil, profileName, nil
+
+    if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[profileName] then
+        local data = SharpiesGearJudgeDB.customWeights[profileName]
+        if type(data) == "table" and data.weights then
+            rawWeights = data.weights
+            if data.BaseSpec then mathSpec = data.BaseSpec end
+        else
+            rawWeights = data
+        end
+    end
+
+    if not rawWeights and MSC.CurrentClass.GetDynamicWeights then
+        local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights(profileName)
+        if dynWeights then rawWeights = dynWeights; specKey = dynKey end
+    end
+
+    if not rawWeights then
+        if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[profileName] then
+            rawWeights = MSC.CurrentClass.Weights[profileName]
+        elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[profileName] then
+            rawWeights = MSC.CurrentClass.LevelingWeights[profileName]
+        elseif MSC.CurrentClass.Profiles and MSC.CurrentClass.Profiles[profileName] then
+            rawWeights = MSC.CurrentClass.Profiles[profileName]
+        elseif MSC.CurrentClass.LevelingBrackets and MSC.CurrentClass.LevelingBrackets[profileName] then
+            rawWeights = MSC.CurrentClass.LevelingBrackets[profileName]
+        end
+        if not mathSpec and SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[profileName] then
+            local data = SharpiesGearJudgeDB.customWeights[profileName]
+            if type(data) == "table" and data.BaseSpec then mathSpec = data.BaseSpec end
+        end
+    end
+
+    return rawWeights, specKey, mathSpec
+end
+
+function MSC:GetProfileWeights(profileName)
+    if not profileName then
+        return MSC.GetCurrentWeights()
+    end
+
+    if MSC.CachedWeightsBySpec[profileName] then
+        return MSC.CachedWeightsBySpec[profileName]
+    end
+
+    local rawWeights, specKey, mathSpec = MSC:LookupRawWeights(profileName)
+    if not rawWeights then return nil end
+
+    local finalWeights = select(1, MSC:ApplyWeightPipeline(rawWeights, mathSpec or specKey))
+    MSC.CachedWeightsBySpec[profileName] = finalWeights
+    return finalWeights, specKey
+end
 
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
@@ -53,6 +143,32 @@ function MSC:GetTalentRank(talentKey)
     return MSC.TalentCache[localizedName] or 0
 end
 
+-- Returns spec key from dominant talent tree when capstones are ambiguous.
+-- tabMap: { [tabIndex] = "SPEC_KEY", ... }; margin = minimum point lead required.
+function MSC:GetDominantTalentTree(tabMap, margin)
+    if not tabMap then return nil, "ambiguous" end
+    margin = margin or 5
+    local maxPts, secondPts = 0, 0
+    local maxTab = nil
+    for tab, _ in pairs(tabMap) do
+        local p = GetNumTalentPoints(tab) or 0
+        if p > maxPts then
+            secondPts = maxPts
+            maxPts = p
+            maxTab = tab
+        elseif p > secondPts then
+            secondPts = p
+        end
+    end
+    if maxTab and maxPts > 0 then
+        if (maxPts - secondPts) >= margin then
+            return tabMap[maxTab], "low"
+        end
+        return tabMap[maxTab], "ambiguous"
+    end
+    return nil, "ambiguous"
+end
+
 -- =========================================================================
 -- 2. WEIGHT DISPATCHER
 -- =========================================================================
@@ -62,6 +178,7 @@ function MSC:ApplyDynamicAdjustments()
     local specKey = "Default"
     local rawWeights = {}
     local mathSpec = nil
+    MSC.CachedSpecConfidence = "high"
 
     -- 1. CHECK FOR MANUAL OVERRIDE 
     if MSC.ManualSpec and MSC.ManualSpec ~= "AUTO" then
@@ -112,7 +229,9 @@ function MSC:ApplyDynamicAdjustments()
 
         -- 3. FALLBACK: STATIC LOOKUP
         if (not rawWeights or not next(rawWeights)) and MSC.CurrentClass and MSC.CurrentClass.GetSpec then
-            specKey = MSC.CurrentClass:GetSpec()
+            local conf
+            specKey, conf = MSC.CurrentClass:GetSpec()
+            MSC.CachedSpecConfidence = conf or "high"
             
             if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
                 rawWeights = MSC.CurrentClass.Weights[specKey]
@@ -123,17 +242,7 @@ function MSC:ApplyDynamicAdjustments()
     end
 
     -- 4. COPY WEIGHTS (Don't edit the originals!)
-    local finalWeights = {}
-    if rawWeights then
-        for k, v in pairs(rawWeights) do finalWeights[k] = v end
-    end
-
-    -- 5. APPLY SCALERS & HIT CAPS
-    local capText = nil 
-    if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
-        -- Pass mathSpec if it exists, otherwise pass specKey
-        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, mathSpec or specKey)
-    end
+    local finalWeights, capText = MSC:ApplyWeightPipeline(rawWeights, mathSpec or specKey)
 
     return finalWeights, specKey, capText 
 end
@@ -141,7 +250,7 @@ end
 -- [[ THE MASTER WRAPPER ]] --
 function MSC.GetCurrentWeights()
     if MSC.CachedWeights then
-        return MSC.CachedWeights, MSC.CachedSpecKey, MSC.CachedCapText 
+        return MSC.CachedWeights, MSC.CachedSpecKey, MSC.CachedCapText, MSC.CachedSpecConfidence
     end
 
     local w, key, capText = MSC:ApplyDynamicAdjustments()
@@ -149,12 +258,13 @@ function MSC.GetCurrentWeights()
     MSC.CachedWeights = w
     MSC.CachedSpecKey = key
     MSC.CachedCapText = capText
+    MSC.CachedSpecConfidence = MSC.CachedSpecConfidence or "high"
     
     -- [[ NUKE TOOLTIP CACHE WHEN PROFILE CHANGES ]]
     if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
     if MSC.SlotCache then wipe(MSC.SlotCache) end
     
-    return w, key, capText
+    return w, key, capText, MSC.CachedSpecConfidence
 end
 
 -- =========================================================================
@@ -168,47 +278,8 @@ function MSC:GetWeaponSpecBonus(itemLink, class, specKey)
 end
 
 -- =========================================================================
--- 4. EVENT LISTENER (Cache Invalidation & Auto-Snapshot)
+-- 4. EVENT LISTENER (Cache Invalidation)
 -- =========================================================================
-
--- [[ BACKGROUND SNAPSHOT ENGINE ]]
-local snapshotTimer = nil
-local isGearDirty = false
-
-local function PerformSnapshot()
-    snapshotTimer = nil 
-    
-    if InCombatLockdown() then
-        isGearDirty = true
-        return
-    end
-
-    if not SGJ_Settings or not SGJ_Settings.GearProfiles then return end
-    
-    local weights, currentSpec = MSC.GetCurrentWeights()
-    if not currentSpec then return end
-    
-    local newGear = MSC:GetEquippedGear()
-    
-    -- [[ SANITY CHECK ]]
-    if SGJ_Settings.GearProfiles[currentSpec] then
-        local oldScore = MSC:GetTotalCharacterScore(SGJ_Settings.GearProfiles[currentSpec], weights, currentSpec)
-        local newScore = MSC:GetTotalCharacterScore(newGear, weights, currentSpec)
-        
-        -- Prevent saving if they massively downgraded their gear before a respec
-        if oldScore > 0 and (newScore < (oldScore * 0.75)) then
-            return 
-        end
-    end
-    
-    SGJ_Settings.GearProfiles[currentSpec] = newGear
-    isGearDirty = false
-end
-
-function MSC:QueueGearSnapshot()
-    if snapshotTimer then snapshotTimer:Cancel() end
-    snapshotTimer = C_Timer.NewTimer(2.0, PerformSnapshot)
-end
 
 -- [[ THE EVENT LISTENER ]]
 local talentTracker = CreateFrame("Frame")
@@ -225,10 +296,14 @@ talentTracker:SetScript("OnEvent", function(self, event, unit)
     if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
+        MSC:BumpScoringRevision()
+    elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+        MSC:BumpScoringRevision()
+    else
+        MSC.CachedWeights = nil
+        MSC.CachedSpecKey = nil
+        if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
     end
-
-    MSC.CachedWeights = nil
-    MSC.CachedSpecKey = nil
     
     if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
         local _, detectedKey = MSC.GetCurrentWeights()

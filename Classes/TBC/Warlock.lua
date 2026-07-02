@@ -845,36 +845,12 @@ function Warlock:ApplyScalers(weights, currentSpec)
     end
     
     -- [[ 2. HIT CAP ]]
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8)
-        local level = UnitLevel("player")
-        if level > 70 then level = 70 end
-        
-        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
-        
-        local baseCapPct = 16 
-        if currentSpec:find("PVP") then
-            baseCapPct = 4 
-        end
-        
+    if MSC.BuffEngine and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local talentBonusPct = 0
         if (currentSpec:find("AFFLICTION") or currentSpec:find("Leveling")) and not currentSpec:find("Fire") then
-             talentBonusPct = Rank("SUPPRESSION") * 2 
+             talentBonusPct = Rank("SUPPRESSION") * 2
         end
-
-        local _, race = UnitRace("player")
-        if race == "Draenei" then talentBonusPct = talentBonusPct + 1 end
-        
-        local finalCapRating = math.max(0, baseCapPct - talentBonusPct) * spellHitScalar
-
-        -- BUFFER LOGIC (Using ~0.5% buffer for Warlocks as previously defined)
-        if hitRating >= (finalCapRating + (spellHitScalar * 0.5)) then
-			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
-			table.insert(activeCaps, MSC.L["Hit (Capped)"])
-		elseif hitRating >= finalCapRating then
-			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.2
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+        MSC.BuffEngine:ApplySpellHitCap(weights, activeCaps, currentSpec, talentBonusPct, { softMult = 0.2, hardLabel = MSC.L["Hit (Capped)"] })
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

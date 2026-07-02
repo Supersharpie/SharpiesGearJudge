@@ -627,31 +627,14 @@ function Rogue:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 3. HIT CAP (With Hysteresis) ]]
-    if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(6) 
-        local level = UnitLevel("player")
-        if level > 70 then level = 70 end
-        
-        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
-        local baseCapPct = currentSpec:find("Leveling") and 5 or 9 
-        local talentHitPct = Rank("PRECISION") * 1
-        
-        local finalCapRating = math.max(0, baseCapPct - talentHitPct) * hitScalar
-
-        -- Hysteresis Buffer: 15 Rating
-        if hitRating >= (finalCapRating + hitScalar) then
-			if currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling") then
-				weights["ITEM_MOD_HIT_RATING_SHORT"] = 1.0 
-				table.insert(activeCaps, MSC.L["Yellow Hit"])
-			else
-				weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-				table.insert(activeCaps, MSC.L["Hit"])
-			end
-		elseif hitRating >= finalCapRating then
-			weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.8
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
-	end
+    if MSC.BuffEngine and weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+        local isCombat = currentSpec:find("COMBAT") or currentSpec:find("Default") or currentSpec:find("Leveling")
+        MSC.BuffEngine:ApplyMeleeHitCap(weights, activeCaps, currentSpec, Rank("PRECISION") * 1, 6, {
+            hardVal = isCombat and 1.0 or 0.5,
+            softMult = 0.8,
+            hardLabel = isCombat and MSC.L["Yellow Hit"] or MSC.L["Hit"],
+        })
+    end
     
     -- [[ 4. EXPERTISE CAP ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then

@@ -172,17 +172,20 @@ function MSC:GetPlayerStat(statType)
     return 0
 end
 
-function MSC:GetSpiritValueInMP5(level, spirit)
+-- Returns MP5 gained from `spiritPoints` on gear (pass 1 for per-stat weighting).
+function MSC:GetSpiritValueInMP5(level, spiritPoints)
     if not MSC.BaseRegenTable then return 0 end
+    local points = spiritPoints or 1
+    if points > 50 then points = 1 end -- guard against passing total Intellect by mistake
     local _, class = UnitClass("player")
     if MSC.IsEra then
-        if class == "PRIEST" or class == "MAGE" then return (spirit / 4) + 12.5 end
-        return (spirit / 5) + 15
+        if class == "PRIEST" or class == "MAGE" then return (points / 4) + 12.5 end
+        return (points / 5) + 15
     else
         if not level or level > 70 then level = 70 end
         local base = MSC.BaseRegenTable[level] or 0.009327
         local intel = UnitStat("player", 4) or 100
-        return 5 * (base * math_sqrt(intel)) * spirit
+        return 5 * (0.001 + base * math_sqrt(intel) * points)
     end
 end
 
@@ -229,8 +232,14 @@ end
 
 function MSC.GetCleanStatName(key)
     if MSC.ShortNames and MSC.ShortNames[key] then return MSC.ShortNames[key] end
+    if MSC.StatShortNames and MSC.StatShortNames[key] then return MSC.StatShortNames[key] end
     local s = string_gsub(string_gsub(string_gsub(key, "ITEM_MOD_", ""), "_SHORT", ""), "_", " ")
     return string_gsub(string_lower(s), "^%l", string_upper)
+end
+
+function MSC.NormalizeStatKey(key)
+    if not key or not MSC.StatAliases then return key end
+    return MSC.StatAliases[key] or key
 end
 
 -- =============================================================
@@ -263,7 +272,10 @@ MSC.StatShortNames = {
     ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = MSC.L["Shadow"], ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = MSC.L["Fire"],
     ["ITEM_MOD_FROST_DAMAGE_SHORT"] = MSC.L["Frost"], ["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = MSC.L["Arcane"],
     ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = MSC.L["Nature"], ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = MSC.L["Holy"],
-    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = MSC.L["Dmg"], ["ITEM_MOD_ARMOR_SHORT"] = MSC.L["Armor"]
+    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = MSC.L["Dmg"], ["ITEM_MOD_ARMOR_SHORT"] = MSC.L["Armor"],
+    ["ITEM_MOD_ALL_RESISTANCE_SHORT"] = MSC.L["All Res"],
+    ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = MSC.L["Feral AP"],
+    ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = MSC.L["Ranged AP"],
 }
 
 function MSC.Round(num, numDecimalPlaces)
@@ -306,18 +318,24 @@ function MSC.GetRawItemStats(itemLink)
     local finalStats = scanData.Stats or {}
     local bonusStats = {}
 
-    -- 3. INTEGRATE USE EFFECTS
-    if scanData.UseEffects then
+    -- 3. INTEGRATE USE EFFECTS (skip when ProcDB/trinket entry owns the item)
+    local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
+    local hasProcEntry = itemID and (
+        (MSC.ProcDB and MSC.ProcDB[itemID]) or
+        (MSC.WeaponDB and MSC.WeaponDB[itemID]) or
+        (MSC.TrinketDB and MSC.TrinketDB[itemID])
+    )
+    if not hasProcEntry and scanData.UseEffects then
         for _, effect in ipairs(scanData.UseEffects) do
             if effect.statKey and effect.averageVal and effect.averageVal > 0 then
-                 finalStats[effect.statKey] = (finalStats[effect.statKey] or 0) + effect.averageVal
-                 if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=effect.statKey, val=effect.averageVal } end
+                 local sk = MSC.NormalizeStatKey and MSC.NormalizeStatKey(effect.statKey) or effect.statKey
+                 finalStats[sk] = (finalStats[sk] or 0) + effect.averageVal
+                 if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=sk, val=effect.averageVal } end
             end
         end
     end
 
     -- 4. OVERRIDES
-    local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
     if itemID then
         if MSC.CurrentClass then
             local classDB = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols or MSC.CurrentClass.ItemOverrides
@@ -351,8 +369,9 @@ function MSC.GetRawItemStats(itemLink)
             end
 
             if calcVal and entry.stat then
-                finalStats[entry.stat] = (finalStats[entry.stat] or 0) + calcVal
-                if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=entry.stat, val=calcVal } end
+                local sk = MSC.NormalizeStatKey(entry.stat)
+                finalStats[sk] = (finalStats[sk] or 0) + calcVal
+                if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=sk, val=calcVal } end
             end
             if entry.score then finalStats._MANUAL_SCORE = entry.score end
         end
@@ -360,6 +379,16 @@ function MSC.GetRawItemStats(itemLink)
 
     -- 5. SOCKET BONUSES
     if scanData.Meta and scanData.Meta.BonusStats then bonusStats = scanData.Meta.BonusStats end
+    local normalized = {}
+    for k, v in pairs(finalStats) do
+        if type(v) == "number" and k ~= "_BONUS_STATS" then
+            local nk = MSC.NormalizeStatKey(k)
+            normalized[nk] = (normalized[nk] or 0) + v
+        else
+            normalized[k] = v
+        end
+    end
+    finalStats = normalized
     finalStats._BONUS_STATS = bonusStats
     
     MSC.StatCache[itemLink] = finalStats
@@ -557,7 +586,40 @@ function MSC.GetGemColor(gemID)
     return nil
 end
 
+function MSC.ApplyGemColorCount(gData, colors)
+    if not gData or not gData.colorType or MSC.IsEra or not colors then return end
+    local ct = gData.colorType
+    if ct == "RED" then
+        colors.RED = colors.RED + 1
+    elseif ct == "BLUE" then
+        colors.BLUE = colors.BLUE + 1
+    elseif ct == "YELLOW" then
+        colors.YELLOW = colors.YELLOW + 1
+    elseif ct == "PURPLE" then
+        colors.RED = colors.RED + 1
+        colors.BLUE = colors.BLUE + 1
+    elseif ct == "ORANGE" then
+        colors.RED = colors.RED + 1
+        colors.YELLOW = colors.YELLOW + 1
+    elseif ct == "GREEN" then
+        colors.BLUE = colors.BLUE + 1
+        colors.YELLOW = colors.YELLOW + 1
+    elseif ct == "PRISMATIC" then
+        colors.RED = colors.RED + 1
+        colors.BLUE = colors.BLUE + 1
+        colors.YELLOW = colors.YELLOW + 1
+    end
+end
+
+MSC.ColorMatchCache = MSC.ColorMatchCache or {}
+MSC.ProcessedStatCache = MSC.ProcessedStatCache or {}
+
 function MSC.SolveColorMatch(gemIDs, baseLink)
+    local gemKey = table_concat(gemIDs, ",") .. "|" .. (baseLink or "")
+    if MSC.ColorMatchCache[gemKey] ~= nil then
+        return MSC.ColorMatchCache[gemKey]
+    end
+
     local template = GetItemStats(baseLink) or {}
     local sockets = {}
     for i=1, (template["EMPTY_SOCKET_RED"] or 0) do table_insert(sockets, "RED") end
@@ -591,11 +653,30 @@ function MSC.SolveColorMatch(gemIDs, baseLink)
         end
         return MatchRecursive(gemIdx + 1, availableSockets)
     end
-    return MatchRecursive(1, sockets)
+    local matched = MatchRecursive(1, sockets)
+    MSC.ColorMatchCache[gemKey] = matched
+    return matched
 end
 
 function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques)
     if not itemLink then return {} end
+
+    local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
+    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
+    local gemQuality = SGJ_Settings and SGJ_Settings.GemQuality or 3
+    local uniqueKey = ""
+    if globalUniques then
+        local parts = {}
+        for id, _ in pairs(globalUniques) do table_insert(parts, tostring(id)) end
+        table_sort(parts)
+        uniqueKey = table.concat(parts, ",")
+    end
+    local procKey = itemLink .. "|" .. tostring(slotId or 0) .. "|" .. tostring(specName or "") .. "|" .. enchantMode .. "|" .. gemMode .. "|" .. gemQuality .. "|" .. (MSC.ScoringRevision or 0) .. "|" .. uniqueKey
+    if globalUniques and next(globalUniques) then
+        -- skip cache when tracking unique-equipped gems across character score
+    elseif weights and MSC.ProcessedStatCache and MSC.ProcessedStatCache[procKey] then
+        return MSC:SafeCopy(MSC.ProcessedStatCache[procKey], {})
+    end
     
     local rawStats = MSC.GetRawItemStats(itemLink)
     local finalStats = {}
@@ -613,8 +694,6 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
 
     if not weights then return finalStats end
     
-local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
-    local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local level = UnitLevel("player")
     
     local derivedSlotId = slotId
@@ -735,6 +814,30 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                 socketsToFill = GetItemStats(itemLink) or {} 
                 local _, _, ids = MSC:GetItemGems(itemLink)
                 for _, id in ipairs(ids) do table_insert(existingGems, id) end
+                for _, gID in ipairs(existingGems) do
+                    local id = tonumber(gID)
+                    if id and id > 0 then
+                        local gData = MSC.GetGemStatsByID(id)
+                        if gData then
+                            if gData.stat then finalStats[gData.stat] = math_max(0, (finalStats[gData.stat] or 0) - (gData.val or 0)) end
+                            if gData.stat2 then finalStats[gData.stat2] = math_max(0, (finalStats[gData.stat2] or 0) - (gData.val2 or 0)) end
+                        end
+                    end
+                end
+            end
+
+            local totalSockets = 0
+            for _, colorKey in ipairs({"EMPTY_SOCKET_RED", "EMPTY_SOCKET_YELLOW", "EMPTY_SOCKET_BLUE", "EMPTY_SOCKET_META", "EMPTY_SOCKET_PRISMATIC"}) do
+                totalSockets = totalSockets + (socketsToFill[colorKey] or 0)
+            end
+            local totalFilled = 0
+            for _, gID in ipairs(existingGems) do
+                if tonumber(gID) and tonumber(gID) > 0 then totalFilled = totalFilled + 1 end
+            end
+            local socketsLeftToProject = math_max(0, totalSockets - totalFilled)
+
+            for _, gID in ipairs(existingGems) do
+                MSC.ApplyGemColorCount(MSC.GetGemStatsByID(gID), Scratch_ProjectedColors)
             end
 
             if MSC.GetBaseLink and MSC.GetBestGemForSocket then
@@ -746,11 +849,13 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                 for _, colorKey in ipairs(socketKeys) do
                     local count = socketsToFill[colorKey] or 0
                     for i=1, count do
+                        if gemMode == 2 and socketsLeftToProject <= 0 then break end
                         local bestGem, score = MSC.GetBestGemForSocket(colorKey, level, weights, uniqueTrackerMatch, isJC)
                         if bestGem then 
                             matchScore = matchScore + score
                             table_insert(Scratch_MatchGems, bestGem)
                             if bestGem.unique then uniqueTrackerMatch[bestGem.id] = true end
+                            if gemMode == 2 then socketsLeftToProject = socketsLeftToProject - 1 end
                         end
                     end
                 end
@@ -808,6 +913,7 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
                         Scratch_GemStats[gem.stat2] = (Scratch_GemStats[gem.stat2] or 0) + gem.val2 
                     end
                     if gem.isMeta then projectedMeta = gem.id end
+                    MSC.ApplyGemColorCount(gem.colorType and gem or MSC.GetGemStatsByID(gem.id), Scratch_ProjectedColors)
                     table_insert(Scratch_ProjectedIDs, gem.id)
                 end
                 
@@ -857,6 +963,9 @@ local enchantMode = SGJ_Settings and SGJ_Settings.EnchantMode or 1
             end
         end
     end
+    if weights and MSC.ProcessedStatCache and not (globalUniques and next(globalUniques)) then
+        MSC.ProcessedStatCache[procKey] = MSC:SafeCopy(finalStats, {})
+    end
     return finalStats
 end
 
@@ -897,25 +1006,32 @@ end
 -- =============================================================
 function MSC.GetItemScore(stats, weights, specName, slotId)
     if not stats or not weights then return 0 end
+    if stats._MANUAL_SCORE and stats._MANUAL_SCORE > 0 then
+        return math_max(0, MSC.Round(stats._MANUAL_SCORE, 1))
+    end
     local score = 0
     local usefulRaw = 0
     local uselessRaw = 0
 
     for stat, val in pairs(stats) do
-        local weightKey = stat
-        if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
-            if weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH" end
-        end
-        if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
-            if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
-        end
-        
-        if weights[weightKey] and type(val) == "number" then 
-            local finalVal = val
-            local w = weights[weightKey]
-            if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
-            score = score + (finalVal * w)
-            if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
+        if stat == "_MANUAL_SCORE" or stat == "_AUTO_PROC" or stat == "IS_PROJECTED" or stat == "GEMS_PROJECTED" or stat == "BONUS_PROJECTED" then
+            -- metadata keys
+        elseif type(val) == "number" then
+            local weightKey = stat
+            if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
+                if weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH" end
+            end
+            if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
+                if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
+            end
+            
+            if weights[weightKey] then 
+                local finalVal = val
+                local w = weights[weightKey]
+                if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
+                score = score + (finalVal * w)
+                if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
+            end
         end
     end
     
@@ -1032,23 +1148,31 @@ function MSC:DebugItem()
 		print(MSC.L["Final Score: "] .. "|cff00ccff" .. MSC.Round(score, 1) .. "|r")
 end
 
+function MSC:GetDefenseFloor(rule)
+    if rule and rule.dynamic then
+        return UnitLevel("player") * 5 + 140
+    end
+    return rule and rule.base or 0
+end
+
 -- =============================================================
 -- 13. LOAD SAVED WEIGHTS (Startup Race Condition Handler)
 -- =============================================================
 local dbLoader = CreateFrame("Frame")
 dbLoader:RegisterEvent("PLAYER_LOGIN")
 dbLoader:SetScript("OnEvent", function()
-    -- Wait briefly for Init.lua to set MSC.CurrentClass
     C_Timer.After(0.5, function()
-        if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and MSC.CurrentClass then
-            MSC.CurrentClass.Weights = MSC.CurrentClass.Weights or {}
-            for profileName, weights in pairs(SharpiesGearJudgeDB.customWeights) do
-                MSC.CurrentClass.Weights[profileName] = weights
+        if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SGJ_Settings then
+            local mode = SGJ_Settings.Mode
+            if mode and mode ~= "AUTO" and SharpiesGearJudgeDB.customWeights[mode] then
+                MSC.CachedWeights = nil
+                MSC.CachedWeightsBySpec = MSC.CachedWeightsBySpec or {}
+                wipe(MSC.CachedWeightsBySpec)
+                if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
             end
-            -- Force a refresh if the main window is open to update dropdowns
-            if MSC.InitSettingsView and MSC.MainFrame and MSC.MainFrame:IsShown() then
-                MSC.InitSettingsView(MSC.MainFrame.Content)
-            end
+        end
+        if MSC.InitSettingsView and MSC.MainFrame and MSC.MainFrame:IsShown() then
+            MSC.InitSettingsView(MSC.MainFrame.Content)
         end
     end)
 end)

@@ -563,47 +563,11 @@ function Mage:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 3. HIT CAP (With Hysteresis) ]]
-    if w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local spellHitRating = GetCombatRating(8)
-        local level = UnitLevel("player")
-        if level > 70 then level = 70 end
-        
-        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
-        
-        -- Default to Raid Cap
-        local baseCapPct = 16
-        
-        -- Adjust for PvP Cap
-        if currentSpec:find("PVP") then
-            baseCapPct = 4
-        end
-        
-        -- Adjust for Leveling Cap
-        if currentSpec:find("Leveling") then
-            baseCapPct = 6
-        end
-        
-        -- 2% per rank of Arcane Focus, 1% per rank of Elemental Precision
-        local arcaneBonusPct = Rank("ARCANE_FOCUS") * 2    
-        local frostFireBonusPct = Rank("ELEMENTAL_PRECISION") * 1 
-        
-        -- Subtract the best active talent (usually don't have both active for main nuke)
-        local talentBonusPct = math.max(arcaneBonusPct, frostFireBonusPct)
-        
-        -- Draenei Racial
-        local _, race = UnitRace("player")
-        if race == "Draenei" then talentBonusPct = talentBonusPct + 1 end
-        
-        local finalCapRating = math.max(0, baseCapPct - talentBonusPct) * spellHitScalar
-
-        -- Hysteresis Buffer
-        if spellHitRating >= (finalCapRating + spellHitScalar) then
-			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.05 
-			table.insert(activeCaps, MSC.L["Hit"])
-		elseif spellHitRating >= finalCapRating then
-			w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+    if MSC.BuffEngine and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+        local arcaneBonusPct = Rank("ARCANE_FOCUS") * 2
+        local frostFireBonusPct = Rank("ELEMENTAL_PRECISION") * 1
+        local talentBonusPct = math_max(arcaneBonusPct, frostFireBonusPct)
+        MSC.BuffEngine:ApplySpellHitCap(w, activeCaps, currentSpec, talentBonusPct)
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

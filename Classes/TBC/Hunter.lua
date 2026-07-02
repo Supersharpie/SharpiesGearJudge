@@ -655,34 +655,8 @@ function Hunter:ApplyScalers(weights, currentSpec)
     end
 
 	-- [[ 3. HIT CAP (Uses Ranged Hit) ]]
-    if w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(7) -- Ranged Hit
-        local level = UnitLevel("player")
-        if level > 70 then level = 70 end
-        
-        -- Get the dynamic scalar for Hit Rating (Index 6)
-        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
-        
-        -- Base Cap: 5% for Leveling/Dungeons, 9% for Raid Bosses
-        local baseCapPct = currentSpec:find("Leveling") and 5 or 9 
-        
-        -- Talent & Racial Flat Percentages
-        local talentHitPct = Rank("SUREFOOTED") * 1
-        local _, race = UnitRace("player")
-        if race == "Draenei" then talentHitPct = talentHitPct + 1 end 
-        -- (Removed Troll Bow Spec from here, as it gives Crit in TBC, not Hit!)
-
-        -- Calculate the exact dynamic rating cap for their current level
-        local finalCapRating = math.max(0, baseCapPct - talentHitPct) * hitScalar
-
-        -- If they are over cap by more than 1%, severely devalue hit
-        if hitRating >= (finalCapRating + hitScalar) then
-            w["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
-            table.insert(activeCaps, MSC.L["Hit"])
-        elseif hitRating >= finalCapRating then
-            w["ITEM_MOD_HIT_RATING_SHORT"] = w["ITEM_MOD_HIT_RATING_SHORT"] * 0.7
-            table.insert(activeCaps, MSC.L["Hit (Soft)"])
-        end
+    if MSC.BuffEngine and w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+        MSC.BuffEngine:ApplyMeleeHitCap(w, activeCaps, currentSpec, Rank("SUREFOOTED") * 1, 7)
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

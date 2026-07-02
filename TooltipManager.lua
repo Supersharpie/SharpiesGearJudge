@@ -118,3 +118,9 @@ TooltipManager:SetScript("OnEvent", function(self, event)
         end
     end
 end)
+
+GameTooltip:HookScript("OnTooltipCleared", function()
+    MSC.HoveredQuestLink = nil
+    MSC.PendingTooltipLink = nil
+    MSC.PendingTooltip = nil
+end)

@@ -104,6 +104,18 @@ Druid.Weights = {
         ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02,
     },
+
+    ["HYBRID_HOTW"] = {
+        ["MSC_WEAPON_DPS"]                  = 0.0,
+        ["ITEM_MOD_STRENGTH_SHORT"]         = 2.0,
+        ["ITEM_MOD_INTELLECT_SHORT"]        = 0.8,
+        ["ITEM_MOD_STAMINA_SHORT"]          = 1.0,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]= 0.8,
+        ["ITEM_MOD_ARMOR_SHORT"]            = 0.15,
+        ["ITEM_MOD_AGILITY_SHORT"]          = 1.2,
+        ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]= 0.5,
+        ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 1.0,
+    },
 }
 
 -- Safety Init
@@ -534,6 +546,7 @@ Druid.PrettyNames = {
     ["RESTO_TREE"]        = MSC.L["Healer: Tree of Life"],
     ["FERAL_CAT"]         = MSC.L["DPS: Feral Cat"],
     ["FERAL_BEAR"]        = MSC.L["Tank: Feral Bear"],
+    ["HYBRID_HOTW"]       = MSC.L["Hybrid: Heart of the Wild"],
     
     ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
     ["Leveling_21_40"] = MSC.L["Feral Cat (21-40)"],
@@ -559,6 +572,8 @@ Druid.PrettyNames = {
 Druid.SpeedChecks = { 
     ["Default"]={} 
 }
+
+Druid.EndgameTabMap = { [1] = "BALANCE_PVE", [2] = "FERAL_CAT", [3] = "RESTO_TREE" }
 
 Druid.ValidWeapons = {
     [4]=true, [5]=true,   -- 1H/2H Maces
@@ -590,7 +605,8 @@ Druid.Talents = {
     ["FERAL_CHARGE"]=MSC.L["Feral Charge"],
     ["INSECT_SWARM"]=MSC.L["Insect Swarm"],
     ["LUNAR_GUIDANCE"]=MSC.L["Lunar Guidance"],
-    ["PREDATORY_INSTINCTS"]=MSC.L["Predatory Instincts"]
+    ["PREDATORY_INSTINCTS"]=MSC.L["Predatory Instincts"],
+    ["INTENSITY"]=MSC.L["Intensity"],
 }
 
 -- =============================================================
@@ -600,15 +616,18 @@ function Druid:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
-    -- [[ ENDGAME DETECTION ]]
     if level >= 60 then
-        if Rank("TREE_OF_LIFE") > 0 then return "RESTO_TREE" end
-        if Rank("MOONKIN_FORM") > 0 or Rank("FORCE_OF_NATURE") > 0 then return "BALANCE_PVE" end
+        if Rank("HEART_WILD") > 0 and Rank("NATURES_SWIFTNESS") > 0 then return "HYBRID_HOTW", "high" end
+        if Rank("TREE_OF_LIFE") > 0 then return "RESTO_TREE", "high" end
+        if Rank("MOONKIN_FORM") > 0 or Rank("FORCE_OF_NATURE") > 0 then return "BALANCE_PVE", "high" end
         if Rank("MANGLE") > 0 or Rank("FERAL_INSTINCT") > 0 then
-            if Rank("THICK_HIDE") >= 3 then return "FERAL_BEAR" end
-            return "FERAL_CAT"
+            if Rank("THICK_HIDE") >= 3 then return "FERAL_BEAR", "high" end
+            return "FERAL_CAT", "high"
         end
-        return "FERAL_CAT"
+        local fallback, conf = MSC:GetDominantTalentTree(Druid.EndgameTabMap, 5)
+        if fallback == "FERAL_CAT" and Rank("THICK_HIDE") >= 3 then fallback = "FERAL_BEAR" end
+        if fallback then return fallback, conf end
+        return "FERAL_CAT", "ambiguous"
     end
 
     -- [[ LEVELING BRACKET CALCULATION ]]
@@ -630,9 +649,9 @@ function Druid:GetSpec()
     local specificKey = role .. suffix
 
     -- [[ FALLBACK CHECKS ]]
-    if Druid.LevelingBrackets and Druid.LevelingBrackets[specificKey] then return specificKey end
-    if Druid.LevelingWeights[specificKey] then return specificKey end
-    return "Leveling" .. suffix
+    if Druid.LevelingBrackets and Druid.LevelingBrackets[specificKey] then return specificKey, "high" end
+    if Druid.LevelingWeights[specificKey] then return specificKey, "high" end
+    return "Leveling" .. suffix, "low"
 end
 
 function Druid:GetDynamicWeights(forceKey)
@@ -649,7 +668,13 @@ function Druid:GetDynamicWeights(forceKey)
     end
 
     local level = UnitLevel("player")
-    local specKey = forceKey or self:GetSpec() 
+    local specKey, specConf
+    if forceKey then
+        specKey = forceKey
+    else
+        specKey, specConf = self:GetSpec()
+        MSC.CachedSpecConfidence = specConf or "high"
+    end
 
     -- 1. Check Leveling Brackets
     if Druid.LevelingBrackets and Druid.LevelingBrackets[specKey] then
@@ -811,13 +836,13 @@ function Druid:ApplyScalers(weights, currentSpec)
         -- [[ SMART SPIRIT SCALING ]]
         if w["ITEM_MOD_SPIRIT_SHORT"] then
             local level = UnitLevel("player")
-            local intellect = UnitStat("player", 4) -- Stat 4 = Intellect
             
             -- 1. Get raw MP5 gained from 1 Spirit
-            local mp5Value = MSC:GetSpiritValueInMP5(level, intellect)
+            local mp5Value = MSC:GetSpiritValueInMP5(level, 1)
             
-            -- 2. Combat Regeneration Uptime (Intensity)
-            local combatMult = 0.65
+            -- 2. Combat regen fraction (Intensity: 17/33/50% spirit regen while casting)
+            local rInt = Rank("INTENSITY")
+            local combatMult = (rInt > 0) and (rInt * 0.17) or 0.0
             
             -- 3. Convert to Score
             local mp5Weight = w["ITEM_MOD_MANA_REGENERATION_SHORT"] or 2.0
@@ -827,7 +852,18 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
     
-    return w
+    -- [[ HIT CAPS ]]
+    if MSC.BuffEngine then
+        if (currentSpec:find("BALANCE") or currentSpec:find("Caster")) and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+            local bopPct = Rank("BALANCE_OF_POWER") * 2
+            MSC.BuffEngine:ApplySpellHitCap(w, activeCaps, currentSpec, bopPct)
+        elseif (currentSpec:find("FERAL") or currentSpec:find("Cat") or currentSpec:find("Bear")) and w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+            MSC.BuffEngine:ApplyMeleeHitCap(w, activeCaps, currentSpec, 0)
+        end
+    end
+
+    local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
+    return w, capText
 end
 
 function Druid:GetWeaponBonus(itemLink) return 0 end

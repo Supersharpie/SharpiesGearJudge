@@ -104,19 +104,22 @@ Warrior.ValidWeapons = {
     [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Crossbow, Thrown
 }
 
+Warrior.EndgameTabMap = { [1] = "ARMS_MS", [2] = "FURY_DW", [3] = "DEEP_PROT" }
+
 function Warrior:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
-    -- [[ 1. ENDGAME SPEC DETECTION ]]
     if level >= 60 then
-        if Rank("SHIELD_SLAM") > 0 then return "DEEP_PROT" end
-        if Rank("BLOODTHIRST") > 0 and Rank("DEFIANCE") > 0 then return "FURY_PROT" end
-        if Rank("TACTICAL_MASTERY") > 0 and Rank("DEFIANCE") > 0 then return "ARMS_PROT" end
-        if Rank("BLOODTHIRST") > 0 and Rank("IMP_SLAM") > 0 then return "FURY_2H" end
-        if Rank("BLOODTHIRST") > 0 then return "FURY_DW" end
-        if Rank("MORTAL_STRIKE") > 0 then return "ARMS_MS" end
-        return "FURY_DW"
+        if Rank("SHIELD_SLAM") > 0 then return "DEEP_PROT", "high" end
+        if Rank("BLOODTHIRST") > 0 and Rank("DEFIANCE") > 0 then return "FURY_PROT", "high" end
+        if Rank("TACTICAL_MASTERY") > 0 and Rank("DEFIANCE") > 0 then return "ARMS_PROT", "high" end
+        if Rank("BLOODTHIRST") > 0 and Rank("IMP_SLAM") > 0 then return "FURY_2H", "high" end
+        if Rank("BLOODTHIRST") > 0 then return "FURY_DW", "high" end
+        if Rank("MORTAL_STRIKE") > 0 then return "ARMS_MS", "high" end
+        local fallback, conf = MSC:GetDominantTalentTree(Warrior.EndgameTabMap, 5)
+        if fallback then return fallback, conf end
+        return "FURY_DW", "ambiguous"
     end
 
     -- [[ 2. LEVELING SPEC DETECTION ]]
@@ -139,10 +142,10 @@ function Warrior:GetSpec()
     local specificKey = role .. suffix
     
     -- Check if it exists, otherwise fall back to generic
-    if Warrior.LevelingWeights[specificKey] then return specificKey end
-    if Warrior.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix end
+    if Warrior.LevelingWeights[specificKey] then return specificKey, "high" end
+    if Warrior.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
     
-    return "Leveling_1_20" -- Ultimate fallback
+    return "Leveling_1_20", "low"
 end
 
 function Warrior:ApplyScalers(weights, currentSpec)

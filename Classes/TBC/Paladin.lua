@@ -662,6 +662,8 @@ Paladin.SpeedChecks = {
     ["PROT_AOE"]={ MH_Fast=false } 
 }
 
+Paladin.EndgameTabMap = { [1] = "HOLY_RAID", [2] = "PROT_DEEP", [3] = "RET_STANDARD" }
+
 Paladin.Talents = { 
     ["PRECISION"]       = MSC.L["Precision"],
     ["HOLY_SHOCK"]      = MSC.L["Holy Shock"], 
@@ -767,19 +769,19 @@ function Paladin:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
-    -- [[ ENDGAME DETECTION ]]
-    if level == 70 then
-        if Rank("AVENGERS_SHIELD") > 0 or Rank("HOLY_SHIELD") > 0 then return "PROT_DEEP" end
-        if Rank("CRUSADER_STRIKE") > 0 or Rank("REPENTANCE") > 0 then return "RET_STANDARD" end
+    if level >= 60 then
+        if Rank("AVENGERS_SHIELD") > 0 or Rank("HOLY_SHIELD") > 0 then return "PROT_DEEP", "high" end
+        if Rank("CRUSADER_STRIKE") > 0 or Rank("REPENTANCE") > 0 then return "RET_STANDARD", "high" end
         
         if Rank("HOLY_SHOCK") > 0 then
-            -- Shockadin check (Sanctity Aura + Holy Shock is usually PvP Shockadin)
-            if Rank("SANCTITY_AURA") > 0 then return "SHOCKADIN_PVP" end 
-            return "HOLY_RAID"
+            if Rank("SANCTITY_AURA") > 0 then return "SHOCKADIN_PVP", "high" end 
+            return "HOLY_RAID", "high"
         end
         
-        if Rank("DIVINE_ILLUM") > 0 then return "HOLY_RAID" end
-        return "RET_STANDARD"
+        if Rank("DIVINE_ILLUM") > 0 then return "HOLY_RAID", "high" end
+        local fallback, conf = MSC:GetDominantTalentTree(Paladin.EndgameTabMap, 5)
+        if fallback then return fallback, conf end
+        return "RET_STANDARD", "ambiguous"
     end
 
     -- [[ LEVELING BRACKET CALCULATION ]]
@@ -810,11 +812,11 @@ function Paladin:GetSpec()
 
     local specificKey = role .. suffix
     
-    if Paladin.LevelingBrackets and Paladin.LevelingBrackets[specificKey] then return specificKey end
-    if Paladin.LevelingWeights[specificKey] then return specificKey end
-    if Paladin.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix end
+    if Paladin.LevelingBrackets and Paladin.LevelingBrackets[specificKey] then return specificKey, "high" end
+    if Paladin.LevelingWeights[specificKey] then return specificKey, "high" end
+    if Paladin.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
 
-    return "Leveling_RET" .. suffix
+    return "Leveling_RET" .. suffix, "low"
 end
 
 function Paladin:GetDynamicWeights(forceKey)
@@ -831,7 +833,13 @@ function Paladin:GetDynamicWeights(forceKey)
     end
 
     local level = UnitLevel("player")
-    local specKey = forceKey or self:GetSpec() 
+    local specKey, specConf
+    if forceKey then
+        specKey = forceKey
+    else
+        specKey, specConf = self:GetSpec()
+        MSC.CachedSpecConfidence = specConf or "high"
+    end 
 
     -- 1. Check Leveling Brackets
     if Paladin.LevelingBrackets and Paladin.LevelingBrackets[specKey] then
@@ -981,44 +989,16 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- [[ 3. CAPS with HYSTERESIS ]]
     local level = UnitLevel("player")
     if level > 70 then level = 70 end
+    local _, raceID = UnitRace("player")
     
     -- A. MELEE HIT CAP (Ret/Prot)
-    local _, raceID = UnitRace("player")
-	local racialHitPct = (raceID == "Draenei") and 1 or 0 
-
-	if weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(6) 
-        local hitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][6]) or 15.8
-        local baseCapPct = currentSpec:find("Leveling") and 5 or 9
-        local talentHitPct = Rank("PRECISION") * 1
-        
-        local finalCapRating = math.max(0, baseCapPct - talentHitPct - racialHitPct) * hitScalar
-        
-        if hitRating >= (finalCapRating + hitScalar) then
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.1
-            table.insert(activeCaps, MSC.L["Hit"])
-        elseif hitRating >= finalCapRating then
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, MSC.L["Hit (Soft)"])
-        end
+	if MSC.BuffEngine and weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+        MSC.BuffEngine:ApplyMeleeHitCap(weights, activeCaps, currentSpec, Rank("PRECISION") * 1)
     end
 
     -- B. SPELL HIT CAP (Shockadin / Prot)
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-        local hitRating = GetCombatRating(8) 
-        local spellHitScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][8]) or 12.6
-        
-        local baseCapPct = 16
-        if currentSpec == "SHOCKADIN_PVP" then baseCapPct = 4 end 
-        local finalCapRating = baseCapPct * spellHitScalar
-        
-        if hitRating >= (finalCapRating + spellHitScalar) then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-            table.insert(activeCaps, MSC.L["Spell Hit"])
-        elseif hitRating >= finalCapRating then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-            table.insert(activeCaps, MSC.L["S-Hit (Soft)"])
-        end
+    if MSC.BuffEngine and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+        MSC.BuffEngine:ApplySpellHitCap(weights, activeCaps, currentSpec, 0, { hardVal = 0.02, hardLabel = MSC.L["Spell Hit"], softLabel = MSC.L["S-Hit (Soft)"] })
     end
 
     -- C. DEFENSE CAP (Prot)

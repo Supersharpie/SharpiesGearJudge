@@ -39,7 +39,18 @@ if MSC.IsTBC or MSC.IsWrath then
     }
 else
     MSC.SAFETY_CAPS = {
-        WARRIOR = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 } },
+        WARRIOR = {
+            { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 },
+            { stat="DEFENSE_FLOOR", base=0, dynamic=true, penalty=1000 },
+        },
+        PALADIN = {
+            { stat="DEFENSE_FLOOR", base=0, dynamic=true, penalty=1000 },
+            { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 },
+        },
+        DRUID = {
+            { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, penalty=100 },
+            { stat="DEFENSE_FLOOR", base=0, dynamic=true, penalty=1000 },
+        },
         ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 } },
         HUNTER = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="SUREFOOTED", tVal=1, penalty=100 } },
         MAGE = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="ELEMENTAL_PRECISION", tVal=2, penalty=100 } },
@@ -88,6 +99,92 @@ end
 -- =============================================================
 local GEAR_SLOTS = { 1, 2, 3, 15, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18 }
 
+function MSC:BuildGearFingerprint(gearTable)
+    local parts = {}
+    for _, slotID in ipairs(GEAR_SLOTS) do
+        local link = gearTable[slotID]
+        if link then
+            parts[#parts + 1] = slotID .. ":" .. (GetItemInfoInstant(link) or 0)
+        end
+    end
+    return table.concat(parts, ";")
+end
+
+function MSC:BuildEvalCacheKey(newItemLink, targetSlotID, specName, baselineGear)
+    local cacheType = baselineGear and "S" or "L"
+    local rev = MSC.ScoringRevision or 0
+    local fp = baselineGear and MSC:BuildGearFingerprint(baselineGear) or "live"
+    local itemId = GetItemInfoInstant(newItemLink) or 0
+    return itemId .. "|" .. (targetSlotID or 0) .. "|" .. (specName or "Default") .. "|" .. cacheType .. "|" .. rev .. "|" .. fp
+end
+
+function MSC:GetCachedCharacterScore(gearTable, weights, specName, baselineGear)
+    local rev = MSC.ScoringRevision or 0
+    local fp = MSC:BuildGearFingerprint(gearTable)
+    local tag = baselineGear and "saved" or "live"
+    local key = (specName or "Default") .. "|" .. rev .. "|" .. tag .. "|" .. fp
+
+    if not baselineGear and MSC.EquippedScoreCache and MSC.EquippedScoreCache.key == key then
+        return MSC.EquippedScoreCache.score, MSC.EquippedScoreCache.stats, MSC.EquippedScoreCache.colors, MSC.EquippedScoreCache.sets
+    end
+
+    local score, stats, colors, sets = MSC:GetTotalCharacterScore(gearTable, weights, specName)
+    if not baselineGear then
+        MSC.EquippedScoreCache = { key = key, score = score, stats = stats, colors = colors, sets = sets }
+    end
+    return score, stats, colors, sets
+end
+
+function MSC:ShouldUseFastEval(itemLink, compSlot)
+    if compSlot == 16 or compSlot == 17 then return false end
+    if MSC.ItemSetMap and itemLink then
+        local itemID = GetItemInfoInstant(itemLink)
+        if itemID and MSC.ItemSetMap[itemID] then return false end
+    end
+    return true
+end
+
+function MSC:EvaluateUpgradeFast(newItemLink, targetSlotID, weights, specName)
+    if not newItemLink then return 0, 0 end
+    if not weights then weights, specName = MSC.GetCurrentWeights() end
+
+    local compSlot = targetSlotID
+    if not compSlot then
+        local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(newItemLink)
+        if MSC.GetComparisonSlot then
+            compSlot = MSC.GetComparisonSlot(newItemLink, equipLoc, weights, specName)
+        end
+    end
+    if not compSlot then return 0, 0 end
+
+    MSC.EquippedSlotScoreCache = MSC.EquippedSlotScoreCache or {}
+    local rev = MSC.ScoringRevision or 0
+    local eqKey = compSlot .. "|" .. (specName or "") .. "|" .. rev
+    local equipped = GetInventoryItemLink("player", compSlot)
+
+    local oldScore = MSC.EquippedSlotScoreCache[eqKey]
+    if oldScore == nil then
+        if equipped then
+            local stats = MSC.SafeGetItemStats(equipped, compSlot, weights, specName)
+            oldScore = MSC.GetItemScore(stats, weights, specName, compSlot)
+            if compSlot == 16 or compSlot == 17 then
+                oldScore = oldScore + (MSC:GetWeaponSpecBonus(equipped, MSC.CurrentClass, specName, weights) or 0)
+            end
+        else
+            oldScore = 0
+        end
+        MSC.EquippedSlotScoreCache[eqKey] = oldScore
+    end
+
+    local newStats = MSC.SafeGetItemStats(newItemLink, compSlot, weights, specName)
+    local newScore = MSC.GetItemScore(newStats, weights, specName, compSlot)
+    if compSlot == 16 or compSlot == 17 then
+        newScore = newScore + (MSC:GetWeaponSpecBonus(newItemLink, MSC.CurrentClass, specName, weights) or 0)
+    end
+
+    return newScore, oldScore
+end
+
 function MSC:GetEquippedGear(outputTable)
     local gear = outputTable or {}
     wipe(gear)
@@ -123,54 +220,36 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
             end
             local stats = Scratch_Stats
             
-            -- [[ 2. GET GEM DATA ]]
-            local itemGemIDs = {}
-            local rMeta, rGemIDs = nil, nil
+            -- [[ 2. GEM DATA & COLORS ]]
+            local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
+            local gemsProjected = (cachedStats.GEMS_PROJECTED and cachedStats.GEMS_PROJECTED > 0) or cachedStats.BONUS_PROJECTED
+            local useProjectedGems = gemsProjected or (gemMode ~= 1)
 
-            if MSC.GetItemGems then
+            if useProjectedGems then
+                if cachedStats.META_ID and not metaGemID then metaGemID = cachedStats.META_ID end
+                if cachedStats.COLORS then
+                    Scratch_Colors.RED = Scratch_Colors.RED + (cachedStats.COLORS.RED or 0)
+                    Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + (cachedStats.COLORS.YELLOW or 0)
+                    Scratch_Colors.BLUE = Scratch_Colors.BLUE + (cachedStats.COLORS.BLUE or 0)
+                end
+            elseif MSC.GetItemGems then
+                local itemGemIDs = {}
+                local rMeta, rGemIDs = nil, nil
                 _, rMeta, rGemIDs = MSC:GetItemGems(itemLink)
                 if rMeta and not metaGemID then metaGemID = rMeta end
                 if rGemIDs then itemGemIDs = rGemIDs end
-            end
-            
-            -- [[ 3. GEM STAT & COLOR INJECTION ]]
-            if #itemGemIDs > 0 and MSC.GetGemStatsByID then
-                for _, gID in ipairs(itemGemIDs) do
-                    local gData = MSC.GetGemStatsByID(gID)
-                    
-                    if gData then
-                        -- A. APPLY STATS
-                        if gData.stat then stats[gData.stat] = (stats[gData.stat] or 0) + gData.val end
-                        if gData.stat2 then stats[gData.stat2] = (stats[gData.stat2] or 0) + gData.val2 end
 
-                        -- B. TRACK META GEM COLORS (TBC Logic)
-                        if not MSC.IsEra and gData.colorType then
-                            if gData.colorType == "RED" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                            elseif gData.colorType == "BLUE" then
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                            elseif gData.colorType == "YELLOW" then
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            elseif gData.colorType == "PURPLE" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                            elseif gData.colorType == "ORANGE" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            elseif gData.colorType == "GREEN" then
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            elseif gData.colorType == "PRISMATIC" then
-                                Scratch_Colors.RED = Scratch_Colors.RED + 1
-                                Scratch_Colors.BLUE = Scratch_Colors.BLUE + 1
-                                Scratch_Colors.YELLOW = Scratch_Colors.YELLOW + 1
-                            end
+                if #itemGemIDs > 0 and MSC.GetGemStatsByID then
+                    for _, gID in ipairs(itemGemIDs) do
+                        local gData = MSC.GetGemStatsByID(gID)
+                        if gData then
+                            if gData.stat then stats[gData.stat] = (stats[gData.stat] or 0) + gData.val end
+                            if gData.stat2 then stats[gData.stat2] = (stats[gData.stat2] or 0) + gData.val2 end
+                            MSC.ApplyGemColorCount(gData, Scratch_Colors)
                         end
                     end
                 end
             end
-            
-            -- [[ 4. SCORE THE ITEM ]]
             local evalStats = stats
             if stats["ITEM_MOD_SPELL_POWER_SHORT"] then
                 evalStats = MSC:SafeCopy(stats, {})
@@ -208,8 +287,7 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                                  Scratch_Accumulator[stat] = (Scratch_Accumulator[stat] or 0) + val
                                  if weights[stat] then totalScore = totalScore + (val * weights[stat]) end
                              end
-                         end
-                         if bonusData.score then
+                         elseif bonusData.score then
                              totalScore = totalScore + bonusData.score
                          end
                      end
@@ -374,14 +452,22 @@ CacheCleaner:SetScript("OnEvent", function(self, event)
     if event == "GET_ITEM_INFO_RECEIVED" then
         if not wipeTimer then
             wipeTimer = C_Timer.After(0.5, function()
-                wipe(MSC.EvaluationCache)
-                wipe(MSC.StatCache)
+                if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+                if MSC.ProcessedStatCache then wipe(MSC.ProcessedStatCache) end
+                if MSC.StatCache then wipe(MSC.StatCache) end
                 wipeTimer = nil
             end)
         end
+    elseif event == "BAG_UPDATE" then
+        if MSC.WeaponBagCache then MSC.WeaponBagCache.Dirty = true end
+        if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    elseif event == "PLAYER_EQUIPMENT_CHANGED" then
+        if MSC.EquippedSlotScoreCache then wipe(MSC.EquippedSlotScoreCache) end
+        MSC.EquippedScoreCache = nil
+        if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
     else
-        wipe(MSC.EvaluationCache)
-        wipe(MSC.StatCache)
+        if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+        MSC.EquippedScoreCache = nil
     end
 end)
 
@@ -391,9 +477,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     if not weights then weights, specName = MSC.GetCurrentWeights() end
 
     -- [[ 1. CACHE CHECK ]]
-    -- Add a flag to the cache key so Saved profiles don't cross-pollinate with Live gear
-    local cacheType = baselineGear and "_Saved" or "_Live"
-    local cacheKey = (newItemLink or "nil") .. "_" .. (targetSlotID or "0") .. "_" .. (specName or "Default") .. cacheType
+    local cacheKey = MSC:BuildEvalCacheKey(newItemLink, targetSlotID, specName, baselineGear)
     
     if MSC.EvaluationCache[cacheKey] then
         return unpack(MSC.EvaluationCache[cacheKey])
@@ -407,7 +491,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
         MSC:GetEquippedGear(Scratch_Gear)
     end
     
-    local currentScore, currentStatsTotal, _, oldSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
+    local currentScore, currentStatsTotal, _, oldSetCounts = MSC:GetCachedCharacterScore(Scratch_Gear, weights, specName, baselineGear)
 
     local originalItem = Scratch_Gear[targetSlotID]
     local originalMH   = Scratch_Gear[16]
@@ -532,6 +616,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
             if rule.stat ~= "DEFENSE_FLOOR" then
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
+                if MSC.BuffEngine and (rule.stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then
+                    trueCap = MSC.BuffEngine:GetEffectiveHitRatingBase(rule.stat, rule.talent, rule.tVal, specName)
+                end
                 
                 local currentVal = 0
                 if baselineGear then
@@ -553,27 +640,36 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                     contextMsg = (contextMsg or "") .. msg
                 end
             
-            elseif rule.stat == "DEFENSE_FLOOR" and MSC.IsTBC then
+            elseif rule.stat == "DEFENSE_FLOOR" then
                 local defWeight = weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                 if defWeight > 0 then
+                    local floor = MSC.GetDefenseFloor and MSC:GetDefenseFloor(rule) or rule.base
                     local currentDef = 0
                     if baselineGear then
-                        local defRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
+                        local defFromGear = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                         local baseDef = UnitLevel("player") * 5
-                        currentDef = baseDef + math_floor(defRating / 2.36)
+                        if MSC.IsEra then
+                            currentDef = baseDef + defFromGear
+                        else
+                            currentDef = baseDef + math_floor(defFromGear / 2.36)
+                        end
                     else
                         currentDef = MSC:GetPlayerStat("DEFENSE")
                     end
-                    
+
                     local oldDefRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     local newDefRating = newStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
-                    
-                    local diffSkill = (newDefRating - oldDefRating) / 2.36
+                    local diffSkill
+                    if MSC.IsEra then
+                        diffSkill = newDefRating - oldDefRating
+                    else
+                        diffSkill = (newDefRating - oldDefRating) / 2.36
+                    end
                     local futureDef = currentDef + diffSkill
-                    
-                    if currentDef >= rule.base and futureDef < (rule.base - 0.1) then
+
+                    if currentDef >= floor and futureDef < (floor - 0.1) then
                          newScore = newScore - rule.penalty
-                         local deficit = futureDef - rule.base
+                         local deficit = futureDef - floor
                          local msg = string_format(MSC.L[" |cffff0000(Cap %.1f Def)|r"], deficit)
                          contextMsg = (contextMsg or "") .. msg
                     end

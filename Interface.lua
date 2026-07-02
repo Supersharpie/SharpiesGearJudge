@@ -486,15 +486,13 @@ function MSC.UpdateReceipt()
     local displayName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName
     MSC.ViewReceipt.Info:SetText(displayName)
     
-    local gearTable = {}; local combinedStats = {}
+    local gearTable = {}
     for i=1, 18 do 
         local link = GetInventoryItemLink(unit, i)
-        if link then 
-            gearTable[i] = link; local s = MSC.SafeGetItemStats(link, i, weights, specName)
-            if s then for k, v in pairs(s) do if type(v)=="number" then combinedStats[k] = (combinedStats[k] or 0) + v end end end
-        end
+        if link then gearTable[i] = link end
     end
-    local totalScore = MSC:GetTotalCharacterScore(gearTable, weights, specName)
+    local totalScore, combinedStats = MSC:GetTotalCharacterScore(gearTable, weights, specName)
+    combinedStats = combinedStats or {}
     MSC.ViewReceipt.Score:SetText(MSC.L["Score: "] .. string_format("|cff00ff00%.1f|r", totalScore))
     
     if MSC.BagCacheDirty then
@@ -506,15 +504,15 @@ function MSC.UpdateReceipt()
                       local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
                       local slotId = MSC.SlotMap and MSC.SlotMap[equipLoc]
                       if slotId then
-                            local stats = MSC.SafeGetItemStats(link, slotId, weights, specName)
-                            local score = MSC.GetItemScore(stats, weights, specName, slotId)
-                            table_insert(MSC.BagCache, { link = link, slotId = slotId, score = score, equipLoc = equipLoc })
+                            table_insert(MSC.BagCache, { link = link, slotId = slotId, equipLoc = equipLoc })
                       end
                 end
             end
         end
         MSC.BagCacheDirty = false 
     end
+
+    local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
 
     for _, btn in ipairs(MSC.ReceiptSlots) do
         local link = GetInventoryItemLink(unit, btn.SlotID)
@@ -527,19 +525,31 @@ function MSC.UpdateReceipt()
             
             local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
             if equipLoc ~= "INVTYPE_HOLDABLE" and equipLoc ~= "INVTYPE_TABARD" and equipLoc ~= "INVTYPE_BODY" then
-                 local enchantID = link:match("item:%d+:(%d+)")
+                 local _, enchantID = link:match("item:(%d+):(%d+)")
+                 enchantID = tonumber(enchantID) or 0
                  local validSlots = {[1]=true,[3]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[15]=true,[16]=true,[17]=true}
-                 if validSlots[btn.SlotID] and (not enchantID or enchantID == "0") then 
+                 if validSlots[btn.SlotID] and enchantID == 0 then 
                     btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertOther"); btn.Alert:Show()
                     btn.AlertMode = "Enchant"; btn.AlertText = MSC.L["Missing Enchant!"] 
                  end
             end
-            local bestBagScore = score; local foundUpgrade = false
+            local foundUpgrade = false
             for _, cachedItem in ipairs(MSC.BagCache) do
                local isMatch = (cachedItem.slotId == btn.SlotID)
                if btn.SlotID == 11 or btn.SlotID == 12 then if cachedItem.slotId == 11 then isMatch = true end end
                if btn.SlotID == 13 or btn.SlotID == 14 then if cachedItem.slotId == 13 then isMatch = true end end
-               if isMatch and cachedItem.score > bestBagScore + 0.1 then foundUpgrade = true end
+               if isMatch then
+                    local compSlot = MSC.GetComparisonSlot(cachedItem.link, cachedItem.equipLoc, weights, specName) or btn.SlotID
+                    if compSlot == btn.SlotID or (btn.SlotID >= 11 and btn.SlotID <= 14) then
+                        local newScore, oldScore
+                        if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(cachedItem.link, compSlot) then
+                            newScore, oldScore = MSC:EvaluateUpgradeFast(cachedItem.link, compSlot, weights, specName)
+                        else
+                            newScore, oldScore = MSC:EvaluateUpgrade(cachedItem.link, compSlot, weights, specName)
+                        end
+                        if newScore and oldScore and newScore > oldScore + 0.1 then foundUpgrade = true end
+                    end
+               end
             end
             if foundUpgrade then 
                 btn.Alert:SetTexture("Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew"); btn.Alert:Show()
@@ -945,7 +955,13 @@ function MSC.UpdateBagOverlays(frame)
                         if MSC.IsItemUsable(link) then
                             local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
                             if compSlot then
-                                local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                                local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
+                                local newScore, oldScore
+                                if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
+                                    newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
+                                else
+                                    newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                                end
                                 
                                 if newScore and oldScore then
                                     local overlayType = nil
@@ -999,7 +1015,13 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
             if MSC.IsItemUsable(link) then
                 local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
                 if compSlot then
-                    local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                    local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
+                    local newScore, oldScore
+                    if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
+                        newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
+                    else
+                        newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                    end
                     if newScore and oldScore then
                         local overlayType = nil
                         if (newScore > (oldScore + 0.1)) then overlayType = "UP"
@@ -1429,6 +1451,26 @@ local function GetClassRings(class, stats, weights)
         AddMod("Spell Hit", "Inspiring Presence (Draenei)", 1, true)
     end
 
+    if isTBC and MSC.BuffEngine and SGJ_Settings and SGJ_Settings.AssumeRaidBuffs then
+        local _, specKey = MSC.GetCurrentWeights()
+        local raidSpell = MSC.BuffEngine:GetRaidHitCreditPct("SPELL", specKey)
+        local raidMelee = MSC.BuffEngine:GetRaidHitCreditPct("MELEE", specKey)
+        if raidSpell > 0 then
+            spellHitBonus = spellHitBonus + raidSpell
+            for _, mod in ipairs(MSC.BuffEngine:GetCapModifiersForUI(specKey)) do
+                if mod.isPct and mod.source ~= "Heroic Presence (Racial)" then
+                    AddMod("Spell Hit", mod.source, mod.val, true)
+                end
+            end
+        end
+        if raidMelee > 0 then
+            meleeHitBonus = meleeHitBonus + raidMelee
+            if MSC.BuffEngine:IsRaidBuffOn("IMPROVED_FAERIE_FIRE") then
+                AddMod("Hit Cap", "Improved Faerie Fire", 3, true)
+            end
+        end
+    end
+
     local function AddRing(label, statKey, capTarget, formatStr, isSkill)
         local val = stats[statKey] or 0
         local currentDisplay = 0; local capRating = 0; local scalar = 0
@@ -1595,9 +1637,26 @@ function MSC.UpdateLogic()
     if content.children then for _, c in ipairs(content.children) do c:Hide() end end
     content.children = {}
 
-    local weights, detectedKey = MSC.GetCurrentWeights()
+    local weights, detectedKey, capText, specConfidence = MSC.GetCurrentWeights()
     if not weights and MSC.CurrentClass then detectedKey, weights = next(MSC.CurrentClass.Weights) end
     if not weights then return end
+
+    local profileLabel = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[detectedKey]) or detectedKey or ""
+    if SGJ_Settings and SGJ_Settings.Mode == "AUTO" and specConfidence and specConfidence ~= "high" then
+        profileLabel = profileLabel .. MSC.L[" (uncertain — pick profile manually if wrong)"]
+    end
+    if profileLabel ~= "" then
+        local hdr = MSC.GetFromPool("Bars", content, function(p)
+            local t = p:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+            t:SetWidth(420)
+            return t
+        end)
+        hdr:ClearAllPoints()
+        hdr:SetPoint("TOPLEFT", 15, -5)
+        hdr:SetText(string_format(MSC.L["Profile: %s"], profileLabel))
+        if specConfidence == "ambiguous" then hdr:SetTextColor(1, 0.6, 0.2) end
+        table_insert(content.children, hdr)
+    end
     
     local currentGear = {}
     for i=1, 18 do currentGear[i] = GetInventoryItemLink("player", i) end
@@ -1609,7 +1668,7 @@ function MSC.UpdateLogic()
         if i <= 4 then -- Allow 4 rings for tanks!
             local xPos = 25 + ((i-1) * 110) -- Tighter spacing to fit perfectly
             local f = MSC.GetFromPool("Rings", content, function(p) return CreateStatRing(p, 0, 0, 80, "TEMP") end)
-            f:ClearAllPoints(); f:SetPoint("TOPLEFT", xPos, -20)
+            f:ClearAllPoints(); f:SetPoint("TOPLEFT", xPos, -45)
             local locLabel = MSC.L[ring.l] or ring.l
             f.lbl:SetText(locLabel:upper())
             f.val:SetText(string_format(ring.fmt, ring.v))
@@ -1679,7 +1738,7 @@ function MSC.UpdateLogic()
         end
     end
 
-    local yOff = -135
+    local yOff = -155
     local sorted = {}
     local maxW = 0
     for k, v in pairs(weights) do 
@@ -1813,8 +1872,15 @@ function MSC.InitSettingsView(parent)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
         local function OnClick(self) 
             UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
-            if key == "Mode" then MSC.ManualSpec = self.value; MSC.CachedWeights = nil end 
-            if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+            if key == "Mode" then MSC.ManualSpec = self.value end
+            if key == "RaidBuffPreset" and MSC.BuffEngine then MSC.BuffEngine:ApplyRaidPreset(self.value) end
+            if key == "WorldBuffPreset" and MSC.BuffEngine then MSC.BuffEngine:ApplyWorldPreset(self.value) end
+            if key == "Mode" or key == "EnchantMode" or key == "GemMode" or key == "GemQuality" then
+                if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
+            elseif MSC.EvaluationCache then
+                wipe(MSC.EvaluationCache)
+            end
+            if MSC.BuffEngine and (key == "RaidBuffPreset" or key == "WorldBuffPreset") then MSC.BuffEngine:InvalidateCaches() end
             MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end
         end
         local function Init(self, level) for _, opt in ipairs(options) do local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val); UIDropDownMenu_AddButton(info, level) end end
@@ -1843,7 +1909,8 @@ function MSC.InitSettingsView(parent)
     local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
     local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
     cbBagArrows:HookScript("OnClick", function() MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end end)
-    local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbBagArrows, 0, -5)
+    local cbFastBag = CreateCheck(MSC.L["Fast Bag Arrows"], "FastBagArrows", MSC.L["Single-slot scoring for bag arrows (full eval for sets/weapons)."], cbBagArrows, 20, -5)
+    local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbFastBag, -20, -5)
     
     -- ==========================================
     -- SECTION 2: TOOLTIP VISUALS
@@ -1865,9 +1932,49 @@ function MSC.InitSettingsView(parent)
     local ddGemQuality = CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {{ text = MSC.L["Common (White/Vendor)"], val = 1 }, { text = MSC.L["Uncommon (Green)"], val = 2 }, { text = MSC.L["Rare (Blue)"], val = 3 }, { text = MSC.L["Epic (Purple)"], val = 4 }}, ddGem, -5, gemQualTip)
 
     -- ==========================================
+    -- SECTION 2b: BUFF ASSUMPTIONS
+    -- ==========================================
+    local hBuffs = CreateHeader(MSC.L["Buff Assumptions"], ddGemQuality, -25)
+    local function InvalidateBuffCaches()
+        if MSC.BuffEngine then MSC.BuffEngine:InvalidateCaches() end
+        MSC.BagCacheDirty = true
+        if RequestUpdate then RequestUpdate() end
+    end
+    local cbRaid = CreateCheck(MSC.L["Assume Raid Buffed"], "AssumeRaidBuffs", MSC.L["Assume raid buffs and debuffs when scoring gear (ToW, IFF, Kings, Draenei in raid, etc.)."], hBuffs, 0, -10)
+    cbRaid:HookScript("OnClick", function(self)
+        if self:GetChecked() and SGJ_Settings.RaidBuffPreset == "off" then
+            if MSC.BuffEngine then MSC.BuffEngine:ApplyRaidPreset("full25") end
+        elseif not self:GetChecked() and MSC.BuffEngine then
+            MSC.BuffEngine:ApplyRaidPreset("off")
+        end
+        InvalidateBuffCaches()
+    end)
+    local raidPresetOpts = {
+        { text = MSC.L["Off"], val = "off" },
+        { text = MSC.L["25-Man Full"], val = "full25" },
+        { text = MSC.L["10-Man Minimal"], val = "minimal10" },
+    }
+    local ddRaidPreset = CreateDropdown(MSC.L["Raid Buff Preset"], "RaidBuffPreset", raidPresetOpts, cbRaid, -5)
+    local cbWorld = CreateCheck(MSC.L["Assume World Buffed"], "AssumeWorldBuffs", MSC.L["Assume classic world buffs (Ony, ZG, Songflower, DM Tribute). Usually off at 70 in Outland raids."], ddRaidPreset, 0, -5)
+    cbWorld:HookScript("OnClick", function(self)
+        if self:GetChecked() and SGJ_Settings.WorldBuffPreset == "off" then
+            if MSC.BuffEngine then MSC.BuffEngine:ApplyWorldPreset("full") end
+        elseif not self:GetChecked() and MSC.BuffEngine then
+            MSC.BuffEngine:ApplyWorldPreset("off")
+        end
+        InvalidateBuffCaches()
+    end)
+    local worldPresetOpts = {
+        { text = MSC.L["Off"], val = "off" },
+        { text = MSC.L["Full World Buffed"], val = "full" },
+        { text = MSC.L["DM Tribute Only"], val = "dmTribute" },
+    }
+    local ddWorldPreset = CreateDropdown(MSC.L["World Buff Preset"], "WorldBuffPreset", worldPresetOpts, cbWorld, -5)
+
+    -- ==========================================
     -- SECTION 4: CHARACTER PROFILE
     -- ==========================================
-    local hProfile = CreateHeader(MSC.L["Character Profile"], ddGemQuality, -25)
+    local hProfile = CreateHeader(MSC.L["Character Profile"], ddWorldPreset, -25)
     local specOptions = { { text = MSC.L["Auto-Detect"], val = "AUTO" } }; local seen = { ["AUTO"] = true }; local profileList = {}
     if MSC.CurrentClass then
         local function AddList(listSource)
@@ -1885,7 +1992,7 @@ function MSC.InitSettingsView(parent)
         if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights then AddList(SharpiesGearJudgeDB.customWeights) end
         AddList(MSC.CurrentClass.Weights); AddList(MSC.CurrentClass.LevelingWeights); AddList(MSC.CurrentClass.Profiles)
     end 
-    local profileTip = MSC.L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents and recent gameplay.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."]
+    local profileTip = MSC.L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatically selects a profile based on your talents (capstone + point-scan). Hybrid builds with points spread across trees may need manual selection.\n\nSelecting a specific profile forces the addon to judge all gear for that spec, regardless of your current talents."]
     local ddProfile = CreateDropdown(MSC.L["Active Scoring Profile"], "Mode", specOptions, hProfile, -10, profileTip)
     
     local bDeleteProfile = CreateFrame("Button", nil, sChild, "UIPanelButtonTemplate")
@@ -1894,7 +2001,6 @@ function MSC.InitSettingsView(parent)
         local selected = SGJ_Settings.Mode
         if selected and SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[selected] then
             SharpiesGearJudgeDB.customWeights[selected] = nil
-            if MSC.CurrentClass and MSC.CurrentClass.Weights then MSC.CurrentClass.Weights[selected] = nil end
             SGJ_Settings.Mode = "AUTO"; MSC.ManualSpec = "AUTO"; MSC.CachedWeights = nil
             print(string.format(MSC.L["|cff00ff00SGJ:|r Deleted custom profile: %s"], selected))
             StaticPopup_Show("SGJ_RELOAD_REQUIRED")
@@ -2404,7 +2510,15 @@ loader:SetScript("OnEvent", function(self, event, name)
             SimplifyStats = false,
             TrackedSpecs = {},
             ShowBagArrows = false,
+            FastBagArrows = true,
             ShowLootArrows = false,
+            AssumeRaidBuffs = false,
+            AssumeWorldBuffs = false,
+            RaidBuffPreset = "off",
+            WorldBuffPreset = "off",
+            RaidBuffToggles = {},
+            WorldBuffToggles = {},
+            ContentPhase = 1,
         }
 
         -- 3. FILL MISSING SETTINGS ONLY
@@ -2417,6 +2531,10 @@ loader:SetScript("OnEvent", function(self, event, name)
 
         -- NEW: Ensure the manual spec override is actually loaded into the engine!
         MSC.ManualSpec = SGJ_Settings.Mode
+
+        if not MSC.IsEra and MSC.BuildGemOptionsForPhase then
+            MSC:BuildGemOptionsForPhase(SGJ_Settings.ContentPhase or 1)
+        end
 
         -- Clean up the loader
         self:UnregisterEvent("ADDON_LOADED")

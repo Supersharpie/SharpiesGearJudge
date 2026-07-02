@@ -94,6 +94,32 @@ Shaman.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.8, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
     },
+
+    ["HYBRID_ELE_RESTO"] = {
+        ["MSC_WEAPON_DPS"]                  = 0.02,
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0,
+        ["ITEM_MOD_NATURE_DAMAGE_SHORT"]    = 1.0,
+        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.1,
+        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.7,
+        ["ITEM_MOD_STAMINA_SHORT"]          = 0.8,
+        ["ITEM_MOD_INTELLECT_SHORT"]        = 0.6,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]= 0.5,
+        ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 1.5,
+        ["ITEM_MOD_STRENGTH_SHORT"]         = 0.02,
+        ["ITEM_MOD_AGILITY_SHORT"]          = 0.02,
+    },
+    ["HYBRID_ENH_RESTO"] = {
+        ["MSC_WEAPON_DPS"]                  = 3.5,
+        ["ITEM_MOD_STRENGTH_SHORT"]         = 2.0,
+        ["ITEM_MOD_ATTACK_POWER_SHORT"]     = 1.0,
+        ["ITEM_MOD_STAMINA_SHORT"]          = 1.0,
+        ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.5,
+        ["ITEM_MOD_CRIT_RATING_SHORT"]      = 1.2,
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]= 0.5,
+        ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 1.5,
+        ["ITEM_MOD_INTELLECT_SHORT"]        = 0.6,
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.02,
+    },
 }
 
 -- =============================================================
@@ -572,6 +598,8 @@ Shaman.PrettyNames = {
     ["ENH_PVE"]         = MSC.L["Raid: Enhancement"],
     ["RESTO_PVE"]       = MSC.L["Raid: Restoration"],
     ["SHAMAN_TANK"]     = MSC.L["Tank: Warden"],
+    ["HYBRID_ELE_RESTO"]= MSC.L["Hybrid: Ele / Resto (NS)"],
+    ["HYBRID_ENH_RESTO"]= MSC.L["Hybrid: Enh / Resto (PvP)"],
     -- Leveling Brackets
     ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],
     ["Leveling_21_40"] = MSC.L["Standard Leveling (21-40)"],
@@ -595,6 +623,8 @@ Shaman.SpeedChecks = {
 	["Default"]={ MH_Slow=true },
     ["ENH_PVE"]={ MH_Slow=true, OH_Slow=true }
 }
+
+Shaman.EndgameTabMap = { [1] = "ELE_PVE", [2] = "ENH_PVE", [3] = "RESTO_PVE" }
 
 Shaman.ValidWeapons = {
     [0]=true, [1]=true,   -- 1H/2H Axes (2H via Talent)
@@ -624,7 +654,8 @@ Shaman.Talents = {
     ["SHIELD_SPEC"]			= MSC.L["Shield Specialization"], 
     ["ANTICIPATION"]		= MSC.L["Anticipation"],
     ["DUAL_WIELD_SPEC"]		= MSC.L["Dual Wield Specialization"],
-	["NATURES_BLESSING"]	= MSC.L["NATURES_BLESSING"]
+	["NATURES_BLESSING"]	= MSC.L["NATURES_BLESSING"],
+    ["NATURES_SWIFTNESS"]   = MSC.L["Nature's Swiftness"],
 }
 
 -- =============================================================
@@ -634,13 +665,16 @@ function Shaman:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
     
-    -- [[ ENDGAME DETECTION ]]
-    if level == 70 then
-        if Rank("TOTEM_OF_WRATH") > 0 or Rank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVE" end
-        if Rank("SHAMANISTIC_RAGE") > 0 or Rank("STORMSTRIKE") > 0 then return "ENH_PVE" end
-        if Rank("EARTH_SHIELD") > 0 or Rank("MANA_TIDE") > 0 then return "RESTO_PVE" end
-        if Rank("SHIELD_SPEC") > 0 and Rank("ANTICIPATION") > 0 then return "SHAMAN_TANK" end
-        return "RESTO_PVE"
+    if level >= 60 then
+        if Rank("NATURES_SWIFTNESS") > 0 and (Rank("TOTEM_OF_WRATH") > 0 or Rank("ELEMENTAL_MASTERY") > 0) then return "HYBRID_ELE_RESTO", "high" end
+        if Rank("NATURES_SWIFTNESS") > 0 and (Rank("SHAMANISTIC_RAGE") > 0 or Rank("STORMSTRIKE") > 0) then return "HYBRID_ENH_RESTO", "high" end
+        if Rank("TOTEM_OF_WRATH") > 0 or Rank("ELEMENTAL_MASTERY") > 0 then return "ELE_PVE", "high" end
+        if Rank("SHAMANISTIC_RAGE") > 0 or Rank("STORMSTRIKE") > 0 then return "ENH_PVE", "high" end
+        if Rank("EARTH_SHIELD") > 0 or Rank("MANA_TIDE") > 0 then return "RESTO_PVE", "high" end
+        if Rank("SHIELD_SPEC") > 0 and Rank("ANTICIPATION") > 0 then return "SHAMAN_TANK", "high" end
+        local fallback, conf = MSC:GetDominantTalentTree(Shaman.EndgameTabMap, 5)
+        if fallback then return fallback, conf end
+        return "RESTO_PVE", "ambiguous"
     end
 
     -- [[ LEVELING BRACKET CALCULATION ]]
@@ -658,8 +692,8 @@ function Shaman:GetSpec()
     end 
 
     local specificKey = role .. suffix
-    if Shaman.LevelingBrackets and Shaman.LevelingBrackets[specificKey] then return specificKey end
-    return "Leveling" .. suffix
+    if Shaman.LevelingBrackets and Shaman.LevelingBrackets[specificKey] then return specificKey, "high" end
+    return "Leveling" .. suffix, "low"
 end
 
 function Shaman:GetDynamicWeights(forceKey)
@@ -678,7 +712,13 @@ function Shaman:GetDynamicWeights(forceKey)
     end
 
     local level = UnitLevel("player")
-    local specKey = forceKey or self:GetSpec() 
+    local specKey, specConf
+    if forceKey then
+        specKey = forceKey
+    else
+        specKey, specConf = self:GetSpec()
+        MSC.CachedSpecConfidence = specConf or "high"
+    end
 
     -- 1. Check Leveling Brackets
     if Shaman.LevelingBrackets and Shaman.LevelingBrackets[specKey] then
@@ -817,38 +857,16 @@ function Shaman:ApplyScalers(weights, currentSpec)
 		end
 
     -- B. 2H / TANK HIT (Hard Cap)
-    elseif weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
-         local hitRating = GetCombatRating(6)
-         local baseCapPct = currentSpec:find("Leveling") and 5 or 9
-         local capRating = math.max(0, baseCapPct - natureGuidancePct - racialHitPct) * hitScalar
-         
-         if hitRating >= (capRating + hitScalar) then
-			weights["ITEM_MOD_HIT_RATING_SHORT"] = 0.02
-			table.insert(activeCaps, MSC.L["Hit"])
-		elseif hitRating >= capRating then
-			weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * 0.4
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+    elseif MSC.BuffEngine and weights["ITEM_MOD_HIT_RATING_SHORT"] and weights["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
+         MSC.BuffEngine:ApplyMeleeHitCap(weights, activeCaps, currentSpec, natureGuidancePct)
     end
     
     -- C. SPELL HIT (Elemental)
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
-         local hitRating = GetCombatRating(8)
-         local baseCapPct = 16 
-         
-         local precisionPct = Rank("ELEMENTAL_PRECISION") * 2 
+    if MSC.BuffEngine and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
+         local precisionPct = Rank("ELEMENTAL_PRECISION") * 2
          local wrathPct = (Rank("TOTEM_OF_WRATH") > 0) and 3 or 0
-         
-         local spellCapPct = math.max(0, baseCapPct - precisionPct - natureGuidancePct - wrathPct - racialHitPct)
-         local spellCapRating = spellCapPct * spellHitScalar
-         
-         if hitRating >= (spellCapRating + spellHitScalar) then
-			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.02
-			table.insert(activeCaps, MSC.L["Spell Hit"])
-		elseif hitRating >= spellCapRating then
-			weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] * 0.4
-			table.insert(activeCaps, MSC.L["Hit (Soft)"])
-		end
+         local talentPct = precisionPct + natureGuidancePct + wrathPct
+         MSC.BuffEngine:ApplySpellHitCap(weights, activeCaps, currentSpec, talentPct, { hardVal = 0.02, hardLabel = MSC.L["Spell Hit"] })
     end
     
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil

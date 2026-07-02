@@ -39,7 +39,6 @@ MSC.ShortNames = {
     ["ITEM_MOD_SPELL_HEALING_DONE"]   = MSC.L["Healing"], 
     ["ITEM_MOD_MANA_REGENERATION_SHORT"] = MSC.L["Mp5"],
     ["ITEM_MOD_POWER_REGEN0_SHORT"]   = MSC.L["Mp5"], 
-    ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = MSC.L["DPS"],
     ["ITEM_MOD_ATTACK_POWER_SHORT"]      = MSC.L["Attack Power"],
     ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = MSC.L["Ranged AP"], 
     ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = MSC.L["Feral AP"],
@@ -71,6 +70,11 @@ MSC.ShortNames = {
     ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = MSC.L["Weapon DPS"],
     ["MSC_WEAPON_DPS"]                   = MSC.L["Weapon DPS"],
     ["MSC_WAND_DPS"]                     = MSC.L["Wand DPS"],
+}
+
+-- Canonical stat keys: map legacy/parser variants to one internal key
+MSC.StatAliases = {
+    ["ITEM_MOD_RESISTANCE_ALL_SHORT"] = "ITEM_MOD_ALL_RESISTANCE_SHORT",
 }
 
 MSC.PrettyNames = {
@@ -203,14 +207,14 @@ MSC.EnchantDB = {
     [3296] = { name = MSC.L["Steelweave"], slot = 15, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } },
     [3294] = { name = MSC.L["Major Armor"], slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 120 } },
     [849]  = { name = MSC.L["Lesser Agility (+3)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 3 } }, 
-    [2502] = { name = MSC.L["Greater Resistance"], slot = 15, stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 5 } },
+    [2502] = { name = MSC.L["Greater Resistance"], slot = 15, stats = { ["ITEM_MOD_ALL_RESISTANCE_SHORT"] = 5 } },
     [1889] = { name = MSC.L["Superior Defense (+70)"], slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 70 } },
     [853]  = { name = MSC.L["Greater Defense (+50)"], slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 50 } },
     [13421] = { name = MSC.L["Minor Agility (+1)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
     [250]   = { name = MSC.L["Minor Agility (+1)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
     [2521] = { name = MSC.L["Subtlety (-2% Threat]"], slot = 15, stats = { MSC_THREAT_MOD = -2 } },
     [2622] = { name = MSC.L["Dodge (+1%)"], slot = 15, stats = { ITEM_MOD_DODGE_RATING_SHORT = 15 } },
-    [3256] = { name = MSC.L["Major Resistance (+7)"], slot = 15, stats = { ITEM_MOD_RESISTANCE_ALL_SHORT = 7 } },
+    [3256] = { name = MSC.L["Major Resistance (+7)"], slot = 15, stats = { ["ITEM_MOD_ALL_RESISTANCE_SHORT"] = 7 } },
     -- [[ CLOAK: RESISTANCES ]]
     [2662] = { name = MSC.L["Spell Penetration"], slot = 15, stats = { ITEM_MOD_SPELL_PENETRATION_SHORT = 20 } },
     [2794] = { name = MSC.L["Greater Shadow Resistance"], slot = 15, stats = { ITEM_MOD_SHADOW_RESISTANCE_SHORT = 15 } },
@@ -419,7 +423,7 @@ LEVELING_PRISMATIC = {
 			-- ========================================================================
 			-- [[ Leveling: Prismatic ]]
 			-- ========================================================================
-			{ id=22460, stat="ITEM_MOD_RESISTANCE_ALL_SHORT", val=3, name=MSC.L["Prismatic Sphere"], colorType="PRISMATIC", quality=3 },
+			{ id=22460, stat="ITEM_MOD_ALL_RESISTANCE_SHORT", val=3, name=MSC.L["Prismatic Sphere"], colorType="PRISMATIC", quality=3 },
 		},
 		
 		LEVELING_RED = {
@@ -519,7 +523,7 @@ LEVELING_PRISMATIC = {
 			-- ========================================================================
 			-- [[ PHASE 1: PRISMATIC ]]
 			-- ========================================================================
-			{ id=22459, stat="ITEM_MOD_RESISTANCE_ALL_SHORT", val=4, name=MSC.L["Void Sphere"], colorType="PRISMATIC", quality=3 },
+			{ id=22459, stat="ITEM_MOD_ALL_RESISTANCE_SHORT", val=4, name=MSC.L["Void Sphere"], colorType="PRISMATIC", quality=3 },
 		},
 		
 		RED_P1 = {
@@ -879,29 +883,12 @@ LEVELING_PRISMATIC = {
 	}
 
 -- [[ CONSTRUCT OPTIONS PROGRAMMATICALLY (TBC ONLY) ]]
-    MSC.GemOptions = {
-        EMPTY_SOCKET_RED = {},
-        EMPTY_SOCKET_YELLOW = {},
-        EMPTY_SOCKET_BLUE = {},
-        EMPTY_SOCKET_META = {},
-        PRISMATIC_GEMS = {} 
-    }
-
-    MSC.GemOptions_Leveling = {
-        EMPTY_SOCKET_RED = {},
-        EMPTY_SOCKET_YELLOW = {},
-        EMPTY_SOCKET_BLUE = {},
-        EMPTY_SOCKET_META = GEMS.META_P1, 
-        PRISMATIC_GEMS = {} 
-    }
-
     local function AddTo(targetList, sourceList, defaultQuality)
         if not sourceList then return end
         for _, gem in ipairs(sourceList) do
             local copy = {}
             for k, v in pairs(gem) do copy[k] = v end
             
-            -- Automatically categorize TBC leveling gems into Common (1) and Uncommon (2)
             if string.find(copy.name, "Tourmaline") or string.find(copy.name, "Zircon") or string.find(copy.name, "Amber") then
                 copy.quality = 1
             elseif string.find(copy.name, "Blood Garnet") or string.find(copy.name, "Azure Moonstone") or string.find(copy.name, "Golden Draenite") or string.find(copy.name, "Flame Spessarite") or string.find(copy.name, "Shadow Draenite") or string.find(copy.name, "Deep Peridot") or string.find(copy.name, "Jaggal Pearl") or string.find(copy.name, "Sphere") then
@@ -914,97 +901,92 @@ LEVELING_PRISMATIC = {
         end
     end
 
-    -- 1. POPULATE RED SOCKETS
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P5)
-	
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.LEVELING_ORANGE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P5)
-	
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.LEVELING_PURPLE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P5)
-    
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC_P1)
+    function MSC:BuildGemOptionsForPhase(phase)
+        phase = tonumber(phase) or 1
 
-    -- 2. POPULATE YELLOW SOCKETS
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_YELLOW)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P5)
-	
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_ORANGE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P5)
-	
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_GREEN)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P5)
-    
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC_P1)
+        MSC.GemOptions = {
+            EMPTY_SOCKET_RED = {}, EMPTY_SOCKET_YELLOW = {}, EMPTY_SOCKET_BLUE = {},
+            EMPTY_SOCKET_META = {}, PRISMATIC_GEMS = {}
+        }
+        MSC.GemOptions_Leveling = {
+            EMPTY_SOCKET_RED = {}, EMPTY_SOCKET_YELLOW = {}, EMPTY_SOCKET_BLUE = {},
+            EMPTY_SOCKET_META = GEMS.META_P1, PRISMATIC_GEMS = {}
+        }
 
-    -- 3. POPULATE BLUE SOCKETS
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.LEVELING_BLUE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P5)
-    
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.LEVELING_PURPLE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P5)
-    
-	AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.LEVELING_GREEN)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P3)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P5)
-    
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC_P1)
-    
-    -- 4. META & PRISMATIC
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P1)
-    -- AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P5)
-    
-	AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.LEVELING_PRISMATIC)
-    AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.LEVELING_ORANGE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.LEVELING_PURPLE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PRISMATIC_P1)
 
-    -- 5. POPULATE JC GEMS
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.JC_RED)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.JC_BLUE)
-    AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.JC_YELLOW)
-    
-    -- POPULATE LEVELING (Green Gems)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_ORANGE)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_PURPLE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_YELLOW)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_ORANGE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_GREEN)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.PRISMATIC_P1)
 
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_YELLOW)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_ORANGE)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_GREEN)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.LEVELING_BLUE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.LEVELING_PURPLE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.LEVELING_GREEN)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PRISMATIC_P1)
 
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_BLUE)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_PURPLE)
-    AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_GREEN)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P1)
+        AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.LEVELING_PRISMATIC)
+        AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PRISMATIC_P1)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.JC_RED)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.JC_BLUE)
+        AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.JC_YELLOW)
 
-    -- Prismatic Lists
-    -- (Prismatic sockets accept all colors, but usually we just check the pure stats)
-    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.RED_P1)
-    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.BLUE_P1)
-    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.YELLOW_P1)
-    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.ORANGE_P1) 
-    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.PURPLE_P1)
-    -- AddTo(MSC.GemOptions.PRISMATIC_GEMS, GEMS.GREEN_P1)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_RED)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_ORANGE)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_RED, GEMS.LEVELING_PURPLE)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_YELLOW)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_ORANGE)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_YELLOW, GEMS.LEVELING_GREEN)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_BLUE)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_PURPLE)
+        AddTo(MSC.GemOptions_Leveling.EMPTY_SOCKET_BLUE, GEMS.LEVELING_GREEN)
+        AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_RED)
+        AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_BLUE)
+        AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_YELLOW)
 
-    AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_RED)
-    AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_BLUE)
-    AddTo(MSC.GemOptions_Leveling.PRISMATIC_GEMS, GEMS.LEVELING_YELLOW)
+        if phase >= 3 then
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P3)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P3)
+        end
+
+        if phase >= 5 then
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.RED_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.ORANGE_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_RED, GEMS.PURPLE_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.YELLOW_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.ORANGE_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_YELLOW, GEMS.GREEN_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.BLUE_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.PURPLE_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_BLUE, GEMS.GREEN_P5)
+            AddTo(MSC.GemOptions.EMPTY_SOCKET_META, GEMS.META_P5)
+        end
+
+        MSC.GemIDCache = {}
+        if MSC.BuildGemCache then MSC:BuildGemCache() end
+    end
+
+    MSC:BuildGemOptionsForPhase(1)
 
 else
     -- [[ VANILLA FALLBACK (Empty Tables) ]]
@@ -1020,6 +1002,8 @@ end
 
 -- ============================================================================
 -- 4. ITEM OVERRIDES (Manual Stats for "Use" & "Proc" Items)
+-- Lookup order at runtime: ProcDB -> WeaponDB -> TrinketDB (Helpers GetRawItemStats);
+-- ItemOverrides / TrinketDB here for Parse tooltip notes and class-specific overrides.
 -- ============================================================================
 MSC.ItemOverrides = MSC.ItemOverrides or {}
 MSC.TrinketDB = MSC.TrinketDB or {}
