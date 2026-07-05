@@ -2,6 +2,14 @@
 
 ---
 
+## 🚀 v2.6.1
+
+### 🐛 Bug Fixes
+
+- **Mage**: Fixed a typo (`math_max` -> `math.max`) in TBC Mage class hit cap logic.
+
+---
+
 ## 🚀 v2.6.0
 
 ### ✨ New Features

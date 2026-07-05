@@ -566,7 +566,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     if MSC.BuffEngine and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] and w["ITEM_MOD_HIT_SPELL_RATING_SHORT"] > 0.1 then
         local arcaneBonusPct = Rank("ARCANE_FOCUS") * 2
         local frostFireBonusPct = Rank("ELEMENTAL_PRECISION") * 1
-        local talentBonusPct = math_max(arcaneBonusPct, frostFireBonusPct)
+        local talentBonusPct = math.max(arcaneBonusPct, frostFireBonusPct)
         MSC.BuffEngine:ApplySpellHitCap(w, activeCaps, currentSpec, talentBonusPct)
     end
     
