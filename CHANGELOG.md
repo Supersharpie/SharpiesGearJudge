@@ -2,6 +2,17 @@
 
 ---
 
+## 🚀 v2.6.2
+
+### 🐛 Bug Fixes & Localization
+
+- **Localization**: Added missing `L["healing.-(%d+).-damage.-(%d+)"]` pattern key to `deDE.lua`, `Localization.lua`, `esES.lua`, `frFR.lua`, `ptBR.lua`, and `ruRU.lua` to fix stat parsing and rating calculations for hybrid heal/damage items on non-English clients (e.g. *Epoch Mender* in German).
+- **Pattern Auditing**: Added 39 missing tooltip stat parsing patterns across all non-English locale files (`deDE`, `esES`, `frFR`, `ptBR`, `ruRU`).
+- **Pattern Priority**: Reordered `EquipPatterns` in [`Parse.lua`](file:///c:/Active%20Games/World%20of%20Warcraft/_anniversary_/Interface/AddOns/SharpiesGearJudge/Parse.lua) so `ELEMENTAL DAMAGE` patterns (shadow, fire, frost, arcane, nature, holy) are evaluated before generic `CASTING STATS` patterns. This prevents German compound words like `"Feuerzauber ... Schaden"` from incorrectly matching `"zauber.-schaden.-(%d+)"` and falling back to generic spell power instead of elemental damage (e.g. *Frozen Shadoweave Shoulders*).
+- **Pattern Syntax**: Corrected Lua regex escape sequences (`%+`) across all localized attack power patterns to prevent malformed pattern runtime errors.
+
+---
+
 ## 🚀 v2.6.1
 
 ### 🐛 Bug Fixes

@@ -282,6 +282,14 @@ MSC.Scanner.EquipPatterns = {
       end 
     },
     
+    -- [[ ELEMENTAL DAMAGE (Must be checked BEFORE generic spell damage) ]]
+    { p = MSC.L["shadow damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+    { p = MSC.L["fire damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+    { p = MSC.L["frost damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+    { p = MSC.L["arcane damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+    { p = MSC.L["nature damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+    { p = MSC.L["holy damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+
     -- [[ CASTING STATS ]]
     { p = MSC.L["damage and healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
     { p = MSC.L["damage done by magical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
@@ -291,69 +299,6 @@ MSC.Scanner.EquipPatterns = {
     { p = MSC.L["healing done.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
     { p = MSC.L["healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
     { p = MSC.L["spell penetration.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
-
-    -- [[ RESOURCES (MP5 / HP5) ]]
-    { p = MSC.L["mana per 5.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-    { p = MSC.L["health per 5.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-    { p = MSC.L["restores (%d+) mana"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
-    { p = MSC.L["restores (%d+) health"], valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
-
-    -- [[ CRIT (Must be checked BEFORE Hit because "critical hit" contains the word "hit") ]]
-    { p = MSC.L["spell critical hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["spell critical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["spell crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical hit with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical strike with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT" },
-    { p = MSC.L["ranged critical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["ranged crit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical strike rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" },
-    { p = MSC.L["critical hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" }, 
-    { p = MSC.L["critical strike.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT" }, -- Era
-
-    -- [[ HIT (Spell/Ranged MUST be checked before Melee) ]]
-    { p = MSC.L["spell hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-    { p = MSC.L["hit with spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT" },
-    { p = MSC.L["ranged hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, 
-    { p = MSC.L["hit rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
-    { p = MSC.L["chance to hit.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" }, -- Era
-
-    -- [[ HASTE ]]
-    { p = MSC.L["spell haste.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HASTE_RATING_SHORT" },
-    { p = MSC.L["ranged haste.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HASTE_RATING_SHORT" },
-    { p = MSC.L["haste rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HASTE_RATING_SHORT" },
-
-    -- [[ ATTACK POWER (Feral/Ranged MUST be checked before General) ]]
-    { p = MSC.L["ranged attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
-    { p = MSC.L["%+(%d+) ranged attack power"], valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" }, -- Era
-    { p = MSC.L["feral attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = MSC.L["%+(%d+) feral attack power"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, -- Era
-    { p = MSC.L["attack power.-(%d+).-in cat"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
-    { p = MSC.L["attack power in cat.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }, 
-    { p = MSC.L["attack power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
-    { p = MSC.L["%+(%d+) attack power"], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" }, -- Era
-
-    -- [[ MELEE & TANKING ]]
-    { p = MSC.L["expertise rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_EXPERTISE_RATING_SHORT" },
-    { p = MSC.L["armor penetration.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT" },
-    { p = MSC.L["block value.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" }, 
-    { p = MSC.L["block rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT" },
-    { p = MSC.L["chance to block.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT" }, -- Era
-    { p = MSC.L["defense rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
-    { p = MSC.L["increased defense.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" }, -- Era
-    { p = MSC.L["dodge rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT" },
-    { p = MSC.L["chance to dodge.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT" }, -- Era
-    { p = MSC.L["parry rating.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT" },
-    { p = MSC.L["chance to parry.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT" }, -- Era
-    { p = MSC.L["resilience.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_RESILIENCE_RATING_SHORT" },
-
-    -- [[ ELEMENTAL DAMAGE ]]
-    { p = MSC.L["shadow damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-    { p = MSC.L["fire damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-    { p = MSC.L["frost damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-    { p = MSC.L["arcane damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-    { p = MSC.L["nature damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-    { p = MSC.L["holy damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
 
     -- ========================================================================
     -- [[ 2. COMPLEX / LOGIC PATTERNS (Cannot be Lazy) ]]
