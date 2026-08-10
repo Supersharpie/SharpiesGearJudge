@@ -2,6 +2,14 @@
 
 ---
 
+## 🚀 v2.6.3
+
+### 🐛 Bug Fixes
+
+- **Hit Cap**: Fixed an issue where the Improved Faerie Fire hit credit and cap modifier were incorrectly being applied to Spell Hit instead of just Melee and Ranged Hit.
+
+---
+
 ## 🚀 v2.6.2
 
 ### 🐛 Bug Fixes & Localization

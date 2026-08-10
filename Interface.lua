@@ -1457,7 +1457,7 @@ local function GetClassRings(class, stats, weights)
         local raidMelee = MSC.BuffEngine:GetRaidHitCreditPct("MELEE", specKey)
         if raidSpell > 0 then
             spellHitBonus = spellHitBonus + raidSpell
-            for _, mod in ipairs(MSC.BuffEngine:GetCapModifiersForUI(specKey)) do
+            for _, mod in ipairs(MSC.BuffEngine:GetCapModifiersForUI(specKey, "SPELL")) do
                 if mod.isPct and mod.source ~= "Heroic Presence (Racial)" then
                     AddMod("Spell Hit", mod.source, mod.val, true)
                 end

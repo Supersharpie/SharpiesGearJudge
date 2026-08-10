@@ -168,7 +168,7 @@ function BE:GetRaidHitCreditPct(hitType, specKey)
     if not SGJ_Settings or not SGJ_Settings.AssumeRaidBuffs then return 0 end
     local credit = 0
 
-    if self:IsRaidBuffOn("IMPROVED_FAERIE_FIRE") then
+    if hitType ~= "SPELL" and self:IsRaidBuffOn("IMPROVED_FAERIE_FIRE") then
         credit = credit + 3
     end
 
@@ -356,13 +356,13 @@ function BE:GetEffectiveHitRatingBase(statKey, classTalentKey, talentRatingPerRa
     return math_max(0, base - creditRating)
 end
 
-function BE:GetCapModifiersForUI(specKey)
+function BE:GetCapModifiersForUI(specKey, hitType)
     local mods = {}
     if self:GetPersonalRacialHitPct() > 0 then
         table.insert(mods, { source = "Heroic Presence (Racial)", val = 1, isPct = true })
     end
     if SGJ_Settings and SGJ_Settings.AssumeRaidBuffs then
-        if self:IsRaidBuffOn("IMPROVED_FAERIE_FIRE") then
+        if hitType ~= "SPELL" and self:IsRaidBuffOn("IMPROVED_FAERIE_FIRE") then
             table.insert(mods, { source = "Improved Faerie Fire", val = 3, isPct = true })
         end
         if self:IsRaidBuffOn("TOTEM_OF_WRATH") and not self:PlayerHasTalent("TOTEM_OF_WRATH") then
