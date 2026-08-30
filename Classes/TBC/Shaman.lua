@@ -845,7 +845,8 @@ function Shaman:ApplyScalers(weights, currentSpec)
     if currentSpec:find("ENH") and Rank("DUAL_WIELD_SPEC") > 0 then
          local hitRating = GetCombatRating(6)
          -- DW wants 9% to cap specials, but continues scaling well up to ~24% for white damage
-         local specialCapPct = math.max(0, 9 - natureGuidancePct - racialHitPct)
+         local dwSpecPct = Rank("DUAL_WIELD_SPEC") * 2
+         local specialCapPct = math.max(0, 9 - dwSpecPct - natureGuidancePct - racialHitPct)
          local specialCapRating = specialCapPct * hitScalar
          
          if hitRating >= (specialCapRating + (2 * hitScalar)) then
@@ -918,6 +919,8 @@ Shaman.Relics = {
     [27984] = { ITEM_MOD_SPELL_POWER_SHORT = 23 }, -- Totem of Impact (Duplicate itemID)
     [32330] = { ITEM_MOD_NATURE_DAMAGE_SHORT = 85 }, -- Totem of Ancestral Guidance
     [33505] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25 }, -- Totem of Living Water (Avg MP5 from CH)
+    [34233] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25 }, -- Totem of the Celestial Tides (Water Shield MP5)
+    [34234] = { ITEM_MOD_MANA_REGENERATION_SHORT = 25 }, -- Totem of the Tortured Earth (Lightning Bolt mana reduction)
 
     -- [[ PvP Healer (Lesser Healing Wave) ]]
     [28357] = { ITEM_MOD_RESILIENCE_RATING_SHORT = 26 }, -- Gladiator's Totem of the Third Wind

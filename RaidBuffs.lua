@@ -342,15 +342,22 @@ function BE:GetEffectiveHitRatingBase(statKey, classTalentKey, talentRatingPerRa
     local base = 202 -- 16% spell hit in rating at 70
     if statKey == "ITEM_MOD_HIT_RATING_SHORT" then base = 142 end -- 9% melee
 
-    local talentRank = 0
-    if classTalentKey and MSC.GetTalentRank then
-        talentRank = MSC:GetTalentRank(classTalentKey) or 0
+    local creditRating = 0
+    local _, playerClass = UnitClass("player")
+    local scalar = self:GetRatingScalar((statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT") and 8 or 6)
+
+    if playerClass == "SHAMAN" and statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then
+        local prec = (MSC.GetTalentRank and MSC:GetTalentRank("ELEMENTAL_PRECISION") or 0) * 2
+        local natGuid = (MSC.GetTalentRank and MSC:GetTalentRank("NATURE_GUIDANCE") or 0) * 1
+        local wrath = (MSC.GetTalentRank and MSC:GetTalentRank("TOTEM_OF_WRATH") or 0) > 0 and 3 or 0
+        creditRating = (prec + natGuid + wrath) * scalar
+    elseif classTalentKey and MSC.GetTalentRank then
+        local talentRank = MSC:GetTalentRank(classTalentKey) or 0
+        creditRating = talentRank * (talentRatingPerRank or 0)
     end
-    local creditRating = talentRank * (talentRatingPerRank or 0)
 
     local hitType = (statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT") and "SPELL" or "MELEE"
     local creditPct = self:GetRaidHitCreditPct(hitType, specKey) + self:GetPersonalRacialHitPct()
-    local scalar = self:GetRatingScalar(hitType == "SPELL" and 8 or 6)
     creditRating = creditRating + creditPct * scalar
 
     return math_max(0, base - creditRating)

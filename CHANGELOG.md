@@ -2,6 +2,25 @@
 
 ---
 
+## 🚀 v2.6.4
+
+### 🐛 Bug Fixes & Improvements
+
+- **Shaman (Totem of Wrath)**:
+  - **Stat Logic UI**: Added full support for the 41-point Elemental talent `Totem of Wrath` (+3% Spell Hit, +3% Spell Crit).
+  - **Active Modifiers**: `Totem of Wrath` is now displayed under **Active Modifiers** in tooltips for both **Spell Hit** and **Spell Crit** stat rings.
+  - **Spell Crit Scanning**: Upgraded spell crit ring evaluation from single-school Holy to scanning all magic schools (`schools 2..7`) with live aura check to prevent double-counting when the totem is actively dropped in the world.
+  - **Hit Cap Engine & Cap Guardian**: Updated `BE:GetEffectiveHitRatingBase` in `RaidBuffs.lua` to aggregate `Elemental Precision` (2% per rank), `Nature's Guidance` (1% per rank), and `Totem of Wrath` (3%) into effective hit cap calculations.
+- **Shaman (Enhancement & Dual Wield)**:
+  - **Dual Wield Specialization**: Added `Dual Wield Specialization` (+2/4/6% melee hit) to Shaman `ApplyScalers` yellow-hit cap and Stat Logic `Hit Cap` Active Modifiers.
+- **Shaman Relic Totems**:
+  - Added Sunwell and Magisters' Terrace relics: `Totem of the Celestial Tides` (`ID 34233`) and `Totem of the Tortured Earth` (`ID 34234`).
+  - Verified and confirmed `Totem of the Void` (`ID 28248` - +55 Nature Damage) and `Totem of Sustaining` (`ID 23200` - +53 LHW).
+- **Item Sets (Dungeon Set 3)**:
+  - **Righteous Armor (Set 623)**: Corrected all 5 item IDs in `Data_Sets.lua` for Protection Paladin Dungeon Set 3 (`Helm of the Righteous ID 28285`, `Spaulders of the Righteous ID 27739`, `Breastplate of the Righteous ID 28203`, `Gauntlets of the Righteous ID 27535`, `Legplates of the Righteous ID 27839`).
+
+---
+
 ## 🚀 v2.6.3
 
 ### 🐛 Bug Fixes

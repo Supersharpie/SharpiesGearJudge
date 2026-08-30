@@ -1329,6 +1329,7 @@ local function GetClassRings(class, stats, weights)
     local meleeHitBonus = 0
     local expertBonus = 0
     local critBonus = 0
+    local spellCritBonus = 0
     local isTBC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
     local _, playerRace = UnitRace("player")
 
@@ -1365,11 +1366,21 @@ local function GetClassRings(class, stats, weights)
     elseif class == "SHAMAN" then
         local elePrec = GetTalentRank(1, "Elemental Precision") * 2
         local natGuid = GetTalentRank(3, "Nature's Guidance") * 1
-        spellHitBonus = elePrec + natGuid
-        meleeHitBonus = natGuid
+        local totemOfWrath = isTBC and (GetTalentRank(1, "Totem of Wrath") > 0 and 3 or 0) or 0
+        local dwSpec = isTBC and (GetTalentRank(2, "Dual Wield Specialization") * 2) or 0
+        spellHitBonus = elePrec + natGuid + totemOfWrath
+        spellCritBonus = totemOfWrath
+        meleeHitBonus = natGuid + dwSpec
         AddMod("Spell Hit", "Elemental Precision", elePrec, true)
         AddMod("Spell Hit", "Nature's Guidance", natGuid, true)
+        if totemOfWrath > 0 then
+            AddMod("Spell Hit", "Totem of Wrath", totemOfWrath, true)
+            AddMod("Spell Crit", "Totem of Wrath", totemOfWrath, true)
+        end
         AddMod("Hit Cap", "Nature's Guidance", natGuid, true)
+        if dwSpec > 0 then
+            AddMod("Hit Cap", "Dual Wield Specialization", dwSpec, true)
+        end
     elseif class == "DRUID" then
         if isTBC then 
             spellHitBonus = GetTalentRank(1, "Balance of Power") * 2 
@@ -1551,7 +1562,18 @@ local function GetClassRings(class, stats, weights)
                 if label == "Dodge" then
                     currentDisplay = GetDodgeChance()
                 elseif string_find(label, "Spell Crit") then
-                    currentDisplay = GetSpellCritChance(2)
+                    local maxCrit = 0
+                    for s=2, 7 do maxCrit = math_max(maxCrit, GetSpellCritChance(s) or 0) end
+                    local hasTotemOfWrathBuff = false
+                    for b=1, 40 do
+                        local name = UnitBuff("player", b)
+                        if name == MSC.L["Totem of Wrath"] then hasTotemOfWrathBuff = true; break end
+                    end
+                    if hasTotemOfWrathBuff and (isTBC and class == "SHAMAN" and GetTalentRank(1, "Totem of Wrath") > 0) then
+                        currentDisplay = maxCrit + math_max(0, spellCritBonus - 3)
+                    else
+                        currentDisplay = maxCrit + spellCritBonus
+                    end
                 elseif string_find(label, "Crit") then
                     if class == "HUNTER" and GetRangedCritChance then
                         currentDisplay = GetRangedCritChance() + critBonus
