@@ -2,6 +2,16 @@
 
 ---
 
+## 🚀 v2.6.5
+
+### 🐛 Bug Fixes & Improvements
+
+- **Gem Projections & Quality Filtering**:
+  - **Quality Ceiling**: Fixed a bug where epic gems (`quality = 4`) were having their quality silently downgraded to rare (`quality = 3`) during engine initialization. Epic gems will now properly respect the user's "Gem Quality" limit setting (e.g., they will be correctly excluded when "Rare (Blue)" is selected).
+  - **Phase 5 Gems**: Moved Phase 5 Sunwell/Isle of Quel'Danas gems (e.g., `Reckless Pyrestone`, `Forceful Seaspray Emerald`, `Steady Seaspray Emerald`) out of the Phase 3 projection tables and into their correct Phase 5 tables. These gems will no longer appear as recommendations when the addon roadmap is set to earlier phases.
+
+---
+
 ## 🚀 v2.6.4
 
 ### 🐛 Bug Fixes & Improvements

@@ -777,7 +777,6 @@ LEVELING_PRISMATIC = {
 			{ id=32220, stat="ITEM_MOD_HIT_RATING_SHORT", val=5, stat2="ITEM_MOD_AGILITY_SHORT", val2=5, name=MSC.L["Glinting Pyrestone"], colorType="ORANGE", quality=4 },
 			{ id=32221, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Veiled Pyrestone"], colorType="ORANGE", quality=4 },
 			{ id=32222, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=10, name=MSC.L["Wicked Pyrestone"], colorType="ORANGE", quality=4 },
-			{ id=35760, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Reckless Pyrestone"], colorType="ORANGE", quality=4 },
 		},
 		
 		PURPLE_P3 = {
@@ -801,8 +800,6 @@ LEVELING_PRISMATIC = {
 			{ id=32224, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=6, name=MSC.L["Radiant Seaspray Emerald"], colorType="GREEN", quality=4 },
 			{ id=32225, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Dazzling Seaspray Emerald"], colorType="GREEN", quality=4 },
 			{ id=32226, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Jagged Seaspray Emerald"], colorType="GREEN", quality=4 },
-			{ id=35758, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Steady Seaspray Emerald"], colorType="GREEN", quality=4 },
-			{ id=35759, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Forceful Seaspray Emerald"], colorType="GREEN", quality=4 },
 		},
 		
 		META_P3 = {
@@ -829,6 +826,10 @@ LEVELING_PRISMATIC = {
 			-- [[ RARE (Phase 5: Noble Topaz) ]]
 			-- ========================================================================
 			{ id=35316, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name=MSC.L["Reckless Noble Topaz"], colorType="ORANGE", quality=3 },
+			-- ========================================================================
+			-- [[ EPIC (Phase 5: Pyrestone) ]]
+			-- ========================================================================
+			{ id=35760, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Reckless Pyrestone"], colorType="ORANGE", quality=4 },
 		},
 		
 		PURPLE_P5 = {
@@ -839,7 +840,11 @@ LEVELING_PRISMATIC = {
 		},
 		
 		GREEN_P5 = {
-		
+		    -- ========================================================================
+			-- [[ EPIC (Phase 5: Seaspray Emerald) ]]
+			-- ========================================================================
+			{ id=35758, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Steady Seaspray Emerald"], colorType="GREEN", quality=4 },
+			{ id=35759, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Forceful Seaspray Emerald"], colorType="GREEN", quality=4 },
 		},
 		
 		META_P5 = {
@@ -889,12 +894,14 @@ LEVELING_PRISMATIC = {
             local copy = {}
             for k, v in pairs(gem) do copy[k] = v end
             
-            if string.find(copy.name, "Tourmaline") or string.find(copy.name, "Zircon") or string.find(copy.name, "Amber") then
-                copy.quality = 1
-            elseif string.find(copy.name, "Blood Garnet") or string.find(copy.name, "Azure Moonstone") or string.find(copy.name, "Golden Draenite") or string.find(copy.name, "Flame Spessarite") or string.find(copy.name, "Shadow Draenite") or string.find(copy.name, "Deep Peridot") or string.find(copy.name, "Jaggal Pearl") or string.find(copy.name, "Sphere") then
-                copy.quality = 2
-            else
-                copy.quality = defaultQuality or 3
+            if not copy.quality then
+                if string.find(copy.name, "Tourmaline") or string.find(copy.name, "Zircon") or string.find(copy.name, "Amber") then
+                    copy.quality = 1
+                elseif string.find(copy.name, "Blood Garnet") or string.find(copy.name, "Azure Moonstone") or string.find(copy.name, "Golden Draenite") or string.find(copy.name, "Flame Spessarite") or string.find(copy.name, "Shadow Draenite") or string.find(copy.name, "Deep Peridot") or string.find(copy.name, "Jaggal Pearl") or string.find(copy.name, "Sphere") then
+                    copy.quality = 2
+                else
+                    copy.quality = defaultQuality or 3
+                end
             end
             
             table.insert(targetList, copy)
