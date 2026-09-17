@@ -1,37 +1,23 @@
-# Sharpie's Gear Judge (Era & TBC Anniversary Edition)
+# Sharpie's Gear Judge (Era, TBC Anniversary & Forever Edition)
 
 **The Final Verdict on your gear.**
 
-**Sharpie's Gear Judge (SGJ)** is a real-time **theorycrafting engine** and UI enhancement built for **World of Warcraft: Classic Era** and the **TBC Anniversary Edition**.
+**Sharpie's Gear Judge (SGJ)** is a real-time **theorycrafting engine** and UI enhancement built for **World of Warcraft: Classic Era**, the **TBC Anniversary Edition**, and the new **WoW: Forever** beta.
 
 Unlike addons that assign static points to items (e.g., "Hit = 10 pts"), SGJ understands **context**. It knows if you are hit-capped, if a helm swap will break your Meta Gem, whether a quest reward is better than what you wear, and — in TBC — it can **project** the best possible gems and enchants for an item before you equip it.
 
 ---
 
-## 🔥 What's New in Version 2.6.0
+## 🔥 What's New in Version 3.0.0
 
-### Raid & world buff modeling
+### WoW: Forever Beta Support
 
-- **Buff Assumptions** in **Settings → Protocol** — model Totem of Wrath, Improved Faerie Fire, Kings, MotW, Draenei-in-raid Heroic Presence, and classic world buffs (Ony, ZG, Songflower, DM tribute).
-- **Unified hit cap engine** across all TBC classes; Boomkin, Rogue, and other specs get raid-aware cap softening.
-- **Cap Guardian** uses your **evaluation spec** for hit targets — off-spec tracked tooltips no longer use the wrong cap.
-
-### Performance & accuracy
-
-- **Faster bag arrows** with automatic fallback to full evaluation for **set pieces** and **weapons**.
-- **Scoring revision system** — caches invalidate cleanly on talent, spec, gear, gem/enchant mode, and buff changes.
-- **Receipt view** scores your character in a single pass instead of double-scanning every slot.
-- **Era defense floor:** Cap Guardian now enforces tank defense floors on Era (`level×5+140`, 440 at 60) — same reactive penalties as TBC.
-- **Hybrid AUTO detection:** TBC hybrid profiles (Fury-Prot, HOTW, Ele/Resto NS, etc.), endgame talent point-scan fallbacks, and uncertain-profile hints in Stat Logic.
-- **BaseSpec on login:** Imported Pawn profiles keep `BaseSpec` scalers after reload (no stale flat-copy into class weights).
-- **Receipt bag upgrades:** Uses full `EvaluateUpgrade` / fast-path — same engine as tooltips and bag arrows.
-
-### Data & engine fixes
-
-- TBC set ID corrections (Malorne/Nordrassil, Cyclone, S4 Priest heal, T6 tokens).
-- Expanded `SetBonusScores` for crafted, dungeon, T5/T6, and arena sets.
-- **ContentPhase gem gating** — P1 gems through Phase 2; BT/Hyjal (P3+) and Sunwell (P5+) gem tiers unlock via the **Roadmap** phase dropdown.
-- ProcDB trinkets, gem Mode 2 partial sockets, set bonus double-count, and custom-weight import fixes.
+- **Full Client Compatibility**: SGJ now fully supports the modern retail engine running the WoW: Forever beta.
+- **Database Branching**: Safely isolated datasets, sets, and profiles into a dedicated `_Forever` branch. This guarantees the Classic Era and TBC versions remain 100% untouched.
+- **Dynamic Weapon Racials**: Purged old Classic Era weapon skill calculations (e.g., +5 swords) across the board for all Forever class profiles. SGJ now natively scores the new weapon racials (e.g., +2% Crit for Humans with Swords, +1% Crit for Dwarves with Maces).
+- **New UI Stat Support**: The in-game character stat panel (`/sgj` -> Receipt) accurately reflects the new Forever racials (e.g., Tauren +1% Hit, Human +2% Crit) instead of legacy Vanilla expertise.
+- **Future-Proof Math Engine**: Re-engineered the underlying mechanics flag (`MSC.IsVanillaRules`) so WoW: Forever can safely share underlying Classic mechanics for now, but can be effortlessly decoupled later as the Forever meta shifts.
+- **New Race/Class Combos**: SGJ automatically supports all the new combinations, like Undead Paladins, Orc Mages, and the newly announced Skyborne race.
 
 ---
 
@@ -190,6 +176,7 @@ Unified codebase — the addon detects your client automatically:
 | --------------------------- | ----------------------------------------------------------------- |
 | **Classic Era (1.15.x)**    | Hit %, Defense Skill, T0–T3 sets, vanilla proc logic              |
 | **TBC Anniversary (2.5.x)** | Combat ratings, gems, meta gems, TBC sets, progression gem phases |
+| **WoW: Forever Beta**       | Native support for new racials, class combos, and isolated beta scaling |
 
 
 ### Install
@@ -199,6 +186,7 @@ Unified codebase — the addon detects your client automatically:
 3. Place in:
   - `_classic_era_/Interface/AddOns` — Vanilla / Era
   - `_classic_/Interface/AddOns` — TBC Anniversary
+  - `_forever_/Interface/AddOns` — WoW: Forever Beta
 
 ### Optional plugins
 
@@ -232,7 +220,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 2.6.0 (TBC Anniversary Ready)
+- **Version:** 3.0.0 (Forever & TBC Anniversary Ready)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
