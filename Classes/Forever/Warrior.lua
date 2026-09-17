@@ -3,7 +3,7 @@ local Warrior = {}
 Warrior.Name = "WARRIOR"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Warrior.Weights = {
     ["Default"] = {
@@ -76,7 +76,7 @@ Warrior.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS (Vanilla)
+-- WOW FOREVER TALENTS
 -- =============================================================
 Warrior.Talents = { 
     ["MORTAL_STRIKE"]    = "Mortal Strike",

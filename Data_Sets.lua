@@ -221,7 +221,7 @@ MSC.SetBonusScores = {
 -- ============================================================================
 -- 6. TBC SPECIFIC DATA (WRAPPED TO HIDE FROM ERA)
 -- ============================================================================
-if not MSC.IsEra then
+if not MSC.IsVanillaRules then
     
     -- TBC ITEM SET DEFINITIONS
     local tbcSets = {
@@ -628,7 +628,7 @@ MSC.ProcDB = {
 	
 }
 
-if not MSC.IsEra then
+if not MSC.IsVanillaRules then
     local tbcProcs = {
 	-- Extra Attacks & Weapon Procs
     [11684] = { ppm=1.0, val=0, stat="ITEM_MOD_MELEE_ATTACK_POWER_SHORT", note = MSC.L["Chance on hit: 2 Extra Attacks"] }, -- Ironfoe

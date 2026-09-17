@@ -1426,21 +1426,40 @@ local function GetClassRings(class, stats, weights)
     local mhLink = GetInventoryItemLink("player", 16)
     if mhLink then
         local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(mhLink)
-        if playerRace == "Human" then
-            if subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5 then
-                expertBonus = expertBonus + 5
-                AddMod("Expertise", "Mace/Sword Spec (Human)", 5, false)
+        if MSC.IsForever then
+            if playerRace == "Human" and (subClassID == 7 or subClassID == 8) then
+                critBonus = critBonus + 2
+                spellCritBonus = spellCritBonus + 2
+                AddMod("Crit", "Sword Spec (Human)", 2, true)
+                AddMod("Spell Crit", "Sword Spec (Human)", 2, true)
+            elseif playerRace == "Orc" and (subClassID == 0 or subClassID == 1) then
+                critBonus = critBonus + 2
+                spellCritBonus = spellCritBonus + 2
+                AddMod("Crit", "Axe Spec (Orc)", 2, true)
+                AddMod("Spell Crit", "Axe Spec (Orc)", 2, true)
+            elseif playerRace == "Dwarf" and (subClassID == 4 or subClassID == 5) then
+                critBonus = critBonus + 1
+                spellCritBonus = spellCritBonus + 1
+                AddMod("Crit", "Mace Spec (Dwarf)", 1, true)
+                AddMod("Spell Crit", "Mace Spec (Dwarf)", 1, true)
             end
-        elseif playerRace == "Orc" then
-            if subClassID == 0 or subClassID == 1 then
-                expertBonus = expertBonus + 5
-                AddMod("Expertise", "Axe Spec (Orc)", 5, false)
+        else
+            if playerRace == "Human" then
+                if subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5 then
+                    expertBonus = expertBonus + 5
+                    AddMod("Expertise", "Mace/Sword Spec (Human)", 5, false)
+                end
+            elseif playerRace == "Orc" then
+                if subClassID == 0 or subClassID == 1 then
+                    expertBonus = expertBonus + 5
+                    AddMod("Expertise", "Axe Spec (Orc)", 5, false)
+                end
             end
         end
     end
 
     local rangedLink = GetInventoryItemLink("player", 18)
-    if rangedLink then
+    if rangedLink and not MSC.IsForever then
         local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(rangedLink)
         if playerRace == "Dwarf" then
             if subClassID == 3 then 
@@ -1453,6 +1472,13 @@ local function GetClassRings(class, stats, weights)
                 AddMod("Crit", "Bow Spec (Troll)", 1, true)
             end 
         end
+    end
+    
+    if MSC.IsForever and playerRace == "Tauren" then
+        meleeHitBonus = meleeHitBonus + 1
+        spellHitBonus = spellHitBonus + 1
+        AddMod("Hit Cap", "Endurance (Tauren)", 1, true)
+        AddMod("Spell Hit", "Endurance (Tauren)", 1, true)
     end
 
     if isTBC and playerRace == "Draenei" then
@@ -2554,7 +2580,7 @@ loader:SetScript("OnEvent", function(self, event, name)
         -- NEW: Ensure the manual spec override is actually loaded into the engine!
         MSC.ManualSpec = SGJ_Settings.Mode
 
-        if not MSC.IsEra and MSC.BuildGemOptionsForPhase then
+        if not MSC.IsVanillaRules and MSC.BuildGemOptionsForPhase then
             MSC:BuildGemOptionsForPhase(SGJ_Settings.ContentPhase or 1)
         end
 

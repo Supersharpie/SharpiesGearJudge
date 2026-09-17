@@ -11,6 +11,10 @@
   - **Database Split**: Safely isolated datasets, sets, and profiles into a dedicated `_Forever` branch. This guarantees the Classic Era and TBC versions remain 100% untouched.
   - **Weapon Racials Overhaul**: Purged old Classic Era weapon skill calculations (e.g., +5 swords) across the board for all Forever class profiles.
   - **Dynamic Math Engine**: Successfully implemented and wired up new dynamic racial values across all 9 classes (e.g., +2% Crit for Humans with Swords, +1% Crit for Dwarves with Maces).
+  - **Character Stats UI Update**: The in-game character stat panel has been updated for the Forever branch to accurately reflect the new weapon racials (e.g., Tauren +1% Hit, Human +2% Crit) rather than falsely displaying legacy Vanilla expertise/weapon skill.
+  - **Engine Flag Overhaul**: Fixed a critical crash in `Evaluator.lua` by completely re-mapping the core `MSC.IsEra` engine flag to safely apply Vanilla's underlying stat mechanics to WoW: Forever without mistakenly fetching Burning Crusade combat ratings.
+  - **Future-Proofing Architecture**: Decoupled the `MSC.IsEra` flag from WoW: Forever. Created a new shared `MSC.IsVanillaRules` flag across the entire math engine, ensuring that WoW: Forever can safely share underlying Classic mechanics for now, but can be effortlessly decoupled later if its mechanics diverge from Era.
+  - **Beta Annotations**: Updated all internal class profile annotations in the Forever branch to explicitly mark them as beta baselines, preventing confusion as the meta shifts during beta testing.
 
 ---
 

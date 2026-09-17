@@ -3,7 +3,7 @@ local Druid = {}
 Druid.Name = "DRUID"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Druid.Weights = {
     ["Default"] = {
@@ -83,7 +83,7 @@ Druid.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS (Vanilla 31-Point Tree)
+-- WOW FOREVER TALENTS
 -- =============================================================
 Druid.Talents = { 
     ["MOONKIN_FORM"]    = "Moonkin Form",

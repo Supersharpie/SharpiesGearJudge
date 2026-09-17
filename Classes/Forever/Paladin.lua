@@ -3,7 +3,7 @@ local Paladin = {}
 Paladin.Name = "PALADIN"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Paladin.Weights = {
     ["Default"] = {
@@ -67,7 +67,7 @@ Paladin.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Paladin.Talents = {
     ["HOLY_SHOCK"]      = "Holy Shock",

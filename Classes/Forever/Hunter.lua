@@ -3,7 +3,7 @@ local Hunter = {}
 Hunter.Name = "HUNTER"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Hunter.Weights = {
     ["Default"] = {
@@ -70,7 +70,7 @@ Hunter.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Hunter.Talents = { 
     ["BESTIAL_WRATH"]   = "Bestial Wrath",

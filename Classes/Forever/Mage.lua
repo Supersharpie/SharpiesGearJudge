@@ -3,7 +3,7 @@ local Mage = {}
 Mage.Name = "MAGE"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Mage.Weights = {
     ["Default"] = {
@@ -80,7 +80,7 @@ Mage.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Mage.Talents = { 
     ["ARCANE_POWER"]    = "Arcane Power",

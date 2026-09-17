@@ -3,7 +3,7 @@ local Shaman = {}
 Shaman.Name = "SHAMAN"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Shaman.Weights = {
     ["Default"] = {
@@ -76,7 +76,7 @@ Shaman.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Shaman.Talents = { 
     ["ELEMENTAL_MASTERY"] = "Elemental Mastery",

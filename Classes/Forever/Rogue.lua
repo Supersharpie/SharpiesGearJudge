@@ -3,7 +3,7 @@ local Rogue = {}
 Rogue.Name = "ROGUE"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Rogue.Weights = {
     ["Default"] = {
@@ -76,7 +76,7 @@ Rogue.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Rogue.Talents = { 
     ["SEAL_FATE"]       = "Seal Fate",

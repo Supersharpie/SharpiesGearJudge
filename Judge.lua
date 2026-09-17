@@ -243,7 +243,7 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
         if class == "MAGE" then local r=Rank("MIND_MASTERY"); if r>0 then dest["ITEM_MOD_SPELL_POWER_SHORT"]=(dest["ITEM_MOD_SPELL_POWER_SHORT"] or 0)+(int*(0.05*r)) end end
 
         -- 3. Spell Crit (Version Branch)
-        if MSC.IsEra then
+        if MSC.IsVanillaRules then
             -- VANILLA: Roughly 59.5 Int = 1% Crit (Mage), others vary. Using ~60 as generic.
             local critPercent = int / 60
             dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) + critPercent
@@ -259,7 +259,7 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     local agi = dest["ITEM_MOD_AGILITY_SHORT"] or 0
     if agi > 0 then
         -- 1. Crit Rating (Physical)
-        if MSC.IsEra then
+        if MSC.IsVanillaRules then
             -- VANILLA: Hunter/Rogue 29/20 Agi = 1%. War/Pal 20 Agi = 1%.
             local div = 20
             if class == "HUNTER" then div = 53 elseif class == "ROGUE" then div = 29 end
@@ -273,7 +273,7 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
         end
 
         -- 2. Dodge Rating
-        if not MSC.IsEra then
+        if not MSC.IsVanillaRules then
             -- TBC Only (Era handles Dodge% via API mostly)
             local dodgeDiv = 25
             if class == "HUNTER" then dodgeDiv = 26 elseif class == "ROGUE" then dodgeDiv = 20 elseif class == "DRUID" then dodgeDiv = 14.7 end
@@ -818,7 +818,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                     tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], MSC.L["Best Available"], 0, 1, 1, 1, 1, 1) 
                 end
                 
-                if not MSC.IsEra and itemNewStats.PROJECTION_DATA then
+                if not MSC.IsVanillaRules and itemNewStats.PROJECTION_DATA then
                     local data = itemNewStats.PROJECTION_DATA
                     for i, gem in ipairs(data.Gems) do
                         local label = (i == 1) and MSC.L["Projected Gems:"] or MSC.L[" "] or " "
@@ -829,7 +829,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                     if data.Stats ~= "" then tooltip:AddDoubleLine(" ", data.Stats, 0, 0, 0, 0, 0.8, 1) end
                 end
                 
-                if not MSC.IsEra and itemNewStats.META_ID and MSC.CheckMetaRequirements and newTotalColors then 
+                if not MSC.IsVanillaRules and itemNewStats.META_ID and MSC.CheckMetaRequirements and newTotalColors then 
                     if MSC:CheckMetaRequirements(itemNewStats.META_ID, newTotalColors) then 
                         tooltip:AddDoubleLine(" ", MSC.L["+ Meta Gem Active"], 0, 0, 0, 0, 1, 0) 
                     else 

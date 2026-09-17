@@ -3,7 +3,7 @@ local Priest = {}
 Priest.Name = "PRIEST"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Priest.Weights = {
     ["Default"] = {
@@ -75,7 +75,7 @@ Priest.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Priest.Talents = { 
     ["SHADOWFORM"]      = "Shadowform",

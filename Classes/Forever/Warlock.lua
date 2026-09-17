@@ -3,7 +3,7 @@ local Warlock = {}
 Warlock.Name = "WARLOCK"
 
 -- =============================================================
--- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
+-- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 -- NOTE: In Era Helpers.lua, 1.0 Rating = 1% Hit/Crit. 
 -- We use standard keys so the Evaluator can match them.
@@ -78,7 +78,7 @@ Warlock.PrettyNames = {
 }
 
 -- =============================================================
--- ERA TALENTS
+-- WOW FOREVER TALENTS
 -- =============================================================
 Warlock.Talents = { 
     ["DEMONIC_SACRIFICE"] = "Demonic Sacrifice",

@@ -84,7 +84,7 @@ function MSC:GetWeaponSpecBonus(itemLink, class, specName, weights)
 end
 
 function MSC:CheckMetaRequirements(metaID, counts)
-    if MSC.IsEra then return true end -- Era has no metas, always pass
+    if MSC.IsVanillaRules then return true end -- Era has no metas, always pass
     if not metaID then return false end
     if metaID == 32409 then return (counts.RED >= 2 and counts.BLUE >= 2 and counts.YELLOW >= 2) -- Relentless
     elseif metaID == 34220 then return (counts.BLUE >= 2) -- Chaotic
@@ -302,7 +302,7 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
     if oh then totalScore = totalScore + MSC:GetWeaponSpecBonus(oh, MSC.CurrentClass, specName, weights) end
 
     -- [[ 9. META GEM ACTIVATION CHECK (TBC Only) ]]
-    if not MSC.IsEra and metaGemID and MSC.CheckMetaRequirements then
+    if not MSC.IsVanillaRules and metaGemID and MSC.CheckMetaRequirements then
         local isActive = MSC:CheckMetaRequirements(metaGemID, Scratch_Colors)
         if not isActive then
              local metaStats = MSC.GetGemStatsByID and MSC.GetGemStatsByID(metaGemID)
@@ -648,7 +648,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                     if baselineGear then
                         local defFromGear = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                         local baseDef = UnitLevel("player") * 5
-                        if MSC.IsEra then
+                        if MSC.IsVanillaRules then
                             currentDef = baseDef + defFromGear
                         else
                             currentDef = baseDef + math_floor(defFromGear / 2.36)
@@ -660,7 +660,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                     local oldDefRating = currentStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     local newDefRating = newStatsTotal["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
                     local diffSkill
-                    if MSC.IsEra then
+                    if MSC.IsVanillaRules then
                         diffSkill = newDefRating - oldDefRating
                     else
                         diffSkill = (newDefRating - oldDefRating) / 2.36

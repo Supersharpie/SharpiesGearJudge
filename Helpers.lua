@@ -150,7 +150,7 @@ function MSC.getItemID(bagID, slotID)
 end
 
 function MSC:GetPlayerStat(statType)
-    if MSC.IsEra then
+    if MSC.IsVanillaRules then
         if statType == "HIT" then return GetHitModifier() or 0
         elseif statType == "SPELL_HIT" then return GetSpellHitModifier() or 0
         elseif statType == "CRIT" then return GetCritChance()
@@ -178,7 +178,7 @@ function MSC:GetSpiritValueInMP5(level, spiritPoints)
     local points = spiritPoints or 1
     if points > 50 then points = 1 end -- guard against passing total Intellect by mistake
     local _, class = UnitClass("player")
-    if MSC.IsEra then
+    if MSC.IsVanillaRules then
         if class == "PRIEST" or class == "MAGE" then return (points / 4) + 12.5 end
         return (points / 5) + 15
     else
@@ -587,7 +587,7 @@ function MSC.GetGemColor(gemID)
 end
 
 function MSC.ApplyGemColorCount(gData, colors)
-    if not gData or not gData.colorType or MSC.IsEra or not colors then return end
+    if not gData or not gData.colorType or MSC.IsVanillaRules or not colors then return end
     local ct = gData.colorType
     if ct == "RED" then
         colors.RED = colors.RED + 1
@@ -782,7 +782,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
         end
     end
 
-    if not MSC.IsEra and gemMode ~= 1 then
+    if not MSC.IsVanillaRules and gemMode ~= 1 then
         wipe(Scratch_GemTextParts); wipe(Scratch_ProjectedIDs); wipe(Scratch_GemCounts); wipe(Scratch_GemOrder)
         wipe(Scratch_GemStats); wipe(Scratch_GemColors); wipe(Scratch_ProjectedColors)
         Scratch_ProjectedColors.RED=0; Scratch_ProjectedColors.YELLOW=0; Scratch_ProjectedColors.BLUE=0
@@ -1035,7 +1035,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         end
     end
     
-    if not MSC.IsEra and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
+    if not MSC.IsVanillaRules and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
         local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"]
         local resWeight = weights["ITEM_MOD_RESILIENCE_RATING_SHORT"] or 0
         if resVal > 0 and resWeight <= 0.05 then score = score - (resVal * 1.5) end
