@@ -59,7 +59,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
         
-        local version = MSC.IsEra and MSC.L["Classic Era"] or MSC.L["TBC Edition"]
+        local version = MSC.IsForever and "Forever Edition" or (MSC.IsEra and MSC.L["Classic Era"] or MSC.L["TBC Edition"])
         print(string.format(MSC.L["|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."], version))
         
     elseif event == "PLAYER_LOGIN" then

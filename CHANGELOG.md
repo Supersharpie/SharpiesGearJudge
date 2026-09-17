@@ -2,6 +2,18 @@
 
 ---
 
+## 🚀 v3.0.0
+
+### ⚔️ Features & Updates
+
+- **WoW: Forever Support**:
+  - **Modern Engine UI**: The addon UI has been updated to run flawlessly on the modern retail engine used in the WoW: Forever beta.
+  - **Database Split**: Safely isolated datasets, sets, and profiles into a dedicated `_Forever` branch. This guarantees the Classic Era and TBC versions remain 100% untouched.
+  - **Weapon Racials Overhaul**: Purged old Classic Era weapon skill calculations (e.g., +5 swords) across the board for all Forever class profiles.
+  - **Dynamic Math Engine**: Successfully implemented and wired up new dynamic racial values across all 9 classes (e.g., +2% Crit for Humans with Swords, +1% Crit for Dwarves with Maces).
+
+---
+
 ## 🚀 v2.6.5
 
 ### 🐛 Bug Fixes & Improvements

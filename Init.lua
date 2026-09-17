@@ -5,6 +5,9 @@ _G[addonName] = MSC
 -- 0. GAME VERSION DETECTION
 -- =============================================================
 local _, _, _, interfaceVersion = GetBuildInfo()
+local GetMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
+local addonTitle = GetMetadata(addonName, "Title") or ""
+MSC.IsForever = (string.find(addonTitle, "Forever Edition") ~= nil)
 MSC.IsEra   = (interfaceVersion < 20000)
 MSC.IsTBC   = (interfaceVersion >= 20000 and interfaceVersion < 30000)
 MSC.IsWrath = (interfaceVersion >= 30000)
