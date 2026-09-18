@@ -1,13 +1,3 @@
-local tracer = CreateFrame("Frame")
-tracer:RegisterEvent("ADDON_LOADED")
-tracer:SetScript("OnEvent", function(self, event, name)
-    if name == "SharpiesGearJudge" then
-        print("|cff00ffffSGJ TRACER:|r On ADDON_LOADED, SGJ_Settings is", type(SGJ_Settings))
-        if type(SGJ_Settings) == "table" then
-            print("|cff00ffffSGJ TRACER:|r ShowBagArrows =", tostring(SGJ_Settings.ShowBagArrows))
-        end
-    end
-end)
 local addonName, MSC = ...
 _G.MSC = MSC 
 
@@ -194,6 +184,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
             
             -- Fetch Cache
+            if not GetNumTradeSkills then return end
             local numRecipes = GetNumTradeSkills()
             if numRecipes and numRecipes > 0 then
                 for i = 1, numRecipes do
@@ -845,6 +836,7 @@ function MSC.UpdateTradeSkillOverlays()
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then return end
 
+    if not GetNumTradeSkills then return end
     local numTradeSkills = GetNumTradeSkills()
     local skillOffset = FauxScrollFrame_GetOffset(TradeSkillListScrollFrame)
     
@@ -1443,10 +1435,10 @@ local function GetClassRings(class, stats, weights)
                 AddMod("Crit", "Sword Spec (Human)", 2, true)
                 AddMod("Spell Crit", "Sword Spec (Human)", 2, true)
             elseif playerRace == "Orc" and (subClassID == 0 or subClassID == 1) then
-                critBonus = critBonus + 2
-                spellCritBonus = spellCritBonus + 2
-                AddMod("Crit", "Axe Spec (Orc)", 2, true)
-                AddMod("Spell Crit", "Axe Spec (Orc)", 2, true)
+                critBonus = critBonus + 1
+                spellCritBonus = spellCritBonus + 1
+                AddMod("Crit", "Axe Spec (Orc)", 1, true)
+                AddMod("Spell Crit", "Axe Spec (Orc)", 1, true)
             elseif playerRace == "Dwarf" and (subClassID == 4 or subClassID == 5) then
                 critBonus = critBonus + 1
                 spellCritBonus = spellCritBonus + 1
@@ -1949,9 +1941,35 @@ function MSC.InitSettingsView(parent)
     end
 
     local function CreateCheck(label, key, tooltip, relTo, xOff, yOff)
-        local cb = CreateFrame("CheckButton", nil, sChild, "ChatConfigCheckButtonTemplate"); cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff); cb.Text:SetText(label); cb.Text:SetTextColor(0.9, 0.9, 0.9); cb:SetChecked(SGJ_Settings[key])
-        cb:HookScript("OnClick", function(self) SGJ_Settings[key] = self:GetChecked(); print("|cff00ff00SGJ Debug:|r Saved " .. key .. " as " .. tostring(SGJ_Settings[key])); if key == "HideMinimap" then MSC.UpdateMinimapPosition() end end)
-        if tooltip then cb:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tooltip, nil, nil, nil, nil, true); GameTooltip:Show() end); cb:SetScript("OnLeave", GameTooltip_Hide) end
+        local cb = CreateFrame("CheckButton", nil, sChild, "UICheckButtonTemplate")
+        cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff)
+        
+        if not cb.Text then
+            cb.Text = cb:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            cb.Text:SetPoint("LEFT", cb, "RIGHT", 5, 0)
+        end
+        cb.Text:SetText(label)
+        cb.Text:SetTextColor(0.9, 0.9, 0.9)
+        
+        -- Force visual update when the menu opens to bypass hidden-frame template bugs
+        cb:HookScript("OnShow", function(self)
+            self:SetChecked(SGJ_Settings[key] == true)
+        end)
+        cb:SetChecked(SGJ_Settings[key] == true)
+        
+        cb:HookScript("OnClick", function(self) 
+            SGJ_Settings[key] = self:GetChecked()
+            if key == "HideMinimap" then MSC.UpdateMinimapPosition() end 
+        end)
+        
+        if tooltip then 
+            cb:SetScript("OnEnter", function(self) 
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(tooltip, nil, nil, nil, nil, true)
+                GameTooltip:Show() 
+            end)
+            cb:SetScript("OnLeave", GameTooltip_Hide) 
+        end
         return cb
     end
     
@@ -1984,15 +2002,20 @@ function MSC.InitSettingsView(parent)
     local hLogic = CreateHeader(MSC.L["Comparison Logic"], cbColor, -25)
     local enchantTip = MSC.L["Controls how item enchantments affect the score.\n\n|cffffffffOff:|r Scores items based on base stats only.\n|cffffffffCurrent:|r Includes the value of the enchant currently on the item.\n|cffffffffProject:|r Simulates the best possible enchant for that item level."]
     local ddEnchant = CreateDropdown(MSC.L["Enchant Mode"], "EnchantMode", {{ text = MSC.L["Off (Raw Stats)"], val = 1 }, { text = MSC.L["Current Only"], val = 2 }, { text = MSC.L["Project Best"], val = 3 }}, hLogic, -10, enchantTip)
-    local gemTip = MSC.L["Controls how empty sockets are scored.\n\n|cffffffffThe Skeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffThe Casual:|r Simple gemming logic, usually respects socket colors.\n|cffffffffThe Pro:|r Min-max gemming logic, prioritizes absolute highest score."]
-    local ddGem = CreateDropdown(MSC.L["Gemming Logic"], "GemMode", {{ text = MSC.L["The Skeptic"], val = 1 }, { text = MSC.L["The Casual"], val = 2 }, { text = MSC.L["The Pro"], val = 3 }}, ddEnchant, -5, gemTip)
-    local gemQualTip = MSC.L["Selects the quality tier of gems the Judge will use when projecting empty sockets."]
-    local ddGemQuality = CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {{ text = MSC.L["Common (White/Vendor)"], val = 1 }, { text = MSC.L["Uncommon (Green)"], val = 2 }, { text = MSC.L["Rare (Blue)"], val = 3 }, { text = MSC.L["Epic (Purple)"], val = 4 }}, ddGem, -5, gemQualTip)
+    local lastLogicAnchor = ddEnchant
+    local ddGem, ddGemQuality
+    if not MSC.IsVanillaRules then
+        local gemTip = MSC.L["Controls how empty sockets are scored.\n\n|cffffffffThe Skeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met.\n|cffffffffThe Casual:|r Simple gemming logic, usually respects socket colors.\n|cffffffffThe Pro:|r Min-max gemming logic, prioritizes absolute highest score."]
+        ddGem = CreateDropdown(MSC.L["Gemming Logic"], "GemMode", {{ text = MSC.L["The Skeptic"], val = 1 }, { text = MSC.L["The Casual"], val = 2 }, { text = MSC.L["The Pro"], val = 3 }}, ddEnchant, -5, gemTip)
+        local gemQualTip = MSC.L["Selects the quality tier of gems the Judge will use when projecting empty sockets."]
+        ddGemQuality = CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {{ text = MSC.L["Common (White/Vendor)"], val = 1 }, { text = MSC.L["Uncommon (Green)"], val = 2 }, { text = MSC.L["Rare (Blue)"], val = 3 }, { text = MSC.L["Epic (Purple)"], val = 4 }}, ddGem, -5, gemQualTip)
+        lastLogicAnchor = ddGemQuality
+    end
 
     -- ==========================================
     -- SECTION 2b: BUFF ASSUMPTIONS
     -- ==========================================
-    local hBuffs = CreateHeader(MSC.L["Buff Assumptions"], ddGemQuality, -25)
+    local hBuffs = CreateHeader(MSC.L["Buff Assumptions"], lastLogicAnchor, -25)
     local function InvalidateBuffCaches()
         if MSC.BuffEngine then MSC.BuffEngine:InvalidateCaches() end
         MSC.BagCacheDirty = true
@@ -2028,6 +2051,9 @@ function MSC.InitSettingsView(parent)
         { text = MSC.L["DM Tribute Only"], val = "dmTribute" },
     }
     local ddWorldPreset = CreateDropdown(MSC.L["World Buff Preset"], "WorldBuffPreset", worldPresetOpts, cbWorld, -5)
+
+    local cbCamping = CreateCheck(MSC.L["Assume Consumables"], "AssumeCampingBuffs", MSC.L["Assumes temporary weapon buffs like Sharpening Stones or Weightstones."], ddWorldPreset, 0, -5)
+    cbCamping:HookScript("OnClick", InvalidateBuffCaches)
 
     -- ==========================================
     -- SECTION 4: CHARACTER PROFILE
@@ -2074,11 +2100,11 @@ function MSC.InitSettingsView(parent)
     local lastAnchor = hSpec
     for _, p in ipairs(profileList) do
         -- 1. The Tracking Checkbox
-        local cb = CreateFrame("CheckButton", nil, sChild, "ChatConfigCheckButtonTemplate")
+        local cb = CreateFrame("CheckButton", nil, sChild, "UICheckButtonTemplate")
         if lastAnchor == hSpec then cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -10) else cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -5) end
         cb.Text:SetText(p.text); cb.Text:SetTextColor(0.8, 0.8, 0.8)
-        cb:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val])
-        cb:SetScript("OnClick", function(self) 
+        cb:HookScript("OnShow", function(self) self:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val]) end); cb:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val])
+        cb:HookScript("OnClick", function(self) 
             if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
             SGJ_Settings.TrackedSpecs[p.val] = self:GetChecked()
         end)
@@ -2572,6 +2598,7 @@ loader:SetScript("OnEvent", function(self, event, name)
             ShowLootArrows = false,
             AssumeRaidBuffs = false,
             AssumeWorldBuffs = false,
+            AssumeCampingBuffs = false,
             RaidBuffPreset = "off",
             WorldBuffPreset = "off",
             RaidBuffToggles = {},
@@ -2872,7 +2899,7 @@ local function DumpBadSettings()
     end
 end
 local badScanner = CreateFrame("Frame")
-badScanner:RegisterEvent("PLAYER_LEAVING_WORLD")
+-- badScanner:RegisterEvent("PLAYER_LEAVING_WORLD")
 badScanner:SetScript("OnEvent", DumpBadSettings)
 
 local function SGJWipeSettings()
@@ -2881,3 +2908,62 @@ local function SGJWipeSettings()
 end
 SLASH_SGJ_WIPE1 = "/sgjwipe"
 SlashCmdList["SGJ_WIPE"] = SGJWipeSettings
+
+local function SGJCheckCorrupt()
+    local bads = {}
+    local function checkLevel(t, path)
+        for k, v in pairs(t) do
+            local currentPath = path .. "." .. tostring(k)
+            local tv = type(v)
+            if tv == "function" or tv == "userdata" or (tv == "table" and v.GetObjectType) then
+                table.insert(bads, currentPath .. " is " .. tv)
+            elseif tv == "table" then
+                checkLevel(v, currentPath)
+            end
+        end
+    end
+    checkLevel(SGJ_Settings, "SGJ_Settings")
+    if #bads > 0 then
+        for _, msg in ipairs(bads) do print("|cffff0000CORRUPT:|r", msg) end
+    else
+        print("|cff00ff00SGJ:|r No corruption found in SGJ_Settings!")
+    end
+end
+SLASH_SGJ_CORRUPT1 = "/sgjcheck"
+SlashCmdList["SGJ_CORRUPT"] = SGJCheckCorrupt
+
+local function SGJCheckCorrupt2()
+    local bads = {}
+    local function checkLevel(t, path)
+        for k, v in pairs(t) do
+            local currentPath = path .. "." .. tostring(k)
+            local tv = type(v)
+            if tv == "function" or tv == "userdata" or (tv == "table" and v.GetObjectType) then
+                table.insert(bads, currentPath .. " is " .. tv)
+            elseif tv == "table" then
+                checkLevel(v, currentPath)
+            end
+        end
+    end
+    if SharpiesGearJudgeDB then checkLevel(SharpiesGearJudgeDB, "SharpiesGearJudgeDB") end
+    if SGJ_History then checkLevel(SGJ_History, "SGJ_History") end
+    
+    if #bads > 0 then
+        for _, msg in ipairs(bads) do print("|cffff0000CORRUPT:|r", msg) end
+    else
+        print("|cff00ff00SGJ:|r No corruption found in other DBs either!")
+    end
+end
+SLASH_SGJ_CORRUPT_TWO1 = "/sgjcheck2"
+SlashCmdList["SGJ_CORRUPT_TWO"] = SGJCheckCorrupt2
+
+local function ForceWriteSGJ()
+    print("|cff00ff00SGJ:|r Forcing save...")
+    -- Dirty the variable explicitly
+    SGJ_Settings._forceSave = GetTime()
+    
+    -- Print current state
+    print("ShowBagArrows is:", SGJ_Settings.ShowBagArrows)
+end
+SLASH_SGJ_FORCE1 = "/sgjforce"
+SlashCmdList["SGJ_FORCE"] = ForceWriteSGJ

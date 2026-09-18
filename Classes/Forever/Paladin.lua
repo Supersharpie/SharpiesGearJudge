@@ -6,43 +6,27 @@ Paladin.Name = "PALADIN"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Paladin.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
-    },
-    ["HOLY_RAID"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.2 
-    },
-    ["HOLY_DEEP"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0 
-    },
-    ["PROT_DEEP"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.6, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5 
-    },
-    ["PROT_AOE"]  = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.5 
-    },
-    ["RET_STANDARD"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HIT_RATING_SHORT"]=22.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2 
-    },
-    ["SHOCKADIN"] = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5 
-    },
-    ["RECK_BOMB"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5 
-    },
+    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=10.0  },
+    ["HOLY_DEEP"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=10.0  },
+    ["PROT_DEEP"] = {  ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0  },
+    ["PROT_AOE"]  = {  ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0  },
+    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["SHOCKADIN"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["RECK_BOMB"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 }
 
 -- =============================================================
 -- LEVELING LOGIC
 -- =============================================================
 Paladin.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]= 0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.5 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=6.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.4 },
-    ["Leveling_Ret_52_59"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 5.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 },
+    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["Leveling_Ret_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
     
-    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
-    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
+    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 }
 
 -- =============================================================
@@ -70,18 +54,18 @@ Paladin.PrettyNames = {
 -- WOW FOREVER TALENTS
 -- =============================================================
 Paladin.Talents = {
+    ["DIVINE_STR"]      = "Divine Strength",
+    ["DIVINE_INT"]      = "Divine Intellect",
     ["HOLY_SHOCK"]      = "Holy Shock",
     ["ILLUMINATION"]    = "Illumination",
     ["HOLY_SHIELD"]     = "Holy Shield",
     ["RECKONING"]       = "Reckoning",
-    ["KINGS"]           = "Blessing of Kings",
+    ["SACRED_DUTY"]     = "Sacred Duty",
     ["REPENTANCE"]      = "Repentance",
     ["VENGEANCE"]       = "Vengeance",
+    ["TOUGHNESS"]       = "Toughness",
+    ["CHAMPION_LIGHT"]  = "Champion of the Light",
     ["IMP_MIGHT"]       = "Improved Blessing of Might",
-    ["DIVINE_STR"]      = "Divine Strength",
-    ["DIVINE_INT"]      = "Divine Intellect",
-    ["PRECISION"]       = "Precision",
-    ["REDOUBT"]         = "Redoubt", 
 }
 
 -- =============================================================
@@ -108,11 +92,11 @@ function Paladin:GetSpec()
 
     -- Endgame Spec Detection
     if Rank("RECKONING") > 0 and Rank("VENGEANCE") > 0 then return "RECK_BOMB" end
-    if Rank("REPENTANCE") > 0 and Rank("KINGS") > 0 then return "RET_UTILITY" end
+    if Rank("REPENTANCE") > 0 and Rank("SACRED_DUTY") > 0 then return "RET_UTILITY" end
     if Rank("REPENTANCE") > 0 then return "RET_STANDARD" end
     if Rank("HOLY_SHIELD") > 0 then return "PROT_DEEP" end
-    if Rank("HOLY_SHOCK") > 0 and Rank("KINGS") == 0 then return "SHOCKADIN" end
-    if Rank("ILLUMINATION") > 0 and Rank("KINGS") > 0 then return "HOLY_RAID" end
+    if Rank("HOLY_SHOCK") > 0 and Rank("SACRED_DUTY") == 0 then return "SHOCKADIN" end
+    if Rank("ILLUMINATION") > 0 and Rank("SACRED_DUTY") > 0 then return "HOLY_RAID" end
     if Rank("ILLUMINATION") > 0 and Rank("IMP_MIGHT") > 0 then return "HOLY_DEEP" end
     return "HOLY_RAID"
 end
@@ -125,6 +109,27 @@ function Paladin:ApplyScalers(weights, currentSpec)
     local rStr = Rank("DIVINE_STR")
     if rStr > 0 and weights["ITEM_MOD_STRENGTH_SHORT"] then 
         weights["ITEM_MOD_STRENGTH_SHORT"] = weights["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rStr * 0.02)) 
+    end
+
+    local rInt = Rank("DIVINE_INT")
+    if rInt > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rInt * 0.02)) 
+    end
+
+    local rTough = Rank("TOUGHNESS")
+    if rTough > 0 and weights["ITEM_MOD_ARMOR_SHORT"] then
+        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
+    end
+
+    local rSacred = Rank("SACRED_DUTY")
+    if rSacred > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
+        weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSacred * 0.02))
+    end
+
+    local rChamp = Rank("CHAMPION_LIGHT")
+    if rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
+        local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"]
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.11))
     end
 
     -- [[ 2. Hit Cap (9%) ]]
@@ -141,24 +146,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
 end
 
 function Paladin:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = weights and weights["ITEM_MOD_CRIT_RATING_SHORT"] or 25.0
-
-    -- Racial: Human (Sword=7/8) -> +2% Crit
-    if race == "Human" and (subClassID == 7 or subClassID == 8) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    -- Racial: Dwarf (Mace=4/5) -> +1% Crit
-    if race == "Dwarf" and (subClassID == 4 or subClassID == 5) then
-        bonus = bonus + (critWeight * 1)
-    end
-    
-    return bonus
+    return 0
 end
 
 -- =============================================================

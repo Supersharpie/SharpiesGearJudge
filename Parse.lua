@@ -84,6 +84,10 @@ MSC.Scanner.BaseStatMap = {
     [MSC.L["parry rating"]]       = "ITEM_MOD_PARRY_RATING_SHORT",
     [MSC.L["block rating"]]       = "ITEM_MOD_BLOCK_RATING_SHORT",
     [MSC.L["hit rating"]]         = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["hit chance"]]         = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["critical strike chance"]] = "ITEM_MOD_CRIT_RATING_SHORT",
+    [MSC.L["weapon damage"]]      = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+
     [MSC.L["crit rating"]]        = "ITEM_MOD_CRIT_RATING_SHORT",
     [MSC.L["critical strike rating"]] = "ITEM_MOD_CRIT_RATING_SHORT",
     [MSC.L["haste rating"]]       = "ITEM_MOD_HASTE_RATING_SHORT",
@@ -100,6 +104,10 @@ MSC.Scanner.BaseStatMap = {
 MSC.Scanner.TermMap = {
     -- [[ 1. OFFENSIVE RATINGS ]]
     [MSC.L["hit rating"]]         = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["hit chance"]]         = "ITEM_MOD_HIT_RATING_SHORT",
+    [MSC.L["critical strike chance"]] = "ITEM_MOD_CRIT_RATING_SHORT",
+    [MSC.L["weapon damage"]]      = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+
     [MSC.L["chance to hit"]]      = "ITEM_MOD_HIT_RATING_SHORT", -- Era
     [MSC.L["spell hit rating"]]   = "ITEM_MOD_HIT_SPELL_RATING_SHORT",	
     [MSC.L["chance to hit with spells"]] = "ITEM_MOD_HIT_SPELL_RATING_SHORT", -- Era Long	
@@ -118,6 +126,7 @@ MSC.Scanner.TermMap = {
     [MSC.L["magical resistances of your spell targets"]] = "ITEM_MOD_SPELL_PENETRATION_SHORT", -- Era Long
     [MSC.L["armor penetration rating"]] = "ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT",
     [MSC.L["expertise rating"]]    = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+    [MSC.L["dodged or parried"]] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
     [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
 
     -- [[ 2. DEFENSIVE RATINGS ]]
@@ -326,9 +335,13 @@ MSC.Scanner.EquipPatterns = {
 
     -- [[ PERCENTAGE MODS (e.g. "1% Hit") ]]
     -- Caught here to prevent "1 Hit" being read as Rating
-    { p = MSC.L["improves your (.*) by (%d+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true }, 
-    { p = MSC.L["increases your (.*) by (%d+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true }, 
-    { p = MSC.L["increases (.*) by (%d+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true },
+    { p = MSC.L["improves your (.*) by ([%d%.]+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true }, 
+    { p = MSC.L["increases your (.*) by ([%d%.]+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true }, 
+    { p = MSC.L["increases (.*) by ([%d%.]+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true },
+    { p = MSC.L["reduces chance for attacks to be (.*) by ([%d%.]+)%%%.?"], valIdx = 2, nameIdx = 1, isPercent = true },
+
+    -- [[ WEAPON SKILLS (Forever) ]]
+    { p = MSC.L["%+([%d%.]+)%s+to%s+(.*)"], valIdx = 1, fixedStat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" },
 
     -- [[ GENERIC FALLBACKS (The "Standard" Parser) ]]
     -- Catches standard strings: "Increases Strength by 10"
@@ -340,8 +353,8 @@ MSC.Scanner.EquipPatterns = {
 
     -- [[ SHORT FORM (Green Text) ]]
     -- Catches: "+10 Strength" or "Strength +10"
-    { p = MSC.L["^%+?%s*(%d+)%%? (.*)$"], valIdx = 1, nameIdx = 2 },
-    { p = MSC.L["^(.-) %+(%d+)%%?$"], valIdx = 2, nameIdx = 1 },
+    { p = MSC.L["^%+?%s*([%d%.]+)%%? (.*)$"], valIdx = 1, nameIdx = 2 },
+    { p = MSC.L["^(.-) %+([%d%.]+)%%?$"], valIdx = 2, nameIdx = 1 },
 }
 
 MSC.Scanner.ProcPatterns = {
@@ -756,9 +769,24 @@ function MSC.Scanner.Scan(itemLink)
         end
     end
 
-    if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
+if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and result.Stats["MSC_DAMAGE_RANGE_MIN"] and result.Stats["MSC_DAMAGE_RANGE_MAX"] then
         local avg = (result.Stats["MSC_DAMAGE_RANGE_MIN"] + result.Stats["MSC_DAMAGE_RANGE_MAX"]) / 2
         result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
+    end
+    
+    if MSC.IsForever and result.Stats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
+        local rawHeal = result.Stats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]
+        local existingDmg = result.Stats["ITEM_MOD_SPELL_POWER_SHORT"] or 0
+        -- Hybrid items split their stats (e.g., 33 heal / 11 dmg becomes 11 POWER and 22 HEALING in this addon's math).
+        -- We want to calculate the 1/3 rule on the TOTAL healing, which is (HEALING + POWER).
+        local totalHealing = rawHeal + existingDmg
+        local inferredDmg = math_floor(totalHealing / 3)
+        if inferredDmg > existingDmg then
+            -- Only grant the missing difference if the item didn't natively have enough spell damage
+            local diff = inferredDmg - existingDmg
+            result.Stats["ITEM_MOD_SPELL_POWER_SHORT"] = existingDmg + diff
+            result.Stats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = rawHeal - diff
+        end
     end
 
     local itemID = tonumber(string_match(itemLink, "item:(%d+)"))

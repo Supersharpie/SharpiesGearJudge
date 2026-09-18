@@ -1,3 +1,5 @@
+SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
+SGJ_Settings = SGJ_Settings or {}
 function MSC_GetTooltipItem(tooltip)
     if not tooltip then return nil, nil end
     if tooltip.GetItem then return tooltip:GetItem() end
@@ -23,7 +25,7 @@ _G[addonName] = MSC
 local _, _, _, interfaceVersion = GetBuildInfo()
 local GetMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 local addonTitle = GetMetadata(addonName, "Title") or ""
-MSC.IsForever = (string.find(addonTitle, "Forever Edition") ~= nil)
+local version = GetBuildInfo(); MSC.IsForever = (string.find(addonTitle, "Forever Edition") ~= nil) or (interfaceVersion == 16001) or (version and string.find(version, "1.60.1") ~= nil)
 MSC.IsEra   = (interfaceVersion < 20000) and not MSC.IsForever
 MSC.IsVanillaRules = MSC.IsEra or MSC.IsForever
 MSC.IsTBC   = (interfaceVersion >= 20000 and interfaceVersion < 30000)

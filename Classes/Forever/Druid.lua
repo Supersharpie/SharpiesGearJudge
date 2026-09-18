@@ -6,30 +6,14 @@ Druid.Name = "DRUID"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Druid.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=0.5 
-    },
-    ["BALANCE_BOOMKIN"] = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.0 
-    },
-    ["RESTO_MOONGLOW"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 
-    },
-    ["RESTO_REGROWTH"] = {
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 
-    },
-    ["RESTO_DEEP"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
-    },
-    ["FERAL_CAT_DPS"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=26.0, ["ITEM_MOD_HIT_RATING_SHORT"]=22.0 
-    },
-    ["FERAL_BEAR_TANK"] = {
-        ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5 
-    },
-    ["HYBRID_HOTW"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=0.8, ["ITEM_MOD_ARMOR_SHORT"]=0.2 
-    },
+    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["BALANCE_BOOMKIN"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.0  },
+    ["RESTO_MOONGLOW"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0  },
+    ["RESTO_REGROWTH"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0  },
+    ["RESTO_DEEP"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0  },
+    ["FERAL_CAT_DPS"] = { ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["FERAL_BEAR_TANK"] = {  ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5  },
+    ["HYBRID_HOTW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
@@ -37,22 +21,22 @@ Druid.Weights = {
 -- =============================================================
 Druid.LevelingWeights = {
     -- Cat Form (Standard)
-    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]= 0.2, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0 },
+    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 
     -- Bear Tank Leveling
-    ["Leveling_Bear_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.2, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_DODGE_RATING_SHORT"]=5.0 },
-    ["Leveling_Bear_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.4, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=8.0 },
-    ["Leveling_Bear_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.8, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5 },
+    ["Leveling_Bear_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Bear_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Bear_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 
     -- Balance
-    ["Leveling_Caster_41_51"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_CRIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+    ["Leveling_Caster_41_51"] = {  ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
+    ["Leveling_Caster_52_59"] = {  ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
 
     -- Restoration
-    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
+    ["Leveling_Healer_52_59"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
 }
 
 -- =============================================================
@@ -97,6 +81,9 @@ Druid.Talents = {
     ["NATURES_SWIFT"]   = "Nature's Swiftness",
     ["IMP_REGROWTH"]    = "Improved Regrowth",
     ["REFLECTION"]      = "Reflection",
+    ["WILD_GROWTH"]     = "Wild Growth",
+    ["LIVING_SPIRIT"]   = "Living Spirit",
+    ["NATURES_REACH"]   = "Nature's Reach",
 }
 
 -- =============================================================
@@ -129,10 +116,11 @@ function Druid:GetSpec()
 
     -- Endgame Spec Detection
     if Rank("MOONKIN_FORM") > 0 then return "BALANCE_BOOMKIN" end
-    if Rank("SWIFTMEND") > 0 then return "RESTO_DEEP" end
+    if Rank("WILD_GROWTH") > 0 then return "RESTO_DEEP" end
+    if Rank("SWIFTMEND") > 0 and Rank("LEADER_OF_PACK") == 0 then return "RESTO_DEEP" end
     if Rank("MOONGLOW") > 0 and Rank("NATURES_SWIFT") > 0 then return "RESTO_MOONGLOW" end
     if Rank("IMP_REGROWTH") >= 3 then return "RESTO_REGROWTH" end
-    if Rank("HEART_WILD") > 0 and Rank("NATURES_SWIFT") > 0 then return "HYBRID_HOTW" end
+    if Rank("LEADER_OF_PACK") > 0 and Rank("NATURES_SWIFT") > 0 then return "HYBRID_HOTW" end
     
     -- Feral Split: Bear vs Cat
     if Rank("THICK_HIDE") >= 3 then return "FERAL_BEAR_TANK" end
@@ -147,11 +135,19 @@ function Druid:ApplyScalers(weights, currentSpec)
     local rHotW = Rank("HEART_WILD")
     if rHotW > 0 then
         if weights["ITEM_MOD_INTELLECT_SHORT"] then 
-            weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.04)) 
+            weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.02)) 
         end
-        if weights["ITEM_MOD_STRENGTH_SHORT"] then
-            weights["ITEM_MOD_STRENGTH_SHORT"] = weights["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rHotW * 0.04))
+        if currentSpec:find("BEAR") and weights["ITEM_MOD_STAMINA_SHORT"] then
+            weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rHotW * 0.04))
         end
+        if (currentSpec:find("CAT") or currentSpec:find("DPS")) and weights["ITEM_MOD_STRENGTH_SHORT"] then
+            weights["ITEM_MOD_STRENGTH_SHORT"] = weights["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rHotW * 0.02))
+        end
+    end
+    
+    local rLS = Rank("LIVING_SPIRIT")
+    if rLS > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLS * 0.05))
     end
 
     -- 2. Covariance (Mana Regen / Healing Synergy)
@@ -164,12 +160,20 @@ function Druid:ApplyScalers(weights, currentSpec)
     end
 
     -- 3. Caps (Hit Cap 9%)
+    local nrHit = Rank("NATURES_REACH") * 2
     if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         -- FIX: Use Shim
         local currentHit = MSC:GetPlayerStat("HIT")
-        if currentHit >= 9 then
+        if (currentHit + nrHit) >= 9 then
             weights["ITEM_MOD_HIT_RATING_SHORT"] = 2.0 -- Drop value
             table.insert(activeCaps, "Hit (9%)")
+        end
+    end
+    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
+        local spellHit = MSC:GetPlayerStat("SPELL_HIT")
+        if (spellHit + nrHit) >= 16 then
+            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0
+            table.insert(activeCaps, "Spell Hit Cap")
         end
     end
 
@@ -177,21 +181,7 @@ function Druid:ApplyScalers(weights, currentSpec)
 end
 
 function Druid:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = math.max(weights and weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0, weights and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0)
-    if critWeight == 0 then critWeight = 10.0 end -- fallback
-
-    -- Racial: Dwarf (Mace=4/5) -> +1% Crit
-    if race == "Dwarf" and (subClassID == 4 or subClassID == 5) then
-        bonus = bonus + (critWeight * 1)
-    end
-    
-    return bonus
+    return 0
 end
 
 -- =============================================================

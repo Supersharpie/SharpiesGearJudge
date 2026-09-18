@@ -160,8 +160,8 @@ end
 function MSC:GetPlayerStat(statType)
     local val = 0
     if MSC.IsVanillaRules then
-        if statType == "HIT" then val = GetHitModifier() or 0
-        elseif statType == "SPELL_HIT" then val = GetSpellHitModifier() or 0
+        if statType == "HIT" then val = GetHitModifier()
+        elseif statType == "SPELL_HIT" then val = GetSpellHitModifier()
         elseif statType == "CRIT" then val = GetCritChance()
         elseif statType == "SPELL_CRIT" then val = GetSpellCritChance(2)
         elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = (b or 0) + (m or 0)
@@ -178,6 +178,7 @@ function MSC:GetPlayerStat(statType)
         elseif statType == "SPELL_POWER" then val = GetSpellBonusDamage(2)
         end
     end
+    
     return MSC.SanitizeStat(val)
 end
 
@@ -1034,15 +1035,51 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
                 if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
             end
             
-            if weights[weightKey] then 
+            local w = weights[weightKey] or 0
+            
+            -- [[ WoW Forever Stat Unifications ]]
+            if MSC.IsForever then
+                if stat == "ITEM_MOD_HIT_RATING_SHORT" or stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or stat == "ITEM_MOD_HIT_MELEE_RATING_SHORT" or stat == "ITEM_MOD_HIT_RANGED_RATING_SHORT" then
+                    w = math_max(w, weights["ITEM_MOD_HIT_RATING_SHORT"] or 0, weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0, weights["ITEM_MOD_HIT_MELEE_RATING_SHORT"] or 0, weights["ITEM_MOD_HIT_RANGED_RATING_SHORT"] or 0)
+                elseif stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" or stat == "ITEM_MOD_CRIT_MELEE_RATING_SHORT" or stat == "ITEM_MOD_CRIT_RANGED_RATING_SHORT" then
+                    w = math_max(w, weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0, weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0, weights["ITEM_MOD_CRIT_MELEE_RATING_SHORT"] or 0, weights["ITEM_MOD_CRIT_RANGED_RATING_SHORT"] or 0)
+                end
+            end
+
+            if w > 0 then 
                 local finalVal = val
-                local w = weights[weightKey]
                 if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
                 score = score + (finalVal * w)
                 if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
             end
+            
+            -- [[ WoW Forever Bonus Spell Power from Healing (roughly 1/3 conversion) ]]
+            if MSC.IsForever and stat == "ITEM_MOD_SPELL_HEALING_DONE_SHORT" then
+                local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
+                if spWeight > 0 then
+                    score = score + (val * 0.333 * spWeight)
+                    usefulRaw = usefulRaw + (val * 0.333)
+                end
+            end
         end
     end
+    
+    local bonusScore = 0
+    if SGJ_Settings and SGJ_Settings.AssumeCampingBuffs and MSC.IsForever then
+        if (slotId == 16 or slotId == 17) and stats["MSC_WEAPON_SPEED"] and stats["MSC_WEAPON_SPEED"] > 0 then
+            local bonusDamage = 2 -- Placeholder for early game Rough Sharpening/Weightstone
+            local bonusDps = bonusDamage / stats["MSC_WEAPON_SPEED"]
+            local w = weights["MSC_WEAPON_DPS"] or 0
+            if slotId == 17 and weights["MSC_WEAPON_DPS_OH"] then
+                w = weights["MSC_WEAPON_DPS_OH"]
+            elseif slotId == 17 then
+                bonusDps = bonusDps * 0.5 -- native OH penalty if OH weight not distinct
+            end
+            bonusScore = bonusScore + (bonusDps * w)
+        end
+    end
+    score = score + bonusScore
+
     
     if not MSC.IsVanillaRules and stats["ITEM_MOD_RESILIENCE_RATING_SHORT"] then
         local resVal = stats["ITEM_MOD_RESILIENCE_RATING_SHORT"]
@@ -1118,7 +1155,7 @@ end
 -- =============================================================
 function MSC:DebugItem()
     local tip = GameTooltip
-    local _, link = MSC_GetTooltipItem(tip)
+    local _, link = tip:GetItem()
     if not link then print(MSC.L["|cffff0000SGJ: Please hover over an item to debug.|r"]) return end
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then print(MSC.L["|cffff0000SGJ: No weights loaded.|r"]) return end

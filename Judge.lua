@@ -100,6 +100,12 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
     elseif cmd == "colors" then
         SGJ_Settings.ColorizeStats = not SGJ_Settings.ColorizeStats
         print(MSC.L["|cff00ff00SGJ:|r Stat Coloring is now "] .. (SGJ_Settings.ColorizeStats and onText or offText))
+    
+    elseif cmd == "debugvars" then
+        print("|cff00ffffSGJ DEBUG:|r Type of SGJ_Settings:", type(SGJ_Settings))
+        if type(SGJ_Settings) == "table" then
+            print("|cff00ffffSGJ DEBUG:|r ShowBagArrows:", tostring(SGJ_Settings.ShowBagArrows))
+        end
     elseif cmd == "debug" then
         MSC:DebugItem()
     elseif cmd == "jc" then
@@ -979,3 +985,148 @@ if not TooltipDataProcessor then
 end
 
 -- Quest tooltip hooks live in TooltipManager.lua
+
+
+-- ============================================================================
+-- PASSIVE LOOT DATA MINER (RECORD-STYLE)
+-- ============================================================================
+local miner = CreateFrame("Frame")
+miner:RegisterEvent("LOOT_OPENED")
+miner:SetScript("OnEvent", function(self, event, ...)
+    if not MSC.IsForever then return end
+    
+    SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
+    if not SharpiesGearJudgeDB.EnableDataminer then return end
+    SharpiesGearJudgeDB.DropDatabase = SharpiesGearJudgeDB.DropDatabase or {}
+    
+    if event == "LOOT_OPENED" then
+        if UnitExists("target") and UnitIsDead("target") and not UnitIsPlayer("target") then
+            local guid = UnitGUID("target")
+            if not guid then return end
+            
+            local npcID = nil
+            -- Handle Modern GUID format (Creature-0-0-0-0-12345-0000)
+            if string.find(guid, "-") then
+                local parts = {strsplit("-", guid)}
+                if parts[1] == "Creature" or parts[1] == "Vehicle" then
+                    npcID = tonumber(parts[6])
+                end
+            -- Handle Vanilla/TBC Hex GUID format (0xF130000A23000000)
+            elseif string.sub(guid, 1, 3) == "0xF" then
+                npcID = tonumber(string.sub(guid, 6, 10), 16)
+            end
+            
+            if npcID then
+                local npcName = UnitName("target") or "Unknown"
+                local zoneName = GetRealZoneText() or "Unknown Zone"
+                
+                SharpiesGearJudgeDB.DropDatabase[npcID] = SharpiesGearJudgeDB.DropDatabase[npcID] or {
+                    name = npcName,
+                    zone = zoneName,
+                    drops = {}
+                }
+                
+                local numItems = GetNumLootItems()
+                for i = 1, numItems do
+                    local link = GetLootSlotLink(i)
+                    if link then
+                        local itemID = string.match(link, "item:(%d+)")
+                        if itemID then
+                            SharpiesGearJudgeDB.DropDatabase[npcID].drops[tonumber(itemID)] = true
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+SlashCmdList["SGJ_MINER"] = function(msg)
+    msg = string.lower(msg or "")
+    SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
+    
+    if msg == "toggle" then
+        SharpiesGearJudgeDB.EnableDataminer = not SharpiesGearJudgeDB.EnableDataminer
+        local status = SharpiesGearJudgeDB.EnableDataminer and "|cff00ff00ON|r" or "|cffff0000OFF|r"
+        print("|cff00ffffSGJ Data Miner:|r Tracking and Roadmap Injection is now " .. status)
+        return
+    end
+
+    SharpiesGearJudgeDB.DropDatabase = SharpiesGearJudgeDB.DropDatabase or {}
+    local npcCount, itemCount = 0, 0
+    for npcID, data in pairs(SharpiesGearJudgeDB.DropDatabase) do
+        npcCount = npcCount + 1
+        for itemID, _ in pairs(data.drops) do
+            itemCount = itemCount + 1
+        end
+    end
+    local status = SharpiesGearJudgeDB.EnableDataminer and "|cff00ff00ON|r" or "|cffff0000OFF|r"
+    print(string.format("|cff00ffffSGJ Data Miner (%s):|r Tracking %d drops across %d unique NPCs.", status, itemCount, npcCount))
+end
+SLASH_SGJ_MINER1 = "/sgjminer"
+
+
+miner:RegisterEvent("QUEST_COMPLETE")
+local originalOnEvent = miner:GetScript("OnEvent")
+miner:SetScript("OnEvent", function(self, event, ...)
+    if originalOnEvent then originalOnEvent(self, event, ...) end
+    
+    if not MSC.IsForever then return end
+    if not SharpiesGearJudgeDB.EnableDataminer then return end
+    
+    SharpiesGearJudgeDB.QuestDatabase = SharpiesGearJudgeDB.QuestDatabase or {}
+    
+    if event == "QUEST_COMPLETE" then
+        local questID = GetQuestID and GetQuestID() or 0
+        if questID == 0 then return end -- Some very old clients don't support GetQuestID
+        
+        local questName = GetTitleText() or "Unknown Quest"
+        local zoneName = GetRealZoneText() or "Unknown Zone"
+        
+        SharpiesGearJudgeDB.QuestDatabase[questID] = SharpiesGearJudgeDB.QuestDatabase[questID] or {
+            name = questName,
+            zone = zoneName,
+            rewards = {}
+        }
+        
+        local numChoices = GetNumQuestChoices()
+        for i = 1, numChoices do
+            local link = GetQuestItemLink("choice", i)
+            if link then
+                local itemID = string.match(link, "item:(%d+)")
+                if itemID then
+                    SharpiesGearJudgeDB.QuestDatabase[questID].rewards[tonumber(itemID)] = true
+                end
+            end
+        end
+        
+        local numRewards = GetNumQuestRewards()
+        for i = 1, numRewards do
+            local link = GetQuestItemLink("reward", i)
+            if link then
+                local itemID = string.match(link, "item:(%d+)")
+                if itemID then
+                    SharpiesGearJudgeDB.QuestDatabase[questID].rewards[tonumber(itemID)] = true
+                end
+            end
+        end
+    end
+end)
+
+-- Hook the slash command to include quest counts
+local oldSlash = SlashCmdList["SGJ_MINER"]
+SlashCmdList["SGJ_MINER"] = function(msg)
+    if oldSlash then oldSlash(msg) end
+    msg = string.lower(msg or "")
+    if msg == "toggle" then return end -- Handled by first slash command
+    
+    SharpiesGearJudgeDB.QuestDatabase = SharpiesGearJudgeDB.QuestDatabase or {}
+    local qCount, qItems = 0, 0
+    for qID, data in pairs(SharpiesGearJudgeDB.QuestDatabase) do
+        qCount = qCount + 1
+        for itemID, _ in pairs(data.rewards) do
+            qItems = qItems + 1
+        end
+    end
+    print(string.format("|cff00ffffSGJ Data Miner:|r Tracking %d rewards across %d unique Quests.", qItems, qCount))
+end

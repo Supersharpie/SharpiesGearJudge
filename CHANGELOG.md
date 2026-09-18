@@ -2,6 +2,42 @@
 
 ---
 
+## 🚀 v3.0.3
+
+### ⚔️ WoW: Forever Class Talent Overhauls
+- **All 9 Classes Updated**: Completely rewrote the auto-detect routing (`GetSpec`) and dynamic stat scalers (`ApplyScalers`) for Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, and Druid to accurately reflect the official WoW: Forever talent trees.
+- Capstone talents, hybrid scaling multipliers (e.g. Spirit to Spell Damage, Attack Power to Intellect), and deep-tree spec detection have been fully natively integrated.
+
+### 🛠️ Beta Client Bug Fixes
+- **SavedVariables Corruption Fix - maybe, maybe not**: Removed legacy `SavedVariablesPerCharacter` tags from all `.toc` files. This completely bypasses a critical WoW Forever Beta bug (introduced in build 69913) that was corrupting WTF folders and preventing UI settings from saving.
+- **Roadmap Modernization**: Repaired Roadmap `UnitDefense` crashes and TBC feature leaks caused by the new modern 11.0 hybrid engine.
+
+### 🐛 Bug Fixes & Minor Adjustments
+- **Profession API Lua Errors**: Bridged deprecated Global APIs (`GetNumSkillLines`, `GetNumTradeSkills`) that were completely removed in the WoW: Forever (11.5) hybrid engine. Polyfilled the `TradeSkillFrame` scanners to silently failover, preventing severe Lua errors when opening the crafting windows.
+- **Startup Crash Resolved**: Fixed critical syntax errors in the Paladin, Shaman, and Hunter class modules that were causing the addon to silently fail during initialization.
+- **Rogue Talent Routing**: Corrected weapon specialization routing for Combat Rogues, properly mapping to the new Hack and Slash and Puncturing Wounds mechanics.
+- **Mage Hit Caps**: Updated hit cap threshold logic for Arcane Mind, Arcane Resilience, and Elemental Precision.
+- **Warlock Scaling**: Buffed Suppression hit cap logic and added Demonic Pact evaluations.
+- **Druid Hybrid Detection**: Re-mapped Heart of the Wild & Nature's Swiftness logic to accurately detect new hybrid leveling builds.
+- **Hunter Marksman Adjustments**: Fixed evaluation mapping for Sniper Shot and Careful Aim.
+---
+
+## 🚀 v3.0.2
+
+### ⚔️ WoW: Forever Stat Meta Overhaul
+- **Unified Hit & Crit System**: Updated the math engine to dynamically unify physical and magical hit/crit values. Items with Hit now properly evaluate for hybrid classes (e.g., Spell Hit evaluating perfectly for physical builds, and vice-versa).
+- **Healer Stat Conversion (1/3 Ratio)**: Programmed the core logic engine to natively convert 33.3% of `+Healing` gear into `+Spell Damage` to match Forever's new hybrid leveling rules for healers.
+- **Removed Gemming UI**: Disabled Jewelcrafting/Gemming options from the interface menus when running on the Forever/Era engine (since the game uses Vanilla rules).
+- **Weapon Damage Hook**: Added an `AssumeCampingBuffs` hook to correctly evaluate melee weapon slots for physical DPS.
+- **BlizzCon 2026 Expertise Overhaul**: Systematically re-weighted all 9 classes in the `Classes/Forever` folder to align with the official Kris Zierhut BlizzCon 2026 presentation:
+  - **Expertise Stacking**: Injected the new `Expertise` stat behind Hit Cap for all physical and tank profiles.
+  - **Weapon Skill Item Caps**: Restored `Weapon Skill` support (with a lower fallback weight compared to Expertise) to accommodate items that still carry skill, without overvaluing them.
+  - **Racial Skill Deactivation**: Disabled all hardcoded Vanilla racial weapon skill bonuses (e.g., Human Swords, Orc Axes) for Forever.
+  - **DoT Crit Scaling**: Significantly buffed Crit weights across DoT-heavy specs (Affliction Warlock, Shadow Priest) now that periodic damage can natively critically strike.
+  - **Dynamic Open-World vs Raiding Scales**: Completely updated all spec profiles to strictly differentiate between Leveling (Stamina/Spirit/Primary Stats) and Raiding (Hit Cap/Expertise/Throughput) archetypes.
+
+---
+
 ## 🚀 v3.0.1
 
 ### 🛠️ Bug Fixes & Engine Ports (11.5)

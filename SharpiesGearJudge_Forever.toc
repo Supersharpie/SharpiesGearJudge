@@ -1,10 +1,9 @@
-## Interface: 11508
+## Interface: 16001
 ## Title: |cff00ccffSharpie's Gear Judge|r (Forever Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.0.0-Forever
-## SavedVariables: SGJ_History
-## SavedVariablesPerCharacter: SGJ_Settings, SharpiesGearJudgeDB
+## Version: 3.0.3-Forever
+## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
 
 Localization.lua
 Locales/deDE.lua
@@ -28,7 +27,6 @@ SixtyUpgradesParser.lua
 Helpers.lua
 Dynamic_Engine.lua
 Evaluator.lua
-
 Classes\Forever\Warrior.lua
 Classes\Forever\Paladin.lua
 Classes\Forever\Rogue.lua
@@ -38,6 +36,5 @@ Classes\Forever\Priest.lua
 Classes\Forever\Shaman.lua
 Classes\Forever\Hunter.lua
 Classes\Forever\Druid.lua
-
 Interface.lua
 Judge.lua

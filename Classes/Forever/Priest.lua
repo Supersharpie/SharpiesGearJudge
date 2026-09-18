@@ -6,24 +6,12 @@ Priest.Name = "PRIEST"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Priest.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5 
-    },
-    ["HOLY_DEEP"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
-    },
-    ["DISC_PI_SUPPORT"] = {
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.5, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=0.6 
-    },
-    ["SHADOW_PVE"] = {
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
-    },
-    ["SHADOW_PVP"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0 
-    },
-    ["HYBRID_POWER_WEAVING"] = {
-        ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 
-    },
+    ["Default"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0  },
+    ["HOLY_DEEP"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8  },
+    ["DISC_PI_SUPPORT"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8  },
+    ["SHADOW_PVE"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["SHADOW_PVP"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
+    ["HYBRID_POWER_WEAVING"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0  },
 }
 
 -- =============================================================
@@ -31,25 +19,18 @@ Priest.Weights = {
 -- =============================================================
 Priest.LevelingWeights = {
     -- Shadow/Wand
-    ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.6 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+    ["Leveling_1_20"]  = {  ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
+    ["Leveling_21_40"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
+    ["Leveling_41_51"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
+    ["Leveling_52_59"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
     
     -- Healer
-["Leveling_Healer_52_59"] = { 
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, -- [[ ADDED ]]
-        ["ITEM_MOD_INTELLECT_SHORT"]=1.2, 
-        ["ITEM_MOD_SPIRIT_SHORT"]=1.5, 
-        ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, 
-        ["ITEM_MOD_STAMINA_SHORT"]=0.8 
-    },
+["Leveling_Healer_52_59"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.5  },
 	
     -- Smite
-    ["Leveling_Smite_21_40"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.0 },
-    ["Leveling_Smite_41_51"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
-    ["Leveling_Smite_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+    ["Leveling_Smite_21_40"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
+    ["Leveling_Smite_41_51"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
+    ["Leveling_Smite_52_59"] = {  ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
 }
 
 -- =============================================================
@@ -145,9 +126,15 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- [[ 1. Spiritual Guidance (Spirit -> Spell Power) ]]
     local rSG = Rank("SPIRIT_GUIDANCE")
     if rSG > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
-        local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0
-        -- Add SP value to Spirit (0.05 per rank)
-        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (spWeight * (rSG * 0.05))
+        local healWeight = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
+        local dmgWeight = weights["ITEM_MOD_SPELL_DAMAGE_DONE_SHORT"] or weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
+        -- Healing gets 5% per point, Damage gets 1% per point
+        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] + (healWeight * (rSG * 0.05)) + (dmgWeight * (rSG * 0.01))
+    end
+
+    local rMent = Rank("MENTAL_STRENGTH")
+    if rMent > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMent * 0.03))
     end
     
     -- [[ 2. Covariance (Mana Regen / Healing Power Synergy) ]]
@@ -165,7 +152,7 @@ function Priest:ApplyScalers(weights, currentSpec)
     if currentSpec:find("SHADOW") and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
         -- FIX: Use GetPlayerStat via Shim (Returns Percent in Era)
         local gearHit = MSC:GetPlayerStat("SPELL_HIT") 
-        local talentHit = Rank("SHADOW_FOCUS") * 2 -- 2% per rank in Era
+        local talentHit = Rank("SHADOW_FOCUS") * 1 -- 1% per rank in Forever
         local totalHit = gearHit + talentHit
         
         if totalHit >= 16 then
@@ -178,20 +165,7 @@ function Priest:ApplyScalers(weights, currentSpec)
 end
 
 function Priest:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = weights and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 8.0
-
-    -- Racial: Dwarf (Mace=4) -> +1% Crit
-    if race == "Dwarf" and (subClassID == 4) then
-        bonus = bonus + (critWeight * 1)
-    end
-    
-    return bonus
+    return 0
 end
 
 -- =============================================================
@@ -202,3 +176,4 @@ for k, v in pairs(Priest.Weights) do Priest.Profiles[k] = v end
 for k, v in pairs(Priest.LevelingWeights) do Priest.Profiles[k] = v end
 
 MSC.RegisterModule("PRIEST", Priest)
+

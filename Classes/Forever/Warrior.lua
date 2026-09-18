@@ -6,27 +6,13 @@ Warrior.Name = "WARRIOR"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Warrior.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.3, ["ITEM_MOD_STAMINA_SHORT"]=0.5 
-    },
-    ["FURY_2H"] = {
-        ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 7.5, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.3, ["ITEM_MOD_CRIT_RATING_SHORT"] = 28.0, ["ITEM_MOD_HIT_RATING_SHORT"] = 12.0, ["ITEM_MOD_STAMINA_SHORT"] = 0.5 
-    },
-    ["FURY_DW"] = {
-        ["ITEM_MOD_HIT_RATING_SHORT"] = 22.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 30.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.5, ["ITEM_MOD_STAMINA_SHORT"] = 0.5 
-    },
-    ["ARMS_MS"] = {
-        ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 8.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 28.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_AGILITY_SHORT"] = 1.2, ["ITEM_MOD_STAMINA_SHORT"] = 1.5 
-    },
-    ["DEEP_PROT"] = {
-        ["ITEM_MOD_STAMINA_SHORT"] = 1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 0.6, ["ITEM_MOD_HIT_RATING_SHORT"] = 10.0, ["ITEM_MOD_DODGE_RATING_SHORT"] = 12.0, ["ITEM_MOD_PARRY_RATING_SHORT"] = 12.0, ["ITEM_MOD_STRENGTH_SHORT"] = 0.5 
-    },
-    ["FURY_PROT"] = {
-        ["ITEM_MOD_HIT_RATING_SHORT"] = 22.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, ["ITEM_MOD_STAMINA_SHORT"] = 1.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.5 
-    },
-    ["ARMS_PROT"] = {
-        ["ITEM_MOD_STAMINA_SHORT"] = 1.0, ["ITEM_MOD_CRIT_RATING_SHORT"] = 20.0, ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8, ["ITEM_MOD_PARRY_RATING_SHORT"] = 10.0 
-    },
+    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["FURY_2H"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["FURY_DW"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["ARMS_MS"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["DEEP_PROT"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["FURY_PROT"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["ARMS_PROT"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.8, ["ITEM_MOD_PARRY_RATING_SHORT"]=10.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
@@ -34,20 +20,20 @@ Warrior.Weights = {
 -- =============================================================
 Warrior.LevelingWeights = {
     -- Standard Arms/2H Fury
-    ["Leveling_1_20"]  = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.2 },
+    ["Leveling_1_20"]  = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
     
     -- Dual Wield Fury Leveling
-    ["Leveling_DW_21_40"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-    ["Leveling_DW_41_51"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_DW_52_59"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
+    ["Leveling_DW_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_DW_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_DW_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 
     -- Tank Leveling
-    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
-    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, ["ITEM_MOD_HIT_RATING_SHORT"]=5.0 },
-    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=10.0 },
+    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
@@ -85,10 +71,12 @@ Warrior.Talents = {
     ["DEFIANCE"]         = "Defiance",
     ["IMP_SLAM"]         = "Improved Slam",
     ["DW_SPEC"]          = "Dual Wield Specialization",
-    ["TACTICAL_MASTERY"] = "Tactical Mastery",
+    ["TACTICAL_MASTERY"] = "Improved Tactical Mastery", -- Renamed in Forever
     ["IMPALE"]           = "Impale",
     ["CRUELTY"]          = "Cruelty",
     ["FLURRY"]           = "Flurry",
+    ["TOUGHNESS"]        = "Toughness",
+    ["VITALITY"]         = "Vitality",
 }
 
 -- =============================================================
@@ -151,6 +139,17 @@ end
 function Warrior:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
+    local rTough = Rank("TOUGHNESS")
+    if rTough > 0 and weights["ITEM_MOD_ARMOR_SHORT"] then
+        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
+    end
+
+    local rVit = Rank("VITALITY")
+    if rVit > 0 then
+        if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rVit * 0.02)) end
+        if weights["ITEM_MOD_STRENGTH_SHORT"] then weights["ITEM_MOD_STRENGTH_SHORT"] = weights["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rVit * 0.02)) end
+    end
+
 
     -- [[ 1. HIT CAP (Using Shim) ]]
     if weights["ITEM_MOD_HIT_RATING_SHORT"] then
@@ -171,28 +170,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
 end
 
 function Warrior:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = weights and weights["ITEM_MOD_CRIT_RATING_SHORT"] or 28.0
-
-    -- Racial: Human (Sword=7/8) -> +2% Crit
-    if race == "Human" and (subClassID == 7 or subClassID == 8) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    -- Racial: Dwarf (Mace=4/5) -> +1% Crit
-    if race == "Dwarf" and (subClassID == 4 or subClassID == 5) then
-        bonus = bonus + (critWeight * 1)
-    end
-    -- Racial: Orc (Axe=0/1) -> +2% Crit (Assumed based on previous parity)
-    if race == "Orc" and (subClassID == 0 or subClassID == 1) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    
-    return bonus
+    return 0
 end
 
 -- =============================================================

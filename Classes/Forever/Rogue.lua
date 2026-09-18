@@ -6,27 +6,13 @@ Rogue.Name = "ROGUE"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Rogue.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0 
-    },
-    ["RAID_COMBAT_SWORDS"] = {
-        ["ITEM_MOD_HIT_RATING_SHORT"]=22.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0 
-    },
-    ["RAID_COMBAT_DAGGERS"] = {
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["RAID_SEAL_FATE"] = {
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=18.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["PVP_HEMO"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0 
-    },
-    ["PVP_CB_DAGGER"] = {
-        ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 
-    },
-    ["PVP_MACE"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=1.8 
-    },
+    ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_COMBAT_SWORDS"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_COMBAT_DAGGERS"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_SEAL_FATE"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["PVP_HEMO"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["PVP_CB_DAGGER"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["PVP_MACE"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
@@ -34,20 +20,20 @@ Rogue.Weights = {
 -- =============================================================
 Rogue.LevelingWeights = {
     -- Combat Swords/Maces
-    ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
+    ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 
     -- Dagger Leveling
-    ["Leveling_Dagger_21_40"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
-    ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0 },
-    ["Leveling_Dagger_52_59"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
+    ["Leveling_Dagger_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Dagger_52_59"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 
     -- Hemo Leveling
-    ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
-    ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0 },
-    ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
+    ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
@@ -82,16 +68,17 @@ Rogue.Talents = {
     ["SEAL_FATE"]       = "Seal Fate",
     ["COLD_BLOOD"]      = "Cold Blood",
     ["ADRENALINE_RUSH"] = "Adrenaline Rush",
-    ["SWORD_SPEC"]      = "Sword Specialization",
-    ["DAGGER_SPEC"]     = "Dagger Specialization",
-    ["MACE_SPEC"]       = "Mace Specialization",
+    ["HACK_AND_SLASH"]  = "Hack and Slash",
+    ["PUNCTURING_WOUNDS"]= "Puncturing Wounds",
     ["RIPOSTE"]         = "Riposte",
     ["HEMORRHAGE"]      = "Hemorrhage",
     ["PREPARATION"]     = "Preparation",
     ["LETHALITY"]       = "Lethality",
     ["PRECISION"]       = "Precision",
     ["WEAP_EXPERTISE"]  = "Weapon Expertise",
-    ["BACKSTAB_IMP"]    = "Improved Backstab", 
+    ["MUTILATE"]        = "Mutilate",
+    ["VENOM"]           = "Venom",
+    ["THOUSAND_CUTS"]   = "Thousand Cuts",
 }
 
 -- =============================================================
@@ -119,7 +106,7 @@ function Rogue:GetSpec()
         -- Detect Leveling Spec Type
         local role = "Leveling" -- Default Combat
         if Rank("HEMORRHAGE") > 0 then role = "Leveling_Hemo"
-        elseif Rank("DAGGER_SPEC") > 0 or Rank("BACKSTAB_IMP") > 0 then role = "Leveling_Dagger"
+        elseif Rank("PUNCTURING_WOUNDS") > 0 then role = "Leveling_Dagger"
         end
         
         local key = role .. suffix
@@ -130,10 +117,10 @@ function Rogue:GetSpec()
     -- Endgame
     if Rank("HEMORRHAGE") > 0 and Rank("PREPARATION") > 0 then return "PVP_HEMO" end
     if Rank("COLD_BLOOD") > 0 and Rank("PREPARATION") > 0 and Rank("HEMORRHAGE") == 0 then return "PVP_CB_DAGGER" end
-    if Rank("MACE_SPEC") > 0 then return "PVP_MACE" end
     if Rank("SEAL_FATE") > 0 then return "RAID_SEAL_FATE" end
-    if Rank("ADRENALINE_RUSH") > 0 and Rank("SWORD_SPEC") > 0 then return "RAID_COMBAT_SWORDS" end
-    if Rank("DAGGER_SPEC") > 0 then return "RAID_COMBAT_DAGGERS" end
+    if Rank("ADRENALINE_RUSH") > 0 and Rank("PUNCTURING_WOUNDS") == 0 then return "RAID_COMBAT_SWORDS" end
+    if Rank("ADRENALINE_RUSH") > 0 and Rank("PUNCTURING_WOUNDS") > 0 then return "RAID_COMBAT_DAGGERS" end
+    if Rank("PUNCTURING_WOUNDS") > 0 then return "RAID_COMBAT_DAGGERS" end
     return "RAID_COMBAT_SWORDS"
 end
 
@@ -161,28 +148,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
 end
 
 function Rogue:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = weights and weights["ITEM_MOD_CRIT_RATING_SHORT"] or 28.0
-
-    -- Racial: Human (Sword=7) -> +2% Crit
-    if race == "Human" and (subClassID == 7) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    -- Racial: Dwarf (Mace=4) -> +1% Crit
-    if race == "Dwarf" and (subClassID == 4) then
-        bonus = bonus + (critWeight * 1)
-    end
-    -- Racial: Orc (Axe=0, included for parity)
-    if race == "Orc" and (subClassID == 0) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    
-    return bonus
+    return 0
 end
 
 MSC.RegisterModule("ROGUE", Rogue)

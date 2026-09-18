@@ -6,45 +6,29 @@ Hunter.Name = "HUNTER"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Hunter.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_HIT_RATING_SHORT"]=32.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 
-    },
-    ["RAID_MM_STANDARD"] = {
-        ["ITEM_MOD_HIT_RATING_SHORT"]=32.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0 
-    },
-    ["RAID_MM_STARTER"] = {
-        ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["RAID_SURV_DEEP"] = {
-        ["ITEM_MOD_AGILITY_SHORT"]=3.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_HIT_RATING_SHORT"]=30.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["PVP_MM_UTIL"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["PVP_SURV_TANK"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
-    ["MELEE_NIGHTFALL"] = {
-        ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 
-    },
-    ["SOLO_DME_TRIBUTE"] = {
-        ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
-    },
+    ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_MM_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_MM_STARTER"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_SURV_DEEP"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["PVP_MM_UTIL"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["PVP_SURV_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["MELEE_NIGHTFALL"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["SOLO_DME_TRIBUTE"] = { ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
 Hunter.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]= 0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 5.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
     
     -- Melee Hunter
-    ["Leveling_Melee_21_40"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=2.0 },
-    ["Leveling_Melee_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
-    ["Leveling_Melee_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 },
+    ["Leveling_Melee_21_40"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Melee_41_51"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_Melee_52_59"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
 
 -- =============================================================
@@ -77,13 +61,16 @@ Hunter.Talents = {
     ["UNLEASHED_FURY"]  = "Unleashed Fury",
     ["TRUESHOT_AURA"]   = "Trueshot Aura",
     ["AIMED_SHOT"]      = "Aimed Shot",
+    ["SNIPER_SHOT"]     = "Sniper Shot",
     ["WYVERN_STING"]    = "Wyvern Sting",
+    ["LACERATING_STRIKES"]= "Lacerating Strikes",
     ["COUNTERATTACK"]   = "Counterattack",
     ["DETERRENCE"]      = "Deterrence",
     ["SUREFOOTED"]      = "Surefooted",
     ["LIGHTNING_REF"]   = "Lightning Reflexes",
     ["MORTAL_SHOTS"]    = "Mortal Shots",
     ["SURVIVALIST"]     = "Survivalist",
+    ["CAREFUL_AIM"]     = "Careful Aim",
 }
 
 -- =============================================================
@@ -116,12 +103,11 @@ function Hunter:GetSpec()
     local _, _, _, _, mmPoints = GetTalentTabInfo(2); mmPoints = mmPoints or 0
     
     -- Endgame
+    if Rank("LACERATING_STRIKES") > 0 then return "RAID_SURV_DEEP" end
+    if Rank("SNIPER_SHOT") > 0 and Rank("UNLEASHED_FURY") > 0 then return "RAID_MM_STANDARD" end
+    if Rank("SNIPER_SHOT") > 0 and Rank("SUREFOOTED") > 0 then return "RAID_MM_STARTER" end
+    if Rank("SNIPER_SHOT") > 0 and Rank("DETERRENCE") > 0 then return "PVP_MM_UTIL" end
     if Rank("COUNTERATTACK") > 0 then return "MELEE_NIGHTFALL" end
-    if Rank("TRUESHOT_AURA") > 0 and Rank("UNLEASHED_FURY") > 0 then return "RAID_MM_STANDARD" end
-    if Rank("TRUESHOT_AURA") > 0 and Rank("SUREFOOTED") > 0 then return "RAID_MM_STARTER" end
-    if Rank("LIGHTNING_REF") == 5 and Rank("WYVERN_STING") > 0 then return "RAID_SURV_DEEP" end
-    if Rank("TRUESHOT_AURA") > 0 and Rank("DETERRENCE") > 0 then return "PVP_MM_UTIL" end
-    if (Rank("WYVERN_STING") > 0 and Rank("SUREFOOTED") > 0) then return "PVP_SURV_TANK" end
     if mmPoints >= 30 then return "RAID_MM_STANDARD" end
     return "RAID_MM_STANDARD"
 end
@@ -133,7 +119,17 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- [[ 1. Lightning Reflexes (Agi Scaling) ]]
     local rLR = Rank("LIGHTNING_REF")
     if rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then 
-        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.03)) 
+        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.02)) 
+    end
+
+    local rSurv = Rank("SURVIVALIST")
+    if rSurv > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
+        weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSurv * 0.02))
+    end
+
+    local rAim = Rank("CAREFUL_AIM")
+    if rAim > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) > 0 then
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (rAim * 0.20))
     end
     
     -- [[ 2. Covariance (Crit scales with RAP) ]]
@@ -164,24 +160,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
 end
 
 function Hunter:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = weights and weights["ITEM_MOD_CRIT_RATING_SHORT"] or 32.0
-
-    -- Racial: Human (Sword=7/8) -> +2% Crit
-    if race == "Human" and (subClassID == 7 or subClassID == 8) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    -- Racial: Orc (Axe=0/1) -> +2% Crit
-    if race == "Orc" and (subClassID == 0 or subClassID == 1) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    
-    return bonus
+    return 0
 end
 
 MSC.RegisterModule("HUNTER", Hunter)

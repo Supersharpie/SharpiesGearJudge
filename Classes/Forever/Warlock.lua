@@ -9,47 +9,33 @@ Warlock.Name = "WARLOCK"
 -- We use standard keys so the Evaluator can match them.
 
 Warlock.Weights = {
-    ["Default"] = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.1 
-    },
-    ["RAID_DS_RUIN"] = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.0, ["ITEM_MOD_STAMINA_SHORT"]=0.3, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
-    },
-    ["RAID_SM_RUIN"] = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=9.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.2 
-    },
-    ["PVE_MD_RUIN"] = {
-        ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.3 
-    },
-    ["PVP_NF_CONFLAG"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
-    },
-    ["PVP_SOUL_LINK"] = {
-        ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.0 
-    },
-    ["PVP_DEEP_DESTRO"] = {
-        ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8 
-    },
+    ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
+    ["RAID_DS_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
+    ["RAID_SM_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
+    ["PVE_MD_RUIN"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.3, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
+    ["PVP_NF_CONFLAG"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
+    ["PVP_SOUL_LINK"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
+    ["PVP_DEEP_DESTRO"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
 }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
 Warlock.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0 },
+    ["Leveling_1_20"]  = {  ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_21_40"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_41_51"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_52_59"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
     
     -- Fire
-    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 },
-    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
-    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0 },
+    ["Leveling_Fire_21_40"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_Fire_41_51"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_Fire_52_59"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
     
     -- Demo
-    ["Leveling_Demo_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
-    ["Leveling_Demo_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0 },
-    ["Leveling_Demo_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+    ["Leveling_Demo_21_40"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_Demo_41_51"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_Demo_52_59"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
 }
 
 -- =============================================================
@@ -86,13 +72,14 @@ Warlock.Talents = {
     ["RUIN"]              = "Ruin",
     ["SOUL_LINK"]         = "Soul Link",
     ["CONFLAGRATE"]       = "Conflagrate",
+    ["INCINERATE"]        = "Incinerate",
+    ["DEMONIC_PACT"]      = "Demonic Pact",
     ["FEL_CONCENTRATION"] = "Fel Concentration",
     ["NIGHTFALL"]         = "Nightfall",
     ["INTENSITY"]         = "Intensity",
     ["MASTER_DEMON"]      = "Master Demonologist",
     ["SUPPRESSION"]       = "Suppression",
     ["DEMONIC_EMBRACE"]   = "Demonic Embrace",
-    ["EMBERSTORM"]        = "Emberstorm",
 }
 
 -- =============================================================
@@ -119,7 +106,7 @@ function Warlock:GetSpec()
 
         local prefix = "Leveling" -- Default Affliction
         
-        if Rank("CONFLAGRATE") > 0 or Rank("EMBERSTORM") > 0 then 
+        if Rank("INCINERATE") > 0 or Rank("CONFLAGRATE") > 0 then 
             prefix = "Leveling_Fire"
         elseif Rank("SOUL_LINK") > 0 or Rank("MASTER_DEMON") > 0 then 
             prefix = "Leveling_Demo"
@@ -134,7 +121,9 @@ function Warlock:GetSpec()
     if Rank("DEMONIC_SACRIFICE") > 0 and Rank("RUIN") > 0 then return "RAID_DS_RUIN" end
     if Rank("SHADOW_MASTERY") > 0 and Rank("RUIN") > 0 then return "RAID_SM_RUIN" end
     if Rank("MASTER_DEMON") > 0 and Rank("RUIN") > 0 then return "PVE_MD_RUIN" end
+    if Rank("DEMONIC_PACT") > 0 then return "PVP_SOUL_LINK" end
     if Rank("SOUL_LINK") > 0 then return "PVP_SOUL_LINK" end
+    if Rank("INCINERATE") > 0 then return "PVP_DEEP_DESTRO" end
     if Rank("CONFLAGRATE") > 0 then 
         if Rank("NIGHTFALL") > 0 then return "PVP_NF_CONFLAG" end
         return "PVP_DEEP_DESTRO" 
@@ -155,16 +144,11 @@ function Warlock:ApplyScalers(weights, currentSpec)
 
     -- [[ 2. Hit Cap (16%) ]]
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
-        -- FIX: Use Shim
         local currentHit = MSC:GetPlayerStat("SPELL_HIT")
         
-        -- Suppression Logic (Affliction Only)
-        local suppressionBonus = Rank("SUPPRESSION") * 2 
-        local isDestro = (Rank("CONFLAGRATE") > 0)
-        
-        -- If we are Deep Destro, Suppression doesn't help main nuke
-        local totalHit = currentHit + (isDestro and 0 or suppressionBonus)
-        
+        -- Suppression Logic (Now affects ALL spells, 1% per rank)
+        local suppressionBonus = Rank("SUPPRESSION") * 1 
+        local totalHit = currentHit + suppressionBonus
         local HIT_CAP = 16
         
         if totalHit >= HIT_CAP then
@@ -177,20 +161,8 @@ function Warlock:ApplyScalers(weights, currentSpec)
 end
 
 function Warlock:GetWeaponBonus(itemLink, weights)
-    if not itemLink then return 0 end
-    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
-    if classID ~= 2 then return 0 end 
-
-    local bonus = 0
-    local _, race = UnitRace("player")
-    local critWeight = weights and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 11.0
-
-    -- Racial: Human (Sword=7) -> +2% Crit
-    if race == "Human" and (subClassID == 7) then 
-        bonus = bonus + (critWeight * 2) 
-    end
-    
-    return bonus
+    return 0
 end
 
 MSC.RegisterModule("WARLOCK", Warlock)
+
