@@ -436,7 +436,7 @@ function MSC:BeautifyTooltip(tooltip)
     
     -- 1. Grab link to check for Relics safely
     local _, link = nil, nil
-    if tooltip.GetItem then _, link = tooltip:GetItem() end
+    _, link = MSC_GetTooltipItem(tooltip)
     if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
 
     local isRelic = false
@@ -592,7 +592,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
 
     -- [[ 2. GET ITEM LINK ]]
     local _, link = nil, nil
-    if tooltip.GetItem then _, link = tooltip:GetItem() end
+    _, link = MSC_GetTooltipItem(tooltip)
 
     if not link and MSC.HoveredQuestLink then
         link = MSC.HoveredQuestLink
@@ -961,15 +961,21 @@ end
 -- =============================================================
 
 -- 1. Standard Tooltip Hooks
-GameTooltip:HookScript("OnTooltipSetItem", function(self)
-    if MSC.EvaluateAndDrawTooltip then
-        MSC.EvaluateAndDrawTooltip(self)
+if not TooltipDataProcessor then
+    if GameTooltip:HasScript("OnTooltipSetItem") then
+        GameTooltip:HookScript("OnTooltipSetItem", function(self)
+            if MSC.EvaluateAndDrawTooltip then
+                MSC.EvaluateAndDrawTooltip(self)
+            end
+        end)
     end
-end)
-ItemRefTooltip:HookScript("OnTooltipSetItem", function(self)
-    if MSC.EvaluateAndDrawTooltip then
-        MSC.EvaluateAndDrawTooltip(self)
+    if ItemRefTooltip and ItemRefTooltip:HasScript("OnTooltipSetItem") then
+        ItemRefTooltip:HookScript("OnTooltipSetItem", function(self)
+            if MSC.EvaluateAndDrawTooltip then
+                MSC.EvaluateAndDrawTooltip(self)
+            end
+        end)
     end
-end)
+end
 
 -- Quest tooltip hooks live in TooltipManager.lua

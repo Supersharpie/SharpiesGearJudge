@@ -149,27 +149,36 @@ function MSC.getItemID(bagID, slotID)
     return nil
 end
 
+-- Safely strips WoW 11.5 "secret numbers" (secure variables) from API returns
+function MSC.SanitizeStat(val)
+    if not val then return 0 end
+    if type(val) ~= "number" then return 0 end
+    local succ, s = pcall(tostring, val)
+    return (succ and tonumber(s)) or 0
+end
+
 function MSC:GetPlayerStat(statType)
+    local val = 0
     if MSC.IsVanillaRules then
-        if statType == "HIT" then return GetHitModifier() or 0
-        elseif statType == "SPELL_HIT" then return GetSpellHitModifier() or 0
-        elseif statType == "CRIT" then return GetCritChance()
-        elseif statType == "SPELL_CRIT" then return GetSpellCritChance(2)
-        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); return b + m
-        elseif statType == "HEALING" then return GetSpellBonusHealing()
-        elseif statType == "SPELL_POWER" then return GetSpellBonusDamage(2)
+        if statType == "HIT" then val = GetHitModifier() or 0
+        elseif statType == "SPELL_HIT" then val = GetSpellHitModifier() or 0
+        elseif statType == "CRIT" then val = GetCritChance()
+        elseif statType == "SPELL_CRIT" then val = GetSpellCritChance(2)
+        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = (b or 0) + (m or 0)
+        elseif statType == "HEALING" then val = GetSpellBonusHealing()
+        elseif statType == "SPELL_POWER" then val = GetSpellBonusDamage(2)
         end
     else
-        if statType == "HIT" then return GetCombatRating(6)
-        elseif statType == "SPELL_HIT" then return GetCombatRating(8)
-        elseif statType == "CRIT" then return GetCombatRating(9)
-        elseif statType == "SPELL_CRIT" then return GetCombatRating(11)
-        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); return b + m
-        elseif statType == "HEALING" then return GetSpellBonusHealing()
-        elseif statType == "SPELL_POWER" then return GetSpellBonusDamage(2)
+        if statType == "HIT" then val = GetCombatRating(6)
+        elseif statType == "SPELL_HIT" then val = GetCombatRating(8)
+        elseif statType == "CRIT" then val = GetCombatRating(9)
+        elseif statType == "SPELL_CRIT" then val = GetCombatRating(11)
+        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = (b or 0) + (m or 0)
+        elseif statType == "HEALING" then val = GetSpellBonusHealing()
+        elseif statType == "SPELL_POWER" then val = GetSpellBonusDamage(2)
         end
     end
-    return 0
+    return MSC.SanitizeStat(val)
 end
 
 -- Returns MP5 gained from `spiritPoints` on gear (pass 1 for per-stat weighting).
@@ -184,7 +193,7 @@ function MSC:GetSpiritValueInMP5(level, spiritPoints)
     else
         if not level or level > 70 then level = 70 end
         local base = MSC.BaseRegenTable[level] or 0.009327
-        local intel = UnitStat("player", 4) or 100
+        local intel = MSC.SanitizeStat(UnitStat("player", 4)) or 100
         return 5 * (0.001 + base * math_sqrt(intel) * points)
     end
 end
@@ -1109,7 +1118,7 @@ end
 -- =============================================================
 function MSC:DebugItem()
     local tip = GameTooltip
-    local _, link = tip:GetItem()
+    local _, link = MSC_GetTooltipItem(tip)
     if not link then print(MSC.L["|cffff0000SGJ: Please hover over an item to debug.|r"]) return end
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then print(MSC.L["|cffff0000SGJ: No weights loaded.|r"]) return end

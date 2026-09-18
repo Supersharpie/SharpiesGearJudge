@@ -218,7 +218,7 @@ function BE:ApplyRatingCap(weights, activeCaps, weightKey, ratingId, baseCapPct,
     if not weights[weightKey] or weights[weightKey] <= 0.1 then return end
     options = options or {}
 
-    local hitRating = GetCombatRating(ratingId)
+    local hitRating = MSC.SanitizeStat(GetCombatRating(ratingId))
     local scalar = self:GetRatingScalar(ratingId)
     local finalCapRating = math_max(0, baseCapPct - (creditPct or 0)) * scalar
     local hardVal = options.hardVal or 0.05

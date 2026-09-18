@@ -1,3 +1,19 @@
+function MSC_GetTooltipItem(tooltip)
+    if not tooltip then return nil, nil end
+    if tooltip.GetItem then return tooltip:GetItem() end
+    if TooltipUtil and TooltipUtil.GetDisplayedItem then return TooltipUtil.GetDisplayedItem(tooltip) end
+    if tooltip.processingInfo and tooltip.processingInfo.tooltipData and tooltip.processingInfo.tooltipData.hyperlink then
+        return nil, tooltip.processingInfo.tooltipData.hyperlink
+    end
+    return nil, nil
+end
+-- Polyfill for WoW 11.0+ engine API removals
+if C_Item then
+    if not GetItemInfoInstant and C_Item.GetItemInfoInstant then _G.GetItemInfoInstant = function(id) return C_Item.GetItemInfoInstant(id) end end
+    if not IsEquippableItem and C_Item.IsEquippableItem then _G.IsEquippableItem = function(id) return C_Item.IsEquippableItem(id) end end
+    if not GetItemInfo and C_Item.GetItemInfo then _G.GetItemInfo = function(id) return C_Item.GetItemInfo(id) end end
+    if not GetItemIcon and C_Item.GetItemIconByID then _G.GetItemIcon = function(id) return C_Item.GetItemIconByID(id) end end
+end
 local addonName, MSC = ...
 _G[addonName] = MSC 
 

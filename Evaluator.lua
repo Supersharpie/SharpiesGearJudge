@@ -13,7 +13,7 @@ local unpack = unpack or table.unpack
 -- WoW API Localizations
 local GetInventoryItemLink = GetInventoryItemLink
 local GetItemInfo = GetItemInfo
-local GetItemInfoInstant = GetItemInfoInstant
+local GetItemInfoInstant = GetItemInfoInstant or (C_Item and C_Item.GetItemInfoInstant)
 local IsEquippableItem = IsEquippableItem
 local UnitClass = UnitClass
 
@@ -626,6 +626,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                 else
                     currentVal = MSC:GetPlayerStat(rule.stat == "ITEM_MOD_HIT_RATING_SHORT" and "HIT" or "SPELL_HIT")
                 end
+                
+                local succ, s = pcall(tostring, currentVal)
+                currentVal = (succ and tonumber(s)) or 0
                 
                 local oldGearVal = currentStatsTotal[rule.stat] or 0
                 local newGearVal = newStatsTotal[rule.stat] or 0

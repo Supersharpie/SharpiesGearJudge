@@ -114,6 +114,12 @@ end
 
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
+    
+    if not GetNumTalentTabs then
+        MSC.TalentCacheLoaded = true
+        return 
+    end
+    
     local tabs = GetNumTalentTabs() or 0
     if tabs == 0 then return end
 

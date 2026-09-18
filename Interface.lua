@@ -1,3 +1,13 @@
+local tracer = CreateFrame("Frame")
+tracer:RegisterEvent("ADDON_LOADED")
+tracer:SetScript("OnEvent", function(self, event, name)
+    if name == "SharpiesGearJudge" then
+        print("|cff00ffffSGJ TRACER:|r On ADDON_LOADED, SGJ_Settings is", type(SGJ_Settings))
+        if type(SGJ_Settings) == "table" then
+            print("|cff00ffffSGJ TRACER:|r ShowBagArrows =", tostring(SGJ_Settings.ShowBagArrows))
+        end
+    end
+end)
 local addonName, MSC = ...
 _G.MSC = MSC 
 
@@ -15,8 +25,8 @@ local GameTooltip = GameTooltip
 local GetItemInfo = GetItemInfo
 local GetInventoryItemLink = GetInventoryItemLink
 local GetInventoryItemTexture = GetInventoryItemTexture
-local GetItemIcon = GetItemIcon
-local SetItemButtonTexture = SetItemButtonTexture
+local GetItemIcon = GetItemIcon or (C_Item and C_Item.GetItemIconByID)
+local SetItemButtonTexture = function(btn, tex) if not btn.icon then btn.icon = btn:CreateTexture(nil, "BACKGROUND"); btn.icon:SetAllPoints() end btn.icon:SetTexture(tex) end
 local UnitClass = UnitClass
 local UnitRace = UnitRace
 local UnitLevel = UnitLevel
@@ -26,7 +36,7 @@ local GetCursorInfo = GetCursorInfo
 local ClearCursor = ClearCursor
 local IsShiftKeyDown = IsShiftKeyDown
 local CreateColor = CreateColor
-local GetItemInfoInstant = GetItemInfoInstant
+local GetItemInfoInstant = GetItemInfoInstant or (C_Item and C_Item.GetItemInfoInstant)
 
 -- Container API Wrapper
 local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
@@ -238,7 +248,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         end
 		
         if GameTooltip:IsVisible() then
-            local _, link = GameTooltip:GetItem()
+            local _, link = MSC_GetTooltipItem(GameTooltip)
             if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
             
             if link and string.find(link, "item:" .. itemID) then
@@ -288,7 +298,7 @@ function MSC.InitLabView(parent)
         
         frame.Slots = {}
         for i=1, numSlots do
-            local btn = CreateFrame("Button", nil, frame, "ItemButtonTemplate")
+            local btn = CreateFrame("Button", nil, frame, nil)
             btn:SetSize(35, 35)
             local totalW = (numSlots * 40)
             local startX = (275 - totalW) / 2
@@ -436,7 +446,7 @@ function MSC.InitReceiptView(parent)
     local pWeap  = CreatePanel(MSC.L["WEAPONS"], 465, 75, "TOP", c, "TOP", 0, -250)
 
     local function CreateSlot(id, parentPanel, x, y, label)
-        local btn = CreateFrame("Button", nil, f, "ItemButtonTemplate"); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
+        local btn = CreateFrame("Button", nil, f, nil); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
         btn.ScoreFrame = CreateFrame("Frame", nil, btn, "BackdropTemplate"); btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
         btn.ScoreFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"}); btn.ScoreFrame:SetBackdropColor(0,0,0,0.5)
         btn.ScoreText = btn.ScoreFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); btn.ScoreText:SetPoint("CENTER"); btn.ScoreText:SetTextColor(1, 0.9, 0)
@@ -925,7 +935,7 @@ function MSC.UpdateBagOverlays(frame)
 
     if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then
         for i = 1, 36 do
-            local btn = _G[name .. "Item" .. i]
+            local btn = _G[name .. "Item" .. i] or (frame.Items and frame.Items[i])
             if btn and btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
         end
         return 
@@ -938,7 +948,7 @@ function MSC.UpdateBagOverlays(frame)
     if not weights then return end
 
     for i = 1, 36 do
-        local button = _G[name .. "Item" .. i]
+        local button = _G[name .. "Item" .. i] or (frame.Items and frame.Items[i])
         
         if button and button:IsShown() then
             if button.SGJ_Overlay then button.SGJ_Overlay:Hide() end
@@ -1334,7 +1344,7 @@ local function GetClassRings(class, stats, weights)
     local _, playerRace = UnitRace("player")
 
     local function GetTalentRank(tab, talentName)
-        local numTalents = GetNumTalents(tab)
+        if not GetNumTalents then return MSC.TalentCache and MSC.TalentCache[MSC.L[talentName]] or 0 end; local numTalents = GetNumTalents(tab) or 0
         for i=1, numTalents do
             local name, _, _, _, rank = GetTalentInfo(tab, i)
             if name == MSC.L[talentName] then return rank end
@@ -1527,22 +1537,22 @@ local function GetClassRings(class, stats, weights)
 			end
 			
 			-- 5% Base Miss + Avoidance Stats + Active Buff
-			val = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + buffBonus
+			val = 5.0 + MSC.SanitizeStat(GetDodgeChance()) + MSC.SanitizeStat(GetParryChance()) + MSC.SanitizeStat(GetBlockChance()) + buffBonus
 			currentDisplay = val
 			capRating = capTarget
             
-        elseif statKey == "ITEM_MOD_HIT_RATING_SHORT" then val = GetCombatRating(6); isRating = true
-        elseif statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then val = GetCombatRating(8); isRating = true
-        elseif statKey == "ITEM_MOD_EXPERTISE_RATING_SHORT" then val = GetCombatRating(24); isRating = true
-        elseif statKey == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then val = GetCombatRating(2); isRating = true
-        elseif statKey == "ITEM_MOD_CRIT_RATING_SHORT" then val = GetCombatRating(9); isRating = true
-        elseif statKey == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then val = GetCombatRating(11); isRating = true
-        elseif statKey == "ITEM_MOD_HASTE_RATING_SHORT" then val = GetCombatRating(18); isRating = true
-        elseif statKey == "ITEM_MOD_SPELL_HASTE_RATING_SHORT" then val = GetCombatRating(20); isRating = true
-        elseif statKey == "ITEM_MOD_DODGE_RATING_SHORT" then val = GetCombatRating(3); isRating = true
+        elseif statKey == "ITEM_MOD_HIT_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(6)); isRating = true
+        elseif statKey == "ITEM_MOD_HIT_SPELL_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(8)); isRating = true
+        elseif statKey == "ITEM_MOD_EXPERTISE_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(24)); isRating = true
+        elseif statKey == "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(2)); isRating = true
+        elseif statKey == "ITEM_MOD_CRIT_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(9)); isRating = true
+        elseif statKey == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(11)); isRating = true
+        elseif statKey == "ITEM_MOD_HASTE_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(18)); isRating = true
+        elseif statKey == "ITEM_MOD_SPELL_HASTE_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(20)); isRating = true
+        elseif statKey == "ITEM_MOD_DODGE_RATING_SHORT" then val = MSC.SanitizeStat(GetCombatRating(3)); isRating = true
         elseif statKey == "ITEM_MOD_SPELL_POWER_SHORT" then 
             local maxSP = 0
-            for i=2, 7 do maxSP = math_max(maxSP, GetSpellBonusDamage(i)) end
+            for i=2, 7 do maxSP = math_max(maxSP, MSC.SanitizeStat(GetSpellBonusDamage(i))) end
             val = maxSP
             currentDisplay = val
             capRating = capTarget
@@ -1562,7 +1572,7 @@ local function GetClassRings(class, stats, weights)
             if isSkill then
 				if label == "Current Defense" then
 					-- 1. Safely grab ONLY the base leveled skill
-					local baseDef = UnitDefense("player")
+					local baseDef = MSC.SanitizeStat(UnitDefense("player"))
 					
 					-- Fallback in case the API fires before the player is fully loaded
 					if not baseDef or baseDef == 0 then
@@ -1586,10 +1596,10 @@ local function GetClassRings(class, stats, weights)
 				end
             elseif isRating then
                 if label == "Dodge" then
-                    currentDisplay = GetDodgeChance()
+                    currentDisplay = MSC.SanitizeStat(GetDodgeChance())
                 elseif string_find(label, "Spell Crit") then
                     local maxCrit = 0
-                    for s=2, 7 do maxCrit = math_max(maxCrit, GetSpellCritChance(s) or 0) end
+                    for s=2, 7 do maxCrit = math_max(maxCrit, MSC.SanitizeStat(GetSpellCritChance(s)) or 0) end
                     local hasTotemOfWrathBuff = false
                     for b=1, 40 do
                         local name = UnitBuff("player", b)
@@ -1604,7 +1614,7 @@ local function GetClassRings(class, stats, weights)
                     if class == "HUNTER" and GetRangedCritChance then
                         currentDisplay = GetRangedCritChance() + critBonus
                     else
-                        currentDisplay = GetCritChance() + critBonus
+                        currentDisplay = MSC.SanitizeStat(GetCritChance()) + critBonus
                     end
                 else
                     currentDisplay = val / scalar
@@ -1940,7 +1950,7 @@ function MSC.InitSettingsView(parent)
 
     local function CreateCheck(label, key, tooltip, relTo, xOff, yOff)
         local cb = CreateFrame("CheckButton", nil, sChild, "ChatConfigCheckButtonTemplate"); cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff); cb.Text:SetText(label); cb.Text:SetTextColor(0.9, 0.9, 0.9); cb:SetChecked(SGJ_Settings[key])
-        cb:SetScript("OnClick", function(self) SGJ_Settings[key] = self:GetChecked(); if key == "HideMinimap" then MSC.UpdateMinimapPosition() end end)
+        cb:HookScript("OnClick", function(self) SGJ_Settings[key] = self:GetChecked(); print("|cff00ff00SGJ Debug:|r Saved " .. key .. " as " .. tostring(SGJ_Settings[key])); if key == "HideMinimap" then MSC.UpdateMinimapPosition() end end)
         if tooltip then cb:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tooltip, nil, nil, nil, nil, true); GameTooltip:Show() end); cb:SetScript("OnLeave", GameTooltip_Hide) end
         return cb
     end
@@ -2758,3 +2768,116 @@ if QuestInfo_ShowRewards then
         return original_QuestInfo_ShowRewards(...)
     end
 end
+
+
+
+
+local function ScanCombinedBagsFinal()
+    if not SGJ_Settings or SGJ_Settings.ShowBagArrows == false then return end
+    if not ContainerFrameCombinedBags or not ContainerFrameCombinedBags:IsShown() then return end
+    
+    local weights, specName = MSC.GetCurrentWeights()
+    if not weights then return end
+
+    if ContainerFrameCombinedBags.EnumerateValidItems then
+        for _, button in ContainerFrameCombinedBags:EnumerateValidItems() do
+            local bagID = button.GetBagID and button:GetBagID()
+            local slotID = button.GetID and button:GetID()
+            if bagID and slotID and slotID > 0 then
+                local link = (C_Container and C_Container.GetContainerItemLink) and C_Container.GetContainerItemLink(bagID, slotID) or GetContainerItemLink(bagID, slotID)
+                if link then
+                    local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+                    if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" and MSC.IsItemUsable(link) then
+                        local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+                        if compSlot then
+                            local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
+                            local newScore, oldScore
+                            if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
+                                newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
+                            else
+                                newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+                            end
+                            
+                            if newScore and oldScore then
+                                local overlayType = nil
+                                if (newScore > (oldScore + 0.1)) then overlayType = "UP"
+                                elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
+
+                                if overlayType then
+                                    if not button.SGJ_OverlayFrame then
+                                        button.SGJ_OverlayFrame = CreateFrame("Frame", nil, button)
+                                        button.SGJ_OverlayFrame:SetFrameLevel(button:GetFrameLevel() + 10)
+                                        button.SGJ_OverlayFrame:SetAllPoints()
+                                        button.SGJ_Overlay = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY")
+                                        button.SGJ_Overlay:SetSize(22, 22)
+                                        button.SGJ_Overlay:SetPoint("TOPRIGHT", button.SGJ_OverlayFrame, "TOPRIGHT", 2, 2)
+                                    end
+                                    
+                                    if overlayType == "UP" then 
+                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+                                    else 
+                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png") 
+                                    end
+                                    button.SGJ_OverlayFrame:Show()
+                                else
+                                    if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+                                end
+                            else
+                                if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+                            end
+                        else
+                            if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+                        end
+                    else
+                        if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+                    end
+                else
+                    if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+                end
+            end
+        end
+    end
+end
+
+local combinedScanner = CreateFrame("Frame")
+combinedScanner:RegisterEvent("BAG_UPDATE_DELAYED")
+combinedScanner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+combinedScanner:SetScript("OnEvent", function() C_Timer.After(0.1, ScanCombinedBagsFinal) end)
+if ContainerFrameCombinedBags then
+    ContainerFrameCombinedBags:HookScript("OnShow", function() C_Timer.After(0.1, ScanCombinedBagsFinal) end)
+end
+
+local function InitialBagScan()
+    C_Timer.After(2, function()
+        if ScanCombinedBagsFinal then ScanCombinedBagsFinal() end
+        if MSC and MSC.UpdateBagOverlays then MSC.UpdateBagOverlays() end
+    end)
+end
+local initialScanner = CreateFrame("Frame")
+initialScanner:RegisterEvent("PLAYER_ENTERING_WORLD")
+initialScanner:SetScript("OnEvent", InitialBagScan)
+
+local function DumpBadSettings()
+    if not SGJ_Settings then return end
+    for k, v in pairs(SGJ_Settings) do
+        if type(v) == "function" or type(v) == "userdata" then
+            print("|cffff0000SGJ ERROR:|r Bad setting type in key: ", k)
+        elseif type(v) == "table" then
+            for k2, v2 in pairs(v) do
+                if type(v2) == "function" or type(v2) == "userdata" then
+                    print("|cffff0000SGJ ERROR:|r Bad setting type in subkey: ", k, k2)
+                end
+            end
+        end
+    end
+end
+local badScanner = CreateFrame("Frame")
+badScanner:RegisterEvent("PLAYER_LEAVING_WORLD")
+badScanner:SetScript("OnEvent", DumpBadSettings)
+
+local function SGJWipeSettings()
+    SGJ_Settings = {}
+    print("|cff00ff00SGJ:|r Settings wiped. Please /reload to recreate defaults.")
+end
+SLASH_SGJ_WIPE1 = "/sgjwipe"
+SlashCmdList["SGJ_WIPE"] = SGJWipeSettings

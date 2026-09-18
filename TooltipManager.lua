@@ -18,9 +18,9 @@ TooltipManager:SetScript("OnEvent", function(self, event)
     MSC.EvaluateAndDrawTooltip = function(tooltip)
         if not tooltip then return end
         
-        local name, link = tooltip:GetItem()
+        local name, link = MSC_GetTooltipItem(tooltip)
         
-        -- Handle quest rewards where tooltip:GetItem() might initially return nil
+        -- Handle quest rewards where MSC_GetTooltipItem(tooltip) might initially return nil
         if MSC.IsQuestHook and not link then 
             link = MSC.HoveredQuestLink 
         end
@@ -102,14 +102,14 @@ TooltipManager:SetScript("OnEvent", function(self, event)
     else
         -- Legacy Client Fallback
         -- GameTooltip and ItemRefTooltip are already hooked using wrappers in Judge.lua
-        if ShoppingTooltip1 then
+        if ShoppingTooltip1 and ShoppingTooltip1:HasScript("OnTooltipSetItem") then
             ShoppingTooltip1:HookScript("OnTooltipSetItem", function(self)
                 if MSC.EvaluateAndDrawTooltip then
                     MSC.EvaluateAndDrawTooltip(self)
                 end
             end)
         end
-        if ShoppingTooltip2 then
+        if ShoppingTooltip2 and ShoppingTooltip2:HasScript("OnTooltipSetItem") then
             ShoppingTooltip2:HookScript("OnTooltipSetItem", function(self)
                 if MSC.EvaluateAndDrawTooltip then
                     MSC.EvaluateAndDrawTooltip(self)

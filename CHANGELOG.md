@@ -1,6 +1,20 @@
-# Sharpie's Gear Judge - Version History
+﻿# Sharpie's Gear Judge - Version History
 
 ---
+
+## 🚀 v3.0.1
+
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
 
 ## 🚀 v3.0.0
 
@@ -18,9 +32,23 @@
 
 ---
 
-## 🚀 v2.6.5
+## 🚀 v3.0.1
 
-### 🐛 Bug Fixes & Improvements
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.6.5
+
+### ðŸ› Bug Fixes & Improvements
 
 - **Gem Projections & Quality Filtering**:
   - **Quality Ceiling**: Fixed a bug where epic gems (`quality = 4`) were having their quality silently downgraded to rare (`quality = 3`) during engine initialization. Epic gems will now properly respect the user's "Gem Quality" limit setting (e.g., they will be correctly excluded when "Rare (Blue)" is selected).
@@ -28,9 +56,23 @@
 
 ---
 
-## 🚀 v2.6.4
+## 🚀 v3.0.1
 
-### 🐛 Bug Fixes & Improvements
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.6.4
+
+### ðŸ› Bug Fixes & Improvements
 
 - **Shaman (Totem of Wrath)**:
   - **Stat Logic UI**: Added full support for the 41-point Elemental talent `Totem of Wrath` (+3% Spell Hit, +3% Spell Crit).
@@ -47,17 +89,45 @@
 
 ---
 
-## 🚀 v2.6.3
+## 🚀 v3.0.1
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.6.3
+
+### ðŸ› Bug Fixes
 
 - **Hit Cap**: Fixed an issue where the Improved Faerie Fire hit credit and cap modifier were incorrectly being applied to Spell Hit instead of just Melee and Ranged Hit.
 
 ---
 
-## 🚀 v2.6.2
+## 🚀 v3.0.1
 
-### 🐛 Bug Fixes & Localization
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.6.2
+
+### ðŸ› Bug Fixes & Localization
 
 - **Localization**: Added missing `L["healing.-(%d+).-damage.-(%d+)"]` pattern key to `deDE.lua`, `Localization.lua`, `esES.lua`, `frFR.lua`, `ptBR.lua`, and `ruRU.lua` to fix stat parsing and rating calculations for hybrid heal/damage items on non-English clients (e.g. *Epoch Mender* in German).
 - **Pattern Auditing**: Added 39 missing tooltip stat parsing patterns across all non-English locale files (`deDE`, `esES`, `frFR`, `ptBR`, `ruRU`).
@@ -66,30 +136,58 @@
 
 ---
 
-## 🚀 v2.6.1
+## 🚀 v3.0.1
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.6.1
+
+### ðŸ› Bug Fixes
 
 - **Mage**: Fixed a typo (`math_max` -> `math.max`) in TBC Mage class hit cap logic.
 
 ---
 
-## 🚀 v2.6.0
+## 🚀 v3.0.1
+
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.6.0
 
 ### ✨ New Features
 
-- **Raid & World Buff Assumptions:** New `RaidBuffs.lua` engine and **Buff Assumptions** section in Protocol settings (`/sgj` → Settings).
-  - **Assume Raid Buffed** with presets (Off / 25-Man Full / 10-Man Minimal) — models Totem of Wrath, Improved Faerie Fire, Blessing of Kings, Mark of the Wild, and **Heroic Presence from a Draenei in your raid** (without double-counting your own Draenei racial).
-  - **Assume World Buffed** with presets (Off / Full World Buffed / DM Tribute Only) — models classic world buffs (Ony/Nef, Rend/Alliance, ZG, Songflower, DM tribute). Off by default at 70; enable for leveling or vanilla content.
+- **Raid & World Buff Assumptions:** New `RaidBuffs.lua` engine and **Buff Assumptions** section in Protocol settings (`/sgj` â†’ Settings).
+  - **Assume Raid Buffed** with presets (Off / 25-Man Full / 10-Man Minimal) â€” models Totem of Wrath, Improved Faerie Fire, Blessing of Kings, Mark of the Wild, and **Heroic Presence from a Draenei in your raid** (without double-counting your own Draenei racial).
+  - **Assume World Buffed** with presets (Off / Full World Buffed / DM Tribute Only) â€” models classic world buffs (Ony/Nef, Rend/Alliance, ZG, Songflower, DM tribute). Off by default at 70; enable for leveling or vanilla content.
   - Stat synergy deflates primary-stat weights when buffs inflate your existing stats (Kings, MotW, ZG, etc.).
-- **Unified Hit Cap Engine:** Shared cap logic across all TBC classes via `MSC.BuffEngine` — melee, spell, and ranged hit credits now include raid debuffs and external buffs when assumptions are enabled.
+- **Unified Hit Cap Engine:** Shared cap logic across all TBC classes via `MSC.BuffEngine` â€” melee, spell, and ranged hit credits now include raid debuffs and external buffs when assumptions are enabled.
 - **Balance Druid Hit Caps:** Added missing spell/melee hit cap softening for Boomkin and Feral specs (previously had no cap logic in `ApplyScalers`).
-- **Era defense floor (Cap Guardian):** Tank profiles on Classic Era now get reactive defense-floor penalties (`level×5+140`, 440 at 60) matching Stat Logic targets.
+- **Era defense floor (Cap Guardian):** Tank profiles on Classic Era now get reactive defense-floor penalties (`levelÃ—5+140`, 440 at 60) matching Stat Logic targets.
 - **TBC hybrid AUTO profiles:** Fury-Prot, Arms-Prot, HOTW, Ele/Resto NS, Enh/Resto NS detection with dedicated weight tables.
 - **Endgame talent point-scan:** Dominant-tree fallback when no capstone matches (Warrior, Paladin, Shaman, Druid).
-- **Uncertain profile UI:** Stat Logic shows when AUTO detection confidence is low or ambiguous.
+    if SGJ_Settings and SGJ_Settings.Mode == "AUTO" and specConfidence and specConfidence ~= "high" then profileLabel = profileLabel .. MSC.L[" (uncertain — pick profile manually if wrong)"] end
 
-### 🔧 Improvements (data & engine)
+### ðŸ”§ Improvements (data & engine)
 
 - **Stat Logic rings** now display raid-buff modifiers when **Assume Raid Buffed** is enabled.
 - **Cap Guardian** (`Evaluator.lua`) uses effective hit targets that respect raid buff assumptions.
@@ -104,10 +202,10 @@
 - **Receipt bag upgrades:** Uses `EvaluateUpgrade` / `EvaluateUpgradeFast` (same engine as tooltips and bag arrows).
 - **BaseSpec on login:** `dbLoader` no longer flat-copies custom weights into `CurrentClass.Weights`; cache invalidates on reload when a custom profile is selected.
 - **LookupRawWeights:** Falls back to `BaseSpec` from `customWeights` when resolving tracked specs.
-- **TBC set data:** Fixed Malorne/Nordrassil `[641]` collision (Nordrassil Resto → `[602]`); Cyclone T4 Enh/Ele/Resto IDs remapped to `[631]`/`[633]`/`[632]`; T6 token duplicates removed from set item lists.
+- **TBC set data:** Fixed Malorne/Nordrassil `[641]` collision (Nordrassil Resto â†’ `[602]`); Cyclone T4 Enh/Ele/Resto IDs remapped to `[631]`/`[633]`/`[632]`; T6 token duplicates removed from set item lists.
 - **Expanded TBC SetBonusScores:** Added scores for Nordrassil, Cataclysm, Avatar, crafted, D3 gaps, T6 heal/caster, and S4 priest heal.
-- **BuildDatabase validation:** Debug mode warns on item→set collisions and sets missing `SetBonusScores`.
-- **ContentPhase gem gating:** `BuildGemOptionsForPhase(phase)` — P1 gems through P2; P3+ and P5+ tiers unlock at phases 3 and 5 (Roadmap phase dropdown rebuilds gem pool).
+- **BuildDatabase validation:** Debug mode warns on itemâ†’set collisions and sets missing `SetBonusScores`.
+- **ContentPhase gem gating:** `BuildGemOptionsForPhase(phase)` â€” P1 gems through P2; P3+ and P5+ tiers unlock at phases 3 and 5 (Roadmap phase dropdown rebuilds gem pool).
 - **Fast bag arrows:** `FastBagArrows` setting (default on); falls back to full `EvaluateUpgrade` for set pieces and weapons.
 - **Removed dead snapshot engine:** `PerformSnapshot` / `QueueGearSnapshot` deleted; manual Save Profile remains the baseline path.
 - **Parse hardening:** Set `(n/m)` headers classify before generic stat lines; proc line index handling aligned with equip parser.
@@ -116,7 +214,7 @@
 - **Shaman DW gate:** Off-hand weapon comparison requires `DUAL_WIELD` talent rank.
 - **Tracked-spec safety:** Off-spec tooltip loop wrapped in `xpcall` with guaranteed `TalentCache` restore.
 
-### 🐛 Bug Fixes
+### ðŸ› Bug Fixes
 
 - **Gem double-counting:** `GetTotalCharacterScore` no longer re-adds physical gem stats when Gem Mode is Casual/Pro and `SafeGetItemStats` already projected sockets.
 - **Off-spec weight pipeline:** `GetProfileWeights` / `GetWeightsByName` now run `ApplyScalers` and `ApplyStatSynergy` for every spec profile, not just the active one.
@@ -139,7 +237,21 @@
 
 ---
 
-## 🚀 v2.5.11
+## 🚀 v3.0.1
+
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.11
 
 - **Added support for Sixty Upgrades EP imports (JSON, URL, and CSV formats) via the standard import window.**
 - **Fixed missing downgrade arrow overlays on items in standard Blizzard bags.**
@@ -147,7 +259,7 @@
 - **Applied initialization safety checks to the Pawn importer and fixed duplicate scanner logic.**
 - **Corrected the TBC Spirit-to-MP5 formula.**
 
-### 🐛 Bug Fixes
+### ðŸ› Bug Fixes
 
 - **Bag Addon Overlays
 - **Fixed an issue where downgrade arrows were entirely omitted from the codebase for both standard Blizzard bags and third-party bag addons (Bagnon, ElvUI, Baganator, etc.).**
@@ -155,27 +267,69 @@
 
 ---
 
-## 🚀 v2.5.10
+## 🚀 v3.0.1
 
-### 🐛 Minor Fixes
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.10
+
+### ðŸ› Minor Fixes
 
 - **Update Parse.lua to recognize Era-style stat lines by adding patterns for "+%d+ ranged/feral/attack power", and reorder related feral patterns for correct matching.** 
 - **Also tighten proc name cleanup to strip trailing spaces and periods (use "[%s%.]+$"), improving stat/proc parsing accuracy.**
 
 ---
 
-## 🚀 v2.5.9
+## 🚀 v3.0.1
 
-### 🐛 Minor Fixes
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.9
+
+### ðŸ› Minor Fixes
 
 - **Extended TermMap with additional spell hit/crit synonyms and remove duplicate entries; add mappings for various era phrasings so spell hit/crit are recognized consistently.**
 - **Reordered and expand EquipPatterns so critical-related patterns are checked before hit (prevents "critical hit" from being matched as plain "hit") and add several regexes to catch alternate phrasings (e.g. "critical hit with spells", "critical hit rating").**
 
 ---
 
-## 🚀 v2.5.8
+## 🚀 v3.0.1
 
-- **UI: Fix EditBox focus for popup windows — enable mouse, focus on click (including empty ScrollFrame area), and hide frame on Escape (Interface.lua).**
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.8
+
+- **UI: Fix EditBox focus for popup windows â€” enable mouse, focus on click (including empty ScrollFrame area), and hide frame on Escape (Interface.lua).**
 - **Parser: Add missing stat entries and adjust term mapping (rename holy damage key), add a "procs/buffs escape hatch" to detect duration markers and record temporary effects into outputProcs instead of treating them as permanent stats, plus minor pattern/whitespace tweaks.**
 - **Changed Swift Starfire Diamond (id 28557) quality from 3 to 4.** 
 - **Added a set of TBC-era _AUTO_PROC overrides that provide averaged uptime stat equivalents for various proc trinkets and weapons (e.g., Dragonspine Trophy, Quagmirran's Eye, Sextant of Unstable Currents, Madness of the Betrayer, assorted rings and weapons).** 
@@ -183,7 +337,21 @@
 
 ---
 
-## 🚀 v2.5.7
+## 🚀 v3.0.1
+
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.7
 
 - **Introduced CacheManager.lua and TooltipManager.lua to handle dynamic cache invalidation and prevent 0-score tooltip evaluations.** 
 - **CacheManager wipes evaluation, slot, and stat caches on equipment, talent, stance, and world-entry events so items are re-scored when baseline stats change.** 
@@ -197,7 +365,21 @@
 
 ---
 
-## 🚀 v2.5.6
+## 🚀 v3.0.1
+
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.6
 
 - **Added a "Clear" button next to the Save button in MSC.InitSettingsView and reposition the status label to the right of it.** 
 *The new button clears the saved gear and talent profiles for the current player key (SGJ_Settings.GearProfiles and SGJ_Settings.TalentProfiles), wipes MSC.EvaluationCache, and updates the status label.** 
@@ -211,15 +393,29 @@
 
 ---
 
-## 🚀 v2.5.5
+## 🚀 v3.0.1
 
-### 🐛 Minor Fixes
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.5
+
+### ðŸ› Minor Fixes
 
 - ** Fix Minimap button drift*
 
-## 🚀 v2.5.4
+## ðŸš€ v2.5.4
 
-### 🐛 Minor Fixes
+### ðŸ› Minor Fixes
 
 - **By ckhatri - Fix Project Best enchant double counting on pre-enchanted items; attempts to strip existing enchants off an item by comparing the item's raw stats against its base template, which is super helpful for accurate comparisons if Blizzard's API hides the enchant ID.**
 - **Avoid nil-index errors in MSC.SolveColorMatch by defaulting the result of GetItemStats(baseLink) to an empty table.** 
@@ -227,9 +423,23 @@
 
 ---
 
-## 🚀 v2.5.3
+## 🚀 v3.0.1
 
-### ⚖️ UI, Scoring & Off Spec Logic
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.3
+
+### âš–ï¸ UI, Scoring & Off Spec Logic
 
 - **Added TalentProfiles storage, build & copy talent cache when saving a profile, and flush evaluation caches.**  
 - **GetWeightsByName now copies raw weight tables and applies class scalers to avoid mutating core data; tooltip evaluation injects saved off-spec talents into MSC.TalentCache to get correct scaled weights, then restores the live cache.**  
@@ -240,7 +450,7 @@
 - **Expanded tooltip multi-spec tracking to load saved baselines and show saved vs. live comparisons with a Saved label.** 
 - **Refactored settings UI into a scrollable pane, reorganize sections, add Save Gear buttons for each tracked profile, improve dropdown/check behavior, and streamline custom-profile deletion.**
 
-### 🐛 Minor Fixes
+### ðŸ› Minor Fixes
 
 - **Updated localization strings to support new UI text.**
 - **Removed PLAYER_REGEN_ENABLED snapshot branch and related trigger code.**
@@ -249,9 +459,23 @@
 
 ---
 
-## 🚀 v2.5.2 - Unreleased
+## 🚀 v3.0.1
 
-### ⚖️ UI, Scoring & Evaluator Logic
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.2 - Unreleased
+
+### âš–ï¸ UI, Scoring & Evaluator Logic
 
 - **Added an optional customBaselineGear parameter to MSC:EvaluateUpgrade so upgrades can be evaluated against a ghost/virtual gear set.**
 - **Initialized SGJ_Settings.GearProfiles and use per-spec GearProfiles (snapshot) when evaluating item tooltips.** 
@@ -259,16 +483,30 @@
 - **Added PerformSnapshot (with a 2s debounce timer), MSC:QueueGearSnapshot, and an isGearDirty flag to defer snapshots during combat and re-run them on PLAYER_REGEN_ENABLED.** 
 - **Registered PLAYER_REGEN_ENABLED and updated the existing event handler to queue snapshots on equipment/inventory changes, talent/spec changes, and entering the world.**
 
-### 🐛 Minor Fixes
+### ðŸ› Minor Fixes
 
 - **Updated the section header comment for the event listener.**
 - **Minor refactor: compute prettySpec earlier for reuse and adjust tooltip formatting for upgrade and raw-score cases.**
 
 ---
 
-## 🚀 v2.5.1
+## 🚀 v3.0.1
 
-### 💎 Gemming System & Database Overhaul
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.1
+
+### ðŸ’Ž Gemming System & Database Overhaul
 
 - **Introduced a new "Gem Quality" setting, allowing users to set a budget limit (Common, Uncommon, Rare, Epic) for how empty sockets are scored and projected.**
 - **Separated the Gemming Algorithm (The Casual vs. The Pro) from the Gem Quality to allow flexible combinations (e.g., using "Pro" min-max logic with "Uncommon" budget gems for leveling or fresh 70s).**
@@ -278,11 +516,25 @@
 
 ---
 
-## 🚀 v2.5.0
+## 🚀 v3.0.1
+
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+## ðŸš€ v2.5.0
 
 - **Introduced (still a work in progress)loot roll overlay support and improve quest/reward UI robustness.**
 
-### 📺 UI & User Experience
+### ðŸ“º UI & User Experience
 
 - **Added a ShowLootArrows setting and UI checkbox to enable/disable green upgrade arrows on group loot popups.** 
 - **Localization strings for the new option were added to the main and several locale files.**
@@ -294,7 +546,7 @@
 - **Improved quest UI overlay handling by hiding ElvUI/Blizzard arrow overlays and making quest item link retrieval more robust (use QuestInfoFrame.questLog to choose GetQuestLogItemLink vs GetQuestItemLink with a fallback).** 
 - **Added/adjusted localization patterns in Localization.lua and Locales/deDE.lua (socket bonus regex, several German pattern fixes and punctuation adjustments for mana/health per 5 sec, armor/feral/cat power patterns) and update Parse.lua to strip socket bonuses using the localized regex.**
 
-### 🐛 Minor Fixes
+### ðŸ› Minor Fixes
 
 - **Fixed spell rating mappings in Parse.lua.
 - **Fixed role detection to use "Leveling_Destro_Shadow" when SHADOW_AND_FLAME is present.
@@ -302,33 +554,47 @@
 
 ---
 
-##🚀 SharpiesGearJudge:Collection (v2.4.0 – v2.4.11)
+## 🚀 v3.0.1
 
-###🛠️ Major Feature: Tanking & Scoring Logic
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+##ðŸš€ SharpiesGearJudge:Collection (v2.4.0 â€“ v2.4.11)
+
+###ðŸ› ï¸ Major Feature: Tanking & Scoring Logic
 
 - **Crush & Def Cap Engine: Full support for Protection Paladins and Warriors, including dynamic "Crush Cap" visual rings and EHP weight pivoting once safely capped.**
 - **The "Exploder" Parser: Advanced detection for "+All Stats," "Attack Power in Cat Form," and "On-Use" trinket value mapping.**
 - **Relic & Spec Overhaul: Standardized scoring for Idols, Librams, and Totems (e.g., Idol of the Raven Goddess) and deepened Warlock endgame spec detection.**
 - **Pawn 2.0: Robust Pawn string import support with negative value handling and "Base Spec" assignment.**
 
-###🌍 Global Localization (MSC.L)
+###ðŸŒ Global Localization (MSC.L)
 
 - **Multi-Language Framework: Introduced a complete localization system.**
 - **Full Support: Extensive translations and regex patterns for deDE, esES, frFR, ptBR, and ruRU, including technical terms and meta-gem effects.**
 
-###⚡ Performance & Caching (The "Speed" Update)
+###âš¡ Performance & Caching (The "Speed" Update)
 
 - **Triple-Layer Caching: Implemented EvaluationCache, UsableCache, and SlotCache to eliminate redundant calculations and UI stutter.**
 - **Event Debouncing: Added a 0.5s gate to GET_ITEM_INFO_RECEIVED to keep the frame rate smooth during heavy data loading.**
 - **Smart Filtering: Uses GetItemInfoInstant to ignore non-equippable items before they ever hit the scoring engine.**
 
-###📺 UI, UX & Compatibility
+###ðŸ“º UI, UX & Compatibility
 
 - **Unified Overlays: Integrated upgrade indicators for Merchant, Trade Skill, Quest Log, and Quest Accept frames.**
 - **Addon Synergy: Native hooks for TSM, ElvUI, Bagnon, and Baganator, plus a LibDataBroker (LDB) launcher for Titan Panel.**
 - **Visual Polish: Added "Compact Equip" and "Colorize Stats" settings; restructured ApplyRingArt to fix animation flickering and stutter.**
 
-###🐛 Key Fixes & Reliability
+###ðŸ› Key Fixes & Reliability
 
 - **Infinite Loop Fix: Resolved the TSM tooltip flickering/looping issue.**
 - **Async Loading: Integrated C_Timer delays to handle uncached item data gracefully without showing "empty" scores.**
@@ -336,35 +602,49 @@
 
 ---
 
-##🚀 SharpiesGearJudge:Collection (v2.2.8 - v2.3.7)
+## 🚀 v3.0.1
 
-###🛠 Core Engine & Performance
+### 🛠️ Bug Fixes & Engine Ports (11.5)
+
+- **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
+- **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
+- **Enhanced Backpack (One-Bag) Support**: Re-engineered the bag evaluation scanner to natively support the modern 11.5 "Combined Backpack". Upgrade arrows now dynamically spawn correctly across the combined inventory.
+- **Classic Bag (Separated) Array Fix**: Updated standard bag iteration to support the modern `ContainerFrameX.Items` array format, repairing bag arrows for players who prefer the "Classic" interface preset.
+- **Checkbox Persistence**: Fixed a persistence bug where UI checkboxes (such as "Show Bag Upgrade Arrows") would fail to save to disk. Switched to `HookScript` to preserve native 11.5 template states, and added a diagnostic wipe command (`/sgjwipe`) to clear corrupted legacy databases.
+- **Startup Scanner**: Injected a `PLAYER_ENTERING_WORLD` delay scan to ensure bag arrows accurately paint themselves immediately upon logging into the game.
+
+---
+
+
+##ðŸš€ SharpiesGearJudge:Collection (v2.2.8 - v2.3.7)
+
+###ðŸ›  Core Engine & Performance
 
 - **Initialization Overhaul: Moved to a "Pending Module" registration system. The addon now uses PLAYER_LOGIN and ForceInit to detect class modules, wiring up profiles only when needed to save memory.**
 - **Micro-Optimizations: Extensive localization of Lua and WoW APIs across all files to reduce global lookups.**
 - **Memory Management: Implemented database flattening for item sets and automated "garbage collection" of temporary tables after database builds.**
 - **Update Throttling: Replaced old OnUpdate logic with a C_Timer based debounce system (RequestUpdate) to handle UI refreshes efficiently during bag/event changes.**
 
-###🔍 Parser & Data Accuracy
+###ðŸ” Parser & Data Accuracy
 
 - **Parse.lua Overhaul: Expanded TermMap and EquipPatterns to support Era/TBC phrasings (e.g., "spell damage and healing," ranged AP, elemental resistances). Improved right-side tooltip scanning to fix missing weapon speed/damage data.**
 - **Item Overrides & Procs: Centralized the ProcDB and AddOverrides tables. Introduced _AUTO_PROC for more accurate valuation of trinkets and procs with detailed internal notes.**
 - **Pawn Integration: Added a robust Pawn v1 string parser, allowing users to import external weight scales directly into the addon's DB with an automatic UI reload prompt.**
 
-###⚖️ Evaluator & Mechanics
+###âš–ï¸ Evaluator & Mechanics
 
 - **Dynamic Caps: Added talent and racial detection (e.g., Heroic Presence, Survival of the Fittest) to dynamically adjust hit, expertise, and defense caps for the UI rings.**
 - **Set Bonus Logic: Rewrote the item set system to use a fast itemID->setID lookup. The evaluator now accurately calculates set bonus gains or breaks when comparing gear.**
 - **Stat Refinements: Improved dual-wield/off-hand logic, added meta gem color counting, and fixed cap/delta math for hit and defense checks.**
 
-###📺 UI & User Experience
+###ðŸ“º UI & User Experience
 
 - **Multi-Spec Tracking: Introduced the ability to track secondary profiles simultaneously, showing upgrade deltas for off-specs in the item tooltips.**
 - **Quest Overlays: Added QUEST_COMPLETE handling to visually mark the best upgrade choice among quest rewards.**
 - **Tooltip Improvements: Added a "Shift Key Only" toggle, fixed minimap anchoring/draggability, and refined the score breakdown to include proc contributions.**
 - **Settings: Transitioned SGJ_Settings to SavedVariablesPerCharacter to allow for unique setups on different alts.**
 
-###⚔️ Class Specific Highlights
+###âš”ï¸ Class Specific Highlights
 
 - **Warlocks: Added TBC-specific weights, mana regeneration tiebreakers, and PvP spell penetration caps.**
 - **Druids: Integrated Dreamstate/Predatory Instincts logic, Feral AP scaling, and expertise cap softening. Added a dynamic "Raven Goddess" idol entry.**

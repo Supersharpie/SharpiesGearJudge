@@ -1,3 +1,4 @@
+local GetItemInfoInstant = GetItemInfoInstant or (C_Item and C_Item.GetItemInfoInstant)
 local addonName, MSC = ...
 local _G = _G 
 
