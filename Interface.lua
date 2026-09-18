@@ -1593,9 +1593,20 @@ local function GetClassRings(class, stats, weights)
                     local maxCrit = 0
                     for s=2, 7 do maxCrit = math_max(maxCrit, MSC.SanitizeStat(GetSpellCritChance(s)) or 0) end
                     local hasTotemOfWrathBuff = false
-                    for b=1, 40 do
-                        local name = UnitBuff("player", b)
-                        if name == MSC.L["Totem of Wrath"] then hasTotemOfWrathBuff = true; break end
+                    if AuraUtil and AuraUtil.FindAuraByName then
+                        hasTotemOfWrathBuff = AuraUtil.FindAuraByName(MSC.L["Totem of Wrath"], "player", "HELPFUL") ~= nil
+                    elseif C_UnitAuras and C_UnitAuras.GetBuffDataByIndex then
+                        for b=1, 40 do
+                            local aura = C_UnitAuras.GetBuffDataByIndex("player", b)
+                            if not aura then break end
+                            if aura.name == MSC.L["Totem of Wrath"] then hasTotemOfWrathBuff = true; break end
+                        end
+                    elseif UnitBuff then
+                        for b=1, 40 do
+                            local name = UnitBuff("player", b)
+                            if not name then break end
+                            if name == MSC.L["Totem of Wrath"] then hasTotemOfWrathBuff = true; break end
+                        end
                     end
                     if hasTotemOfWrathBuff and (isTBC and class == "SHAMAN" and GetTalentRank(1, "Totem of Wrath") > 0) then
                         currentDisplay = maxCrit + math_max(0, spellCritBonus - 3)

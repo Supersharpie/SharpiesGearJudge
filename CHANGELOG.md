@@ -2,6 +2,18 @@
 
 ---
 
+## 🚀 v3.0.4
+
+### 🛠️ Beta Client & API Crash Fixes
+- **SavedVariables Beta Bypass**: Added a temporary hardcode override in `Init.lua` to guarantee essential settings (like Bag Arrows) load properly while the WoW 11.5 beta client's file I/O is broken.
+- **UnitBuff Polyfill**: Fixed a fatal UI crash when calculating Spell Crit stats. Replaced the deleted global `UnitBuff` API with modern `AuraUtil.FindAuraByName` and `C_UnitAuras` fallbacks.
+- **Roadmap MouseIsOver Crash**: Fixed a nil crash on the Roadmap interactive popup. Converted the deprecated global `MouseIsOver()` function to the modern `frame:IsMouseOver()` method.
+
+### 🧪 Data & Roadmap Updates - Mainly for beta testers
+- **Data Export UI**: Added the `/sgjminer export` slash command. This opens an in-game UI frame that automatically serializes your discovered drops into raw Lua strings, allowing testers to cleanly `Ctrl+C` copy the data without navigating corrupted `WTF` folders.
+- **Pure Dynamic Roadmap**: Completely wiped the legacy Vanilla item and quest databases (`D1_Items_Forever.lua` and `D5_Quests_Forever.lua`) for the beta. The Roadmap will now start as a blank slate and populate 100% organically based only on real-time dataminer discoveries, eliminating false positives from old expansions.
+
+
 ## 🚀 v3.0.3
 
 ### ⚔️ WoW: Forever Class Talent Overhauls

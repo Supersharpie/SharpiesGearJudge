@@ -1,5 +1,14 @@
 SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
 SGJ_Settings = SGJ_Settings or {}
+
+-- =========================================================================
+-- [BETA BUG BYPASS] HARDCODED SETTINGS
+-- TODO: DELETE THIS ENTIRE BLOCK BEFORE PUBLIC RELEASE!
+-- =========================================================================
+SharpiesGearJudgeDB.EnableDataminer = true
+SGJ_Settings.ShowBagArrows = true
+-- =========================================================================
+
 function MSC_GetTooltipItem(tooltip)
     if not tooltip then return nil, nil end
     if tooltip.GetItem then return tooltip:GetItem() end

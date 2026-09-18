@@ -1130,3 +1130,80 @@ SlashCmdList["SGJ_MINER"] = function(msg)
     end
     print(string.format("|cff00ffffSGJ Data Miner:|r Tracking %d rewards across %d unique Quests.", qItems, qCount))
 end
+
+
+-- =========================================================================
+-- [DATAMINER EXPORT UI]
+-- =========================================================================
+function MSC.ShowMinerExport()
+    if not SGJ_MinerExportFrame then
+        local f = CreateFrame("Frame", "SGJ_MinerExportFrame", UIParent, "BasicFrameTemplateWithInset")
+        f:SetSize(600, 450)
+        f:SetPoint("CENTER")
+        f:SetFrameStrata("DIALOG")
+        f:SetMovable(true)
+        f:EnableMouse(true)
+        f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving)
+        f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        f.TitleText:SetText("SGJ Dataminer Export (Ctrl+C to Copy)")
+        
+        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+        sf:SetPoint("TOPLEFT", 10, -30)
+        sf:SetPoint("BOTTOMRIGHT", -30, 10)
+        
+        local eb = CreateFrame("EditBox", nil, sf)
+        eb:SetMultiLine(true)
+        eb:SetFontObject("ChatFontNormal")
+        eb:SetWidth(550)
+        eb:SetScript("OnEscapePressed", function() f:Hide() end)
+        sf:SetScrollChild(eb)
+        f.EditBox = eb
+        
+        -- Select all text when clicked
+        eb:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    end
+    
+    local lines = {}
+    table.insert(lines, "-- ==========================================")
+    table.insert(lines, "-- SGJ DATAMINER EXPORT")
+    table.insert(lines, "-- Paste this into Discord or the Addon files!")
+    table.insert(lines, "-- ==========================================")
+    
+    table.insert(lines, "local Drops = {")
+    if SharpiesGearJudgeDB and SharpiesGearJudgeDB.DropDatabase then
+        for npcID, data in pairs(SharpiesGearJudgeDB.DropDatabase) do
+            local dropStr = ""
+            for itemID, _ in pairs(data.drops) do
+                dropStr = dropStr .. itemID .. ", "
+            end
+            table.insert(lines, string.format('    [%d] = { name = "%s", zone = "%s", drops = { %s} },', npcID, tostring(data.name), tostring(data.zone), dropStr))
+        end
+    end
+    table.insert(lines, "}")
+    
+    table.insert(lines, "local Quests = {")
+    if SharpiesGearJudgeDB and SharpiesGearJudgeDB.QuestDatabase then
+        for questID, data in pairs(SharpiesGearJudgeDB.QuestDatabase) do
+            local rewStr = ""
+            for itemID, _ in pairs(data.rewards) do
+                rewStr = rewStr .. itemID .. ", "
+            end
+            table.insert(lines, string.format('    [%d] = { name = "%s", zone = "%s", rewards = { %s} },', questID, tostring(data.name), tostring(data.zone), rewStr))
+        end
+    end
+    table.insert(lines, "}")
+    
+    SGJ_MinerExportFrame.EditBox:SetText(table.concat(lines, "\n"))
+    SGJ_MinerExportFrame:Show()
+end
+
+-- Hook the export command
+local oldMinerHook = SlashCmdList["SGJ_MINER"]
+SlashCmdList["SGJ_MINER"] = function(msg)
+    if msg and string.lower(msg) == "export" then
+        if MSC.ShowMinerExport then MSC.ShowMinerExport() end
+        return
+    end
+    if oldMinerHook then oldMinerHook(msg) end
+end
