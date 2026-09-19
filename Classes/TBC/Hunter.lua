@@ -92,7 +92,7 @@ Hunter.LevelingWeights = {}
 Hunter.LevelingBrackets = {
     -- [[ 1. STANDARD RANGED (1-20) ]]
     -- Pre-Viper. Spirit is okay for regen.
-    ["Leveling_1_20"] = { 
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
@@ -121,7 +121,7 @@ Hunter.LevelingBrackets = {
     },
     
     -- [[ 2. STANDARD RANGED (21-40) ]]
-    ["Leveling_21_40"] = { 
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 6.0, 
@@ -152,7 +152,7 @@ Hunter.LevelingBrackets = {
     },
     
     -- [[ 3. BEAST MASTERY / MARKSMANSHIP (41-70) ]]
-    ["Leveling_41_51"] = { 
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 7.0, 
@@ -181,7 +181,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -210,7 +210,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_60_70"] = { 
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 9.0, 
@@ -245,7 +245,7 @@ Hunter.LevelingBrackets = {
     },
 
     -- [[ MELEE HUNTER (The "Drizzt" Build) ]]
-    ["Leveling_Melee_21_40"] = { 
+    ["Leveling_Melee_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
@@ -274,7 +274,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_Melee_41_51"] = { 
+    ["Leveling_Melee_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 6.0, 
@@ -305,7 +305,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_Melee_52_59"] = { 
+    ["Leveling_Melee_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 7.0, 
@@ -336,7 +336,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_Melee_60_70"] = { 
+    ["Leveling_Melee_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -369,7 +369,7 @@ Hunter.LevelingBrackets = {
     },
     
     -- [[ SURVIVAL (Ranged Stat Stick Build) ]]
-    ["Leveling_Survival_21_40"] = { 
+    ["Leveling_Survival_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 6.0, 
@@ -394,7 +394,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_Survival_41_51"] = { 
+    ["Leveling_Survival_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 7.0, 
@@ -419,7 +419,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_Survival_52_59"] = { 
+    ["Leveling_Survival_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -444,7 +444,7 @@ Hunter.LevelingBrackets = {
 			["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = 1.0 -- Ensure RAP items are caught
         }
     },
-    ["Leveling_Survival_60_70"] = { 
+    ["Leveling_Survival_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 9.0, 

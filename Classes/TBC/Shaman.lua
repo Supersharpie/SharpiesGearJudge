@@ -128,7 +128,7 @@ Shaman.Weights = {
 Shaman.LevelingBrackets = {
     -- [[ STANDARD MELEE (1-39) ]]
     -- 2H Axes/Maces/Staves. Windfury unlocks at Lvl 30.
-    ["Leveling_1_20"] = { 
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -155,7 +155,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 0.8
         }
     },
-    ["Leveling_21_40"] = { -- Windfury Era (Lvl 30)
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, -- Windfury Era (Lvl 30)
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -187,7 +187,7 @@ Shaman.LevelingBrackets = {
     -- Meta: Slow MH / Slow OH (for Stormstrike). 
     -- Mental Dexterity: Int provides AP (1 Int = 1 AP).
     -- TBC Mechanics: Agility provides ZERO AP. Only Crit/Armor.
-    ["Leveling_41_51"] = { 
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -218,7 +218,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -249,7 +249,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5
         }
     },
-    ["Leveling_60_70"] = { 
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -287,7 +287,7 @@ Shaman.LevelingBrackets = {
 
     -- [[ ELEMENTAL CASTER ]]
     -- Spell Power > Hit > Crit > Int. Spirit is dead.
-    ["Leveling_Caster_40_51"] = { 
+    ["Leveling_Caster_40_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 40, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -314,7 +314,7 @@ Shaman.LevelingBrackets = {
 			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         }
     },
-    ["Leveling_Caster_52_59"] = { 
+    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -341,7 +341,7 @@ Shaman.LevelingBrackets = {
 			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         }
     },
-    ["Leveling_Caster_60_70"] = { 
+    ["Leveling_Caster_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -375,7 +375,7 @@ Shaman.LevelingBrackets = {
 
     -- [[ SHAMAN TANK (Warden) ]]
     -- High Stamina + Block + Agility (Dodge). Weapon Speed = Fast (Threat application).
-    ["Leveling_Tank_21_40"] = {
+    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
@@ -406,7 +406,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_Tank_41_51"] = {
+    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
@@ -439,7 +439,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         }
     },
-    ["Leveling_Tank_52_59"] = {
+    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
@@ -472,7 +472,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         }
     },
-    ["Leveling_Tank_60_70"] = {
+    ["Leveling_Tank_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 6.0, 
@@ -514,7 +514,7 @@ Shaman.LevelingBrackets = {
 
     -- [[ RESTO HEALER ]]
     -- Healing Power > Mp5 > Int. Spirit is garbage.
-    ["Leveling_Healer_40_51"] = { 
+    ["Leveling_Healer_40_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 40, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -537,7 +537,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8
         }
     },
-    ["Leveling_Healer_52_59"] = {
+    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -560,7 +560,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_Healer_60_70"] = {
+    ["Leveling_Healer_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -811,7 +811,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("ELE") or currentSpec:find("Caster") then
         if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
-            local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
+            local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(4)) -- 4 = Nature
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
                  if spScaler > 1.2 then spScaler = 1.2 end
@@ -821,7 +821,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("RESTO") or currentSpec:find("Healer") then
         if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
-            local healPower = GetSpellBonusHealing()
+            local healPower = MSC.SanitizeStat(GetSpellBonusHealing())
             if healPower > 800 then
                 local hScaler = 1 + ((healPower - 800) / 10000)
                 if hScaler > 1.2 then hScaler = 1.2 end
@@ -843,7 +843,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
 
     -- A. DUAL WIELD HIT (Enhancement)
     if currentSpec:find("ENH") and Rank("DUAL_WIELD_SPEC") > 0 then
-         local hitRating = GetCombatRating(6)
+         local hitRating = MSC.SanitizeStat(GetCombatRating(6))
          -- DW wants 9% to cap specials, but continues scaling well up to ~24% for white damage
          local dwSpecPct = Rank("DUAL_WIELD_SPEC") * 2
          local specialCapPct = math.max(0, 9 - dwSpecPct - natureGuidancePct - racialHitPct)
@@ -972,3 +972,5 @@ if Shaman.LevelingWeights then
     for k, v in pairs(Shaman.LevelingWeights) do Shaman.Profiles[k] = v end
 end
 MSC.RegisterModule("SHAMAN", Shaman)
+
+

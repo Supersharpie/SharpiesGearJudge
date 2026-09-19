@@ -125,7 +125,7 @@ Warrior.LevelingWeights = {}
 Warrior.LevelingBrackets = {
 
     -- [[ 1. ARMS / 2H LEVELING ]]
-    ["Leveling_1_20"] = {
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -152,7 +152,7 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5
         }
     },
-    ["Leveling_2H_21_40"] = {
+    ["Leveling_2H_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -181,7 +181,7 @@ Warrior.LevelingBrackets = {
 			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
-    ["Leveling_2H_41_51"] = { 
+    ["Leveling_2H_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 13.0, 
@@ -210,7 +210,7 @@ Warrior.LevelingBrackets = {
 			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
-    ["Leveling_2H_52_59"] = {
+    ["Leveling_2H_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -239,7 +239,7 @@ Warrior.LevelingBrackets = {
 			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
-    ["Leveling_2H_60_70"] = {
+    ["Leveling_2H_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
@@ -272,7 +272,7 @@ Warrior.LevelingBrackets = {
     },      
 
     -- [[ 2. FURY / DUAL WIELD ]]
-    ["Leveling_DW_21_40"] = {
+    ["Leveling_DW_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -303,7 +303,7 @@ Warrior.LevelingBrackets = {
 			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
-    ["Leveling_DW_41_51"] = {
+    ["Leveling_DW_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 11.0, 
@@ -332,7 +332,7 @@ Warrior.LevelingBrackets = {
 			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
-    ["Leveling_DW_52_59"] = {
+    ["Leveling_DW_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -361,7 +361,7 @@ Warrior.LevelingBrackets = {
 			["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.1 -- Better than nothing
         }
     },
-    ["Leveling_DW_60_70"] = {
+    ["Leveling_DW_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -396,7 +396,7 @@ Warrior.LevelingBrackets = {
     },
 
     -- [[ 3. PROT / TANK ]]
-    ["Leveling_Tank_21_40"] = {
+    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -427,7 +427,7 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_PARRY_RATING_SHORT"] = 0.5
         }
     },
-    ["Leveling_Tank_41_51"] = {
+    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
@@ -458,7 +458,7 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         }
     },
-    ["Leveling_Tank_52_59"] = {
+    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 9.0,
@@ -489,7 +489,7 @@ Warrior.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5
         }
     },
-    ["Leveling_Tank_60_70"] = {
+    ["Leveling_Tank_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -742,7 +742,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
     end
 
     if weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
-        local arPen = GetCombatRating(25) or 0
+        local arPen = MSC.SanitizeStat(GetCombatRating(25)) or 0
         if arPen > 100 then
             local scaler = 1 + (arPen / 1000) 
             if scaler > 1.4 then scaler = 1.4 end
@@ -794,7 +794,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
 	
 	-- [[ F. The Expertise Cap ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
-        local expRating = GetCombatRating(24)
+        local expRating = MSC.SanitizeStat(GetCombatRating(24))
         local level = UnitLevel("player")
         if level > 70 then level = 70 end
         local expScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][1]) or 3.94
@@ -870,3 +870,5 @@ if Warrior.LevelingWeights then
 end
 
 MSC.RegisterModule("WARRIOR", Warrior)
+
+

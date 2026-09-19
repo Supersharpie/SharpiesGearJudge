@@ -116,7 +116,7 @@ Warlock.Weights = {
 Warlock.LevelingBrackets = {
     -- [[ STANDARD AFFLICTION (1-20) ]]
     -- Wand is God. Spirit/Stam for Life Tap sustainability.
-    ["Leveling_1_20"] = {
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 1, max = 20,
         Start = { 
             ["MSC_WAND_DPS"] = 2.5, 
@@ -143,7 +143,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         }
     },
-    ["Leveling_21_40"] = {
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WAND_DPS"] = 2.0, 
@@ -170,7 +170,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         }
     },
-    ["Leveling_41_51"] = { -- Dark Pact era (Mana from Pet). Spirit value drops.
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, -- Dark Pact era (Mana from Pet). Spirit value drops.
         min = 41, max = 51,
         Start = { 
             ["MSC_WAND_DPS"] = 1.5, 
@@ -197,7 +197,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2
         }
     },
-    ["Leveling_52_59"] = {
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WAND_DPS"] = 0.8, 
@@ -224,7 +224,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5
         }
     },
-    ["Leveling_60_70"] = { -- Outland Drain Tanking / Affliction
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, -- Outland Drain Tanking / Affliction
         min = 60, max = 70,
         Start = { 
             ["MSC_WAND_DPS"] = 0.4, 
@@ -256,7 +256,7 @@ Warlock.LevelingBrackets = {
 
     -- [[ DESTRUCTION (FIRE) ]]
     -- Focus: Crit / Fire Dmg / Int (Mana hungry).
-    ["Leveling_Fire_21_40"] = {
+    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WAND_DPS"] = 1.5, 
@@ -283,7 +283,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Fire_41_51"] = {
+    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WAND_DPS"] = 1.2, 
@@ -310,7 +310,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Fire_52_59"] = {
+    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WAND_DPS"] = 0.8, 
@@ -337,7 +337,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Fire_60_70"] = {
+    ["Leveling_Fire_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WAND_DPS"] = 0.4, 
@@ -368,7 +368,7 @@ Warlock.LevelingBrackets = {
     },
 -- [[ DESTRUCTION (SHADOW) LEVELING ]]
     -- Focus: Crit / Shadow Dmg / Int (Mana hungry).
-    ["Leveling_Destro_Shadow_21_40"] = {
+    ["Leveling_Destro_Shadow_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WAND_DPS"] = 1.5, 
@@ -395,7 +395,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Destro_Shadow_41_51"] = {
+    ["Leveling_Destro_Shadow_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WAND_DPS"] = 1.2, 
@@ -422,7 +422,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Destro_Shadow_52_59"] = {
+    ["Leveling_Destro_Shadow_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WAND_DPS"] = 0.8, 
@@ -449,7 +449,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Destro_Shadow_60_70"] = {
+    ["Leveling_Destro_Shadow_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WAND_DPS"] = 0.4, 
@@ -481,7 +481,7 @@ Warlock.LevelingBrackets = {
 	
     -- [[ DEMO LEVELING ]]
     -- Focus: Stamina (Pet Scaling) / SP.
-    ["Leveling_Demo_21_40"] = {
+    ["Leveling_Demo_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WAND_DPS"] = 1.5, 
@@ -508,7 +508,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Demo_41_51"] = { -- Felguard Era
+    ["Leveling_Demo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, -- Felguard Era
         min = 41, max = 51,
         Start = { 
             ["MSC_WAND_DPS"] = 1.0, 
@@ -535,7 +535,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Demo_52_59"] = {
+    ["Leveling_Demo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WAND_DPS"] = 0.6, 
@@ -562,7 +562,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Demo_60_70"] = {
+    ["Leveling_Demo_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WAND_DPS"] = 0.2, 
@@ -831,8 +831,8 @@ function Warlock:ApplyScalers(weights, currentSpec)
     -- [[ 3. COVARIANCE (Destro Loves Crit/Haste) ]]
     if currentSpec:find("DESTRUCT") then
         local spellPower = 0
-        if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3) 
-        else spellPower = GetSpellBonusDamage(2) end
+        if currentSpec:find("SHADOW") then spellPower = MSC.SanitizeStat(GetSpellBonusDamage(3)) 
+        else spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) end
         
         if spellPower > 600 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             local scaler = 1 + ((spellPower - 600) / 10000)
@@ -876,3 +876,4 @@ if Warlock.LevelingBrackets then
 end
 
 MSC.RegisterModule("WARLOCK", Warlock)
+

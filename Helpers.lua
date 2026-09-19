@@ -691,6 +691,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
     local rawStats = MSC.GetRawItemStats(itemLink)
     local finalStats = {}
     for k,v in pairs(rawStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
+    if MSC.IsForever and finalStats.MSC_WEAPON_DPS and not finalStats.ITEM_MOD_DAMAGE_PER_SECOND_SHORT then finalStats.ITEM_MOD_DAMAGE_PER_SECOND_SHORT = finalStats.MSC_WEAPON_DPS end
     local bonusStats = rawStats._BONUS_STATS or {}
     local baseLink = MSC.GetBaseLink and MSC.GetBaseLink(itemLink) or nil
     local baseRaw = nil

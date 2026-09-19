@@ -74,6 +74,11 @@ MSC.ShortNames = {
 
 -- Canonical stat keys: map legacy/parser variants to one internal key
 MSC.StatAliases = {
+    ["MSC_WEAPON_DPS"] = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+    ["MSC_WAND_DPS"] = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+    ["MSC_WEAPON_SPEED"] = "ITEM_MOD_WEAPON_SPEED_SHORT",
+    ["MSC_OH_WEAPON_SPEED"] = "ITEM_MOD_WEAPON_SPEED_SHORT",
+
     ["ITEM_MOD_RESISTANCE_ALL_SHORT"] = "ITEM_MOD_ALL_RESISTANCE_SHORT",
 }
 

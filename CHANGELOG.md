@@ -1,15 +1,31 @@
-﻿# Sharpie's Gear Judge - Version History
+# Sharpie's Gear Judge - Version History
+
+---
+
+## 🚀 v3.0.5
+
+### ✨ New Features
+- **Group Loot Side-Panel**: Completely overhauled the Group Loot frames! Instead of tiny up/down icons, the addon now attaches a sleek, rich tooltip directly to the side of the loot roll frame. It displays a clear "Recommended Roll: NEED" or "GREED/PASS" verdict, the mathematical percentage upgrade, and the exact equipped item link it's being compared against.
+- **Rested XP UI Updates**: Upgraded the SharpiesGearJudge_XP plugin's visual tracking. The bar now draws a classic, translucent blue "tail" extending outward to show exactly where your rested XP ends. Also added exact Rested XP data directly into the tooltip when hovering.
+
+### 🐛 Bug Fixes
+- **Empty Slot Tooltip Clarity**: Fixed a confusing mathematical edge case where comparing an upgrade against an empty slot would display +0.0% in the tooltip. It now correctly identifies empty slot upgrades as (New).
+- **Combat Lockdown "Secret Number" Crash**: Swept all class modules (Druid, Mage, Priest, etc.) and wrapped internal calls to GetSpellBonusDamage, GetSpellBonusHealing, GetCombatRating, and UnitDefense inside the addon's MSC.SanitizeStat safety protocol. This resolves a fatal Lua crash triggered when the 11.5 engine locked down combat APIs and injected un-mathable <secret number> objects instead of integers.
+- **UnitBuff API Polyfill**: Fixed a fatal UI crash in the Laboratory rings caused by the modern 11.5 engine removing the `UnitBuff` global API. Implemented a robust fallback using `AuraUtil.FindAuraByName` and `C_UnitAuras`.
+- **Missing Stat Descriptions**: Added descriptive text for `SPELL_HIT`, `ATTACK_POWER`, and `DAMAGE_PER_SECOND` to the stat logic breakdown.
+- **Receipt Window Layout Overhaul**: Completely remodeled the Receipt UI tab. Removed the restrictive semi-transparent dark panels, boosted the window opacity for a clean "floating HUD" look, and rearranged `WEAPONS` into a space-efficient vertical 3rd column. The Capstone Score is now vastly enlarged and dynamically positioned next to the stat totals.
+- **LabBlocks Overlap**: Corrected Y-offset math inside the Laboratory color bars to prevent the title and sub-text from colliding.
 
 ---
 
 ## 🚀 v3.0.4
 
-### 🛠️ Beta Client & API Crash Fixes
+### 🔧 Beta Client & API Crash Fixes
 - **SavedVariables Beta Bypass**: Added a temporary hardcode override in `Init.lua` to guarantee essential settings (like Bag Arrows) load properly while the WoW 11.5 beta client's file I/O is broken.
 - **UnitBuff Polyfill**: Fixed a fatal UI crash when calculating Spell Crit stats. Replaced the deleted global `UnitBuff` API with modern `AuraUtil.FindAuraByName` and `C_UnitAuras` fallbacks.
 - **Roadmap MouseIsOver Crash**: Fixed a nil crash on the Roadmap interactive popup. Converted the deprecated global `MouseIsOver()` function to the modern `frame:IsMouseOver()` method.
 
-### 🧪 Data & Roadmap Updates - Mainly for beta testers
+### 🗺️ Data & Roadmap Updates - Mainly for beta testers
 - **Data Export UI**: Added the `/sgjminer export` slash command. This opens an in-game UI frame that automatically serializes your discovered drops into raw Lua strings, allowing testers to cleanly `Ctrl+C` copy the data without navigating corrupted `WTF` folders.
 - **Pure Dynamic Roadmap**: Completely wiped the legacy Vanilla item and quest databases (`D1_Items_Forever.lua` and `D5_Quests_Forever.lua`) for the beta. The Roadmap will now start as a blank slate and populate 100% organically based only on real-time dataminer discoveries, eliminating false positives from old expansions.
 
@@ -20,11 +36,11 @@
 - **All 9 Classes Updated**: Completely rewrote the auto-detect routing (`GetSpec`) and dynamic stat scalers (`ApplyScalers`) for Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, and Druid to accurately reflect the official WoW: Forever talent trees.
 - Capstone talents, hybrid scaling multipliers (e.g. Spirit to Spell Damage, Attack Power to Intellect), and deep-tree spec detection have been fully natively integrated.
 
-### 🛠️ Beta Client Bug Fixes
+### ??? Beta Client Bug Fixes
 - **SavedVariables Corruption Fix - maybe, maybe not**: Removed legacy `SavedVariablesPerCharacter` tags from all `.toc` files. This completely bypasses a critical WoW Forever Beta bug (introduced in build 69913) that was corrupting WTF folders and preventing UI settings from saving.
 - **Roadmap Modernization**: Repaired Roadmap `UnitDefense` crashes and TBC feature leaks caused by the new modern 11.0 hybrid engine.
 
-### 🐛 Bug Fixes & Minor Adjustments
+### ?? Bug Fixes & Minor Adjustments
 - **Profession API Lua Errors**: Bridged deprecated Global APIs (`GetNumSkillLines`, `GetNumTradeSkills`) that were completely removed in the WoW: Forever (11.5) hybrid engine. Polyfilled the `TradeSkillFrame` scanners to silently failover, preventing severe Lua errors when opening the crafting windows.
 - **Startup Crash Resolved**: Fixed critical syntax errors in the Paladin, Shaman, and Hunter class modules that were causing the addon to silently fail during initialization.
 - **Rogue Talent Routing**: Corrected weapon specialization routing for Combat Rogues, properly mapping to the new Hack and Slash and Puncturing Wounds mechanics.
@@ -36,7 +52,7 @@
 
 ## 🚀 v3.0.2
 
-### ⚔️ WoW: Forever Stat Meta Overhaul
+### ?? WoW: Forever Stat Meta Overhaul
 - **Unified Hit & Crit System**: Updated the math engine to dynamically unify physical and magical hit/crit values. Items with Hit now properly evaluate for hybrid classes (e.g., Spell Hit evaluating perfectly for physical builds, and vice-versa).
 - **Healer Stat Conversion (1/3 Ratio)**: Programmed the core logic engine to natively convert 33.3% of `+Healing` gear into `+Spell Damage` to match Forever's new hybrid leveling rules for healers.
 - **Removed Gemming UI**: Disabled Jewelcrafting/Gemming options from the interface menus when running on the Forever/Era engine (since the game uses Vanilla rules).
@@ -52,7 +68,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -66,7 +82,7 @@
 
 ## 🚀 v3.0.0
 
-### ⚔️ Features & Updates
+### ?? Features & Updates
 
 - **WoW: Forever Support**:
   - **Modern Engine UI**: The addon UI has been updated to run flawlessly on the modern retail engine used in the WoW: Forever beta.
@@ -82,7 +98,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -94,9 +110,9 @@
 ---
 
 
-## ðŸš€ v2.6.5
+## 🚀 v2.6.5
 
-### ðŸ› Bug Fixes & Improvements
+### 🐛 Bug Fixes & Improvements
 
 - **Gem Projections & Quality Filtering**:
   - **Quality Ceiling**: Fixed a bug where epic gems (`quality = 4`) were having their quality silently downgraded to rare (`quality = 3`) during engine initialization. Epic gems will now properly respect the user's "Gem Quality" limit setting (e.g., they will be correctly excluded when "Rare (Blue)" is selected).
@@ -106,7 +122,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -118,9 +134,9 @@
 ---
 
 
-## ðŸš€ v2.6.4
+## 🚀 v2.6.4
 
-### ðŸ› Bug Fixes & Improvements
+### 🐛 Bug Fixes & Improvements
 
 - **Shaman (Totem of Wrath)**:
   - **Stat Logic UI**: Added full support for the 41-point Elemental talent `Totem of Wrath` (+3% Spell Hit, +3% Spell Crit).
@@ -139,7 +155,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -151,9 +167,9 @@
 ---
 
 
-## ðŸš€ v2.6.3
+## 🚀 v2.6.3
 
-### ðŸ› Bug Fixes
+### 🐛 Bug Fixes
 
 - **Hit Cap**: Fixed an issue where the Improved Faerie Fire hit credit and cap modifier were incorrectly being applied to Spell Hit instead of just Melee and Ranged Hit.
 
@@ -161,7 +177,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -173,9 +189,9 @@
 ---
 
 
-## ðŸš€ v2.6.2
+## 🚀 v2.6.2
 
-### ðŸ› Bug Fixes & Localization
+### 🐛 Bug Fixes & Localization
 
 - **Localization**: Added missing `L["healing.-(%d+).-damage.-(%d+)"]` pattern key to `deDE.lua`, `Localization.lua`, `esES.lua`, `frFR.lua`, `ptBR.lua`, and `ruRU.lua` to fix stat parsing and rating calculations for hybrid heal/damage items on non-English clients (e.g. *Epoch Mender* in German).
 - **Pattern Auditing**: Added 39 missing tooltip stat parsing patterns across all non-English locale files (`deDE`, `esES`, `frFR`, `ptBR`, `ruRU`).
@@ -186,7 +202,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -198,9 +214,9 @@
 ---
 
 
-## ðŸš€ v2.6.1
+## 🚀 v2.6.1
 
-### ðŸ› Bug Fixes
+### 🐛 Bug Fixes
 
 - **Mage**: Fixed a typo (`math_max` -> `math.max`) in TBC Mage class hit cap logic.
 
@@ -208,7 +224,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -220,22 +236,22 @@
 ---
 
 
-## ðŸš€ v2.6.0
+## 🚀 v2.6.0
 
 ### ✨ New Features
 
-- **Raid & World Buff Assumptions:** New `RaidBuffs.lua` engine and **Buff Assumptions** section in Protocol settings (`/sgj` â†’ Settings).
-  - **Assume Raid Buffed** with presets (Off / 25-Man Full / 10-Man Minimal) â€” models Totem of Wrath, Improved Faerie Fire, Blessing of Kings, Mark of the Wild, and **Heroic Presence from a Draenei in your raid** (without double-counting your own Draenei racial).
-  - **Assume World Buffed** with presets (Off / Full World Buffed / DM Tribute Only) â€” models classic world buffs (Ony/Nef, Rend/Alliance, ZG, Songflower, DM tribute). Off by default at 70; enable for leveling or vanilla content.
+- **Raid & World Buff Assumptions:** New `RaidBuffs.lua` engine and **Buff Assumptions** section in Protocol settings (`/sgj` → Settings).
+  - **Assume Raid Buffed** with presets (Off / 25-Man Full / 10-Man Minimal) — models Totem of Wrath, Improved Faerie Fire, Blessing of Kings, Mark of the Wild, and **Heroic Presence from a Draenei in your raid** (without double-counting your own Draenei racial).
+  - **Assume World Buffed** with presets (Off / Full World Buffed / DM Tribute Only) — models classic world buffs (Ony/Nef, Rend/Alliance, ZG, Songflower, DM tribute). Off by default at 70; enable for leveling or vanilla content.
   - Stat synergy deflates primary-stat weights when buffs inflate your existing stats (Kings, MotW, ZG, etc.).
-- **Unified Hit Cap Engine:** Shared cap logic across all TBC classes via `MSC.BuffEngine` â€” melee, spell, and ranged hit credits now include raid debuffs and external buffs when assumptions are enabled.
+- **Unified Hit Cap Engine:** Shared cap logic across all TBC classes via `MSC.BuffEngine` — melee, spell, and ranged hit credits now include raid debuffs and external buffs when assumptions are enabled.
 - **Balance Druid Hit Caps:** Added missing spell/melee hit cap softening for Boomkin and Feral specs (previously had no cap logic in `ApplyScalers`).
-- **Era defense floor (Cap Guardian):** Tank profiles on Classic Era now get reactive defense-floor penalties (`levelÃ—5+140`, 440 at 60) matching Stat Logic targets.
+- **Era defense floor (Cap Guardian):** Tank profiles on Classic Era now get reactive defense-floor penalties (`level×5+140`, 440 at 60) matching Stat Logic targets.
 - **TBC hybrid AUTO profiles:** Fury-Prot, Arms-Prot, HOTW, Ele/Resto NS, Enh/Resto NS detection with dedicated weight tables.
 - **Endgame talent point-scan:** Dominant-tree fallback when no capstone matches (Warrior, Paladin, Shaman, Druid).
-    if SGJ_Settings and SGJ_Settings.Mode == "AUTO" and specConfidence and specConfidence ~= "high" then profileLabel = profileLabel .. MSC.L[" (uncertain — pick profile manually if wrong)"] end
+    if SGJ_Settings and SGJ_Settings.Mode == "AUTO" and specConfidence and specConfidence ~= "high" then profileLabel = profileLabel .. MSC.L[" (uncertain � pick profile manually if wrong)"] end
 
-### ðŸ”§ Improvements (data & engine)
+### 🔧 Improvements (data & engine)
 
 - **Stat Logic rings** now display raid-buff modifiers when **Assume Raid Buffed** is enabled.
 - **Cap Guardian** (`Evaluator.lua`) uses effective hit targets that respect raid buff assumptions.
@@ -250,10 +266,10 @@
 - **Receipt bag upgrades:** Uses `EvaluateUpgrade` / `EvaluateUpgradeFast` (same engine as tooltips and bag arrows).
 - **BaseSpec on login:** `dbLoader` no longer flat-copies custom weights into `CurrentClass.Weights`; cache invalidates on reload when a custom profile is selected.
 - **LookupRawWeights:** Falls back to `BaseSpec` from `customWeights` when resolving tracked specs.
-- **TBC set data:** Fixed Malorne/Nordrassil `[641]` collision (Nordrassil Resto â†’ `[602]`); Cyclone T4 Enh/Ele/Resto IDs remapped to `[631]`/`[633]`/`[632]`; T6 token duplicates removed from set item lists.
+- **TBC set data:** Fixed Malorne/Nordrassil `[641]` collision (Nordrassil Resto → `[602]`); Cyclone T4 Enh/Ele/Resto IDs remapped to `[631]`/`[633]`/`[632]`; T6 token duplicates removed from set item lists.
 - **Expanded TBC SetBonusScores:** Added scores for Nordrassil, Cataclysm, Avatar, crafted, D3 gaps, T6 heal/caster, and S4 priest heal.
-- **BuildDatabase validation:** Debug mode warns on itemâ†’set collisions and sets missing `SetBonusScores`.
-- **ContentPhase gem gating:** `BuildGemOptionsForPhase(phase)` â€” P1 gems through P2; P3+ and P5+ tiers unlock at phases 3 and 5 (Roadmap phase dropdown rebuilds gem pool).
+- **BuildDatabase validation:** Debug mode warns on item→set collisions and sets missing `SetBonusScores`.
+- **ContentPhase gem gating:** `BuildGemOptionsForPhase(phase)` — P1 gems through P2; P3+ and P5+ tiers unlock at phases 3 and 5 (Roadmap phase dropdown rebuilds gem pool).
 - **Fast bag arrows:** `FastBagArrows` setting (default on); falls back to full `EvaluateUpgrade` for set pieces and weapons.
 - **Removed dead snapshot engine:** `PerformSnapshot` / `QueueGearSnapshot` deleted; manual Save Profile remains the baseline path.
 - **Parse hardening:** Set `(n/m)` headers classify before generic stat lines; proc line index handling aligned with equip parser.
@@ -262,7 +278,7 @@
 - **Shaman DW gate:** Off-hand weapon comparison requires `DUAL_WIELD` talent rank.
 - **Tracked-spec safety:** Off-spec tooltip loop wrapped in `xpcall` with guaranteed `TalentCache` restore.
 
-### ðŸ› Bug Fixes
+### 🐛 Bug Fixes
 
 - **Gem double-counting:** `GetTotalCharacterScore` no longer re-adds physical gem stats when Gem Mode is Casual/Pro and `SafeGetItemStats` already projected sockets.
 - **Off-spec weight pipeline:** `GetProfileWeights` / `GetWeightsByName` now run `ApplyScalers` and `ApplyStatSynergy` for every spec profile, not just the active one.
@@ -287,7 +303,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -299,7 +315,7 @@
 ---
 
 
-## ðŸš€ v2.5.11
+## 🚀 v2.5.11
 
 - **Added support for Sixty Upgrades EP imports (JSON, URL, and CSV formats) via the standard import window.**
 - **Fixed missing downgrade arrow overlays on items in standard Blizzard bags.**
@@ -307,7 +323,7 @@
 - **Applied initialization safety checks to the Pawn importer and fixed duplicate scanner logic.**
 - **Corrected the TBC Spirit-to-MP5 formula.**
 
-### ðŸ› Bug Fixes
+### 🐛 Bug Fixes
 
 - **Bag Addon Overlays
 - **Fixed an issue where downgrade arrows were entirely omitted from the codebase for both standard Blizzard bags and third-party bag addons (Bagnon, ElvUI, Baganator, etc.).**
@@ -317,7 +333,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -329,9 +345,9 @@
 ---
 
 
-## ðŸš€ v2.5.10
+## 🚀 v2.5.10
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - **Update Parse.lua to recognize Era-style stat lines by adding patterns for "+%d+ ranged/feral/attack power", and reorder related feral patterns for correct matching.** 
 - **Also tighten proc name cleanup to strip trailing spaces and periods (use "[%s%.]+$"), improving stat/proc parsing accuracy.**
@@ -340,7 +356,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -352,9 +368,9 @@
 ---
 
 
-## ðŸš€ v2.5.9
+## 🚀 v2.5.9
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - **Extended TermMap with additional spell hit/crit synonyms and remove duplicate entries; add mappings for various era phrasings so spell hit/crit are recognized consistently.**
 - **Reordered and expand EquipPatterns so critical-related patterns are checked before hit (prevents "critical hit" from being matched as plain "hit") and add several regexes to catch alternate phrasings (e.g. "critical hit with spells", "critical hit rating").**
@@ -363,7 +379,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -375,9 +391,9 @@
 ---
 
 
-## ðŸš€ v2.5.8
+## 🚀 v2.5.8
 
-- **UI: Fix EditBox focus for popup windows â€” enable mouse, focus on click (including empty ScrollFrame area), and hide frame on Escape (Interface.lua).**
+- **UI: Fix EditBox focus for popup windows — enable mouse, focus on click (including empty ScrollFrame area), and hide frame on Escape (Interface.lua).**
 - **Parser: Add missing stat entries and adjust term mapping (rename holy damage key), add a "procs/buffs escape hatch" to detect duration markers and record temporary effects into outputProcs instead of treating them as permanent stats, plus minor pattern/whitespace tweaks.**
 - **Changed Swift Starfire Diamond (id 28557) quality from 3 to 4.** 
 - **Added a set of TBC-era _AUTO_PROC overrides that provide averaged uptime stat equivalents for various proc trinkets and weapons (e.g., Dragonspine Trophy, Quagmirran's Eye, Sextant of Unstable Currents, Madness of the Betrayer, assorted rings and weapons).** 
@@ -387,7 +403,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -399,7 +415,7 @@
 ---
 
 
-## ðŸš€ v2.5.7
+## 🚀 v2.5.7
 
 - **Introduced CacheManager.lua and TooltipManager.lua to handle dynamic cache invalidation and prevent 0-score tooltip evaluations.** 
 - **CacheManager wipes evaluation, slot, and stat caches on equipment, talent, stance, and world-entry events so items are re-scored when baseline stats change.** 
@@ -415,7 +431,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -427,7 +443,7 @@
 ---
 
 
-## ðŸš€ v2.5.6
+## 🚀 v2.5.6
 
 - **Added a "Clear" button next to the Save button in MSC.InitSettingsView and reposition the status label to the right of it.** 
 *The new button clears the saved gear and talent profiles for the current player key (SGJ_Settings.GearProfiles and SGJ_Settings.TalentProfiles), wipes MSC.EvaluationCache, and updates the status label.** 
@@ -443,7 +459,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -455,15 +471,15 @@
 ---
 
 
-## ðŸš€ v2.5.5
+## 🚀 v2.5.5
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - ** Fix Minimap button drift*
 
-## ðŸš€ v2.5.4
+## 🚀 v2.5.4
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - **By ckhatri - Fix Project Best enchant double counting on pre-enchanted items; attempts to strip existing enchants off an item by comparing the item's raw stats against its base template, which is super helpful for accurate comparisons if Blizzard's API hides the enchant ID.**
 - **Avoid nil-index errors in MSC.SolveColorMatch by defaulting the result of GetItemStats(baseLink) to an empty table.** 
@@ -473,7 +489,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -485,9 +501,9 @@
 ---
 
 
-## ðŸš€ v2.5.3
+## 🚀 v2.5.3
 
-### âš–ï¸ UI, Scoring & Off Spec Logic
+### ⚖️ UI, Scoring & Off Spec Logic
 
 - **Added TalentProfiles storage, build & copy talent cache when saving a profile, and flush evaluation caches.**  
 - **GetWeightsByName now copies raw weight tables and applies class scalers to avoid mutating core data; tooltip evaluation injects saved off-spec talents into MSC.TalentCache to get correct scaled weights, then restores the live cache.**  
@@ -498,7 +514,7 @@
 - **Expanded tooltip multi-spec tracking to load saved baselines and show saved vs. live comparisons with a Saved label.** 
 - **Refactored settings UI into a scrollable pane, reorganize sections, add Save Gear buttons for each tracked profile, improve dropdown/check behavior, and streamline custom-profile deletion.**
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - **Updated localization strings to support new UI text.**
 - **Removed PLAYER_REGEN_ENABLED snapshot branch and related trigger code.**
@@ -509,7 +525,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -521,9 +537,9 @@
 ---
 
 
-## ðŸš€ v2.5.2 - Unreleased
+## 🚀 v2.5.2 - Unreleased
 
-### âš–ï¸ UI, Scoring & Evaluator Logic
+### ⚖️ UI, Scoring & Evaluator Logic
 
 - **Added an optional customBaselineGear parameter to MSC:EvaluateUpgrade so upgrades can be evaluated against a ghost/virtual gear set.**
 - **Initialized SGJ_Settings.GearProfiles and use per-spec GearProfiles (snapshot) when evaluating item tooltips.** 
@@ -531,7 +547,7 @@
 - **Added PerformSnapshot (with a 2s debounce timer), MSC:QueueGearSnapshot, and an isGearDirty flag to defer snapshots during combat and re-run them on PLAYER_REGEN_ENABLED.** 
 - **Registered PLAYER_REGEN_ENABLED and updated the existing event handler to queue snapshots on equipment/inventory changes, talent/spec changes, and entering the world.**
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - **Updated the section header comment for the event listener.**
 - **Minor refactor: compute prettySpec earlier for reuse and adjust tooltip formatting for upgrade and raw-score cases.**
@@ -540,7 +556,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -552,9 +568,9 @@
 ---
 
 
-## ðŸš€ v2.5.1
+## 🚀 v2.5.1
 
-### ðŸ’Ž Gemming System & Database Overhaul
+### 💎 Gemming System & Database Overhaul
 
 - **Introduced a new "Gem Quality" setting, allowing users to set a budget limit (Common, Uncommon, Rare, Epic) for how empty sockets are scored and projected.**
 - **Separated the Gemming Algorithm (The Casual vs. The Pro) from the Gem Quality to allow flexible combinations (e.g., using "Pro" min-max logic with "Uncommon" budget gems for leveling or fresh 70s).**
@@ -566,7 +582,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -578,11 +594,11 @@
 ---
 
 
-## ðŸš€ v2.5.0
+## 🚀 v2.5.0
 
 - **Introduced (still a work in progress)loot roll overlay support and improve quest/reward UI robustness.**
 
-### ðŸ“º UI & User Experience
+### 📺 UI & User Experience
 
 - **Added a ShowLootArrows setting and UI checkbox to enable/disable green upgrade arrows on group loot popups.** 
 - **Localization strings for the new option were added to the main and several locale files.**
@@ -594,7 +610,7 @@
 - **Improved quest UI overlay handling by hiding ElvUI/Blizzard arrow overlays and making quest item link retrieval more robust (use QuestInfoFrame.questLog to choose GetQuestLogItemLink vs GetQuestItemLink with a fallback).** 
 - **Added/adjusted localization patterns in Localization.lua and Locales/deDE.lua (socket bonus regex, several German pattern fixes and punctuation adjustments for mana/health per 5 sec, armor/feral/cat power patterns) and update Parse.lua to strip socket bonuses using the localized regex.**
 
-### ðŸ› Minor Fixes
+### 🐛 Minor Fixes
 
 - **Fixed spell rating mappings in Parse.lua.
 - **Fixed role detection to use "Leveling_Destro_Shadow" when SHADOW_AND_FLAME is present.
@@ -604,7 +620,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -616,33 +632,33 @@
 ---
 
 
-##ðŸš€ SharpiesGearJudge:Collection (v2.4.0 â€“ v2.4.11)
+##🚀 SharpiesGearJudge:Collection (v2.4.0 – v2.4.11)
 
-###ðŸ› ï¸ Major Feature: Tanking & Scoring Logic
+###🛠️ Major Feature: Tanking & Scoring Logic
 
 - **Crush & Def Cap Engine: Full support for Protection Paladins and Warriors, including dynamic "Crush Cap" visual rings and EHP weight pivoting once safely capped.**
 - **The "Exploder" Parser: Advanced detection for "+All Stats," "Attack Power in Cat Form," and "On-Use" trinket value mapping.**
 - **Relic & Spec Overhaul: Standardized scoring for Idols, Librams, and Totems (e.g., Idol of the Raven Goddess) and deepened Warlock endgame spec detection.**
 - **Pawn 2.0: Robust Pawn string import support with negative value handling and "Base Spec" assignment.**
 
-###ðŸŒ Global Localization (MSC.L)
+###🌍 Global Localization (MSC.L)
 
 - **Multi-Language Framework: Introduced a complete localization system.**
 - **Full Support: Extensive translations and regex patterns for deDE, esES, frFR, ptBR, and ruRU, including technical terms and meta-gem effects.**
 
-###âš¡ Performance & Caching (The "Speed" Update)
+###⚡ Performance & Caching (The "Speed" Update)
 
 - **Triple-Layer Caching: Implemented EvaluationCache, UsableCache, and SlotCache to eliminate redundant calculations and UI stutter.**
 - **Event Debouncing: Added a 0.5s gate to GET_ITEM_INFO_RECEIVED to keep the frame rate smooth during heavy data loading.**
 - **Smart Filtering: Uses GetItemInfoInstant to ignore non-equippable items before they ever hit the scoring engine.**
 
-###ðŸ“º UI, UX & Compatibility
+###📺 UI, UX & Compatibility
 
 - **Unified Overlays: Integrated upgrade indicators for Merchant, Trade Skill, Quest Log, and Quest Accept frames.**
 - **Addon Synergy: Native hooks for TSM, ElvUI, Bagnon, and Baganator, plus a LibDataBroker (LDB) launcher for Titan Panel.**
 - **Visual Polish: Added "Compact Equip" and "Colorize Stats" settings; restructured ApplyRingArt to fix animation flickering and stutter.**
 
-###ðŸ› Key Fixes & Reliability
+###🐛 Key Fixes & Reliability
 
 - **Infinite Loop Fix: Resolved the TSM tooltip flickering/looping issue.**
 - **Async Loading: Integrated C_Timer delays to handle uncached item data gracefully without showing "empty" scores.**
@@ -652,7 +668,7 @@
 
 ## 🚀 v3.0.1
 
-### 🛠️ Bug Fixes & Engine Ports (11.5)
+### 🐛 Bug Fixes & Engine Ports (11.5)
 
 - **11.5 Engine Taint Resolution**: Completely resolved secure environment math crashes on item hover in the WoW: Forever client. Built a new mathematical sanitization wrapper for all live-stat API calls to prevent 11.5 taint propagation.
 - **Legacy API Bridges**: Bridged several deleted global APIs for the 11.5 client. Created polyfills to gracefully bridge `tooltip:GetItem()` and `GetNumTalentTabs` to their modern 11.0 `TooltipUtil` equivalents.
@@ -664,37 +680,40 @@
 ---
 
 
-##ðŸš€ SharpiesGearJudge:Collection (v2.2.8 - v2.3.7)
+##🚀 SharpiesGearJudge:Collection (v2.2.8 - v2.3.7)
 
-###ðŸ›  Core Engine & Performance
+###🛠 Core Engine & Performance
 
 - **Initialization Overhaul: Moved to a "Pending Module" registration system. The addon now uses PLAYER_LOGIN and ForceInit to detect class modules, wiring up profiles only when needed to save memory.**
 - **Micro-Optimizations: Extensive localization of Lua and WoW APIs across all files to reduce global lookups.**
 - **Memory Management: Implemented database flattening for item sets and automated "garbage collection" of temporary tables after database builds.**
 - **Update Throttling: Replaced old OnUpdate logic with a C_Timer based debounce system (RequestUpdate) to handle UI refreshes efficiently during bag/event changes.**
 
-###ðŸ” Parser & Data Accuracy
+###🔍 Parser & Data Accuracy
 
 - **Parse.lua Overhaul: Expanded TermMap and EquipPatterns to support Era/TBC phrasings (e.g., "spell damage and healing," ranged AP, elemental resistances). Improved right-side tooltip scanning to fix missing weapon speed/damage data.**
 - **Item Overrides & Procs: Centralized the ProcDB and AddOverrides tables. Introduced _AUTO_PROC for more accurate valuation of trinkets and procs with detailed internal notes.**
 - **Pawn Integration: Added a robust Pawn v1 string parser, allowing users to import external weight scales directly into the addon's DB with an automatic UI reload prompt.**
 
-###âš–ï¸ Evaluator & Mechanics
+###⚖️ Evaluator & Mechanics
 
 - **Dynamic Caps: Added talent and racial detection (e.g., Heroic Presence, Survival of the Fittest) to dynamically adjust hit, expertise, and defense caps for the UI rings.**
 - **Set Bonus Logic: Rewrote the item set system to use a fast itemID->setID lookup. The evaluator now accurately calculates set bonus gains or breaks when comparing gear.**
 - **Stat Refinements: Improved dual-wield/off-hand logic, added meta gem color counting, and fixed cap/delta math for hit and defense checks.**
 
-###ðŸ“º UI & User Experience
+###📺 UI & User Experience
 
 - **Multi-Spec Tracking: Introduced the ability to track secondary profiles simultaneously, showing upgrade deltas for off-specs in the item tooltips.**
 - **Quest Overlays: Added QUEST_COMPLETE handling to visually mark the best upgrade choice among quest rewards.**
 - **Tooltip Improvements: Added a "Shift Key Only" toggle, fixed minimap anchoring/draggability, and refined the score breakdown to include proc contributions.**
 - **Settings: Transitioned SGJ_Settings to SavedVariablesPerCharacter to allow for unique setups on different alts.**
 
-###âš”ï¸ Class Specific Highlights
+###⚔️ Class Specific Highlights
 
 - **Warlocks: Added TBC-specific weights, mana regeneration tiebreakers, and PvP spell penetration caps.**
 - **Druids: Integrated Dreamstate/Predatory Instincts logic, Feral AP scaling, and expertise cap softening. Added a dynamic "Raven Goddess" idol entry.**
 - **Paladins/Priests: Corrected missing spell power weights for leveling/healing and adjusted Retribution priorities.**
+
+
+
 

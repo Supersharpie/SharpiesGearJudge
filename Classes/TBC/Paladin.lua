@@ -102,7 +102,7 @@ Paladin.LevelingWeights = {}
 -- =============================================================
 Paladin.LevelingBrackets = {
     -- [[ GENERIC STARTER (1-20) ]]
-    ["Leveling_1_20"] = {
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 7.0, 
@@ -132,7 +132,7 @@ Paladin.LevelingBrackets = {
 
     -- [[ RETRIBUTION LEVELING ]]
     -- (Ret doesn't strictly NEED armor weight as much, but 0.01 helps tie-break)
-    ["Leveling_RET_21_40"] = {
+    ["Leveling_RET_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -169,7 +169,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
-    ["Leveling_RET_41_51"] = {
+    ["Leveling_RET_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 13.0, 
@@ -206,7 +206,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
-    ["Leveling_RET_52_59"] = {
+    ["Leveling_RET_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -241,7 +241,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
     },
-    ["Leveling_RET_60_70"] = {
+    ["Leveling_RET_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 16.0, 
@@ -283,7 +283,7 @@ Paladin.LevelingBrackets = {
         }
     },
 
-["Leveling_PROT_AOE_41_51"] = {
+["Leveling_PROT_AOE_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
@@ -316,7 +316,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
         }
     },
-    ["Leveling_PROT_AOE_52_59"] = {
+    ["Leveling_PROT_AOE_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
@@ -349,7 +349,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 2.0,
         }
     },
-    ["Leveling_PROT_AOE_60_70"] = {
+    ["Leveling_PROT_AOE_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 1.0, 
@@ -386,7 +386,7 @@ Paladin.LevelingBrackets = {
     },
 
     -- [[ HOLY DUNGEON LEVELING ]]
-    ["Leveling_HOLY_DUNGEON_21_40"] = {
+    ["Leveling_HOLY_DUNGEON_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
@@ -409,7 +409,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_HOLY_DUNGEON_41_51"] = {
+    ["Leveling_HOLY_DUNGEON_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
@@ -432,7 +432,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0
         }
     },
-    ["Leveling_HOLY_DUNGEON_52_59"] = {
+    ["Leveling_HOLY_DUNGEON_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.2, 
@@ -455,7 +455,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0
         }
     },
-    ["Leveling_HOLY_DUNGEON_60_70"] = {
+    ["Leveling_HOLY_DUNGEON_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
@@ -482,7 +482,7 @@ Paladin.LevelingBrackets = {
     },
 
     -- [[ PROT DUNGEON LEVELING ]]
-    ["Leveling_PROT_DUNGEON_21_40"] = {
+    ["Leveling_PROT_DUNGEON_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.8, 
@@ -513,7 +513,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.1 -- Added
         }
     },
-    ["Leveling_PROT_DUNGEON_41_51"] = {
+    ["Leveling_PROT_DUNGEON_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 41, max = 51,
         Start = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
@@ -546,7 +546,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
-    ["Leveling_PROT_DUNGEON_52_59"] = {
+    ["Leveling_PROT_DUNGEON_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 52, max = 59,
         Start = { 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
@@ -579,7 +579,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.08 -- Added
         }
     },
-    ["Leveling_PROT_DUNGEON_60_70"] = {
+    ["Leveling_PROT_DUNGEON_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 60, max = 70,
         Start = { 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.0, 
@@ -951,7 +951,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     elseif currentSpec == "SHOCKADIN_PVP" then
         -- SHOCKADIN: Spell Power -> Spell Crit
         if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-            local spellPower = GetSpellBonusDamage(2) -- 2 = Holy
+            local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) -- 2 = Holy
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
                  if spScaler > 1.2 then spScaler = 1.2 end
@@ -960,7 +960,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
         end
 
 	elseif currentSpec:find("HOLY") then
-        local spellPower = GetSpellBonusHealing()
+        local spellPower = MSC.SanitizeStat(GetSpellBonusHealing())
         
         -- 1. LOW GEAR (Fresh 70): Survival Mode
         -- If we have low SP, we assume we have low mana. Prioritize Efficiency.
@@ -1004,7 +1004,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- C. DEFENSE CAP (Prot)
     if weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] > 1.0 then
         local baseDef, armorDef = UnitDefense("player")
-        local currentDef = baseDef + armorDef
+        local currentDef = MSC.SanitizeStat(baseDef) + MSC.SanitizeStat(armorDef)
         local dynamicDefCap = (level * 5) + 140
         
         if currentDef >= (dynamicDefCap + 5) then
@@ -1035,7 +1035,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
 
     -- E. EXPERTISE CAP (Ret/Prot)
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
-        local expRating = GetCombatRating(24) 
+        local expRating = MSC.SanitizeStat(GetCombatRating(24)) 
         local expScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][1]) or 3.94
         
         local racialBonusExpSkill = 0
@@ -1097,3 +1097,6 @@ if Paladin.LevelingWeights then
 end
 
 MSC.RegisterModule("PALADIN", Paladin)
+
+
+

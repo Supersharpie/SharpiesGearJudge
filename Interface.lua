@@ -279,10 +279,9 @@ function MSC.InitLabView(parent)
     MSC.LabBlocks = {}
 
     local function CreateBlock(id, title, numSlots, x, y)
-        local frame = CreateFrame("Frame", nil, f, "BackdropTemplate")
+        local frame = CreateFrame("Frame", nil, f)
         frame:SetSize(275, 90); frame:SetPoint("TOPLEFT", x, y)
-        frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
-        frame:SetBackdropColor(0, 0, 0, 0.3); frame:SetBackdropBorderColor(0, 0, 0, 1)
+        NineSliceUtil.ApplyLayoutByName(frame, "TooltipDefaultDarkLayout")
         
         frame.Title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal"); frame.Title:SetPoint("TOPLEFT", 10, -5); frame.Title:SetText(title)
         frame.Score = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); frame.Score:SetPoint("TOPRIGHT", -10, -5); frame.Score:SetText("")
@@ -328,6 +327,13 @@ function MSC.InitLabView(parent)
     CreateBlock(6, MSC.L["Option C2: Dual Wield"], 2, 300, -250)
 
     f.ResultText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("BOTTOM", 0, 60); f.ResultText:SetText(MSC.L["Waiting for Items..."])
+    f.ResultTextAnim = f.ResultText:CreateAnimationGroup()
+    local scale = f.ResultTextAnim:CreateAnimation("Scale")
+    scale:SetScaleFrom(0.5, 0.5); scale:SetScaleTo(1.2, 1.2); scale:SetDuration(0.2); scale:SetSmoothing("OUT"); scale:SetOrder(1)
+    local scale2 = f.ResultTextAnim:CreateAnimation("Scale")
+    scale2:SetScaleFrom(1.2, 1.2); scale2:SetScaleTo(1.0, 1.0); scale2:SetDuration(0.15); scale2:SetSmoothing("IN_OUT"); scale2:SetOrder(2)
+    local alpha = f.ResultTextAnim:CreateAnimation("Alpha")
+    alpha:SetFromAlpha(0); alpha:SetToAlpha(1); alpha:SetDuration(0.2); alpha:SetOrder(1)
     
     local bClear = CreateFrame("Button", nil, f, "UIPanelCloseButton")
     bClear:SetSize(24, 24)
@@ -393,14 +399,14 @@ function MSC.UpdateLabCalc()
     
     for id, block in pairs(MSC.LabBlocks) do
         if not hasItems then
-            block:SetBackdropBorderColor(0,0,0,1); block:SetAlpha(1)
+            block:SetAlpha(1)
             MSC.ViewLab.ResultText:SetText(MSC.L["Waiting for Items..."])
             MSC.ViewLab.ResultText:SetTextColor(1, 0.82, 0)
         elseif id == winnerIndex then
-            block:SetBackdropBorderColor(0, 1, 0, 1); block:SetAlpha(1)
+            block:SetAlpha(1)
             block.Score:SetTextColor(0, 1, 0)
         else
-            block:SetBackdropBorderColor(0,0,0,1); block:SetAlpha(0.4)
+            block:SetAlpha(0.4)
             block.Score:SetTextColor(0.5, 0.5, 0.5)
         end
     end
@@ -415,31 +421,35 @@ function MSC.UpdateLabCalc()
         
         MSC.ViewLab.ResultText:SetText(string_format(MSC.L["%s Wins! (+%s)"], names[winnerIndex], string_format("%.1f", delta)))
         MSC.ViewLab.ResultText:SetTextColor(0, 1, 0)
+        
+        if MSC.ViewLab.lastWinner ~= winnerIndex then
+            if MSC.ViewLab.ResultTextAnim then MSC.ViewLab.ResultTextAnim:Play() end
+            MSC.ViewLab.lastWinner = winnerIndex
+        end
+    else
+        MSC.ViewLab.lastWinner = nil
     end
 end
 
 function MSC.InitReceiptView(parent)
     local f = CreateFrame("Frame", nil, parent); f:SetAllPoints(); f:Hide()
     f.Info = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Info:SetPoint("TOPLEFT", 40, -10)
-    f.Score = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Score:SetPoint("TOPRIGHT", -40, -10)
     
-    local c = CreateFrame("Frame", nil, f); c:SetSize(400, 340); c:SetPoint("TOP", 0, -50) 
+    local c = CreateFrame("Frame", nil, f); c:SetSize(500, 240); c:SetPoint("TOP", 20, -50) 
     
     local function CreatePanel(name, w, h, point, relTo, relPoint, x, y)
-        local p = CreateFrame("Frame", nil, c, "BackdropTemplate"); p:SetSize(w, h); p:SetPoint(point, relTo, relPoint, x, y)
-        p:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1}); p:SetBackdropColor(unpack(MSC.Colors.BgPanel)); p:SetBackdropBorderColor(0,0,0,0.5)
+        local p = CreateFrame("Frame", nil, c); p:SetSize(w, h); p:SetPoint(point, relTo, relPoint, x, y)
         local lbl = p:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); lbl:SetPoint("BOTTOMLEFT", p, "TOPLEFT", 0, 4); lbl:SetText(name); lbl:SetTextColor(0.7, 0.7, 0.7); return p
     end
     
     local pArmor = CreatePanel(MSC.L["ARMOR"], 220, 240, "TOPLEFT", c, "TOPLEFT", 0, 0)
-    local pJewel = CreatePanel(MSC.L["ACCESSORIES"], 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 20, 0)
-    
-    local pWeap  = CreatePanel(MSC.L["WEAPONS"], 465, 75, "TOP", c, "TOP", 0, -250)
+    local pJewel = CreatePanel(MSC.L["ACCESSORIES"], 130, 240, "TOPLEFT", pArmor, "TOPRIGHT", 10, 0)
+    local pWeap  = CreatePanel(MSC.L["WEAPONS"], 130, 240, "TOPLEFT", pJewel, "TOPRIGHT", 10, 0)
 
     local function CreateSlot(id, parentPanel, x, y, label)
         local btn = CreateFrame("Button", nil, f, nil); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
-        btn.ScoreFrame = CreateFrame("Frame", nil, btn, "BackdropTemplate"); btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
-        btn.ScoreFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8"}); btn.ScoreFrame:SetBackdropColor(0,0,0,0.5)
+        btn.ScoreFrame = CreateFrame("Frame", nil, btn); btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
+        NineSliceUtil.ApplyLayoutByName(btn.ScoreFrame, "TooltipDefaultDarkLayout")
         btn.ScoreText = btn.ScoreFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); btn.ScoreText:SetPoint("CENTER"); btn.ScoreText:SetTextColor(1, 0.9, 0)
         btn.Alert = btn:CreateTexture(nil, "OVERLAY"); btn.Alert:SetSize(16, 16); btn.Alert:SetPoint("LEFT", btn.ScoreFrame, "RIGHT", 2, 0); btn.Alert:Hide()
 		btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label, 1, 1, 1) end if self.AlertMode then GameTooltip:AddLine(" "); GameTooltip:AddLine(self.AlertText or MSC.L["Alert"], 1, 0, 0) end GameTooltip:Show() end); btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -453,17 +463,29 @@ function MSC.InitReceiptView(parent)
     CreateSlot(1, pArmor, 10, -10, MSC.L["Head"]); CreateSlot(3, pArmor, 10, -55, MSC.L["Shoulder"]); CreateSlot(15, pArmor, 10, -100, MSC.L["Back"]); CreateSlot(5, pArmor, 10, -145, MSC.L["Chest"]); CreateSlot(9, pArmor, 10, -190, MSC.L["Wrist"])
     CreateSlot(10, pArmor, 115, -10, MSC.L["Hands"]); CreateSlot(6, pArmor, 115, -55, MSC.L["Waist"]); CreateSlot(7, pArmor, 115, -100, MSC.L["Legs"]); CreateSlot(8, pArmor, 115, -145, MSC.L["Feet"])
     CreateSlot(2, pJewel, 10, -10, MSC.L["Neck"]); CreateSlot(11, pJewel, 10, -55, MSC.L["Ring 1"]); CreateSlot(12, pJewel, 10, -100, MSC.L["Ring 2"]); CreateSlot(13, pJewel, 10, -145, MSC.L["Trinket 1"]); CreateSlot(14, pJewel, 10, -190, MSC.L["Trinket 2"])
-    CreateSlot(16, pWeap, 30, -20, MSC.L["Main Hand"]); CreateSlot(17, pWeap, 160, -20, MSC.L["Off Hand"]); CreateSlot(18, pWeap, 290, -20, MSC.L["Ranged"])
+    CreateSlot(16, pWeap, 10, -10, MSC.L["Main Hand"]); CreateSlot(17, pWeap, 10, -55, MSC.L["Off Hand"]); CreateSlot(18, pWeap, 10, -100, MSC.L["Ranged"])
     
-    f.SummaryBox = CreateFrame("Frame", nil, f, "BackdropTemplate")
-    f.SummaryBox:SetPoint("TOP", pWeap, "BOTTOM", 0, -15) 
-    f.SummaryBox:SetSize(450, 120)
+    f.SummaryBox = CreateFrame("Frame", nil, f)
+    f.SummaryBox:SetPoint("TOPLEFT", c, "BOTTOMLEFT", 0, -20) 
+    f.SummaryBox:SetSize(500, 120)
     
-    f.SummaryBox.Title = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryBox.Title:SetPoint("TOP", 0, 0); f.SummaryBox.Title:SetText(MSC.L["COMBINED GEAR STAT TOTALS"]); f.SummaryBox.Title:SetTextColor(1, 0.82, 0)
+    f.SummaryBox.Title = f.SummaryBox:CreateFontString(nil, "OVERLAY", "GameFontNormal"); f.SummaryBox.Title:SetPoint("TOPLEFT", 15, 0); f.SummaryBox.Title:SetText(MSC.L["COMBINED GEAR STAT TOTALS"]); f.SummaryBox.Title:SetTextColor(1, 0.82, 0)
+    
+    f.Score = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Score:SetPoint("TOPRIGHT", f.SummaryBox, "TOPRIGHT", -20, 10)
+    f.Score:SetFont("Fonts\\FRIZQT__.TTF", 24, "OUTLINE")
+    
+    f.SummaryGrid = CreateFrame("Frame", nil, f.SummaryBox)
+    f.SummaryGrid:SetPoint("TOPLEFT", f.SummaryBox.Title, "BOTTOMLEFT", 0, -15)
+    f.SummaryGrid:SetSize(400, 100)
+
     MSC.SummaryRows = {}
     
     for i=1, 14 do
-        local row = CreateFrame("Frame", nil, f.SummaryBox); row:SetSize(200, 16)
+        local row = CreateFrame("Frame", nil, f.SummaryGrid); row:SetSize(140, 16)
+        local col = (i - 1) % 2
+        local r = math.floor((i - 1) / 2)
+        row:SetPoint("TOPLEFT", f.SummaryGrid, "TOPLEFT", col * 220, -(r * 18))
+        
         row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", 0, 0)
         row.Value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); row.Value:SetPoint("RIGHT", 0, 0)
         table_insert(MSC.SummaryRows, row)
@@ -572,9 +594,6 @@ function MSC.UpdateReceipt()
         if sortedStats[i] then
             row:Show(); local clean = MSC.GetCleanStatName(sortedStats[i].key)
             row.Label:SetText("|cff00ff00" .. clean .. ":|r"); row.Value:SetText(string_format("%.1f", sortedStats[i].val))
-            local isLeft = (i % 2 ~= 0); local rIdx = math_ceil(i/2)
-            if isLeft then row:SetPoint("TOPLEFT", MSC.ViewReceipt.SummaryBox, "TOPLEFT", 10, -20 - (rIdx*16))
-            else row:SetPoint("TOPLEFT", MSC.ViewReceipt.SummaryBox, "TOPLEFT", 230, -20 - (rIdx*16)) end
         else row:Hide() end
     end
 end
@@ -1193,12 +1212,13 @@ local function GetStatReason(stat, class, profileName)
     if string_find(stat, "INTELLECT") then return MSC.L["Increases Mana Pool and Spell Crit"] end
     if string_find(stat, "SPIRIT") then return MSC.L["Increases Out-of-Combat and Spell5 Regen"] end
     if string_find(stat, "ATTACK_POWER") then return MSC.L["Increases Raw Physical Damage Output"] end
+    if string_find(stat, "DAMAGE_PER_SECOND") then return MSC.L["Increases Baseline Weapon Damage"] end
     if string_find(stat, "EXPERTISE") then return MSC.L["Reduces chance Target Parries or Dodges"] end
     if string_find(stat, "ARMOR_PENETRATION") then return MSC.L["Ignores a portion of Target's Armor"] end
     if string_find(stat, "MELEE_HIT") or string_find(stat, "RANGED_HIT") or (string_find(stat, "HIT") and not string_find(stat, "SPELL")) then return MSC.L["Reduces chance to Miss Physical attacks"] end
     if string_find(stat, "SPELL_POWER") then return MSC.L["Increases Scaling Damage of Spells"] end
     if string_find(stat, "HEALING") then return MSC.L["Increases Potency of Healing spells"] end
-    if string_find(stat, "SPELL_HIT") then return MSC.L["Reduces chance for Spells to Resist/Miss"] end
+    if string_find(stat, "SPELL_HIT") or string_find(stat, "HIT_SPELL") then return MSC.L["Reduces chance for Spells to Resist/Miss"] end
     if string_find(stat, "MANA_REG") or string_find(stat, "MP5") then return MSC.L["Constant Mana Sustain (Mp5)"] end
     if string_find(stat, "CRIT") and not string_find(stat, "FROM_STATS") then return MSC.L["Chance for Extra Critical Damage/Healing"] end
     if string_find(stat, "HASTE") then return MSC.L["Increases Attack/Casting Speed"] end
@@ -1220,60 +1240,56 @@ local function GetProgressColor(percent, roleColor)
     end
 end
 
-local function CreateStatRing(parent, x, y, size, label)
-    local f = CreateFrame("Frame", nil, parent)
-    f:SetSize(size, size); f:SetPoint("TOPLEFT", x, y)
-    
-    f.bg = f:CreateTexture(nil, "BACKGROUND", nil, -1)
-    f.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-    f.bg:SetAllPoints(); f.bg:SetVertexColor(0.1, 0.1, 0.1, 0.6)
+MSC_StatRingMixin = {}
 
-    f.SpinFrame = CreateFrame("Frame", nil, f)
-    f.SpinFrame:SetAllPoints(f)
-    
-    f.Energy = f.SpinFrame:CreateTexture(nil, "ARTWORK")
-    f.Energy:SetAllPoints()
-    f.Energy:SetBlendMode("ADD")
-    f.Energy:SetAlpha(1.0)
-    
-    f.Energy:SetTexCoord(0.1, 0.9, 0.1, 0.9) 
+function MSC_StatRingMixin:OnLoad(size, label)
+    self.bg = self:CreateTexture(nil, "BACKGROUND", nil, -1)
+    self.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+    self.bg:SetAllPoints(); self.bg:SetVertexColor(0.1, 0.1, 0.1, 0.6)
 
-    local mask = f.SpinFrame:CreateMaskTexture()
+    self.SpinFrame = CreateFrame("Frame", nil, self)
+    self.SpinFrame:SetAllPoints(self)
+    
+    self.Energy = self.SpinFrame:CreateTexture(nil, "ARTWORK")
+    self.Energy:SetAllPoints()
+    self.Energy:SetBlendMode("ADD")
+    self.Energy:SetAlpha(1.0)
+    self.Energy:SetTexCoord(0.1, 0.9, 0.1, 0.9) 
+
+    local mask = self.SpinFrame:CreateMaskTexture()
     mask:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
     mask:SetSize(size * 0.9, size * 0.9) 
     mask:SetPoint("CENTER")
-    f.Energy:AddMaskTexture(mask)
+    self.Energy:AddMaskTexture(mask)
 
-    f.AnimGroup = f.SpinFrame:CreateAnimationGroup()
-    f.AnimGroup:SetLooping("REPEAT")
+    self.AnimGroup = self.SpinFrame:CreateAnimationGroup()
+    self.AnimGroup:SetLooping("REPEAT")
     
-    f.Spin = f.AnimGroup:CreateAnimation("Rotation")
-    f.Spin:SetOrder(1)
+    self.Spin = self.AnimGroup:CreateAnimation("Rotation")
+    self.Spin:SetOrder(1)
 
-    f.Pulse = f.AnimGroup:CreateAnimation("Scale")
-    f.Pulse:SetOrder(1)
+    self.Pulse = self.AnimGroup:CreateAnimation("Scale")
+    self.Pulse:SetOrder(1)
     
-    f.TextFrame = CreateFrame("Frame", nil, f)
-    f.TextFrame:SetAllPoints()
-    f.TextFrame:SetFrameLevel(f.SpinFrame:GetFrameLevel() + 10) 
+    self.TextFrame = CreateFrame("Frame", nil, self)
+    self.TextFrame:SetAllPoints()
+    self.TextFrame:SetFrameLevel(self.SpinFrame:GetFrameLevel() + 10) 
 
-    f.val = f.TextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.val:SetPoint("CENTER", 0, 0); f.val:SetTextColor(1, 1, 1)
-    f.lbl = f.TextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.lbl:SetPoint("TOP", f, "BOTTOM", 0, -5); f.lbl:SetText(label:upper()); f.lbl:SetTextColor(0.6, 0.6, 0.6)
+    self.val = self.TextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); self.val:SetPoint("CENTER", 0, 0); self.val:SetTextColor(1, 1, 1)
+    self.lbl = self.TextFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); self.lbl:SetPoint("TOP", self, "BOTTOM", 0, -5); self.lbl:SetText(label:upper()); self.lbl:SetTextColor(0.6, 0.6, 0.6)
     
-    f.cooldown = CreateFrame("Cooldown", nil, f.TextFrame, "CooldownFrameTemplate")
-    f.cooldown:SetAllPoints(f)
-    f.cooldown:SetSwipeTexture("Interface\\Minimap\\UI-Minimap-Background")
-    f.cooldown:SetHideCountdownNumbers(true); f.cooldown:SetDrawEdge(false); f.cooldown:SetReverse(true)
-    f.cooldown:SetUseCircularEdge(true)
-    f.cooldown:SetAlpha(0.2) 
-	f.cooldown.noCooldownCount = true -- Ignores Blizzard's default cooldown text
-    f.cooldown.noOCC = true           -- Ignores OmniCC and TullaCC
-	f.cooldown:SetHideCountdownNumbers(true) -- Ignores Blizzard's native UI text
-    return f
+    self.cooldown = CreateFrame("Cooldown", nil, self.TextFrame, "CooldownFrameTemplate")
+    self.cooldown:SetAllPoints(self)
+    self.cooldown:SetSwipeTexture("Interface\\Minimap\\UI-Minimap-Background")
+    self.cooldown:SetHideCountdownNumbers(true); self.cooldown:SetDrawEdge(false); self.cooldown:SetReverse(true)
+    self.cooldown:SetUseCircularEdge(true)
+    self.cooldown:SetAlpha(0.2) 
+    self.cooldown.noCooldownCount = true
+    self.cooldown.noOCC = true
+    self.cooldown:SetHideCountdownNumbers(true)
 end
 
-function MSC.ApplyRingArt(f, statType)
-    -- 1. IDENTIFY THE TARGET TEXTURE
+function MSC_StatRingMixin:ApplyArt(statType)
     local targetTexture
     if statType == "Current Defense" or statType == "Crush Cap" or statType == "Defense" then
         targetTexture = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\Ring_Rune.tga"
@@ -1285,38 +1301,43 @@ function MSC.ApplyRingArt(f, statType)
         targetTexture = "Interface\\Common\\RingBorder"
     end
 
-    -- 2. ONLY APPLY IF DIFFERENT (Prevents Stutter)
-    if f.CurrentArt == targetTexture then return end
-    f.CurrentArt = targetTexture
+    if self.CurrentArt == targetTexture then return end
+    self.CurrentArt = targetTexture
 
-    -- 3. RESET & STOP ONLY ON ACTUAL CHANGE
-    if f.AnimGroup:IsPlaying() then f.AnimGroup:Stop() end
-    f.Spin:SetDuration(0)
-    f.Pulse:SetDuration(0)
-    f.Energy:SetRotation(0)
-    f.Energy:SetTexture(targetTexture)
+    if self.AnimGroup:IsPlaying() then self.AnimGroup:Stop() end
+    self.Spin:SetDuration(0)
+    self.Pulse:SetDuration(0)
+    self.Energy:SetRotation(0)
+    self.Energy:SetTexture(targetTexture)
 
-    -- 4. APPLY SPECIFIC STYLE LOGIC
     if targetTexture:find("Ring_Rune") then
-        f.Spin:SetDegrees(360); f.Spin:SetDuration(60)
-        if statType == "Crush Cap" then f.Energy:SetVertexColor(1.0, 0.8, 0.2, 1) end
+        self.Spin:SetDegrees(360); self.Spin:SetDuration(60)
+        if statType == "Crush Cap" then self.Energy:SetVertexColor(1.0, 0.8, 0.2, 1) end
     elseif targetTexture:find("Ring_Swirl") then
-        f.Spin:SetDegrees(-360); f.Spin:SetDuration(30)
-        if statType == "Spell Power" then f.Energy:SetVertexColor(0.2, 0.7, 1.0, 1)
-        elseif statType:find("Haste") then f.Energy:SetVertexColor(1.0, 0.8, 0.0, 1)
-        elseif statType == "Spell Hit" then f.Energy:SetVertexColor(0.2, 1.0, 0.8, 1)
-        else f.Energy:SetVertexColor(0.2, 1.0, 0.2, 1) end
+        self.Spin:SetDegrees(-360); self.Spin:SetDuration(30)
+        if statType == "Spell Power" then self.Energy:SetVertexColor(0.2, 0.7, 1.0, 1)
+        elseif statType:find("Haste") then self.Energy:SetVertexColor(1.0, 0.8, 0.0, 1)
+        elseif statType == "Spell Hit" then self.Energy:SetVertexColor(0.2, 1.0, 0.8, 1)
+        else self.Energy:SetVertexColor(0.2, 1.0, 0.2, 1) end
     elseif targetTexture:find("Ring_Sun") then
-        f.Pulse:SetScaleFrom(1, 1); f.Pulse:SetScaleTo(1.1, 1.1)
-        f.Pulse:SetDuration(0.5); f.Pulse:SetSmoothing("IN_OUT")
-        if statType:find("Spell") then f.Energy:SetVertexColor(0.8, 0.2, 1.0, 1)
-        elseif statType:find("Crit") then f.Energy:SetVertexColor(1.0, 0.0, 0.0, 1)
-        else f.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) end
+        self.Pulse:SetScaleFrom(1, 1); self.Pulse:SetScaleTo(1.1, 1.1)
+        self.Pulse:SetDuration(0.5); self.Pulse:SetSmoothing("IN_OUT")
+        if statType:find("Spell") then self.Energy:SetVertexColor(0.8, 0.2, 1.0, 1)
+        elseif statType:find("Crit") then self.Energy:SetVertexColor(1.0, 0.0, 0.0, 1)
+        else self.Energy:SetVertexColor(1.0, 0.5, 0.0, 1) end
     end
 
-    if (f.Spin:GetDuration() > 0 or f.Pulse:GetDuration() > 0) then
-        f.AnimGroup:Play()
+    if (self.Spin:GetDuration() > 0 or self.Pulse:GetDuration() > 0) then
+        self.AnimGroup:Play()
     end
+end
+
+local function CreateStatRing(parent, x, y, size, label)
+    local f = CreateFrame("Frame", nil, parent)
+    f:SetSize(size, size); f:SetPoint("TOPLEFT", x, y)
+    Mixin(f, MSC_StatRingMixin)
+    f:OnLoad(size, label)
+    return f
 end
 
 local function GetClassRings(class, stats, weights)
@@ -1435,10 +1456,10 @@ local function GetClassRings(class, stats, weights)
                 AddMod("Crit", "Sword Spec (Human)", 2, true)
                 AddMod("Spell Crit", "Sword Spec (Human)", 2, true)
             elseif playerRace == "Orc" and (subClassID == 0 or subClassID == 1) then
-                critBonus = critBonus + 1
-                spellCritBonus = spellCritBonus + 1
-                AddMod("Crit", "Axe Spec (Orc)", 1, true)
-                AddMod("Spell Crit", "Axe Spec (Orc)", 1, true)
+                critBonus = critBonus + 2
+                spellCritBonus = spellCritBonus + 2
+                AddMod("Crit", "Axe Spec (Orc)", 2, true)
+                AddMod("Spell Crit", "Axe Spec (Orc)", 2, true)
             elseif playerRace == "Dwarf" and (subClassID == 4 or subClassID == 5) then
                 critBonus = critBonus + 1
                 spellCritBonus = spellCritBonus + 1
@@ -1594,12 +1615,12 @@ local function GetClassRings(class, stats, weights)
                     for s=2, 7 do maxCrit = math_max(maxCrit, MSC.SanitizeStat(GetSpellCritChance(s)) or 0) end
                     local hasTotemOfWrathBuff = false
                     if AuraUtil and AuraUtil.FindAuraByName then
-                        hasTotemOfWrathBuff = AuraUtil.FindAuraByName(MSC.L["Totem of Wrath"], "player", "HELPFUL") ~= nil
-                    elseif C_UnitAuras and C_UnitAuras.GetBuffDataByIndex then
+                        if AuraUtil.FindAuraByName(MSC.L["Totem of Wrath"], "player", "HELPFUL") then hasTotemOfWrathBuff = true end
+                    elseif C_UnitAuras and C_UnitAuras.GetAuraDataByIndex then
                         for b=1, 40 do
-                            local aura = C_UnitAuras.GetBuffDataByIndex("player", b)
-                            if not aura then break end
-                            if aura.name == MSC.L["Totem of Wrath"] then hasTotemOfWrathBuff = true; break end
+                            local auraData = C_UnitAuras.GetAuraDataByIndex("player", b, "HELPFUL")
+                            if not auraData then break end
+                            if auraData.name == MSC.L["Totem of Wrath"] then hasTotemOfWrathBuff = true; break end
                         end
                     elseif UnitBuff then
                         for b=1, 40 do
@@ -1733,7 +1754,7 @@ function MSC.UpdateLogic()
             local locLabel = MSC.L[ring.l] or ring.l
             f.lbl:SetText(locLabel:upper())
             f.val:SetText(string_format(ring.fmt, ring.v))
-            MSC.ApplyRingArt(f, ring.l) 
+            f:ApplyArt(ring.l) 
             local fillPct = 0
             if ring.m > 0 then fillPct = math_min(100, (ring.v / ring.m) * 100) end
             local r,g,b = 0, 0, 0
@@ -1846,9 +1867,9 @@ function MSC.UpdateLogic()
                  self:SetAlpha(1)
              end)
              b:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(0.8) end)
-             b.leftT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.leftT:SetPoint("TOPLEFT", 10, -8)
-             b.rightT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.rightT:SetPoint("TOPRIGHT", -10, -8)
-             b.sub = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); b.sub:SetPoint("BOTTOMLEFT", 10, 5)
+             b.leftT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.leftT:SetPoint("TOPLEFT", 10, -4)
+             b.rightT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.rightT:SetPoint("TOPRIGHT", -10, -4)
+             b.sub = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); b.sub:SetPoint("BOTTOMLEFT", 10, 3)
              return b
         end)
         
@@ -2262,7 +2283,7 @@ function MSC.ToggleMainMenu()
     
     f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7)
     f.Overlay:SetAllPoints()
-    f.Overlay:SetColorTexture(0.05, 0.05, 0.07, 0.88)
+    f.Overlay:SetColorTexture(0.05, 0.05, 0.07, 0.98)
 
     f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND")
     f.Header.Grad:SetAllPoints()
@@ -2973,8 +2994,101 @@ local function ForceWriteSGJ()
     -- Dirty the variable explicitly
     SGJ_Settings._forceSave = GetTime()
     
-    -- Print current state
     print("ShowBagArrows is:", SGJ_Settings.ShowBagArrows)
 end
 SLASH_SGJ_FORCE1 = "/sgjforce"
 SlashCmdList["SGJ_FORCE"] = ForceWriteSGJ
+
+-- ============================================================================
+-- QUICK SAVE WORKAROUND (PTR/BETA SAVEDVARIABLES BUG FIX)
+-- ============================================================================
+
+StaticPopupDialogs["SGJ_QUICK_SAVE"] = {
+    text = "Save datamined data to disk?\n\nThis will trigger a UI Reload to forcefully write all SavedVariables into your WTF folder. (This bypasses the Beta client crash bug).",
+    button1 = "Save (Reload UI)",
+    button2 = "Cancel",
+    OnAccept = function()
+        ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3, 
+}
+
+local function QuickSaveSGJ()
+    if InCombatLockdown() then
+        print("|cffff0000SGJ:|r Cannot quick-save while in combat!")
+        return
+    end
+    StaticPopup_Show("SGJ_QUICK_SAVE")
+end
+
+SLASH_SGJ_SAVE1 = "/sgjsave"
+SlashCmdList["SGJ_SAVE"] = QuickSaveSGJ
+
+-- ============================================================================
+-- DATAMINER (ITEM HISTORY LOGGER)
+-- ============================================================================
+
+local function ToggleMiner()
+    if not SGJ_Settings then SGJ_Settings = {} end
+    SGJ_Settings.MinerEnabled = not SGJ_Settings.MinerEnabled
+    if SGJ_Settings.MinerEnabled then
+        if not SGJ_History then SGJ_History = {} end
+        print("|cff00ff00SGJ Dataminer:|r ENABLED. Recording all seen items to SGJ_History.")
+    else
+        print("|cffff0000SGJ Dataminer:|r DISABLED.")
+    end
+end
+
+SLASH_SGJ_MINER1 = "/sgjminer"
+SlashCmdList["SGJ_MINER"] = function(msg)
+    if msg == "toggle" or msg == "" then
+        ToggleMiner()
+    elseif msg == "clear" then
+        SGJ_History = {}
+        print("|cff00ff00SGJ Dataminer:|r SGJ_History has been cleared.")
+    else
+        print("|cff00ccffSGJ Miner Commands:|r")
+        print("  /sgjminer toggle - Turns the miner on/off")
+        print("  /sgjminer clear  - Wipes the stored item history")
+    end
+end
+
+-- Hook into the main evaluate function to record items
+local original_EvaluateMiner = MSC.EvaluateAndDrawTooltip
+MSC.EvaluateAndDrawTooltip = function(tooltip)
+    if original_EvaluateMiner then original_EvaluateMiner(tooltip) end
+    
+    if SGJ_Settings and SGJ_Settings.MinerEnabled and tooltip then
+        local name, link = tooltip:GetItem()
+        if link then
+            local itemID = link:match("item:(%d+)")
+            if itemID then
+                itemID = tonumber(itemID)
+                if not SGJ_History then SGJ_History = {} end
+                if not SGJ_History[itemID] then
+                    local itemName, _, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(link)
+                    if itemName then
+                        SGJ_History[itemID] = {
+                            link = link,
+                            name = itemName,
+                            loc = itemEquipLoc or "",
+                            ilvl = itemLevel or 0,
+                            subType = itemSubType or "",
+                            time = date("%Y-%m-%d %H:%M:%S")
+                        }
+                    end
+                end
+            end
+        end
+    end
+end
+
+
+
+
+
+
+

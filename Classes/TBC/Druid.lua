@@ -127,7 +127,7 @@ Druid.LevelingWeights = {}
 Druid.LevelingBrackets = {
 
     -- [[ GENERIC / FERAL START ]]
-    ["Leveling_1_20"] = { 
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, -- ADJUSTED: Staff bashing is #1 until Bear Form
@@ -155,7 +155,7 @@ Druid.LevelingBrackets = {
     
     -- [[ FERAL CAT LEVELING ]]
     -- Progression: Str/AP -> Agi/Crit
-    ["Leveling_21_40"] = { 
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -180,7 +180,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 1.0
         }
     },
-    ["Leveling_41_51"] = { 
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -207,7 +207,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -234,7 +234,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         }
     },
-    ["Leveling_60_70"] = { 
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -266,7 +266,7 @@ Druid.LevelingBrackets = {
     
     -- [[ FERAL BEAR LEVELING ]]
     -- Adjusted: Increased Strength/AP slightly so leveling bears can actually kill mobs
-    ["Leveling_Bear_21_40"] = { 
+    ["Leveling_Bear_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -289,7 +289,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8
         }
     },
-    ["Leveling_Bear_41_51"] = { 
+    ["Leveling_Bear_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -314,7 +314,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_Bear_52_59"] = { 
+    ["Leveling_Bear_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -339,7 +339,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0
         }
     },
-    ["Leveling_Bear_60_70"] = { 
+    ["Leveling_Bear_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -371,7 +371,7 @@ Druid.LevelingBrackets = {
     
     -- [[ BOOMKIN LEVELING ]]
     -- Int is King. Spirit buffed for downtime.
-    ["Leveling_Caster_41_51"] = { 
+    ["Leveling_Caster_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -398,7 +398,7 @@ Druid.LevelingBrackets = {
 			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         }
     },
-    ["Leveling_Caster_52_59"] = { 
+    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -425,7 +425,7 @@ Druid.LevelingBrackets = {
 			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         }
     },
-    ["Leveling_Caster_60_70"] = { 
+    ["Leveling_Caster_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -456,7 +456,7 @@ Druid.LevelingBrackets = {
     },
     
     -- [[ HEALER LEVELING (Dungeon Spam) ]]
-    ["Leveling_Healer_21_40"] = { 
+    ["Leveling_Healer_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -475,7 +475,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0
         }
     },
-    ["Leveling_Healer_41_51"] = { 
+    ["Leveling_Healer_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -494,7 +494,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0
         }
     },
-    ["Leveling_Healer_52_59"] = { 
+    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -513,7 +513,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0
         }
     },
-    ["Leveling_Healer_60_70"] = { 
+    ["Leveling_Healer_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -804,7 +804,7 @@ function Druid:ApplyScalers(weights, currentSpec)
                  w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.2 -- Heavy penalty until geared
             end
 
-            local spellPower = GetSpellBonusDamage(4) -- 4 = Nature
+            local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(4)) -- 4 = Nature
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
                  if spScaler > 1.2 then spScaler = 1.2 end
@@ -824,7 +824,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
         
         if (currentSpec:find("FERAL_CAT") or currentSpec:find("Cat")) and w["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
-            local arPen = GetCombatRating(25) or 0
+            local arPen = MSC.SanitizeStat(GetCombatRating(25)) or 0
             if arPen > 100 then
                 local scaler = 1 + (arPen / 1000)
                 if scaler > 1.4 then scaler = 1.4 end
@@ -956,3 +956,5 @@ if Druid.LevelingWeights then
     for k, v in pairs(Druid.LevelingWeights) do Druid.Profiles[k] = v end
 end
 MSC.RegisterModule("DRUID", Druid)
+
+

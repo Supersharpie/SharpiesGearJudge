@@ -396,3 +396,27 @@ function MSC:SaveBaselineProfile(specName)
     local prettyName = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName]) or specName
     print(string.format(MSC.L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"], prettyName))
 end
+
+function MSC:AutoUpdateBaseline()
+    if not SGJ_Settings then return end
+    local weights, specName = self.GetCurrentWeights()
+    if not weights or not specName then return end
+
+    local playerKey = self:GetPlayerKey()
+    if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
+    if not SGJ_Settings.GearProfiles[playerKey] then SGJ_Settings.GearProfiles[playerKey] = {} end
+
+    local savedGear = SGJ_Settings.GearProfiles[playerKey][specName]
+    local liveGear = {}
+    self:GetEquippedGear(liveGear)
+    
+    local liveScore = self:GetCachedCharacterScore(liveGear, weights, specName, nil)
+    local savedScore = 0
+    if savedGear then
+        savedScore = self:GetCachedCharacterScore(savedGear, weights, specName, savedGear)
+    end
+    
+    if liveScore >= savedScore then
+        self:SaveBaselineProfile(specName)
+    end
+end

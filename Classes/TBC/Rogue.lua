@@ -77,7 +77,7 @@ Rogue.LevelingWeights = {}
 Rogue.LevelingBrackets = {
     -- [[ 1. STANDARD COMBAT (Swords/Maces/Fists) ]]
     -- Meta: Slow MH (Sinister Strike) / Fast OH (Poisons/Combat Potency)
-    ["Leveling_1_20"] = { 
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 1, max = 20,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -104,7 +104,7 @@ Rogue.LevelingBrackets = {
 			["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Early game dodge reduction
         }
     },
-    ["Leveling_21_40"] = { 
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -133,7 +133,7 @@ Rogue.LevelingBrackets = {
 			["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5 -- Early game dodge reduction
         }
     },
-    ["Leveling_41_51"] = { -- Combat Potency Era (Fast OH is mandatory)
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, -- Combat Potency Era (Fast OH is mandatory)
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -160,7 +160,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -187,7 +187,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2
         }
     },
-    ["Leveling_60_70"] = { 
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
@@ -221,7 +221,7 @@ Rogue.LevelingBrackets = {
 
     -- [[ 2. DAGGERS (Assassination) ]]
     -- Speed doesn't matter (Daggers are always fast). Focus on Crit/Dagger Skill.
-    ["Leveling_Dagger_21_40"] = { 
+    ["Leveling_Dagger_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -240,7 +240,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_Dagger_41_51"] = { 
+    ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -259,7 +259,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2
         }
     },
-    ["Leveling_Dagger_52_59"] = { 
+    ["Leveling_Dagger_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -278,7 +278,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2
         }
     },
-    ["Leveling_Dagger_60_70"] = { 
+    ["Leveling_Dagger_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
@@ -302,7 +302,7 @@ Rogue.LevelingBrackets = {
 
     -- [[ 3. HEMO (Subtlety) ]]
     -- Slow MH (Hemo hits harder). OH Speed less important than Combat, but Fast usually better for poisons.
-    ["Leveling_Hemo_21_40"] = { 
+    ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
@@ -325,7 +325,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.2
         }
     },
-    ["Leveling_Hemo_41_51"] = { 
+    ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
@@ -348,7 +348,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
         }
     },
-    ["Leveling_Hemo_52_59"] = { 
+    ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
@@ -371,7 +371,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.2
         }
     },
-    ["Leveling_Hemo_60_70"] = { 
+    ["Leveling_Hemo_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
@@ -595,7 +595,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
 
     -- [[ 0. ARPEN SCALING ]]
     if weights["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] then
-        local arPen = GetCombatRating(25) or 0
+        local arPen = MSC.SanitizeStat(GetCombatRating(25)) or 0
         if arPen > 100 then
             local scaler = 1 + (arPen / 1000)
             if scaler > 1.4 then scaler = 1.4 end
@@ -638,7 +638,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
     
     -- [[ 4. EXPERTISE CAP ]]
     if weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] and weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] > 0.1 then
-        local expRating = GetCombatRating(24)
+        local expRating = MSC.SanitizeStat(GetCombatRating(24))
         local level = UnitLevel("player")
         if level > 70 then level = 70 end
         local expScalar = (MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][1]) or 3.94
@@ -717,3 +717,4 @@ if Rogue.LevelingWeights then
 end
 
 MSC.RegisterModule("ROGUE", Rogue)
+

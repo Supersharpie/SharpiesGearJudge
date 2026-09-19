@@ -106,7 +106,7 @@ Priest.LevelingWeights = {}
 Priest.LevelingBrackets = {
     -- [[ 1. SHADOW / SPIRIT TAP (1-20) ]]
     -- Wand is primary DPS source. Spirit is primary Mana source.
-    ["Leveling_1_20"] = { 
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
 		min = 1, max = 20,
 		Start = { 
 			["MSC_WAND_DPS"] = 4.0, -- Priest 1-20 is 50% Wanding. Priority #1.
@@ -131,7 +131,7 @@ Priest.LevelingBrackets = {
 	},
     
     -- [[ 2. SHADOW / SPIRIT TAP (21-40) ]]
-    ["Leveling_21_40"] = { 
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 2.5, 
@@ -156,7 +156,7 @@ Priest.LevelingBrackets = {
     },
     
     -- [[ 3. SHADOWFORM ERA (41-59) ]]
-    ["Leveling_41_51"] = { 
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 2.0, 
@@ -179,7 +179,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 1.0, 
@@ -205,7 +205,7 @@ Priest.LevelingBrackets = {
     
     -- [[ 5. OUTLAND SHADOW (60-70) ]]
     -- Crit nerfed significantly (DoTs don't crit). SP/Shadow bumped.
-    ["Leveling_60_70"] = { 
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
@@ -235,7 +235,7 @@ Priest.LevelingBrackets = {
     
     -- [[ SMITE PRIEST (Holy Fire/Smite) ]]
     -- Unlike Shadow, Smite DOES Crit. Keep Crit high here.
-    ["Leveling_Smite_21_40"] = { 
+    ["Leveling_Smite_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 2.0, 
@@ -260,7 +260,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8
         }
     },
-    ["Leveling_Smite_41_51"] = { 
+    ["Leveling_Smite_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 1.5, 
@@ -285,7 +285,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8
         }
     },
-    ["Leveling_Smite_52_59"] = { 
+    ["Leveling_Smite_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 1.2, 
@@ -310,7 +310,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8
         }
     },
-    ["Leveling_Smite_60_70"] = { 
+    ["Leveling_Smite_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.8, 
@@ -339,7 +339,7 @@ Priest.LevelingBrackets = {
     },
     
     -- [[ HEALER BRACKETS (Dungeon Grinding) ]]
-    ["Leveling_Healer_52_59"] = { 
+    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.2, 
@@ -362,7 +362,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8
         }
     },
-    ["Leveling_Healer_60_70"] = { 
+    ["Leveling_Healer_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
@@ -604,8 +604,8 @@ function Priest:ApplyScalers(weights, currentSpec)
     if currentSpec:find("SHADOW") or currentSpec:find("SMITE") then
         if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] or w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             local spellPower = 0
-            if currentSpec:find("SHADOW") then spellPower = GetSpellBonusDamage(3)
-            else spellPower = GetSpellBonusDamage(2) end 
+            if currentSpec:find("SHADOW") then spellPower = MSC.SanitizeStat(GetSpellBonusDamage(3))
+            else spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) end 
             
             if spellPower > 700 then
                  local spScaler = 1 + ((spellPower - 700) / 10000)
@@ -647,3 +647,4 @@ if Priest.LevelingWeights then
 end
 
 MSC.RegisterModule("PRIEST", Priest)
+

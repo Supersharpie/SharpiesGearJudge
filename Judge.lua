@@ -84,6 +84,10 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if MSCLabFrame and MSCLabFrame:IsShown() and MSC.UpdateLabCalc then 
             MSC.UpdateLabCalc() 
         end
+        
+        if event == "PLAYER_EQUIPMENT_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+            if MSC.AutoUpdateBaseline then MSC:AutoUpdateBaseline() end
+        end
     end
 end)
 
@@ -737,10 +741,23 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             end
 
             -- [[ 4. UPGRADE/DOWNGRADE MATH ]]
-            local percentDiff = 0; if oldScore > 0 then percentDiff = ((newScore - oldScore) / oldScore) * 100 end
-            if delta > 0.1 then tooltip:AddLine(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r"], TEX_UP, delta, percentDiff))
-            elseif delta < -0.1 then tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f / %.1f%%)|r"], TEX_DOWN, delta, percentDiff))
-            else tooltip:AddLine(MSC.L["|cff888888= Sidegrade (0.0)|r"]) end
+            if delta > 0.01 then 
+                if oldScore > 0 then
+                    local percentDiff = ((newScore - oldScore) / oldScore) * 100
+                    tooltip:AddLine(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r"], TEX_UP, delta, percentDiff))
+                else
+                    tooltip:AddLine(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / New)|r"], TEX_UP, delta))
+                end
+            elseif delta < -0.01 then 
+                if oldScore > 0 then
+                    local percentDiff = ((newScore - oldScore) / oldScore) * 100
+                    tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f / %.1f%%)|r"], TEX_DOWN, delta, percentDiff))
+                else
+                    tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f)|r"], TEX_DOWN, delta))
+                end
+            else 
+                tooltip:AddLine(MSC.L["|cff888888= Sidegrade (0.0)|r"]) 
+            end
 
             if MSC.SetBonusScores and oldSetCounts and newSetCounts then
                 for setID, scores in pairs(MSC.SetBonusScores) do
@@ -785,7 +802,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                             local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
                             local tDelta = tNewScore - tOldScore
 
-                            if tDelta > 0.1 then
+                            if tdelta > 0.01 then
                                 local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
                                 local label = "|cff00ccff" .. prettySpec .. ":|r"
                                 if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" end
@@ -1207,3 +1224,4 @@ SlashCmdList["SGJ_MINER"] = function(msg)
     end
     if oldMinerHook then oldMinerHook(msg) end
 end
+

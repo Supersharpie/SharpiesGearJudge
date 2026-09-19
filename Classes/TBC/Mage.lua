@@ -110,7 +110,7 @@ Mage.LevelingWeights = {}
 Mage.LevelingBrackets = {
     -- [[ 1. STANDARD FROST (Single Target) ]]
     -- Wand DPS is king early.
-    ["Leveling_1_20"] = { 
+    ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
 		min = 1, max = 20,
 		Start = { 
 			["MSC_WAND_DPS"] = 3.0, -- CRITICAL FIX: Wand, not Melee
@@ -133,7 +133,7 @@ Mage.LevelingBrackets = {
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
 		}
 	},
-    ["Leveling_21_40"] = { 
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 1.5, 
@@ -156,7 +156,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5
         }
     },
-    ["Leveling_41_51"] = { 
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.6, 
@@ -179,7 +179,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_52_59"] = { 
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.2, 
@@ -204,7 +204,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_60_70"] = { 
+    ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.1, 
@@ -232,7 +232,7 @@ Mage.LevelingBrackets = {
 
     -- [[ 6. FIRE LEVELING ]]
     -- Crit is vital for Master of Elements (Mana Sustain).
-    ["Leveling_Fire_41_51"] = { 
+    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.8, 
@@ -255,7 +255,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Fire_52_59"] = { 
+    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.5, 
@@ -278,7 +278,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
-    ["Leveling_Fire_60_70"] = { 
+    ["Leveling_Fire_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.2, 
@@ -304,7 +304,7 @@ Mage.LevelingBrackets = {
 
     -- [[ 7. AOE BLIZZARD LEVELING ]]
     -- Stamina (Don't Die) > Int (Don't OOM) > SP (Kill).
-    ["Leveling_AoE_41_51"] = { 
+    ["Leveling_AoE_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.1, 
@@ -323,7 +323,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.2
         }
     },
-    ["Leveling_AoE_52_59"] = { 
+    ["Leveling_AoE_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.1, 
@@ -342,7 +342,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.2
         }
     },
-    ["Leveling_AoE_60_70"] = { 
+    ["Leveling_AoE_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 0.1, 
@@ -554,7 +554,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     
     -- [[ 2. COVARIANCE ]]
     if w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-        local spellPower = GetSpellBonusDamage(2) -- Frost
+        local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) -- Frost
         if spellPower > 500 then
             local spScaler = 1 + ((spellPower - 500) / 2000)
             if spScaler > 1.15 then spScaler = 1.15 end
@@ -589,3 +589,4 @@ if Mage.LevelingWeights then
 end
 
 MSC.RegisterModule("MAGE", Mage)
+
