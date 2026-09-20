@@ -1,7 +1,11 @@
 # Sharpie's Gear Judge - Version History
 
----
+## 🚀 v3.0.7
 
+### 🐛 Bug Fixes
+- **Secret String Taint Crash**: Resolved a fatal Lua error in Judge.lua triggered during LOOT_OPENED. The 11.5 engine occasionally returns tainted <secret string> objects for UnitGUID('target'). Wrapped the dataminer's GUID parsers in a secure pcall execution block to safely ignore tainted data without crashing the client.
+
+---
 ## 🚀 v3.0.6
 
 ### ✨ New Features - Mainly for testing purpose - (https://discord.gg/aYmhmtGxYs) if you wanna add to the fun
@@ -14,7 +18,6 @@
 ### 🐛 Bug Fixes
 - **PowerShell Regex Fix**: Cleaned up the routing syntax inside GetSpec() across all class modules after an automated script injected literal newline strings into the code while splitting the leveling bands.
 
----
 
 ## 🚀 v3.0.5
 

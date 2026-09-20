@@ -1,8 +1,8 @@
-## Interface: 16001
+﻿## Interface: 16001
 ## Title: |cff00ccffSharpie's Gear Judge|r
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.0.6
+## Version: 3.0.7
 ## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
 
 Localization.lua
@@ -38,3 +38,4 @@ Classes\Forever\Hunter.lua
 Classes\Forever\Druid.lua
 Interface.lua
 Judge.lua
+

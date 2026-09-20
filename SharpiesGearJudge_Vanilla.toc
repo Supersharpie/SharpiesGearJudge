@@ -1,4 +1,4 @@
-## Interface: 11508
+﻿## Interface: 11508
 ## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
@@ -40,3 +40,4 @@ Classes\ERA\Druid.lua
 
 Interface.lua
 Judge.lua
+

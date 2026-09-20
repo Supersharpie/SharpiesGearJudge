@@ -1022,15 +1022,21 @@ miner:SetScript("OnEvent", function(self, event, ...)
             if not guid then return end
             
             local npcID = nil
-            -- Handle Modern GUID format (Creature-0-0-0-0-12345-0000)
-            if string.find(guid, "-") then
+            -- Safely check for modern GUID format
+            local ok, hasDash = pcall(string.find, guid, "-")
+            if not ok then return end -- 11.5 Engine: 'secret string value' taint block
+            
+            if hasDash then
                 local parts = {strsplit("-", guid)}
                 if parts[1] == "Creature" or parts[1] == "Vehicle" then
                     npcID = tonumber(parts[6])
                 end
             -- Handle Vanilla/TBC Hex GUID format (0xF130000A23000000)
-            elseif string.sub(guid, 1, 3) == "0xF" then
-                npcID = tonumber(string.sub(guid, 6, 10), 16)
+            else
+                local okSub, hexPrefix = pcall(string.sub, guid, 1, 3)
+                if okSub and hexPrefix == "0xF" then
+                    npcID = tonumber(string.sub(guid, 6, 10), 16)
+                end
             end
             
             if npcID then

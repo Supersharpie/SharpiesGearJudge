@@ -1,8 +1,8 @@
-## Interface: 20505
+﻿## Interface: 20505
 ## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 2.6.5-TBC
+## Version: 3.0.6-TBC
 ## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
 
 Localization.lua
@@ -41,3 +41,4 @@ Classes\TBC\Druid.lua
 
 Interface.lua
 Judge.lua
+
