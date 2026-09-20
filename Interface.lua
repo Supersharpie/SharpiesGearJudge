@@ -3087,7 +3087,71 @@ MSC.EvaluateAndDrawTooltip = function(tooltip)
 end
 
 
+SLASH_SGJ_SCALAR1 = "/sgjscalar"
+SlashCmdList["SGJ_SCALAR"] = function()
+    local ratings = {
+        {id=2, name="Defense"}, {id=3, name="Dodge"}, {id=4, name="Parry"}, {id=5, name="Block"},
+        {id=6, name="Melee Hit"}, {id=7, name="Ranged Hit"}, {id=8, name="Spell Hit"},
+        {id=9, name="Melee Crit"}, {id=10, name="Ranged Crit"}, {id=11, name="Spell Crit"},
+        {id=15, name="Resilience"}, {id=18, name="Melee Haste"}, {id=19, name="Ranged Haste"},
+        {id=20, name="Spell Haste"}, {id=24, name="Expertise"}, {id=29, name="Mastery"}
+    }
 
+    local _, classStr = UnitClass("player")
+    local _, raceStr = UnitRace("player")
+
+    local out = {}
+    table.insert(out, "[SGJ Scalar Test] - Level " .. UnitLevel("player") .. " " .. raceStr .. " " .. classStr)
+    table.insert(out, "--------------------------------------------------")
+    
+    local foundAny = false
+    for _, r in ipairs(ratings) do
+        local cr = GetCombatRating(r.id) or 0
+        local cb = GetCombatRatingBonus(r.id) or 0
+        if cr > 0 and cb > 0 then
+            table.insert(out, r.name .. ": " .. string.format("%.2f", cr / cb) .. " rating = 1%")
+            foundAny = true
+        end
+    end
+
+    if not foundAny then
+        table.insert(out, "[!] No Combat Ratings found on your current gear.")
+        table.insert(out, "Equip gear with any Combat Rating to test!")
+    end
+
+    local strTotal = select(2, UnitStat("player", 1))
+    local agiTotal = select(2, UnitStat("player", 2))
+    local staTotal = select(2, UnitStat("player", 3))
+    local intTotal = select(2, UnitStat("player", 4))
+    local spiTotal = select(2, UnitStat("player", 5))
+    
+    local baseAP, posAP, negAP = UnitAttackPower("player")
+    local totalAP = baseAP + posAP + negAP
+    
+    local baseRegen, castingRegen = GetManaRegen()
+    local pRegen = GetPowerRegen()
+    
+    table.insert(out, "")
+    table.insert(out, "(Primary Stat conversions below are specific to " .. classStr .. "s)")
+    table.insert(out, "Total Str: " .. strTotal .. " | Total Agi: " .. agiTotal)
+    table.insert(out, "Total Sta: " .. staTotal .. " | Total Int: " .. intTotal)
+    table.insert(out, "Total Spi: " .. spiTotal)
+    table.insert(out, "---")
+    table.insert(out, "Total Max Health: " .. UnitHealthMax("player"))
+    table.insert(out, "Total Attack Power: " .. totalAP)
+    table.insert(out, "Total Melee Crit: " .. string.format("%.2f%%", GetCritChance()))
+    table.insert(out, "Total Spell Crit: " .. string.format("%.2f%%", GetSpellCritChance(2)))
+    table.insert(out, string.format("Mana Regen (per 5s): %.1f Not Casting | %.1f Casting", (baseRegen or 0)*5, (castingRegen or 0)*5))
+    table.insert(out, string.format("Power Regen (per 1s): %.1f", pRegen or 0))
+    
+    if not MSC.ScalarExportFrame then
+        MSC.ScalarExportFrame = MSC.CreatePopupFrame("SGJ Scalar Export")
+    end
+    
+    MSC.ScalarExportFrame.EditBox:SetText(table.concat(out, "\n"))
+    MSC.ScalarExportFrame:Show()
+    MSC.ScalarExportFrame.EditBox:HighlightText()
+end
 
 
 

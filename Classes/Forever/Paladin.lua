@@ -20,7 +20,8 @@ Paladin.Weights = {
 -- LEVELING LOGIC
 -- =============================================================
 Paladin.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STRENGTH_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=2.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
     ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
     ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
     ["Leveling_Ret_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
@@ -42,7 +43,9 @@ Paladin.PrettyNames = {
     ["RECK_BOMB"]       = "PvP: Reck-Bomb (One-Shot)",
     ["RET_UTILITY"]     = "Raid: Ret Utility (Nightfall)",
     
-    ["Leveling_1_20"]       = "Leveling (1-20)",
+    ["Leveling_1_10"]       = "Leveling (1-10)",
+    
+    ["Leveling_11_20"]      = "Leveling (11-20)",
     ["Leveling_21_40"]      = "Leveling: Retribution (21-40)",
     ["Leveling_41_51"]      = "Leveling: Retribution (41-51)",
     ["Leveling_Ret_52_59"]  = "Leveling: Pre-BiS Ret (52-59)",
@@ -84,7 +87,8 @@ function Paladin:GetSpec()
     
     -- Leveling Check First
     if level < 60 then
-        if level <= 20 then return "Leveling_1_20" end
+        if level <= 10 then return "Leveling_1_10" end
+        if level <= 20 then return "Leveling_11_20" end
         if level <= 40 then return "Leveling_21_40" end
         if level <= 51 then return "Leveling_41_51" end
         return "Leveling_Ret_52_59"
@@ -167,3 +171,6 @@ for k, v in pairs(Paladin.Weights) do Paladin.Profiles[k] = v end
 for k, v in pairs(Paladin.LevelingWeights) do Paladin.Profiles[k] = v end
 
 MSC.RegisterModule("PALADIN", Paladin)
+
+
+

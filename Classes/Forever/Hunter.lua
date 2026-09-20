@@ -20,7 +20,8 @@ Hunter.Weights = {
 -- LEVELING WEIGHTS
 -- =============================================================
 Hunter.LevelingWeights = {
-    ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
     ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
     ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
     ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
@@ -43,7 +44,9 @@ Hunter.PrettyNames = {
     ["MELEE_NIGHTFALL"]  = "Support: Nightfall (Melee)",
     ["SOLO_DME_TRIBUTE"] = "Farming: DM North Solo",
     
-    ["Leveling_1_20"]       = "Leveling (1-20)",
+    ["Leveling_1_10"]       = "Leveling (1-10)",
+    
+    ["Leveling_11_20"]      = "Leveling (11-20)",
     ["Leveling_21_40"]      = "Leveling: Beast Mastery (21-40)",
     ["Leveling_41_51"]      = "Leveling: Beast Mastery (41-51)",
     ["Leveling_52_59"]      = "Leveling: Pre-BiS Hunter (52-59)",
@@ -92,7 +95,8 @@ function Hunter:GetSpec()
     -- Leveling Bracket Logic
     if level < 60 then
         local suffix = ""
-        if level <= 20 then suffix = "_1_20"
+        if level <= 10 then suffix = "_1_10"
+        elseif level <= 20 then suffix = "_11_20"
         elseif level <= 40 then suffix = "_21_40"
         elseif level <= 51 then suffix = "_41_51"
         else suffix = "_52_59" end
@@ -164,3 +168,5 @@ function Hunter:GetWeaponBonus(itemLink, weights)
 end
 
 MSC.RegisterModule("HUNTER", Hunter)
+
+
