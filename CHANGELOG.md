@@ -13,6 +13,7 @@
 - **Copy-Pasteable Export UI**: Modified the /sgjscalar command to render its output into a massive, copy-pasteable UI window (identical to /sgjminer) instead of vomiting text into the chat log. This allows for frictionless data logging to Discord or spreadsheets.
 - **Comprehensive Character Snapshotting**: The /sgjscalar export now includes your Class, Race, Level, Total Attack Power, Total Max Health, Mana Regen (split into Not Casting vs Casting), and Energy/Focus Regen to give a 100% complete snapshot of your character.
 - **Leveling Spec Splicing**: Spliced the massive Leveling_1_20 stat-weight band directly down the middle. Created a dedicated Leveling_1_10 profile and a Leveling_11_20 profile across all 9 class modules to dynamically route priorities and account for WoW: Forever's drastically boosted early-game spell power itemization.
+- **Blizzard Item Budgets Databased**: Extracted and securely injected the official 11.5 engine ScalingStatValues (Item Budget) table directly into Database_Forever.lua. 
 
 ### 🐛 Bug Fixes
 - **Regex Fix**: Cleaned up the routing syntax inside GetSpec() across all class modules after an automated script injected literal newline strings into the code while splitting the leveling bands.
