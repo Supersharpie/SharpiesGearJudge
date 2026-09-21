@@ -93,15 +93,23 @@ TooltipManager:SetScript("OnEvent", function(self, event)
     end
 
     -- Global Tooltip API (TBC Anniversary / 11.x Client)
+    -- Registered under AllTypes rather than Enum.TooltipDataType.Item: on this
+    -- client build, that enum value doesn't line up with what the dispatcher
+    -- actually tags item tooltips with, so a callback registered for it alone
+    -- never fires. AllTypes sidesteps the enum entirely; the tooltip==GameTooltip
+    -- (etc.) check below already scopes this to the tooltips we care about.
     if TooltipDataProcessor then
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip, data)
+        TooltipDataProcessor.AddTooltipPostCall(TooltipDataProcessor.AllTypes, function(tooltip, data)
             if tooltip == GameTooltip or tooltip == ItemRefTooltip or tooltip == ShoppingTooltip1 or tooltip == ShoppingTooltip2 then
                 MSC.EvaluateAndDrawTooltip(tooltip)
             end
         end)
-    else
-        -- Legacy Client Fallback
-        -- GameTooltip and ItemRefTooltip are already hooked using wrappers in Judge.lua
+    end
+    -- ShoppingTooltip hooks registered unconditionally too, same reasoning as
+    -- above: TooltipDataProcessor existing doesn't guarantee it actually fires
+    -- on every client build. GameTooltip/ItemRefTooltip's OnTooltipSetItem
+    -- hooks live in Judge.lua and are likewise unconditional now.
+    do
         if ShoppingTooltip1 and ShoppingTooltip1:HasScript("OnTooltipSetItem") then
             ShoppingTooltip1:HookScript("OnTooltipSetItem", function(self)
                 if MSC.EvaluateAndDrawTooltip then

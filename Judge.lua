@@ -802,7 +802,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                             local tNewScore, tOldScore, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, tSlotId, tWeights, tSpec, baselineGear)
                             local tDelta = tNewScore - tOldScore
 
-                            if tdelta > 0.01 then
+                            if tDelta > 0.01 then
                                 local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
                                 local label = "|cff00ccff" .. prettySpec .. ":|r"
                                 if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" end
@@ -984,7 +984,12 @@ end
 -- =============================================================
 
 -- 1. Standard Tooltip Hooks
-if not TooltipDataProcessor then
+-- Registered unconditionally, even when TooltipDataProcessor exists: on some
+-- client builds that table is present but not actually wired into the real
+-- tooltip pipeline (AddTooltipPostCall never fires), so trusting its mere
+-- presence as proof the modern path works left every tooltip silently blank.
+-- EvaluateAndDrawTooltip's own duplicate guard makes it safe to hook both.
+do
     if GameTooltip:HasScript("OnTooltipSetItem") then
         GameTooltip:HookScript("OnTooltipSetItem", function(self)
             if MSC.EvaluateAndDrawTooltip then

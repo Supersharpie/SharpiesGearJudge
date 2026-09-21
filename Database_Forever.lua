@@ -1029,146 +1029,13 @@ local function AddOverrides(db)
     end
 end
 
-AddOverrides({
-
-	[30542] = { note = MSC.L["Use: Teleport (8 possible malfunctions!)"] },
-	[28789] = { note = MSC.L["Proc: 170 SP (On Resist Only)"] }, 
-	[34471] = { note = MSC.L["Passive: 15 mp5 + Heal Battery"] },
-	[30449] = { note = MSC.L["Pet Proc"] }, 
-	[11811] = { note = MSC.L["Passive: Resistances not valued"] },
-	
-    -- [[ WEAPONS & CHAMPION ]]
-    [9449]  = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=150 }, note = MSC.L["Use: 50% Haste - Burst Value"] },
-    [8345]  = { _AUTO_PROC = { stat="ITEM_MOD_FERAL_ATTACK_POWER_SHORT", val=80 }, note = MSC.L["Powershift: Energy Refund valued as 80 AP"] },
-	
-	[833] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=1.38 }, note = MSC.L["Use: 500 Avg Heal (30m CD)"] }, -- Lifestone
-	[11819] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=1.67 }, note = MSC.L["Use: 1.67 Avg mp5 (15m CD)"] },
-    [11832] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2.8 }, note = MSC.L["Use: ~2.8 Avg mp5 from cost reduction (15m CD)"] },-- Burst of Knowledge: Assuming ~5 casts in 10s = 500 mana saved. Over 15m (900s), 500 / 180 = 2.8 MP5.
-    [17759] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=1.39 }, note = MSC.L["Use: ~1.4 Avg hp5 (30m CD)"] },
-    [21777] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=12 }, note = MSC.L["Use: 12 Avg mp5 (5m CD)"] }, 
-	[24390] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=6 }, note = MSC.L["Use: 6 Avg mp5 (3m CD)"] }, -- Auslese's Light Channeler (215 Mana / 180s)
-    [30841] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=18.3 }, note = MSC.L["Use: ~18.3 Avg mp5 from cost reduction (1m CD)"] },-- Lower City Prayerbook: Assuming ~10 casts during the 15s window = 220 mana saved. 220 mana / 60s CD = 18.3 mp5
-	
-    -- Pet/Minor damage effects assigned proxy Spell Power or Attack Power equivalents.
-    [18354] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=10 }, note = MSC.L["Equip: Imp Firebolt Dmg +8.1 (10 SP Proxy)"] }, 
-    [18355] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Equip: Pet Dmg +4% (20 AP Proxy)"] },
-    [18815] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=15 }, note = MSC.L["Equip: 13 Fire Thorns (15 SP Proxy)"] }, 
-    [18951] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=1 }, note = MSC.L["Equip: Reduced Fall Dmg (1 Agi Proxy)"] }, 
-
-    -- Direct Damage: (Avg Dmg / Cooldown Seconds) = DPS. DPS * 14 = AP Equivalent.
-    [23836] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=140 }, note = MSC.L["Use: 1200 Dmg (2m CD / ~140 AP Proxy)"] }, -- 10 DPS * 14
-    [10577] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10.5 }, note = MSC.L["Use: 450 AoE Dmg (10m CD / ~10.5 AP Proxy)"] }, -- 0.75 DPS * 14
-    
-    -- Small token utility scores so they don't read as 0.
-    [21756] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=5 }, note = MSC.L["Use: 30% Speed + Snare Immune (5 Agi Proxy)"] }, 
-    [21758] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=4.5 }, note = MSC.L["Use: 4.5 Avg AP (5m CD)"] }, 
-
-    -- Damage Reduction -> Block Value Proxy: DR * (Duration / Cooldown).
-    [21760] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=1.33 }, note = MSC.L["Use: 1.33 Avg DR (5m CD / Block Proxy)"] }, -- 20 DR * (20s/300s)
-    [21763] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=14 }, note = MSC.L["Use: Summon Truesilver Boar (14 AP Proxy)"] }, -- Assuming ~1 DPS avg over 15m
-    [21784] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=2.33 }, note = MSC.L["Use: 2.33 Avg DR (5m CD / Block Proxy)"] }, -- 35 DR * (20s/300s)
-    [22954] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=25 }, note = MSC.L["Use: 25 Avg Haste (2m CD)"] }, 
-    [23001] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=5 }, note = MSC.L["Use: Threat Reduction (5 Agi Proxy)"] }, 
-    [23040] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=39.2 }, note = MSC.L["Use: 39.2 Avg Block Value (2m CD)"] },
-
-	-- Procs and Proxies
-    [22321] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=35 }, note = MSC.L["Equip: Fire Dmg Proc (~35 AP Proxy)"] }, -- Heart of Wyrmthalak (Assuming ~1 PPM)
-    
-    -- Conditional vs Undead/Demons (Calculated at full value, note explains condition)
-    [23206] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=150 }, note = MSC.L["Equip: 150 AP (vs Undead/Demons)"] }, -- Mark of the Champion (Melee)
-    [23207] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=85 }, note = MSC.L["Equip: 85 SP (vs Undead/Demons)"] }, -- Mark of the Champion (Caster)
-
-    -- Standard Cooldown Averages (Stat * Duration / CD)
-    [23041] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=43.3 }, note = MSC.L["Use: 43.3 Avg AP (2m CD)"] }, -- Slayer's Crest (260 AP / 20s / 120s)
-    [23046] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21.7 }, note = MSC.L["Use: 21.7 Avg SP (2m CD)"] }, -- Restrained Essence of Sapphiron (130 SP / 20s / 120s)
-    [24124] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Use: Summon Felsteel Boar (20 AP Proxy)"] }, -- Figurine - Felsteel Boar
-    [28288] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=21.7 }, note = MSC.L["Use: 21.7 Avg Haste (2m CD)"] }, -- Abacus of Violent Odds (Item ID)
-    [29383] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46.3 }, note = MSC.L["Use: 46.3 Avg AP (2m CD)"] }, -- Bloodlust Brooch (278 AP / 20s / 120s)
-    [29776] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=33.3 }, note = MSC.L["Use: 33.3 Avg AP (2m CD)"] }, -- Core of Ar'kelos (200 AP / 20s / 120s)
-    [30293] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=39.7 }, note = MSC.L["Use: 39.7 Avg Heal / 13.2 Avg SP (90s CD)"] }, -- Heavenly Inspiration (238 Heal / 15s / 90s)
-    [30665] = { _AUTO_PROC = { stat="ITEM_MOD_SPIRIT_SHORT", val=50 }, note = MSC.L["Use: 50 Avg Spirit (2m CD)"] }, -- Earring of Soulful Meditation (300 Spirit / 20s / 120s)
-    
-	-- Charge-based Cooldowns
-    [23047] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=37.5 }, note = MSC.L["Use: 5 Spell Charges (37.5 Avg Heal Proxy / 2m CD)"] }, -- Eye of the Dead (450 Heal * 5)
-    
-    -- Identical Faction Quest Rewards
-    [25619] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=17.3 }, note = MSC.L["Use: 17.3 Avg SP (2m CD)"] }, -- Glowing Crystal Insignia (Horde)
-    [25620] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=17.3 }, note = MSC.L["Use: 17.3 Avg SP (2m CD)"] }, -- Ancient Crystal Talisman (Alliance)
-    
-    -- Identical Faction PvP Trinkets
-    [25628] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=23.1 }, note = MSC.L["Use: 23.1 Avg AP (2m CD)"] }, -- Ogre Mauler's Badge (185 AP / 15s / 120s)
-    [25633] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=23.1 }, note = MSC.L["Use: 23.1 Avg AP (2m CD)"] }, -- Uniting Charm (185 AP / 15s / 120s)
-    
-    [25634] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=35.5 }, note = MSC.L["Use: 35.5 Avg Heal / 11.8 Avg SP (2m CD)"] }, -- Oshu'gun Relic (213 Heal / 20s / 120s)
-    [27828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=47 }, note = MSC.L["Use: 47 Avg Heal / 15.6 Avg SP (2m CD)"] }, -- Warp-Scarab Brooch (282 Heal / 20s / 120s)
-    
-    -- Conditional On-Kill Restores (Assumes optimal usage on Cooldown for Max Potential)
-    [26055] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=37.5 }, note = MSC.L["Use: 37.5 Max mp5 (Requires Killingblow / 2m CD)"] }, -- Oculus of the Hidden Eye (900 Mana / 120s)
-    [27416] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=37.5 }, note = MSC.L["Use: 37.5 Max hp5 (Requires Killingblow / 2m CD)"] }, -- Fetish of the Fallen (900 Health / 120s)
-    [28108] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=100 }, note = MSC.L["Equip: 100 Max mp5 (Requires Killingblows / 10s CD)"] }, -- Power Infused Mushroom
-    [28109] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=100 }, note = MSC.L["Equip: 100 Max hp5 (Requires Killingblows / 10s CD)"] }, -- Essence Infused Mushroom
-  
-    -- Faction Equivalent Proc Trinkets
-    [27920] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, note = MSC.L["Equip: Melee Heal or Ranged Mana Proc (~10 mp5 Proxy)"] }, -- Mark of Conquest
-    [27921] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=10 }, note = MSC.L["Equip: Melee Heal or Ranged Mana Proc (~10 mp5 Proxy)"] }, -- Mark of Conquest
-
-    -- Stacking/Complex Healing Cooldowns
-    -- Ribbon of Sacrifice: Max stacks yield 150 bonus healing received. Very hard to average, assigning proxy.
-    [28590] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=30 }, note = MSC.L["Use: Stacking Heal Bonus (~30 Heal Proxy)"] },
-
-    -- Class Specific / Unique Procs
-    [30446] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=70 }, note = MSC.L["Equip: +70 AP to Battle Shout"] }, -- Solarian's Sapphire (Warrior)
-    [30448] = { _AUTO_PROC = { stat="ITEM_MOD_RANGED_ATTACK_POWER_SHORT", val=40 }, note = MSC.L["Equip: Shot Dmg Bonus (~40 RAP Proxy)"] }, -- Talon of Al'ar (Hunter)
-    [30621] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=5 }, note = MSC.L["Equip: Threat Reduction on Crits (5 Agi Proxy)"] }, -- Prism of Inner Calm
-    [30720] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=28.1 }, note = MSC.L["Equip: 28.1 Avg SP / ~25 mp5 via Mana Gems"] },-- Serpent-Coil Braid (Mage): Gems have 2m CD. 225 SP / 15s / 120s = 28.1 SP. 25% gem mana is ~600 extra mana every 2m = ~25 mp5.
-
-	-- High-End Raid / Badge Trinkets
-    [32483] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=29.2 }, note = MSC.L["Use: 29.2 Avg Haste (2m CD)"] }, -- The Skull of Gul'dan (175 Haste / 20s / 120s)
-    [32654] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=36 }, note = MSC.L["Use: 36 Avg AP (1m CD)"] }, -- Crystalforged Trinket (216 AP / 10s / 60s)
-    [33828] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=66 }, note = MSC.L["Use: 66 Avg Heal / 22 Avg SP (2m CD)"] }, -- Tome of Diabolic Remedy (396 Heal / 20s / 120s)
-    [33829] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=35.2 }, note = MSC.L["Use: 35.2 Avg SP (2m CD)"] }, -- Hex Shrunken Head (211 SP / 20s / 120s)
-    [33831] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Use: 60 Avg AP (2m CD)"] }, -- Berserker's Call (360 AP / 20s / 120s)
-    [34430] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=33.3 }, note = MSC.L["Use: 33.3 Avg mp5 (5m CD)"] }, -- Glimmering Naaru Sliver (2000 Total Mana / 300s)
-
-    -- Battlemaster's Trinkets (1750 Max HP / 15s / 180s = 145.8 Avg Health)
-    [33832] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Determination
-    [34049] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Audacity
-    [34050] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Perseverance
-    [34578] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Determination
-    [34579] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Audacity
-    [34580] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_SHORT", val=145.8 }, note = MSC.L["Use: 145.8 Avg Health (3m CD)"] }, -- Battlemaster's Perseverance
-
-    -- Jewelcrafting Figurines (Phase 5 IDs)
-    [35694] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Use: Summon Khorium Boar (20 AP Proxy)"] }, 
-    [35702] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=53.3 }, note = MSC.L["Use: 53.3 Avg AP (90s CD)"] }, -- Figurine - Shadowsong Panther (320 AP / 15s / 90s)
-    [35703] = { _AUTO_PROC = { stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=25 }, note = MSC.L["Use: 25 Avg mp5 (3m CD)"] }, -- Figurine - Seaspray Albatross (900 Mana / 180s)
-
-    -- Brewfest Event Trinkets
-    [38287] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=46.3 }, note = MSC.L["Use: 46.3 Avg AP (2m CD)"] }, -- Empty Mug of Direbrew (278 AP / 20s / 120s)
-    [38288] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=49.5 }, note = MSC.L["Use: 49.5 Avg Heal / 16.5 Avg SP (2m CD)"] }, -- Direbrew Hops (297 Heal / 20s / 120s)
-    [38289] = { _AUTO_PROC = { stat="ITEM_MOD_BLOCK_VALUE_SHORT", val=33.3 }, note = MSC.L["Use: 33.3 Avg Block Value (2m CD)"] }, -- Coren's Lucky Coin (200 BV / 20s / 120s)
-    [38290] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=25.8 }, note = MSC.L["Use: 25.8 Avg SP (2m CD)"] }, -- Dark Iron Smoking Pipe (155 SP / 20s / 120s)
-
-    -- Starter / TBC Classic Boost Item
-    [185988] = { _AUTO_PROC = { stat="ITEM_MOD_HEALTH_REGENERATION_SHORT", val=3.3 }, note = MSC.L["Use: 3.3 Avg hp5 (10m CD)"] }, -- Communal Stone of Stoicism (400 Avg Health / 600s)
-
-    -- [[ TBC PROC TRINKETS & WEAPONS (Averaged Uptime) ]]
-    [28830] = { _AUTO_PROC = { stat="ITEM_MOD_HASTE_RATING_SHORT", val=160 }, note = MSC.L["Equip: 160 Avg Haste (DST Proxy)"] }, -- Dragonspine Trophy
-    [27683] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=42 }, note = MSC.L["Equip: 42 Avg Spell Haste (Quagmirran's)"] }, -- Quagmirran's Eye
-    [30626] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=63 }, note = MSC.L["Equip: 63 Avg SP (Sextant)"] }, -- Sextant of Unstable Currents
-    [30627] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=75 }, note = MSC.L["Equip: 75 Avg AP (Tsunami)"] }, -- Tsunami Talisman
-    [32505] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=186 }, note = MSC.L["Equip: 186 Avg ArP (Madness)"] }, -- Madness of the Betrayer
-    [34472] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=102 }, note = MSC.L["Equip: 102 Avg AP (Shard of Contempt)"] }, -- Shard of Contempt
-    [28773] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = MSC.L["Equip: 55 Avg AP (Don Santos)"] }, -- Don Santos' Famous Hunting Rifle
-    [28573] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Equip: 60 Avg AP (Despair)"] }, -- Despair
-    [28729] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = MSC.L["Equip: 50 Avg AP (Blight)"] }, -- Blight
-    [32262] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Equip: 60 Avg AP (Syphon of the Nathrezim)"] }, -- Syphon of the Nathrezim
-    [29301] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=26 }, note = MSC.L["Equip: 26 Avg AP (Band of Eternal Champion)"] },
-    [29305] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = MSC.L["Equip: 21 Avg SP (Band of Eternal Sage)"] },
-    [29309] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=37 }, note = MSC.L["Equip: 37 Avg Heal (Band of Eternal Restorer)"] },
-    [29313] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_SHORT", val=133 }, note = MSC.L["Equip: 133 Avg Armor (Band of Eternal Defender)"] },
-
-})
+-- Wiped for the beta (2026-09-21): this table was ~140 unconditional entries,
+-- almost entirely real TBC raid/dungeon trinkets and weapons (Bloodlust Brooch,
+-- Dragonspine Trophy, "Jewelcrafting Figurines (Phase 5 IDs)", etc.) that can't
+-- exist in Forever since TBC content isn't part of it. Starting blank and
+-- repopulating organically with confirmed Forever item IDs only, same approach
+-- as the v3.0.4 Roadmap database wipe.
+AddOverrides({})
 
 -- [[ PVP UTILITY OVERRIDES ]]
 local function AddPvPTrinkets()
@@ -1184,28 +1051,8 @@ local function AddPvPTrinkets()
         MSC.TrinketDB[id] = MSC.ItemOverrides[id]
     end
     
-    -- Rank 2 (TBC Level 70 Medallions - All CC Break + Resilience)
-    -- Includes your previously commented TBC IDs (30348, 30351, 30345, 28240)
-    local r2_ids = {28234, 28235, 30348, 30351, 30345, 28240}
-    for _, id in ipairs(r2_ids) do
-        MSC.ItemOverrides[id] = MSC.ItemOverrides[id] or {}
-        MSC.ItemOverrides[id].MSC_PVP_UTILITY = 80
-        MSC.ItemOverrides[id].estimate = true
-        MSC.ItemOverrides[id].note = MSC.L["CC Break (Rank 2)"]
-        
-        MSC.TrinketDB[id] = MSC.ItemOverrides[id]
-    end
-
-    -- Rank 3 (WotLK/Late TBC - e.g., Titan-Forged / Level 80 variants)
-    local r3_ids = {37864, 37865}
-    for _, id in ipairs(r3_ids) do
-        MSC.ItemOverrides[id] = MSC.ItemOverrides[id] or {}
-        MSC.ItemOverrides[id].MSC_PVP_UTILITY = 100
-        MSC.ItemOverrides[id].estimate = true
-        MSC.ItemOverrides[id].note = MSC.L["CC Break (Rank 3)"]
-        
-        MSC.TrinketDB[id] = MSC.ItemOverrides[id]
-    end
+    -- Rank 2 (TBC Level 70 Medallions) and Rank 3 (WotLK Titan-Forged variants)
+    -- wiped for the beta (2026-09-21) — TBC/WotLK content isn't part of Forever.
 end
 AddPvPTrinkets()
 

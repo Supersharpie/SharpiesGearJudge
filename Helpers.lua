@@ -310,6 +310,43 @@ function MSC:GetRatingPercent(statKey, ratingVal, level)
 end
 
 -- =============================================================
+-- 5.5 FOREVER WEAPON RACIALS
+-- =============================================================
+-- Server-granted crit specializations native to WoW: Forever (confirmed via
+-- wowforevertools.com/races). Crit is unified there (affects both melee and
+-- spell), unlike Era/TBC's flat weapon-SKILL racials (Classes\ERA|TBC's
+-- per-class GetWeaponBonus), so this is shared across every class rather than
+-- reimplemented per profile.
+MSC.ForeverWeaponRacials = {
+    Human = { critPct = 2, subclasses = { [7] = true, [8] = true } },  -- Sword Specialization
+    Dwarf = { critPct = 1, subclasses = { [4] = true, [5] = true } },  -- Mace Specialization
+    Orc   = { critPct = 1, subclasses = { [0] = true, [1] = true } },  -- Axe Specialization
+}
+
+function MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+    if not itemLink or not weights then return 0 end
+    local _, race = UnitRace("player")
+    local racial = race and MSC.ForeverWeaponRacials[race]
+    if not racial then return 0 end
+
+    local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
+    if classID ~= 2 or not subClassID or not racial.subclasses[subClassID] then return 0 end
+
+    -- "Rating needed per 1% Crit" at the player's level, falling back to the
+    -- level-60/70 edges of the table (same clamping as GetRatingPercent) or a
+    -- rough constant if the table isn't available at all.
+    local level = UnitLevel("player")
+    local scalars = MSC.CombatRatingScalars
+    local levelData = scalars and (scalars[level] or scalars[60] or scalars[70])
+    local ratingPerPct = (levelData and levelData[7]) or 22.1
+
+    local meleeCritValue = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0) * ratingPerPct
+    local spellCritValue = (weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) * ratingPerPct
+
+    return racial.critPct * (meleeCritValue + spellCritValue)
+end
+
+-- =============================================================
 -- 6. SCANNING
 -- =============================================================
 function MSC.GetRawItemStats(itemLink)

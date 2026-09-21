@@ -176,7 +176,7 @@ function Mage:ApplyScalers(weights, currentSpec)
 end
 
 function Mage:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 end
 
 MSC.RegisterModule("MAGE", Mage)

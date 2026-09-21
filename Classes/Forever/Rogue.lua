@@ -152,7 +152,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
 end
 
 function Rogue:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 end
 
 MSC.RegisterModule("ROGUE", Rogue)

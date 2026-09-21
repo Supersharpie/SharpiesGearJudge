@@ -167,7 +167,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
 end
 
 function Hunter:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 end
 
 MSC.RegisterModule("HUNTER", Hunter)

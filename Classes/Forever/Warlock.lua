@@ -165,7 +165,7 @@ function Warlock:ApplyScalers(weights, currentSpec)
 end
 
 function Warlock:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 end
 
 MSC.RegisterModule("WARLOCK", Warlock)

@@ -11,11 +11,20 @@ SGJ_Settings.ShowBagArrows = true
 
 function MSC_GetTooltipItem(tooltip)
     if not tooltip then return nil, nil end
-    if tooltip.GetItem then return tooltip:GetItem() end
-    if TooltipUtil and TooltipUtil.GetDisplayedItem then return TooltipUtil.GetDisplayedItem(tooltip) end
+    -- Prefer the modern API: on the 11.x-derived engine, tooltip:GetItem() can still
+    -- exist as a method (inherited generically) while silently returning nothing,
+    -- since the actual item data now lives in tooltip.processingInfo.tooltipData
+    -- rather than wherever GetItem() used to read from. Checking "does the method
+    -- exist" isn't enough to know it still works, so try the known-good modern path
+    -- first and only fall back to the legacy method for clients where it's absent.
+    if TooltipUtil and TooltipUtil.GetDisplayedItem then
+        local name, link = TooltipUtil.GetDisplayedItem(tooltip)
+        if link then return name, link end
+    end
     if tooltip.processingInfo and tooltip.processingInfo.tooltipData and tooltip.processingInfo.tooltipData.hyperlink then
         return nil, tooltip.processingInfo.tooltipData.hyperlink
     end
+    if tooltip.GetItem then return tooltip:GetItem() end
     return nil, nil
 end
 -- Polyfill for WoW 11.0+ engine API removals

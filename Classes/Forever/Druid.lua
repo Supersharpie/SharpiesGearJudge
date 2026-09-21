@@ -185,17 +185,25 @@ function Druid:ApplyScalers(weights, currentSpec)
 end
 
 function Druid:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+end
+
+function Druid:GetRelicBonus(itemID, currentSpec)
+    local bonus = {}
+    if Druid.Relics[itemID] then
+        for k, v in pairs(Druid.Relics[itemID]) do bonus[k] = v end
+    end
+    return bonus
 end
 
 -- =============================================================
--- IDOLS (Classic Era)
+-- IDOLS
+-- Wiped for the beta (2026-09-21): these were real TBC Idol item IDs. TBC
+-- content isn't part of Forever, so this starts blank and repopulates
+-- organically with confirmed Forever Idol IDs, same as the ProcDB/TrinketDB
+-- cleanup above.
 -- =============================================================
-Druid.Relics = {
-    [22398] = { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 }, -- Idol of Brutality
-    [22396] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30 },      -- Idol of Health
-    [23197] = { ITEM_MOD_SPELL_POWER_SHORT = 33 },        -- Idol of the Moon
-}
+Druid.Relics = {}
 
 -- Register Profiles
 Druid.Profiles = {}

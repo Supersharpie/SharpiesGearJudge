@@ -191,19 +191,25 @@ function Shaman:ApplyScalers(weights, currentSpec)
 end
 
 function Shaman:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+end
+
+function Shaman:GetRelicBonus(itemID, currentSpec)
+    local bonus = {}
+    if Shaman.Relics[itemID] then
+        for k, v in pairs(Shaman.Relics[itemID]) do bonus[k] = v end
+    end
+    return bonus
 end
 
 -- =============================================================
--- CLASS SPECIFIC ITEMS (ERA TOTEMS)
+-- TOTEMS
+-- Wiped for the beta (2026-09-21): these were real TBC Totem item IDs. TBC
+-- content isn't part of Forever, so this starts blank and repopulates
+-- organically with confirmed Forever Totem IDs, same as the ProcDB/TrinketDB
+-- cleanup above.
 -- =============================================================
-Shaman.Relics = {
-    [22395] = { ITEM_MOD_SPELL_POWER_SHORT = 30 }, -- Totem of Iskar
-    [23200] = { ITEM_MOD_MANA_REGENERATION_SHORT = 4 }, -- Totem of Sustaining
-    [22394] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Totem of Rebirth
-    [23199] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 33, estimate = true }, -- Totem of the Storm
-    [22397] = { ["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 20, estimate = true }, -- Totem of Rage
-}
+Shaman.Relics = {}
 
 MSC.RegisterModule("SHAMAN", Shaman)
 

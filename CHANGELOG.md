@@ -1,5 +1,35 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.10
+
+### 🐛 Bug Fixes
+- **Tooltip Verdicts Went Completely Silent (No Errors)**: The entire tooltip verdict system stopped drawing on some client builds, with zero Lua errors — not even the base "Judge's Score" line, on any item. 
+	Root cause: `TooltipManager.lua` gated its legacy `GameTooltip`/`ItemRefTooltip`/`ShoppingTooltip` `OnTooltipSetItem` hooks behind `if not TooltipDataProcessor then`, trusting that table's mere existence as proof the modern `TooltipDataProcessor.AddTooltipPostCall` path would actually fire. 
+	On at least one client build it exists as a table (with real functions on it) but the registered callback never actually gets invoked by the tooltip pipeline — confirmed by adding a temporary debug print inside it that never fired, while manually calling `MSC.EvaluateAndDrawTooltip(GameTooltip)` directly worked fine. 
+	So the "modern" branch got taken, found to be non-functional, and the legacy fallback that would have worked was never registered because we assumed we didn't need it. Also tried registering under `TooltipDataProcessor.AllTypes` instead of `Enum.TooltipDataType.Item` first (in case the enum value didn't line up with what this client's dispatcher actually tags item tooltips with) — didn't help either, confirming the whole `AddTooltipPostCall` path is non-functional here, not just misregistered. 
+	Fix: register the legacy `OnTooltipSetItem` hooks (in both `Judge.lua` and `TooltipManager.lua`) unconditionally, regardless of whether `TooltipDataProcessor` exists. `EvaluateAndDrawTooltip`'s own duplicate-guard makes it safe for both mechanisms to fire on clients where both actually work.
+- **Relic Bonus Tooltip Note Missing for Forever Druid/Paladin/Shaman**: `Judge.lua`'s "Judge's Notes" tooltip line for Idols/Librams/Totems only reads through `MSC.CurrentClass:GetRelicBonus(itemID, specName)`, which was never implemented for any Forever class even though their `.Relics` data tables existed. 
+	Scoring itself was already correct (a separate mechanism in `Helpers.lua` applies `.Relics` stats directly during item scanning), but the tooltip note was silently absent. Added the missing `GetRelicBonus` to Druid, Paladin, and Shaman.
+
+### 🧹 Data Cleanup
+- **Removed TBC-Only Item Data from Forever's Database**: `Database_Forever.lua` had a ~140-entry `AddOverrides()` block of unconditional item proc/trinket data that was almost entirely real TBC raid and dungeon content (Bloodlust Brooch, Dragonspine Trophy, "Jewelcrafting Figurines (Phase 5 IDs)", etc.) — content that can't exist in Forever since TBC isn't part of it. 
+	Also removed the Rank 2/3 PvP trinket entries (explicitly TBC Level 70 Medallions and WotLK Titan-Forged variants), keeping only the genuine Vanilla-era Rank 1 insignias. Also emptied the Druid/Paladin/Shaman `.Relics` tables (Idols/Librams/Totems are a TBC-introduced item type with no Vanilla equivalent, so every entry in them was TBC-only regardless of specific ID). 
+	All of this starts blank and repopulates organically with confirmed Forever item IDs going forward, matching the same approach already used for the Roadmap plugin's item database in v3.0.4. `Data_Sets_Forever.lua`'s `ProcDB` was audited too and found already correctly scoped — its Classic/Era section is untouched and its TBC-specific section was already dead code behind an `if not MSC.IsVanillaRules` guard that never executes on Forever.
+
+---
+## 🚀 v3.0.9
+
+### 🐛 Bug Fixes
+- **Secondary/Tracked Specs Never Appeared in Tooltips**: `Judge.lua`'s tracked-spec tooltip line checked `if tdelta > 0.01` instead of the actual variable `tDelta` (declared two lines above). 
+	Since Lua is case-sensitive, this silently referenced an undefined global (`nil`), and since the whole block runs inside an `xpcall` that only prints on `MSC.Debug`, every tracked-spec evaluation was throwing and getting swallowed silently — secondary specs enabled in Settings never showed an upgrade line in tooltips, with no visible error. Fixed the typo.
+- **Forever Weapon Racials Not Scored on Gear Comparisons**: Human's Sword Specialization (+2% Crit), Dwarf's Mace Specialization (+1%), and Orc's Axe Specialization (+1%) were only ever credited in the character-sheet cap-guardian display — every Forever class's `GetWeaponBonus(itemLink, weights)` (the hook actually used when scoring/comparing candidate weapons) was a stub returning `0`. 
+	Added a shared `MSC.GetForeverWeaponRacialBonus()` in `Helpers.lua` and wired it into all 9 Forever class modules, so weapon-type racials now actually affect upgrade scoring, not just the current-gear display. Also fixed Orc's Axe Specialization being hardcoded as +2% Crit in that display logic — confirmed via wowforevertools.com and Warcraft Tavern's Forever coverage that it's +1%, matching Dwarf.
+
+### ✨ New Features
+- **`/sgjscalar` Now Dumps Equipped Gear and a Full Stat Sheet**: Previously only printed primary stats, a handful of derived combat stats, and any found Combat Ratings. 
+	Now also lists every equipped item by slot, plus Defense Skill, Armor, Dodge/Parry/Block%, Ranged AP, Spell Power, and Healing Power — all wrapped in the existing `MSC.SanitizeStat()` protocol to match this addon's established defense against tainted-value crashes.
+
+---
 ## 🚀 v3.0.8
 
 ### 🐛 Bug Fixes
@@ -12,6 +42,7 @@
 	That global no longer exists on the modern 11.x-derived engine TBC Anniversary and Forever now share, so the guard silently failed and the hook never attached — bag arrows had no trigger at all, even with the setting enabled, while tooltip verdicts kept working fine since they use a separate, still-valid hook. Replaced with a `BAG_UPDATE_DELAYED` / `PLAYER_EQUIPMENT_CHANGED` event listener that scans all visible `ContainerFrame` windows directly, which fires reliably across all three clients.
 
 ---
+
 ## 🚀 v3.0.7
 
 ### 🐛 Bug Fixes

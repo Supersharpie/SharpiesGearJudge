@@ -169,7 +169,7 @@ function Priest:ApplyScalers(weights, currentSpec)
 end
 
 function Priest:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 end
 
 -- =============================================================

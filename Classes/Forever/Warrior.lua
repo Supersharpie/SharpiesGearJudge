@@ -174,7 +174,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
 end
 
 function Warrior:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 end
 
 -- =============================================================

@@ -150,20 +150,25 @@ function Paladin:ApplyScalers(weights, currentSpec)
 end
 
 function Paladin:GetWeaponBonus(itemLink, weights)
-    return 0
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+end
+
+function Paladin:GetRelicBonus(itemID, currentSpec)
+    local bonus = {}
+    if Paladin.Relics[itemID] then
+        for k, v in pairs(Paladin.Relics[itemID]) do bonus[k] = v end
+    end
+    return bonus
 end
 
 -- =============================================================
--- ERA RELIC MAPPING
+-- LIBRAMS
+-- Wiped for the beta (2026-09-21): these were real TBC Libram item IDs. TBC
+-- content isn't part of Forever, so this starts blank and repopulates
+-- organically with confirmed Forever Libram IDs, same as the ProcDB/TrinketDB
+-- cleanup above.
 -- =============================================================
-Paladin.Relics = {
-    [22399] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 53 }, -- Libram of Divinity (Flash of Light)
-    [23006] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 80 }, -- Libram of Hope (Holy Light)
-    [23203] = { ITEM_MOD_ATTACK_POWER_SHORT = 40 },  -- Libram of Fervor
-    [23201] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 45, estimate = true }, -- Libram of Divinity Base
-    [22396] = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 45, estimate = true }, -- Libram of Truth
-    [22402] = { ITEM_MOD_MANA_REGENERATION_SHORT = 8, estimate = true }, -- Libram of Hope Base
-}
+Paladin.Relics = {}
 
 -- Register Profiles for UI
 Paladin.Profiles = {}

@@ -1478,10 +1478,10 @@ local function GetClassRings(class, stats, weights)
                 AddMod("Crit", "Sword Spec (Human)", 2, true)
                 AddMod("Spell Crit", "Sword Spec (Human)", 2, true)
             elseif playerRace == "Orc" and (subClassID == 0 or subClassID == 1) then
-                critBonus = critBonus + 2
-                spellCritBonus = spellCritBonus + 2
-                AddMod("Crit", "Axe Spec (Orc)", 2, true)
-                AddMod("Spell Crit", "Axe Spec (Orc)", 2, true)
+                critBonus = critBonus + 1
+                spellCritBonus = spellCritBonus + 1
+                AddMod("Crit", "Axe Spec (Orc)", 1, true)
+                AddMod("Spell Crit", "Axe Spec (Orc)", 1, true)
             elseif playerRace == "Dwarf" and (subClassID == 4 or subClassID == 5) then
                 critBonus = critBonus + 1
                 spellCritBonus = spellCritBonus + 1
@@ -3126,6 +3126,20 @@ MSC.EvaluateAndDrawTooltip = function(tooltip)
 end
 
 
+-- Slot order/labels match Laboratory.lua's OrderedSlots so scalar dumps and
+-- Lab imports read the same way.
+local SGJ_ScalarGearSlots = {
+    { slot = "HeadSlot", label = "Head" }, { slot = "NeckSlot", label = "Neck" },
+    { slot = "ShoulderSlot", label = "Shoulder" }, { slot = "BackSlot", label = "Back" },
+    { slot = "ChestSlot", label = "Chest" }, { slot = "WristSlot", label = "Wrist" },
+    { slot = "HandsSlot", label = "Hands" }, { slot = "WaistSlot", label = "Waist" },
+    { slot = "LegsSlot", label = "Legs" }, { slot = "FeetSlot", label = "Feet" },
+    { slot = "Finger0Slot", label = "Ring 1" }, { slot = "Finger1Slot", label = "Ring 2" },
+    { slot = "Trinket0Slot", label = "Trinket 1" }, { slot = "Trinket1Slot", label = "Trinket 2" },
+    { slot = "MainHandSlot", label = "Main Hand" }, { slot = "SecondaryHandSlot", label = "Off Hand" },
+    { slot = "RangedSlot", label = "Ranged" },
+}
+
 SLASH_SGJ_SCALAR1 = "/sgjscalar"
 SlashCmdList["SGJ_SCALAR"] = function()
     local ratings = {
@@ -3142,7 +3156,7 @@ SlashCmdList["SGJ_SCALAR"] = function()
     local out = {}
     table.insert(out, "[SGJ Scalar Test] - Level " .. UnitLevel("player") .. " " .. raceStr .. " " .. classStr)
     table.insert(out, "--------------------------------------------------")
-    
+
     local foundAny = false
     for _, r in ipairs(ratings) do
         local cr = GetCombatRating(r.id) or 0
@@ -3158,21 +3172,46 @@ SlashCmdList["SGJ_SCALAR"] = function()
         table.insert(out, "Equip gear with any Combat Rating to test!")
     end
 
+    -- [[ EQUIPPED GEAR ]]
+    table.insert(out, "")
+    table.insert(out, "Equipped Gear:")
+    local anyGear = false
+    for _, s in ipairs(SGJ_ScalarGearSlots) do
+        local slotID = GetInventorySlotInfo(s.slot)
+        local link = slotID and GetInventoryItemLink("player", slotID)
+        if link then
+            anyGear = true
+            table.insert(out, string.format("  %s: %s", s.label, link))
+        end
+    end
+    if not anyGear then
+        table.insert(out, "  (nothing equipped)")
+    end
+
     local strTotal = select(2, UnitStat("player", 1))
     local agiTotal = select(2, UnitStat("player", 2))
     local staTotal = select(2, UnitStat("player", 3))
     local intTotal = select(2, UnitStat("player", 4))
     local spiTotal = select(2, UnitStat("player", 5))
-    
+
     local rawB, rawP, rawN = UnitAttackPower("player")
     local baseAP = MSC.SanitizeStat(rawB)
     local posAP = MSC.SanitizeStat(rawP)
     local negAP = MSC.SanitizeStat(rawN)
     local totalAP = baseAP + posAP + negAP
-    
+
+    local rawRB, rawRP, rawRN = UnitRangedAttackPower("player")
+    local totalRangedAP = MSC.SanitizeStat(rawRB) + MSC.SanitizeStat(rawRP) + MSC.SanitizeStat(rawRN)
+
+    local defBase, defModifier = UnitDefense("player")
+    local totalDefense = MSC.SanitizeStat(defBase) + MSC.SanitizeStat(defModifier)
+
+    local _armorBase, _armorEffectiveBase, armorTotal = UnitArmor("player")
+    local totalArmor = MSC.SanitizeStat(armorTotal)
+
     local baseRegen, castingRegen = GetManaRegen()
     local pRegen = GetPowerRegen()
-    
+
     table.insert(out, "")
     table.insert(out, "(Primary Stat conversions below are specific to " .. classStr .. "s)")
     table.insert(out, "Total Str: " .. strTotal .. " | Total Agi: " .. agiTotal)
@@ -3180,16 +3219,20 @@ SlashCmdList["SGJ_SCALAR"] = function()
     table.insert(out, "Total Spi: " .. spiTotal)
     table.insert(out, "---")
     table.insert(out, "Total Max Health: " .. UnitHealthMax("player"))
-    table.insert(out, "Total Attack Power: " .. totalAP)
+    table.insert(out, "Total Armor: " .. totalArmor)
+    table.insert(out, "Total Attack Power: " .. totalAP .. " | Total Ranged AP: " .. totalRangedAP)
+    table.insert(out, "Total Defense Skill: " .. totalDefense)
+    table.insert(out, string.format("Total Dodge: %.2f%% | Total Parry: %.2f%% | Total Block: %.2f%%", GetDodgeChance() or 0, GetParryChance() or 0, GetBlockChance() or 0))
     table.insert(out, "Total Melee Crit: " .. string.format("%.2f%%", GetCritChance()))
     table.insert(out, "Total Spell Crit: " .. string.format("%.2f%%", GetSpellCritChance(2)))
+    table.insert(out, "Total Spell Power: " .. MSC.SanitizeStat(GetSpellBonusDamage(2)) .. " | Total Healing Power: " .. MSC.SanitizeStat(GetSpellBonusHealing()))
     table.insert(out, string.format("Mana Regen (per 5s): %.1f Not Casting | %.1f Casting", (baseRegen or 0)*5, (castingRegen or 0)*5))
     table.insert(out, string.format("Power Regen (per 1s): %.1f", pRegen or 0))
-    
+
     if not MSC.ScalarExportFrame then
         MSC.ScalarExportFrame = MSC.CreatePopupFrame("SGJ Scalar Export")
     end
-    
+
     MSC.ScalarExportFrame.EditBox:SetText(table.concat(out, "\n"))
     MSC.ScalarExportFrame:Show()
     MSC.ScalarExportFrame.EditBox:HighlightText()
