@@ -1092,7 +1092,21 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             end
             
             -- [[ WoW Forever Bonus Spell Power from Healing (roughly 1/3 conversion) ]]
-            if MSC.IsForever and stat == "ITEM_MOD_SPELL_HEALING_DONE_SHORT" then
+            -- Restricted to profiles that already weight Spell Healing themselves
+            -- (weights["...HEALING..."] > 0) -- the class file's own signal that
+            -- this specific spec can cast healing spells at all. Previously gated
+            -- only on "does this profile weight Spell Power," which fired for every
+            -- caster DPS profile too (Mage Leveling, Shadow Priest, etc. all weight
+            -- Spell Power heavily), crediting phantom value for a stat those specs
+            -- can never use. Gating by class alone isn't precise enough either --
+            -- Shadow Priest's SHADOW_PVE/SHADOW_PVP profiles correctly have no
+            -- healing weight at all despite being the Priest class, so a
+            -- class-based check would have wrongly included them too. This
+            -- bonus never showed up in the tooltip's visible Gains/Losses list
+            -- (which works off raw stat categories, not this converted pool),
+            -- so the inflation was invisible until traced through the math.
+            local healWeight = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0
+            if MSC.IsForever and stat == "ITEM_MOD_SPELL_HEALING_DONE_SHORT" and healWeight > 0 then
                 local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
                 if spWeight > 0 then
                     score = score + (val * 0.333 * spWeight)
