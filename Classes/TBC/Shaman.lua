@@ -800,7 +800,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- [[ 4. COVARIANCE (Synergy) ]]
     if currentSpec:find("ENH") or currentSpec:find("Tank") then
         if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-            local base, pos, neg = UnitAttackPower("player")
+            local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
             local totalAP = base + pos + neg
             if totalAP > 1000 then 
                  local apScaler = 1 + ((totalAP - 1000) / 20000)

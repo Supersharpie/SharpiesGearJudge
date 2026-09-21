@@ -161,21 +161,21 @@ function MSC:GetPlayerStat(statType)
     local val = 0
     if MSC.IsVanillaRules then
         if statType == "HIT" then val = GetHitModifier()
-        elseif statType == "SPELL_HIT" then val = GetSpellHitModifier()
-        elseif statType == "CRIT" then val = GetCritChance()
-        elseif statType == "SPELL_CRIT" then val = GetSpellCritChance(2)
-        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = (b or 0) + (m or 0)
-        elseif statType == "HEALING" then val = GetSpellBonusHealing()
-        elseif statType == "SPELL_POWER" then val = GetSpellBonusDamage(2)
+        elseif statType == "SPELL_HIT" then val = MSC.SanitizeStat(GetSpellHitModifier())
+        elseif statType == "CRIT" then val = MSC.SanitizeStat(GetCritChance())
+        elseif statType == "SPELL_CRIT" then val = MSC.SanitizeStat(GetSpellCritChance(2))
+        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = MSC.SanitizeStat(b) + MSC.SanitizeStat(m)
+        elseif statType == "HEALING" then val = MSC.SanitizeStat(GetSpellBonusHealing())
+        elseif statType == "SPELL_POWER" then val = MSC.SanitizeStat(GetSpellBonusDamage(2))
         end
     else
         if statType == "HIT" then val = GetCombatRating(6)
-        elseif statType == "SPELL_HIT" then val = GetCombatRating(8)
-        elseif statType == "CRIT" then val = GetCombatRating(9)
-        elseif statType == "SPELL_CRIT" then val = GetCombatRating(11)
-        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = (b or 0) + (m or 0)
-        elseif statType == "HEALING" then val = GetSpellBonusHealing()
-        elseif statType == "SPELL_POWER" then val = GetSpellBonusDamage(2)
+        elseif statType == "SPELL_HIT" then val = MSC.SanitizeStat(GetCombatRating(8))
+        elseif statType == "CRIT" then val = MSC.SanitizeStat(GetCombatRating(9))
+        elseif statType == "SPELL_CRIT" then val = MSC.SanitizeStat(GetCombatRating(11))
+        elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = MSC.SanitizeStat(b) + MSC.SanitizeStat(m)
+        elseif statType == "HEALING" then val = MSC.SanitizeStat(GetSpellBonusHealing())
+        elseif statType == "SPELL_POWER" then val = MSC.SanitizeStat(GetSpellBonusDamage(2))
         end
     end
     

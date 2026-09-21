@@ -616,7 +616,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
 
     -- [[ 2. COVARIANCE (Crit scales with AP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-        local base, pos, neg = UnitAttackPower("player")
+        local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
         local totalAP = base + pos + neg
         
         if totalAP > 1000 then

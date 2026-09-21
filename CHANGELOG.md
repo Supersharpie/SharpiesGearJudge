@@ -1,5 +1,17 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.8
+
+### 🐛 Bug Fixes
+- **Combat Lockdown "Secret Number" Crash (Part 2)**: Wrapped unprotected calls to `UnitRangedAttackPower`, `UnitAttackPower`, `UnitDefense`, and `UnitPowerMax` inside the `MSC.SanitizeStat()` protocol across all class profiles and the main engine. Resolves fatal Lua taint crashes when the 11.5 engine obfuscates combat stats dynamically during encounters.
+- **Druid Early-Game Stat Math**: Injected Weapon DPS weights into the `Leveling_1_10` and `Leveling_11_20` Feral Druid profiles. Previously, because Feral Druids ignore weapon DPS in Cat/Bear forms, early-game caster weapons with no primary stats were evaluating as `0.0` sidegrades before the Druid actually unlocked their shapeshifting forms.
+- **Blank `/sgj` Window on Era & TBC Anniversary**: Fixed a fatal Lua error where `Interface.lua` called `NineSliceUtil.ApplyLayoutByName(..., "TooltipDefaultDarkLayout")` to skin the Weapon Thunderdome and Receipt panels. 
+	That API only exists on the modern retail/WoW: Forever engine — on Era and TBC Anniversary it doesn't exist, so the call threw immediately during `MSC.InitLabView`, aborting the rest of window construction before the sidebar buttons or any tab content were ever created. 
+	This left the main window rendering as an empty shell (title bar and close button only, no tabs, no content). Added `MSC.ApplyPanelSkin()`, which tries the modern NineSlice skin first and falls back to a plain Classic-safe tooltip backdrop when it's unavailable.
+- **Bag Upgrade Arrows Never Appeared on Default Bags**: The only trigger for `MSC.UpdateBagOverlays` on the standard Blizzard bag frames was a `hooksecurefunc("ContainerFrame_Update", ...)`, guarded by `if ContainerFrame_Update then`. 
+	That global no longer exists on the modern 11.x-derived engine TBC Anniversary and Forever now share, so the guard silently failed and the hook never attached — bag arrows had no trigger at all, even with the setting enabled, while tooltip verdicts kept working fine since they use a separate, still-valid hook. Replaced with a `BAG_UPDATE_DELAYED` / `PLAYER_EQUIPMENT_CHANGED` event listener that scans all visible `ContainerFrame` windows directly, which fires reliably across all three clients.
+
+---
 ## 🚀 v3.0.7
 
 ### 🐛 Bug Fixes

@@ -919,7 +919,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
 
 	-- [[ RETRIBUTION DYNAMIC SCALING ]]
     if currentSpec:find("RET") then
-        local base, pos, neg = UnitAttackPower("player")
+        local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
         local totalAP = base + pos + neg
         
         -- 1. CRIT SCALING (Universal)
@@ -1003,7 +1003,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
 
     -- C. DEFENSE CAP (Prot)
     if weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] > 1.0 then
-        local baseDef, armorDef = UnitDefense("player")
+        local rawBD, rawAD = UnitDefense("player"); local baseDef = MSC.SanitizeStat(rawBD); local armorDef = MSC.SanitizeStat(rawAD)
         local currentDef = MSC.SanitizeStat(baseDef) + MSC.SanitizeStat(armorDef)
         local dynamicDefCap = (level * 5) + 140
         

@@ -799,7 +799,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
             -- [[ MANA SAFETY ]]
             -- If max mana is too low (<7000), Haste burns you out.
-            local maxMana = UnitPowerMax("player", 0)
+            local maxMana = MSC.SanitizeStat(UnitPowerMax("player", 0))
             if maxMana < 7000 then
                  w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.2 -- Heavy penalty until geared
             end
@@ -814,7 +814,7 @@ function Druid:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("FERAL") or currentSpec:find("Bear") or currentSpec:find("Cat") then
         if w["ITEM_MOD_CRIT_RATING_SHORT"] then
-            local base, pos, neg = UnitAttackPower("player")
+            local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
             local totalAP = base + pos + neg
             if totalAP > 2000 then 
                  local apScaler = 1 + ((totalAP - 2000) / 20000)

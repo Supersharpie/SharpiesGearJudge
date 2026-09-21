@@ -138,7 +138,10 @@ function Hunter:ApplyScalers(weights, currentSpec)
     
     -- [[ 2. Covariance (Crit scales with RAP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-        local base, pos, neg = UnitRangedAttackPower("player")
+        local rawBase, rawPos, rawNeg = UnitRangedAttackPower("player")
+        local base = MSC.SanitizeStat(rawBase)
+        local pos = MSC.SanitizeStat(rawPos)
+        local neg = MSC.SanitizeStat(rawNeg)
         local totalRAP = base + pos + neg
         if totalRAP > 1500 then
             local rapScaler = 1 + ((totalRAP - 1500) / 10000)

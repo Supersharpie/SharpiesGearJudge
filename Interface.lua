@@ -268,6 +268,28 @@ function MSC.CreateModernBorder(f, thickness)
     end
 end
 
+-- [[ CLIENT-SAFE PANEL SKIN ]]
+-- NineSliceUtil ("TooltipDefaultDarkLayout") only exists on the modern retail/Forever
+-- engine. Era and TBC Anniversary don't have it, and calling it unguarded throws and
+-- aborts whatever init function called it (blanking the whole /sgj window). Try the
+-- modern skin first, fall back to a plain Classic-safe tooltip backdrop otherwise.
+function MSC.ApplyPanelSkin(frame)
+    if NineSliceUtil and NineSliceUtil.ApplyLayoutByName then
+        local ok = pcall(NineSliceUtil.ApplyLayoutByName, frame, "TooltipDefaultDarkLayout")
+        if ok then return end
+    end
+    if frame.SetBackdrop then
+        frame:SetBackdrop({
+            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 16, edgeSize = 16,
+            insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        })
+        frame:SetBackdropColor(0, 0, 0, 0.85)
+        frame:SetBackdropBorderColor(1, 1, 1, 0.6)
+    end
+end
+
 -- =============================================================
 -- 2. VIEW DEFINITIONS
 -- =============================================================
@@ -279,9 +301,9 @@ function MSC.InitLabView(parent)
     MSC.LabBlocks = {}
 
     local function CreateBlock(id, title, numSlots, x, y)
-        local frame = CreateFrame("Frame", nil, f)
+        local frame = CreateFrame("Frame", nil, f, "BackdropTemplate")
         frame:SetSize(275, 90); frame:SetPoint("TOPLEFT", x, y)
-        NineSliceUtil.ApplyLayoutByName(frame, "TooltipDefaultDarkLayout")
+        MSC.ApplyPanelSkin(frame)
         
         frame.Title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal"); frame.Title:SetPoint("TOPLEFT", 10, -5); frame.Title:SetText(title)
         frame.Score = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); frame.Score:SetPoint("TOPRIGHT", -10, -5); frame.Score:SetText("")
@@ -448,8 +470,8 @@ function MSC.InitReceiptView(parent)
 
     local function CreateSlot(id, parentPanel, x, y, label)
         local btn = CreateFrame("Button", nil, f, nil); btn:SetSize(30, 30); btn:SetPoint("TOPLEFT", parentPanel, "TOPLEFT", x, y)
-        btn.ScoreFrame = CreateFrame("Frame", nil, btn); btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
-        NineSliceUtil.ApplyLayoutByName(btn.ScoreFrame, "TooltipDefaultDarkLayout")
+        btn.ScoreFrame = CreateFrame("Frame", nil, btn, "BackdropTemplate"); btn.ScoreFrame:SetPoint("LEFT", btn, "RIGHT", 2, 0); btn.ScoreFrame:SetSize(40, 20)
+        MSC.ApplyPanelSkin(btn.ScoreFrame)
         btn.ScoreText = btn.ScoreFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); btn.ScoreText:SetPoint("CENTER"); btn.ScoreText:SetTextColor(1, 0.9, 0)
         btn.Alert = btn:CreateTexture(nil, "OVERLAY"); btn.Alert:SetSize(16, 16); btn.Alert:SetPoint("LEFT", btn.ScoreFrame, "RIGHT", 2, 0); btn.Alert:Hide()
 		btn:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); if self.link then GameTooltip:SetHyperlink(self.link) else GameTooltip:SetText(label, 1, 1, 1) end if self.AlertMode then GameTooltip:AddLine(" "); GameTooltip:AddLine(self.AlertText or MSC.L["Alert"], 1, 0, 0) end GameTooltip:Show() end); btn:SetScript("OnLeave", GameTooltip_Hide)
@@ -2476,13 +2498,30 @@ if hooksecurefunc and MerchantFrame_UpdateMerchantInfo then
     end)
 end
 
-if hooksecurefunc and ContainerFrame_Update then
-    hooksecurefunc("ContainerFrame_Update", function(frame)
-        C_Timer.After(0.01, function()
-            if MSC.UpdateBagOverlays then MSC.UpdateBagOverlays(frame) end
-        end)
-    end)
+-- [[ CLIENT-SAFE BAG ARROW REFRESH ]]
+-- ContainerFrame_Update no longer exists on the modern 11.x-derived engine that
+-- TBC Anniversary / Forever now share (same removal category as UnitBuff,
+-- GetNumSkillLines, MouseIsOver elsewhere in this addon). The hooksecurefunc
+-- above then silently never attaches, so bag-slot arrows never got a trigger
+-- there at all even though tooltip verdicts (a separate hook path) kept working.
+-- BAG_UPDATE_DELAYED fires on every client family, so use it as the reliable
+-- fallback regardless of whether the old global still exists.
+local function SGJ_RefreshAllBagOverlays()
+    if not MSC.UpdateBagOverlays then return end
+    for i = 1, (NUM_CONTAINER_FRAMES or 13) do
+        local container = _G["ContainerFrame" .. i]
+        if container and container:IsVisible() then
+            MSC.UpdateBagOverlays(container)
+        end
+    end
 end
+
+local bagRefreshFrame = CreateFrame("Frame")
+bagRefreshFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+bagRefreshFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+bagRefreshFrame:SetScript("OnEvent", function()
+    C_Timer.After(0.01, SGJ_RefreshAllBagOverlays)
+end)
 
 if GroupLootFrame_OpenNewFrame then
         hooksecurefunc("GroupLootFrame_OpenNewFrame", function()
@@ -3125,7 +3164,10 @@ SlashCmdList["SGJ_SCALAR"] = function()
     local intTotal = select(2, UnitStat("player", 4))
     local spiTotal = select(2, UnitStat("player", 5))
     
-    local baseAP, posAP, negAP = UnitAttackPower("player")
+    local rawB, rawP, rawN = UnitAttackPower("player")
+    local baseAP = MSC.SanitizeStat(rawB)
+    local posAP = MSC.SanitizeStat(rawP)
+    local negAP = MSC.SanitizeStat(rawN)
     local totalAP = baseAP + posAP + negAP
     
     local baseRegen, castingRegen = GetManaRegen()

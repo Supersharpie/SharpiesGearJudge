@@ -756,7 +756,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
     end
 
     if weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] and weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] > 1.0 then
-        local baseDef, armorDef = UnitDefense("player")
+        local rawBD, rawAD = UnitDefense("player"); local baseDef = MSC.SanitizeStat(rawBD); local armorDef = MSC.SanitizeStat(rawAD)
         local playerLevel = UnitLevel("player")
         local dynamicDefCap = (playerLevel * 5) + 140
         
