@@ -10,9 +10,14 @@ Warlock.Name = "WARLOCK"
 
 Warlock.Weights = {
     ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
-    ["RAID_DS_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
-    ["RAID_SM_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
-    ["PVE_MD_RUIN"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.3, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
+    -- Raid Spell Crit: 1% crit is worth 2 Spell Power before Ruin doubles it
+    -- in ApplyScalers -- 4.0 on the Spell Power 2.0 profiles below, 30.0 on
+    -- PVE_MD_RUIN's Spell Power 15.0 scale (the old 1.5 / 12.0 made it
+    -- 0.75-0.8 Spell Power). PVE_MD_RUIN's Spell Hit 187.5 matches the raid
+    -- profiles' 1% Hit = 12.5 Spell Power.
+    ["RAID_DS_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
+    ["RAID_SM_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
+    ["PVE_MD_RUIN"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=187.5, ["ITEM_MOD_STAMINA_SHORT"]=0.3, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
     ["PVP_NF_CONFLAG"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["PVP_SOUL_LINK"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["PVP_DEEP_DESTRO"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
@@ -22,21 +27,29 @@ Warlock.Weights = {
 -- LEVELING WEIGHTS
 -- =============================================================
 Warlock.LevelingWeights = {
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    
+    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
+    -- Unlike every other class's file, Warlock's own Leveling_1_10/11_20 never
+    -- had Spell Power/Hit/Crit weighted at all -- so there's no established
+    -- leveling convention in this file to copy. All brackets below are fixed
+    -- to match the endgame Default profile's convention instead (SPELL_POWER
+    -- 15.0, HIT_SPELL 20.0, SPELL_CRIT 12.0); see Warrior.lua's leveling-
+    -- bracket comment for the item-database evidence on why this can't wait
+    -- until higher levels.
+    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
+
     -- Fire
-    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    
+    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
+    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
+
     -- Demo
-    ["Leveling_Demo_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_Demo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
-    ["Leveling_Demo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    ["Leveling_Demo_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
+    ["Leveling_Demo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
+    ["Leveling_Demo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
 }
 
 -- =============================================================
@@ -83,6 +96,9 @@ Warlock.Talents = {
     ["MASTER_DEMON"]      = "Master Demonologist",
     ["SUPPRESSION"]       = "Suppression",
     ["DEMONIC_EMBRACE"]   = "Demonic Embrace",
+    ["MALEDICTION"]       = "Malediction", -- New in Forever, Affliction t2, 5 ranks, +1%/rank periodic damage
+    ["PANDEMIC"]          = "Pandemic", -- New in Forever, Affliction t3, 3 ranks, +33%/rank crit damage bonus on DoTs (now that DoTs crit)
+    ["AGONIZING_FLAMES"]  = "Agonizing Flames", -- New in Forever, Destruction t4, 3 ranks, +3%/rank Destruction spell damage
 }
 
 -- =============================================================
@@ -142,8 +158,49 @@ function Warlock:ApplyScalers(weights, currentSpec)
 
     -- [[ 1. Demonic Embrace (Stamina) ]]
     local rEmb = Rank("DEMONIC_EMBRACE")
-    if rEmb > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then 
-        weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03)) 
+    if rEmb > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
+        weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03))
+    end
+
+    -- Ruin (Destruction t3, 5 ranks): "Increases the critical strike damage
+    -- bonus of your Destruction spells by 20%" -- same phrasing/math as Mage's
+    -- Arcane Mind/Ice Shards -- 1+rank*0.20, reaching 2.0x at 5/5 (matches
+    -- real Classic Ruin's known doubling effect exactly). Shadow Bolt itself
+    -- is a Destruction spell and the primary nuke for every non-Fire build
+    -- too, and Ruin is a prerequisite for all 3 raid spec detections, so this
+    -- applies unconditionally by rank rather than gating on spec name.
+    local rRuin = Rank("RUIN")
+    if rRuin > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+        weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rRuin * 0.20))
+    end
+
+    -- Pandemic (New in Forever, Affliction t3, 3 ranks): same crit-damage-bonus
+    -- phrasing, now extended to DoTs since Forever lets periodic damage crit --
+    -- 1+rank*0.33, reaching ~2.0x at 3/3, consistent with every other
+    -- crit-damage-bonus talent converging on a 2x cap at its own max rank
+    local rPandemic = Rank("PANDEMIC")
+    if rPandemic > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+        weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rPandemic * 0.33))
+    end
+
+    -- Shadow Mastery (Affliction t6, 5 ranks): +1%/rank Shadow spell damage/drain
+    local rShadowMastery = Rank("SHADOW_MASTERY")
+    if rShadowMastery > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+        weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rShadowMastery * 0.01))
+    end
+
+    -- Malediction (New in Forever, Affliction t2, 5 ranks): +1%/rank periodic
+    -- (DoT) damage from all Warlock spells
+    local rMalediction = Rank("MALEDICTION")
+    if rMalediction > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+        weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rMalediction * 0.01))
+    end
+
+    -- Agonizing Flames (New in Forever, Destruction t4, 3 ranks): +3%/rank
+    -- damage on all Destruction spells (includes Shadow Bolt)
+    local rAgonizing = Rank("AGONIZING_FLAMES")
+    if rAgonizing > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+        weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rAgonizing * 0.03))
     end
 
     -- [[ 2. Hit Cap (16%) ]]

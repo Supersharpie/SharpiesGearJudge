@@ -175,6 +175,32 @@ function MSC:GetDominantTalentTree(tabMap, margin)
     return nil, "ambiguous"
 end
 
+-- Leveling role detection (levels 11-59). Early levels only reach talent
+-- tiers 1-3, and several common DPS leveling picks sit inside the tank/
+-- healer trees (Paladin Divine Strength in Holy, Druid Furor in Restoration,
+-- Priest Wand Specialization in Discipline), so raw tree points can't tell
+-- the roles apart. Each class instead lists the "marker" talents only that
+-- role would take (checked against Forever's talent data on
+-- wowforevertools.com); a class's GetSpec falls back to its DPS bracket when
+-- the matching role profile doesn't exist for the player's level:
+--   roleMarkers = { [profilePrefix] = { "TALENT_KEY", ... }, ... }
+-- Returns the prefix whose markers hold the most points, or nil if none/tied.
+function MSC:GetLowLevelRole(roleMarkers)
+    if not roleMarkers then return nil end
+    local bestRole, bestPts, tied = nil, 0, false
+    for role, keys in pairs(roleMarkers) do
+        local pts = 0
+        for _, key in ipairs(keys) do pts = pts + self:GetTalentRank(key) end
+        if pts > bestPts then
+            bestRole, bestPts, tied = role, pts, false
+        elseif pts > 0 and pts == bestPts then
+            tied = true
+        end
+    end
+    if tied then return nil end
+    return bestRole
+end
+
 -- =========================================================================
 -- 2. WEIGHT DISPATCHER
 -- =========================================================================

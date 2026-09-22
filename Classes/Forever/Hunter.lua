@@ -5,31 +5,47 @@ Hunter.Name = "HUNTER"
 -- =============================================================
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
+-- Strength/Attack Power/Ranged Attack Power/Weapon DPS/Agility calibrated to
+-- real conversion math (see Paladin.lua for the base derivation). Hunter's
+-- own formula differs from Warrior/Paladin's: melee Attack Power = 1x
+-- Strength + 1x Agility (not Strength-only 2:1), and Ranged Attack Power
+-- comes from Agility alone (Strength contributes nothing to a ranged
+-- Hunter). The ranged-weapon-damage bonus formula uses the same /14 divisor
+-- as melee (RAP/14 x weapon speed), so Weapon DPS = 14x its AP-type weight
+-- for both melee- and ranged-anchored profiles. Agility additionally carries
+-- a Crit/Dodge premium on top of its 1:1 AP credit that Strength doesn't get.
 Hunter.Weights = {
-    ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["RAID_MM_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["RAID_MM_STARTER"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["RAID_SURV_DEEP"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["PVP_MM_UTIL"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["PVP_SURV_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["MELEE_NIGHTFALL"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["SOLO_DME_TRIBUTE"] = { ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["RAID_MM_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_MM_STARTER"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    ["RAID_SURV_DEEP"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["PVP_MM_UTIL"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["PVP_SURV_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["MELEE_NIGHTFALL"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["SOLO_DME_TRIBUTE"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
 Hunter.LevelingWeights = {
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_AGILITY_SHORT"]=15.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_EXPERTISE_RATING_SHORT"]=13.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    
-    -- Melee Hunter
-    ["Leveling_Melee_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["Leveling_Melee_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["Leveling_Melee_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
+    -- Strength/Agility/Weapon DPS corrected to the confirmed 1:1 Hunter
+    -- melee-AP formula and 14:1 Weapon DPS:AP ratio (see comment above
+    -- Hunter.Weights for the derivation).
+    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
+    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
+    -- Brought up to match Leveling_1_10/11_20's convention (Hit/Crit/Attack
+    -- Power were entirely absent -- zero weight, invisible to scoring; see
+    -- Warrior.lua's leveling-bracket comment for the item-database evidence)
+    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.35, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.25 },
+
+    -- Melee Hunter (same convention fix as above)
+    ["Leveling_Melee_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["Leveling_Melee_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["Leveling_Melee_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 }
 
 -- =============================================================
@@ -63,9 +79,7 @@ Hunter.Talents = {
     ["BESTIAL_WRATH"]   = "Bestial Wrath",
     ["UNLEASHED_FURY"]  = "Unleashed Fury",
     ["TRUESHOT_AURA"]   = "Trueshot Aura",
-    ["AIMED_SHOT"]      = "Aimed Shot",
     ["SNIPER_SHOT"]     = "Sniper Shot",
-    ["WYVERN_STING"]    = "Wyvern Sting",
     ["LACERATING_STRIKES"]= "Lacerating Strikes",
     ["COUNTERATTACK"]   = "Counterattack",
     ["DETERRENCE"]      = "Deterrence",
@@ -74,6 +88,13 @@ Hunter.Talents = {
     ["MORTAL_SHOTS"]    = "Mortal Shots",
     ["SURVIVALIST"]     = "Survivalist",
     ["CAREFUL_AIM"]     = "Careful Aim",
+    ["PREDATORS_EDGE"]  = "Predator's Edge", -- New in Forever (Survival t4, 5 ranks, +6%/rank melee crit damage bonus)
+    ["FOCUSED_FIRE"]    = "Focused Fire", -- New in Forever (BM t2, 2 ranks, +1%/rank all damage while pet active)
+    ["RANGED_WPN_SPEC"] = "Ranged Weapon Specialization", -- Same as Classic (MM t6, 5 ranks, +1%/rank ranged weapon damage)
+    -- "Aimed Shot" and "Wyvern Sting" removed: both are confirmed base
+    -- abilities in Forever (level-gated, no talent rank), not talents --
+    -- GetTalentRank on either always returned 0. Both were already unused
+    -- elsewhere in this file, so no behavior change.
 }
 
 -- =============================================================
@@ -121,9 +142,10 @@ function Hunter:ApplyScalers(weights, currentSpec)
     local activeCaps = {}
 
     -- [[ 1. Lightning Reflexes (Agi Scaling) ]]
+    -- Confirmed +3%/rank Agility (Same as Classic) -- was miscalibrated at 0.02
     local rLR = Rank("LIGHTNING_REF")
-    if rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then 
-        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.02)) 
+    if rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then
+        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.03))
     end
 
     local rSurv = Rank("SURVIVALIST")
@@ -135,7 +157,42 @@ function Hunter:ApplyScalers(weights, currentSpec)
     if rAim > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) > 0 then
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (rAim * 0.20))
     end
-    
+
+    -- Mortal Shots (MM t4, 5 ranks): +6%/rank ranged crit damage bonus (base
+    -- crit bonus is +50%; this raises it, e.g. 5/5 = +30% -> 80% bonus, a
+    -- 1.6x multiplier on Crit's value). Ranged-only, so skip the melee spec.
+    local rMortal = Rank("MORTAL_SHOTS")
+    if rMortal > 0 and not currentSpec:upper():find("MELEE") and weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+        weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * (1 + (rMortal * 0.12))
+    end
+
+    -- Predator's Edge (New in Forever, Survival t4, 5 ranks): +6%/rank melee
+    -- crit damage bonus -- same math as Mortal Shots, but melee-only
+    local rPredEdge = Rank("PREDATORS_EDGE")
+    if rPredEdge > 0 and currentSpec:upper():find("MELEE") and weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+        weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * (1 + (rPredEdge * 0.12))
+    end
+
+    -- Focused Fire (New in Forever, BM t2, 2 ranks): +1%/rank all damage
+    -- while pet is active -- assumed active like other classes assume gear
+    -- prerequisites (e.g. Bastion assuming a shield)
+    local rFocused = Rank("FOCUSED_FIRE")
+    if rFocused > 0 then
+        if weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
+            weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rFocused * 0.01))
+        end
+        if weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] then
+            weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] * (1 + (rFocused * 0.01))
+        end
+    end
+
+    -- Ranged Weapon Specialization (Same as Classic, MM t6, 5 ranks): +1%/rank
+    -- ranged weapon damage
+    local rRangedSpec = Rank("RANGED_WPN_SPEC")
+    if rRangedSpec > 0 and weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] then
+        weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] * (1 + (rRangedSpec * 0.01))
+    end
+
     -- [[ 2. Covariance (Crit scales with RAP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
         local rawBase, rawPos, rawNeg = UnitRangedAttackPower("player")

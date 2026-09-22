@@ -736,6 +736,12 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         tooltip:AddLine(" ")
                         local hexColor = string.format("ff%02x%02x%02x", cR.r*255, cR.g*255, cR.b*255)
                         tooltip:AddLine(MSC.L["Judge's Note: "] .. "|c" .. hexColor .. entry.note .. "|r", cL.r, cL.g, cL.b, true)
+                    elseif not entry and itemNewStats and itemNewStats._RAW_PROCS then
+                        -- Scanner found "chance on hit" / temporary Equip: proc text but
+                        -- no curated ProcDB/WeaponDB/TrinketDB/PvPDB entry exists for it --
+                        -- let the player know the score below is stats-only.
+                        tooltip:AddLine(" ")
+                        tooltip:AddLine(MSC.L["Proc not yet modeled (score reflects stats only)"], 0.53, 0.53, 0.53, true)
                     end
                 end
             end

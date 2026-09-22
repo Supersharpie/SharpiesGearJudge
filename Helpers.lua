@@ -271,6 +271,7 @@ MSC.StatShortNames = {
     ["ITEM_MOD_STAMINA_SHORT"] = MSC.L["Stam"], ["ITEM_MOD_INTELLECT_SHORT"] = MSC.L["Int"],
     ["ITEM_MOD_AGILITY_SHORT"] = MSC.L["Agi"], ["ITEM_MOD_STRENGTH_SHORT"] = MSC.L["Str"],
     ["ITEM_MOD_SPIRIT_SHORT"] = MSC.L["Spt"], ["ITEM_MOD_SPELL_POWER_SHORT"] = MSC.L["SP"],
+    ["ITEM_MOD_SPELL_DAMAGE_DONE_SHORT"] = MSC.L["Spell Dmg"], ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = MSC.L["Hp5"],
     ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = MSC.L["Heal"], ["ITEM_MOD_MANA_REGENERATION_SHORT"] = MSC.L["Mp5"],
     ["ITEM_MOD_ATTACK_POWER_SHORT"] = MSC.L["AP"], ["ITEM_MOD_CRIT_RATING_SHORT"] = MSC.L["Crit"],
     ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = MSC.L["Spell Crit"], ["ITEM_MOD_HIT_RATING_SHORT"] = MSC.L["Hit"],
@@ -332,18 +333,35 @@ function MSC.GetForeverWeaponRacialBonus(itemLink, weights)
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 or not subClassID or not racial.subclasses[subClassID] then return 0 end
 
-    -- "Rating needed per 1% Crit" at the player's level, falling back to the
-    -- level-60/70 edges of the table (same clamping as GetRatingPercent) or a
-    -- rough constant if the table isn't available at all.
-    local level = UnitLevel("player")
-    local scalars = MSC.CombatRatingScalars
-    local levelData = scalars and (scalars[level] or scalars[60] or scalars[70])
-    local ratingPerPct = (levelData and levelData[7]) or 22.1
+    -- Crit weights are "per 1%" (GetItemScore converts rating to percent
+    -- before weighting), so +N% crit is worth N x the weight -- exactly what
+    -- the equivalent Critical Strike Rating on an item scores. Uses the larger
+    -- of the two crit weights, matching GetItemScore's Forever crit unification.
+    local critWeight = math_max(weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0, weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0)
 
-    local meleeCritValue = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0) * ratingPerPct
-    local spellCritValue = (weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) * ratingPerPct
+    return racial.critPct * critWeight
+end
 
-    return racial.critPct * (meleeCritValue + spellCritValue)
+-- =============================================================
+-- 5.6 FOREVER DUAL-WIELD HIT TAPER
+-- =============================================================
+-- Dual-wield melee (Rogue, Enhancement Shaman, DW Fury Warrior) don't fall off
+-- a cliff at the 9% yellow-hit cap the way single-wield/2H specs do. Per the
+-- confirmed Forever formula, White Crit Cap = 100% - (28% - Hit) - 5.6% dodge
+-- - 40% glancing: at 0 gear Hit that's a 26.4% base crit cap, and every point
+-- of Hit raises it 1:1, topping out at 54.4% once Hit reaches 28% (the same
+-- ceiling 2H specs sit at, since 28 Hit fully cancels the DW miss penalty).
+-- Between the 9% yellow cap and the 28% white cap, Hit no longer helps yellow
+-- abilities (already at 0% miss there) but keeps cutting white-swing misses
+-- 1:1 the whole way to 28%, so its marginal value doesn't keep decaying in
+-- that band -- it's a plateau, not a fade. Past 28% both the white miss and
+-- the crit ceiling are maxed out, so Hit provides essentially nothing.
+function MSC.ApplyForeverDualWieldHitTaper(hitWeight, totalHitPct, softCap, hardCap)
+    softCap = softCap or 9
+    hardCap = hardCap or 28
+    if not hitWeight or totalHitPct < softCap then return hitWeight, false end
+    if totalHitPct >= hardCap then return hitWeight * 0.05, true end
+    return hitWeight * 0.6, true -- retains most of its value across the 9%-28% band
 end
 
 -- =============================================================
@@ -437,7 +455,13 @@ function MSC.GetRawItemStats(itemLink)
     end
     finalStats = normalized
     finalStats._BONUS_STATS = bonusStats
-    
+    -- Raw "chance on hit" / temporary Equip: proc text the scanner found but
+    -- couldn't score (no ProcDB/WeaponDB/TrinketDB/PvPDB entry exists yet).
+    -- Rides along through SafeGetItemStats/EvaluateUpgrade so the tooltip can
+    -- warn that the item's score is stats-only when this is non-empty and no
+    -- curated entry was found.
+    if scanData.Procs and #scanData.Procs > 0 then finalStats._RAW_PROCS = scanData.Procs end
+
     MSC.StatCache[itemLink] = finalStats
     return finalStats
 end
@@ -1060,6 +1084,17 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
     local score = 0
     local usefulRaw = 0
     local uselessRaw = 0
+    -- Forever items carry raw Combat Ratings (e.g. "+10 Hit Rating"), confirmed
+    -- against real datamined items (foreverchanges.pro) and this file's own
+    -- CombatRatingScalars table -- 10 rating = 1% Hit at level 60, etc. Every
+    -- class's Hit/Crit/Weapon Skill/Defense/Dodge/Parry weight was calibrated
+    -- as "points per 1% (or per 1 skill point)", so the raw rating value must
+    -- be converted through that same table before being multiplied by weight,
+    -- or it overvalues those stats by the rating-per-percent factor (10x-22x
+    -- depending on stat/level). GetRatingPercent already does this exact
+    -- conversion for the tooltip's cosmetic display text; reusing it here
+    -- fixes every class/profile's rating stats in one place.
+    local foreverLevel = MSC.IsForever and UnitLevel("player")
 
     for stat, val in pairs(stats) do
         if stat == "_MANUAL_SCORE" or stat == "_AUTO_PROC" or stat == "IS_PROJECTED" or stat == "GEMS_PROJECTED" or stat == "BONUS_PROJECTED" then
@@ -1081,38 +1116,30 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
                     w = math_max(w, weights["ITEM_MOD_HIT_RATING_SHORT"] or 0, weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0, weights["ITEM_MOD_HIT_MELEE_RATING_SHORT"] or 0, weights["ITEM_MOD_HIT_RANGED_RATING_SHORT"] or 0)
                 elseif stat == "ITEM_MOD_CRIT_RATING_SHORT" or stat == "ITEM_MOD_SPELL_CRIT_RATING_SHORT" or stat == "ITEM_MOD_CRIT_MELEE_RATING_SHORT" or stat == "ITEM_MOD_CRIT_RANGED_RATING_SHORT" then
                     w = math_max(w, weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0, weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0, weights["ITEM_MOD_CRIT_MELEE_RATING_SHORT"] or 0, weights["ITEM_MOD_CRIT_RANGED_RATING_SHORT"] or 0)
+                elseif stat == "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT" and w == 0 then
+                    -- "+X Spell Damage" is damage-only (Parse.lua keeps it apart
+                    -- from Spell Power), so it's worth the profile's Spell Power
+                    -- weight -- but unlike Spell Power it is never folded into
+                    -- healing (Evaluator only folds ITEM_MOD_SPELL_POWER_SHORT).
+                    w = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
                 end
             end
 
-            if w > 0 then 
+            if w > 0 then
                 local finalVal = val
+                if foreverLevel and MSC.RatingIndexMap[stat] then
+                    local converted = MSC:GetRatingPercent(stat, val, foreverLevel)
+                    if converted then finalVal = converted end
+                end
                 if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
                 score = score + (finalVal * w)
                 if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
             end
-            
-            -- [[ WoW Forever Bonus Spell Power from Healing (roughly 1/3 conversion) ]]
-            -- Restricted to profiles that already weight Spell Healing themselves
-            -- (weights["...HEALING..."] > 0) -- the class file's own signal that
-            -- this specific spec can cast healing spells at all. Previously gated
-            -- only on "does this profile weight Spell Power," which fired for every
-            -- caster DPS profile too (Mage Leveling, Shadow Priest, etc. all weight
-            -- Spell Power heavily), crediting phantom value for a stat those specs
-            -- can never use. Gating by class alone isn't precise enough either --
-            -- Shadow Priest's SHADOW_PVE/SHADOW_PVP profiles correctly have no
-            -- healing weight at all despite being the Priest class, so a
-            -- class-based check would have wrongly included them too. This
-            -- bonus never showed up in the tooltip's visible Gains/Losses list
-            -- (which works off raw stat categories, not this converted pool),
-            -- so the inflation was invisible until traced through the math.
-            local healWeight = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0
-            if MSC.IsForever and stat == "ITEM_MOD_SPELL_HEALING_DONE_SHORT" and healWeight > 0 then
-                local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
-                if spWeight > 0 then
-                    score = score + (val * 0.333 * spWeight)
-                    usefulRaw = usefulRaw + (val * 0.333)
-                end
-            end
+            -- (No implicit "+Healing grants 1/3 as Spell Power" bonus on Forever:
+            -- its items print that third explicitly as a separate "+X Spell
+            -- Damage" line -- e.g. Holy Shroud is +33 Healing / +11 Spell
+            -- Damage -- and 77 healing items carry no damage at all, so
+            -- inferring one double-counted it.)
         end
     end
     

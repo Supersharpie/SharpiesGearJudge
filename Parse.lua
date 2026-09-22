@@ -74,6 +74,8 @@ MSC.Scanner.BaseStatMap = {
     [MSC.L["mana per 5 sec"]] = "ITEM_MOD_MANA_REGENERATION_SHORT",
     [MSC.L["health per 5 sec."]] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
     [MSC.L["health per 5 sec"]] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
+    [MSC.L["mana regeneration"]] = "ITEM_MOD_MANA_REGENERATION_SHORT", -- Forever: "Equip: +5 Mana Regeneration" (= Classic "Restores 5 mana per 5 sec.")
+    [MSC.L["health regeneration"]] = "ITEM_MOD_HEALTH_REGENERATION_SHORT", -- Forever
     [MSC.L["mana"]]            = "ITEM_MOD_MANA_SHORT",
     [MSC.L["health"]]          = "ITEM_MOD_HEALTH_SHORT",
     [MSC.L["hp"]]              = "ITEM_MOD_HEALTH_SHORT",
@@ -156,11 +158,15 @@ MSC.Scanner.TermMap = {
     [MSC.L["attack power"]]       = "ITEM_MOD_ATTACK_POWER_SHORT",
     [MSC.L["attack power in cat"]] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
     [MSC.L["feral attack power"]]   = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+    -- Forever: "Equip: +140 Attack Power in Cat, Bear, and Dire Bear forms only."
+    [MSC.L["attack power in cat, bear, and dire bear forms only"]] = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
     [MSC.L["spell power"]]        = "ITEM_MOD_SPELL_POWER_SHORT",
     [MSC.L["healing"]]            = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
     [MSC.L["mana per 5 sec"]]     = "ITEM_MOD_MANA_REGENERATION_SHORT",
     [MSC.L["health per 5 sec"]]   = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
-    
+    [MSC.L["mana regeneration"]]  = "ITEM_MOD_MANA_REGENERATION_SHORT", -- Forever
+    [MSC.L["health regeneration"]] = "ITEM_MOD_HEALTH_REGENERATION_SHORT", -- Forever
+
     -- [[ 5. ERA & TBC SPELL DAMAGE ]]
     [MSC.L["healing done by spells and effects"]] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
     [MSC.L["healing done by magical spells and effects"]] = "ITEM_MOD_SPELL_HEALING_DONE_SHORT",
@@ -237,6 +243,16 @@ MSC.Scanner.TermMap = {
     [MSC.L["magic resistance"]]               = "ITEM_MOD_ALL_RESISTANCE_SHORT",
     [MSC.L["chance to resist mechanic mechanics"]] = "ITEM_MOD_RESILIENCE_RATING_SHORT",
 }
+
+-- Forever prints three separate spell stats: "+X Spell Power" (damage AND
+-- healing), "+X Healing", and "+X Spell Damage" (damage only -- Classic
+-- healing gear was split into +Healing plus a third as +Spell Damage, e.g.
+-- Holy Shroud: +33 Healing / +11 Spell Damage). Keep Spell Damage out of
+-- ITEM_MOD_SPELL_POWER_SHORT so the Evaluator doesn't fold it into healing.
+if MSC.IsForever then
+    MSC.Scanner.BaseStatMap[MSC.L["spell damage"]] = "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT"
+    MSC.Scanner.TermMap[MSC.L["spell damage"]] = "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT"
+end
 
 -- =============================================================
 -- 2. PATTERN DATABASE (Merged)
@@ -774,20 +790,9 @@ if not result.Stats["MSC_WEAPON_DPS"] and result.Stats["MSC_WEAPON_SPEED"] and r
         result.Stats["MSC_WEAPON_DPS"] = math_floor((avg / result.Stats["MSC_WEAPON_SPEED"]) * 10 + 0.5) / 10
     end
     
-    if MSC.IsForever and result.Stats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
-        local rawHeal = result.Stats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]
-        local existingDmg = result.Stats["ITEM_MOD_SPELL_POWER_SHORT"] or 0
-        -- Hybrid items split their stats (e.g., 33 heal / 11 dmg becomes 11 POWER and 22 HEALING in this addon's math).
-        -- We want to calculate the 1/3 rule on the TOTAL healing, which is (HEALING + POWER).
-        local totalHealing = rawHeal + existingDmg
-        local inferredDmg = math_floor(totalHealing / 3)
-        if inferredDmg > existingDmg then
-            -- Only grant the missing difference if the item didn't natively have enough spell damage
-            local diff = inferredDmg - existingDmg
-            result.Stats["ITEM_MOD_SPELL_POWER_SHORT"] = existingDmg + diff
-            result.Stats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = rawHeal - diff
-        end
-    end
+    -- (No Forever "1/3 of Healing is Spell Damage" inference here: Forever
+    -- items print that third as their own "+X Spell Damage" line -- see the
+    -- Spell Damage remap above the pattern database.)
 
     local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
     if itemID and MSC.ItemOverrides and MSC.ItemOverrides[itemID] then
