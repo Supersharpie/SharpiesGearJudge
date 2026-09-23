@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.0.11
+## Version: 3.0.12
 ## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
 
 Localization.lua

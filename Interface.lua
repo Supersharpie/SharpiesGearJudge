@@ -3181,7 +3181,12 @@ SlashCmdList["SGJ_SCALAR"] = function()
         local link = slotID and GetInventoryItemLink("player", slotID)
         if link then
             anyGear = true
-            table.insert(out, string.format("  %s: %s", s.label, link))
+            local itemID = link:match("item:(%d+)")
+            if itemID then
+                table.insert(out, string.format("  %s: %s (ID: %s)", s.label, link, itemID))
+            else
+                table.insert(out, string.format("  %s: %s", s.label, link))
+            end
         end
     end
     if not anyGear then

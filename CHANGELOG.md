@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.12
+
+### 🐛 Bug Fixes
+- **Error When Hovering Units/Objects in the World**: The tooltip hook fires for every tooltip type, and the line-beautifier ran before the item check, so it read world-cursor tooltips too. That text is a protected "secret" value on this client, and comparing it threw "attempt to compare local 'text' (a secret string value...)". 
+	The beautifier now skips any tooltip that isn't for an item, and `ClassifyLine` ignores secret strings. Follow-up: the same error still fired from stance-bar tooltips, because `issecretvalue` isn't available on this client (so the secret check never tripped) and spell/stance tooltips carry a hyperlink the item check accepted. 
+	Secret detection now falls back to `canaccessvalue` or a protected compare, and the tooltip item lookup only accepts actual item links.
+- **False "Proc Not Yet Modeled" on Bind-on-Equip Items**: "Binds when equipped" contains the word "equip", so the item scanner read it as an Equip effect it couldn't score and flagged every BoE item with the "Proc not yet modeled" note. Binding lines are now skipped.
+
+---
+
 ## 🚀 v3.0.11
 
 ### ⚔️ WoW: Forever Class Talent Audit (All 9 Classes)

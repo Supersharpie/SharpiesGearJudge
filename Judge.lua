@@ -448,6 +448,9 @@ function MSC:BeautifyTooltip(tooltip)
     local _, link = nil, nil
     _, link = MSC_GetTooltipItem(tooltip)
     if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
+    -- Only item tooltips have lines worth rewriting. Unit/world-cursor tooltips
+    -- (reached via the AllTypes post-call) carry secret strings that error on compare.
+    if not link then return end
 
     local isRelic = false
     if link then
@@ -461,7 +464,7 @@ function MSC:BeautifyTooltip(tooltip)
         local leftObj = _G[prefix .. i]
         if leftObj then
             local text = leftObj:GetText()
-            if text then
+            if text and not MSC_IsSecret(text) then
                 local newText = text
                 local lineChanged = false
                 
@@ -635,7 +638,8 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
     if tooltipName then
         for i = 2, tooltip:NumLines() do
             local leftLine = _G[tooltipName .. "TextLeft" .. i]
-            if leftLine and leftLine:GetText() and string_find(leftLine:GetText(), MSC.L["Judge's Score:"] or "Judge's Score:") then
+            local lineText = leftLine and leftLine:GetText()
+            if lineText and not MSC_IsSecret(lineText) and string_find(lineText, MSC.L["Judge's Score:"] or "Judge's Score:") then
                 return
             end
         end

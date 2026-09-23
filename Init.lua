@@ -9,6 +9,22 @@ SharpiesGearJudgeDB.EnableDataminer = true
 SGJ_Settings.ShowBagArrows = true
 -- =========================================================================
 
+-- Secret values (protected tooltip text etc.) error on compare/concat while tainted.
+-- issecretvalue isn't guaranteed to exist on every client build that has secrets,
+-- so fall back to canaccessvalue, then to a protected compare as a last resort.
+local _issecretvalue, _canaccessvalue = issecretvalue, canaccessvalue
+local function _probeCompare(v) return v == "" end
+function MSC_IsSecret(v)
+    if v == nil then return false end
+    if _issecretvalue and _issecretvalue(v) then return true end
+    if _canaccessvalue and not _canaccessvalue(v) then return true end
+    return not pcall(_probeCompare, v)
+end
+
+local function IsItemLink(link)
+    return type(link) == "string" and not MSC_IsSecret(link) and string.find(link, "item:", 1, true) ~= nil
+end
+
 function MSC_GetTooltipItem(tooltip)
     if not tooltip then return nil, nil end
     -- Prefer the modern API: on the 11.x-derived engine, tooltip:GetItem() can still
@@ -19,12 +35,17 @@ function MSC_GetTooltipItem(tooltip)
     -- first and only fall back to the legacy method for clients where it's absent.
     if TooltipUtil and TooltipUtil.GetDisplayedItem then
         local name, link = TooltipUtil.GetDisplayedItem(tooltip)
-        if link then return name, link end
+        if IsItemLink(link) then return name, link end
     end
-    if tooltip.processingInfo and tooltip.processingInfo.tooltipData and tooltip.processingInfo.tooltipData.hyperlink then
-        return nil, tooltip.processingInfo.tooltipData.hyperlink
+    -- tooltipData.hyperlink is set for spell/stance tooltips too; only accept item links.
+    local data = tooltip.processingInfo and tooltip.processingInfo.tooltipData
+    if data and IsItemLink(data.hyperlink) then
+        return nil, data.hyperlink
     end
-    if tooltip.GetItem then return tooltip:GetItem() end
+    if tooltip.GetItem then
+        local name, link = tooltip:GetItem()
+        if IsItemLink(link) then return name, link end
+    end
     return nil, nil
 end
 -- Polyfill for WoW 11.0+ engine API removals
@@ -34,6 +55,14 @@ if C_Item then
     if not GetItemInfo and C_Item.GetItemInfo then _G.GetItemInfo = function(id) return C_Item.GetItemInfo(id) end end
     if not GetItemIcon and C_Item.GetItemIconByID then _G.GetItemIcon = function(id) return C_Item.GetItemIconByID(id) end end
 end
+
+if not UnitDefense then
+    _G.UnitDefense = function(unit)
+        local lvl = UnitLevel(unit or "player") or 1
+        return (lvl * 5), 0
+    end
+end
+
 local addonName, MSC = ...
 _G[addonName] = MSC 
 

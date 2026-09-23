@@ -447,8 +447,15 @@ local function ParseCooldown(text)
 end
 
 function MSC.Scanner.ClassifyLine(text)
-    if not text or text == "" then return "SKIP" end
+    if not text or MSC_IsSecret(text) or text == "" then return "SKIP" end
     local lower = string_lower(text)
+
+    -- Binding lines ("Binds when equipped" contains "equip") aren't effects;
+    -- without this they fell through as unmodeled procs on every BoE item.
+    if text == ITEM_BIND_ON_EQUIP or text == ITEM_BIND_ON_PICKUP or text == ITEM_BIND_ON_USE
+        or text == ITEM_SOULBOUND or string_find(lower, "^binds ") then
+        return "FLUFF"
+    end
 
     -- [[ OPTIMIZATION: SIMPLE CHECKS FIRST ]]
 	if string_find(lower, MSC.L["chance on"]) then return "PROC" end
