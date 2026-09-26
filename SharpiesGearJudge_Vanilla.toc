@@ -1,8 +1,8 @@
-﻿## Interface: 11508
+## Interface: 11509
 ## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.0.12-Era
+## Version: 3.0.9-Era
 ## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
 
 Localization.lua

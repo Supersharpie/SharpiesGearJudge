@@ -115,13 +115,13 @@ Shaman.Talents = {
     ["STORMSTRIKE"]       = "Stormstrike",
     ["RIPTIDE"]           = "Riptide",
     ["NATURES_SWIFTNESS"] = "Nature's Swiftness",
-    ["ELEMENTAL_ALACRITY"]= "Elemental Alacrity",
+    ["ELEMENTAL_ALACRITY"]= "Elemental Alacrity", -- Elemental t3 (swapped with Elemental Fury, beta 2026-09-24)
     ["FLURRY"]            = "Flurry",
     ["RESTORATIVE_TOTEMS"]= "Restorative Totems",
     ["EYE_OF_STORM"]      = "Eye of the Storm",
     ["ANCESTRAL_KNOW"]    = "Ancestral Knowledge",
     ["TIDAL_FOCUS"]       = "Tidal Focus",
-    ["ELEMENTAL_FURY"]    = "Elemental Fury",
+    ["ELEMENTAL_FURY"]    = "Elemental Fury", -- Elemental t6 (was t3 before the 2026-09-24 beta build)
     ["SPIRIT_WEAPONS"]    = "Spirit Weapons",
     ["ANTICIPATION"]      = "Anticipation",
     ["TIDAL_MASTERY"]     = "Tidal Mastery",
@@ -150,7 +150,7 @@ Shaman.Talents = {
 Shaman.LowLevelRoles = {
     Leveling_Tank   = { "ANTICIPATION" },
     Leveling_Healer = { "IMP_HEALING_WAVE", "TIDAL_MASTERY", "MINDFULNESS", "TIDAL_FOCUS", "ANCESTRAL_HEALING", "HEALING_FOCUS", "WATER_SHIELD" },
-    Leveling_Caster = { "CONVECTION", "CONCUSSION", "CALL_OF_FLAME", "REVERBERATION", "ELEMENTAL_FOCUS", "ELEMENTAL_FURY" },
+    Leveling_Caster = { "CONVECTION", "CONCUSSION", "CALL_OF_FLAME", "REVERBERATION", "ELEMENTAL_FOCUS", "ELEMENTAL_ALACRITY", "ELEMENTAL_FURY" },
 }
 
 -- =============================================================
@@ -230,7 +230,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- Elemental Fury (Elemental t3, 5 ranks): same phrasing/math as Mage's
+    -- Elemental Fury (Elemental t6 since the 2026-09-24 beta build, 5 ranks): same phrasing/math as Mage's
     -- Arcane Mind -- relative growth of the crit damage bonus, 1+rank*0.20,
     -- reaching 2.0x at 5/5 (matches real Classic Elemental Fury exactly)
     local rEleFury = Rank("ELEMENTAL_FURY")

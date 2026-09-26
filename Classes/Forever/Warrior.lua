@@ -143,7 +143,7 @@ Warrior.Talents = {
     ["IMPALE"]           = "Impale",
     ["TOUGHNESS"]        = "Toughness",
     ["PRECISION"]        = "Precision", -- New in Forever (Fury t5, 3 ranks, +1%/rank Hit)
-    ["BASTION"]          = "Bastion", -- New in Forever (Prot t6, 5 ranks, +2%/rank damage w/ shield)
+    ["BASTION"]          = "Bastion", -- New in Forever (Prot t5 since the 2026-09-24 beta build, swapped with Focused Rage; 5 ranks, +2%/rank damage w/ shield)
     ["WEAPONMASTER"]     = "Weaponmaster", -- New in Forever (Arms t5, 5 ranks, per-weapon-type bonus)
     ["TWOH_SPEC"]        = "Two-Handed Weapon Specialization", -- Changed from Classic (Arms t4, 3 ranks, +1%/rank 2H melee damage)
     ["SHIELD_SPEC"]      = "Shield Specialization", -- Prot t1, 5 ranks, +5% Block, Rage on block
@@ -244,7 +244,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * (1 + (rImpale * 0.10))
     end
 
-    -- Bastion (New in Forever, Prot t6, 5 ranks): +2%/rank damage while a
+    -- Bastion (New in Forever, Prot t5, 5 ranks): +2%/rank damage while a
     -- shield is equipped. Every Protection profile requires a shield, so it's
     -- safe to apply unconditionally for PROT specs rather than checking gear.
     -- None of DEEP_PROT/FURY_PROT/ARMS_PROT weight Attack Power at all -- they

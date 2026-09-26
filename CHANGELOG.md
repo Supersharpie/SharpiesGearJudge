@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.13
+
+### 🐛 Bug Fixes
+- **Talent Names Matched Loosely**: Talent lookups needed the name to match exactly, so one spelling difference silently turned a talent off. The September 24 beta notes spell it "Rage of the Far Seer" while the addon (and wowforevertools) used "Rage of the Farseer". If the client uses the spaced version, Enhancement Shamans at 60 would never be detected. Lookups now ignore case and spaces.
+
+### ⚔️ WoW: Forever Beta Build (September 24)
+- **Shaman**: Elemental Fury and Elemental Alacrity swapped tiers (Fury is now tier 6, Alacrity tier 3). Fury's crit-damage scaling is unchanged. Alacrity now also counts as a leveling Elemental marker, since Fury isn't available until the mid-30s anymore.
+
+---
+
 ## 🚀 v3.0.12
 
 ### 🐛 Bug Fixes

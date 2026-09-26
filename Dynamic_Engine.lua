@@ -112,6 +112,13 @@ function MSC:GetProfileWeights(profileName)
     return finalWeights, specKey
 end
 
+-- Talent names are matched ignoring case and spaces: Forever's patch notes and
+-- data sites don't always agree on spacing ("Rage of the Farseer" vs "Rage of
+-- the Far Seer"), and one exact-match miss silently breaks spec detection.
+local function TalentKey(name)
+    return (name:lower():gsub("%s+", ""))
+end
+
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
     
@@ -128,7 +135,7 @@ function MSC:BuildTalentCache()
         for i = 1, num do
             local name, _, _, _, rank = GetTalentInfo(t, i)
             if name then 
-                MSC.TalentCache[name] = tonumber(rank) or 0
+                MSC.TalentCache[TalentKey(name)] = tonumber(rank) or 0
             end
         end
     end
@@ -146,7 +153,7 @@ function MSC:GetTalentRank(talentKey)
     local localizedName = MSC.CurrentClass.Talents[talentKey]
     if not localizedName then return 0 end
 
-    return MSC.TalentCache[localizedName] or 0
+    return MSC.TalentCache[TalentKey(localizedName)] or 0
 end
 
 -- Returns spec key from dominant talent tree when capstones are ambiguous.
