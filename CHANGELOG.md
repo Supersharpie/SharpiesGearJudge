@@ -1,12 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.15
+
+### 🐛 Bug Fixes
+- **Baganator Upgrade Arrows**: SGJ hooked `Baganator.ItemButtonUtil.UpdateItemButton`, which doesn't exist, so Baganator bags never showed an arrow. SGJ now uses Baganator's public API instead. A **Sharpie's Gear Judge** icon widget (Baganator *Icons* tab, placed top-right by default) draws SGJ's green/red arrow. **Sharpie's Gear Judge** is also listed under Baganator's *Upgrade detection* option, which drives the `upgrade` search keyword and categories. 
+Both work whether or not **Show Bag Upgrade Arrows** is on, since Baganator's own settings are the opt-in. Results are cached per item and refreshed on level-up, talent/spec changes, equipment changes, and when **Fast Bag Arrows** is toggled.
+
+---
+
 ## 🚀 v3.0.14
 
 ### 🐛 Bug Fixes
 - **Bag Upgrade Arrows Blizzard Bags and Bagnon** Tooltips showed the right verdict, but no arrow was drawn.
 	Each bag frame's `OnShow`/`UpdateItems` is now hooked. Buttons are read through `EnumerateValidItems()`/`GetBagID()`, and the combined backpack uses the same path instead of its own scanner.
 	Bagnon: Bagnon 10+ (the BagBrother core) removed `Bagnon.ItemSlot`, so SGJ's hook never attached. It now hooks `Item`/`ContainerItem:Update`, reads the link from `button.info.hyperlink`, evaluates on the next frame, and rescans the live inventory grid when the bag opens. Items from other characters (cached view) aren't judged.
-	Every bag integration (Blizzard, Bagnon, ElvUI, Baganator) now shares one scoring function and one arrow renderer. The arrow sits on a raised child frame so the button's own layers can't cover it. Toggling **Show Bag Upgrade Arrows** or **Fast Bag Arrows** now updates open bags right away.
+	Every bag integration (Blizzard, Bagnon, ElvUI) now shares one scoring function and one arrow renderer. The arrow sits on a raised child frame so the button's own layers can't cover it. Toggling **Show Bag Upgrade Arrows** or **Fast Bag Arrows** now updates open bags right away.
 
 ---
 

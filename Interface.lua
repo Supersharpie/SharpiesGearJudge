@@ -232,7 +232,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         end
         
         if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
-		
+
         if GameTooltip:IsVisible() then
             local _, link = MSC_GetTooltipItem(GameTooltip)
             if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
@@ -1254,19 +1254,68 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
     end
 
     -- [[ 4. BAGANATOR SUPPORT ]]
-    if CheckAddOnLoaded("Baganator") and Baganator then
-        if Baganator.ItemButtonUtil and Baganator.ItemButtonUtil.UpdateItemButton then
-            hooksecurefunc(Baganator.ItemButtonUtil, "UpdateItemButton", function(self)
-                if self and self:IsShown() then
-                    local bagID = self.bagID or self.bag
-                    local slotID = self.slotID or self.slotIndex
-                    if bagID and slotID then
-                        local link = GetContainerItemLink(bagID, slotID)
-                        EvaluateAndDraw(self, link)
-                    end
-                end
-            end)
+    -- Baganator owns its item buttons, so SGJ plugs in through its public API:
+    --  * Corner widget ("Icons" tab): draws SGJ's up/down arrow on the item.
+    --  * Upgrade plugin ("Upgrade detection" dropdown): feeds the `upgrade`
+    --    search keyword / categories. It does not draw anything by itself.
+    -- Both callbacks return true/false, or nil for "ask again soon" (item not cached).
+    -- Baganator's own settings are the opt-in, so ShowBagArrows doesn't gate this path.
+    if CheckAddOnLoaded("Baganator") and Baganator and Baganator.API and Baganator.API.RegisterUpgradePlugin then
+        local PLUGIN_ID = "sharpies_gear_judge"
+        local verdictCache = {} -- link -> "UP" / "DOWN" / false
+
+        local function GetVerdict(itemLink)
+            if not itemLink then return false end
+            local cached = verdictCache[itemLink]
+            if cached ~= nil then return cached end
+            if not GetItemInfo(itemLink) then return nil end
+            local weights, specName = MSC.GetCurrentWeights()
+            if not weights then return nil end
+            local verdict = MSC.GetBagArrowVerdict(itemLink, weights, specName) or false
+            verdictCache[itemLink] = verdict
+            return verdict
         end
+
+        if Baganator.API.RegisterCornerWidget then
+            Baganator.API.RegisterCornerWidget("Sharpie's Gear Judge", PLUGIN_ID, function(arrow, details)
+                local verdict = GetVerdict(details.itemLink)
+                if verdict == nil then return nil end
+                if not verdict then return false end
+                arrow:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (verdict == "UP" and "Upgrade.png" or "Downgrade.png"))
+                return true
+            end, function(itemButton)
+                local arrow = itemButton:CreateTexture(nil, "OVERLAY")
+                arrow:SetSize(16, 16)
+                return arrow
+            end, {corner = "top_right", priority = 1})
+        end
+
+        Baganator.API.RegisterUpgradePlugin("Sharpie's Gear Judge", PLUGIN_ID, function(itemLink)
+            local verdict = GetVerdict(itemLink)
+            if verdict == nil then return nil end
+            return verdict == "UP"
+        end)
+
+        function MSC.RequestBaganatorRefresh()
+            wipe(verdictCache)
+            local api = Baganator.API
+            local widgetActive = api.IsCornerWidgetActive and api.IsCornerWidgetActive(PLUGIN_ID)
+            local pluginActive = api.IsUpgradePluginActive and api.IsUpgradePluginActive(PLUGIN_ID)
+            if (widgetActive or pluginActive) and api.RequestItemButtonsRefresh then api.RequestItemButtonsRefresh() end
+        end
+
+        -- Baganator also refreshes on equip changes itself (via Syndicator), but that can
+        -- run before SGJ's own caches update, so every trigger re-asks once things settle.
+        local baganatorEvents = CreateFrame("Frame")
+        baganatorEvents:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+        baganatorEvents:RegisterEvent("PLAYER_LEVEL_UP")
+        baganatorEvents:RegisterEvent("PLAYER_TALENT_UPDATE")
+        baganatorEvents:RegisterEvent("CHARACTER_POINTS_CHANGED")
+        baganatorEvents:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        baganatorEvents:SetScript("OnEvent", function()
+            wipe(verdictCache)
+            C_Timer.After(0.5, MSC.RequestBaganatorRefresh)
+        end)
     end
 end)
 
@@ -2059,6 +2108,7 @@ function MSC.InitSettingsView(parent)
             SGJ_Settings[key] = self:GetChecked()
             if key == "HideMinimap" then MSC.UpdateMinimapPosition() end 
             if (key == "ShowBagArrows" or key == "FastBagArrows") and MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
+            if key == "FastBagArrows" and MSC.RequestBaganatorRefresh then MSC.RequestBaganatorRefresh() end
         end)
         
         if tooltip then 

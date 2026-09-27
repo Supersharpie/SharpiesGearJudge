@@ -59,7 +59,7 @@ Hover any item — world drops, vendor goods, quest rewards, dungeon loot, or AH
 
 **Opt-in by default** — enable in Settings → Interface Options.
 
-- **Bag upgrade arrows** (`ShowBagArrows`, **off** by default): Green/red arrows on items in your bags (Blizzard bags, **Bagnon**, **ElvUI**, **Baganator**, **XLoot**).
+- **Bag upgrade arrows** (`ShowBagArrows`, **off** by default): Green/red arrows on items in your bags (Blizzard bags, **Bagnon**, **ElvUI**, **XLoot**). Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab (independent of this setting), and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
 - **Fast bag arrows** (`FastBagArrows`, **on** when bag arrows are enabled): Quick single-slot scoring; automatically uses full evaluation for set pieces and weapons.
 - **Loot roll arrows** (`ShowLootArrows`, **off** by default): Highlights the best upgrade on group loot popups.
 - **Quest reward overlays:** Marks the best choice among quest reward options.
