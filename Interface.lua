@@ -231,12 +231,7 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             if MSC.UpdateTSMOverlays then MSC.UpdateTSMOverlays() end
         end
         
-        for i = 1, 13 do
-            local container = _G["ContainerFrame"..i]
-            if container and container:IsVisible() and MSC.UpdateBagOverlays then
-                MSC.UpdateBagOverlays(container)
-            end
-        end
+        if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
 		
         if GameTooltip:IsVisible() then
             local _, link = MSC_GetTooltipItem(GameTooltip)
@@ -960,72 +955,105 @@ end
 -- =============================================================
 -- BAG / INVENTORY UPGRADE OVERLAYS
 -- =============================================================
-function MSC.UpdateBagOverlays(frame)
-    if not frame or not frame:IsShown() then return end
-    
-    local name = frame:GetName()
-    if not name or not string.find(name, "ContainerFrame") then return end
+-- Shared by the Blizzard bags and every third-party bag integration below.
+-- Returns "UP", "DOWN" or nil for a bag item link.
+function MSC.GetBagArrowVerdict(link, weights, specName)
+    if not link or not weights then return nil end
+    local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+    if not itemName or not equipLoc or equipLoc == "" or equipLoc == "INVTYPE_NON_EQUIP" then return nil end
+    if not MSC.IsItemUsable(link) then return nil end
 
-    if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then
-        for i = 1, 36 do
-            local btn = _G[name .. "Item" .. i] or (frame.Items and frame.Items[i])
-            if btn and btn.SGJ_Overlay then btn.SGJ_Overlay:Hide() end
-        end
-        return 
+    local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+    if not compSlot then return nil end
+
+    local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
+    local newScore, oldScore
+    if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
+        newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
+    else
+        newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+    end
+    if not newScore or not oldScore then return nil end
+
+    if newScore > (oldScore + 0.1) then return "UP"
+    elseif oldScore > (newScore + 0.1) then return "DOWN" end
+    return nil
+end
+
+-- Draws (or hides, when overlayType is nil) the arrow on a bag button. The
+-- texture lives on a child frame raised above the button, so the button's own
+-- child frames and bag-addon refreshes can't cover it.
+function MSC.SetBagArrow(button, overlayType)
+    if not button then return end
+    if not overlayType then
+        if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
+        return
     end
 
-    local bagID = frame:GetID()
-    local numSlots = GetContainerNumSlots(bagID)
-    
-    local weights, specName = MSC.GetCurrentWeights()
-    if not weights then return end
+    if not button.SGJ_OverlayFrame then
+        -- Older builds put a bare texture directly on the button; retire it
+        if button.SGJ_Overlay then button.SGJ_Overlay:Hide() end
+        local holder = CreateFrame("Frame", nil, button)
+        holder:SetAllPoints(button)
+        button.SGJ_Overlay = holder:CreateTexture(nil, "OVERLAY", nil, 7)
+        button.SGJ_Overlay:SetSize(18, 18)
+        button.SGJ_Overlay:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -2, -2)
+        button.SGJ_OverlayFrame = holder
+    end
 
-    for i = 1, 36 do
-        local button = _G[name .. "Item" .. i] or (frame.Items and frame.Items[i])
-        
-        if button and button:IsShown() then
-            if button.SGJ_Overlay then button.SGJ_Overlay:Hide() end
+    button.SGJ_OverlayFrame:SetFrameLevel(button:GetFrameLevel() + 10)
+    button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+    button.SGJ_Overlay:Show()
+    button.SGJ_OverlayFrame:Show()
+end
 
+-- Every Blizzard bag frame this client has: the modern container list, the
+-- legacy ContainerFrame<N> globals, and the combined backpack.
+function MSC.ForEachBlizzardBagFrame(fn)
+    local seen = {}
+    local function visit(frame)
+        if frame and not seen[frame] then
+            seen[frame] = true
+            fn(frame)
+        end
+    end
+    if ContainerFrameContainer and type(ContainerFrameContainer.ContainerFrames) == "table" then
+        for _, frame in pairs(ContainerFrameContainer.ContainerFrames) do visit(frame) end
+    end
+    for i = 1, (NUM_CONTAINER_FRAMES or 13) do visit(_G["ContainerFrame" .. i]) end
+    visit(ContainerFrameCombinedBags)
+end
+
+function MSC.UpdateBagOverlays(frame)
+    if not frame or not frame:IsShown() then return end
+
+    local weights, specName
+    if not (SGJ_Settings and SGJ_Settings.ShowBagArrows == false) then
+        weights, specName = MSC.GetCurrentWeights()
+    end
+
+    -- Modern buttons know their own bag (the combined backpack spans several);
+    -- legacy buttons inherit it from the frame.
+    local frameBag = frame.GetID and frame:GetID()
+    local function draw(button)
+        local verdict
+        if weights then
+            local bagID = (button.GetBagID and button:GetBagID()) or frameBag
             local slotID = button:GetID()
-            if slotID and slotID > 0 and slotID <= numSlots then
-                local link = GetContainerItemLink(bagID, slotID)
-                
-                if link then
-                    -- GATEKEEPER
-                    local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                    
-                    if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                        if MSC.IsItemUsable(link) then
-                            local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                            if compSlot then
-                                local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
-                                local newScore, oldScore
-                                if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
-                                    newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
-                                else
-                                    newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                                end
-                                
-                                if newScore and oldScore then
-                                    local overlayType = nil
-                                    if (newScore > (oldScore + 0.1)) then overlayType = "UP"
-                                    elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
-                                    
-                                    if overlayType then
-                                        if not button.SGJ_Overlay then
-                                            button.SGJ_Overlay = button:CreateTexture(nil, "OVERLAY", nil, 7)
-                                            button.SGJ_Overlay:SetSize(18, 18)
-                                            button.SGJ_Overlay:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2) 
-                                        end
-                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
-                                        button.SGJ_Overlay:Show()
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
+            if bagID and slotID and slotID > 0 then
+                verdict = MSC.GetBagArrowVerdict(GetContainerItemLink(bagID, slotID), weights, specName)
             end
+        end
+        MSC.SetBagArrow(button, verdict)
+    end
+
+    if frame.EnumerateValidItems then
+        for _, button in frame:EnumerateValidItems() do draw(button) end
+    else
+        local name = frame:GetName()
+        for i = 1, 36 do
+            local button = (name and _G[name .. "Item" .. i]) or (frame.Items and frame.Items[i])
+            if button and button:IsShown() then draw(button) end
         end
     end
 end
@@ -1043,48 +1071,12 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
 
 -- [[ HELPER: THE DRAWING ENGINE ]]
     local function EvaluateAndDraw(button, link)
-        -- Hide any existing overlay first
-        if button.SGJ_Overlay then button.SGJ_Overlay:Hide() end
-
-        -- [[ CHECK THE SETTING ]]
-        if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
-        if not link then return end
-
-        local weights, specName = MSC.GetCurrentWeights()
-        if not weights then return end
-
-        local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-        if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-            if MSC.IsItemUsable(link) then
-                local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                if compSlot then
-                    local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
-                    local newScore, oldScore
-                    if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
-                        newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
-                    else
-                        newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                    end
-                    if newScore and oldScore then
-                        local overlayType = nil
-                        if (newScore > (oldScore + 0.1)) then overlayType = "UP"
-                        elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
-
-                        if overlayType then
-                            -- Use the same direct-texture approach as the working standard bag code
-                            if not button.SGJ_Overlay then
-                                button.SGJ_Overlay = button:CreateTexture(nil, "OVERLAY", nil, 7)
-                                button.SGJ_Overlay:SetSize(18, 18)
-                                button.SGJ_Overlay:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
-                            end
-                            button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
-                            button.SGJ_Overlay:SetAlpha(1)
-                            button.SGJ_Overlay:Show()
-                        end
-                    end
-                end
-            end
+        local verdict
+        if link and not (SGJ_Settings and SGJ_Settings.ShowBagArrows == false) then
+            local weights, specName = MSC.GetCurrentWeights()
+            verdict = MSC.GetBagArrowVerdict(link, weights, specName)
         end
+        MSC.SetBagArrow(button, verdict)
     end
 
 
@@ -1162,7 +1154,7 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                             for _, bar in ipairs(self.RollBars) do
                                 if bar:IsShown() and bar.rollID == rollID and bar.button and bar.button.link then
                                     if SGJ_Settings and SGJ_Settings.ShowLootArrows == false then
-                                        if bar.button.SGJ_Overlay then bar.button.SGJ_Overlay:Hide() end
+                                        MSC.SetBagArrow(bar.button, nil)
                                         return
                                     end
                                     EvaluateAndDraw(bar.button, bar.button.link)
@@ -1198,15 +1190,67 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
     end
 
     -- [[ 3. BAGNON SUPPORT ]]
-    if CheckAddOnLoaded("Bagnon") and Bagnon and Bagnon.ItemSlot then
-        hooksecurefunc(Bagnon.ItemSlot, "Update", function(self)
-            if self:IsShown() then
-                -- Backup link retrieval methods just in case Bagnon API changes
-                local link = self.GetItem and self:GetItem()
-                if not link and self.bag and self.slot then link = GetContainerItemLink(self.bag, self.slot) end
-                EvaluateAndDraw(self, link)
+    -- Bagnon 10+ (BagBrother core) replaced ItemSlot with Item/ContainerItem and
+    -- keeps the link in button.info.hyperlink. Old ItemSlot is still hooked for
+    -- legacy installs.
+    if CheckAddOnLoaded("Bagnon") and type(Bagnon) == "table" then
+        local function GetBagnonLink(button)
+            local link = button.info and button.info.hyperlink
+            if not link and button.GetItem then link = button:GetItem() end
+            if not link then
+                local bagID = (button.GetBag and button:GetBag()) or button.bag
+                local slotID = button:GetID()
+                if bagID and slotID and slotID > 0 then link = GetContainerItemLink(bagID, slotID) end
             end
-        end)
+            return link
+        end
+
+        -- Bagnon calls Update many times per refresh; batch them and evaluate
+        -- on the next frame, once the button has finished updating.
+        local pending, flushQueued = {}, false
+        local function Flush()
+            flushQueued = false
+            for button in pairs(pending) do
+                pending[button] = nil
+                -- Cached (offline/other character) items aren't ours to judge
+                if button:IsShown() and not (button.IsCached and button:IsCached()) then
+                    EvaluateAndDraw(button, GetBagnonLink(button))
+                else
+                    MSC.SetBagArrow(button, nil)
+                end
+            end
+        end
+        local function Queue(button)
+            if not button then return end
+            pending[button] = true
+            if not flushQueued then
+                flushQueued = true
+                C_Timer.After(0, Flush)
+            end
+        end
+
+        for _, className in ipairs({ "ItemSlot", "Item", "ContainerItem" }) do
+            local class = Bagnon[className]
+            if type(class) == "table" and type(class.Update) == "function" then
+                pcall(hooksecurefunc, class, "Update", Queue)
+            end
+        end
+
+        -- Backup for button paths the class hooks miss: walk the live inventory grid
+        function MSC.RefreshBagnonOverlays()
+            local frames = Bagnon.Frames
+            if type(frames) ~= "table" or not frames.Get then return end
+            local ok, frame = pcall(frames.Get, frames, "inventory")
+            if not ok or type(frame) ~= "table" or not frame.IsShown or not frame:IsShown() then return end
+            local group = rawget(frame, "ItemGroup")
+            if type(group) ~= "table" or type(group.buttons) ~= "table" then return end
+            for _, button in ipairs(group.buttons) do Queue(button) end
+        end
+
+        if type(Bagnon.Frames) == "table" and type(Bagnon.Frames.Show) == "function" then
+            hooksecurefunc(Bagnon.Frames, "Show", function() C_Timer.After(0, MSC.RefreshBagnonOverlays) end)
+        end
+        MSC.RefreshBagnonOverlays()
     end
 
     -- [[ 4. BAGANATOR SUPPORT ]]
@@ -2014,6 +2058,7 @@ function MSC.InitSettingsView(parent)
         cb:HookScript("OnClick", function(self) 
             SGJ_Settings[key] = self:GetChecked()
             if key == "HideMinimap" then MSC.UpdateMinimapPosition() end 
+            if (key == "ShowBagArrows" or key == "FastBagArrows") and MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
         end)
         
         if tooltip then 
@@ -2482,10 +2527,8 @@ if hooksecurefunc then
     end
 
     if ContainerFrame_Update then
-        hooksecurefunc("ContainerFrame_Update", function(frame)
-            C_Timer.After(0.01, function()
-                if MSC.UpdateBagOverlays then MSC.UpdateBagOverlays(frame) end
-            end)
+        hooksecurefunc("ContainerFrame_Update", function()
+            if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
         end)
     end
 end
@@ -2506,22 +2549,46 @@ end
 -- there at all even though tooltip verdicts (a separate hook path) kept working.
 -- BAG_UPDATE_DELAYED fires on every client family, so use it as the reliable
 -- fallback regardless of whether the old global still exists.
-local function SGJ_RefreshAllBagOverlays()
-    if not MSC.UpdateBagOverlays then return end
-    for i = 1, (NUM_CONTAINER_FRAMES or 13) do
-        local container = _G["ContainerFrame" .. i]
-        if container and container:IsVisible() then
-            MSC.UpdateBagOverlays(container)
-        end
-    end
+-- Opening a bag doesn't fire BAG_UPDATE_DELAYED, so each Blizzard bag frame's
+-- own OnShow / UpdateItems is hooked too; otherwise arrows only appeared after
+-- the bag contents changed while it was open.
+local bagRefreshQueued = false
+function MSC.RefreshAllBagOverlays()
+    bagRefreshQueued = false
+    MSC.ForEachBlizzardBagFrame(function(frame)
+        if frame:IsShown() then MSC.UpdateBagOverlays(frame) end
+    end)
+    if MSC.RefreshBagnonOverlays then MSC.RefreshBagnonOverlays() end
 end
 
+function MSC.QueueBagOverlayRefresh()
+    if bagRefreshQueued then return end
+    bagRefreshQueued = true
+    C_Timer.After(0, MSC.RefreshAllBagOverlays)
+end
+
+local hookedBagFrames = {}
+local function HookBlizzardBagFrames()
+    MSC.ForEachBlizzardBagFrame(function(frame)
+        if hookedBagFrames[frame] then return end
+        hookedBagFrames[frame] = true
+        frame:HookScript("OnShow", MSC.QueueBagOverlayRefresh)
+        if type(frame.UpdateItems) == "function" then
+            hooksecurefunc(frame, "UpdateItems", MSC.QueueBagOverlayRefresh)
+        end
+    end)
+end
+HookBlizzardBagFrames()
+
 local bagRefreshFrame = CreateFrame("Frame")
+bagRefreshFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 bagRefreshFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 bagRefreshFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-bagRefreshFrame:SetScript("OnEvent", function()
-    C_Timer.After(0.01, SGJ_RefreshAllBagOverlays)
+bagRefreshFrame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_ENTERING_WORLD" then HookBlizzardBagFrames() end
+    MSC.QueueBagOverlayRefresh()
 end)
+
 
 if GroupLootFrame_OpenNewFrame then
         hooksecurefunc("GroupLootFrame_OpenNewFrame", function()
@@ -2866,94 +2933,6 @@ if QuestInfo_ShowRewards then
         return original_QuestInfo_ShowRewards(...)
     end
 end
-
-
-
-
-local function ScanCombinedBagsFinal()
-    if not SGJ_Settings or SGJ_Settings.ShowBagArrows == false then return end
-    if not ContainerFrameCombinedBags or not ContainerFrameCombinedBags:IsShown() then return end
-    
-    local weights, specName = MSC.GetCurrentWeights()
-    if not weights then return end
-
-    if ContainerFrameCombinedBags.EnumerateValidItems then
-        for _, button in ContainerFrameCombinedBags:EnumerateValidItems() do
-            local bagID = button.GetBagID and button:GetBagID()
-            local slotID = button.GetID and button:GetID()
-            if bagID and slotID and slotID > 0 then
-                local link = (C_Container and C_Container.GetContainerItemLink) and C_Container.GetContainerItemLink(bagID, slotID) or GetContainerItemLink(bagID, slotID)
-                if link then
-                    local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                    if equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" and MSC.IsItemUsable(link) then
-                        local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                        if compSlot then
-                            local useFast = (not SGJ_Settings or SGJ_Settings.FastBagArrows ~= false)
-                            local newScore, oldScore
-                            if useFast and MSC.EvaluateUpgradeFast and MSC.ShouldUseFastEval and MSC:ShouldUseFastEval(link, compSlot) then
-                                newScore, oldScore = MSC:EvaluateUpgradeFast(link, compSlot, weights, specName)
-                            else
-                                newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                            end
-                            
-                            if newScore and oldScore then
-                                local overlayType = nil
-                                if (newScore > (oldScore + 0.1)) then overlayType = "UP"
-                                elseif (oldScore > (newScore + 0.1)) then overlayType = "DOWN" end
-
-                                if overlayType then
-                                    if not button.SGJ_OverlayFrame then
-                                        button.SGJ_OverlayFrame = CreateFrame("Frame", nil, button)
-                                        button.SGJ_OverlayFrame:SetFrameLevel(button:GetFrameLevel() + 10)
-                                        button.SGJ_OverlayFrame:SetAllPoints()
-                                        button.SGJ_Overlay = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY")
-                                        button.SGJ_Overlay:SetSize(22, 22)
-                                        button.SGJ_Overlay:SetPoint("TOPRIGHT", button.SGJ_OverlayFrame, "TOPRIGHT", 2, 2)
-                                    end
-                                    
-                                    if overlayType == "UP" then 
-                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                                    else 
-                                        button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png") 
-                                    end
-                                    button.SGJ_OverlayFrame:Show()
-                                else
-                                    if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
-                                end
-                            else
-                                if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
-                            end
-                        else
-                            if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
-                        end
-                    else
-                        if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
-                    end
-                else
-                    if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
-                end
-            end
-        end
-    end
-end
-
-local combinedScanner = CreateFrame("Frame")
-combinedScanner:RegisterEvent("BAG_UPDATE_DELAYED")
-combinedScanner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-combinedScanner:SetScript("OnEvent", function() C_Timer.After(0.1, ScanCombinedBagsFinal) end)
-if ContainerFrameCombinedBags then
-    ContainerFrameCombinedBags:HookScript("OnShow", function() C_Timer.After(0.1, ScanCombinedBagsFinal) end)
-end
-
-local function InitialBagScan()
-    C_Timer.After(2, function()
-        if ScanCombinedBagsFinal then ScanCombinedBagsFinal() end
-        if MSC and MSC.UpdateBagOverlays then MSC.UpdateBagOverlays() end
-    end)
-end
-local initialScanner = CreateFrame("Frame")
-initialScanner:RegisterEvent("PLAYER_ENTERING_WORLD")
-initialScanner:SetScript("OnEvent", InitialBagScan)
 
 local function DumpBadSettings()
     if not SGJ_Settings then return end

@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.14
+
+### 🐛 Bug Fixes
+- **Bag Upgrade Arrows Blizzard Bags and Bagnon** Tooltips showed the right verdict, but no arrow was drawn.
+	Each bag frame's `OnShow`/`UpdateItems` is now hooked. Buttons are read through `EnumerateValidItems()`/`GetBagID()`, and the combined backpack uses the same path instead of its own scanner.
+	Bagnon: Bagnon 10+ (the BagBrother core) removed `Bagnon.ItemSlot`, so SGJ's hook never attached. It now hooks `Item`/`ContainerItem:Update`, reads the link from `button.info.hyperlink`, evaluates on the next frame, and rescans the live inventory grid when the bag opens. Items from other characters (cached view) aren't judged.
+	Every bag integration (Blizzard, Bagnon, ElvUI, Baganator) now shares one scoring function and one arrow renderer. The arrow sits on a raised child frame so the button's own layers can't cover it. Toggling **Show Bag Upgrade Arrows** or **Fast Bag Arrows** now updates open bags right away.
+
+---
+
 ## 🚀 v3.0.13
 
 ### 🐛 Bug Fixes
