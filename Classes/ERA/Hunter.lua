@@ -163,6 +163,14 @@ function Hunter:ApplyScalers(weights, currentSpec)
         end
     end
 
+    -- [[ 4. Melee Weapon = Stat Stick ]]
+    -- Weapon DPS weight is calibrated for the ranged slot. A ranged Hunter
+    -- only swings the melee weapon for the odd Raptor Strike / Wing Clip, so
+    -- its DPS is worth a fraction of that; its stats still count in full.
+    if not (currentSpec or ""):upper():find("MELEE") and (weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] or 0) > 0 then
+        weights["MSC_WEAPON_DPS_MELEE"] = weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] * 0.15
+    end
+
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 

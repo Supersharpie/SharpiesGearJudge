@@ -2,8 +2,13 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.0.15-TBC
+## Version: 3.0.16-TBC
 ## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
 Localization.lua
 Locales/deDE.lua

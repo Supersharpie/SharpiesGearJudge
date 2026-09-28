@@ -2452,44 +2452,56 @@ function MSC.SwitchTab(id)
     end
 end
 
+-- =============================================================
+-- MINIMAP BUTTON (LibDataBroker launcher + LibDBIcon)
+-- =============================================================
+-- Built through LibDBIcon (embedded in Libs\) so minimap managers that
+-- collect LibDBIcon buttons -- Leatrix Plus "Combine addon buttons",
+-- MinimapButtonButton, SexyMap, etc. -- pick it up, and it follows the
+-- minimap shape. The same LDB object also feeds Titan Panel/Bazooka.
+local ldb = LibStub and LibStub:GetLibrary("LibDataBroker-1.1", true)
+local dbIcon = LibStub and LibStub:GetLibrary("LibDBIcon-1.0", true)
+local MINIMAP_ICON_NAME = "SharpiesGearJudge"
+
+local ldbObject = ldb and ldb:NewDataObject(MINIMAP_ICON_NAME, {
+    type = "launcher",
+    text = "Gear Judge",
+    icon = "Interface\\Icons\\INV_Misc_Spyglass_02",
+    OnClick = function(self, button)
+        MSC.ToggleMainMenu()
+    end,
+    OnTooltipShow = function(tooltip)
+        tooltip:AddLine("|cffffd100Sharpie's Gear Judge|r")
+        tooltip:AddLine(MSC.L["Click to open the interface."], 1, 1, 1)
+    end,
+})
+
 function MSC.UpdateMinimapPosition()
-    if not MSC_Minimap then return end
-    if SGJ_Settings and SGJ_Settings.HideMinimap then MSC_Minimap:Hide() else MSC_Minimap:Show() end
+    if not (dbIcon and dbIcon:IsRegistered(MINIMAP_ICON_NAME)) then return end
+    local hide = SGJ_Settings and SGJ_Settings.HideMinimap
+    -- MinimapIcon can be gone mid-session after /sgjwipe (until /reload)
+    if SGJ_Settings and SGJ_Settings.MinimapIcon then SGJ_Settings.MinimapIcon.hide = hide and true or false end
+    if hide then dbIcon:Hide(MINIMAP_ICON_NAME) else dbIcon:Show(MINIMAP_ICON_NAME) end
 end
 
-local mb = CreateFrame("Button", "MSC_Minimap", Minimap)
-mb:SetSize(32,32)
-mb:SetFrameLevel(Minimap:GetFrameLevel() + 10) 
-mb:SetPoint("CENTER", -60, -60) 
-
-mb.icon = mb:CreateTexture(nil,"BACKGROUND")
-mb.icon:SetTexture("Interface\\Icons\\INV_Misc_Spyglass_02")
-mb.icon:SetSize(20,20)
-mb.icon:SetPoint("CENTER")
-
-mb.border = mb:CreateTexture(nil,"OVERLAY")
-mb.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-mb.border:SetSize(54,54)
-mb.border:SetPoint("TOPLEFT")
-
-mb:SetMovable(true)
-mb:EnableMouse(true)
-mb:RegisterForDrag("LeftButton")
-mb:SetClampedToScreen(true) 
-
-mb:SetScript("OnDragStart", function(self) self:StartMoving() end)
-mb:SetScript("OnDragStop", function(self) 
-    self:StopMovingOrSizing()
+local function RegisterMinimapIcon()
+    if not (dbIcon and ldbObject) or dbIcon:IsRegistered(MINIMAP_ICON_NAME) then return end
     if not SGJ_Settings then SGJ_Settings = {} end
-    local point, relativeTo, relativePoint, xOfs, yOfs = self:GetPoint()
-
-    local cleanX = math.floor(xOfs + 0.5)
-    local cleanY = math.floor(yOfs + 0.5)
-    
-    SGJ_Settings.MinimapPos = { point, relativePoint, cleanX, cleanY }
-end)
-mb:RegisterForClicks("AnyUp")
-mb:SetScript("OnClick", function(self) MSC.ToggleMainMenu() end)
+    if type(SGJ_Settings.MinimapIcon) ~= "table" then
+        -- Migrate the old hand-built button's CENTER offset to a LibDBIcon
+        -- angle (degrees, same cos/sin convention); anything else starts at
+        -- the old default spot (bottom-left, 225).
+        local angle = 225
+        local p = SGJ_Settings.MinimapPos
+        if type(p) == "table" and p[1] == "CENTER" and p[2] == "CENTER" and tonumber(p[3]) and tonumber(p[4]) and (p[3] ~= 0 or p[4] ~= 0) then
+            angle = math.deg(math.atan2(p[4], p[3])) % 360
+        end
+        SGJ_Settings.MinimapIcon = { minimapPos = angle }
+    end
+    SGJ_Settings.MinimapPos = nil
+    SGJ_Settings.MinimapIcon.hide = SGJ_Settings.HideMinimap and true or false
+    dbIcon:Register(MINIMAP_ICON_NAME, ldbObject, SGJ_Settings.MinimapIcon)
+end
 
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
@@ -2502,17 +2514,7 @@ f:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 f:SetScript("OnEvent", function(self, event, arg1) 
     if event == "PLAYER_LOGIN" then 
         SharpiesGearJudgeDB = SharpiesGearJudgeDB or { customWeights = {} }
-        if SGJ_Settings and SGJ_Settings.MinimapPos then
-            local p = SGJ_Settings.MinimapPos
-            if type(p) == "table" then
-                MSC_Minimap:ClearAllPoints()
-                MSC_Minimap:SetPoint(p[1], Minimap, p[2], p[3], p[4])
-            else
-                SGJ_Settings.MinimapPos = nil
-                MSC_Minimap:ClearAllPoints()
-                MSC_Minimap:SetPoint("CENTER", Minimap, "CENTER", -60, -60)
-            end
-        end
+        RegisterMinimapIcon()
         if MSC.WeightDB then
             for name, weights in pairs(SharpiesGearJudgeDB.customWeights) do
                 MSC.WeightDB[name] = weights
@@ -2910,25 +2912,6 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     totalLine:SetText(MSC.L["Total Score: "] .. string_format("|cff00ff00%.1f|r", totalScore))
     totalLine:Show()
     f:SetHeight(math_abs(yOff) + 100)
-end
-
--- =============================================================
--- TITAN PANEL / LIBDATABROKER COMPATIBILITY
--- =============================================================
-local ldb = LibStub and LibStub:GetLibrary("LibDataBroker-1.1", true)
-if ldb then
-    ldb:NewDataObject("SharpiesGearJudge", {
-        type = "launcher",
-        text = "Gear Judge",
-        icon = "Interface\\Icons\\INV_Misc_Spyglass_02",
-        OnClick = function(self, button)
-            MSC.ToggleMainMenu()
-        end,
-        OnTooltipShow = function(tooltip)
-            tooltip:AddLine("|cffffd100Sharpie's Gear Judge|r")
-            tooltip:AddLine(MSC.L["Click to open the interface."], 1, 1, 1)
-        end,
-    })
 end
 
 -- [[ CATCH-ALL FOR UI RELOADS ]]

@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.16
+
+### ✨ Improvements
+- **Minimap Button Works With Minimap Managers**: The minimap button is now a standard LibDBIcon button (LibStub, CallbackHandler, LibDataBroker and LibDBIcon are now embedded), so **Leatrix Plus** *Combine addon buttons* and other minimap-button collectors pick it up. It also follows square minimap shapes. Your saved button position carries over, and **Hide Minimap Button** still works.
+
+### 🐛 Bug Fixes
+- **Hunter Melee Weapons Are Stat Sticks**: Weapon DPS was weighted the same in the melee slot as on the bow/gun, so a ranged Hunter was told a higher-DPS 2H beat one with more Agility/Stamina. Ranged Hunter profiles (Era, TBC, Forever) now value melee-slot weapon DPS at 15% of the ranged value; the weapon's stats still count in full. Melee profiles (Melee/Nightfall, and Forever's melee Survival profiles) are unchanged.
+
+---
+
 ## 🚀 v3.0.15
 
 ### 🐛 Bug Fixes

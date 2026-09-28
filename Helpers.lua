@@ -267,7 +267,7 @@ local Scratch_GemColors = {}
 local Scratch_ProjectedColors = { RED=0, YELLOW=0, BLUE=0 }
 
 MSC.StatShortNames = {
-    ["MSC_WAND_DPS"] = MSC.L["Wand DPS"], ["MSC_WEAPON_DPS"] = MSC.L["Weapon DPS"], ["MSC_WEAPON_SPEED"] = MSC.L["Speed"], ["MSC_OH_WEAPON_SPEED"] = MSC.L["OH Speed"],
+    ["MSC_WAND_DPS"] = MSC.L["Wand DPS"], ["MSC_WEAPON_DPS"] = MSC.L["Weapon DPS"], ["MSC_WEAPON_DPS_MELEE"] = MSC.L["Melee Weapon DPS"], ["MSC_WEAPON_SPEED"] = MSC.L["Speed"], ["MSC_OH_WEAPON_SPEED"] = MSC.L["OH Speed"],
     ["ITEM_MOD_STAMINA_SHORT"] = MSC.L["Stam"], ["ITEM_MOD_INTELLECT_SHORT"] = MSC.L["Int"],
     ["ITEM_MOD_AGILITY_SHORT"] = MSC.L["Agi"], ["ITEM_MOD_STRENGTH_SHORT"] = MSC.L["Str"],
     ["ITEM_MOD_SPIRIT_SHORT"] = MSC.L["Spt"], ["ITEM_MOD_SPELL_POWER_SHORT"] = MSC.L["SP"],
@@ -1101,8 +1101,13 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             -- metadata keys
         elseif type(val) == "number" then
             local weightKey = stat
-            if slotId == 17 and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then
-                if weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH" end
+            local isWeaponDps = (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT")
+            if isWeaponDps and (slotId == 16 or slotId == 17) then
+                -- MSC_WEAPON_DPS_MELEE: a class module can set this in ApplyScalers
+                -- when its Weapon DPS weight is anchored to the ranged slot (e.g. a
+                -- ranged Hunter, whose melee weapon is mostly a stat stick).
+                if slotId == 17 and weights["MSC_WEAPON_DPS_OH"] then weightKey = "MSC_WEAPON_DPS_OH"
+                elseif weights["MSC_WEAPON_DPS_MELEE"] then weightKey = "MSC_WEAPON_DPS_MELEE" end
             end
             if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
                 if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
@@ -1131,7 +1136,7 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
                     local converted = MSC:GetRatingPercent(stat, val, foreverLevel)
                     if converted then finalVal = converted end
                 end
-                if slotId == 17 and weightKey == stat and (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT") then finalVal = val * 0.5 end
+                if slotId == 17 and isWeaponDps and weightKey ~= "MSC_WEAPON_DPS_OH" then finalVal = val * 0.5 end
                 score = score + (finalVal * w)
                 if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
             end

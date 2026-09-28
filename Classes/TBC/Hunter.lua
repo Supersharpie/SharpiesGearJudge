@@ -658,7 +658,15 @@ function Hunter:ApplyScalers(weights, currentSpec)
     if MSC.BuffEngine and w["ITEM_MOD_HIT_RATING_SHORT"] and w["ITEM_MOD_HIT_RATING_SHORT"] > 0.1 then
         MSC.BuffEngine:ApplyMeleeHitCap(w, activeCaps, currentSpec, Rank("SUREFOOTED") * 1, 7)
     end
-    
+
+    -- [[ 4. MELEE WEAPON = STAT STICK ]]
+    -- Weapon DPS weight is calibrated for the ranged slot. A ranged Hunter
+    -- only swings the melee weapon for the odd Raptor Strike / Wing Clip, so
+    -- its DPS is worth a fraction of that; its stats still count in full.
+    if not (currentSpec or ""):upper():find("MELEE") and (w["MSC_WEAPON_DPS"] or 0) > 0 then
+        w["MSC_WEAPON_DPS_MELEE"] = w["MSC_WEAPON_DPS"] * 0.15
+    end
+
     local capText = (#activeCaps > 0) and table.concat(activeCaps, ", ") or nil
     return w, capText
 end

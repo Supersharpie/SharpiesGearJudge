@@ -276,6 +276,7 @@ L["Arcane Res"] = "Arcane Res"
 L["All Res"] = "All Res"
 L["Speed"] = "Speed"
 L["Weapon DPS"] = "Weapon DPS"
+L["Melee Weapon DPS"] = "Melee Weapon DPS"
 L["Wand DPS"] = "Wand DPS"
 L["OH Speed"] = "OH Speed"
 

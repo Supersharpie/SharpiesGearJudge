@@ -70,6 +70,7 @@ MSC.ShortNames = {
     ["MSC_WEAPON_SPEED"]                 = MSC.L["Speed"],
     ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = MSC.L["Weapon DPS"],
     ["MSC_WEAPON_DPS"]                   = MSC.L["Weapon DPS"],
+    ["MSC_WEAPON_DPS_MELEE"]             = MSC.L["Melee Weapon DPS"],
     ["MSC_WAND_DPS"]                     = MSC.L["Wand DPS"],
 }
 
