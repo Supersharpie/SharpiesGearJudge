@@ -125,7 +125,7 @@ function Hunter:GetSpec()
     end
     
     -- Fallback Talent Tab Scan
-    local _, _, _, _, mmPoints = GetTalentTabInfo(2); mmPoints = mmPoints or 0
+    local mmPoints = MSC.GetTabPointsSpent(2)
     
     -- Endgame
     if Rank("LACERATING_STRIKES") > 0 then return "RAID_SURV_DEEP" end

@@ -8,6 +8,8 @@ local tonumber = tonumber
 local GetNumTalentTabs = GetNumTalentTabs
 local GetNumTalents = GetNumTalents
 local GetTalentInfo = GetTalentInfo
+local GetTalentTabInfo = GetTalentTabInfo
+local C_SpecializationInfo = C_SpecializationInfo
 local UnitClass = UnitClass
 local CreateFrame = CreateFrame
 local C_Timer = C_Timer
@@ -119,25 +121,63 @@ local function TalentKey(name)
     return (name:lower():gsub("%s+", ""))
 end
 
+-- Forever's client removed the Classic talent globals (GetNumTalents,
+-- GetTalentInfo, and the tab/index form of GetTalentTabInfo) in favour of
+-- C_SpecializationInfo, which exposes each talent tree as a "specialization".
+-- Its GetTalentInfo has no talentIndex lookup there ("query.tier must be
+-- specified"), so the tree is walked by tier/column grid position instead.
+-- The grid bounds cover Classic/TBC trees (9 tiers x 4 columns) with room to
+-- spare. Each call is pcall'd so an empty or invalid cell is skipped rather
+-- than raising an error on every tooltip.
+local MAX_TALENT_TIERS, MAX_TALENT_COLUMNS = 11, 4
+
+-- Calls fn(name, rank) for each talent in the tab; stops early if fn returns true.
+function MSC.ForEachTalent(tab, fn)
+    if GetNumTalents then
+        for i = 1, GetNumTalents(tab) or 0 do
+            local name, _, _, _, rank = GetTalentInfo(tab, i)
+            if name and fn(name, tonumber(rank) or 0) then return end
+        end
+        return
+    end
+    local getTalent = C_SpecializationInfo and C_SpecializationInfo.GetTalentInfo
+    if not getTalent then return end
+    for tier = 1, MAX_TALENT_TIERS do
+        for column = 1, MAX_TALENT_COLUMNS do
+            local ok, info = pcall(getTalent, { specializationIndex = tab, tier = tier, column = column })
+            if ok and type(info) == "table" and info.name
+                and fn(info.name, tonumber(info.rank) or 0) then
+                return
+            end
+        end
+    end
+end
+
+function MSC.GetTabPointsSpent(tab)
+    if GetNumTalents and GetTalentTabInfo then
+        local _, _, _, _, pointsSpent = GetTalentTabInfo(tab)
+        return tonumber(pointsSpent) or 0
+    end
+    local total = 0
+    MSC.ForEachTalent(tab, function(_, rank) total = total + rank end)
+    return total
+end
+
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
-    
+
     if not GetNumTalentTabs then
         MSC.TalentCacheLoaded = true
-        return 
+        return
     end
-    
+
     local tabs = GetNumTalentTabs() or 0
     if tabs == 0 then return end
 
     for t = 1, tabs do
-        local num = GetNumTalents(t) or 0
-        for i = 1, num do
-            local name, _, _, _, rank = GetTalentInfo(t, i)
-            if name then 
-                MSC.TalentCache[TalentKey(name)] = tonumber(rank) or 0
-            end
-        end
+        MSC.ForEachTalent(t, function(name, rank)
+            MSC.TalentCache[TalentKey(name)] = rank
+        end)
     end
     MSC.TalentCacheLoaded = true
 end
@@ -164,7 +204,7 @@ function MSC:GetDominantTalentTree(tabMap, margin)
     local maxPts, secondPts = 0, 0
     local maxTab = nil
     for tab, _ in pairs(tabMap) do
-        local p = GetNumTalentPoints(tab) or 0
+        local p = MSC.GetTabPointsSpent(tab)
         if p > maxPts then
             secondPts = maxPts
             maxPts = p

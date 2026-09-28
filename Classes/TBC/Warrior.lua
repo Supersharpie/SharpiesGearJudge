@@ -631,8 +631,8 @@ function Warrior:GetSpec()
     else
         -- Fallback: Point Scan
         -- If user has significantly more points in Fury (Tab 2) than Arms (Tab 1), assume DW
-        local furyPts = GetNumTalentPoints(2)
-        local armsPts = GetNumTalentPoints(1)
+        local furyPts = MSC.GetTabPointsSpent(2)
+        local armsPts = MSC.GetTabPointsSpent(1)
         if furyPts > (armsPts + 5) and level > 25 then 
             role = "Leveling_DW" 
         end

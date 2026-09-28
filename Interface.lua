@@ -33,9 +33,8 @@ local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or
 local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
 
 
-local version = C_AddOns and C_AddOns.GetAddOnMetadata(addonName, "Version") 
-               or GetAddOnMetadata(addonName, "Version") 
-               or "2.x"
+local GetMetadata = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+local version = (GetMetadata and GetMetadata(addonName, "Version")) or "2.x"
 
 MSC.Version = version
 
@@ -168,15 +167,17 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
         end)
         
     elseif event == "ADDON_LOADED" and arg1 == "Blizzard_TradeSkillUI" then
-            if not MSC.TradeSkillHooked then
+            if not MSC.TradeSkillHooked and TradeSkillFrame_Update then
                 hooksecurefunc("TradeSkillFrame_Update", function()
                     if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
                 end)
-                hooksecurefunc("TradeSkillFrame_SetSelection", function()
-                    C_Timer.After(0.05, function()
-                        if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+                if TradeSkillFrame_SetSelection then
+                    hooksecurefunc("TradeSkillFrame_SetSelection", function()
+                        C_Timer.After(0.05, function()
+                            if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+                        end)
                     end)
-                end)
+                end
                 MSC.TradeSkillHooked = true
             end
             
@@ -1472,12 +1473,11 @@ local function GetClassRings(class, stats, weights)
     local _, playerRace = UnitRace("player")
 
     local function GetTalentRank(tab, talentName)
-        if not GetNumTalents then return MSC.TalentCache and MSC.TalentCache[MSC.L[talentName]] or 0 end; local numTalents = GetNumTalents(tab) or 0
-        for i=1, numTalents do
-            local name, _, _, _, rank = GetTalentInfo(tab, i)
-            if name == MSC.L[talentName] then return rank end
-        end
-        return 0
+        local found = 0
+        MSC.ForEachTalent(tab, function(name, rank)
+            if name == MSC.L[talentName] then found = rank; return true end
+        end)
+        return found
     end
 
     -- NEW: Tracking table for Tooltips
@@ -2555,9 +2555,11 @@ function MSC.OnItemLinkClick(link)
     MSC.UpdateLabCalc()
 end
 
-hooksecurefunc("HandleModifiedItemClick", function(link) if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
-hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
-hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end)
+-- hooksecurefunc errors on a missing global, which at file scope would abort
+-- the rest of this file, so each Blizzard function is checked first.
+if HandleModifiedItemClick then hooksecurefunc("HandleModifiedItemClick", function(link) if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
+if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
+if DressUpItemLink then hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
 
 if hooksecurefunc then
     local function TriggerQuestUpdate()
@@ -2921,11 +2923,13 @@ if IsLoaded("Blizzard_TradeSkillUI") and not MSC.TradeSkillHooked then
         hooksecurefunc("TradeSkillFrame_Update", function()
             if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
         end)
-        hooksecurefunc("TradeSkillFrame_SetSelection", function()
-            C_Timer.After(0.05, function()
-                if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+        if TradeSkillFrame_SetSelection then
+            hooksecurefunc("TradeSkillFrame_SetSelection", function()
+                C_Timer.After(0.05, function()
+                    if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+                end)
             end)
-        end)
+        end
         MSC.TradeSkillHooked = true
     end
 end

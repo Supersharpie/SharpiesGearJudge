@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.0.17
+
+### 🐛 Bug Fixes
+- **Forever Talent Error (`Dynamic_Engine.lua:134: attempt to call a nil value`)**: Forever's client removed the Classic talent APIs (`GetNumTalents` and the tab/index forms of `GetTalentInfo`/`GetTalentTabInfo`), so spec detection threw an error on every tooltip. Talent reads now use `C_SpecializationInfo` when the old APIs are missing (talent cache, hit/crit talent bonuses, Hunter tree-point check). 
+	The talent-tree point fallback used by Warrior, Paladin, Shaman and Druid spec detection also called a function that doesn't exist (`GetNumTalentPoints`) and now reads tree points correctly on every client.
+- **Hardened Against Further Blizzard API Removals**: Forever keeps moving old global functions into newer namespaces, so the remaining unguarded uses were fixed before they could break. `GetItemStats` (gem/socket math) and `EquipItemByName` now fall back to their `C_Item` versions. Reading the addon version no longer calls `GetAddOnMetadata` without checking that it exists. 
+	The Lab's link hooks (`HandleModifiedItemClick`, `ChatEdit_InsertLink`, `DressUpItemLink`) and the trade-skill overlay hooks are only attached when the Blizzard function exists. If one of the Lab link hooks had gone missing, the rest of the interface file would have failed to load.
+
+---
+
 ## 🚀 v3.0.16
 
 ### ✨ Improvements

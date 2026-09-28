@@ -113,7 +113,7 @@ function Hunter:GetSpec()
     end
     
     -- Fallback Talent Tab Scan
-    local _, _, _, _, mmPoints = GetTalentTabInfo(2); mmPoints = mmPoints or 0
+    local mmPoints = MSC.GetTabPointsSpent(2)
     
     -- Endgame
     if Rank("COUNTERATTACK") > 0 then return "MELEE_NIGHTFALL" end

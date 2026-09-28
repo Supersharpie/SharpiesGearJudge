@@ -54,6 +54,8 @@ if C_Item then
     if not IsEquippableItem and C_Item.IsEquippableItem then _G.IsEquippableItem = function(id) return C_Item.IsEquippableItem(id) end end
     if not GetItemInfo and C_Item.GetItemInfo then _G.GetItemInfo = function(id) return C_Item.GetItemInfo(id) end end
     if not GetItemIcon and C_Item.GetItemIconByID then _G.GetItemIcon = function(id) return C_Item.GetItemIconByID(id) end end
+    if not GetItemStats and C_Item.GetItemStats then _G.GetItemStats = function(link) return C_Item.GetItemStats(link) end end
+    if not EquipItemByName and C_Item.EquipItemByName then _G.EquipItemByName = function(item, slot) return C_Item.EquipItemByName(item, slot) end end
 end
 
 if not UnitDefense then

@@ -801,9 +801,9 @@ function Paladin:GetSpec()
         role = "Leveling_HOLY_DUNGEON"
     else
         -- Fallback: Check Point Distribution
-        local holyPts = GetNumTalentPoints(1)
-        local protPts = GetNumTalentPoints(2)
-        local retPts  = GetNumTalentPoints(3)
+        local holyPts = MSC.GetTabPointsSpent(1)
+        local protPts = MSC.GetTabPointsSpent(2)
+        local retPts  = MSC.GetTabPointsSpent(3)
         
         if protPts > (holyPts + retPts) then role = "Leveling_PROT_DUNGEON"
         elseif holyPts > (protPts + retPts) then role = "Leveling_HOLY_DUNGEON"
