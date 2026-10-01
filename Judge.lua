@@ -116,10 +116,39 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         SGJ_Settings.IsJC = not SGJ_Settings.IsJC
         print(MSC.L["|cff00ff00SGJ:|r Jewelcrafter evaluation is now "] .. (SGJ_Settings.IsJC and onText or offText))
     elseif cmd == "options" or cmd == "config" then 
-        if MSC.CreateOptionsFrame then MSC.CreateOptionsFrame() end 
+        if MSC.OpenSettingsTab then MSC.OpenSettingsTab() end
     elseif cmd == "import" then
         if MSC.ShowImportWindow then MSC.ShowImportWindow() end
-    else 
+    elseif cmd == "hitcheck" and MSC.GetForeverHitPercent then
+        -- Shows the pieces of the Forever hit reading, so it can be checked
+        -- against the character sheet with a hit item on and off.
+        for _, kind in ipairs({ "MELEE", "RANGED", "SPELL" }) do
+            local total, fromRating, modifier = MSC:GetForeverHitPercent(kind)
+            local cap = MSC.GetForeverCapTarget(kind == "RANGED" and "MELEE" or kind)
+            print(string.format("|cff00ff00SGJ hit (%s):|r %.2f%% = %.2f%% from Hit Rating + %.2f%% from talents/other | target %.1f%%", kind, total, fromRating, modifier, cap or 0))
+        end
+        local def = MSC.GetForeverDefenseTarget and MSC.GetForeverDefenseTarget()
+        print(string.format("|cff00ff00SGJ:|r raid blend %.0f%%, defense %d, defense target %s", (MSC.GetRaidBlend() or 0) * 100, MSC:GetPlayerStat("DEFENSE"), def and string.format("%d", def) or "none below 50"))
+    elseif cmd == "talents" then
+        -- What SGJ reads from the talent tree, the points per tree, and the
+        -- profile that picks (for checking talent detection in game).
+        MSC.TalentCacheLoaded = false
+        MSC:BuildTalentCache()
+        print(string.format("|cff00ff00SGJ talents:|r read from %s", MSC.TraitTalentData and "trait tree" or "Classic talent API"))
+        local shown = 0
+        for name, rank in pairs(MSC.TalentCache or {}) do
+            if rank > 0 then print("   " .. name .. " " .. rank); shown = shown + 1 end
+        end
+        if shown == 0 then print("   (no talent points found)") end
+        print(string.format("   points per tree: %d / %d / %d", MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)))
+        -- Clears the cached weights and profile together (clearing only the
+        -- profile left tooltips with weights but no profile name)
+        MSC:BumpScoringRevision()
+        local _, specKey = MSC.GetCurrentWeights()
+        print("   profile: " .. tostring(specKey))
+    elseif cmd == "whatsnew" or cmd == "news" then
+        if MSC.ShowWhatsNew then MSC.ShowWhatsNew() end
+    else
         if MSC.ToggleMainMenu then MSC.ToggleMainMenu() end 
     end 
 end
@@ -332,19 +361,24 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     local totalAP = apFromStr + apFromAgi
     if totalAP > 0 then
         dest["ITEM_MOD_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + totalAP
-        
-        -- Special Case: Hunters also get Ranged AP from Agi/Int (Careful Aim)
-        if class == "HUNTER" then
-            dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0) + totalAP
-            
-            -- Careful Aim (Int -> RAP)
-            local r = Rank("CAREFUL_AIM")
-            if r > 0 then
-                local int = dest["ITEM_MOD_INTELLECT_SHORT"] or 0
-                if int > 0 then
-                    local rapFromInt = int * (0.15 * r) -- 15/30/45%
-                    dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] + rapFromInt
-                end
+    end
+
+    -- Special Case: Hunter Ranged AP comes from Agility only (Strength adds
+    -- none): 2 per point on Era/Forever, 1 per point in TBC. Plus Int
+    -- (Careful Aim).
+    if class == "HUNTER" then
+        if agi > 0 then
+            local rapFromAgi = agi * (MSC.IsVanillaRules and 2 or 1)
+            dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0) + rapFromAgi
+        end
+
+        -- Careful Aim (Int -> RAP)
+        local r = Rank("CAREFUL_AIM")
+        if r > 0 then
+            local int = dest["ITEM_MOD_INTELLECT_SHORT"] or 0
+            if int > 0 then
+                local rapFromInt = int * (0.15 * r) -- 15/30/45%
+                dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] + rapFromInt
             end
         end
     end
@@ -675,7 +709,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end
         tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
         
-        local displayName = specName
+        local displayName = specName or "?"
         if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName] then displayName = MSC.CurrentClass.PrettyNames[specName] end
         
         local _, _, capInfo = MSC.GetCurrentWeights()
@@ -705,7 +739,9 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                                 local name = (MSC.StatShortNames and MSC.StatShortNames[key]) 
                                 if not name then name = key:gsub("ITEM_MOD_", ""):gsub("_SHORT", ""):gsub("_", " "):lower() end
                                 if statStr ~= "" then statStr = statStr .. ", " end
-                                statStr = statStr .. string_format("+%d %s", val, name)
+                                -- relic equivalents can be fractional (e.g. 2.4 Mp5)
+                                local fmtVal = (val >= 10 or val == math.floor(val)) and string_format("%d", math.floor(val + 0.5)) or string_format("%.1f", val)
+                                statStr = statStr .. "+" .. fmtVal .. " " .. name
                             end
                         end
                         if statStr ~= "" then

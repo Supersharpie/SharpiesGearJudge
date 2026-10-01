@@ -577,6 +577,7 @@ Druid.EndgameTabMap = { [1] = "BALANCE_PVE", [2] = "FERAL_CAT", [3] = "RESTO_TRE
 
 Druid.ValidWeapons = {
     [4]=true, [5]=true,   -- 1H/2H Maces
+    [6]=true,             -- Polearms (Druids learn them in TBC)
     [10]=true,            -- Staves
     [13]=true,            -- Fist Weapons
     [15]=true             -- Daggers

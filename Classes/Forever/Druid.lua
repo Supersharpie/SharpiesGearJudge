@@ -150,6 +150,8 @@ Druid.Talents = {
     ["GIFT_OF_EARTHMOTHER"] = "Gift of the Earthmother", -- New in Forever, Restoration t3, 1 rank
     ["IMP_WRATH"]       = "Improved Wrath", -- Balance t1, 5 ranks
     ["IMP_MOONFIRE"]    = "Improved Moonfire", -- Balance t2, 2 ranks
+    ["NATURAL_SHAPESHIFTER"] = "Natural Shapeshifter", -- Restoration t2, 3 ranks, -10%/rank shapeshift mana cost
+    ["PREDATORY_STRIKES"] = "Predatory Strikes", -- Feral t4 (minLevel 25), 3 ranks, +0.5 x level AP per rank in Cat/Bear
 }
 
 -- Leveling role marker talents (see MSC:GetLowLevelRole). Furor is
@@ -168,6 +170,7 @@ Druid.LowLevelRoles = {
 -- =============================================================
 Druid.ValidWeapons = {
     [4]=true, [5]=true,   -- 1H/2H Maces
+    [6]=true,             -- Polearms (Forever: learned at 20)
     [10]=true,            -- Staves
     [13]=true,            -- Fist Weapons
     [15]=true             -- Daggers
@@ -190,12 +193,15 @@ function Druid:GetSpec()
         if Rank("MOONKIN_FORM") > 0 then role = "Leveling_Caster"
         elseif Rank("SWIFTMEND") > 0 then role = "Leveling_Healer"
         elseif Rank("THICK_HIDE") >= 3 then role = "Leveling_Bear"
-        elseif level > 10 then role = MSC:GetLowLevelRole(Druid.LowLevelRoles) or role
+        elseif level >= 10 then role = MSC:GetLowLevelRole(Druid.LowLevelRoles) or role
         end
 
         -- Not every role has every bracket (e.g. no Leveling_Caster_21_40);
         -- returning a missing key would leave the profile with no weights
         -- and silence every verdict, so fall back like the other classes do.
+        -- Level 10 brings the first talent point: a role it marks uses that
+        -- role's 11-20 row (the 1-10 band only has the default row).
+        if level == 10 and role ~= "Leveling" then suffix = "_11_20" end
         local key = role .. suffix
         if Druid.LevelingWeights[key] then return key end
         return "Leveling" .. suffix
@@ -217,9 +223,13 @@ end
 function Druid:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
-    -- Cat weights: FERAL_CAT_DPS plus the 21-40 / 41-51 / 52-59 default
-    -- leveling brackets (Leveling_1_10 is pre-form and Leveling_11_20 is Bear)
+    -- The default leveling line changes form by level, not by band: caster
+    -- form to 9, Bear Form 10-19, Cat Form (learned at 20) from 20 on.
+    local level = UnitLevel("player")
     local isCat = currentSpec:find("CAT") or currentSpec:match("^Leveling_[245]%d_%d%d$")
+        or (currentSpec == "Leveling_11_20" and level >= 20)
+    local isDefaultBear = (currentSpec == "Leveling_1_10" and level == 10)
+        or (currentSpec == "Leveling_11_20" and level < 20)
     
     -- 1. Heart of the Wild
     local rHotW = Rank("HEART_WILD")
@@ -228,8 +238,7 @@ function Druid:ApplyScalers(weights, currentSpec)
             weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.02)) 
         end
         -- upper(): the leveling profiles are "Leveling_Bear_*", not "BEAR".
-        -- Leveling_11_20 is Bear Form weights too (no Cat Form until 20).
-        if (currentSpec:upper():find("BEAR") or currentSpec == "Leveling_11_20") and weights["ITEM_MOD_STAMINA_SHORT"] then
+        if (currentSpec:upper():find("BEAR") or isDefaultBear) and weights["ITEM_MOD_STAMINA_SHORT"] then
             weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rHotW * 0.04))
         end
         if (isCat or currentSpec:find("DPS")) and weights["ITEM_MOD_STRENGTH_SHORT"] then
@@ -250,56 +259,146 @@ function Druid:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rVengeance * 0.20))
     end
 
-    -- Moonfury (Balance t6, 5 ranks): +2%/rank Arcane/Nature spell damage
-    local rMoonfury = Rank("MOONFURY")
-    if rMoonfury > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-        weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rMoonfury * 0.02))
+    -- Row families the talent hooks below route by. isBear is the leveling
+    -- Bear rows plus the 10-19 default line (isDefaultBear above).
+    local isBear = currentSpec:find("^Leveling_Bear") or isDefaultBear
+    local isCasterRow = currentSpec:find("^Leveling_Caster")
+    local isHealerRow = currentSpec:find("^Leveling_Healer")
+    local isLevelingRow = currentSpec:find("^Leveling")
+    local Keys = MSC.ScaleForeverKeys
+    local touched = {}
+    local function Touch(list) for _, k in ipairs(list) do touched[k] = true end end
+    -- Melee offense keys a Cat/Bear damage talent scales together.
+    local FERAL_OFFENSE = { "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT",
+        "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT" }
+    local BEAR_STRIKES_KEYS = { "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_STAMINA_SHORT",
+        "ITEM_MOD_HEALTH_SHORT", "ITEM_MOD_ARMOR_SHORT", "ITEM_MOD_DODGE_RATING_SHORT",
+        "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" }
+
+    -- Natural Shapeshifter (Restoration t2, 3 ranks): -10% shapeshift mana
+    -- cost per rank. The shift is ~55% of a Cat leveler's mana per kill, so
+    -- every mana stat loses 5.5% of its value per rank.
+    local rNatShift = Rank("NATURAL_SHAPESHIFTER")
+    if rNatShift > 0 and isCat and isLevelingRow then
+        Keys(weights, MSC.ForeverManaKeys, 1 - 0.055 * rNatShift)
+        Touch(MSC.ForeverManaKeys)
     end
 
+    -- Predatory Strikes (Feral t4, minLevel 25, 3 ranks): +0.5 x level attack
+    -- power per rank in Cat/Bear -- about +2.2% Cat damage (+1.5% Bear) per
+    -- rank at every level.
+    local rPredStrikes = Rank("PREDATORY_STRIKES")
+    if rPredStrikes > 0 and level >= 25 and isLevelingRow then
+        if isCat then
+            -- Crit goes through the helper so Agility's crit share follows.
+            MSC.ScaleForeverMeleeCrit(weights, 1 + 0.022 * rPredStrikes, level)
+            Keys(weights, { "ITEM_MOD_HIT_RATING_SHORT" }, 1 + 0.022 * rPredStrikes)
+            Touch({ "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" })
+        elseif isBear then
+            -- Bigger damage makes every safety stat worth more against it;
+            -- Strength/AP/Feral AP stay the unit.
+            Keys(weights, BEAR_STRIKES_KEYS, 1 + 0.015 * rPredStrikes)
+            Touch(BEAR_STRIKES_KEYS)
+        end
+    end
+
+    -- Moonfury (Balance t6, 5 ranks): +2%/rank Arcane/Nature spell damage.
     -- Genesis (New in Forever, Balance t1, 5 ranks): +1%/rank periodic damage
-    -- AND healing -- applies to whichever weight the current spec carries
+    -- AND healing. Naturalist (Restoration t2, 5 ranks): +1%/rank all damage.
+    -- Gift of Nature (Restoration t3, 5 ranks): +2%/rank universal healing.
+    -- A flat damage/healing multiplier lifts every damage-derived stat
+    -- equally, so the caster/healer leveling rows take it by dividing the
+    -- safety stats (Agility included) instead of scaling Spell Power or
+    -- Healing; endgame specs keep the plain scaling.
+    local rMoonfury = Rank("MOONFURY")
     local rGenesis = Rank("GENESIS")
-    if rGenesis > 0 then
-        if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rGenesis * 0.01))
-        end
-        if weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
-            weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rGenesis * 0.01))
-        end
-    end
-
-    -- Gift of Nature (Restoration t3, 5 ranks, Same as Classic): +2%/rank
-    -- universal healing done
     local rGoN = Rank("GIFT_OF_NATURE")
-    if rGoN > 0 and weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
-        weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rGoN * 0.02))
+    local rNaturalist = Rank("NATURALIST")
+    if isCasterRow then
+        -- Genesis at 0.3 of nominal: DoTs are ~25-35% of modelled damage.
+        local m = (1 + 0.02 * rMoonfury) * (1 + 0.01 * rNaturalist) * (1 + 0.003 * rGenesis)
+        MSC.ApplyForeverDamageMult(weights, m, { "ITEM_MOD_AGILITY_SHORT" })
+        Touch(MSC.ForeverSafetyKeys)
+        Touch({ "ITEM_MOD_AGILITY_SHORT" })
+    elseif isHealerRow then
+        -- Genesis at 0.4 of nominal: HoTs and Wild Growth are ~40% of healing.
+        local m = (1 + 0.02 * rGoN) * (1 + 0.004 * rGenesis) * (1 + 0.01 * rNaturalist)
+        MSC.ApplyForeverDamageMult(weights, m, { "ITEM_MOD_AGILITY_SHORT" })
+        Touch(MSC.ForeverSafetyKeys)
+        Touch({ "ITEM_MOD_AGILITY_SHORT" })
+    else
+        if rMoonfury > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rMoonfury * 0.02))
+        end
+        if rGenesis > 0 then
+            if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+                weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rGenesis * 0.01))
+            end
+            if weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
+                weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rGenesis * 0.01))
+            end
+        end
+        if rGoN > 0 and weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
+            weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rGoN * 0.02))
+        end
+        if rNaturalist > 0 then
+            if (isCat or isBear) and isLevelingRow then
+                -- Feral rows: the melee offense keys plus Spell Power.
+                local f = 1 + 0.01 * rNaturalist
+                Keys(weights, FERAL_OFFENSE, f)
+                Keys(weights, { "ITEM_MOD_SPELL_POWER_SHORT" }, f)
+                Touch(FERAL_OFFENSE)
+            else
+                if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+                    weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rNaturalist * 0.01))
+                end
+                if weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
+                    weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rNaturalist * 0.01))
+                end
+            end
+        end
     end
 
-    -- Naturalist (Restoration t2, 5 ranks): +1%/rank all damage dealt --
-    -- applies to whichever damage weight the current spec carries
-    local rNaturalist = Rank("NATURALIST")
-    if rNaturalist > 0 then
-        if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rNaturalist * 0.01))
-        end
-        if weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
-            weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rNaturalist * 0.01))
+    -- Reflection (Restoration t3, 3 ranks, minLevel 20): 17% of mana regen
+    -- continues while casting per rank. The Healer anchors bake rb(L): 0 to
+    -- 15, 1 at 20, 3 from 25; Spirit and Intellect move with the gap.
+    if isHealerRow then
+        local rReflection = Rank("REFLECTION")
+        local rb = MSC.ForeverLevelLerp({ {15, 0}, {20, 1}, {25, 3} }, level)
+        if rReflection ~= rb then
+            Keys(weights, { "ITEM_MOD_SPIRIT_SHORT" }, (0.70 + 0.10 * rReflection) / (0.70 + 0.10 * rb))
+            Keys(weights, { "ITEM_MOD_INTELLECT_SHORT" }, 1 + 0.04 * (rb - rReflection))
+            Touch({ "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_INTELLECT_SHORT" })
         end
     end
 
     -- Predator's Instincts (New in Forever, Feral t5, 2 ranks): +10%/rank
-    -- melee crit damage bonus -- only the Cat profiles track Attack Power/melee
-    -- Crit meaningfully among the Feral profiles (Bear tank doesn't weight AP)
+    -- melee crit damage bonus -- Cat and Bear leveling rows both carry Crit.
+    -- The helper also moves Agility's crit share.
     local rPredInstincts = Rank("PREDATORY_INSTINCTS")
-    if rPredInstincts > 0 and isCat and weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-        weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * (1 + (rPredInstincts * 0.10))
+    if rPredInstincts > 0 and (isCat or isBear) then
+        MSC.ScaleForeverMeleeCrit(weights, 1 + 0.10 * rPredInstincts, level)
+        Touch({ "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" })
     end
 
     -- Savage Fury (Feral t3, 2 ranks): +5%/rank Claw/Rake/Shred/Maul/Swipe
-    -- damage -- same CAT-only gate as Predator's Instincts
+    -- damage, ~40% of Cat damage (Maul in Bear) -- +2% per rank on the
+    -- offense keys, Bear Agility at half that.
     local rSavageFury = Rank("SAVAGE_FURY")
-    if rSavageFury > 0 and isCat and weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
-        weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rSavageFury * 0.05))
+    if rSavageFury > 0 and (isCat or isBear) then
+        Keys(weights, FERAL_OFFENSE, 1 + 0.02 * rSavageFury)
+        if isBear and not isCat then
+            -- FERAL_OFFENSE took Agility at the full +2%: pull it back to +1%.
+            Keys(weights, { "ITEM_MOD_AGILITY_SHORT" }, (1 + 0.01 * rSavageFury) / (1 + 0.02 * rSavageFury))
+        end
+        Touch(FERAL_OFFENSE)
+    end
+
+    -- Weights under 0.02 are noise to the scorer: zero what the talent
+    -- hooks shrank into that band.
+    for k in pairs(touched) do
+        local v = weights[k]
+        if v and v > 0 and v < 0.02 then weights[k] = 0 end
     end
 
     -- 2. Covariance (Mana Regen / Healing Synergy)
@@ -311,37 +410,25 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- 3. Caps (Hit Cap 9%)
-    local nrHit = Rank("NATURES_REACH") * 2
-    if weights["ITEM_MOD_HIT_RATING_SHORT"] then
-        -- FIX: Use Shim
-        local currentHit = MSC:GetPlayerStat("HIT")
-        if (currentHit + nrHit) >= 9 then
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = 2.0 -- Drop value
-            table.insert(activeCaps, "Hit (9%)")
-        end
-    end
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
-        local spellHit = MSC:GetPlayerStat("SPELL_HIT")
-        if (spellHit + nrHit) >= 16 then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0
-            table.insert(activeCaps, "Spell Hit Cap")
-        end
-    end
+    -- 3. Caps
+    -- Nature's Reach (+2% hit per rank, all attacks) is already in the game's
+    -- hit numbers read by MSC:GetForeverHitPercent. Targets are the level's
+    -- caps, sliding to the raid caps from 50; past a cap Hit keeps 10% of
+    -- its value (the same for every class).
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_RATING_SHORT", "MELEE", 0.1, "Hit", activeCaps)
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps)
+    -- Bear: defense toward 440 from 50 (bears can't block, so no uncrushable)
+    if currentSpec:upper():find("BEAR") then MSC.ApplyForeverDefenseTarget(weights, activeCaps) end
 
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Druid:GetWeaponBonus(itemLink, weights)
-    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+function Druid:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink)
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
 end
 
 function Druid:GetRelicBonus(itemID, currentSpec)
-    local bonus = {}
-    if Druid.Relics[itemID] then
-        for k, v in pairs(Druid.Relics[itemID]) do bonus[k] = v end
-    end
-    return bonus
+    return MSC.GetForeverRelicBonus(Druid.Relics, itemID, currentSpec)
 end
 
 -- =============================================================
@@ -351,7 +438,50 @@ end
 -- organically with confirmed Forever Idol IDs, same as the ProcDB/TrinketDB
 -- cleanup above.
 -- =============================================================
-Druid.Relics = {}
+-- Forever idols as equivalent stats per spec (MSC.GetForeverRelicBonus).
+-- role: "melee" (Cat/default feral line), "tank" (Bear), "caster", "healer".
+-- Mana savings become Mp5; small cooldown/duration effects get a hand-set
+-- equivalent for the spec that uses them (estimates, not modeled).
+Druid.Relics = {
+    -- Windcharged Leaf: shapeshift cost -40. Feral levelers shift about once
+    -- a minute (40 mana/min = 3.3 Mp5); casters rarely.
+    [263411] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "melee" or role == "tank") and 3.3 or 1 } end,
+    -- Mark of Urs'endris: +4% armor from items
+    [263435] = function(role, ctx) return { ITEM_MOD_ARMOR_SHORT = 0.04 * ctx.itemArmor } end,
+    -- Mystic Mushroom: +5% Spirit
+    [249396] = function(role, ctx) return { ITEM_MOD_SPIRIT_SHORT = 0.05 * ctx.spirit } end,
+    -- Talons of Wrath: Wrath 50% chance to restore 35 mana. A Balance leveler
+    -- casts Wrath about a quarter of the time it's fighting: ~13 Mp5.
+    [249441] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "caster") and 13 or 1 } end,
+    -- Howling Idol: Tiger's Fury cooldown -3 sec (Cat)
+    [272427] = function(role) return (role == "melee") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 10 } or {} end,
+    -- Enraged Idol: Enrage +10 rage (Bear)
+    [272428] = function(role) return (role == "tank") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 15 } or {} end,
+    -- Idol of Synthesis: Swiftmend cooldown -1 sec per HoT on the target
+    [272429] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 20 } or {} end,
+    -- Swarming Idol: Insect Swarm +2 sec
+    [272430] = function(role) return (role == "caster") and { ITEM_MOD_SPELL_POWER_SHORT = 5 } or {} end,
+    -- Idol of Swiftness: Swiftmend cooldown -3 sec
+    [279250] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30 } or {} end,
+    -- Idol of the Ursine Twins: Lacerate 10% chance to reset Mangle (Bear)
+    [279251] = function(role) return (role == "tank") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 30 } or {} end,
+
+    -- Unchanged Classic idols (Wowhead Classic data). Single-spell bonuses
+    -- count at that spell's share of the spec's healing/damage/mana use.
+    -- Idol of Ferocity: Claw and Rake cost 3 less energy (~4% more Cat damage)
+    [22397] = function(role, ctx) return (role == "melee") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = math.max(15, 0.03 * ctx.ap) } or {} end,
+    -- Idol of Rejuvenation: Rejuvenation heals up to 50 more (~35% of healing)
+    [22398] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 17.5 } or {} end,
+    -- Idol of Health: Healing Touch cast time -0.15 sec (~2% more healing)
+    [22399] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 25 } or {} end,
+    -- Idol of Longevity: up to 25 mana back per Healing Touch
+    [23004] = function(role) return (role == "healer") and { ITEM_MOD_MANA_REGENERATION_SHORT = 8 } or {} end,
+    -- Idol of the Moon: Moonfire deals up to 33 more (~25% of a Balance
+    -- Druid's damage)
+    [23197] = function(role) return (role == "caster") and { ITEM_MOD_SPELL_POWER_SHORT = 8 } or {} end,
+    -- Idol of Brutality: Maul and Swipe cost 3 less rage (Bear)
+    [23198] = function(role) return (role == "tank") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 20 } or {} end,
+}
 
 -- Register Profiles
 Druid.Profiles = {}

@@ -75,6 +75,9 @@ Paladin.LevelingWeights = {
     ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.3, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.6, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0 },
 }
 
+-- The Ret chain changes name at 52 (see MSC:GetLevelingRow's blend)
+Paladin.LevelingNext = { ["Leveling_41_51"] = "Leveling_Ret_52_59" }
+
 -- =============================================================
 -- DISPLAY NAMES
 -- =============================================================
@@ -123,13 +126,15 @@ Paladin.Talents = {
     ["CHAMPION_LIGHT"]  = "Champion of the Light",
     ["PRECISION"]       = "Precision", -- Protection t2, 3 ranks, +1%/rank Hit
     ["HEALING_LIGHT"]   = "Healing Light", -- Holy t2, 3 ranks, +4%/rank Holy Light/FoL/Holy Shock healing
-    ["CRUSADE"]         = "Crusade", -- New in Forever, Retribution t4, 2 ranks, +1%/rank all damage dealt
     ["REDOUBT"]         = "Redoubt", -- Protection t1, 5 ranks, block chance after being hit
     ["ANTICIPATION"]    = "Anticipation", -- Protection t2, 5 ranks, +20 Defense Skill
     ["IMP_RIGHTEOUS_FURY"] = "Improved Righteous Fury", -- Protection t3, 3 ranks
     ["SHIELD_SPEC"]     = "Shield Specialization", -- Protection t3, 3 ranks
     ["SPIRITUAL_FOCUS"] = "Spiritual Focus", -- Holy t2, 2 ranks, pushback protection on heals
     ["REVERENCE"]       = "Reverence", -- New in Forever, Holy t3, 3 ranks, mana regen while casting
+    ["SEAL_OF_COMMAND"] = "Seal of Command", -- Retribution t3 (level 20), 1 rank
+    ["TWOH_SPEC"]       = "Two-Handed Weapon Specialization", -- Retribution t5, 3 ranks, +2%/rank 2H damage
+    ["ONE_HAND_SPEC"]   = "One-Handed Weapon Specialization", -- Protection t4, 3 ranks, +3%/rank 1H damage
     -- "Improved Blessing of Might" doesn't exist anywhere in Forever's Paladin
     -- talent/ability list (confirmed via wowforevertools.com/changes/paladin,
     -- direct search, all status filters). Its only use was a GetSpec() branch
@@ -161,11 +166,13 @@ function Paladin:GetSpec()
 
     -- Leveling Check First
     if level < 60 then
-        if level <= 10 then return "Leveling_1_10" end
+        -- Level 10 has its first talent point, so let roles apply from 10.
+        if level < 10 then return "Leveling_1_10" end
         local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
 
         local role = MSC:GetLowLevelRole(Paladin.LowLevelRoles)
         if role and Paladin.LevelingWeights[role .. suffix] then return role .. suffix end
+        if level == 10 then return "Leveling_1_10" end
         if suffix == "_52_59" then return "Leveling_Ret_52_59" end
         return "Leveling" .. suffix
     end
@@ -218,43 +225,169 @@ function Paladin:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rHealLight * 0.04))
     end
 
-    -- Crusade (New in Forever, Retribution t4, 2 ranks): +1%/rank all damage
-    -- dealt, unconditional -- raises AP/SP for whichever the spec weights
-    local rCrusade = Rank("CRUSADE")
-    if rCrusade > 0 then
-        if weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
-            weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rCrusade * 0.01))
+    -- [[ 1b. Leveling talent hooks (study: Paladin.txt) ]]
+    local level = UnitLevel("player")
+    local isLeveling = currentSpec:find("^Leveling") ~= nil
+    local isHealerRow = currentSpec:find("^Leveling_Healer") ~= nil
+    local isTankRow = currentSpec:find("^Leveling_Tank") ~= nil
+    local isRetRow = isLeveling and not isHealerRow and not isTankRow
+
+    -- Multiply a key when present; a weight left in (0, 0.02) is zeroed.
+    local function Mul(k, m)
+        local v = weights[k]
+        if not v or m == 1 then return end
+        v = v * m
+        if v > 0 and v < 0.02 then v = 0 end
+        weights[k] = v
+    end
+    local function MulAll(keys, m) for _, k in ipairs(keys) do Mul(k, m) end end
+
+    if isRetRow then
+        -- Seal of Command (Ret t3, level 20): without it the player stays on
+        -- Seal of Righteousness, whose Holy damage is worth more than the
+        -- anchor's Seal of Command model, and procs no longer crit.
+        if level >= 20 and Rank("SEAL_OF_COMMAND") == 0 then
+            MulAll({ "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT", "ITEM_MOD_HOLY_DAMAGE_SHORT" }, 1.25)
+            Mul("ITEM_MOD_CRIT_RATING_SHORT", 0.95)
+            Mul("ITEM_MOD_AGILITY_SHORT", 0.96)
+            Mul("ITEM_MOD_HIT_RATING_SHORT", 0.98)
         end
-        if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rCrusade * 0.01))
+
+        -- Vengeance (Ret t5, level 30): +1%/rank damage per stack for 30 s after
+        -- a crit, about +2.25% average per rank. A crit also starts the buff, so
+        -- crit gains a further 2%/rank; Agility gets the crit part by its share.
+        local rVeng = Rank("VENGEANCE")
+        if rVeng > 0 and level >= 30 then
+            local dmg = 1 + 0.0225 * rVeng
+            MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+                     "MSC_WEAPON_DPS_MELEE", "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT",
+                     "ITEM_MOD_HOLY_DAMAGE_SHORT", "MSC_WEAPON_SPEED" }, dmg)
+            Mul("ITEM_MOD_CRIT_RATING_SHORT", dmg * (1 + 0.02 * rVeng))
+            local critShare = (level >= 45) and 0.90 or 0.85
+            Mul("ITEM_MOD_AGILITY_SHORT", 1 + 0.0225 * rVeng + 0.02 * rVeng * critShare)
+        end
+
+        -- Two-Handed Weapon Specialization (Ret t5, level 30): +2%/rank damage
+        -- with a two-hander, about 1.3%/rank of total damage.
+        local rTwoH = Rank("TWOH_SPEC")
+        if rTwoH > 0 then
+            local link = GetInventoryItemLink("player", 16)
+            local equipLoc = link and select(9, GetItemInfo(link))
+            if equipLoc == "INVTYPE_2HWEAPON" then
+                MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+                         "MSC_WEAPON_DPS_MELEE", "MSC_WEAPON_SPEED" }, 1 + 0.013 * rTwoH)
+            end
         end
     end
 
-    -- [[ 2. Hit Cap (9%) ]]
-    if weights["ITEM_MOD_HIT_RATING_SHORT"] then
-        -- FIX: Use Shim
-        local currentHit = MSC:GetPlayerStat("HIT")
-        -- Precision (Protection t2, 3 ranks): +1%/rank Hit
-        local totalHit = currentHit + Rank("PRECISION")
-        if totalHit >= 9 then
-            weights["ITEM_MOD_HIT_RATING_SHORT"] = 2.0 -- Drop value but keep relevant for PvP
-            table.insert(activeCaps, "Hit (9%)")
+    if isHealerRow then
+        -- Healing Light also raises the value of mana, regen and crit equally
+        -- with healing power: scale their group-side share to match.
+        local rHL = Rank("HEALING_LIGHT")
+        if rHL > 0 then
+            MulAll({ "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT",
+                     "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }, 1 + 0.032 * rHL)
         end
+
+        -- Illumination (Holy t4, 5 ranks), relative to the ranks baked into the
+        -- anchors: 0 at 20, 1 at 25, 5 from 30.
+        local bIll = MSC.ForeverLevelLerp({ {20, 0}, {25, 1}, {30, 5} }, level)
+        local rIll = Rank("ILLUMINATION")
+        Mul("ITEM_MOD_SPELL_CRIT_RATING_SHORT", (0.61 + 0.39 * rIll / 5) / (0.61 + 0.39 * bIll / 5))
+        Mul("ITEM_MOD_INTELLECT_SHORT", (0.91 + 0.09 * rIll / 5) / (0.91 + 0.09 * bIll / 5))
+
+        -- Reverence (Holy t3, 3 ranks): Spirit regenerates in combat only through
+        -- it. Baked ranks: 0 at 15, 1 at 20, 3 from 25. Intellect's mana part is
+        -- worth about 4% more per missing rank from 40.
+        local bRev = MSC.ForeverLevelLerp({ {15, 0}, {20, 1}, {25, 3} }, level)
+        local rRev = Rank("REVERENCE")
+        Mul("ITEM_MOD_SPIRIT_SHORT", (0.30 + 0.07 * rRev) / (0.30 + 0.07 * bRev))
+        if level >= 40 then Mul("ITEM_MOD_INTELLECT_SHORT", 1 + 0.04 * (bRev - rRev)) end
+    end
+
+    if isTankRow then
+        -- Shield Specialization (Prot t3, 3 ranks): anchors bake rank 1 at 20 and
+        -- rank 3 from 25; scale by the real rank. Block Value is the absorb part,
+        -- Intellect and Mp5 the mana-proc part. The block-rating part is handled
+        -- in section 2b.
+        local rSS = Rank("SHIELD_SPEC")
+        if level >= 20 then
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", (1 + 0.10 * rSS) / 1.3)
+            local intLow, intHigh = 0.74 + 0.086 * rSS, 0.66 + 0.113 * rSS
+            Mul("ITEM_MOD_INTELLECT_SHORT", MSC.ForeverLevelLerp({ {35, intLow}, {40, intHigh} }, level))
+            if level >= 25 and level <= 35 then
+                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", 1.2 - 0.067 * rSS)
+            end
+        end
+
+        -- Holy Shield (Prot t7, level 40): without it Block Value is worth far
+        -- less and mana use is lower.
+        if level >= 40 and Rank("HOLY_SHIELD") == 0 then
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 0.42)
+            Mul("ITEM_MOD_INTELLECT_SHORT", 0.62)
+            MulAll({ "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+                     "ITEM_MOD_BLOCK_RATING_SHORT" }, 0.94)
+        end
+
+        -- Redoubt (Prot t1, 5 ranks): +2.34% block chance per rank, against a
+        -- baked Block Value base of 0.05 below 40 and 0.11 from 40.
+        local rRed = Rank("REDOUBT")
+        if rRed > 0 then
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 1 + ((level >= 40) and 0.21 or 0.47) * rRed)
+        end
+
+        -- One-Handed Weapon Specialization (Prot t4, level 25): +3%/rank 1H
+        -- damage on the physical share of tank damage.
+        local rOneH = Rank("ONE_HAND_SPEC")
+        if rOneH > 0 then
+            local per = MSC.ForeverLevelLerp({ {40, 0.017}, {45, 0.012} }, level)
+            MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+                     "MSC_WEAPON_DPS_MELEE" }, 1 + per * rOneH)
+        end
+    end
+
+    -- [[ 2. Hit Cap ]]
+    -- Hit % includes Precision once (MSC:GetForeverHitPercent); the target is
+    -- the level's cap, sliding to the raid cap from 50. Past it Hit keeps 10%
+    -- of its value, the same as every other class.
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_RATING_SHORT", "MELEE", 0.1, "Hit", activeCaps)
+
+    -- [[ 2b. Block for leveling tanks: Shield Specialization ]]
+    -- Client data: only rank 3 of Shield Specialization makes blocks restore
+    -- 6% of max mana, at a 100% chance (once per 3 sec). The talent text's
+    -- "33%" is a third per rank. The leveling tank rows priced block as its
+    -- survival value (about 0.6 x Dodge, like other tanks) plus a mana part
+    -- hedged to two-thirds for that "33%". So with 3/3 the mana part counts in
+    -- full (x1.5), and without rank 3 block is worth its survival value only.
+    if currentSpec:find("^Leveling_Tank") then
+        local block = weights["ITEM_MOD_BLOCK_RATING_SHORT"]
+        local dodge = weights["ITEM_MOD_DODGE_RATING_SHORT"] or 0
+        if block and block > 0 and dodge > 0 then
+            local survival = math.min(block, 0.6 * dodge)
+            if Rank("SHIELD_SPEC") >= 3 then
+                weights["ITEM_MOD_BLOCK_RATING_SHORT"] = survival + (block - survival) * 1.5
+            else
+                weights["ITEM_MOD_BLOCK_RATING_SHORT"] = survival
+            end
+        end
+    end
+
+    -- [[ 3. Tank caps: defense toward 440, uncrushable (from 50) ]]
+    if currentSpec:find("PROT") or currentSpec:find("Tank") then
+        MSC.ApplyForeverDefenseTarget(weights, activeCaps)
+        -- Holy Shield (talent): +20% block chance while active
+        MSC.ApplyForeverUncrushable(weights, (Rank("HOLY_SHIELD") > 0) and 20 or 0, activeCaps)
     end
     
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Paladin:GetWeaponBonus(itemLink, weights)
-    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+function Paladin:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink)
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
 end
 
 function Paladin:GetRelicBonus(itemID, currentSpec)
-    local bonus = {}
-    if Paladin.Relics[itemID] then
-        for k, v in pairs(Paladin.Relics[itemID]) do bonus[k] = v end
-    end
-    return bonus
+    return MSC.GetForeverRelicBonus(Paladin.Relics, itemID, currentSpec)
 end
 
 -- =============================================================
@@ -264,7 +397,60 @@ end
 -- organically with confirmed Forever Libram IDs, same as the ProcDB/TrinketDB
 -- cleanup above.
 -- =============================================================
-Paladin.Relics = {}
+-- Forever librams as equivalent stats per spec (MSC.GetForeverRelicBonus).
+-- role: "melee" (Retribution), "tank", "healer". Small cooldown/damage
+-- effects are estimates for the spec that uses them.
+Paladin.Relics = {
+    -- Tenets of the Silver Hand: +1% damage vs Undead. About a quarter of
+    -- leveling kills are Undead, and weapon damage is about 2x AP-worth for
+    -- a leveling Ret: ~0.25% of damage = 0.0075 x AP.
+    [249397] = function(role, ctx) return (role ~= "healer") and { ITEM_MOD_ATTACK_POWER_SHORT = 0.0075 * ctx.ap } or {} end,
+    -- Libram of Invocation: Seal mana cost -5% (a Seal every ~30 sec)
+    [249442] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "healer") and 0.3 or 0.7 } end,
+    -- Sentinel's Libram: Swift Judgement cooldown -10 sec
+    [272434] = function(role) return (role == "melee") and { ITEM_MOD_ATTACK_POWER_SHORT = 6 } or {} end,
+    -- Libram of Law: Judgement damage +4% (~10% of a Ret's damage; half
+    -- that value as threat for a tank)
+    [272435] = function(role, ctx)
+        if role == "melee" then return { ITEM_MOD_ATTACK_POWER_SHORT = 0.012 * ctx.ap } end
+        if role == "tank" then return { ITEM_MOD_ATTACK_POWER_SHORT = 0.006 * ctx.ap } end
+        return {}
+    end,
+    -- Libram of Economy: Holy Light mana cost -5%
+    [272436] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "healer") and 10 or 1 } end,
+    -- Steadfast Libram: shield Block Value +30% while Holy Shield is up (~80%)
+    [279247] = function(role, ctx)
+        if role ~= "tank" or MSC:GetTalentRank("HOLY_SHIELD") <= 0 then return {} end
+        return { ITEM_MOD_BLOCK_VALUE_SHORT = 0.24 * ctx.shieldBlock }
+    end,
+    -- Libram of Infusion: Holy Shock crit +6%
+    [279248] = function(role)
+        if MSC:GetTalentRank("HOLY_SHOCK") <= 0 then return {} end
+        if role == "healer" then return { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 12 } end
+        return { ITEM_MOD_SPELL_POWER_SHORT = 10 }
+    end,
+
+    -- Unchanged Classic librams (Wowhead Classic data). Single-spell bonuses
+    -- count at that spell's share of the spec's healing/damage/mana use.
+    -- Libram of Truth: Devotion Aura +55 armor (tanks run it; others often don't)
+    [22400] = function(role) return { ITEM_MOD_ARMOR_SHORT = (role == "tank") and 55 or 25 } end,
+    -- Libram of Hope: Seal spells cost 20 less (a Seal every ~30 sec)
+    [22401] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "healer") and 1 or 3.3 } end,
+    -- Libram of Grace: Cleanse costs 25 less
+    [22402] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "healer") and 1 or 0.3 } end,
+    -- Libram of Light: Flash of Light heals up to 83 more (~60% of healing)
+    [23006] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 } or {} end,
+    -- Libram of Divinity (both IDs): Flash of Light heals up to 53 more
+    [23201] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 32 } or {} end,
+    [23202] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 32 } or {} end,
+    -- Libram of Fervor: Seal of the Crusader +48 AP and Judgement of the
+    -- Crusader +33 Holy damage (only while running that Seal)
+    [23203] = function(role)
+        if role == "melee" then return { ITEM_MOD_ATTACK_POWER_SHORT = 30 } end
+        if role == "tank" then return { ITEM_MOD_ATTACK_POWER_SHORT = 10 } end
+        return {}
+    end,
+}
 
 -- Register Profiles for UI
 Paladin.Profiles = {}

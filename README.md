@@ -59,9 +59,10 @@ Hover any item — world drops, vendor goods, quest rewards, dungeon loot, or AH
 
 **Opt-in by default** — enable in Settings → Interface Options.
 
-- **Bag upgrade arrows** (`ShowBagArrows`, **off** by default): Green/red arrows on items in your bags (Blizzard bags, **Bagnon**, **ElvUI**, **XLoot**). Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab (independent of this setting), and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
+- **Bag upgrade arrows** (`ShowBagArrows`, **off** by default): Green/red arrows on items in your bags (Blizzard bags, **Bagnon**, **ElvUI**, **GudaBags**, **XLoot**). Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab (independent of this setting), and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
 - **Fast bag arrows** (`FastBagArrows`, **on** when bag arrows are enabled): Quick single-slot scoring; automatically uses full evaluation for set pieces and weapons.
 - **Loot roll arrows** (`ShowLootArrows`, **off** by default): Highlights the best upgrade on group loot popups.
+- **Profession window arrows** (always on): A green arrow on recipes that would craft an upgrade for you, on the recipe list and on the selected recipe's icon. Works in Forever's professions window and in the Classic profession and Enchanting windows (Era, TBC).
 - **Quest reward overlays:** Marks the best choice among quest reward options.
 
 ### 🧾 The Gear Receipt
@@ -195,7 +196,7 @@ Unified codebase — the addon detects your client automatically:
 
 ### Supported bag addons
 
-Blizzard default bags, **Bagnon**, **ElvUI Bags**, **Baganator**, **XLoot** (loot rolls).
+Blizzard default bags, **Bagnon**, **ElvUI Bags**, **Baganator**, **GudaBags**, **XLoot** (loot rolls).
 
 ### Localization
 

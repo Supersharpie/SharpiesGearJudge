@@ -30,17 +30,20 @@ Mage.LevelingWeights = {
     -- Brought up to match Leveling_1_10/11_20's convention (Spell Hit/Crit
     -- were entirely absent -- zero weight, invisible to scoring; see
     -- Warrior.lua's leveling-bracket comment for the item-database evidence)
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
     ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
     ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.8 },
 
-    -- Fire Leveling (same convention fix as above)
-    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
+    -- Fire Leveling (same convention fix as above). 11-20 rows: the Frost
+    -- 11-20 row with each spec's school-damage split from its 21-40 row.
+    ["Leveling_Fire_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
+    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
     ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
     ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.8 },
 
     -- AoE Grinding (same convention fix as above)
-    ["Leveling_AoE_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
+    ["Leveling_AoE_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
+    ["Leveling_AoE_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
     ["Leveling_AoE_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
     ["Leveling_AoE_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.8 },
 }
@@ -64,10 +67,12 @@ Mage.PrettyNames = {
     ["Leveling_41_51"]      = "Leveling: Frost/Fire ST (41-51)",
     ["Leveling_52_59"]      = "Leveling: Pre-BiS Mage (52-59)",
     
+    ["Leveling_AoE_11_20"]  = "Leveling: AoE Grinding (11-20)",
     ["Leveling_AoE_21_40"]  = "Leveling: AoE Grinding (21-40)",
     ["Leveling_AoE_41_51"]  = "Leveling: AoE Grinding (41-51)",
     ["Leveling_AoE_52_59"]  = "Leveling: AoE Grinding (52-59)",
     
+    ["Leveling_Fire_11_20"] = "Leveling: Fire (11-20)",
     ["Leveling_Fire_21_40"] = "Leveling: Fire (21-40)",
     ["Leveling_Fire_41_51"] = "Leveling: Fire (41-51)",
     ["Leveling_Fire_52_59"] = "Leveling: Fire (52-59)",
@@ -92,8 +97,24 @@ Mage.Talents = {
     ["ELE_PRECISION"]   = "Elemental Precision",
     ["ARCANE_FOCUS"]    = "Arcane Focus",
     ["ARCANE_RESILIENCE"] = "Arcane Resilience", -- Arcane t2, 2 ranks, Armor += 25%/rank of Intellect -- was already referenced in ApplyScalers but missing here, so Rank() always returned 0
+    ["WAND_SPEC"]       = "Wand Specialization", -- Arcane t1, 2 ranks, +13%/+25% wand damage
+    ["ARCANE_MEDITATION"] = "Arcane Meditation", -- Arcane t4, 3 ranks, 17%/rank regen while casting
     ["FIRE_POWER"]      = "Fire Power", -- Fire t6, 5 ranks, +2%/rank Fire damage (Same as Classic)
     ["PIERCING_ICE"]    = "Piercing Ice", -- Frost t3, 3 ranks, +2%/rank Frost damage (Same as Classic)
+    -- Leveling role markers (tiers 1-3, see Mage.LowLevelRoles)
+    ["FROST_WARDING"]   = "Frost Warding", -- Frost t1
+    ["IMP_FROSTBOLT"]   = "Improved Frostbolt", -- Frost t1
+    ["IMP_FROST_NOVA"]  = "Improved Frost Nova", -- Frost t2
+    ["FROSTBITE"]       = "Frostbite", -- Frost t2
+    ["FROST_CHANNELING"] = "Frost Channeling", -- Frost t3
+    ["ICE_LANCE"]       = "Ice Lance", -- Frost t3
+    ["WAKE_OF_FIRE"]    = "Wake of Fire", -- Fire t1
+    ["INCINERATION"]    = "Incineration", -- Fire t1
+    ["IMP_FIREBALL"]    = "Improved Fireball", -- Fire t1
+    ["FLAME_THROWING"]  = "Flame Throwing", -- Fire t2
+    ["IMPACT"]          = "Impact", -- Fire t2
+    ["BURNING_SOUL"]    = "Burning Soul", -- Fire t3
+    ["IMP_FLAMESTRIKE"] = "Improved Flamestrike", -- Fire t3
 }
 
 -- =============================================================
@@ -104,6 +125,15 @@ Mage.ValidWeapons = {
     [15]=true,            -- Daggers
     [10]=true,            -- Staves
     [19]=true             -- Wands
+}
+
+-- Leveling role marker talents (see MSC:GetLowLevelRole). "Leveling" is the
+-- Frost default, so Frost picks are listed to outvote a stray Fire point.
+-- Arcane and Elemental Precision (Fire+Frost hit) mark neither; AoE is
+-- still detected by Improved Blizzard in GetSpec.
+Mage.LowLevelRoles = {
+    Leveling      = { "FROST_WARDING", "IMP_FROSTBOLT", "ICE_SHARDS", "PERMAFROST", "IMP_FROST_NOVA", "FROSTBITE", "PIERCING_ICE", "FROST_CHANNELING", "ICE_LANCE" },
+    Leveling_Fire = { "WAKE_OF_FIRE", "INCINERATION", "IMP_FIREBALL", "IGNITE", "FLAME_THROWING", "IMPACT", "BURNING_SOUL", "IMP_FLAMESTRIKE", "PYROBLAST" },
 }
 
 function Mage:GetSpec()
@@ -120,10 +150,16 @@ function Mage:GetSpec()
         else suffix = "_52_59" end
         
         local role = "Leveling" -- Default
-        if Rank("IMP_BLIZZARD") >= 2 then role = "Leveling_AoE"
+        -- Improved Blizzard is tier 3 (first point at 20), so one point marks
+        -- an AoE mage up to 21; from then on it takes 2.
+        if Rank("IMP_BLIZZARD") >= ((level <= 21) and 1 or 2) then role = "Leveling_AoE"
         elseif Rank("IGNITE") >= 3 then role = "Leveling_Fire"
+        elseif level >= 10 then role = MSC:GetLowLevelRole(Mage.LowLevelRoles) or role
         end
 
+        -- Level 10 brings the first talent point: a role it marks uses that
+        -- role's 11-20 row (the 1-10 band only has the default row).
+        if level == 10 and role ~= "Leveling" then suffix = "_11_20" end
         local key = role .. suffix
         if Mage.LevelingWeights[key] then return key end
         return "Leveling" .. suffix
@@ -172,21 +208,92 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- gate: unlike Arcane Mind (no Arcane profile exists to even test against),
     -- ELEMENTAL/POM_PYRO are real hybrid specs that can carry Frost points
     -- without "FROST" appearing in the spec key, so rank alone is the signal.
+    -- Leveling rows: Ice Shards only helps Frost spells, so Leveling_AoE
+    -- (Arcane Explosion crits are not Frost) gets a 0.65 Frost share (5/5 =
+    -- x1.65, not x2.0) and Fire rows skip it. Int carries its crit share via
+    -- ScaleForeverSpellCrit. Endgame specs keep the flat 1 + 0.2r.
+    local specUp = string.upper(currentSpec or "")
+    local isLeveling = specUp:find("^LEVELING") ~= nil
+    local isFireRow = specUp:find("FIRE") ~= nil
+    local isAoERow = specUp:find("AOE") ~= nil
+    local level = UnitLevel("player")
     local rIceShards = Rank("ICE_SHARDS")
     if rIceShards > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-        weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rIceShards * 0.20))
+        if not isLeveling then
+            weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rIceShards * 0.20))
+        elseif not isFireRow then
+            MSC.ScaleForeverSpellCrit(weights, 1 + (rIceShards * 0.20 * (isAoERow and 0.65 or 1)), level)
+        end
     end
 
-    -- Fire Power (Fire t6, 5 ranks, Same as Classic): +2%/rank Fire damage
     local rFirePower = Rank("FIRE_POWER")
-    if rFirePower > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-        weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rFirePower * 0.02))
+    local rPiercingIce = Rank("PIERCING_ICE")
+    if not isLeveling then
+        -- Fire Power (Fire t6, 5 ranks, Same as Classic): +2%/rank Fire damage
+        if rFirePower > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rFirePower * 0.02))
+        end
+        -- Piercing Ice (Frost t3, 3 ranks, Same as Classic): +2%/rank Frost damage
+        if rPiercingIce > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rPiercingIce * 0.02))
+        end
+    else
+        -- Leveling: a +2%/rank school-damage talent is a flat damage multiplier
+        -- (the wand is untouched by it, so it is kept fixed). Piercing Ice is
+        -- Frost-only: full on the Frost row, x0.72 share on AoE, skipped on Fire.
+        -- Fire Power only applies to the Fire rows.
+        local wandKeep = { "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" }
+        if isFireRow then
+            if rFirePower > 0 then
+                MSC.ApplyForeverDamageMult(weights, 1 + (0.02 * rFirePower), wandKeep)
+            end
+        elseif rPiercingIce > 0 then
+            MSC.ApplyForeverDamageMult(weights, 1 + (0.02 * rPiercingIce * (isAoERow and 0.72 or 1)), wandKeep)
+        end
     end
 
-    -- Piercing Ice (Frost t3, 3 ranks, Same as Classic): +2%/rank Frost damage
-    local rPiercingIce = Rank("PIERCING_ICE")
-    if rPiercingIce > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-        weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rPiercingIce * 0.02))
+    -- Improved Frostbolt (Frost t1, 5 ranks, -0.1s cast per rank): the
+    -- leveling anchors assume 5/5 from 15, so fewer ranks slow the nuke and
+    -- make wand DPS worth more.
+    local rImpFrostbolt = Rank("IMP_FROSTBOLT")
+    if isLeveling and not isFireRow and level >= 15 and weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] then
+        local castBase = (level >= 26) and 3.0 or ((level >= 20) and 2.6 or 2.2)
+        weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] * (castBase - 0.1 * rImpFrostbolt) / (castBase - 0.5)
+    end
+
+    -- Wand Specialization (Arcane t1, 2 ranks, +13% / +25% wand damage)
+    local rWandSpec = Rank("WAND_SPEC")
+    if isLeveling and rWandSpec > 0 and weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] then
+        weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] * (({ 1.13, 1.25 })[math.min(rWandSpec, 2)])
+    end
+
+    -- Arcane Meditation (Arcane t4, 3 ranks, 17% regen while casting per rank):
+    -- from 34 Mage Armor and Meditation stack to a 100% cap (half of players
+    -- assumed on Mage Armor, baseline 1.425); below 34 it is additive.
+    local rArcMed = Rank("ARCANE_MEDITATION")
+    if isLeveling and rArcMed > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+        local spiritMult
+        if level >= 34 then
+            spiritMult = (1 + 1.7 * (0.5 * math.min(1, 0.5 + 0.17 * rArcMed) + 0.5 * 0.17 * rArcMed)) / 1.425
+        else
+            spiritMult = 1 + 1.7 * 0.17 * rArcMed
+        end
+        weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * spiritMult
+    end
+
+    -- Frost Channeling (Frost t3, 3 ranks, -5% Frost mana cost per rank): about
+    -- 70% of an AoE mage's mana goes to Frost spells.
+    local rFrostChan = Rank("FROST_CHANNELING")
+    if isLeveling and isAoERow and rFrostChan > 0 then
+        local fc = 1 / (1 - 0.05 * rFrostChan * 0.7)
+        MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_MANA_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }, fc)
+    end
+
+    -- Never leave a weight in the dead zone (0, 0.02)
+    if isLeveling then
+        for k, v in pairs(weights) do
+            if type(v) == "number" and v > 0 and v < 0.02 then weights[k] = 0 end
+        end
     end
 
     -- [[ 2. Covariance (SP -> Crit) ]]
@@ -201,27 +308,20 @@ function Mage:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 3. Hit Cap ]]
-    if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
-        -- FIX: Use Shim
-        local currentHit = MSC:GetPlayerStat("SPELL_HIT") 
-        local talentHit = 0
-        if currentSpec:find("FIRE") or currentSpec:find("FROST") then
-            talentHit = Rank("ELE_PRECISION") * 1
-        elseif currentSpec:find("ARCANE") then
-            talentHit = Rank("ARCANE_FOCUS") * 1 -- inert until an Arcane profile exists
-        end
-
-        local totalHit = currentHit + talentHit
-        if totalHit >= 16 then
-            weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0 
-            table.insert(activeCaps, "Hit (16%)")
-        end
-    end
+    -- Target is the level's cap, sliding to the raid cap from 50. Elemental
+    -- Precision (Fire/Frost only) and Arcane Focus (Arcane only) aren't in the
+    -- game's general spell-hit number, so they're added here; every leveling
+    -- profile is Frost/Fire based.
+    local talentHit = currentSpec:find("ARCANE") and Rank("ARCANE_FOCUS") or Rank("ELE_PRECISION")
+    -- AoE grinding: about a quarter of the damage is Arcane Explosion, which
+    -- Elemental Precision doesn't cover.
+    if currentSpec:find("AoE") or currentSpec:find("AOE") then talentHit = talentHit * 0.75 end
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit)
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Mage:GetWeaponBonus(itemLink, weights)
-    return MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+function Mage:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink)
+    return MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
 end
 
 MSC.RegisterModule("MAGE", Mage)

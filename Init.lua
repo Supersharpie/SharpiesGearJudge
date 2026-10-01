@@ -1,14 +1,6 @@
 SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
 SGJ_Settings = SGJ_Settings or {}
 
--- =========================================================================
--- [BETA BUG BYPASS] HARDCODED SETTINGS
--- TODO: DELETE THIS ENTIRE BLOCK BEFORE PUBLIC RELEASE!
--- =========================================================================
-SharpiesGearJudgeDB.EnableDataminer = true
-SGJ_Settings.ShowBagArrows = true
--- =========================================================================
-
 -- Secret values (protected tooltip text etc.) error on compare/concat while tainted.
 -- issecretvalue isn't guaranteed to exist on every client build that has secrets,
 -- so fall back to canaccessvalue, then to a protected compare as a last resort.

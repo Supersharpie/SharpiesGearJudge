@@ -147,6 +147,9 @@ eventFrame:RegisterEvent("QUEST_ITEM_UPDATE")
 eventFrame:RegisterEvent("START_LOOT_ROLL")         
 eventFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 eventFrame:RegisterEvent("TRADE_SKILL_SHOW")
+-- Classic Enchanting window only; Forever has no Craft frame or CRAFT_SHOW,
+-- and registering an unknown event raises an error there.
+pcall(eventFrame.RegisterEvent, eventFrame, "CRAFT_SHOW")
 eventFrame:RegisterEvent("ADDON_LOADED")
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1) 
@@ -166,21 +169,12 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             if MSC.UpdateLootRollOverlays then MSC.UpdateLootRollOverlays() end
         end)
         
-    elseif event == "ADDON_LOADED" and arg1 == "Blizzard_TradeSkillUI" then
-            if not MSC.TradeSkillHooked and TradeSkillFrame_Update then
-                hooksecurefunc("TradeSkillFrame_Update", function()
-                    if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
-                end)
-                if TradeSkillFrame_SetSelection then
-                    hooksecurefunc("TradeSkillFrame_SetSelection", function()
-                        C_Timer.After(0.05, function()
-                            if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
-                        end)
-                    end)
-                end
-                MSC.TradeSkillHooked = true
-            end
-            
+    elseif event == "ADDON_LOADED" and (arg1 == "Blizzard_TradeSkillUI" or arg1 == "Blizzard_CraftUI" or arg1 == "Blizzard_Professions") then
+        MSC.HookProfessionWindows()
+
+    elseif event == "CRAFT_SHOW" then
+        C_Timer.After(0.05, MSC.UpdateCraftOverlays)
+
 		elseif event == "TRADE_SKILL_SHOW" then
             if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
             
@@ -225,6 +219,9 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             C_Timer.After(0.1, function()
                 if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
             end)
+        end
+        if CraftFrame and CraftFrame:IsShown() then
+            C_Timer.After(0.1, MSC.UpdateCraftOverlays)
         end
 
         -- [[ TSM COMPATIBILITY ]]
@@ -867,89 +864,210 @@ end
 -- =============================================================
 -- TRADE SKILL / CRAFTING OVERLAYS
 -- =============================================================
-function MSC.UpdateTradeSkillOverlays()
-    if not TradeSkillFrame or not TradeSkillFrame:IsShown() then return end
+-- Profession windows only flag upgrades (a recipe you'd never craft for
+-- yourself doesn't need a red arrow). Uncached items are requested and the
+-- window redraws on GET_ITEM_INFO_RECEIVED.
+function MSC.IsCraftUpgrade(link, weights, specName)
+    if not link or not weights then return false end
+    if not GetItemInfo(link) then
+        -- Enchant/spell links (Enchanting, Beast Training) never resolve to an item
+        if link:find("|Hitem:") and MSC_ScannerTooltip then pcall(MSC_ScannerTooltip.SetHyperlink, MSC_ScannerTooltip, link) end
+        return false
+    end
+    local _, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
+    if not equipLoc or equipLoc == "" or equipLoc == "INVTYPE_NON_EQUIP" then return false end
+    if not MSC.IsItemUsable(link) then return false end
+    local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
+    if not compSlot then return false end
+    local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
+    return newScore and oldScore and newScore > (oldScore + 0.1) or false
+end
+
+-- Shows or hides the green arrow on a recipe row or the selected-recipe icon.
+local function SetCraftArrow(frame, show, size, point, x, y)
+    if not frame then return end
+    if not show then
+        if frame.SGJ_Overlay then frame.SGJ_Overlay:Hide() end
+        return
+    end
+    if not frame.SGJ_Overlay then
+        frame.SGJ_Overlay = frame:CreateTexture(nil, "OVERLAY", nil, 7)
+        frame.SGJ_Overlay:SetSize(size, size)
+        frame.SGJ_Overlay:SetPoint(point, frame, point, x, y)
+        frame.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
+    end
+    frame.SGJ_Overlay:Show()
+end
+
+-- One routine for both Classic profession windows: the TradeSkill frame
+-- (every profession but Enchanting) and the Craft frame (Enchanting; Beast
+-- Training also uses it, but its links are spells and are skipped).
+local function UpdateProfessionList(ui)
+    local frame = _G[ui.frame]
+    if not frame or not frame:IsShown() or not ui.getNum then return end
 
     local weights, specName = MSC.GetCurrentWeights()
     if not weights then return end
 
-    if not GetNumTradeSkills then return end
-    local numTradeSkills = GetNumTradeSkills()
-    local skillOffset = FauxScrollFrame_GetOffset(TradeSkillListScrollFrame)
-    
-    -- 1. List Buttons
-    for i = 1, TRADE_SKILLS_DISPLAYED or 8 do
-        local skillIndex = i + skillOffset
-        local skillButton = _G["TradeSkillSkill" .. i]
-        
-        if skillButton then
-            if skillButton.SGJ_Overlay then skillButton.SGJ_Overlay:Hide() end
-            
-            if skillIndex <= numTradeSkills and skillButton:IsShown() then
-                local skillName, skillType = GetTradeSkillInfo(skillIndex)
-                if skillType ~= "header" then 
-                    local link = GetTradeSkillItemLink(skillIndex)
-                    if link then
-                        local itemName = GetItemInfo(link)
-                        if not itemName then
-                            MSC_ScannerTooltip:SetHyperlink(link) 
-                        else
-                            -- GATEKEEPER
-                            local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                            if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                                if MSC.IsItemUsable(link) then
-                                    local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                                    if compSlot then
-                                        local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                                        if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                                            if not skillButton.SGJ_Overlay then
-                                                skillButton.SGJ_Overlay = skillButton:CreateTexture(nil, "OVERLAY", nil, 7)
-                                                skillButton.SGJ_Overlay:SetSize(16, 16)
-                                                skillButton.SGJ_Overlay:SetPoint("RIGHT", skillButton, "RIGHT", -2, 0)
-                                                skillButton.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                                            end
-                                            skillButton.SGJ_Overlay:Show()
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
+    local total = ui.getNum() or 0
+    local scroll = _G[ui.scroll]
+    local offset = (scroll and FauxScrollFrame_GetOffset) and FauxScrollFrame_GetOffset(scroll) or 0
+
+    -- 1. List rows
+    for i = 1, ui.shown or 8 do
+        local index = i + offset
+        local row = _G[ui.row .. i]
+        if row then
+            local show = false
+            if index <= total and row:IsShown() then
+                local _, _, kind = ui.getInfo(index)
+                if ui.rowTypeIsSecond then kind = select(2, ui.getInfo(index)) end
+                if kind ~= "header" then
+                    show = MSC.IsCraftUpgrade(ui.getLink(index), weights, specName)
                 end
             end
+            SetCraftArrow(row, show, 16, "RIGHT", -2, 0)
         end
     end
-    
-    -- 2. Selected Icon at Top
-    local selectedIcon = _G["TradeSkillSkillIcon"]
-    if selectedIcon and selectedIcon:IsShown() then
-        if selectedIcon.SGJ_Overlay then selectedIcon.SGJ_Overlay:Hide() end
-        
-        local currentIndex = GetTradeSkillSelectionIndex()
-        if currentIndex and currentIndex > 0 then
-            local link = GetTradeSkillItemLink(currentIndex)
-            if link then
-                -- GATEKEEPER
-                local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
-                if itemName and equipLoc and equipLoc ~= "" and equipLoc ~= "INVTYPE_NON_EQUIP" then
-                    if MSC.IsItemUsable(link) then
-                        local compSlot = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
-                        if compSlot then
-                            local newScore, oldScore = MSC:EvaluateUpgrade(link, compSlot, weights, specName)
-                            if newScore and oldScore and (newScore > (oldScore + 0.1)) then
-                                if not selectedIcon.SGJ_Overlay then
-                                    selectedIcon.SGJ_Overlay = selectedIcon:CreateTexture(nil, "OVERLAY", nil, 7)
-                                    selectedIcon.SGJ_Overlay:SetSize(22, 22)
-                                    selectedIcon.SGJ_Overlay:SetPoint("TOPRIGHT", selectedIcon, "TOPRIGHT", 4, 4)
-                                    selectedIcon.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png")
-                                end
-                                selectedIcon.SGJ_Overlay:Show()
-                            end
-                        end
-                    end
-                end
-            end
+
+    -- 2. Selected recipe icon
+    local icon = _G[ui.icon]
+    if icon then
+        local index = ui.getSelected and ui.getSelected()
+        local show = icon:IsShown() and index and index > 0
+            and MSC.IsCraftUpgrade(ui.getLink(index), weights, specName) or false
+        SetCraftArrow(icon, show, 22, "TOPRIGHT", 4, 4)
+    end
+end
+
+local TRADESKILL_UI = {
+    frame = "TradeSkillFrame", scroll = "TradeSkillListScrollFrame", row = "TradeSkillSkill",
+    icon = "TradeSkillSkillIcon", rowTypeIsSecond = true,
+}
+local CRAFT_UI = {
+    frame = "CraftFrame", scroll = "CraftListScrollFrame", row = "Craft", icon = "CraftIcon",
+}
+
+function MSC.UpdateTradeSkillOverlays()
+    if not GetNumTradeSkills then return end
+    TRADESKILL_UI.shown = TRADE_SKILLS_DISPLAYED or 8
+    TRADESKILL_UI.getNum, TRADESKILL_UI.getInfo = GetNumTradeSkills, GetTradeSkillInfo
+    TRADESKILL_UI.getLink, TRADESKILL_UI.getSelected = GetTradeSkillItemLink, GetTradeSkillSelectionIndex
+    UpdateProfessionList(TRADESKILL_UI)
+end
+
+-- GetCraftInfo returns name, subSpellName, type, ...
+function MSC.UpdateCraftOverlays()
+    if not GetNumCrafts or not GetCraftItemLink then return end
+    CRAFT_UI.shown = CRAFTS_DISPLAYED or 8
+    CRAFT_UI.getNum, CRAFT_UI.getInfo = GetNumCrafts, GetCraftInfo
+    CRAFT_UI.getLink, CRAFT_UI.getSelected = GetCraftItemLink, GetCraftSelectionIndex
+    UpdateProfessionList(CRAFT_UI)
+end
+
+-- Modern profession window (Blizzard_Professions). WoW Forever ships this one
+-- instead of the Classic TradeSkill/Craft frames, for every profession
+-- including Enchanting. Recipe rows live in a ScrollBox; the result comes
+-- from C_TradeSkillUI.GetRecipeOutputItemData (no hyperlink for enchants).
+local function GetRecipeOutputLink(recipeID)
+    if not recipeID or not (C_TradeSkillUI and C_TradeSkillUI.GetRecipeOutputItemData) then return nil end
+    local ok, info = pcall(C_TradeSkillUI.GetRecipeOutputItemData, recipeID)
+    return ok and info and info.hyperlink or nil
+end
+
+local function GetRowRecipeID(elementData)
+    local data = elementData and elementData.GetData and elementData:GetData()
+    return data and data.recipeInfo and data.recipeInfo.recipeID
+end
+
+local function DrawProfessionsRow(frame, elementData)
+    if not frame then return end
+    local recipeID = GetRowRecipeID(elementData or (frame.GetElementData and frame:GetElementData()))
+    local show = false
+    if recipeID then
+        local weights, specName = MSC.GetCurrentWeights()
+        show = MSC.IsCraftUpgrade(GetRecipeOutputLink(recipeID), weights, specName)
+    end
+    SetCraftArrow(frame, show, 16, "RIGHT", -4, 0)
+end
+
+local function DrawProfessionsOutput(form)
+    if not form or not form.OutputIcon then return end
+    local recipeID = form.transaction and form.transaction.GetRecipeID and form.transaction:GetRecipeID()
+    local show = false
+    if recipeID and form.OutputIcon:IsShown() then
+        local weights, specName = MSC.GetCurrentWeights()
+        show = MSC.IsCraftUpgrade(GetRecipeOutputLink(recipeID), weights, specName)
+    end
+    SetCraftArrow(form.OutputIcon, show, 22, "TOPRIGHT", 4, 4)
+end
+
+function MSC.UpdateProfessionsOverlays()
+    local page = ProfessionsFrame and ProfessionsFrame:IsShown() and ProfessionsFrame.CraftingPage
+    if not page then return end
+    local scrollBox = page.RecipeList and page.RecipeList.ScrollBox
+    if scrollBox and scrollBox.ForEachFrame then
+        pcall(scrollBox.ForEachFrame, scrollBox, DrawProfessionsRow)
+    end
+    DrawProfessionsOutput(page.SchematicForm)
+end
+
+local function HookModernProfessions()
+    if MSC.ProfessionsHooked then return end
+    local page = ProfessionsFrame and ProfessionsFrame.CraftingPage
+    local scrollBox = page and page.RecipeList and page.RecipeList.ScrollBox
+    if not scrollBox or not ScrollUtil or not ScrollUtil.AddInitializedFrameCallback then return end
+    MSC.ProfessionsHooked = true
+
+    -- Every time a recipe row is (re)used for a recipe
+    ScrollUtil.AddInitializedFrameCallback(scrollBox, function(_, frame, elementData)
+        DrawProfessionsRow(frame, elementData)
+    end, MSC)
+
+    -- The selected recipe's output icon
+    local form = page.SchematicForm
+    if form and type(form.UpdateOutputItem) == "function" then
+        hooksecurefunc(form, "UpdateOutputItem", DrawProfessionsOutput)
+    end
+
+    ProfessionsFrame:HookScript("OnShow", function() C_Timer.After(0.05, MSC.UpdateProfessionsOverlays) end)
+
+    -- Gear, level or talents changed, or a result item finished loading
+    local refresh = CreateFrame("Frame")
+    refresh:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    refresh:RegisterEvent("PLAYER_LEVEL_UP")
+    refresh:RegisterEvent("PLAYER_TALENT_UPDATE")
+    refresh:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    refresh:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+    local queued = false
+    refresh:SetScript("OnEvent", function()
+        if queued or not ProfessionsFrame:IsShown() then return end
+        queued = true
+        C_Timer.After(0.2, function() queued = false; MSC.UpdateProfessionsOverlays() end)
+    end)
+end
+
+-- Hooks each profession window once its Blizzard addon has loaded
+-- (called on ADDON_LOADED and again at file load for /reload).
+function MSC.HookProfessionWindows()
+    HookModernProfessions()
+    if not MSC.TradeSkillHooked and TradeSkillFrame_Update then
+        hooksecurefunc("TradeSkillFrame_Update", MSC.UpdateTradeSkillOverlays)
+        if TradeSkillFrame_SetSelection then
+            hooksecurefunc("TradeSkillFrame_SetSelection", function()
+                C_Timer.After(0.05, MSC.UpdateTradeSkillOverlays)
+            end)
         end
+        MSC.TradeSkillHooked = true
+    end
+    if not MSC.CraftHooked and CraftFrame_Update then
+        hooksecurefunc("CraftFrame_Update", MSC.UpdateCraftOverlays)
+        if CraftFrame_SetSelection then
+            hooksecurefunc("CraftFrame_SetSelection", function()
+                C_Timer.After(0.05, MSC.UpdateCraftOverlays)
+            end)
+        end
+        MSC.CraftHooked = true
     end
 end
 
@@ -984,7 +1102,9 @@ end
 -- Draws (or hides, when overlayType is nil) the arrow on a bag button. The
 -- texture lives on a child frame raised above the button, so the button's own
 -- child frames and bag-addon refreshes can't cover it.
-function MSC.SetBagArrow(button, overlayType)
+-- `place` (optional, used when the arrow is first created) moves it off the
+-- default top-right corner: { point = "TOPLEFT", x = 2, y = -2, size = 14 }.
+function MSC.SetBagArrow(button, overlayType, place)
     if not button then return end
     if not overlayType then
         if button.SGJ_OverlayFrame then button.SGJ_OverlayFrame:Hide() end
@@ -997,8 +1117,10 @@ function MSC.SetBagArrow(button, overlayType)
         local holder = CreateFrame("Frame", nil, button)
         holder:SetAllPoints(button)
         button.SGJ_Overlay = holder:CreateTexture(nil, "OVERLAY", nil, 7)
-        button.SGJ_Overlay:SetSize(18, 18)
-        button.SGJ_Overlay:SetPoint("TOPRIGHT", holder, "TOPRIGHT", -2, -2)
+        local point = (place and place.point) or "TOPRIGHT"
+        local size = (place and place.size) or 18
+        button.SGJ_Overlay:SetSize(size, size)
+        button.SGJ_Overlay:SetPoint(point, holder, point, (place and place.x) or -2, (place and place.y) or -2)
         button.SGJ_OverlayFrame = holder
     end
 
@@ -1316,6 +1438,99 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         baganatorEvents:SetScript("OnEvent", function()
             wipe(verdictCache)
             C_Timer.After(0.5, MSC.RequestBaganatorRefresh)
+        end)
+    end
+
+    -- [[ 5. GUDABAGS SUPPORT ]]
+    -- GudaBags.API.OnItemButtonUpdate(callback(button, bagID, slot)) fires
+    -- after each real-item update on its item buttons (bags, bank, mail; not
+    -- cached-character or read-only views). It doesn't fire when a pooled
+    -- button is reused for an empty or drop-target slot, but every one of
+    -- those paths hides GudaBags' own upgradeArrow texture, so hooking that
+    -- Hide clears SGJ's arrow too. The arrow sits top-left where GudaBags
+    -- puts its Pawn arrow (item level text owns the top-right corner).
+    if CheckAddOnLoaded("GudaBags") and GudaBags and GudaBags.API and type(GudaBags.API.OnItemButtonUpdate) == "function" then
+        local PLACE = { point = "TOPLEFT", x = 1, y = -1, size = 15 }
+        local known = setmetatable({}, { __mode = "k" })
+
+        local function GetGudaLink(button)
+            local data = button.itemData
+            local link = data and (data.link or data.itemLink)
+            if not link and data and data.bagID and data.slot then
+                link = GetContainerItemLink(data.bagID, data.slot)
+            end
+            return link
+        end
+
+        -- A real, live item (not an empty/drop-target pseudo slot or a cached view)
+        local function HasRealItem(button)
+            local data = button.itemData
+            return data and not button.isReadOnly and not data.isEmptySlots
+                and not data.isDropTarget and not data.isGuildBank
+        end
+
+        -- SetItem runs many times per refresh; judge once, on the next frame.
+        local pending, flushQueued = {}, false
+        local function Flush()
+            flushQueued = false
+            for button in pairs(pending) do
+                pending[button] = nil
+                if button:IsShown() and HasRealItem(button) then
+                    local link = GetGudaLink(button)
+                    local verdict
+                    if link and not (SGJ_Settings and SGJ_Settings.ShowBagArrows == false) then
+                        local weights, specName = MSC.GetCurrentWeights()
+                        verdict = MSC.GetBagArrowVerdict(link, weights, specName)
+                    end
+                    MSC.SetBagArrow(button, verdict, PLACE)
+                else
+                    MSC.SetBagArrow(button, nil)
+                end
+            end
+        end
+        local function Queue(button)
+            pending[button] = true
+            if not flushQueued then
+                flushQueued = true
+                C_Timer.After(0, Flush)
+            end
+        end
+
+        GudaBags.API.OnItemButtonUpdate(function(button)
+            if not button then return end
+            if not known[button] then
+                known[button] = true
+                if button.upgradeArrow and button.upgradeArrow.Hide then
+                    -- Also hidden on GudaBags' own Pawn-arrow repaints, so a
+                    -- button that still holds a real item is re-judged instead.
+                    hooksecurefunc(button.upgradeArrow, "Hide", function()
+                        if HasRealItem(button) then Queue(button)
+                        else
+                            pending[button] = nil
+                            MSC.SetBagArrow(button, nil)
+                        end
+                    end)
+                end
+                button:HookScript("OnHide", function() MSC.SetBagArrow(button, nil) end)
+            end
+            Queue(button)
+        end)
+
+        -- Re-judge every visible GudaBags button (gear, level, talents or the
+        -- SGJ arrow settings changed; GudaBags won't redraw for those).
+        function MSC.RefreshGudaBagsOverlays()
+            for button in pairs(known) do
+                if button:IsShown() and HasRealItem(button) then Queue(button) end
+            end
+        end
+
+        local gudaEvents = CreateFrame("Frame")
+        gudaEvents:RegisterEvent("PLAYER_LEVEL_UP")
+        gudaEvents:RegisterEvent("PLAYER_TALENT_UPDATE")
+        gudaEvents:RegisterEvent("CHARACTER_POINTS_CHANGED")
+        gudaEvents:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        gudaEvents:SetScript("OnEvent", function()
+            C_Timer.After(0.5, MSC.RefreshGudaBagsOverlays)
         end)
     end
 end)
@@ -2204,10 +2419,24 @@ function MSC.InitSettingsView(parent)
     local cbCamping = CreateCheck(MSC.L["Assume Consumables"], "AssumeCampingBuffs", MSC.L["Assumes temporary weapon buffs like Sharpening Stones or Weightstones."], ddWorldPreset, 0, -5)
     cbCamping:HookScript("OnClick", InvalidateBuffCaches)
 
+    -- Forever: from 50, hit and defense targets slide toward raid caps
+    -- (MSC.ForeverCaps); turn off to keep leveling targets until 60.
+    local lastBuffRow = cbCamping
+    if MSC.IsForever then
+        local cbRaidPrep = CreateCheck(MSC.L["Gear for Raiding"], "GearForRaiding", MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 16% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."], cbCamping, 0, -5)
+        cbRaidPrep:HookScript("OnClick", function()
+            MSC.CachedWeights = nil
+            if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
+            if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
+            InvalidateBuffCaches()
+        end)
+        lastBuffRow = cbRaidPrep
+    end
+
     -- ==========================================
     -- SECTION 4: CHARACTER PROFILE
     -- ==========================================
-    local hProfile = CreateHeader(MSC.L["Character Profile"], ddWorldPreset, -25)
+    local hProfile = CreateHeader(MSC.L["Character Profile"], lastBuffRow, -25)
     local specOptions = { { text = MSC.L["Auto-Detect"], val = "AUTO" } }; local seen = { ["AUTO"] = true }; local profileList = {}
     if MSC.CurrentClass then
         local function AddList(listSource)
@@ -2613,6 +2842,7 @@ function MSC.RefreshAllBagOverlays()
         if frame:IsShown() then MSC.UpdateBagOverlays(frame) end
     end)
     if MSC.RefreshBagnonOverlays then MSC.RefreshBagnonOverlays() end
+    if MSC.RefreshGudaBagsOverlays then MSC.RefreshGudaBagsOverlays() end
 end
 
 function MSC.QueueBagOverlayRefresh()
@@ -2791,6 +3021,7 @@ loader:SetScript("OnEvent", function(self, event, name)
             AssumeRaidBuffs = false,
             AssumeWorldBuffs = false,
             AssumeCampingBuffs = false,
+            GearForRaiding = true, -- Forever: hit/defense targets slide to raid caps from 50
             RaidBuffPreset = "off",
             WorldBuffPreset = "off",
             RaidBuffToggles = {},
@@ -2917,22 +3148,8 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
 end
 
 -- [[ CATCH-ALL FOR UI RELOADS ]]
-local IsLoaded = (C_AddOns and C_AddOns.IsAddOnLoaded) or IsAddOnLoaded
-if IsLoaded("Blizzard_TradeSkillUI") and not MSC.TradeSkillHooked then
-    if TradeSkillFrame_Update then
-        hooksecurefunc("TradeSkillFrame_Update", function()
-            if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
-        end)
-        if TradeSkillFrame_SetSelection then
-            hooksecurefunc("TradeSkillFrame_SetSelection", function()
-                C_Timer.After(0.05, function()
-                    if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
-                end)
-            end)
-        end
-        MSC.TradeSkillHooked = true
-    end
-end
+-- The profession addons may already be loaded (e.g. after /reload).
+MSC.HookProfessionWindows()
 
 -- =============================================================
 -- BLIZZARD UI HOTFIX

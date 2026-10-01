@@ -103,7 +103,7 @@ Shaman.ValidWeapons = {
     [4]=true, [5]=true,   -- 1H/2H Maces (2H via Talent)
     [10]=true,            -- Staves
     [13]=true, [15]=true, -- Fists, Daggers
-    [6]=true              -- Shields (Technically Armor, but useful to track context)
+    -- (No [6]: weapon subclass 6 is Polearms, which Shamans can't use; shields are armor.)
 }
 
 function Shaman:GetSpec()

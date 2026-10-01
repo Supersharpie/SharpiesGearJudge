@@ -82,7 +82,7 @@ function MSC:LookupRawWeights(profileName)
         if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[profileName] then
             rawWeights = MSC.CurrentClass.Weights[profileName]
         elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[profileName] then
-            rawWeights = MSC.CurrentClass.LevelingWeights[profileName]
+            rawWeights = MSC:GetLevelingRow(MSC.CurrentClass, profileName)
         elseif MSC.CurrentClass.Profiles and MSC.CurrentClass.Profiles[profileName] then
             rawWeights = MSC.CurrentClass.Profiles[profileName]
         elseif MSC.CurrentClass.LevelingBrackets and MSC.CurrentClass.LevelingBrackets[profileName] then
@@ -131,8 +131,89 @@ end
 -- than raising an error on every tooltip.
 local MAX_TALENT_TIERS, MAX_TALENT_COLUMNS = 11, 4
 
+-- Forever's talent window is the modern trait system (Blizzard_PlayerSpells,
+-- Camelot overrides): one trait tree per class whose node groups are the
+-- three Classic trees, in Classic tab order. Talents are trait nodes, read
+-- from the active spec group's config. Returns configID, treeID or nil
+-- (Classic Era / TBC have no class-talent trait config and use the globals).
+local function GetTraitTalentConfig()
+    if not (C_Traits and C_Traits.GetConfigInfo and C_Traits.GetTreeNodes and C_Traits.GetNodeInfo) then return nil end
+    local configID
+    local spec = C_SpecializationInfo
+    if spec and spec.GetActiveSpecGroup and spec.GetCombatConfigIDForSpecGroup then
+        local ok, group = pcall(spec.GetActiveSpecGroup)
+        if ok and group then
+            local ok2, id = pcall(spec.GetCombatConfigIDForSpecGroup, group)
+            if ok2 then configID = id end
+        end
+    end
+    if not configID and C_ClassTalents and C_ClassTalents.GetActiveConfigID then
+        local ok, id = pcall(C_ClassTalents.GetActiveConfigID)
+        if ok then configID = id end
+    end
+    if not configID then return nil end
+    local ok, info = pcall(C_Traits.GetConfigInfo, configID)
+    local treeID = ok and info and info.treeIDs and info.treeIDs[1]
+    if not treeID then return nil end
+    return configID, treeID
+end
+
+local function GetTraitNodeName(configID, node)
+    local entryID = (node.activeEntry and node.activeEntry.entryID) or (node.entryIDs and node.entryIDs[1])
+    if not entryID then return nil end
+    local ok, entry = pcall(C_Traits.GetEntryInfo, configID, entryID)
+    if not ok or not entry or not entry.definitionID then return nil end
+    local okDef, def = pcall(C_Traits.GetDefinitionInfo, entry.definitionID)
+    if not okDef or not def then return nil end
+    local name = def.overrideName
+    if (not name or name == "") and def.spellID then
+        if C_Spell and C_Spell.GetSpellName then name = C_Spell.GetSpellName(def.spellID)
+        elseif GetSpellInfo then name = GetSpellInfo(def.spellID) end
+    end
+    if name == "" then return nil end
+    return name
+end
+
+-- Calls fn(name, rank, tab) for every named talent node in the trait tree.
+-- Returns false when this client has no class-talent trait config.
+function MSC.ForEachTraitTalent(fn)
+    local configID, treeID = GetTraitTalentConfig()
+    if not configID then return false end
+
+    local tabOfGroup = {}
+    local okD, displays = pcall(C_Traits.GetGroupDisplayInfoByTreeID, treeID)
+    if okD and type(displays) == "table" then
+        for i, d in ipairs(displays) do
+            if d.groupID then tabOfGroup[d.groupID] = i end
+        end
+    end
+
+    local okN, nodes = pcall(C_Traits.GetTreeNodes, treeID)
+    if not okN or type(nodes) ~= "table" then return false end
+    for _, nodeID in ipairs(nodes) do
+        local okI, node = pcall(C_Traits.GetNodeInfo, configID, nodeID)
+        if okI and type(node) == "table" and node.ID and node.ID ~= 0 then
+            local name = GetTraitNodeName(configID, node)
+            if name then
+                local tab
+                for _, groupID in ipairs(node.groupIDs or {}) do
+                    if tabOfGroup[groupID] then tab = tabOfGroup[groupID]; break end
+                end
+                fn(name, tonumber(node.activeRank) or tonumber(node.ranksPurchased) or 0, tab)
+            end
+        end
+    end
+    return true
+end
+
 -- Calls fn(name, rank) for each talent in the tab; stops early if fn returns true.
 function MSC.ForEachTalent(tab, fn)
+    if MSC.TraitTalentData then
+        for _, t in ipairs(MSC.TraitTalentData) do
+            if t.tab == tab and fn(t.name, t.rank) then return end
+        end
+        return
+    end
     if GetNumTalents then
         for i = 1, GetNumTalents(tab) or 0 do
             local name, _, _, _, rank = GetTalentInfo(tab, i)
@@ -154,6 +235,14 @@ function MSC.ForEachTalent(tab, fn)
 end
 
 function MSC.GetTabPointsSpent(tab)
+    if not MSC.TalentCacheLoaded then MSC:BuildTalentCache() end
+    if MSC.TraitTalentData then
+        local total = 0
+        for _, t in ipairs(MSC.TraitTalentData) do
+            if t.tab == tab then total = total + t.rank end
+        end
+        return total
+    end
     if GetNumTalents and GetTalentTabInfo then
         local _, _, _, _, pointsSpent = GetTalentTabInfo(tab)
         return tonumber(pointsSpent) or 0
@@ -165,6 +254,22 @@ end
 
 function MSC:BuildTalentCache()
     MSC.TalentCache = {}
+    MSC.TraitTalentData = nil
+
+    -- Forever: read the trait tree (see GetTraitTalentConfig). Only used when
+    -- it actually yields talents; otherwise fall through to the Classic path.
+    local traitData = {}
+    if MSC.ForEachTraitTalent(function(name, rank, tab)
+        table.insert(traitData, { name = name, rank = rank, tab = tab })
+    end) and #traitData > 0 then
+        for _, t in ipairs(traitData) do
+            local k = TalentKey(t.name)
+            MSC.TalentCache[k] = math.max(MSC.TalentCache[k] or 0, t.rank)
+        end
+        MSC.TraitTalentData = traitData
+        MSC.TalentCacheLoaded = true
+        return
+    end
 
     if not GetNumTalentTabs then
         MSC.TalentCacheLoaded = true
@@ -248,6 +353,90 @@ function MSC:GetLowLevelRole(roleMarkers)
     return bestRole
 end
 
+-- Forever leveling blend (TBC-style smooth weights). Each LevelingWeights row
+-- "<role>_<lo>_<hi>" holds the weights at level <lo>; between <lo> and the
+-- next band's start the weights slide linearly toward that band's row (same
+-- role, or the module's LevelingNext[key] when the chain changes name, e.g.
+-- Paladin Leveling_41_51 -> Leveling_Ret_52_59). A role's last band holds
+-- flat. Levels outside the band clamp, so previewing another band's profile
+-- shows its start (below) or end (above) weights. Era/TBC rows pass through.
+local function ParseLevelingBand(key)
+    local role, lo, hi = string.match(key, "^(Leveling.-)_(%d+)_(%d+)$")
+    return role, tonumber(lo), tonumber(hi)
+end
+
+-- Forever per-spec curves (Classes/Forever/LevelingCurves.lua): an ordered
+-- list of { level, weights } keyframes. Linear between keyframes, flat
+-- outside them. A stat missing from one keyframe counts as 0 there; explicit
+-- 0s are kept in the result (MSC_WEAPON_DPS_MELEE = 0 is an override), and a
+-- blended value that lands in the scorer's 0-0.02 "useless" band becomes 0.
+function MSC.EvaluateLevelingCurve(curve, level)
+    local n = #curve
+    if n == 0 then return {} end
+    local a, b = curve[1], curve[n]
+    if level <= a[1] then b = a
+    elseif level >= b[1] then a = b
+    else
+        for i = 1, n - 1 do
+            if level >= curve[i][1] and level <= curve[i + 1][1] then a, b = curve[i], curve[i + 1]; break end
+        end
+    end
+    local t = (b[1] > a[1]) and ((level - a[1]) / (b[1] - a[1])) or 0
+    local out = {}
+    local function put(stat)
+        if out[stat] ~= nil then return end
+        local va, vb = a[2][stat] or 0, b[2][stat] or 0
+        local v = va + (vb - va) * t
+        if v > 0 and v < 0.02 then v = 0 end
+        out[stat] = v
+    end
+    for stat in pairs(a[2]) do put(stat) end
+    for stat in pairs(b[2]) do put(stat) end
+    return out
+end
+
+function MSC:GetLevelingRow(module, key)
+    local rows = module and module.LevelingWeights
+    local row = rows and rows[key]
+    if not row or not MSC.IsForever then return row end
+
+    local role, lo, hi = ParseLevelingBand(key)
+    if not role then return row end
+
+    -- Per-spec curve: weights at the player's level, held inside the chosen
+    -- band so previewing another band's profile shows that band's weights.
+    local curves = module.LevelingCurves
+    local curve = curves and (curves[role] or (MSC.LevelingCurveAlias and curves[MSC.LevelingCurveAlias[role] or ""]))
+    if curve then
+        local level = UnitLevel("player")
+        if level < lo then level = lo elseif level > hi then level = hi end
+        return MSC.EvaluateLevelingCurve(curve, level)
+    end
+
+    local nextKey = module.LevelingNext and module.LevelingNext[key]
+    local nextLo = nextKey and rows[nextKey] and select(2, ParseLevelingBand(nextKey))
+    if not nextLo then
+        nextKey = nil
+        for k in pairs(rows) do
+            local r, l = ParseLevelingBand(k)
+            if r == role and l and l > lo and (not nextLo or l < nextLo) then nextKey, nextLo = k, l end
+        end
+    end
+    if not nextKey then return row end
+
+    local t = (UnitLevel("player") - lo) / (nextLo - lo)
+    if t <= 0 then return row end
+    local nextRow = rows[nextKey]
+    if t >= 1 then return nextRow end
+
+    local blended = {}
+    for stat, v in pairs(row) do blended[stat] = v + ((nextRow[stat] or 0) - v) * t end
+    for stat, v in pairs(nextRow) do
+        if row[stat] == nil then blended[stat] = v * t end
+    end
+    return blended
+end
+
 -- =========================================================================
 -- 2. WEIGHT DISPATCHER
 -- =========================================================================
@@ -292,7 +481,7 @@ function MSC:ApplyDynamicAdjustments()
             if MSC.CurrentClass and MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
                 rawWeights = MSC.CurrentClass.Weights[specKey]
             elseif MSC.CurrentClass and MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
-                rawWeights = MSC.CurrentClass.LevelingWeights[specKey]
+                rawWeights = MSC:GetLevelingRow(MSC.CurrentClass, specKey)
             end
         end
         
@@ -315,7 +504,7 @@ function MSC:ApplyDynamicAdjustments()
             if MSC.CurrentClass.Weights and MSC.CurrentClass.Weights[specKey] then
                 rawWeights = MSC.CurrentClass.Weights[specKey]
             elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
-                rawWeights = MSC.CurrentClass.LevelingWeights[specKey]
+                rawWeights = MSC:GetLevelingRow(MSC.CurrentClass, specKey)
             end
         end
     end
@@ -368,11 +557,16 @@ talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
 talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
 talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
 talentTracker:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+talentTracker:RegisterEvent("PLAYER_LEVEL_UP") -- Forever leveling weights blend by level
+-- Forever's trait-based talent window commits through the trait config
+-- (unknown events raise an error on Classic clients, hence the pcall)
+pcall(talentTracker.RegisterEvent, talentTracker, "TRAIT_CONFIG_UPDATED")
 
 talentTracker:SetScript("OnEvent", function(self, event, unit)
     if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
 
-    if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+    if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED"
+        or event == "TRAIT_CONFIG_UPDATED" then
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
         MSC:BumpScoringRevision()

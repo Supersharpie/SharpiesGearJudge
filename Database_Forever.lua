@@ -78,8 +78,9 @@ MSC.ShortNames = {
 MSC.StatAliases = {
     ["MSC_WEAPON_DPS"] = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
     ["MSC_WAND_DPS"] = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
-    ["MSC_WEAPON_SPEED"] = "ITEM_MOD_WEAPON_SPEED_SHORT",
-    ["MSC_OH_WEAPON_SPEED"] = "ITEM_MOD_WEAPON_SPEED_SHORT",
+    -- (MSC_WEAPON_SPEED / MSC_OH_WEAPON_SPEED are NOT aliased: weights are
+    -- keyed on them and GetItemScore matches stat == "MSC_WEAPON_SPEED", so
+    -- renaming the item stat made every weapon-speed weight do nothing.)
 
     ["ITEM_MOD_RESISTANCE_ALL_SHORT"] = "ITEM_MOD_ALL_RESISTANCE_SHORT",
 

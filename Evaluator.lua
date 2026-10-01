@@ -76,9 +76,13 @@ function MSC:SafeCopy(orig, dest)
     return copy
 end
 
-function MSC:GetWeaponSpecBonus(itemLink, class, specName, weights)
+-- slotId (16 main hand / 17 off hand) and specName let class bonuses depend
+-- on the hand and profile (e.g. a Rogue's dagger main-hand requirement).
+-- otherHandLink: the weapon in the other hand (for bonuses that apply once
+-- per character, like the weapon racials).
+function MSC:GetWeaponSpecBonus(itemLink, class, specName, weights, slotId, otherHandLink)
     if MSC.CurrentClass and MSC.CurrentClass.GetWeaponBonus then
-        return MSC.CurrentClass:GetWeaponBonus(itemLink, weights)
+        return MSC.CurrentClass:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink)
     end
     return 0
 end
@@ -168,7 +172,7 @@ function MSC:EvaluateUpgradeFast(newItemLink, targetSlotID, weights, specName)
             local stats = MSC.SafeGetItemStats(equipped, compSlot, weights, specName)
             oldScore = MSC.GetItemScore(stats, weights, specName, compSlot)
             if compSlot == 16 or compSlot == 17 then
-                oldScore = oldScore + (MSC:GetWeaponSpecBonus(equipped, MSC.CurrentClass, specName, weights) or 0)
+                oldScore = oldScore + (MSC:GetWeaponSpecBonus(equipped, MSC.CurrentClass, specName, weights, compSlot, GetInventoryItemLink("player", compSlot == 16 and 17 or 16)) or 0)
             end
         else
             oldScore = 0
@@ -179,7 +183,7 @@ function MSC:EvaluateUpgradeFast(newItemLink, targetSlotID, weights, specName)
     local newStats = MSC.SafeGetItemStats(newItemLink, compSlot, weights, specName)
     local newScore = MSC.GetItemScore(newStats, weights, specName, compSlot)
     if compSlot == 16 or compSlot == 17 then
-        newScore = newScore + (MSC:GetWeaponSpecBonus(newItemLink, MSC.CurrentClass, specName, weights) or 0)
+        newScore = newScore + (MSC:GetWeaponSpecBonus(newItemLink, MSC.CurrentClass, specName, weights, compSlot, GetInventoryItemLink("player", compSlot == 16 and 17 or 16)) or 0)
     end
 
     return newScore, oldScore
@@ -250,13 +254,8 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
                     end
                 end
             end
-            local evalStats = stats
-            if stats["ITEM_MOD_SPELL_POWER_SHORT"] then
-                evalStats = MSC:SafeCopy(stats, {})
-                evalStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = (evalStats["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + evalStats["ITEM_MOD_SPELL_POWER_SHORT"]
-            end
-            
-            local itemScore = MSC.GetItemScore(evalStats, weights, specName, slotID)
+            -- (Spell Power's healing half is scored inside MSC.GetItemScore.)
+            local itemScore = MSC.GetItemScore(stats, weights, specName, slotID)
             totalScore = totalScore + itemScore
 
             -- [[ 5. ACCUMULATE TOTALS ]]
@@ -298,8 +297,8 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
 
     -- [[ 8. WEAPON SPECIALIZATION BONUS ]]
     local mh = gearTable[16]; local oh = gearTable[17]
-    if mh then totalScore = totalScore + MSC:GetWeaponSpecBonus(mh, MSC.CurrentClass, specName, weights) end
-    if oh then totalScore = totalScore + MSC:GetWeaponSpecBonus(oh, MSC.CurrentClass, specName, weights) end
+    if mh then totalScore = totalScore + MSC:GetWeaponSpecBonus(mh, MSC.CurrentClass, specName, weights, 16) end
+    if oh then totalScore = totalScore + MSC:GetWeaponSpecBonus(oh, MSC.CurrentClass, specName, weights, 17, mh) end
 
     -- [[ 9. META GEM ACTIVATION CHECK (TBC Only) ]]
     if not MSC.IsVanillaRules and metaGemID and MSC.CheckMetaRequirements then
@@ -525,6 +524,22 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     local isNew2H = (newLoc == "INVTYPE_2HWEAPON" or newLoc == "INVTYPE_STAFF" or newLoc == "INVTYPE_POLEARM")
     local is2HSpec = (specName and (string_find(specName, "ARMS") or string_find(specName, "RET") or string_find(specName, "2H")))
 
+    -- Shield tanks (Protection Warriors and Paladins, Shaman tank profiles)
+    -- need the shield for Shield Block, Shield Slam, Holy Shield and their
+    -- block stats, so a two-hander is never shown as an upgrade for them.
+    -- Skipped when a two-hander is already equipped (no shield to lose).
+    local blocks2HForTank = false
+    if isNew2H and targetSlotID == 16 and specName then
+        local _, cls = UnitClass("player")
+        local upSpec = string.upper(specName)
+        if (cls == "WARRIOR" or cls == "PALADIN" or cls == "SHAMAN")
+            and (string_find(upSpec, "TANK") or string_find(upSpec, "PROT")) then
+            local currLoc = originalMH and select(9, GetItemInfo(originalMH))
+            local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
+            blocks2HForTank = not isCurrent2H
+        end
+    end
+
     if targetSlotID == 16 then
         if isNew2H then
             Scratch_Gear[17] = nil 
@@ -611,9 +626,26 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
         ["DEFENSE_FLOOR"]                   = MSC.L["Def"] 
     }
     
+    -- Forever: hit is valued on its true curve against the post-swap total
+    -- (Hit Rating, 10 = 1%), so hit past a cap is discounted and hit that
+    -- drops back below one is charged in full (MSC.ForeverHitCapCorrection).
+    if MSC.IsForever and MSC.ForeverHitCapCorrection then
+        local function HitRating(t)
+            return (t["ITEM_MOD_HIT_RATING_SHORT"] or 0) + (t["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0)
+                + (t["ITEM_MOD_HIT_MELEE_RATING_SHORT"] or 0) + (t["ITEM_MOD_HIT_RANGED_RATING_SHORT"] or 0)
+        end
+        local correction, droppedBy = MSC.ForeverHitCapCorrection(weights, HitRating(currentStatsTotal), HitRating(newStatsTotal))
+        newScore = newScore + correction
+        if droppedBy then
+            contextMsg = (contextMsg or "") .. string_format(MSC.L[" |cffff0000(Cap %.1f %s)|r"], droppedBy, MSC.L["Hit"])
+        end
+    end
+
     if MSC.SAFETY_CAPS[playerClass] then
         for _, rule in ipairs(MSC.SAFETY_CAPS[playerClass]) do
-            if rule.stat ~= "DEFENSE_FLOOR" then
+            if MSC.IsForever and rule.stat ~= "DEFENSE_FLOOR" then
+                -- handled above
+            elseif rule.stat ~= "DEFENSE_FLOOR" then
                 local trueCap = rule.base
                 if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
                 if MSC.BuffEngine and (rule.stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then
@@ -679,6 +711,12 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                 end
             end
         end
+    end
+
+    -- A shield tank losing the shield for a two-hander: never an upgrade.
+    if blocks2HForTank then
+        if newScore > currentScore then newScore = currentScore end
+        contextMsg = (contextMsg or "") .. MSC.L[" |cffff0000(Tank: needs a shield)|r"]
     end
 
     -- [[ 8. FINALIZE & STORE CACHE ]]

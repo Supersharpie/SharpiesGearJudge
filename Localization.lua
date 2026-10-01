@@ -200,6 +200,7 @@ L["|cffff0000!!! WARNING: Breaking Set Bonus (%d) !!!|r"] = "|cffff0000!!! WARNI
 L["|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r"] = "|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r"
 L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"] = "  |cffff0000(Breaks %d-pc Set Bonus!)|r"
 L["|cffff0000(Not 2Hander)|r"] = "|cffff0000(Not 2Hander)|r"
+L[" |cffff0000(Tank: needs a shield)|r"] = " |cffff0000(Tank: needs a shield)|r"
 L["|cff00ff00(w/ %s)|r"] = "|cff00ff00(w/ %s)|r"
 L["|cffff0000(No OH found)|r"] = "|cffff0000(No OH found)|r"
 L["|cffff0000(No MH found)|r"] = "|cffff0000(No MH found)|r"

@@ -1,5 +1,99 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.1.0
+
+### ✨ Improvements
+- **Rebuilt Forever Leveling Weights for All 28 Specs**: Every Forever leveling spec now has its own weight curve, with keyframes every 5 levels from 10 to 59 (and at level 1 for each class's default spec). Weights blend level by level between keyframes, and keyframes also sit on the levels where something changes, such as Cat Form at 20 or a key talent tier. Each spec was worked out from what it can actually use at each level:
+	- the talents it can reach by then, from Forever's current talent trees;
+	- the spells and ranks it has learned;
+	- the stats that actually drop on Forever gear at that level;
+	- the Forever client's own per-level tables for crit per Agility, crit per Intellect, and mob health, damage and armor.
+
+	Each curve was checked for math and game timing, then against every other class for consistency, and the review's findings were applied (one survival unit for tanks, one regen rule for melee, one Hp5 rule for tanks, one Agility model for casters, Flurry and healer regen talents handled the same way everywhere). Stats now rise, fall or drop off as they gain or lose value: a ranged Hunter's Crit is worth 2.4 at level 10 and 16.8 at 59, and a stat that stops mattering fades to zero instead of holding its early value. Profile names and the profile list are unchanged; each profile now shows the weights for your exact level.
+- **Forever Leveling Weights Follow Your Talents (about 80 talent hooks)**: The curves are built for a typical build at each level; your actual talents now adjust them. Around 45 new talent hooks were added and 35 existing ones corrected, across all nine classes. A few examples:
+	- Warrior: Deep Wounds, Dual Wield Specialization, Raging Blows, Shield Slam, Weaponmaster's mace and sword branches, and the Mortal Strike gate with the Spearing Strike, Bloodthrill and Improved Slam speed hooks for Arms builds that skip it.
+	- Paladin: Vengeance, Two-Handed and One-Handed Weapon Specialization, Illumination, Reverence, Holy Shield, Redoubt, Shield Specialization's Block Value and mana side, and a Seal of Command hook for builds still on Seal of Righteousness at 20+.
+	- Hunter: Efficiency, Resourcefulness, Bestial Discipline, Rapid Recuperation, Lone Wolf (petless builds value Stamina and melee more), Barrage, Deadly Aspects and Improved Tracking.
+	- Rogue: Dual Wield Specialization, Mutilate, and Hack and Slash's sword and mace branches.
+	- Priest: Meditation, Spirit Tap, Wand Specialization, Mind Flay, Divine Aegis, Penance and Prayer of Mending, and a restore for Priests who reach 40 without Shadowform.
+	- Mage: Improved Frostbolt, Wand Specialization, Arcane Meditation and Frost Channeling.
+	- Warlock: Soul Harvesting and Fel Vitality.
+	- Shaman: Mindfulness, Improved Stormstrike, Spirit Weapons (no Parry value without it), and hooks that undo the baked Stormstrike, Shamanistic Focus and Flurry for builds that don't have them. Lava Burst's school split is reversed if you skipped it.
+	- Druid: Natural Shapeshifter, Predatory Strikes (Cat and Bear), Savage Fury and Predatory Instincts now apply to Bears too, and Reflection follows your actual rank.
+
+	Every crit talent now also moves the primary stat that carries crit (Agility for melee, Intellect for spells), using the client's crit-per-point tables for your class and level. Where a profile assumes a talent nearly everyone takes (Flurry for Enhancement and dual-wield Fury, Reflection, Reverence, Mindfulness, Shadowform), a hook now removes that assumption for players without it.
+- **Forever Hit and Tank Caps Follow Your Level (Gear for Raiding)**: Hit caps now match what you're fighting. While leveling that's 5% melee/ranged and 3% spell hit against same-level mobs. From level 50 the targets slide toward the raid caps (9% hit, 16% spell hit), reaching them at 60, so you can gear toward raiding in your 50s. Tanks get the same slide toward 440 Defense, and shield tanks (Warriors, Paladins and Shamans) are checked for being uncrushable from 50 (102.4% avoidance and block, counting Shield Block or Holy Shield). A new **Gear for Raiding** option in Protocol (on by default) turns the slide off if you won't raid. `/sgj hitcheck` shows your hit, where it comes from, and your current targets.
+- **Forever Relics Are Rated**: All 25 of Forever's new librams, idols and totems now score for the specs that use them. So do the 19 Classic relics Forever kept unchanged, such as Idol of Ferocity, Libram of Light, Totem of Life and Libram of Truth. For those, a bonus to one spell counts at that spell's share of the spec's healing or damage, so +83 to Flash of Light isn't treated as +83 to all healing. Their effects (percentages, mana savings, cooldowns) are converted into equivalent stats for your spec:
+	- Mystic Mushroom counts as 5% of your Spirit.
+	- Mark of Urs'endris counts as 4% of your item armor.
+	- Polished Driftwood Icon counts as the Mp5 from letting 8% of your regen continue while casting.
+	- Steadfast Libram counts as 30% of your shield's block value while Holy Shield is up.
+
+	Effects a spec doesn't use count for nothing, such as Swiftmend idols for a Cat Druid. Small cooldown and duration effects use estimated values.
+- **Gear Judge in the Game's AddOns Options**: Sharpie's Gear Judge now has a page under Game Menu > Options > AddOns. It lets you open the Gear Judge window or its settings, see What's New, and turn the minimap button back on, and it lists the chat commands. This helps anyone who has hidden the minimap button or doesn't know `/sgj`.
+- **What's New Window After Updates**: The first time you log in after installing a new version, a small window shows a quick rundown of what changed and the Discord invite. The Discord is where to request features, report bugs and flag weights that feel off. The link sits in a box so you can copy it with Ctrl+C. The window appears once per version, a few seconds after login (never during combat). Reopen it any time with `/sgj whatsnew`.
+- **Upgrade Arrows in Profession Windows**: Recipes that craft an upgrade for you get a green arrow on the recipe list and on the selected recipe's icon. On Forever this never worked: Forever uses the newer professions window (the same one for every profession, Enchanting included), which Gear Judge didn't know about. It is now supported. On Classic Era and TBC the existing arrows in the profession window now also appear in the separate Enchanting window, so enchanter-made wands and rods get one. Enchants themselves aren't items and get no arrow.
+- **GudaBags Support**: Bag upgrade arrows now show in GudaBags (bags, bank and mail), in the top-left corner where GudaBags puts its own upgrade arrow. They follow **Show Bag Upgrade Arrows**, update when your gear, level or talents change, and are not drawn on other characters' cached bags.
+
+### 🐛 Bug Fixes
+- **Forever Hit Caps Didn't Work**: The old caps read a hit value without gear Hit Rating, added general hit talents (Precision, Surefooted, Suppression, Tidal Focus, Nature's Reach) on top of a number that already included them, compared raw rating against percent caps for Rogues, Warriors and Shamans, and gave an item full value for hit past the cap. Hit is now read correctly and valued on its real curve against your total after the swap: hit past the cap is discounted, and a swap that drops you below the cap is charged for what you lose. School-only talents are still added (Shadow Focus, Elemental Precision, Arcane Focus, and Holy Precision for Smite at 6% per rank, so 3/3 covers the leveling cap by itself). Forever Shamans use the single-weapon cap, since they can't dual-wield, and leveling Priests (Shadow and Smite) now have a hit cap too. With working caps, the temporary halving of caster Hit weights from level 30 is gone, so Hit gets its full value below the cap and no longer dips at 30.
+- **Weapon Speed Weights Did Nothing on Forever**: A stat rename meant a weapon's speed never matched its weight. Speed now counts where a spec values it (slow two-handers for Arms Warriors and Retribution Paladins, Stormstrike Enhancement Shamans, and slower daggers for Dagger and Hemo Rogues). It only applies to the main hand; the off-hand and ranged slot use their own values, so a slow bow no longer inherits a melee preference.
+- **Talent Hooks Were Wrong in the Same Few Ways**: Fixing the existing hooks turned up four patterns:
+	- *Flat damage talents only boosted one stat.* Two-Handed Weapon Specialization, Bastion, Piercing Ice, Fire Power, Darkness, Moonfury, Genesis, Naturalist, Gift of Nature, Malediction, Shadow Mastery, Agonizing Flames, Savage Fury, Focused Fire and Ranged Weapon Specialization scaled Spell Power or Attack Power alone, so with the talent every other damage stat lost 5-20% of its value. They now raise the whole damage family together.
+	- *Crit-bonus talents were worth 3-5x too much.* Lethality, Impale, Mortal Shots and Predator's Edge multiplied Crit as if every hit gained the bonus; they only affect yellow attacks or one ability family, so their multipliers are now 1.05-1.25x at max rank instead of 1.4-1.6x. Pandemic no longer boosts Shadow Bolt crits, Ruin no longer boosts DoT crits, and the two no longer multiply each other. Ice Shards no longer applies to Fire Mages and counts at Frost's 65% share for AoE Mages. Shadowform's x2 crit now applies only to the endgame Shadow profiles, since the leveling curve already includes it.
+	- *Forever talent text is the rank-1 value.* Mental Dexterity (33% per rank, was read as 11%), Mental Quickness (15%, was 7.5%) and Spiritual Guidance (5%, was 1%) were under-counted 2-5x. Lightning Reflexes still used Classic's 3% per rank; Forever's is 2%.
+	- *Healer multipliers tilted Healing against mana.* Healing Light, Spiritual Healing, Healing Way and Purification scaled only the Healing weight, over-valuing it against Intellect, Spirit, Mp5 and crit by up to 15%. They now keep the row's balance (Healing Way at Healing Wave's real share of your healing by level).
+- **Profile Detection Fixes**: Several builds landed on the wrong leveling or endgame profile:
+	- Forever's talent window is now the trait-based one, and Gear Judge was reading talents the old way, so a talent point could go unnoticed (one point in Redoubt left a Paladin on the Retribution profile). Talents are now read from the trait tree, which also feeds every talent-based weight adjustment. `/sgj talents` lists what Gear Judge reads, the points in each tree and the profile it picks.
+	- A single filler point in Anticipation (or Spirit Weapons on the way to Rage of the Farseer) switched an Enhancement Shaman to the tank profile; tank now needs Anticipation plus a second point, Toughness 3+, Spirit Weapons, or level 24 or lower.
+	- Careful Aim marked Hunters as ranged, though melee Hunters take it too.
+	- One point in Meditation, Improved Power Word: Shield, Martyrdom or Silent Resolve made a Priest a healer (no wand or hit value); only Improved Renew and Inspiration mark a healer now.
+	- Opportunity and Improved Ambush counted toward the Dagger profile, so a pure Subtlety Rogue fell back to Combat (slow swords); Ghostly Strike or mostly-Subtlety talents now pick Hemo, and Mutilate picks Daggers.
+	- Improved Blizzard needed 2 points to mark an AoE Mage, but a level-20 Mage can only have 1; one point now counts up to level 21.
+	- Talent roles now apply from level 10, when the first talent point arrives, for every class (only Paladins did before). A level-10 character with a Protection, Restoration, Fire, Subtlety or other role point now gets that role's 11-20 weights instead of the default 1-10 row.
+	- The default Druid profile follows your level for form bonuses: Bear Form from 10 to 19 and Cat Form from 20 (level 20 used to keep the Bear Stamina bonus).
+	- At 60, any Warlock with Demonic Pact was scored with the PvP Soul Link profile. Pact is a damage build, so it now gets the Master Demonologist raid profile with that talent and the Demonic Sacrifice raid profile otherwise; Soul Link without Pact still gets the PvP profile.
+- **Weapon Scoring Fixes**:
+	- *Dagger Rogues were shown swords as upgrades.* Backstab and Ambush need a main-hand dagger, and Ghostly Strike and Hemorrhage hit much harder with one, but nothing in the weights told a dagger from a sword. Dagger and Hemo Rogues now get a main-hand dagger bonus (about 20 AP-worth at 20, rising to 45-48 at 59), and Hack and Slash's dagger/fist crit counts at each hand's real share (75% main hand, 20% off hand) instead of fully on both.
+	- *Weapon racials counted twice when dual wielding.* A Human with two swords, a Dwarf with two maces or an Orc with two axes had the racial valued on both weapons; it now counts once, on whichever hand provides it.
+	- *Shield tanks were shown weapons that replace the shield.* Off-hand weapon DPS now counts for nothing on Protection Warrior profiles, and a two-hander is never shown as an upgrade for Protection Warriors, Protection Paladins or Shaman tanks (all versions), since it would take away the shield that Shield Block, Shield Slam, Holy Shield and block stats need. The tooltip says "(Tank: needs a shield)". If you're already using a two-hander, two-handers still compare normally.
+	- *Melee Hunters.* Dual-wielding Hunters (from 20) now use the dual-wield hit curve when a weapon is in the off-hand, and Predator's Edge's off-hand damage raises the value of off-hand weapons.
+	- *Staves and daggers scored as wands.* From level 10, Forever Priest, Mage and Warlock leveling profiles give melee-slot weapon DPS no value, so a high-DPS staff with no caster stats no longer looks like an upgrade.
+	- *Hunters scored thrown weapons like bows.* Hunters can't Auto Shot with a thrown weapon, so it is now rated on its stats only.
+	- *Weapon lists.* Shamans no longer rate polearms (a "shields" entry actually meant polearms, on every version; two-handed axes and maces are still rated). Forever Rogues can now rate one-handed axes, and Druids can rate polearms on Forever and TBC.
+- **Curve Corrections From the Review**:
+	- *Paladin tank Block follows Shield Specialization.* On Forever only rank 3 makes every block restore 6% of max mana (the "33%" is a third per rank). With 3/3, Block Rating keeps the mana part in full; without it, blocks only stop damage and Block is valued like other tanks' (about 0.6x Dodge).
+	- *Bear Druids over-valued Hp5* at about three times the other tanks; a Bear-talented Druid is a tank, so it now uses the same rule (Hp5 = 0.25 x Stamina).
+	- *Level 10-19 Druids under-valued Armor.* Every Druid fights in Bear Form from 10 until Cat Form at 20, and Bear Form multiplies item armor, so Armor is now 0.04-0.047 over those levels (was 0.035).
+- **Healer Spell Power Under-Scored in Tooltips**: Spell Power's healing half only counted in the full-character score, so tooltips and upgrade arrows under-valued Spell Power items for healer profiles. It now counts everywhere (all game versions).
+- **Relics Never Counted, and Were Offered to the Wrong Classes**: A relic's bonus was only shown as a tooltip note and never added to its score, so every libram, idol and totem scored close to nothing in every version; relic bonuses now count, so TBC's existing relic values apply too. Many relics have no "Classes:" line, so a Warrior could be told a Libram was usable; librams are now only for Paladins, idols for Druids and totems for Shamans.
+- **`/sgj options` Did Nothing**: It called a settings window that no longer exists. It now opens the Gear Judge window on its Protocol (settings) page.
+- **Overlapping Text in the Protocol Settings**: The "Assume Consumables" checkbox sat on top of the "Character Profile" heading. The heading now starts below the checkbox.
+
+---
+
+## 🚀 v3.0.18
+
+### ✨ Improvements
+- **Forever Spec Profiles Start at Level 11**: Most classes had only one leveling profile until 21, and the split profiles relied on deep talents a level 11-20 character can't reach. Every Forever class now splits by spec from level 11, reading the tier 1-3 talents you've picked (from Forever's current talent trees). New 11-20 profiles:
+	- **Hunter**: Melee/Survival. Hunters with more melee picks (Deflection, Savage Strikes, Improved Wing Clip) than ranged Marksmanship picks now get the melee profile. The melee profiles were never chosen automatically at any level before; this fixes 21-59 too.
+	- **Mage**: Fire and AoE Grinding. Fire is chosen when you have more Fire points than Frost points. Improved Blizzard still picks AoE.
+	- **Warlock**: Destruction and Demonology, chosen by whichever tree has the most tier 1-3 points.
+	- **Rogue**: Daggers (Puncturing Wounds, Opportunity, Improved Ambush) and Hemo (Subtlety picks).
+	- **Warrior**: Dual Wield, chosen when a weapon is in your off-hand, since no early Fury talent tells dual wield from two-handed.
+	- **Priest**: Smite/Holy (Divine Fury).
+
+	Rogue Daggers/Hemo and Warrior Dual Wield use the same stat weights as their default profiles for now, so only the profile name changes.
+- **Forever Leveling Weights Change Smoothly With Level**: Like TBC, Forever's leveling weights now slide level by level instead of jumping at 21, 41 and 52. Each band's weights are where you start that band, and they blend toward the next band's as you level (e.g. a Warrior's Spirit eases from 2.0 at 11 to 1.0 at 21). The 52-59 profiles hold steady. Weights update when you level up.
+	Some 21-40 profiles had simply left out a stat that 11-20 uses, which would have dropped it early: Wand DPS for Priest, Mage and Warlock, and Health Regen for Arms/Fury Warriors. Those now start 21-40 at their 11-20 value and fade out by 41, so level-20 characters keep valuing wands and Health Regen.
+
+### 🐛 Bug Fixes
+- **Forever Hunters Undervalued Agility**: Hunters get 2 Ranged Attack Power per point of Agility on Forever (as in original Classic), but the ranged Hunter profiles counted 1. Agility is now worth 1 point more in every ranged Forever Hunter profile (3.0, or 3.5 for the Marksmanship raid profiles), so a melee weapon with Attack Power and Stamina no longer beats one with the same amount of Agility. Melee profiles (Survival, Nightfall and the melee leveling profiles) are unchanged, since melee attack power still gets 1 per Agility.
+- **Strength No Longer Counts for Ranged Forever Hunters**: Strength only adds melee attack power, so it's no longer weighted in the ranged Hunter profiles (Default, PvP Marksmanship, Farming and the ranged leveling profiles). The melee profiles still value it.
+- **Hunter Ranged AP Row**: The tooltip's Ranged AP change counted Strength and only 1 per Agility. It now shows 2 per Agility on Era/Forever (1 in TBC) and ignores Strength.
+
+---
+
 ## 🚀 v3.0.17
 
 ### 🐛 Bug Fixes

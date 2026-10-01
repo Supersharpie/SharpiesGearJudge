@@ -88,6 +88,11 @@ function MSC.IsItemUsable(itemLink)
         
         if subClassID == 6 then -- Shield
             if playerClass ~= "WARRIOR" and playerClass ~= "PALADIN" and playerClass ~= "SHAMAN" then result = false end
+        elseif subClassID == 7 or subClassID == 8 or subClassID == 9 then
+            -- Relics: Libram (Paladin), Idol (Druid), Totem (Shaman). Many carry
+            -- no "Classes:" line, so the tooltip scan below can't catch them.
+            local relicClass = (subClassID == 7 and "PALADIN") or (subClassID == 8 and "DRUID") or "SHAMAN"
+            if playerClass ~= relicClass then result = false end
         elseif subClassID > 0 and subClassID <= 4 then
              if subClassID > maxArmor then result = false end
         end
@@ -159,6 +164,10 @@ end
 
 function MSC:GetPlayerStat(statType)
     local val = 0
+    -- Forever gear has Hit Rating, which GetHitModifier() doesn't include.
+    if MSC.IsForever and (statType == "HIT" or statType == "SPELL_HIT") and MSC.GetForeverHitPercent then
+        return (MSC:GetForeverHitPercent(statType == "HIT" and "MELEE" or "SPELL"))
+    end
     if MSC.IsVanillaRules then
         if statType == "HIT" then val = GetHitModifier()
         elseif statType == "SPELL_HIT" then val = MSC.SanitizeStat(GetSpellHitModifier())
@@ -324,7 +333,11 @@ MSC.ForeverWeaponRacials = {
     Orc   = { critPct = 1, subclasses = { [0] = true, [1] = true } },  -- Axe Specialization
 }
 
-function MSC.GetForeverWeaponRacialBonus(itemLink, weights)
+-- otherHandLink: the weapon in the other hand. The racial applies once while
+-- either hand holds that weapon type, so when the other hand already
+-- qualifies this item adds nothing (dual wielders with two swords, or an
+-- off-hand sword next to a main-hand sword).
+function MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
     if not itemLink or not weights then return 0 end
     local _, race = UnitRace("player")
     local racial = race and MSC.ForeverWeaponRacials[race]
@@ -332,6 +345,10 @@ function MSC.GetForeverWeaponRacialBonus(itemLink, weights)
 
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 or not subClassID or not racial.subclasses[subClassID] then return 0 end
+    if otherHandLink then
+        local _, _, _, _, _, _, _, _, _, _, _, otherClass, otherSub = GetItemInfo(otherHandLink)
+        if otherClass == 2 and otherSub and racial.subclasses[otherSub] then return 0 end
+    end
 
     -- Crit weights are "per 1%" (GetItemScore converts rating to percent
     -- before weighting), so +N% crit is worth N x the weight -- exactly what
@@ -356,6 +373,230 @@ end
 -- 1:1 the whole way to 28%, so its marginal value doesn't keep decaying in
 -- that band -- it's a plateau, not a fade. Past 28% both the white miss and
 -- the crit ceiling are maxed out, so Hit provides essentially nothing.
+-- =============================================================
+-- 5.7 FOREVER CAPS (hit, spell hit, tank defense)
+-- =============================================================
+-- Two targets per cap: what's useful against level-appropriate mobs while
+-- leveling, and what raiding at 60 needs (level-63 bosses). From level 50 the
+-- target slides linearly toward the raid one, so players gearing for raids
+-- keep valuing hit and defense past the leveling target. "Gear for raiding"
+-- (Protocol, on by default) can turn the slide off for pure levelers.
+MSC.ForeverCaps = {
+    RAID_BLEND_START = 50,
+    MELEE = { leveling = 5, raid = 9 },   -- yellow/2H miss vs same level / vs +3 boss
+    SPELL = { leveling = 3, raid = 16 },  -- 4% miss (1% can't be removed) / 17% vs +3
+    DW_WHITE = { leveling = 24, raid = 28 }, -- dual-wield white swings
+    DEFENSE_RAID = 440,                   -- crit immunity vs level-63 bosses
+    UNCRUSHABLE = 102.4,                  -- miss + dodge + parry + block vs +3
+}
+
+function MSC.IsGearingForRaids()
+    return not (SGJ_Settings and SGJ_Settings.GearForRaiding == false)
+end
+
+-- 0 below 50 (or when not gearing for raids), 1 at 60+.
+function MSC.GetRaidBlend(level)
+    level = level or UnitLevel("player") or 1
+    if level >= 60 then return 1 end
+    if not MSC.IsGearingForRaids() then return 0 end
+    local start = MSC.ForeverCaps.RAID_BLEND_START
+    if level <= start then return 0 end
+    return (level - start) / (60 - start)
+end
+
+function MSC.GetForeverCapTarget(kind, level)
+    local c = MSC.ForeverCaps[kind]
+    if not c then return nil end
+    local t = MSC.GetRaidBlend(level)
+    return c.leveling + (c.raid - c.leveling) * t
+end
+
+-- Defense skill a tank should aim for: none below 50 (returns nil), then a
+-- slide from the level's base defense (5 x level) to 440 at 60.
+function MSC.GetForeverDefenseTarget(level)
+    level = level or UnitLevel("player") or 1
+    local t = MSC.GetRaidBlend(level)
+    if t <= 0 then return nil end
+    local base = 5 * math_min(level, 60)
+    return base + (MSC.ForeverCaps.DEFENSE_RAID - base) * t
+end
+
+-- Current hit % in one place, talents included once. Forever gear carries
+-- Hit Rating (10 = 1%), which the old GetHitModifier() path didn't see.
+-- kind: "MELEE", "RANGED" or "SPELL". /sgj hitcheck prints the parts.
+local CR_HIT = { MELEE = 6, RANGED = 7, SPELL = 8 }
+function MSC:GetForeverHitPercent(kind)
+    kind = kind or "MELEE"
+    local cr = CR_HIT[kind] or 6
+    local fromRating
+    if GetCombatRatingBonus then
+        fromRating = MSC.SanitizeStat(GetCombatRatingBonus(cr))
+    else
+        fromRating = MSC.SanitizeStat(GetCombatRating and GetCombatRating(cr) or 0) / 10
+    end
+    local modifier
+    if kind == "SPELL" then
+        modifier = MSC.SanitizeStat(GetSpellHitModifier and GetSpellHitModifier() or 0)
+    else
+        modifier = MSC.SanitizeStat(GetHitModifier and GetHitModifier() or 0)
+    end
+    return fromRating + modifier, fromRating, modifier
+end
+
+-- Scales a hit weight for the current hit % against the level's target:
+-- full value below the target, overcapMult of it above. extraHit is for
+-- school-only talents (Shadow Focus, Elemental Precision, Suppression) that
+-- the game's general spell-hit number doesn't include.
+function MSC.ApplyForeverHitCap(weights, key, kind, overcapMult, label, activeCaps, extraHit)
+    local cap = MSC.GetForeverCapTarget(kind == "RANGED" and "MELEE" or kind)
+    MSC.ApplyForeverHitKnees(weights, key, kind, { { cap = cap, mult = overcapMult or 0.1 } }, label, activeCaps, extraHit)
+end
+
+-- General form: knees = { { cap = pct, mult = m }, ... } in rising order.
+-- Hit is worth the full weight below the first cap, then each knee's mult
+-- of it. Sets the weight for the player's current hit and records the curve
+-- in MSC.ForeverHitCapState so the upgrade check can value an item that
+-- crosses a cap (see MSC.ForeverHitCapCorrection).
+function MSC.ApplyForeverHitKnees(weights, key, kind, knees, label, activeCaps, extraHit)
+    local full = weights[key]
+    if not full or full <= 0 then return end
+    local hit = MSC:GetForeverHitPercent(kind) + (extraHit or 0)
+    local mult, reached = 1, nil
+    for _, k in ipairs(knees) do
+        if hit >= k.cap then mult, reached = k.mult, k.cap end
+    end
+    weights[key] = full * mult
+    -- Kept per weights table (weak keys), so each profile's curve stays with
+    -- the weights it produced.
+    MSC.ForeverHitCapState = MSC.ForeverHitCapState or setmetatable({}, { __mode = "k" })
+    local byKey = MSC.ForeverHitCapState[weights] or {}
+    byKey[key] = { kind = kind, extra = extraHit or 0, knees = knees, mult = mult }
+    MSC.ForeverHitCapState[weights] = byKey
+    if reached and activeCaps then table.insert(activeCaps, string_format("%s (%.1f%%)", label or "Hit", reached)) end
+end
+
+-- Value of `hit` percent points under a knee curve, in units of the full weight.
+local function KneeValue(knees, hit)
+    local value, prevCap, prevMult = 0, 0, 1
+    for _, k in ipairs(knees) do
+        if hit <= k.cap then return value + (hit - prevCap) * prevMult end
+        value = value + (k.cap - prevCap) * prevMult
+        prevCap, prevMult = k.cap, k.mult
+    end
+    return value + (hit - prevCap) * prevMult
+end
+
+-- Score correction for swapping gear from oldRating to newRating total Hit
+-- Rating (Forever: 10 rating = 1%). The weights charge every point at the
+-- current slope; this replaces that with the true curve, so hit that goes
+-- past a cap is discounted and hit that drops back below one is charged in
+-- full. Returns the correction and the cap crossed downward, if any.
+function MSC.ForeverHitCapCorrection(weights, oldRating, newRating)
+    local state = MSC.ForeverHitCapState and MSC.ForeverHitCapState[weights]
+    if not state or oldRating == newRating then return 0 end
+    -- Use the hit key the scorer uses (the largest hit weight)
+    local key, w = nil, 0
+    for k, st in pairs(state) do
+        local kw = weights[k] or 0
+        if kw > w then key, w = k, kw end
+    end
+    if not key then return 0 end
+    local st = state[key]
+    if st.mult <= 0 then return 0 end
+    local full = w / st.mult
+    local _, _, modifier = MSC:GetForeverHitPercent(st.kind)
+    local base = modifier + st.extra
+    local cur, fut = base + oldRating / 10, base + newRating / 10
+    local trueDelta = full * (KneeValue(st.knees, fut) - KneeValue(st.knees, cur))
+    local charged = w * (fut - cur)
+    local firstCap = st.knees[1] and st.knees[1].cap
+    local droppedBelow = firstCap and cur >= firstCap and fut < firstCap and (fut - firstCap) or nil
+    return trueDelta - charged, droppedBelow
+end
+
+-- Tank defense toward the raid target: past the target, Defense is worth
+-- much less (Stamina and armor take over).
+function MSC.ApplyForeverDefenseTarget(weights, activeCaps)
+    local w = weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]
+    if not w or w <= 0 then return end
+    local target = MSC.GetForeverDefenseTarget()
+    if not target then return end
+    local def = MSC:GetPlayerStat("DEFENSE")
+    if def >= target then
+        weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = w * 0.3
+        if activeCaps then table.insert(activeCaps, string_format("Defense (%d)", target)) end
+    end
+end
+
+-- Shield tanks: once miss + dodge + parry + block (+ the shield's active
+-- block ability) reaches 102.4%, crushing blows can't land, so more
+-- avoidance/block is worth less and effective health takes over. From 50
+-- when gearing for raids (dungeon and raid bosses are +2/+3), always at 60.
+function MSC.ApplyForeverUncrushable(weights, activeBlockPct, activeCaps)
+    if MSC.GetRaidBlend() <= 0 then return end
+    local dodge = GetDodgeChance and MSC.SanitizeStat(GetDodgeChance()) or 0
+    local parry = GetParryChance and MSC.SanitizeStat(GetParryChance()) or 0
+    local block = GetBlockChance and MSC.SanitizeStat(GetBlockChance()) or 0
+    local total = 5 + dodge + parry + block + (activeBlockPct or 0)
+    if total >= MSC.ForeverCaps.UNCRUSHABLE then
+        for _, k in ipairs({ "ITEM_MOD_BLOCK_RATING_SHORT", "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT" }) do
+            if weights[k] then weights[k] = weights[k] * 0.8 end
+        end
+        if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * 1.2 end
+        if weights["ITEM_MOD_ARMOR_SHORT"] then weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * 1.2 end
+        if activeCaps then table.insert(activeCaps, "Uncrushable") end
+    end
+end
+
+-- =============================================================
+-- 5.8 FOREVER RELICS
+-- =============================================================
+-- Relic effects are mostly percentages and cooldowns the parser can't read,
+-- so each class's Relics table turns them into equivalent stats for the
+-- player's spec (see Classes/Forever/Paladin|Druid|Shaman.lua). This is the
+-- live character data those conversions use.
+function MSC.GetRelicContext()
+    local _, class = UnitClass("player")
+    local level = UnitLevel("player") or 1
+    local spirit = MSC.SanitizeStat(UnitStat("player", 5))
+    local agi = MSC.SanitizeStat(UnitStat("player", 2))
+    local baseArmor = UnitArmor and MSC.SanitizeStat((UnitArmor("player"))) or 0
+    local apBase, apPos, apNeg = 0, 0, 0
+    if UnitAttackPower then apBase, apPos, apNeg = UnitAttackPower("player") end
+    local ap = MSC.SanitizeStat(apBase) + MSC.SanitizeStat(apPos) + MSC.SanitizeStat(apNeg)
+    -- Classic mana regen from Spirit, per 5 sec outside the five-second rule
+    local regenPerTick = (class == "SHAMAN") and (17 + spirit / 5) or (15 + spirit / 5)
+    return {
+        level = level, spirit = spirit, ap = ap,
+        itemArmor = math_max(0, baseArmor - 2 * agi),
+        spiritRegen5 = regenPerTick * 2.5,
+        shieldBlock = GetShieldBlock and MSC.SanitizeStat(GetShieldBlock()) or 0,
+    }
+end
+
+-- Which kind of spec a relic is being valued for.
+function MSC.RelicRole(spec)
+    local s = (spec or ""):upper()
+    if s:find("HEAL") or s:find("RESTO") or s:find("HOLY") then return "healer" end
+    if s:find("TANK") or s:find("BEAR") or s:find("PROT") then return "tank" end
+    if s:find("CASTER") or s:find("BALANCE") or s:find("BOOMKIN") or s:find("ELE") then return "caster" end
+    return "melee"
+end
+
+-- Shared GetRelicBonus body: Relics entries are either a stat table or a
+-- function(role, ctx, spec) returning one.
+function MSC.GetForeverRelicBonus(relics, itemID, spec)
+    local entry = relics and relics[itemID]
+    if not entry then return {} end
+    if type(entry) == "function" then
+        local ok, res = pcall(entry, MSC.RelicRole(spec), MSC.GetRelicContext(), spec or "")
+        return (ok and type(res) == "table") and res or {}
+    end
+    local bonus = {}
+    for k, v in pairs(entry) do bonus[k] = v end
+    return bonus
+end
+
 function MSC.ApplyForeverDualWieldHitTaper(hitWeight, totalHitPct, softCap, hardCap)
     softCap = softCap or 9
     hardCap = hardCap or 28
@@ -363,6 +604,173 @@ function MSC.ApplyForeverDualWieldHitTaper(hitWeight, totalHitPct, softCap, hard
     if totalHitPct >= hardCap then return hitWeight * 0.05, true end
     return hitWeight * 0.6, true -- retains most of its value across the 9%-28% band
 end
+
+-- =============================================================
+-- 5.9 FOREVER TALENT HOOK HELPERS
+-- =============================================================
+-- Shared pieces for the per-class ApplyScalers talent hooks so every class
+-- applies the same rules:
+--   * a crit multiplier must also move the primary stat that carries crit
+--     (Agility for melee, Intellect for spells), because primary stats are
+--     scored only through their own weight;
+--   * a flat "+X% damage" talent scales every damage-derived weight
+--     together, so it is applied by dividing the safety stats instead of
+--     multiplying Spell Power or Attack Power alone.
+-- Stat-per-1%-crit tables come from the client's PlayerExpectedStat
+-- (build 1.60.1.70009), index = level 1..60.
+MSC.ForeverCritPerStat = {
+    WARRIOR = {
+        agi = { 4, 4.20, 4.20, 4.40, 4.60, 4.80, 4.80, 5, 5.20, 5.20, 5.40, 5.60, 6, 6.20, 6.40, 6.60, 6.80, 7.20, 7.40, 7.80, 7.80, 8, 8.40, 8.60, 9, 9.20, 9.40, 9.80, 10, 10.40, 10.60, 10.80, 11.20, 11.40, 11.81, 12, 12.20, 12.59, 12.80, 13.19, 13.61, 13.79, 14.20, 14.41, 14.79, 14.99, 15.41, 15.80, 16, 16.39, 16.81, 17.01, 17.39, 17.79, 18.21, 18.42, 18.80, 19.19, 19.61, 20 },
+        int = nil,
+    },
+    PALADIN = {
+        agi = { 4.65, 4.88, 4.88, 5.12, 5.12, 5.35, 5.35, 5.58, 5.58, 5.81, 5.81, 6.05, 6.51, 6.51, 6.98, 6.98, 7.21, 7.67, 7.67, 8.14, 8.38, 8.38, 8.83, 9.07, 9.30, 9.53, 9.77, 10, 10.24, 10.70, 10.93, 10.93, 11.39, 11.63, 12.09, 12.33, 12.33, 12.79, 13.02, 13.50, 13.72, 13.72, 14.18, 14.41, 14.88, 15.11, 15.34, 15.82, 16.05, 16.50, 16.75, 16.98, 17.45, 17.67, 18.15, 18.38, 18.59, 19.08, 19.31, 19.76 },
+        int = { 13.33, 14.01, 14.01, 14.66, 14.66, 15.34, 16, 16, 16.67, 16.67, 17.33, 17.99, 18.66, 19.34, 20.66, 20.66, 21.32, 22.68, 22.68, 23.98, 24.69, 25.32, 25.97, 26.67, 28.01, 28.65, 28.65, 30.03, 30.67, 31.95, 32.68, 33.33, 34.01, 34.72, 35.97, 36.63, 37.31, 38.61, 39.37, 40.65, 41.32, 42.02, 43.29, 43.29, 44.64, 45.25, 46.73, 48.08, 48.78, 50, 50.76, 51.28, 52.63, 53.19, 54.64, 55.25, 55.87, 58.14, 58.82, 59.88 },
+    },
+    HUNTER = {
+        agi = { 4.60, 4.80, 5, 5.40, 5.60, 5.80, 6, 6.20, 6.60, 6.80, 7.40, 8.40, 9.20, 10, 11, 11.60, 12.41, 13.40, 14.20, 15.20, 15.80, 16.81, 17.61, 18.59, 19.42, 20.20, 21.19, 21.98, 22.99, 23.98, 24.57, 25.58, 26.60, 27.40, 28.41, 29.24, 30.21, 31.15, 32.15, 33, 33.78, 34.84, 35.84, 36.76, 37.74, 38.61, 39.53, 40.82, 41.84, 42.74, 43.67, 44.64, 45.66, 46.73, 47.85, 48.54, 49.75, 50.76, 52.08, 52.91 },
+        int = { 14.29, 14.99, 14.99, 15.72, 15.72, 16.42, 16.42, 17.15, 17.15, 17.86, 17.86, 18.59, 20, 20, 21.41, 21.41, 22.12, 23.58, 23.58, 25, 25.71, 25.71, 27.17, 27.86, 28.57, 29.33, 30.03, 30.67, 31.45, 32.89, 33.56, 33.56, 34.97, 35.71, 37.17, 37.88, 37.88, 39.22, 40, 41.49, 42.19, 42.19, 43.48, 44.25, 45.66, 46.51, 47.17, 48.54, 49.26, 50.76, 51.55, 52.08, 53.48, 54.35, 55.87, 56.50, 57.14, 58.48, 59.17, 60.61 },
+    },
+    ROGUE = {
+        agi = { 2.30, 2.40, 2.50, 2.70, 2.80, 2.90, 3.10, 3.20, 3.30, 3.50, 3.90, 4.30, 4.80, 5.20, 5.80, 6.20, 6.60, 7.10, 7.60, 8.10, 8.60, 9, 9.50, 9.90, 10.50, 11, 11.40, 11.90, 12.41, 13, 13.40, 13.91, 14.41, 14.90, 15.50, 16, 16.39, 16.89, 17.39, 17.99, 18.48, 19.01, 19.49, 20.08, 20.70, 21.19, 21.69, 22.22, 22.68, 23.42, 23.92, 24.39, 25, 25.51, 26.11, 26.67, 27.17, 27.78, 28.33, 28.99 },
+        int = nil,
+    },
+    PRIEST = {
+        agi = { 10, 10, 10, 10.50, 10.50, 10.50, 10.50, 11, 11, 11, 11, 11.49, 11.49, 11.49, 11.49, 12, 12, 12, 12.50, 12.50, 12.50, 12.50, 13, 13, 13, 13.50, 13.50, 13.50, 14.01, 14.01, 14.01, 14.49, 14.49, 14.49, 14.99, 14.99, 14.99, 15.50, 15.50, 15.50, 16, 16, 16.50, 16.50, 16.50, 17.01, 17.01, 17.51, 17.51, 17.51, 17.99, 17.99, 18.48, 18.48, 19.01, 19.01, 19.49, 19.49, 20, 20 },
+        int = { 5.24, 5.48, 5.71, 5.95, 6.43, 6.67, 6.91, 7.14, 7.38, 7.86, 8.57, 9.52, 10.24, 11.43, 12.38, 13.09, 14.29, 14.99, 15.95, 17.15, 17.86, 19.05, 19.76, 20.96, 21.88, 22.83, 23.81, 24.75, 25.71, 26.88, 27.86, 28.82, 29.76, 30.96, 31.95, 32.89, 34.01, 34.97, 35.97, 37.17, 38.02, 39.22, 40.16, 41.49, 42.55, 43.48, 44.84, 45.66, 46.95, 48.08, 49.02, 50.25, 51.28, 52.36, 53.76, 54.64, 55.87, 56.82, 58.48, 59.52 },
+    },
+    SHAMAN = {
+        agi = { 6.06, 6.06, 6.37, 6.37, 6.67, 6.67, 6.67, 6.97, 6.97, 7.27, 7.27, 7.58, 7.58, 7.88, 8.18, 8.48, 8.48, 8.79, 8.79, 9.39, 9.39, 9.70, 9.70, 10, 10.30, 10.60, 10.60, 10.91, 10.91, 11.52, 11.52, 11.82, 12.12, 12.12, 12.72, 13.04, 13.04, 13.33, 13.33, 13.95, 14.25, 14.25, 14.53, 14.86, 15.15, 15.46, 15.75, 16.05, 16.05, 16.67, 16.98, 17.27, 17.27, 17.57, 18.18, 18.48, 18.80, 18.80, 19.08, 19.69 },
+        int = { 7.78, 8.15, 8.52, 8.52, 8.89, 9.26, 9.63, 10, 10.37, 10.37, 11.11, 11.85, 12.97, 13.70, 14.81, 15.55, 16.29, 17.42, 18.15, 19.27, 20, 20.75, 21.83, 22.57, 23.70, 24.45, 25.19, 26.32, 27.03, 28.17, 29.24, 30.03, 31.15, 31.85, 33, 34.13, 34.84, 35.97, 36.63, 38.17, 38.91, 39.68, 40.82, 41.84, 42.92, 44.05, 44.84, 45.87, 46.95, 48.08, 49.26, 50, 51.55, 52.36, 53.76, 54.35, 55.56, 57.14, 57.80, 59.17 },
+    },
+    MAGE = {
+        agi = { 11.11, 11.11, 11.11, 11.67, 11.67, 11.67, 11.67, 11.67, 11.67, 12.22, 12.22, 12.22, 12.22, 12.22, 12.77, 12.77, 12.77, 12.77, 12.77, 13.33, 13.33, 13.33, 13.33, 13.89, 13.89, 13.89, 13.89, 13.89, 14.45, 14.45, 14.45, 14.45, 14.99, 14.99, 14.99, 15.55, 15.55, 15.55, 15.55, 16.10, 16.10, 16.10, 16.10, 16.67, 16.67, 16.67, 17.21, 17.21, 17.21, 17.76, 17.76, 17.76, 18.35, 18.35, 18.35, 18.90, 18.90, 18.90, 19.46, 19.46 },
+        int = { 5.21, 5.42, 5.62, 6.04, 6.25, 6.46, 6.67, 6.87, 7.29, 7.50, 8.12, 9.17, 9.79, 11.67, 12.71, 13.33, 14.16, 14.99, 15.82, 16.86, 17.51, 18.55, 19.16, 20.20, 21.05, 21.88, 22.94, 25.19, 26.25, 27.32, 27.93, 28.99, 29.76, 30.58, 31.65, 32.47, 33.56, 34.36, 35.46, 36.23, 37.04, 39.53, 40.49, 41.49, 42.55, 43.29, 44.44, 45.45, 46.51, 47.39, 48.31, 49.26, 50.25, 51.55, 52.63, 55.25, 56.50, 57.14, 58.48, 59.52 },
+    },
+    WARLOCK = {
+        agi = { 6.67, 6.67, 7, 7, 7, 7.33, 7.33, 7.33, 7.67, 7.67, 8, 8, 8, 8.33, 8.67, 9, 9, 9, 9.34, 9.67, 10, 10, 10.33, 10.33, 11, 11, 11, 11.34, 11.34, 12, 12, 12.33, 12.33, 12.67, 13, 13.33, 13.66, 13.66, 14.01, 14.33, 14.66, 14.66, 14.99, 14.99, 15.67, 16, 16, 16.34, 16.67, 17.01, 17.33, 17.33, 17.67, 17.99, 18.35, 18.66, 19.01, 19.34, 19.34, 20 },
+        int = { 6.67, 6.97, 7.27, 7.58, 7.88, 8.18, 8.48, 8.79, 9.09, 9.39, 10.30, 11.21, 12.12, 13.04, 13.95, 14.53, 15.75, 16.67, 17.57, 18.48, 19.38, 20.28, 21.23, 22.42, 23.31, 23.92, 25.13, 26.04, 27.25, 28.17, 28.82, 30.03, 30.86, 32.15, 33, 33.90, 35.21, 36.10, 37.31, 38.17, 39.06, 40.32, 41.15, 42.37, 43.67, 44.64, 45.45, 46.73, 47.85, 49.02, 50, 51.28, 52.36, 53.76, 54.95, 55.87, 56.82, 58.14, 59.52, 60.61 },
+    },
+    DRUID = {
+        agi = { 4.88, 4.88, 5.12, 5.12, 5.36, 5.36, 5.61, 5.61, 5.85, 6.34, 6.58, 6.58, 6.83, 6.83, 7.32, 7.32, 7.56, 7.81, 7.81, 8.78, 8.78, 9.03, 9.27, 9.27, 9.76, 9.76, 10, 10.25, 10.25, 11.22, 11.47, 11.47, 11.71, 11.95, 12.20, 12.44, 12.69, 12.69, 12.92, 13.91, 14.14, 14.14, 14.39, 14.64, 15.13, 15.36, 15.36, 15.60, 15.85, 16.84, 17.06, 17.33, 17.57, 17.57, 18.05, 18.28, 18.55, 18.80, 19.01, 20 },
+        int = { 6.87, 7.19, 7.50, 7.81, 8.12, 8.44, 8.75, 8.75, 9.07, 10, 10.63, 11.56, 12.18, 13.12, 14.37, 14.99, 15.95, 16.56, 17.51, 19.05, 19.69, 20.62, 21.23, 22.52, 23.42, 24.04, 25, 25.64, 26.88, 28.41, 29.07, 30.30, 30.96, 31.85, 33.11, 33.78, 34.72, 35.59, 36.50, 38.46, 39.06, 40.32, 40.98, 42.19, 43.10, 44.05, 45.05, 45.87, 47.17, 48.78, 49.75, 51.02, 51.55, 52.91, 54.05, 54.95, 55.87, 56.82, 58.14, 59.88 },
+    },
+}
+
+function MSC.GetForeverLevel()
+    return (UnitLevel and UnitLevel("player")) or 60
+end
+
+-- Agility points per 1% melee crit / Intellect points per 1% spell crit for
+-- the player's class at a level (defaults: current level).
+function MSC.GetForeverAgiPerCrit(level)
+    local _, cls = UnitClass("player")
+    local t = MSC.ForeverCritPerStat[cls or ""]
+    local L = math.max(1, math.min(60, math.floor(level or MSC.GetForeverLevel())))
+    return (t and t.agi and t.agi[L]) or 20
+end
+
+function MSC.GetForeverIntPerSpellCrit(level)
+    local _, cls = UnitClass("player")
+    local t = MSC.ForeverCritPerStat[cls or ""]
+    local L = math.max(1, math.min(60, math.floor(level or MSC.GetForeverLevel())))
+    return (t and t.int and t.int[L]) or 60
+end
+
+-- Linear interpolation through { {level, value}, ... } (sorted by level);
+-- clamps outside the first/last point.
+function MSC.ForeverLevelLerp(points, level)
+    level = level or MSC.GetForeverLevel()
+    if not points or #points == 0 then return 0 end
+    if level <= points[1][1] then return points[1][2] end
+    for i = 2, #points do
+        local a, b = points[i - 1], points[i]
+        if level <= b[1] then
+            local t = (level - a[1]) / (b[1] - a[1])
+            return a[2] + (b[2] - a[2]) * t
+        end
+    end
+    return points[#points][2]
+end
+
+-- Multiply every listed key that exists in the row.
+function MSC.ScaleForeverKeys(weights, keys, mult)
+    if not weights or not mult or mult == 1 then return end
+    for _, k in ipairs(keys) do
+        if weights[k] then weights[k] = weights[k] * mult end
+    end
+end
+
+-- Melee crit multiplier: scales the crit weight and adds the same gain to
+-- Agility through the class's agi-per-crit at this level. Feral crit
+-- (ITEM_MOD_CRIT_RATING_SHORT) uses the same key.
+function MSC.ScaleForeverMeleeCrit(weights, mult, level)
+    local key = "ITEM_MOD_CRIT_RATING_SHORT"
+    if not weights or not weights[key] or not mult or mult == 1 then return end
+    local old = weights[key]
+    weights[key] = old * mult
+    if weights["ITEM_MOD_AGILITY_SHORT"] then
+        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] + (weights[key] - old) / MSC.GetForeverAgiPerCrit(level)
+    end
+end
+
+-- Spell crit multiplier: scales the spell crit weight and moves Intellect's
+-- crit share by the same gain (int-per-spell-crit at this level).
+function MSC.ScaleForeverSpellCrit(weights, mult, level)
+    local key = "ITEM_MOD_SPELL_CRIT_RATING_SHORT"
+    if not weights or not weights[key] or not mult or mult == 1 then return end
+    local old = weights[key]
+    weights[key] = old * mult
+    if weights["ITEM_MOD_INTELLECT_SHORT"] then
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (weights[key] - old) / MSC.GetForeverIntPerSpellCrit(level)
+    end
+end
+
+-- Keys that are NOT damage/healing-derived: a flat "+X% damage" talent
+-- leaves these alone while everything else gains, so the talent is applied
+-- as a division of this set (the AP / Spell Power unit stays fixed).
+MSC.ForeverSafetyKeys = {
+    "ITEM_MOD_STAMINA_SHORT", "ITEM_MOD_HEALTH_SHORT", "ITEM_MOD_ARMOR_SHORT",
+    "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_BLOCK_RATING_SHORT",
+    "ITEM_MOD_BLOCK_VALUE_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+    "ITEM_MOD_HEALTH_REGENERATION_SHORT", "ITEM_MOD_RESILIENCE_RATING_SHORT",
+    "ITEM_MOD_FIRE_RESISTANCE_SHORT", "ITEM_MOD_FROST_RESISTANCE_SHORT", "ITEM_MOD_NATURE_RESISTANCE_SHORT",
+    "ITEM_MOD_SHADOW_RESISTANCE_SHORT", "ITEM_MOD_ARCANE_RESISTANCE_SHORT",
+}
+
+-- Flat damage (or healing) multiplier `mult` for the whole row: divides the
+-- safety keys plus any `alsoKeep` keys (e.g. the wand for casters, since a
+-- spell-damage talent does not touch it) by mult, so the damage family
+-- rises relative to them without changing the unit.
+function MSC.ApplyForeverDamageMult(weights, mult, alsoKeep)
+    if not weights or not mult or mult == 1 or mult <= 0 then return end
+    local inv = 1 / mult
+    MSC.ScaleForeverKeys(weights, MSC.ForeverSafetyKeys, inv)
+    if alsoKeep then MSC.ScaleForeverKeys(weights, alsoKeep, inv) end
+end
+
+-- The physical damage family, for talents that only boost melee/ranged
+-- damage (e.g. a one-handed weapon specialization on a hybrid row).
+MSC.ForeverMeleeDamageKeys = {
+    "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+    "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", "MSC_WEAPON_DPS_MELEE", "MSC_WEAPON_DPS_OH",
+    "ITEM_MOD_DAMAGE_PER_SECOND_SHORT", "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT",
+    "MSC_WEAPON_SPEED", "MSC_OH_WEAPON_SPEED", "MSC_RANGED_WEAPON_SPEED", "ITEM_MOD_AGILITY_SHORT",
+}
+
+-- The spell damage family (school keys included), for a school-limited
+-- damage talent applied at its school share.
+MSC.ForeverSpellDamageKeys = {
+    "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT",
+    "ITEM_MOD_FIRE_DAMAGE_SHORT", "ITEM_MOD_FROST_DAMAGE_SHORT", "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    "ITEM_MOD_NATURE_DAMAGE_SHORT", "ITEM_MOD_SHADOW_DAMAGE_SHORT", "ITEM_MOD_HOLY_DAMAGE_SHORT",
+    "ITEM_MOD_HIT_SPELL_RATING_SHORT", "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+}
+
+-- Mana-derived keys (the value of "more casts").
+MSC.ForeverManaKeys = {
+    "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_MANA_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT",
+}
 
 -- =============================================================
 -- 6. SCANNING
@@ -1035,6 +1443,32 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
             end
         end
     end
+    -- Relics (Libram 7, Idol 8, Totem 9): their effects are text the parser
+    -- can't read, so add the class's equivalent stats for this spec. (Before
+    -- this, GetRelicBonus only fed a tooltip note and relics scored ~0.)
+    if MSC.CurrentClass and MSC.CurrentClass.GetRelicBonus and GetItemInfoInstant then
+        local relicID, _, _, _, _, relicClassID, relicSubClassID = GetItemInfoInstant(itemLink)
+        if relicClassID == 4 and (relicSubClassID == 7 or relicSubClassID == 8 or relicSubClassID == 9) then
+            local ok, bonus = pcall(MSC.CurrentClass.GetRelicBonus, MSC.CurrentClass, relicID, specName or MSC.CachedSpecKey or "")
+            if ok and type(bonus) == "table" then
+                for k, v in pairs(bonus) do
+                    if type(v) == "number" and v > 0 then finalStats[k] = (finalStats[k] or 0) + v end
+                end
+            end
+        end
+    end
+    -- Weapon types a class can equip but not attack with (Forever Hunters
+    -- and thrown weapons: Auto Shot and shots need a bow, gun or crossbow)
+    -- are scored on their stats only, so their DPS can't beat a real bow.
+    local statsOnly = MSC.CurrentClass and MSC.CurrentClass.StatsOnlyWeapons
+    if statsOnly and GetItemInfoInstant then
+        local _, _, _, _, _, itemClassID, itemSubClassID = GetItemInfoInstant(itemLink)
+        if itemClassID == 2 and statsOnly[itemSubClassID] then
+            finalStats.ITEM_MOD_DAMAGE_PER_SECOND_SHORT = nil
+            finalStats.MSC_WEAPON_DPS = nil
+            finalStats.MSC_WEAPON_SPEED = nil
+        end
+    end
     if weights and MSC.ProcessedStatCache and not (globalUniques and next(globalUniques)) then
         MSC.ProcessedStatCache[procKey] = MSC:SafeCopy(finalStats, {})
     end
@@ -1112,6 +1546,10 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             if slotId == 17 and stat == "MSC_WEAPON_SPEED" then
                 if weights["MSC_OH_WEAPON_SPEED"] then weightKey = "MSC_OH_WEAPON_SPEED" end
             end
+            -- Forever's speed weights model melee swings; a bow/gun/wand's
+            -- speed in the ranged slot shouldn't inherit them. (TBC Hunter
+            -- profiles weight ranged speed on purpose, so Forever only.)
+            if MSC.IsForever and slotId == 18 and stat == "MSC_WEAPON_SPEED" then weightKey = "MSC_RANGED_WEAPON_SPEED" end
             
             local w = weights[weightKey] or 0
             
@@ -1139,6 +1577,17 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
                 if slotId == 17 and isWeaponDps and weightKey ~= "MSC_WEAPON_DPS_OH" then finalVal = val * 0.5 end
                 score = score + (finalVal * w)
                 if w >= 0.02 then usefulRaw = usefulRaw + val else uselessRaw = uselessRaw + val end
+            end
+            -- Spell Power also heals, so its healing half scores at the
+            -- Healing weight. This used to happen only on the full-character
+            -- path (Evaluator folded SP into Healing there), so tooltips and
+            -- upgrade arrows under-scored Spell Power for healer profiles.
+            if stat == "ITEM_MOD_SPELL_POWER_SHORT" then
+                local hw = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0
+                if hw > 0 then
+                    score = score + (val * hw)
+                    if w < 0.02 then usefulRaw = usefulRaw + val end
+                end
             end
             -- (No implicit "+Healing grants 1/3 as Spell Power" bonus on Forever:
             -- its items print that third explicitly as a separate "+X Spell
@@ -1279,6 +1728,11 @@ function MSC:DebugItem()
 end
 
 function MSC:GetDefenseFloor(rule)
+    -- Forever: the same target the tank scalers use (none below 50, then
+    -- sliding to 440 by 60), so the "don't drop below" check agrees with them.
+    if MSC.IsForever and rule and rule.dynamic and MSC.GetForeverDefenseTarget then
+        return MSC.GetForeverDefenseTarget() or math.huge
+    end
     if rule and rule.dynamic then
         return UnitLevel("player") * 5 + 140
     end
