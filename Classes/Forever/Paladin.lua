@@ -211,10 +211,12 @@ function Paladin:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSacred * 0.02))
     end
 
+    -- Champion of the Light (Ret t6, 3 ranks): spell damage from 20/40/60% of
+    -- Intellect (Forever patch of 2 Oct; was 33/66/100%), damage only.
     local rChamp = Rank("CHAMPION_LIGHT")
     if rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"]
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.11))
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.20))
     end
 
     -- Healing Light (Holy t2, 3 ranks): +4%/rank healing from Holy Light /
@@ -321,19 +323,22 @@ function Paladin:ApplyScalers(weights, currentSpec)
         end
 
         -- Holy Shield (Prot t7, level 40): without it Block Value is worth far
-        -- less and mana use is lower.
+        -- less and mana use is lower. The rows bake its +30% block (2 Oct
+        -- patch; average block 0.05 -> 0.14), so without it BV x0.05/0.14
+        -- (with a little BV kept for Redoubt/gear block) and Int x0.55.
         if level >= 40 and Rank("HOLY_SHIELD") == 0 then
-            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 0.42)
-            Mul("ITEM_MOD_INTELLECT_SHORT", 0.62)
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 0.33)
+            Mul("ITEM_MOD_INTELLECT_SHORT", 0.55)
             MulAll({ "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
                      "ITEM_MOD_BLOCK_RATING_SHORT" }, 0.94)
         end
 
-        -- Redoubt (Prot t1, 5 ranks): +2.34% block chance per rank, against a
-        -- baked Block Value base of 0.05 below 40 and 0.11 from 40.
+        -- Redoubt (Prot t1, 5 ranks): +1.56% block chance per rank on average
+        -- (its proc gives 4%/rank since the 2 Oct patch, was 6%), against a
+        -- baked average block of 0.05 below 40 and 0.14 from 40 (Holy Shield).
         local rRed = Rank("REDOUBT")
         if rRed > 0 then
-            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 1 + ((level >= 40) and 0.21 or 0.47) * rRed)
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 1 + ((level >= 40) and 0.11 or 0.31) * rRed)
         end
 
         -- One-Handed Weapon Specialization (Prot t4, level 25): +3%/rank 1H
@@ -375,8 +380,8 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- [[ 3. Tank caps: defense toward 440, uncrushable (from 50) ]]
     if currentSpec:find("PROT") or currentSpec:find("Tank") then
         MSC.ApplyForeverDefenseTarget(weights, activeCaps)
-        -- Holy Shield (talent): +20% block chance while active
-        MSC.ApplyForeverUncrushable(weights, (Rank("HOLY_SHIELD") > 0) and 20 or 0, activeCaps)
+        -- Holy Shield (talent): +30% block chance while active (2 Oct patch, was 20%)
+        MSC.ApplyForeverUncrushable(weights, (Rank("HOLY_SHIELD") > 0) and 30 or 0, activeCaps)
     end
     
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)

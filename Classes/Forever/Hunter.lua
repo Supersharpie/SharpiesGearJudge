@@ -111,7 +111,7 @@ Hunter.Talents = {
     -- Leveling role markers (tiers 1-3, see Hunter.LowLevelRoles)
     ["SAVAGE_STRIKES"]  = "Savage Strikes", -- Survival t2, 2 ranks, +2% melee ability crit
     ["IMP_WING_CLIP"]   = "Improved Wing Clip", -- Survival t2, 3 ranks
-    ["DEFLECTION"]      = "Deflection", -- Survival t1, 5 ranks, +2% Parry
+    ["DEFLECTION"]      = "Deflection", -- Survival t1, 5 ranks, +1% Parry per rank (2 Oct patch, was 2%)
     ["HAWK_EYE"]        = "Hawk Eye", -- MM t1, 3 ranks, +2 yd ranged weapon range
     ["IMP_CONC_SHOT"]   = "Improved Concussive Shot", -- MM t1, 5 ranks
     ["IMP_STINGS"]      = "Improved Stings", -- MM t2, 3 ranks

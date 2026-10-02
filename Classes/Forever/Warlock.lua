@@ -106,7 +106,7 @@ Warlock.Talents = {
     ["AGONIZING_FLAMES"]  = "Agonizing Flames", -- New in Forever, Destruction t4, 3 ranks, +3%/rank Destruction spell damage
     -- Leveling role markers (tiers 1-3, see Warlock.LowLevelRoles)
     ["IMP_CORRUPTION"]    = "Improved Corruption", -- Affliction t1
-    ["SOUL_HARVESTING"]   = "Soul Harvesting", -- Affliction t2
+    ["SOUL_HARVESTING"]   = "Soul Harvest", -- Affliction t2 (renamed from Soul Harvesting in the 2 Oct patch)
     ["IMP_DRAINS"]        = "Improved Drains", -- Affliction t2
     ["IMP_BANE_AGONY"]    = "Improved Bane of Agony", -- Affliction t3
     ["AMPLIFY_CURSE"]     = "Amplify Curse", -- Affliction t3
@@ -259,7 +259,7 @@ function Warlock:ApplyScalers(weights, currentSpec)
         end
         MSC.ScaleForeverKeys(weights, dmgKeys, dmgMult)
 
-        -- Soul Harvesting (Affliction t2, 2 ranks): the regen buff is
+        -- Soul Harvest (Affliction t2, 2 ranks): the regen buff is
         -- conditional on a Drain Soul kill (level 10+), so about +6%/rank.
         local rSoulHarvest = Rank("SOUL_HARVESTING")
         if rSoulHarvest > 0 and level >= 10 then

@@ -151,6 +151,8 @@ Druid.Talents = {
     ["IMP_WRATH"]       = "Improved Wrath", -- Balance t1, 5 ranks
     ["IMP_MOONFIRE"]    = "Improved Moonfire", -- Balance t2, 2 ranks
     ["NATURAL_SHAPESHIFTER"] = "Natural Shapeshifter", -- Restoration t2, 3 ranks, -10%/rank shapeshift mana cost
+    ["SHIFTING_POWER"]  = "Shifting Power", -- Feral t4, 1 rank (2 Oct patch): 55% base mana -> 40 Energy, 16 s cd
+    ["IMP_SHIFTING_POWER"] = "Improved Shifting Power", -- Feral t5, 2 ranks: -4 s cooldown per rank
     ["PREDATORY_STRIKES"] = "Predatory Strikes", -- Feral t4 (minLevel 25), 3 ranks, +0.5 x level AP per rank in Cat/Bear
 }
 
@@ -282,6 +284,24 @@ function Druid:ApplyScalers(weights, currentSpec)
     if rNatShift > 0 and isCat and isLevelingRow then
         Keys(weights, MSC.ForeverManaKeys, 1 - 0.055 * rNatShift)
         Touch(MSC.ForeverManaKeys)
+    end
+
+    -- Shifting Power (Feral t4, minLevel 25; new in the 2 Oct patch, 16 s
+    -- cooldown): turns 55% of base mana into 40 Energy, so a Cat's spare mana
+    -- becomes damage. Using it is mana-limited, not cooldown-limited, so each
+    -- mana point is worth 40 / cost Energy: about 1.2 AP per Intellect at 30
+    -- falling to 0.6 at 59, and Mp5 about 0.6 (the study's kill times, paw
+    -- damage and special-attack damage per Energy), hedged x0.6 for players
+    -- who don't spend every cooldown. Natural Shapeshifter makes it cheaper,
+    -- so more Energy per mana. Spirit is left out: casting it starts the
+    -- five-second rule.
+    if Rank("SHIFTING_POWER") > 0 and isCat and isLevelingRow and level >= 25 then
+        local cheaper = 1 / (1 - 0.1 * rNatShift)
+        local addInt = MSC.ForeverLevelLerp({ { 30, 0.70 }, { 40, 0.52 }, { 50, 0.41 }, { 59, 0.38 } }, level) * cheaper
+        local addMp5 = MSC.ForeverLevelLerp({ { 30, 0.39 }, { 59, 0.32 } }, level) * cheaper
+        weights["ITEM_MOD_INTELLECT_SHORT"] = (weights["ITEM_MOD_INTELLECT_SHORT"] or 0) + addInt
+        weights["ITEM_MOD_MANA_REGENERATION_SHORT"] = (weights["ITEM_MOD_MANA_REGENERATION_SHORT"] or 0) + addMp5
+        Touch({ "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" })
     end
 
     -- Predatory Strikes (Feral t4, minLevel 25, 3 ranks): +0.5 x level attack
@@ -453,8 +473,9 @@ Druid.Relics = {
     -- Talons of Wrath: Wrath 50% chance to restore 35 mana. A Balance leveler
     -- casts Wrath about a quarter of the time it's fighting: ~13 Mp5.
     [249441] = function(role) return { ITEM_MOD_MANA_REGENERATION_SHORT = (role == "caster") and 13 or 1 } end,
-    -- Howling Idol: Tiger's Fury cooldown -3 sec (Cat)
-    [272427] = function(role) return (role == "melee") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 10 } or {} end,
+    -- Howling Idol: Tiger's Fury cooldown -3 sec. Tiger's Fury was removed
+    -- from Forever in the 2 Oct patch, so the idol does nothing now.
+    [272427] = {},
     -- Enraged Idol: Enrage +10 rage (Bear)
     [272428] = function(role) return (role == "tank") and { ITEM_MOD_FERAL_ATTACK_POWER_SHORT = 15 } or {} end,
     -- Idol of Synthesis: Swiftmend cooldown -1 sec per HoT on the target

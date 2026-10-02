@@ -1,5 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.1.1
+
+### ✨ Improvements
+- **Support for the new Talents Plugin (Forever, still in development)**: Gear Judge can now take its leveling role and level-60 profile from a build chosen in the new Sharpie's Gear Judge [Talents] plugin. For example, picking a Protection tank build gives you the tank weights from your first talent point, before the build's marker talents would otherwise switch you over. Automatic detection is unchanged when no build is chosen, and a manually chosen profile still wins.
+- **Forever Beta Patch (2 October) Talent Changes**:
+	- Warrior: Crits from basic attacks now give 75% more rage, so every Warrior leveling profile values Crit about 15-16% higher and Agility about 7-13% higher (tanks least, since most of their Agility value is dodge and armor).
+	- Warlock: Soul Harvesting was renamed Soul Harvest. Gear Judge now finds it again, so its mana regen bonus and the Affliction leveling profile see it.
+	- Paladin: Holy Shield's +30% block chance (was 20%) now counts toward being uncrushable, and the Protection leveling weights from 40 rate Block Value about 27% higher and Intellect about 13% higher, since you block (and so get Shield Specialization mana) more often. Redoubt's smaller block bonus (4% per rank, was 6%) lowers the Block Value it adds. Champion of the Light now converts 20/40/60% of Intellect to spell damage (was counted at 11% per rank), so Retribution Intellect is worth more with it.
+	- Druid: Tiger's Fury was removed, so the Howling Idol (Tiger's Fury cooldown) no longer scores. Bear Form crits now give 75% more rage, so Bear leveling weights value Crit about 17% higher and Agility about 7% higher (more rage means more Mauls). Cats who take the new Shifting Power talent (mana into Energy) now value Intellect and Mp5: Intellect goes from about 0.3 to 1.0 at level 30 and from 0.17 to about 0.55 at 59, and more with Natural Shapeshifter.
+
+### 🐛 Bug Fixes
+- **Forever Leveling Weights Now Load**: The Forever client loads the plain `SharpiesGearJudge.toc`, not the `_Forever` one, and that file didn't list the per-spec leveling curves from v3.1.0. Forever characters were still scored with the older level-band weights. The curves now load, along with every weight update since.
+
+---
+
 ## 🚀 v3.1.0
 
 ### ✨ Improvements

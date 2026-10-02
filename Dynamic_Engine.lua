@@ -174,8 +174,9 @@ local function GetTraitNodeName(configID, node)
     return name
 end
 
--- Calls fn(name, rank, tab) for every named talent node in the trait tree.
--- Returns false when this client has no class-talent trait config.
+-- Calls fn(name, rank, tab, node) for every named talent node in the trait
+-- tree (node is the C_Traits node info: .ID, .maxRanks, ...). Returns false
+-- when this client has no class-talent trait config.
 function MSC.ForEachTraitTalent(fn)
     local configID, treeID = GetTraitTalentConfig()
     if not configID then return false end
@@ -199,7 +200,7 @@ function MSC.ForEachTraitTalent(fn)
                 for _, groupID in ipairs(node.groupIDs or {}) do
                     if tabOfGroup[groupID] then tab = tabOfGroup[groupID]; break end
                 end
-                fn(name, tonumber(node.activeRank) or tonumber(node.ranksPurchased) or 0, tab)
+                fn(name, tonumber(node.activeRank) or tonumber(node.ranksPurchased) or 0, tab, node)
             end
         end
     end
@@ -337,8 +338,25 @@ end
 -- the matching role profile doesn't exist for the player's level:
 --   roleMarkers = { [profilePrefix] = { "TALENT_KEY", ... }, ... }
 -- Returns the prefix whose markers hold the most points, or nil if none/tied.
+-- A build chosen in the Talents plugin names the leveling role and endgame
+-- profile it is built for, so the weights follow the build even before its
+-- marker talents are taken. leveling is a LowLevelRoles key (e.g.
+-- "Leveling_Tank") or "Leveling" for the class's default chain; endgame is a
+-- Weights key used at 60. nil, nil clears it.
+function MSC.SetTalentBuildRole(leveling, endgame)
+    local cur = MSC.TalentBuildRole
+    if (cur and cur.leveling) == leveling and (cur and cur.endgame) == endgame then return end
+    MSC.TalentBuildRole = (leveling or endgame) and { leveling = leveling, endgame = endgame } or nil
+    MSC.CachedWeights = nil
+end
+
 function MSC:GetLowLevelRole(roleMarkers)
     if not roleMarkers then return nil end
+    local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+    if forced then
+        if roleMarkers[forced] then return forced end
+        if forced == "Leveling" then return nil end
+    end
     local bestRole, bestPts, tied = nil, 0, false
     for role, keys in pairs(roleMarkers) do
         local pts = 0
@@ -487,7 +505,14 @@ function MSC:ApplyDynamicAdjustments()
         
     else
         -- 2. AUTO-DETECT MODE
-        if MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
+        -- 2a. A Talents-plugin build names its level-60 profile (see
+        -- MSC.SetTalentBuildRole); leveling roles are handled in GetLowLevelRole.
+        local forcedEnd = MSC.TalentBuildRole and MSC.TalentBuildRole.endgame
+        local cls = MSC.CurrentClass
+        if forcedEnd and (UnitLevel("player") or 0) >= 60 and cls and cls.Weights and cls.Weights[forcedEnd] then
+            specKey = forcedEnd
+            rawWeights = cls.Weights[forcedEnd]
+        elseif MSC.CurrentClass and MSC.CurrentClass.GetDynamicWeights then
             local dynWeights, dynKey = MSC.CurrentClass:GetDynamicWeights()
             if dynWeights then
                 rawWeights = dynWeights
