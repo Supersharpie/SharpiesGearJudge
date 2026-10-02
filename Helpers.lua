@@ -812,9 +812,14 @@ function MSC.GetRawItemStats(itemLink)
     if itemID then
         if MSC.CurrentClass then
             local classDB = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols or MSC.CurrentClass.ItemOverrides
-            if classDB and classDB[itemID] then
-                for statKey, val in pairs(classDB[itemID]) do
-                    if type(val) == "number" and statKey ~= "note" then
+            if type(classDB) ~= "table" then return end
+            local entry = classDB[itemID]
+            if type(entry) == "function" then
+                entry = entry()
+            end
+            if type(entry) == "table" then
+                for statKey, val in pairs(entry) do
+                    if statKey ~= "note" and type(val) == "number" then
                         finalStats[statKey] = (finalStats[statKey] or 0) + val
                     end
                 end
