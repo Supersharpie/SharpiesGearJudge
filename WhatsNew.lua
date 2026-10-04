@@ -15,19 +15,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    { forever = true, text = "Every class: level-60 weights rebuilt from the wowsims Forever simulator (healers from our healing model), profiles named after the Talents plugin's builds in five languages, new Dungeon Leveling profiles, and more of your talents adjust the leveling weights." },
-    { forever = true, text = "Warriors: Arms: Raid, Fury and Protection: Raid weights from the simulator, plus a Protection: AoE Farming profile and Arms and Protection Dungeon Leveling. Level-60 Warriors are scored by the tree they spent the most points in, so a Fury or Arms Warrior with a few Protection talents no longer gets tank weights." },
-    { forever = true, text = "Paladins: Retribution: Raid weights from the simulator with Twist of Light seal-twisting (Hit and Crit now lead), Protection: Raid from the simulator's tank test, Holy: Raid from our healing model, and the leveling weights checked against the simulator at the top end. Retribution and Holy builds no longer get the healer or PvP Shockadin weights by mistake." },
-    { forever = true, text = "Rogues: Combat weights from the simulator (Crit now counts as much as Hit), a Combat: Dungeon Leveling profile for daggers, and level-60 Rogues are scored by their main tree and main-hand weapon." },
-    { forever = true, text = "Hunters: a new Beast Mastery: Raid profile (the strongest Hunter spec; Intellect and Mp5 count more than Agility), a Beast Mastery: Dungeon Leveling profile, and level-60 Hunters are scored by their main tree." },
-    { forever = true, text = "Mages: Frost, Fire and a new Arcane: Raid from the simulator (Crit counts several times more), Frost: AoE Farming and Frost: Dungeon Leveling, and level-60 Mages are scored by their main tree." },
-    { forever = true, text = "Priests: Shadow: Raid from the simulator, separate Holy: Raid and Discipline: Raid from our healing model (Mp5 and Intellect worth far more), Shadow farming and Dungeon Leveling profiles, and Shadow Priests without Shadow Weaving no longer get healer weights." },
-    { forever = true, text = "Warlocks: Demonology (Demonic Pact), Affliction and Destruction raid weights from the simulator (Crit worth about four times more, Hit about half), a Demonology AoE farming profile and Affliction: Dungeon Leveling." },
-    { forever = true, text = "Shamans: Enhancement and Elemental raid weights from the simulator, Restoration from our healing model, a Tank: AoE Farming profile and Enhancement and Restoration Dungeon Leveling. Elemental raid builds no longer get the PvP weights." },
-    { forever = true, text = "Druids: Cat, Balance and Bear raid weights from the simulator, Restoration from our healing model, and Cat and Restoration Dungeon Leveling profiles." },
-    { forever = true, text = "Fixed a Lua error on Druid idols such as Windcharged Leaf. Librams, idols and totems are no longer counted twice when scored." },
-    { forever = true, text = "Talents plugin 1.1.0: builds for every class (raid, dungeon leveling and farming), sorted by Max Level, Leveling or Farming and by role. New: Twist of Light Retribution, Vanguard as the recommended Paladin raid tank, Shaman and Druid tanks, and a no-respec Affliction Warlock." },
-    { forever = true, text = "Roadmap plugin: loot for every Forever dungeon with a known loot table, over 1,100 drops with the boss that drops each one, now including Excavation Site: Wetlands, Razorfen Downs and Uldaman from the 2 October patch, up through Scholomance and Stratholme." },
+    -- v3.2.0: add a line here for each change logged under v3.2.0 in CHANGELOG.md.
+    { text = "Bigger window: the main window is wider and taller, so its tabs have more room." },
+    { text = "Receipt redesigned: your score and alerts on the left, your character with each slot's score in the middle, and your stat totals on the right." },
+    { text = "Protocol redesigned: a section list on the left and the options in two columns, so most of them fit without scrolling." },
+    { text = "Stat Logic redesigned: your profile and cap rings on the left, and full-width stat weight bars on the right." },
+    { text = "Stat Logic rings match your spec: tanks, healers, casters and melee each get their own, with Forever's real hit and defense targets." },
+    { text = "Weapon Thunderdome redesigned: the six setups in two columns, with the winner and a ranking of every setup on the right." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

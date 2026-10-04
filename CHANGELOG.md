@@ -1,5 +1,42 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.0
+
+### 🖼️ Window Redesign
+- **Bigger Window**: The main window is now 900×700 (was 650×650), so its tabs have more room. It still opens at its normal size and scale every session.
+- **Receipt Redesigned**: The Receipt tab is laid out in three columns.
+	- **Left**: your profile, your total score, and your alerts as a list ("2 missing enchants", "1 better item in your bags"). Click an alert to make the slots it refers to flash.
+	- **Middle**: your character, with your gear slots down both sides and the weapons underneath, like the character pane. Each slot shows its score beside it (no box when there is no score), and empty slots show the usual slot art. Clicking a slot still opens its score breakdown.
+	- **Right**: your weighted stat totals in a single list wide enough for long stat names, up to 24 stats (was 14). Before, long names overlapped their values.
+- **Protocol Redesigned**: The settings tab has a list of its sections on the left; click one to jump to it, and the list follows as you scroll. Import Pawn String and Export Data sit at the bottom of that list.
+	- The options are in boxed sections in two columns (Interface Options and Tooltip Visuals on the left; Comparison Logic, Buff Assumptions and Character Profile on the right), so most of them fit without scrolling.
+	- Secondary Specs & Baselines runs across the full width underneath, so long profile names no longer run under the Save Profile button.
+	- The Delete button for imported profiles now sits under the profile dropdown as "Delete Custom Profile", with a tooltip saying it only removes profiles you imported.
+- **Stat Logic Redesigned**: Your scoring profile and the cap rings (hit, defense and the like) now sit in a column on the left, two rings to a row. A note under the profile says when the auto-detected profile is uncertain. If the profile has no caps to track, the column says so.
+	- The stat weight bars run the full width of the rest of the window, so each bar's one-line explanation no longer runs into the weight number. Hover a bar for the full explanation and the math.
+- **Fixed: Stat Logic Refresh Errors**: The profile line and the weight bars shared one pool of reused widgets, so a refresh could hand the profile text to a bar, which raised an error. The profile line now has its own text.
+- **Fixed: Missing Stat Explanations**: After a refresh, a weight bar could lose its explanation line if the bar had last been used for a stat without one.
+- **Weapon Thunderdome Redesigned**: The six weapon setups sit in the middle, Set 1 on the left and Set 2 on the right.
+	- Each setup shows its name on its own line and its score beside the weapon slots, so long names no longer run into the score. Empty slots show weapon or off-hand slot art to match the setup.
+	- The left column shows which profile is scoring the weapons and how to use the tab, with a Clear All button (was a small X in the corner).
+	- The right column shows the winner and a ranking of every setup that has weapons in it, with the winner in green.
+- **Fixed: Duplicate Settings**: Opening the window right after logging in could build a second copy of the settings on top of the first. The settings are now rebuilt in place.
+- The new text is translated for German, Spanish, French, Brazilian Portuguese and Russian.
+
+### 📊 Stat Logic Rings (All Classes)
+- **Rings Follow the Profile's Role**: The cap rings are picked from the profile itself (its name says tank, healer, caster or melee) instead of guessed from its weights. The guess went wrong for many profiles, checked across all 600 profiles in Era, TBC and Forever:
+	- Retribution and Protection Paladins on Forever got caster rings (Spell Hit, Spell Power), because they weight Spell Power above Attack Power.
+	- Holy Paladins and Priest healers got caster rings with Spell Hit, and Restoration Shamans and Druids got melee rings (Hit, Expertise).
+	- Tanks without a big Defense weight got melee rings: Protection: Solo Leveling Warriors on Forever, Era Leveling: Tank and Fury-Prot Warriors, Era and TBC Shaman tank leveling, and Era Bear leveling.
+- **Healer Rings (new)**: Spell Crit, Healing and, on TBC, Spell Haste.
+- **Forever Tanks**: Defense, Crush Cap, then Dodge, Parry and Block (Bears: Defense, Dodge, Hit), then Hit. Up to six rings, two to a row. Below level 50 the Defense ring shows your defense with no target, since tanks aim for 440 only from 50.
+- **No Haste or Expertise on Era and Forever**: those ratings don't exist there, so their rings are gone.
+- **Forever Hit and Defense Targets**: The rings use the same targets as the gear scores: hit 5% (spell 3%) while leveling, sliding to 9% (spell 16%) from 50 with Gear for Raiding on, and defense sliding to 440. Your current hit comes from the same place the scores read it, plus Arcane Focus, Elemental Precision, Shadow Focus or Holy Precision where the profile uses them. Before, the rings used TBC's targets and conversions.
+- **Era Hit and Defense**: Era gear gives a flat "+1% hit" and "+Defense" instead of ratings, so the rings now read your hit and defense from the game. Before, they only counted talents.
+- Shield Block counts toward the Crush Cap from level 16, when Warriors learn it (was 10).
+
+---
+
 ## 🚀 v3.1.2
 
 ### ✨ All Classes (Forever)
