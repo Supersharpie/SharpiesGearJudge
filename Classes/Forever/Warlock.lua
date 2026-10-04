@@ -10,79 +10,77 @@ Warlock.Name = "WARLOCK"
 
 Warlock.Weights = {
     ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
-    -- Raid Spell Crit: 1% crit is worth 2 Spell Power before Ruin doubles it
-    -- in ApplyScalers -- 4.0 on the Spell Power 2.0 profiles below, 30.0 on
-    -- PVE_MD_RUIN's Spell Power 15.0 scale (the old 1.5 / 12.0 made it
-    -- 0.75-0.8 Spell Power). PVE_MD_RUIN's Spell Hit 187.5 matches the raid
-    -- profiles' 1% Hit = 12.5 Spell Power.
-    ["RAID_DS_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
-    ["RAID_SM_RUIN"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0  },
-    ["PVE_MD_RUIN"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=187.5, ["ITEM_MOD_STAMINA_SHORT"]=0.3, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
+
+    -- The raid profiles come from the wowsims Forever sim (study/warlock2, 2026-10-03; NOTES.md there has the numbers),
+    -- run with each build's own talents and demon, so ApplyScalers' talent hooks skip them. Spell Power sits at 2.0;
+    -- Hit and Crit per 1%. Most of the damage is Shadow. Stamina is a small Life Tap / safety term (the sim's three-
+    -- minute fight never runs a warlock dry).
+    -- Demonology: Raid (Demonic Pact 5/31/15: Succubus out with a sacrificed Imp's buff kept). About 19% ahead of Affliction.
+    ["DEMO_PACT_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.78, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.22, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.52, ["ITEM_MOD_SPIRIT_SHORT"]=0.32, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.44, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    -- Affliction: Raid (Affliction 35 / Destruction 16, Succubus).
+    ["AFF_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.72, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.28, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.52, ["ITEM_MOD_SPIRIT_SHORT"]=0.24, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.48, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    -- Destruction: Raid (DS/Ruin with Pandemic: the Imp sacrificed). About 28% behind Demonology.
+    ["DESTRO_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.78, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.22, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.48, ["ITEM_MOD_SPIRIT_SHORT"]=0.28, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.38, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    -- Demonology: AoE Farming (Soul Link with Rain of Fire / Hellfire on 4-5 mob packs; a rough model). Hellfire burns you
+    -- for as much as each enemy and Life Tap pays for the mana in health, so Stamina leads; Fire damage and mana stats next,
+    -- Spell Power counts little (Hellfire and Rain of Fire take a small share of it).
+    ["DEMO_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05 },
+
+    -- PvP profiles (not modelled).
     ["PVP_NF_CONFLAG"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["PVP_SOUL_LINK"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["PVP_DEEP_DESTRO"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
 }
+-- Old names, kept so a saved profile choice still works.
+Warlock.Weights["PVE_MD_RUIN"] = Warlock.Weights["DEMO_PACT_RAID"]
+Warlock.Weights["RAID_SM_RUIN"] = Warlock.Weights["AFF_RAID"]
+Warlock.Weights["RAID_DS_RUIN"] = Warlock.Weights["DESTRO_RAID"]
+-- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { DEMO_PACT_RAID = true, AFF_RAID = true, DESTRO_RAID = true, PVE_MD_RUIN = true, RAID_SM_RUIN = true, RAID_DS_RUIN = true }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
-Warlock.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Unlike every other class's file, Warlock's own Leveling_1_10/11_20 never
-    -- had Spell Power/Hit/Crit weighted at all -- so there's no established
-    -- leveling convention in this file to copy. All brackets below are fixed
-    -- to match the endgame Default profile's convention instead (SPELL_POWER
-    -- 15.0, HIT_SPELL 20.0, SPELL_CRIT 12.0); see Warrior.lua's leveling-
-    -- bracket comment for the item-database evidence on why this can't wait
-    -- until higher levels.
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-
-    -- Fire. 11-20 rows: the Affliction 11-20 row with each spec's
-    -- school-damage split from its 21-40 row.
-    ["Leveling_Fire_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-
-    -- Demo
-    ["Leveling_Demo_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_Demo_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0 },
-    ["Leveling_Demo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    ["Leveling_Demo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-}
+-- Filled at load from Classes/Forever/Curves/Warlock_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling          Affliction: Solo Leveling (DoTs + Voidwalker, the default)
+--   Leveling_Dungeon  Affliction: Dungeon Leveling
+--   Leveling_Demo     Demonology: Solo Leveling (Soul Link; also the AoE farming build's leveling)
+--   Leveling_Fire     Destruction: Solo Leveling
+Warlock.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Warlock.PrettyNames = {
-    ["RAID_DS_RUIN"]    = "Raid: Destruction (DS/Ruin)",
-    ["RAID_SM_RUIN"]    = "Raid: Affliction (SM/Ruin)",
-    ["PVE_MD_RUIN"]     = "Raid: Master Demonologist",
+    ["DEMO_PACT_RAID"] = L["Demonology: Raid"],
+    ["AFF_RAID"]       = L["Affliction: Raid"],
+    ["DESTRO_RAID"]    = L["Destruction: Raid"],
+    ["DEMO_FARM"]      = L["Demonology: AoE Farming"],
+    ["PVE_MD_RUIN"]    = L["Demonology: Raid (old profile)"],
+    ["RAID_SM_RUIN"]   = L["Affliction: Raid (old profile)"],
+    ["RAID_DS_RUIN"]   = L["Destruction: Raid (old profile)"],
     ["PVP_NF_CONFLAG"]  = "PvP: Nightfall / Conflagrate",
     ["PVP_SOUL_LINK"]   = "PvP: Soul Link (Tank)",
     ["PVP_DEEP_DESTRO"] = "PvP: Destruction (Conflag)",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Affliction (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Affliction (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Affliction (52-59)",
-    
-    ["Leveling_Fire_11_20"] = "Leveling: Destruction (11-20)",
-    ["Leveling_Fire_21_40"] = "Leveling: Destruction (21-40)",
-    ["Leveling_Fire_41_51"] = "Leveling: Destruction (41-51)",
-    ["Leveling_Fire_52_59"] = "Leveling: Destruction (52-59)",
-    
-    ["Leveling_Demo_11_20"] = "Leveling: Demonology (11-20)",
-    ["Leveling_Demo_21_40"] = "Leveling: Demonology (21-40)",
-    ["Leveling_Demo_41_51"] = "Leveling: Demonology (41-51)",
-    ["Leveling_Demo_52_59"] = "Leveling: Demonology (52-59)",
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",         "Affliction: Solo Leveling" },
+    { "Leveling_Dungeon", "Affliction: Dungeon Leveling" },
+    { "Leveling_Demo",    "Demonology: Solo Leveling" },
+    { "Leveling_Fire",    "Destruction: Solo Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Warlock.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -107,6 +105,8 @@ Warlock.Talents = {
     -- Leveling role markers (tiers 1-3, see Warlock.LowLevelRoles)
     ["IMP_CORRUPTION"]    = "Improved Corruption", -- Affliction t1
     ["SOUL_HARVESTING"]   = "Soul Harvest", -- Affliction t2 (renamed from Soul Harvesting in the 2 Oct patch)
+    ["IMP_LIFE_TAP"]      = "Improved Life Tap", -- Affliction t1, 2 ranks, +10% mana per Life Tap per rank
+    ["DEMONIC_KNOWLEDGE"] = "Demonic Knowledge", -- Demonology t5, 3 ranks, spell damage from the demon
     ["IMP_DRAINS"]        = "Improved Drains", -- Affliction t2
     ["IMP_BANE_AGONY"]    = "Improved Bane of Agony", -- Affliction t3
     ["AMPLIFY_CURSE"]     = "Amplify Curse", -- Affliction t3
@@ -145,68 +145,54 @@ Warlock.LowLevelRoles = {
     Leveling      = { "SUPPRESSION", "IMP_CORRUPTION", "MALEDICTION", "SOUL_HARVESTING", "IMP_DRAINS", "IMP_BANE_AGONY", "FEL_CONCENTRATION", "AMPLIFY_CURSE", "PANDEMIC" },
     Leveling_Demo = { "IMP_HEALTH_FUNNEL", "IMP_IMP", "DEMONIC_EMBRACE", "UNHOLY_POWER", "DEMONIC_AEGIS", "IMP_VOIDWALKER", "FEL_VITALITY", "DEMONIC_ENERGIES", "IMP_SAYAAD", "DEMONIC_SACRIFICE", "MASTER_SUMMONER" },
     Leveling_Fire = { "DESTRUCTIVE_REACH", "IMP_SHADOW_BOLT", "BANE", "MOLTEN_SKIN", "CATACLYSM", "AFTERMATH", "RUIN", "SHADOWBURN" },
+    -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_Dungeon = {},
 }
 
 function Warlock:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
-    
-    -- Leveling Logic
-    if level < 60 then 
-        local suffix = ""
-        if level <= 10 then suffix = "_1_10"
-        elseif level <= 20 then suffix = "_11_20"
-        elseif level <= 40 then suffix = "_21_40"
-        elseif level <= 51 then suffix = "_41_51"
-        else suffix = "_52_59" end 
 
-        local prefix = "Leveling" -- Default Affliction
-        
-        if Rank("INCINERATE") > 0 or Rank("CONFLAGRATE") > 0 then 
-            prefix = "Leveling_Fire"
-        elseif Rank("SOUL_LINK") > 0 or Rank("MASTER_DEMON") > 0 then
-            prefix = "Leveling_Demo"
-        elseif level >= 10 then
-            prefix = MSC:GetLowLevelRole(Warlock.LowLevelRoles) or prefix
+    if level < 60 then
+        if level < 10 then return "Leveling_1_10" end
+        local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
+
+        -- A Talents plugin build names its role; it wins over the talent checks below.
+        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        if forced and (forced == "Leveling" or Warlock.LowLevelRoles[forced]) and Warlock.LevelingWeights[forced .. suffix] then
+            return forced .. suffix
         end
 
-        -- Level 10 brings the first talent point: a role it marks uses that
-        -- role's 11-20 row (the 1-10 band only has the default row).
-        if level == 10 and prefix ~= "Leveling" then suffix = "_11_20" end
-        local key = prefix .. suffix
-        if Warlock.LevelingWeights[key] then return key end
+        local prefix = "Leveling" -- Affliction
+        if Rank("INCINERATE") > 0 or Rank("CONFLAGRATE") > 0 then prefix = "Leveling_Fire"
+        elseif Rank("SOUL_LINK") > 0 or Rank("MASTER_DEMON") > 0 then prefix = "Leveling_Demo"
+        else
+            prefix = MSC:GetLowLevelRole(Warlock.LowLevelRoles) or prefix
+            if prefix == "Leveling_Dungeon" then prefix = "Leveling" end
+        end
+        if Warlock.LevelingWeights[prefix .. suffix] then return prefix .. suffix end
+        if level == 10 then return "Leveling_1_10" end
         return "Leveling" .. suffix
     end
 
-    -- Endgame Logic
-    if Rank("DEMONIC_SACRIFICE") > 0 and Rank("RUIN") > 0 then return "RAID_DS_RUIN" end
-    if Rank("SHADOW_MASTERY") > 0 and Rank("RUIN") > 0 then return "RAID_SM_RUIN" end
-    if Rank("MASTER_DEMON") > 0 and Rank("RUIN") > 0 then return "PVE_MD_RUIN" end
-    -- Demonic Pact keeps the Demonic Sacrifice buff while another demon is
-    -- out, so it's a damage build: Sacrifice + Master Demonologist stacked,
-    -- or Sacrifice on its own. (It used to fall through to the PvP Soul Link
-    -- tank profile.) Soul Link without Pact is still the PvP tank build.
-    if Rank("DEMONIC_PACT") > 0 then
-        if Rank("MASTER_DEMON") > 0 then return "PVE_MD_RUIN" end
-        return "RAID_DS_RUIN"
-    end
-    if Rank("SOUL_LINK") > 0 then return "PVP_SOUL_LINK" end
-    if Rank("INCINERATE") > 0 then return "PVP_DEEP_DESTRO" end
-    if Rank("CONFLAGRATE") > 0 then 
-        if Rank("NIGHTFALL") > 0 then return "PVP_NF_CONFLAG" end
-        return "PVP_DEEP_DESTRO" 
-    end
-    
-    return "Default"
+    -- Endgame: the AoE farming build (Soul Link with Molten Skin), Demonic Pact, then the tree with the most points.
+    if Rank("SOUL_LINK") > 0 and Rank("MOLTEN_SKIN") >= 3 and Rank("DEMONIC_PACT") == 0 then return "DEMO_FARM" end
+    if Rank("DEMONIC_PACT") > 0 then return "DEMO_PACT_RAID" end
+    local aff, demo, destro = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if demo > aff and demo >= destro then return "DEMO_PACT_RAID" end
+    if destro > aff then return "DESTRO_RAID" end
+    return "AFF_RAID"
 end
 
 function Warlock:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
+    -- The sim-built raid profiles already carry their talents: the talent hooks skip them (the hit cap still applies).
+    local hooks = not SIM_PROFILES[currentSpec or ""]
 
     -- [[ 1. Demonic Embrace (Stamina) ]]
     local rEmb = Rank("DEMONIC_EMBRACE")
-    if rEmb > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
+    if hooks and rEmb > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rEmb * 0.03))
     end
 
@@ -219,7 +205,7 @@ function Warlock:ApplyScalers(weights, currentSpec)
     -- applies unconditionally by rank rather than gating on spec name.
     local isLeveling = type(currentSpec) == "string" and currentSpec:find("^Leveling") ~= nil
     local rRuin = Rank("RUIN")
-    if not isLeveling and rRuin > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    if hooks and not isLeveling and rRuin > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rRuin * 0.20))
     end
 
@@ -266,6 +252,55 @@ function Warlock:ApplyScalers(weights, currentSpec)
             MSC.ScaleForeverKeys(weights, { "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }, 1 + 0.06 * rSoulHarvest)
         end
 
+        -- Improved Life Tap (Affliction t1, 2 ranks, +10% mana per Life Tap per
+        -- rank): not baked in. Each HP tapped now returns more mana, so HP is
+        -- better fuel (Stamina, Health, Hp5 about +3.5%/rank, the fuel share of
+        -- their weight) and mana is cheaper (Int and flat +Mana about -4%/rank,
+        -- the mana-derived share of Int). Spirit's Life Tap term is only about
+        -- 0.05 SP of 3, so it is left alone. Level 27-29 of the solo build.
+        local rLifeTap = Rank("IMP_LIFE_TAP")
+        if rLifeTap > 0 then
+            MSC.ScaleForeverKeys(weights, { "ITEM_MOD_STAMINA_SHORT", "ITEM_MOD_HEALTH_SHORT", "ITEM_MOD_HEALTH_REGENERATION_SHORT" }, 1 + 0.035 * rLifeTap)
+            MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_MANA_SHORT" }, 1 - 0.04 * rLifeTap)
+        end
+
+        -- Soul Link (Demonology t5, 1 rank: 30% of damage taken goes to the
+        -- demon, +3% damage) and Demonic Knowledge (3 ranks): the Leveling_Demo
+        -- keyframes bake in a mild Soul Link (Stamina/Health x0.95, Armor x0.93)
+        -- and Demonic Knowledge as hit/crit x1.05, all reached at 30 and eased
+        -- in from 25, so these use the un-bake pattern against what each
+        -- keyframe baked: real / baked. Rows without those keyframes (Fire)
+        -- bake nothing. Soul Link also lifts every damage-derived weight 3%.
+        local rSoulLink = Rank("SOUL_LINK")
+        local demoBake = 0
+        if currentSpec:find("^Leveling_Demo") then
+            demoBake = math.max(0, math.min(1, (level - 25) / 5))
+        end
+        if rSoulLink > 0 or demoBake > 0 then
+            -- Soul Link takes 30% of the damage the HP/armor would have stopped:
+            -- the safety share of Stamina (about 0.3 of its weight) falls 30%,
+            -- armor (all safety) falls 30%.
+            local stamFix = (1 - 0.09 * math.min(rSoulLink, 1)) / (1 - 0.05 * demoBake)
+            MSC.ScaleForeverKeys(weights, { "ITEM_MOD_STAMINA_SHORT", "ITEM_MOD_HEALTH_SHORT" }, stamFix)
+            local armorOld = weights["ITEM_MOD_ARMOR_SHORT"]
+            if armorOld then
+                -- never push a weight that sat above 0.02 into the useless band
+                local armorNew = armorOld * (1 - 0.30 * math.min(rSoulLink, 1)) / (1 - 0.07 * demoBake)
+                if armorOld >= 0.02 and armorNew < 0.02 then armorNew = 0.02 end
+                weights["ITEM_MOD_ARMOR_SHORT"] = armorNew
+            end
+        end
+        if rSoulLink > 0 then
+            MSC.ScaleForeverKeys(weights, dmgKeys, 1.03)
+        end
+        local rDK = Rank("DEMONIC_KNOWLEDGE")
+        if demoBake > 0 or rDK > 0 then
+            -- 3 ranks give the baked x1.05 (+1.67% per rank)
+            local dkFix = (1 + (0.05 / 3) * rDK) / (1 + 0.05 * demoBake)
+            MSC.ScaleForeverKeys(weights, { "ITEM_MOD_HIT_SPELL_RATING_SHORT" }, dkFix)
+            MSC.ScaleForeverSpellCrit(weights, dkFix, level)
+        end
+
         -- Fel Vitality (Demonology t2, 3 ranks, +5% max mana/rank): scales the
         -- mana part of Int (about 0.85 of it) and flat +Mana.
         if currentSpec:find("^Leveling_Demo") then
@@ -275,7 +310,7 @@ function Warlock:ApplyScalers(weights, currentSpec)
                 MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT" }, 1 + 0.04 * rFelVit)
             end
         end
-    else
+    elseif hooks then
         if rPandemic > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rPandemic * 0.33))
         end

@@ -10,102 +10,91 @@ Shaman.Name = "SHAMAN"
 -- the same 1x Strength + 1x Agility melee-AP formula as Rogue/Hunter (not
 -- Warrior/Paladin's Strength-only 2:1), so both are weighted near AP's own
 -- value, with Agility carrying an added Crit/Dodge premium. Weapon DPS =
--- 14x AP's weight. Also restoring ELE_PVE/ENH_STORMSTRIKE/RESTO_DEEP's Spell
--- Crit (and ELE_PVE's Spell Power) to match their own sibling profiles --
--- these still carried the old "unknown crit math" hedge values that a prior
--- pass intended to fix but never actually landed in this file.
+-- 14x AP's weight.
 Shaman.Weights = {
     ["Default"] = { ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- ELE_PVE: Spell Hit 187.5 / Spell Crit 30 at Spell Power 15 -- 1% Hit =
-    -- 12.5 Spell Power (the raid standard) and 1% Crit = 2 Spell Power before
-    -- Elemental Fury.
-    ["ELE_PVE"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=187.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0  },
+    -- The level-60 profiles (study/shaman2, 2026-10-03; NOTES.md there has the numbers), each worked out with its build's own
+    -- talents, so ApplyScalers' talent hooks skip them. Hit and Crit per 1%.
+    -- Enhancement: Raid (Elemental 19 / Enhancement 32, two-hander, Windfury) from the wowsims Forever simulator, at Attack
+    -- Power 1.5 like the other melee profiles. Intellect counts through Mental Dexterity and the shocks' mana, Spell Power
+    -- through Flame Shock, Earth Shock and Lightning Shield; Spell Hit / Crit are the shocks'.
+    ["ENH_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_AGILITY_SHORT"]=2.45, ["ITEM_MOD_INTELLECT_SHORT"]=2.63, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.45, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.41, ["ITEM_MOD_HIT_RATING_SHORT"]=55.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=44.3, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Elemental: Raid (Elemental 31 / Enhancement 11 / Restoration 9) from the simulator, Spell Power 2.0. Elemental runs out
+    -- of mana in Forever and drops to a lower Lightning Bolt rank, which is why Crit and Hit are worth far less than for the
+    -- other casters. Nature and Fire damage split the Spell Power value by how much of the damage each school does.
+    ["ELE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.32, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.64, ["ITEM_MOD_INTELLECT_SHORT"]=0.62, ["ITEM_MOD_SPIRIT_SHORT"]=0.24, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.84, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=13.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=9.9 },
+    -- Restoration: Raid (Restoration 40 / Enhancement 11) from our healing model (the simulator can't heal), Healing 2.0.
+    -- Water Shield gives 2% of your mana back on heal crits, so Crit is worth about twice its value for other healers.
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.56, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.88, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.8, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+
+    -- Tank: AoE Farming (one-hander + shield, Rockbiter with Spirit Weapons; pulls of about 4 mobs killed with Fire Nova,
+    -- Magma Totem, Lightning Shield and shocks; a rough model, judgment-set like the other farming profiles). The pack
+    -- hits you the whole time, so Stamina, avoidance and the mana stats lead; Spell Power is the damage. Also the level-60
+    -- weights for the Tank: Dungeon Leveling build (there is no raid tank profile).
+    ["TANK_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.08, ["ITEM_MOD_DODGE_RATING_SHORT"]=8.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=6.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=6.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=8.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=6.0, ["ITEM_MOD_HIT_RATING_SHORT"]=4.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.6, ["ITEM_MOD_STRENGTH_SHORT"]=0.6, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0 },
+
+    -- PvP, totem-support and hybrid profiles (not modelled).
     ["ELE_PVP"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
-    ["ENH_STORMSTRIKE"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["RESTO_DEEP"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8  },
     -- Healer Spell Crit 48 at Healing 20: 1% crit is worth ~2.4 Healing.
     ["RESTO_TOTEM_SUPPORT"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0  },
     ["HYBRID_ELE_RESTO"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["HYBRID_ENH_RESTO"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
+-- Old names, kept so a saved profile choice still works.
+Shaman.Weights["ELE_PVE"] = Shaman.Weights["ELE_RAID"]
+Shaman.Weights["ENH_STORMSTRIKE"] = Shaman.Weights["ENH_RAID"]
+Shaman.Weights["RESTO_DEEP"] = Shaman.Weights["RESTO_RAID"]
+-- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { ENH_RAID = true, ELE_RAID = true, RESTO_RAID = true, ELE_PVE = true, ENH_STORMSTRIKE = true, RESTO_DEEP = true }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
-Shaman.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Strength/Agility/Weapon DPS corrected to the confirmed 1:1 Shaman
-    -- melee-AP formula and 14:1 Weapon DPS:AP ratio (see comment above
-    -- Shaman.Weights for the derivation).
-    ["Leveling_1_10"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-    -- Brought up to match Leveling_1_10/11_20's convention (Hit/Crit/Attack
-    -- Power were entirely absent -- zero weight, invisible to scoring; see
-    -- Warrior.lua's leveling-bracket comment for the item-database evidence)
-    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.25 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.1 },
-
-    -- Caster/Healer: matched to ELE_PVP / RESTO_DEEP's own conventions (Spell
-    -- Hit/Crit/Healing were absent or negligible -- a healer profile with no
-    -- Spell Healing weight at all is a clear-cut gap regardless of scale).
-    -- 11-20 healer adds Mp5 at RESTO_DEEP's Mp5:Healing ratio.
-    ["Leveling_Healer_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 },
-    ["Leveling_Caster_11_20"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0 },
-    ["Leveling_Caster_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0 },
-    ["Leveling_Caster_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
-    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=5.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    ["Leveling_Healer_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.0 },
-    ["Leveling_Healer_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.8 },
-    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5 },
-
-    -- Tank Shaman (no endgame tank profile exists to copy from -- added Hit
-    -- and raised Weapon Skill to match the class's general DPS convention,
-    -- since both were absent/low). Armor, Defense and Weapon DPS follow the
-    -- band ladder in Warrior.lua's LevelingWeights; Intellect covers Earth
-    -- Shock threat and self-heals.
-    -- 11-20 adds Weapon DPS at half the DPS brackets' 14.0, since low-level
-    -- threat comes almost entirely from weapon damage, and a low Defense
-    -- weight (see Warrior.lua's Leveling_Tank_11_20 comment).
-    ["Leveling_Tank_11_20"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.045, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 },
-    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.5 },
-    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.06, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0 },
-    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.6 },
-}
+-- Filled at load from Classes/Forever/Curves/Shaman_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling                Enhancement: Solo Leveling (two-hander, Rockbiter; the default)
+--   Leveling_Dungeon        Enhancement: Dungeon Leveling
+--   Leveling_Caster         Elemental: Leveling
+--   Leveling_Healer         Restoration: Leveling
+--   Leveling_HealerDungeon  Restoration: Dungeon Leveling
+--   Leveling_Tank           Tank: Dungeon Leveling (one-hander and shield, Rockbiter with Spirit Weapons; also the farming build's leveling)
+Shaman.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Shaman.PrettyNames = {
-    ["ELE_PVE"]             = "DPS: Elemental (PvE)",
+    ["ENH_RAID"]        = L["Enhancement: Raid"],
+    ["ELE_RAID"]        = L["Elemental: Raid"],
+    ["RESTO_RAID"]      = L["Restoration: Raid"],
+    ["TANK_FARM"]       = L["Tank: AoE Farming"],
+    ["ENH_STORMSTRIKE"] = L["Enhancement: Raid (old profile)"],
+    ["ELE_PVE"]         = L["Elemental: Raid (old profile)"],
+    ["RESTO_DEEP"]      = L["Restoration: Raid (old profile)"],
     ["ELE_PVP"]             = "PvP: Elemental (Burst)",
-    ["RESTO_DEEP"]          = "Healer: Deep Restoration",
     ["RESTO_TOTEM_SUPPORT"] = "Healer: Totem Twisting",
-    ["ENH_STORMSTRIKE"]     = "DPS: Enhancement",
     ["HYBRID_ELE_RESTO"]    = "Hybrid: Ele / Resto (NS)",
     ["HYBRID_ENH_RESTO"]    = "Hybrid: Enh / Resto (PvP)",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Enhancement (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Enhancement (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Enh (52-59)",
-    
-    ["Leveling_Caster_11_20"] = "Leveling: Elemental (11-20)",
-    ["Leveling_Caster_21_40"] = "Leveling: Elemental (21-40)",
-    ["Leveling_Caster_41_51"] = "Leveling: Elemental (41-51)",
-    ["Leveling_Caster_52_59"] = "Leveling: Elemental (52-59)",
-    ["Leveling_Healer_11_20"] = "Leveling: Resto Dungeon (11-20)",
-    ["Leveling_Healer_21_40"] = "Leveling: Resto Dungeon (21-40)",
-    ["Leveling_Healer_41_51"] = "Leveling: Resto Dungeon (41-51)",
-    ["Leveling_Healer_52_59"] = "Leveling: Resto Dungeon (52-59)",
 
-    ["Leveling_Tank_11_20"]   = "Leveling: Tank Shaman (11-20)",
-    ["Leveling_Tank_21_40"]   = "Leveling: Tank Shaman (21-40)",
-    ["Leveling_Tank_41_51"]   = "Leveling: Tank Shaman (41-51)",
-    ["Leveling_Tank_52_59"]   = "Leveling: Tank Shaman (52-59)",
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",               "Enhancement: Solo Leveling" },
+    { "Leveling_Dungeon",       "Enhancement: Dungeon Leveling" },
+    { "Leveling_Caster",        "Elemental: Leveling" },
+    { "Leveling_Healer",        "Restoration: Leveling" },
+    { "Leveling_HealerDungeon", "Restoration: Dungeon Leveling" },
+    { "Leveling_Tank",          "Tank: Dungeon Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Shaman.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -155,6 +144,9 @@ Shaman.LowLevelRoles = {
     Leveling_Tank   = {},
     Leveling_Healer = { "IMP_HEALING_WAVE", "TIDAL_MASTERY", "MINDFULNESS", "TIDAL_FOCUS", "ANCESTRAL_HEALING", "HEALING_FOCUS", "WATER_SHIELD" },
     Leveling_Caster = { "CONVECTION", "CONCUSSION", "CALL_OF_FLAME", "REVERBERATION", "ELEMENTAL_FOCUS", "ELEMENTAL_ALACRITY", "ELEMENTAL_FURY" },
+    -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_Dungeon = {},
+    Leveling_HealerDungeon = {},
 }
 
 -- =============================================================
@@ -184,6 +176,13 @@ function Shaman:GetSpec()
         elseif level <= 51 then suffix = "_41_51"
         else suffix = "_52_59" end
         
+        -- A Talents plugin build names its role; it wins over the talent checks below.
+        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        if forced and (forced == "Leveling" or Shaman.LowLevelRoles[forced]) and level >= 10 then
+            local fs = (level == 10 and forced ~= "Leveling") and "_11_20" or suffix
+            if Shaman.LevelingWeights[forced .. fs] then return forced .. fs end
+        end
+
         -- Detect Roles
         local role = "Leveling" -- Default Enh
         -- Tank needs Anticipation (a lone filler point is only believable
@@ -192,9 +191,14 @@ function Shaman:GetSpec()
         local isTank = rAnti >= 1 and (level <= 24 or rAnti >= 2 or Rank("TOUGHNESS") >= 3 or Rank("SPIRIT_WEAPONS") > 0)
         if isTank then role = "Leveling_Tank"
         elseif Rank("ELEMENTAL_FURY") > 0 then role = "Leveling_Caster"
+        -- Stormstrike keeps Enhancement builds that take the Elemental shock talents (Convection, Call of Flame,
+        -- Reverberation) on the Enhancement weights
+        elseif Rank("STORMSTRIKE") > 0 then role = "Leveling"
         elseif Rank("WATER_SHIELD") > 0 then role = "Leveling_Healer"
         elseif level >= 10 then role = MSC:GetLowLevelRole(Shaman.LowLevelRoles) or role
         end
+        if role == "Leveling_Dungeon" then role = "Leveling" end
+        if role == "Leveling_HealerDungeon" then role = "Leveling_Healer" end
         
         -- Level 10 brings the first talent point: a role it marks uses that
         -- role's 11-20 row (the 1-10 band only has the default row).
@@ -204,22 +208,30 @@ function Shaman:GetSpec()
         return "Leveling" .. suffix
     end
 
-    -- Endgame
-    if Rank("LAVA_BURST") > 0 then 
-        if Rank("EYE_OF_STORM") > 0 then return "ELE_PVP" end
-        return "ELE_PVE" 
+    -- Endgame: Lava Burst (Elemental; full Eye of the Storm is the PvP build, the raid build takes 2 as filler), Riptide
+    -- (Restoration), Rage of the Farseer (Enhancement), a shield tank, the hybrids, Stormstrike, then the tree with the most points.
+    if Rank("LAVA_BURST") > 0 then
+        if Rank("EYE_OF_STORM") >= 3 then return "ELE_PVP" end
+        return "ELE_RAID"
     end
-    if Rank("RIPTIDE") > 0 then return "RESTO_DEEP" end
-    if Rank("RAGE_FARSEER") > 0 then return "ENH_STORMSTRIKE" end
+    if Rank("RIPTIDE") > 0 then return "RESTO_RAID" end
+    if Rank("RAGE_FARSEER") > 0 then return "ENH_RAID" end
+    -- shield tank (Anticipation with Spirit Weapons): the farming weights (no raid tank profile)
+    if Rank("ANTICIPATION") >= 2 and Rank("SPIRIT_WEAPONS") > 0 then return "TANK_FARM" end
     if Rank("NATURES_SWIFTNESS") > 0 and Rank("ELEMENTAL_ALACRITY") > 0 then return "HYBRID_ELE_RESTO" end
     if Rank("NATURES_SWIFTNESS") > 0 and Rank("FLURRY") > 0 then return "HYBRID_ENH_RESTO" end
-    if Rank("RESTORATIVE_TOTEMS") > 0 and Rank("TIDAL_MASTERY") > 0 then return "RESTO_TOTEM_SUPPORT" end
-    return "RESTO_DEEP"
+    if Rank("STORMSTRIKE") > 0 then return "ENH_RAID" end
+    local ele, enh, resto = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if ele > enh and ele >= resto then return "ELE_RAID" end
+    if enh > resto then return "ENH_RAID" end
+    return "RESTO_RAID"
 end
 
 function Shaman:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
+    -- The study-built level-60 profiles already carry their talents: the talent hooks skip them (the hit cap still applies).
+    local hooks = not SIM_PROFILES[currentSpec or ""]
     local level = UnitLevel("player") or 1
     local isTank   = currentSpec:find("Leveling_Tank") ~= nil
     local isCaster = currentSpec:find("Leveling_Caster") ~= nil
@@ -279,30 +291,42 @@ function Shaman:ApplyScalers(weights, currentSpec)
             end
         end
 
+        -- Improved Stormstrike (Enhancement t5), Enhancement rows: the rows do
+        -- not bake it. Its 50% mana regen while casting (15 sec after each
+        -- Stormstrike, about every 8 sec, so full uptime at 2/2) lifts Spirit
+        -- only, since Mp5 already works in combat -- the same factor as the
+        -- tank hook below (x1.62 at 2/2, x1.31 at 1/2). The dodge/parry reset
+        -- is worth under 1% damage per 1% dodge for a DPS Shaman, so it is skipped.
+        local rImpSSEnh = Rank("IMPROVED_STORMSTRIKE")
+        if isEnh and rImpSSEnh > 0 and level >= 30 then
+            local uptime = 1 - (1 - 0.5 * math.min(rImpSSEnh, 2)) ^ 1.9
+            Scale(weights, { SPI }, 1 + 0.62 * uptime)
+        end
+
         for _, k in ipairs({ INT, SPI, MP5, "MSC_WEAPON_SPEED" }) do
             if weights[k] and weights[k] > 0 and weights[k] < 0.02 then weights[k] = 0 end
         end
     end
 
     local rAK = Rank("ANCESTRAL_KNOW")
-    if rAK > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+    if hooks and rAK > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAK * 0.02))
     end
 
     local rTough = Rank("TOUGHNESS")
-    if rTough > 0 then
+    if hooks and rTough > 0 then
         Scale(weights, { "ITEM_MOD_STAMINA_SHORT", "ITEM_MOD_HEALTH_SHORT" }, 1 + (rTough * 0.02))
     end
 
     local rMD = Rank("MENTAL_DEXTERITY")
-    if rMD > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) > 0 then
+    if hooks and rMD > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) > 0 then
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (rMD * 0.33))
     end
 
     -- Mental Quickness: the Forever text is the rank-1 value (15% of Intellect
     -- per rank). Healer rows count healing plus the damage half.
     local rMQ = Rank("MENTAL_QUICKNESS")
-    if rMQ > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+    if hooks and rMQ > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
         local spWeight
         if isHealer then
             spWeight = (weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) + (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0)
@@ -318,7 +342,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- Arcane Mind -- relative growth of the crit damage bonus, 1+rank*0.20,
     -- reaching 2.0x at 5/5 (matches real Classic Elemental Fury exactly)
     local rEleFury = Rank("ELEMENTAL_FURY")
-    if rEleFury > 0 and (currentSpec:find("ELE") or currentSpec:find("Caster")) and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    if hooks and rEleFury > 0 and (currentSpec:find("ELE") or currentSpec:find("Caster")) and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rEleFury * 0.20))
     end
 
@@ -328,7 +352,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- Leveling_Caster rows skip it: a flat x1.05 on SP wrongly devalues the
     -- mana stats and hit/crit next to Spell Power (the modelled shift is <1%).
     local rConcussion = Rank("CONCUSSION")
-    if rConcussion > 0 and not isCaster and (currentSpec:find("ELE") or currentSpec:find("Caster")) and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
+    if hooks and rConcussion > 0 and not isCaster and (currentSpec:find("ELE") or currentSpec:find("Caster")) and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
         weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rConcussion * 0.01))
     end
 
@@ -376,7 +400,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
             Scale(weights, { MP5 }, 1 + 0.82 * (m - 1))
             MSC.ScaleForeverSpellCrit(weights, 1 + 0.65 * (m - 1), level)
         end
-    else
+    elseif hooks then
         if rPurify > 0 and currentSpec:find("RESTO") and weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
             weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rPurify * 0.02))
         end

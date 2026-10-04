@@ -7,75 +7,77 @@ Priest.Name = "PRIEST"
 -- =============================================================
 Priest.Weights = {
     ["Default"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
-    -- Healer Spell Crit: 1% crit is worth ~2.4 Healing (a crit heal adds 50%)
-    -- -- 4.8 at Healing 2, 48 at Healing 20 (the old 0.8 / 10 made it 0.4-0.5).
-    ["HOLY_DEEP"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.8  },
-    ["DISC_PI_SUPPORT"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.8  },
-    ["SHADOW_PVE"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0  },
+    -- The level-60 profiles (study/priest2, 2026-10-03; NOTES.md there has the numbers). Spell Power / Healing sit at
+    -- 2.0; Hit and Crit per 1%. Each was worked out with its build's own talents, so ApplyScalers' talent hooks skip them.
+    -- Shadow: Raid comes from the wowsims Forever sim (Shadow 508 DPS against Smite's 315-375). Spirit and Mp5 come out at
+    -- nothing there (the fight never runs a Shadow priest dry); Intellect is its crit and a little mana.
+    ["SHADOW_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=16.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.4, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=0.1 },
+    -- The healer profiles come from our healing model (the sim can't heal): a raid fight's healing done with the mana you
+    -- have, casting lower ranks where they save mana. Holy: Raid (Spiritual Guidance and Prayer of Mending) leans on Spirit
+    -- and Mp5; its crit came out at ~2.5 in the model, which misses Inspiration and Holy's crit talents, so it is set at 7.
+    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.47, ["ITEM_MOD_SPIRIT_SHORT"]=2.25, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    -- Discipline: Raid (Penance, Divine Aegis and Power Infusion, 32/19): crits shield through Divine Aegis, so Crit leads.
+    ["DISC_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=3.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.4, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    -- Shadow: Multi-DoT Farming (Shadow Word: Pain and Devouring Plague on packs of 4-5, shields and fears; a rough model).
+    -- The pack hits you the whole time, so Stamina leads with the mana stats. Talent hooks still apply (Shadowform doubles
+    -- the Crit here).
+    ["SHADOW_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.03 },
+
+    -- PvP and hybrid profiles (not modelled).
     ["SHADOW_PVP"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["HYBRID_POWER_WEAVING"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
 }
+-- Old names, kept so a saved profile choice still works.
+Priest.Weights["SHADOW_PVE"] = Priest.Weights["SHADOW_RAID"]
+Priest.Weights["HOLY_DEEP"] = Priest.Weights["HOLY_RAID"]
+Priest.Weights["DISC_PI_SUPPORT"] = Priest.Weights["DISC_RAID"]
+-- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { SHADOW_RAID = true, HOLY_RAID = true, DISC_RAID = true, SHADOW_PVE = true, HOLY_DEEP = true, DISC_PI_SUPPORT = true }
 
 -- =============================================================
--- LEVELING WEIGHTS (Spirit is King)
+-- LEVELING WEIGHTS
 -- =============================================================
-Priest.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Shadow/Wand. Stamina (on ~40-60% of 1-20 items) was entirely absent
-    -- here -- added at the 21-40 bracket's own value.
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=7.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=7.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=7.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=7.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2 },
-    -- Brought up to match Leveling_1_10/11_20's convention (Spell Hit/Crit
-    -- were entirely absent -- zero weight, invisible to scoring; see
-    -- Warrior.lua's leveling-bracket comment for the item-database evidence)
-    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=13.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-
-    -- Healer: also had no Spell Healing weighted at all (a healer profile
-    -- with zero credit for healing power), and no Hit -- correctly omitted
-    -- here since heals can't miss, matching HOLY_DEEP's own convention.
-    -- 11-20 uses the same shape plus Mp5 at HOLY_DEEP's Mp5:Healing ratio.
-    ["Leveling_Healer_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8 },
-    ["Leveling_Healer_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=0.8 },
-    ["Leveling_Healer_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.8 },
-    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
-
-    -- Smite (same convention fix as the Shadow/Wand brackets above). 11-20:
-    -- the Shadow/Wand 11-20 row with all school damage moved to Holy.
-    ["Leveling_Smite_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2 },
-    ["Leveling_Smite_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2 },
-    ["Leveling_Smite_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4 },
-    ["Leveling_Smite_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-}
+-- Filled at load from Classes/Forever/Curves/Priest_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling                Shadow: Solo Leveling (wand, then Mind Flay and Shadowform; the default)
+--   Leveling_ShadowDungeon  Shadow: Dungeon Leveling
+--   Leveling_Healer         Healer: Leveling (the Holy and Discipline raid builds)
+--   Leveling_HealerDungeon  Healer: Dungeon Leveling
+--   Leveling_Smite          Smite: Solo Leveling
+Priest.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Priest.PrettyNames = {
-    ["HOLY_DEEP"]          = "Healer: Deep Holy",
-    ["DISC_PI_SUPPORT"]    = "Healer: Disc (Power Infusion)",
-    ["SHADOW_PVE"]         = "DPS: Shadow (PvE)",
-    ["SHADOW_PVP"]         = "PvP: Shadow (Blackout)",
+    ["SHADOW_RAID"]     = L["Shadow: Raid"],
+    ["HOLY_RAID"]       = L["Holy: Raid"],
+    ["DISC_RAID"]       = L["Discipline: Raid"],
+    ["SHADOW_FARM"]     = L["Shadow: Multi-DoT Farming"],
+    ["SHADOW_PVE"]      = L["Shadow: Raid (old profile)"],
+    ["HOLY_DEEP"]       = L["Holy: Raid (old profile)"],
+    ["DISC_PI_SUPPORT"] = L["Discipline: Raid (old profile)"],
+    ["SHADOW_PVP"]           = "PvP: Shadow (Blackout)",
     ["HYBRID_POWER_WEAVING"] = "Support: Power Weaving",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Shadow/Wand (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Shadow (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Shadow (52-59)",
-    
-    ["Leveling_Smite_11_20"] = "Leveling: Smite/Holy (11-20)",
-    ["Leveling_Smite_21_40"] = "Leveling: Smite/Holy (21-40)",
-    ["Leveling_Smite_41_51"] = "Leveling: Smite/Holy (41-51)",
-    ["Leveling_Smite_52_59"] = "Leveling: Smite/Holy (52-59)",
-    
-    ["Leveling_Healer_11_20"] = "Leveling: Healer (11-20)",
-    ["Leveling_Healer_21_40"] = "Leveling: Healer (21-40)",
-    ["Leveling_Healer_41_51"] = "Leveling: Healer (41-51)",
-    ["Leveling_Healer_52_59"] = "Leveling: Pre-BiS Healer (52-59)",
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",               "Shadow: Solo Leveling" },
+    { "Leveling_ShadowDungeon", "Shadow: Dungeon Leveling" },
+    { "Leveling_Healer",        "Healer: Leveling" },
+    { "Leveling_HealerDungeon", "Healer: Dungeon Leveling" },
+    { "Leveling_Smite",         "Smite: Solo Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Priest.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -104,6 +106,9 @@ Priest.Talents = {
     ["DIVINE_AEGIS"]    = "Divine Aegis", -- Discipline t6, 3 ranks, crit heals shield
     ["PENANCE"]         = "Penance", -- Discipline t5 (L30), 1 rank
     ["PRAYER_OF_MENDING"] = "Prayer of Mending", -- Holy t7 (L40), 1 rank
+    ["IMP_MIND_BLAST"]  = "Improved Mind Blast", -- Shadow t3, 5 ranks, -0.5 s Mind Blast cooldown each
+    ["IMP_SWP"]         = "Improved Shadow Word: Pain", -- Shadow t2, 2 ranks, +3 s duration each
+    ["DEVOURING_CONTAGION"] = "Devouring Contagion", -- Shadow; the farming build's signature (Devouring Plague spreads on a kill)
 }
 
 -- Leveling role marker talents (see MSC:GetLowLevelRole). Wand Specialization
@@ -112,7 +117,10 @@ Priest.Talents = {
 -- Silent Resolve were dropped as markers: Discipline wand levelers take them
 -- too, and one point flipped them to the healer profile (no wand DPS, no hit).
 Priest.LowLevelRoles = {
-    Leveling_Healer = { "IMP_RENEW", "INSPIRATION" },
+    Leveling_Healer = { "IMP_RENEW", "INSPIRATION", "DIVINE_AEGIS", "PRAYER_OF_MENDING" }, -- the last two only heal
+    -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_ShadowDungeon = {},
+    Leveling_HealerDungeon = {},
 }
 
 -- =============================================================
@@ -163,24 +171,29 @@ function Priest:GetSpec()
         return "Leveling" .. suffix
     end
 
-    -- Endgame
-    if Rank("SHADOWFORM") > 0 and Rank("SHADOW_WEAVING") > 0 then return "SHADOW_PVE" end
-    if Rank("SHADOWFORM") > 0 and Rank("BLACKOUT") > 0 then return "SHADOW_PVP" end
-    if Rank("POWER_INFUSION") > 0 and Rank("SHADOW_WEAVING") > 0 then return "HYBRID_POWER_WEAVING" end
-    if Rank("POWER_INFUSION") > 0 then return "DISC_PI_SUPPORT" end
-    if Rank("SPIRIT_GUIDANCE") > 0 then return "HOLY_DEEP" end
-    return "HOLY_DEEP"
+    -- Endgame: the farming build (Devouring Contagion), Shadowform, then the healers: Prayer of Mending is Holy's,
+    -- Penance / Power Infusion Discipline's, otherwise the tree with more points.
+    if Rank("DEVOURING_CONTAGION") > 0 then return "SHADOW_FARM" end
+    if Rank("SHADOWFORM") > 0 then return "SHADOW_RAID" end
+    if Rank("PRAYER_OF_MENDING") > 0 then return "HOLY_RAID" end
+    if Rank("PENANCE") > 0 or Rank("POWER_INFUSION") > 0 then return "DISC_RAID" end
+    local disc, holy, shadow = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if shadow > disc and shadow > holy then return "SHADOW_RAID" end
+    if disc > holy then return "DISC_RAID" end
+    return "HOLY_RAID"
 end
 
 function Priest:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
+    -- The study-built level-60 profiles already carry their talents: the talent hooks skip them (the hit cap still applies).
+    local hooks = not SIM_PROFILES[currentSpec or ""]
 
     local level = UnitLevel("player")
     local isLeveling = currentSpec:match("^Leveling") ~= nil
     local isHealerRow = currentSpec:match("^Leveling_Healer") ~= nil
     local isSmiteRow = currentSpec:match("^Leveling_Smite") ~= nil
-    local isDefaultRow = currentSpec:match("^Leveling_%d") ~= nil -- Shadow/Wand
+    local isDefaultRow = (currentSpec:match("^Leveling_%d") or currentSpec:match("^Leveling_ShadowDungeon")) ~= nil -- Shadow/Wand (solo and dungeon)
     local function Scale(key, mult)
         if weights[key] and mult ~= 1 then weights[key] = weights[key] * mult end
     end
@@ -189,16 +202,23 @@ function Priest:ApplyScalers(weights, currentSpec)
     if isDefaultRow then
         local rMF = Rank("MIND_FLAY")
         local rSF = Rank("SHADOWFORM")
+        local mfRamp = rMF > 0 and level >= 28 and level < 40
 
         -- No-Shadowform restore: the 40+ rows bake Shadowform in, so a Disc/wand
         -- build without it gets the factors back (ramped in from 35 to 40)
         if level >= 36 and rSF == 0 then
             local p = (level >= 40) and 1 or ((level - 35) / 5)
             local function F(f) return f ^ p end
-            Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", F(3.3))
+            -- A Mind Flay owner (28-39, Shadowform still ahead) is already moved
+            -- to the filler rotation by the Mind Flay ramp below, so the wand and
+            -- Spirit factors are left out for them (restoring them as well would
+            -- put the wand weight at ~60 at 39 where the study path gives ~25)
+            if not mfRamp then
+                Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", F(3.3))
+                Scale("ITEM_MOD_SPIRIT_SHORT", F(2.0))
+            end
             Scale("ITEM_MOD_INTELLECT_SHORT", F(1.47))
             Scale("ITEM_MOD_MANA_SHORT", F(1.6))
-            Scale("ITEM_MOD_SPIRIT_SHORT", F(2.0))
             Scale("ITEM_MOD_MANA_REGENERATION_SHORT", F(1.1))
             Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", F(1.14))
             Scale("ITEM_MOD_STAMINA_SHORT", F(1.14))
@@ -212,7 +232,7 @@ function Priest:ApplyScalers(weights, currentSpec)
         -- Mind Flay ramp (28-39): the wand gives way to Mind Flay. Applied once,
         -- never stacked with Wand Specialization
         local mindFlayFired = false
-        if rMF > 0 and level >= 28 and level < 40 then
+        if mfRamp then
             mindFlayFired = true
             Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", MSC.ForeverLevelLerp({ {35, 0.6}, {40, 1.0} }, level))
             Scale("ITEM_MOD_SPIRIT_SHORT", MSC.ForeverLevelLerp({ {35, 0.75}, {40, 1.0} }, level))
@@ -220,15 +240,42 @@ function Priest:ApplyScalers(weights, currentSpec)
 
         -- Wand Specialization (Discipline t1, 2 ranks): wand damage 13% / 25%
         local rWand = Rank("WAND_SPEC")
-        if rWand > 0 and not mindFlayFired and (rMF == 0 or rSF == 0) then
+        -- (also with Shadowform + Mind Flay: the 40+ rows bake the wand as a short
+        -- fight tail, and the talent still adds its % to that tail)
+        if rWand > 0 and not mindFlayFired then
             Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", ({ 1.13, 1.25 })[math.min(rWand, 2)])
         end
 
         -- Spirit Tap (Shadow t1, 5 ranks) and Meditation (Discipline t3, 3 ranks)
-        -- come from different trees; if both are taken the larger one applies
-        local tapMult = 1 + 0.16 * Rank("SPIRIT_TAP")
-        local medMult = 1 + ((rMF > 0) and 0.18 or 0.12) * Rank("MEDITATION")
-        Scale("ITEM_MOD_SPIRIT_SHORT", math.max(tapMult, medMult))
+        -- both add casting regen to the same Spirit pool, so their gains add
+        -- (a Shadow build with Meditation, as the solo build has from 51, took
+        -- only the larger one before: 1.8 instead of 2.34)
+        local tapGain = 0.16 * Rank("SPIRIT_TAP")
+        local medGain = ((rMF > 0) and 0.18 or 0.12) * Rank("MEDITATION")
+        Scale("ITEM_MOD_SPIRIT_SHORT", 1 + tapGain + medGain)
+
+        -- Improved Mind Blast (-0.5 s cooldown/rank, 5 ranks) and Improved Shadow
+        -- Word: Pain (+3 s/rank, 2 ranks) raise Shadow's share of the kill (about
+        -- +0.6% / +2.5% per rank); the gain moves from the Arcane key (Starshards)
+        -- so the school shares still sum to the Spell Power unit
+        local shMult = 1 + 0.006 * Rank("IMP_MIND_BLAST") + 0.025 * Rank("IMP_SWP")
+        local shKey, arKey = weights["ITEM_MOD_SHADOW_DAMAGE_SHORT"], weights["ITEM_MOD_ARCANE_DAMAGE_SHORT"]
+        if shMult ~= 1 and shKey and arKey then
+            weights["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = shKey * shMult
+            weights["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = math.max(0, arKey - shKey * (shMult - 1))
+        end
+
+        -- Shadow Weaving (Shadow t4, 3 ranks): 5 stacks of +2% Shadow damage, and
+        -- since 1.60.1.70170 it can no longer fail to apply; ~70% of the 10% is up
+        -- over a kill. Same Shadow/hit-crit split as Darkness. Not baked in the rows
+        if Rank("SHADOW_WEAVING") > 0 then
+            local dmSW = 1 + 0.07 * 0.65
+            Scale("ITEM_MOD_SPELL_POWER_SHORT", dmSW)
+            Scale("ITEM_MOD_SHADOW_DAMAGE_SHORT", dmSW)
+            local cmSW = 1 + 0.07 * 0.35
+            Scale("ITEM_MOD_SPELL_CRIT_RATING_SHORT", cmSW)
+            Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", cmSW)
+        end
     end
 
     -- [[ Healer: Meditation, Divine Aegis, Penance, Prayer of Mending ]]
@@ -273,7 +320,7 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- the rank-1 value, so per rank it is 5% healing / 1.6% damage (Smite rows:
     -- damage 1% of Spirit, healing only when the row carries a healing weight)
     local rSG = Rank("SPIRIT_GUIDANCE")
-    if rSG > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+    if hooks and rSG > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0
         if isSmiteRow then
             local healWeight = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0
@@ -286,21 +333,21 @@ function Priest:ApplyScalers(weights, currentSpec)
     end
 
     local rMent = Rank("MENTAL_STRENGTH")
-    if rMent > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+    if hooks and rMent > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMent * 0.03))
     end
 
     -- Shadowform (Shadow t7, 1 rank): doubles the crit damage bonus of Shadow
     -- spells (+100% crit damage bonus, i.e. 50% -> 100%, a flat 2x on Crit's value)
     -- Leveling rows already build Shadowform's crit bonus into their 40-59
-    -- keyframes (LevelingCurves.lua), so only the endgame profiles get it here.
-    if Rank("SHADOWFORM") > 0 and not currentSpec:match("^Leveling") and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    -- keyframes (Curves/Priest_Curves.lua), so only the endgame profiles get it here.
+    if hooks and Rank("SHADOWFORM") > 0 and not currentSpec:match("^Leveling") and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * 2.0
     end
 
     -- Spiritual Healing (Holy t6, 3 ranks): +3%/rank universal healing done
     local rSpiritHeal = Rank("SPIRITUAL_HEALING")
-    if rSpiritHeal > 0 then
+    if hooks and rSpiritHeal > 0 then
         if isHealerRow then
             -- A healing multiplier also scales Int/Mp5/Spirit/crit per mana, so the
             -- row keeps Healing and the solo-only stats are divided instead
@@ -318,7 +365,7 @@ function Priest:ApplyScalers(weights, currentSpec)
 
     -- Darkness (Shadow t6, 5 ranks, Same as Classic): +2%/rank Shadow damage
     local rDark = Rank("DARKNESS")
-    if rDark > 0 then
+    if hooks and rDark > 0 then
         if isDefaultRow then
             -- (the default Leveling_<band> profiles are the Shadow/Wand leveling weights)
             -- Shadow damage is ~0.65 of the kill, the rest of the gain is hit/crit value
@@ -341,7 +388,7 @@ function Priest:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 2. Covariance (Mana Regen / Healing Power Synergy) ]]
-    if currentSpec:find("HOLY") or currentSpec:find("DISC") then
+    if hooks and (currentSpec:find("HOLY") or currentSpec:find("DISC")) then
         -- FIX: Use GetPlayerStat via Shim (This usually returns bonus healing)
         local healPower = MSC.SanitizeStat(GetSpellBonusHealing()) -- Vanilla API for Healing
         
@@ -358,9 +405,24 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- profiles and Holy Precision (6%/rank, Holy only; 18% at 3/3 covers any
     -- leveling cap on its own) for Smite, since the
     -- game's general spell-hit number includes neither.
-    local isShadow = currentSpec:find("SHADOW") or currentSpec:match("^Leveling_%d")
+    local isShadow = currentSpec:find("SHADOW") or isDefaultRow
     local talentHit = (isShadow and Rank("SHADOW_FOCUS")) or (currentSpec:find("Smite") and Rank("HOLY_PRECISION") * 6) or 0
-    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit)
+    local rSFocus = Rank("SHADOW_FOCUS")
+    if isDefaultRow and rSFocus > 0 and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
+        -- Shadow Focus only covers Shadow spells; Starshards (Arcane) and the wand
+        -- still miss at the level's cap. Hit is worth full below (cap - Shadow
+        -- Focus) of gear hit, then only the non-Shadow share (1 - s) until the cap,
+        -- then the usual 0.1 (a flat cap with Shadow Focus added left a 5/5 player
+        -- at 0.1 from level 19 although 60-70% of the hit value was still live)
+        local s = MSC.ForeverLevelLerp({ {10, 0.25}, {15, 0.30}, {20, 0.30}, {25, 0.32}, {30, 0.35}, {35, 0.38}, {40, 0.40} }, level)
+        local cap = MSC.GetForeverCapTarget("SPELL")
+        MSC.ApplyForeverHitKnees(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", {
+            { cap = math.max(0, cap - rSFocus), mult = (1 - s) + s * 0.1 },
+            { cap = cap, mult = 0.1 },
+        }, "Spell Hit", activeCaps, 0)
+    else
+        MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit)
+    end
 
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end

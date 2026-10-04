@@ -7,76 +7,75 @@ Mage.Name = "MAGE"
 -- =============================================================
 Mage.Weights = {
     ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_SHORT"]=0.02, ["ITEM_MOD_STAMINA_SHORT"]=0.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
-    -- The raid profiles anchor Spell Power at 2.0, so Spell Crit 4.0 makes 1%
-    -- crit worth 2 Spell Power (the old 1.5 placeholder made it 0.75);
-    -- Ice Shards / Arcane Mind scale it further in ApplyScalers.
-    ["FIRE_RAID"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
-    ["FROST_AP"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
-    ["FROST_WC"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0  },
-    ["FROST_AOE"] = {  ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
+
+    -- The raid profiles come from the wowsims Forever sim (study/mage2, 2026-10-03; NOTES.md there has the numbers),
+    -- run with each build's own talents, so ApplyScalers' talent hooks skip them. Spell Power sits at 2.0; Hit and
+    -- Crit are per 1%. In a three-minute fight with raid buffs a Frost or Arcane mage doesn't run out of mana, so
+    -- Intellect counts mostly for its crit.
+    -- Frost: Raid (Frost with Ice Lance, Fingers of Frost and Winter's Chill; bosses can't be frozen).
+    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=24.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.28 },
+    -- Fire: Raid (Fire 35 / Frost 16). About 17% behind Frost in the sim; Fireball's mana cost makes Intellect, Spirit and Mp5 count.
+    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=18.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.98, ["ITEM_MOD_SPIRIT_SHORT"]=1.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.32 },
+    -- Arcane: Raid (Arcane Blast and Arcane Missiles). About 6% behind Frost.
+    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.82, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.18, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.46, ["ITEM_MOD_SPIRIT_SHORT"]=0.24, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.38 },
+    -- Frost: AoE Farming (Blizzard kiting packs at 60; study/mage2/farm.js, a rough model, tempered). Blizzard's spell
+    -- power share is small next to its base damage and drinking is a big part of each pull, so Crit, Intellect and Mp5
+    -- count for a lot against Spell Power; Stamina keeps you alive when a pull goes wrong.
+    ["FROST_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=3.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
+
+    -- PvP profiles (not modelled).
     ["POM_PYRO"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["ELEMENTAL"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["FROST_PVP"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
 }
+-- Old names, kept so a saved profile choice still works.
+Mage.Weights["FROST_WC"] = Mage.Weights["FROST_RAID"]
+Mage.Weights["FROST_AP"] = Mage.Weights["FROST_RAID"]
+-- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { FROST_RAID = true, FIRE_RAID = true, ARCANE_RAID = true, FROST_WC = true, FROST_AP = true }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
-Mage.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Frost (ST)
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    -- Brought up to match Leveling_1_10/11_20's convention (Spell Hit/Crit
-    -- were entirely absent -- zero weight, invisible to scoring; see
-    -- Warrior.lua's leveling-bracket comment for the item-database evidence)
-    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.8 },
-
-    -- Fire Leveling (same convention fix as above). 11-20 rows: the Frost
-    -- 11-20 row with each spec's school-damage split from its 21-40 row.
-    ["Leveling_Fire_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    ["Leveling_Fire_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
-    ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.5, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=12.75, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.75, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.8 },
-
-    -- AoE Grinding (same convention fix as above)
-    ["Leveling_AoE_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    ["Leveling_AoE_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.6 },
-    ["Leveling_AoE_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.75, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
-    ["Leveling_AoE_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=9.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.8 },
-}
+-- Filled at load from Classes/Forever/Curves/Mage_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling          Frost: Solo Leveling (single target, the default)
+--   Leveling_AoE      Frost: AoE Leveling (Blizzard pack grinding)
+--   Leveling_Dungeon  Frost: Dungeon Leveling
+--   Leveling_Fire     Fire leveling (Ignite)
+Mage.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Mage.PrettyNames = {
-    ["FIRE_RAID"]       = "Raid: Deep Fire (Combustion)",
-    ["FROST_AP"]        = "Raid: Frost (Arcane Power)",
-    ["FROST_WC"]        = "Raid: Frost (Winter's Chill)",
+    ["FROST_RAID"]  = L["Frost: Raid"],
+    ["FIRE_RAID"]   = L["Fire: Raid"],
+    ["ARCANE_RAID"] = L["Arcane: Raid"],
+    ["FROST_AOE"]   = L["Frost: AoE Farming"],
+    ["FROST_WC"]    = L["Frost: Raid (old profile)"],
+    ["FROST_AP"]    = L["Frost: Raid (old Arcane Power profile)"],
     ["POM_PYRO"]        = "PvP: PoM Pyro (3-Min Mage)",
     ["ELEMENTAL"]       = "PvP: Elemental (Shatter)",
     ["FROST_PVP"]       = "PvP: Deep Frost",
-    ["FROST_AOE"]       = "Farming: Frost AoE",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Frost/Fire ST (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Frost/Fire ST (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Mage (52-59)",
-    
-    ["Leveling_AoE_11_20"]  = "Leveling: AoE Grinding (11-20)",
-    ["Leveling_AoE_21_40"]  = "Leveling: AoE Grinding (21-40)",
-    ["Leveling_AoE_41_51"]  = "Leveling: AoE Grinding (41-51)",
-    ["Leveling_AoE_52_59"]  = "Leveling: AoE Grinding (52-59)",
-    
-    ["Leveling_Fire_11_20"] = "Leveling: Fire (11-20)",
-    ["Leveling_Fire_21_40"] = "Leveling: Fire (21-40)",
-    ["Leveling_Fire_41_51"] = "Leveling: Fire (41-51)",
-    ["Leveling_Fire_52_59"] = "Leveling: Fire (52-59)",
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",         "Frost: Solo Leveling" },
+    { "Leveling_AoE",     "Frost: AoE Leveling" },
+    { "Leveling_Dungeon", "Frost: Dungeon Leveling" },
+    { "Leveling_Fire",    "Fire: Solo Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Mage.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -134,55 +133,60 @@ Mage.ValidWeapons = {
 Mage.LowLevelRoles = {
     Leveling      = { "FROST_WARDING", "IMP_FROSTBOLT", "ICE_SHARDS", "PERMAFROST", "IMP_FROST_NOVA", "FROSTBITE", "PIERCING_ICE", "FROST_CHANNELING", "ICE_LANCE" },
     Leveling_Fire = { "WAKE_OF_FIRE", "INCINERATION", "IMP_FIREBALL", "IGNITE", "FLAME_THROWING", "IMPACT", "BURNING_SOUL", "IMP_FLAMESTRIKE", "PYROBLAST" },
+    -- No markers: these apply only when chosen, e.g. by a Talents plugin build (AoE grinding is
+    -- otherwise picked from Improved Blizzard in GetSpec).
+    Leveling_AoE = {},
+    Leveling_Dungeon = {},
 }
 
 function Mage:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
-    
-    -- Leveling Bracket Logic
+
     if level < 60 then
-        local suffix = ""
-        if level <= 10 then suffix = "_1_10"
-        elseif level <= 20 then suffix = "_11_20"
-        elseif level <= 40 then suffix = "_21_40"
-        elseif level <= 51 then suffix = "_41_51"
-        else suffix = "_52_59" end
-        
-        local role = "Leveling" -- Default
+        if level < 10 then return "Leveling_1_10" end
+        local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
+
+        -- A Talents plugin build names its role; it wins over the talent checks below.
+        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        if forced and (forced == "Leveling" or Mage.LowLevelRoles[forced]) and Mage.LevelingWeights[forced .. suffix] then
+            return forced .. suffix
+        end
+
+        local role = "Leveling"
         -- Improved Blizzard is tier 3 (first point at 20), so one point marks
         -- an AoE mage up to 21; from then on it takes 2.
         if Rank("IMP_BLIZZARD") >= ((level <= 21) and 1 or 2) then role = "Leveling_AoE"
         elseif Rank("IGNITE") >= 3 then role = "Leveling_Fire"
-        elseif level >= 10 then role = MSC:GetLowLevelRole(Mage.LowLevelRoles) or role
+        else
+            role = MSC:GetLowLevelRole(Mage.LowLevelRoles) or role
+            if role == "Leveling_AoE" or role == "Leveling_Dungeon" then role = "Leveling" end
         end
-
-        -- Level 10 brings the first talent point: a role it marks uses that
-        -- role's 11-20 row (the 1-10 band only has the default row).
-        if level == 10 and role ~= "Leveling" then suffix = "_11_20" end
-        local key = role .. suffix
-        if Mage.LevelingWeights[key] then return key end
+        if Mage.LevelingWeights[role .. suffix] then return role .. suffix end
+        if level == 10 then return "Leveling_1_10" end
         return "Leveling" .. suffix
     end
 
-    -- Endgame
-    if Rank("COMBUSTION") > 0 then return "FIRE_RAID" end
-    if Rank("ARCANE_POWER") > 0 and Rank("ICE_SHARDS") > 0 then return "FROST_AP" end
-    if Rank("WINTERS_CHILL") > 0 then return "FROST_WC" end
-    if Rank("PRESENCE_OF_MIND") > 0 and Rank("PYROBLAST") > 0 then return "POM_PYRO" end
+    -- Endgame: the PvP signatures first, then AoE farming, then the tree with the most points.
+    if Rank("PRESENCE_OF_MIND") > 0 and Rank("PYROBLAST") > 0 and Rank("COMBUSTION") == 0 then return "POM_PYRO" end
     if Rank("BLAST_WAVE") > 0 and Rank("ICE_SHARDS") > 0 then return "ELEMENTAL" end
     if Rank("IMP_BLIZZARD") == 3 and Rank("PERMAFROST") > 0 then return "FROST_AOE" end
-    if Rank("ICE_BARRIER") > 0 then return "FROST_PVP" end
-    return "FROST_AP"
+    local arcane, fire, frost = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if fire > frost and fire >= arcane then return "FIRE_RAID" end
+    if arcane > frost then return "ARCANE_RAID" end
+    return "FROST_RAID"
 end
 
 function Mage:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
+    -- The sim-built raid profiles already carry their talents: the talent hooks skip them
+    -- (the Spell Power -> crit covariance and the hit cap below still apply).
+    local hooks = not SIM_PROFILES[currentSpec or ""]
 
     -- [[ 1. Arcane Mind (+10% Int) ]]
     local rAR = Rank("ARCANE_RESILIENCE")
-    if rAR > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ARMOR_SHORT"] or 0) > 0 then
+    if hooks and rAR > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ARMOR_SHORT"] or 0) > 0 then
         -- Assume 25% per rank
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (weights["ITEM_MOD_ARMOR_SHORT"] * (rAR * 0.25))
     end
@@ -195,10 +199,10 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- (inert for the Fire/Frost profiles modeled today, ready for when an
     -- Arcane raid profile exists).
     local rAM = Rank("ARCANE_MIND")
-    if rAM > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+    if hooks and rAM > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rAM * 0.02))
     end
-    if rAM > 0 and currentSpec:find("ARCANE") and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    if hooks and rAM > 0 and currentSpec:find("ARCANE") and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rAM * 0.20))
     end
 
@@ -218,7 +222,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     local isAoERow = specUp:find("AOE") ~= nil
     local level = UnitLevel("player")
     local rIceShards = Rank("ICE_SHARDS")
-    if rIceShards > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    if hooks and rIceShards > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         if not isLeveling then
             weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rIceShards * 0.20))
         elseif not isFireRow then
@@ -228,7 +232,7 @@ function Mage:ApplyScalers(weights, currentSpec)
 
     local rFirePower = Rank("FIRE_POWER")
     local rPiercingIce = Rank("PIERCING_ICE")
-    if not isLeveling then
+    if not isLeveling and hooks then
         -- Fire Power (Fire t6, 5 ranks, Same as Classic): +2%/rank Fire damage
         if rFirePower > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
             weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rFirePower * 0.02))
@@ -237,7 +241,7 @@ function Mage:ApplyScalers(weights, currentSpec)
         if rPiercingIce > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
             weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rPiercingIce * 0.02))
         end
-    else
+    elseif isLeveling then
         -- Leveling: a +2%/rank school-damage talent is a flat damage multiplier
         -- (the wand is untouched by it, so it is kept fixed). Piercing Ice is
         -- Frost-only: full on the Frost row, x0.72 share on AoE, skipped on Fire.
@@ -282,10 +286,14 @@ function Mage:ApplyScalers(weights, currentSpec)
     end
 
     -- Frost Channeling (Frost t3, 3 ranks, -5% Frost mana cost per rank): about
-    -- 70% of an AoE mage's mana goes to Frost spells.
+    -- 70% of an AoE mage's mana goes to Frost spells, and about 85% of a Frost
+    -- single-target mage's (Fire Blast is the rest). Not baked into any anchor;
+    -- the solo Frost build has 3/3 by 39, worth about x1.15 on mana stats.
+    -- Fire rows skip it (their mana goes to Fire spells).
     local rFrostChan = Rank("FROST_CHANNELING")
-    if isLeveling and isAoERow and rFrostChan > 0 then
-        local fc = 1 / (1 - 0.05 * rFrostChan * 0.7)
+    local frostManaShare = isAoERow and 0.7 or (isFireRow and 0 or 0.85)
+    if isLeveling and frostManaShare > 0 and rFrostChan > 0 then
+        local fc = 1 / (1 - 0.05 * rFrostChan * frostManaShare)
         MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_MANA_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }, fc)
     end
 

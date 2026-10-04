@@ -8,9 +8,16 @@ Unlike addons that assign static points to items (e.g., "Hit = 10 pts"), SGJ und
 
 ---
 
-## 🔥 What's New in Version 3.0.0
+## 🔥 What's New
 
-### WoW: Forever Beta Support
+### WoW: Forever Weights (3.1.2)
+
+- **Simulator-Backed Level-60 Weights**: Every class's level-60 profiles were rebuilt with its builds' own talents: damage and tank profiles from the wowsims Forever simulator, healer profiles from a healing model in which healers downrank, farming profiles from rough models.
+- **Profiles Named After the Talent Builds**: Profile names match the Talents plugin's builds (for example "Arms: Raid", "Holy: Dungeon Leveling"), translated for German, Spanish, French, Brazilian Portuguese and Russian.
+- **Dungeon Leveling Profiles**: Most specs have Dungeon Leveling weights beside their Solo ones (the tank takes the hits; healers are limited by mana between pulls).
+- **Smarter Spec Detection**: Level-60 characters are scored by their signature talents and the tree they spent the most points in, and a Talents plugin build's choice comes first.
+
+### WoW: Forever Beta Support (3.0.0)
 
 - **Full Client Compatibility**: SGJ now fully supports the modern retail engine running the WoW: Forever beta.
 - **Database Branching**: Safely isolated datasets, sets, and profiles into a dedicated `_Forever` branch. This guarantees the Classic Era and TBC versions remain 100% untouched.
@@ -92,6 +99,20 @@ Core `/sgj` tab — compare **2H vs. dual wield** weapon layouts (6 weapon slots
 - Zone and dungeon loot rankings using SGJ scoring.
 - **Content Phase** dropdown sets `SGJ_Settings.ContentPhase` and rebuilds the gem projection pool for that progression tier. Without Roadmap, the phase setting exists but has no in-core UI.
 - Buff assumptions flow into Roadmap scoring when using manual profile overrides.
+
+### 🌳 The Talents Plugin
+
+*(Separate addon: **SharpiesGearJudge_Talents** — WoW: Forever only)*
+
+- Talent build guide from level 10 to 60: the next talent glows in the talent window, a side panel shows your progress, and off-build points are flagged.
+- Builds for every class, sorted by **Max Level**, **Leveling** (Solo / Dungeon) or **Farming** and by role.
+- Gear Judge's weights follow the chosen build: its leveling profile while you level, its level-60 profile at 60.
+
+### 📈 The XP Plugin
+
+*(Separate addon: **SharpiesGearJudge_XP**)*
+
+- Experience bar with rested XP and quest turn-in projection, upgrades waiting in your bags, a level-up gear alert and a warning before your leveling weights change.
 
 ### 👥 Multi-Spec & Saved Baselines
 
@@ -193,6 +214,8 @@ Unified codebase — the addon detects your client automatically:
 
 - **SharpiesGearJudge_Laboratory** — Virtual paperdoll / loadout testing.
 - **SharpiesGearJudge_Roadmap** — Zone loot rankings and Content Phase control.
+- **SharpiesGearJudge_Talents** — Talent build guide for WoW: Forever, linked to Gear Judge's weights.
+- **SharpiesGearJudge_XP** — Gear-aware experience bar.
 
 ### Supported bag addons
 
@@ -221,7 +244,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.0.0 (Forever & TBC Anniversary Ready)
+- **Version:** 3.1.2 (Forever & TBC Anniversary Ready)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

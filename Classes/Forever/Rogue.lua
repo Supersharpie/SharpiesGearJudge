@@ -3,82 +3,79 @@ local Rogue = {}
 Rogue.Name = "ROGUE"
 
 -- =============================================================
--- WOW FOREVER STAT WEIGHTS (Beta Baseline)
+-- LEVEL-60 WEIGHTS
 -- =============================================================
--- Strength/Attack Power/Weapon DPS/Agility calibrated to real conversion
--- math (see Paladin.lua for the base derivation). Rogues, like Hunters, get
--- melee Attack Power = 1x Strength + 1x Agility (not Warrior/Paladin's
--- Strength-only 2:1), so both are weighted near AP's own value, with
--- Agility carrying an added Crit/Dodge premium Strength doesn't get. Weapon
--- DPS = 14x AP's weight (same universal /14 divisor derivation).
+-- Hit and Crit are per 1%; the rest per point. Rogues get 1 Attack Power from
+-- each point of Strength and Agility, and Agility also gives crit. The raid
+-- profiles come from the wowsims Forever sim run from the Research folder
+-- (study/rogue2, 2026-10-03; NOTES.md there has the numbers). The sim runs
+-- each build's own talents (Lethality, Hack and Slash, Dual Wield
+-- Specialization...), so ApplyScalers' talent hooks are for the leveling rows.
+-- AP sits at 1.5 in the raid profiles.
 Rogue.Weights = {
     ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["RAID_COMBAT_SWORDS"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["RAID_COMBAT_DAGGERS"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["RAID_SEAL_FATE"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+
+    -- Combat: Raid (Combat swords with Sinister Strike, level-63 boss, raid buffs). Agility is worth about
+    -- twice Attack Power (its crit), and Hit and Crit are close. Off-hand weapon DPS is worth a quarter of the main hand's.
+    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.97, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=35.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=17.0, ["MSC_WEAPON_DPS_OH"]=4.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Combat: Raid (Daggers) (Backstab from behind). About 4% behind swords in the sim.
+    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.93, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=34.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.8, ["MSC_WEAPON_DPS_OH"]=4.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Assassination: Raid (Mutilate) (Assassination 31 / Combat 20, daggers). Mutilate hits with both hands, so the
+    -- off-hand counts for more; Hit and Crit higher (Seal Fate combo points). About 9% behind Combat swords.
+    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.18, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=41.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=39.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=13.5, ["MSC_WEAPON_DPS_OH"]=6.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+
+    -- PvP profiles (not modelled).
     ["PVP_HEMO"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["PVP_CB_DAGGER"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["PVP_MACE"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 }
+-- Old names, kept so a saved profile choice still works.
+Rogue.Weights["RAID_COMBAT_SWORDS"] = Rogue.Weights["COMBAT_RAID"]
+Rogue.Weights["RAID_COMBAT_DAGGERS"] = Rogue.Weights["COMBAT_DAGGERS"]
+Rogue.Weights["RAID_SEAL_FATE"] = Rogue.Weights["ASSN_MUTILATE"]
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
-Rogue.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Combat Swords/Maces. Strength/Agility/Weapon DPS corrected to the
-    -- confirmed 1:1 Rogue melee-AP formula and 14:1 Weapon DPS:AP ratio (see
-    -- comment above Rogue.Weights for the derivation).
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- Brought up to match Leveling_1_10/11_20's convention (Hit/Crit/Attack
-    -- Power were entirely absent -- zero weight, invisible to scoring; see
-    -- Warrior.lua's leveling-bracket comment for the item-database evidence)
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-
-    -- Dagger Leveling (same convention fix as above)
-    ["Leveling_Dagger_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Dagger_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Dagger_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-
-    -- Hemo Leveling (same convention fix as above)
-    ["Leveling_Hemo_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-}
+-- Filled at load from Classes/Forever/Curves/Rogue_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling                Combat: Solo Leveling (swords/maces, the default)
+--   Leveling_Dagger         Combat Daggers: Solo Leveling (Puncturing Wounds or Mutilate)
+--   Leveling_DaggerDungeon  Combat: Dungeon Leveling (daggers, Backstab from behind)
+--   Leveling_Hemo           Subtlety: Solo Leveling (Hemorrhage / Ghostly Strike)
+Rogue.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Rogue.PrettyNames = {
-    ["RAID_COMBAT_SWORDS"]  = "Raid: Combat Swords",
-    ["RAID_COMBAT_DAGGERS"] = "Raid: Combat Daggers",
-    ["RAID_SEAL_FATE"]      = "Raid: Seal Fate (Crit)",
+    ["COMBAT_RAID"]         = L["Combat: Raid"],
+    ["COMBAT_DAGGERS"]      = L["Combat: Raid (Daggers)"],
+    ["ASSN_MUTILATE"]       = L["Assassination: Raid (Mutilate)"],
+    ["RAID_COMBAT_SWORDS"]  = L["Combat: Raid (old profile)"],
+    ["RAID_COMBAT_DAGGERS"] = L["Combat: Raid (Daggers, old profile)"],
+    ["RAID_SEAL_FATE"]      = L["Assassination: Raid (old profile)"],
     ["PVP_MACE"]            = "PvP: Mace Specialization",
     ["PVP_HEMO"]            = "PvP: Hemo Control",
     ["PVP_CB_DAGGER"]       = "PvP: Cold Blood Burst",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Combat (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Combat (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Combat (52-59)",
-    
-    ["Leveling_Dagger_11_20"] = "Leveling: Daggers (11-20)",
-    ["Leveling_Dagger_21_40"] = "Leveling: Daggers (21-40)",
-    ["Leveling_Dagger_41_51"] = "Leveling: Daggers (41-51)",
-    ["Leveling_Dagger_52_59"] = "Leveling: Daggers (52-59)",
-    
-    ["Leveling_Hemo_11_20"]    = "Leveling: Hemo (11-20)",
-    ["Leveling_Hemo_21_40"]    = "Leveling: Hemo (21-40)",
-    ["Leveling_Hemo_41_51"]    = "Leveling: Hemo (41-51)",
-    ["Leveling_Hemo_52_59"]    = "Leveling: Hemo (52-59)",
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",               "Combat: Solo Leveling" },
+    { "Leveling_Dagger",        "Combat Daggers: Solo Leveling" },
+    { "Leveling_DaggerDungeon", "Combat: Dungeon Leveling" },
+    { "Leveling_Hemo",          "Subtlety: Solo Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Rogue.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -112,6 +109,11 @@ Rogue.Talents = {
     ["INITIATIVE"]          = "Initiative", -- Subtlety t3
     ["GHOSTLY_STRIKE"]      = "Ghostly Strike", -- Subtlety t3
     ["DW_SPEC"]             = "Dual Wield Specialization", -- Combat t4
+    ["MALICE"]              = "Malice", -- Assassination t1
+    ["RUTHLESSNESS"]        = "Ruthlessness", -- Assassination t2
+    ["RELENTLESS_STRIKES"]  = "Relentless Strikes", -- Assassination t3
+    ["MURDER"]              = "Murder", -- Assassination t2
+    ["IMP_EVISCERATE"]      = "Improved Eviscerate", -- Combat t1
 }
 
 -- =============================================================
@@ -134,48 +136,47 @@ Rogue.LowLevelRoles = {
     -- takes them, which tied pure-Subtlety builds 3-3 and sent them to Combat.)
     Leveling_Dagger = { "PUNCTURING_WOUNDS", "MUTILATE" },
     Leveling_Hemo   = { "CAMOUFLAGE", "MASTER_OF_DECEPTION", "SETUP", "ELUSIVENESS", "DIRTY_TRICKS", "INITIATIVE", "GHOSTLY_STRIKE" },
+    -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_DaggerDungeon = {},
 }
 
 function Rogue:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
-    
-    -- Leveling Bracket Logic
+
     if level < 60 then
-        local suffix = ""
-        if level <= 10 then suffix = "_1_10"
-        elseif level <= 20 then suffix = "_11_20"
-        elseif level <= 40 then suffix = "_21_40"
-        elseif level <= 51 then suffix = "_41_51"
-        else suffix = "_52_59" end
-        
-        -- Detect Leveling Spec Type
-        local role = "Leveling" -- Default Combat
-        local subPts = MSC.GetTabPointsSpent and MSC.GetTabPointsSpent(3) or 0
-        local otherPts = MSC.GetTabPointsSpent and (MSC.GetTabPointsSpent(1) + MSC.GetTabPointsSpent(2)) or 0
+        if level < 10 then return "Leveling_1_10" end
+        local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
+
+        -- A Talents plugin build names its role; it wins over the talent markers below.
+        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        if forced and (forced == "Leveling" or Rogue.LowLevelRoles[forced]) and Rogue.LevelingWeights[forced .. suffix] then
+            return forced .. suffix
+        end
+
+        local role = "Leveling" -- Combat swords/maces
+        local subPts = MSC.GetTabPointsSpent(3)
+        local otherPts = MSC.GetTabPointsSpent(1) + MSC.GetTabPointsSpent(2)
         if Rank("HEMORRHAGE") > 0 then role = "Leveling_Hemo"
         elseif Rank("PUNCTURING_WOUNDS") > 0 or Rank("MUTILATE") > 0 then role = "Leveling_Dagger"
         -- Ghostly Strike, or mostly-Subtlety points, is a Hemo leveler
-        elseif level >= 10 and (Rank("GHOSTLY_STRIKE") > 0 or (subPts >= 5 and subPts > otherPts)) then role = "Leveling_Hemo"
-        elseif level >= 10 then role = MSC:GetLowLevelRole(Rogue.LowLevelRoles) or role
+        elseif Rank("GHOSTLY_STRIKE") > 0 or (subPts >= 5 and subPts > otherPts) then role = "Leveling_Hemo"
+        else role = MSC:GetLowLevelRole(Rogue.LowLevelRoles) or role
         end
-        
-        -- Level 10 brings the first talent point: a role it marks uses that
-        -- role's 11-20 row (the 1-10 band only has the default row).
-        if level == 10 and role ~= "Leveling" then suffix = "_11_20" end
-        local key = role .. suffix
-        if Rogue.LevelingWeights[key] then return key end
+        if Rogue.LevelingWeights[role .. suffix] then return role .. suffix end
+        if level == 10 then return "Leveling_1_10" end
         return "Leveling" .. suffix
     end
 
-    -- Endgame
+    -- Endgame: the PvP signatures first, then the tree with the most points.
     if Rank("HEMORRHAGE") > 0 and Rank("PREPARATION") > 0 then return "PVP_HEMO" end
-    if Rank("COLD_BLOOD") > 0 and Rank("PREPARATION") > 0 and Rank("HEMORRHAGE") == 0 then return "PVP_CB_DAGGER" end
-    if Rank("SEAL_FATE") > 0 then return "RAID_SEAL_FATE" end
-    if Rank("ADRENALINE_RUSH") > 0 and Rank("PUNCTURING_WOUNDS") == 0 then return "RAID_COMBAT_SWORDS" end
-    if Rank("ADRENALINE_RUSH") > 0 and Rank("PUNCTURING_WOUNDS") > 0 then return "RAID_COMBAT_DAGGERS" end
-    if Rank("PUNCTURING_WOUNDS") > 0 then return "RAID_COMBAT_DAGGERS" end
-    return "RAID_COMBAT_SWORDS"
+    if Rank("COLD_BLOOD") > 0 and Rank("PREPARATION") > 0 then return "PVP_CB_DAGGER" end
+    local assn, combat = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2)
+    if Rank("MUTILATE") > 0 or Rank("SEAL_FATE") > 0 or assn > combat then return "ASSN_MUTILATE" end
+    -- Combat: a dagger in the main hand (Backstab), otherwise swords/maces/fists
+    local mh = GetInventoryItemLink("player", 16)
+    if mh and select(7, GetItemInfoInstant(mh)) == 15 then return "COMBAT_DAGGERS" end
+    return "COMBAT_RAID"
 end
 
 function Rogue:ApplyScalers(weights, currentSpec)
@@ -191,13 +192,12 @@ function Rogue:ApplyScalers(weights, currentSpec)
     -- Melee crits already deal 2.0x, so 5/5 lifts that bonus from 1.00 to 1.20
     -- on those yellow hits alone (not white hits, Ambush, Eviscerate or
     -- poison). Leveling rows scale by how much of the damage those hits carry;
-    -- endgame keeps the flat 0.08/rank.
+    -- the level-60 profiles come from the sim with Lethality in.
     local rLethal = Rank("LETHALITY")
-    if rLethal > 0 then
-        local perRank = 0.08
+    if rLethal > 0 and isLeveling then
+        local perRank = 0.016
         if spec:find("^Leveling_Dagger") then perRank = 0.010
-        elseif spec:find("^Leveling_Hemo") then perRank = 0.008
-        elseif isLeveling then perRank = 0.016 end
+        elseif spec:find("^Leveling_Hemo") then perRank = 0.008 end
         MSC.ScaleForeverMeleeCrit(weights, 1 + (rLethal * perRank), level)
     end
 
@@ -207,6 +207,36 @@ function Rogue:ApplyScalers(weights, currentSpec)
         local rDW = Rank("DW_SPEC")
         if rDW > 0 then
             MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_OH" }, 1 + (rDW * 0.045))
+        end
+
+        -- Damage talents the Combat curve does not carry (or carries only
+        -- as Improved Eviscerate). Each is a share-weighted damage gain; the
+        -- net factor lowers the survival keys the same way a flat damage
+        -- talent does (fights end sooner), and a player without the talents
+        -- gets 1.0. Skipped for the Dagger/Hemo rows. Dual Wield
+        -- Specialization's off-hand key is the hook above; this is only its
+        -- overall damage gain (5%/rank on ~19% white off-hand damage, poison
+        -- excluded = 0.009/rank). Malice: +1% crit/rank over ~1.2 crit-
+        -- adjusted = 0.0085/rank. Ruthlessness: 20%/rank extra combo point
+        -- is ~10% shorter cycle at 3/3 on the ~55% yellow share, scaled for
+        -- short solo fights = 0.010/rank. Relentless Strikes: 25 energy per
+        -- finisher (~90% at 4.5 CP), same scaling = 0.025. Murder: 2%/rank on
+        -- ~35% Humanoid/Giant mobs = 0.007/rank. Improved Eviscerate (7%/rank
+        -- on ~18% of damage = 0.0125/rank) is baked at 2.14 ranks (the
+        -- study's 15%) from level 15, so it is un-baked:
+        -- (1+k*rank)/(1+k*bakedRank(level)).
+        if not spec:find("^Leveling_Dagger") and not spec:find("^Leveling_Hemo") then
+            local bakedIE = MSC.ForeverLevelLerp({ { 10, 0 }, { 15, 2.14 } }, level)
+            local dmg = (1 + 0.0125 * Rank("IMP_EVISCERATE")) / (1 + 0.0125 * bakedIE)
+            dmg = dmg * (1 + 0.009 * Rank("DW_SPEC") + 0.0085 * Rank("MALICE")
+                + 0.010 * Rank("RUTHLESSNESS") + 0.025 * Rank("RELENTLESS_STRIKES")
+                + 0.007 * Rank("MURDER"))
+            local armor = weights["ITEM_MOD_ARMOR_SHORT"]
+            MSC.ApplyForeverDamageMult(weights, dmg)
+            -- keep Armor out of the 0-0.02 band the engine treats as unscored
+            if armor and armor >= 0.02 and weights["ITEM_MOD_ARMOR_SHORT"] < 0.02 then
+                weights["ITEM_MOD_ARMOR_SHORT"] = 0.02
+            end
         end
 
         -- Mutilate (Assassination t5): the off-hand lands a 75% yellow hit per

@@ -3,144 +3,137 @@ local Paladin = {}
 Paladin.Name = "PALADIN"
 
 -- =============================================================
--- WOW FOREVER STAT WEIGHTS (Beta Baseline)
+-- LEVEL-60 WEIGHTS
 -- =============================================================
+-- Hit, Crit, Dodge, Parry and Block weights are per 1%; Defense per skill
+-- point; the rest per point. Within a profile, Strength = 2x Attack Power and
+-- Weapon DPS = 14x Attack Power (bonus damage per swing is AP / 14 x speed).
+-- The model-built profiles come from the Research folder (study/ret_build,
+-- 2026-10-03; NOTES.md there has the numbers behind each one).
 Paladin.Weights = {
-    -- Strength/Attack Power/Weapon DPS below are calibrated to real conversion
-    -- math, not picked to "feel" right: 1 Strength = 2 Attack Power for a
-    -- plate melee class (so Strength weight = 2x AP weight), and 14 Attack
-    -- Power = 1 point of weapon DPS (bonus dmg/swing = AP/14*speed, so
-    -- DPS = AP/14 once speed cancels out -- so DPS weight = 14x AP weight).
-    -- Agility grants Paladins 0 Attack Power and only a very weak Crit
-    -- conversion (~0.05%/point vs Crit Rating's ~1%/14), so it's subordinated
-    -- to Strength/Crit here instead of matching their old, copied-from-a-
-    -- melee-Agility-class magnitude.
+    -- Fallback before a spec is known.
     ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=10.0  },
-    ["HOLY_DEEP"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=10.0  },
-    -- PROT_DEEP/PROT_AOE never weighted Strength or AP at all -- added at the
-    -- same 2:1 ratio (2.5 instead of 2.2 to credit Strength's extra Block
-    -- Value contribution for a shield-equipped Prot spec). Hit stays at 25.0
-    -- unchanged -- its pre-cap front-loading is a deliberate threshold-based
-    -- design, not part of this linear-conversion fix.
-    -- Armor 0.075 (was 0.5): same raid armor math as Warrior's DEEP_PROT
-    -- (see Warrior.lua).
-    ["PROT_DEEP"] = {  ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0  },
-    ["PROT_AOE"]  = {  ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0  },
-    -- RET_STANDARD: AP sits at 1.5 here (not the 1.0 anchor), so Strength
-    -- scales to 3.0 (2x) and Weapon DPS -- entirely missing before -- to 21.0
-    -- (14x) to keep both ratios correct at this profile's own AP scale.
-    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+
+    -- Retribution: Raid (Ret 33 / Holy 18 with Twist of Light, pre-raid gear) from the wowsims Forever simulator (study/paladin3,
+    -- 2026-10-03), 70% raid boss / 30% dungeon boss, Attack Power 1.5. The rotation seal-twists: Seal of Righteousness up before
+    -- each swing, then Seal of Command, so every swing carries both seals (Twist of Light's Echo). That makes white hits count
+    -- double, so Hit and Crit lead. Built with the build's talents (Divine Strength, Divine Intellect, Champion of the Light):
+    -- ApplyScalers' talent hooks skip this profile.
+    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=67.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=51.6, ["ITEM_MOD_STRENGTH_SHORT"]=3.58, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.78, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.45, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.45, ["ITEM_MOD_INTELLECT_SHORT"]=3.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.09, ["ITEM_MOD_SPIRIT_SHORT"]=0.35, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=5.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+
+    -- Holy: Raid (pre-raid healer, raid buffs, long / potion / burst fights). Downranking allowed: Forever
+    -- gives every rank the full coefficient (a mild cut is assumed for ranks 10+ levels below you). A
+    -- Paladin healer runs short of mana before casting time, so Intellect and Mp5 rank above +healing.
+    ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.3, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5  },
+
+    -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
+    -- 2026-10-04), as the Warrior's and Druid's raid tanks: threat 35% / damage taken 35% / effective health 30%, Stamina 3.0.
+    -- Dodge and Parry lead; Block only takes Block Value off each big boss hit, so it and Block Value count for less.
+    -- Threat is half Holy (Spell Power) and half melee (Hit, Crit). A 3-minute boss never runs a tank dry, so Intellect and
+    -- Mp5 keep only a small floor for longer fights.
+    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=30.5, ["ITEM_MOD_BLOCK_RATING_SHORT"]=13.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.22, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.79, ["ITEM_MOD_AGILITY_SHORT"]=2.62, ["ITEM_MOD_STRENGTH_SHORT"]=0.78, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.34, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.43, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.43, ["ITEM_MOD_HIT_RATING_SHORT"]=16.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+
+    -- Protection: AoE Farming (15-20 normal mobs at 55-57, some Undead; Consecration, Holy Shield and
+    -- Retribution Aura at 30 + 10% of spell power per hit taken). Spell Power drives the damage; Block,
+    -- Dodge, Parry, Defense and Stamina set the pack size; Block Value and mana barely matter. Scaled to
+    -- Spell Power = 3.0.
+    ["PROT_AOE"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=1.65, ["ITEM_MOD_BLOCK_RATING_SHORT"]=58.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=29.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=7.4, ["ITEM_MOD_HIT_RATING_SHORT"]=18.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.2, ["ITEM_MOD_STRENGTH_SHORT"]=0.47, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.23, ["ITEM_MOD_ARMOR_SHORT"]=0.16, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5  },
+
+    -- PvP profiles (not modelled).
     ["SHOCKADIN"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
     ["RECK_BOMB"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 }
+-- Old name for Holy: Raid, kept so a saved profile choice still works.
+Paladin.Weights["HOLY_DEEP"] = Paladin.Weights["HOLY_RAID"]
+-- The simulator-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { RET_STANDARD = true, PROT_DEEP = true }
 
 -- =============================================================
--- LEVELING LOGIC
+-- LEVELING WEIGHTS
 -- =============================================================
-Paladin.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Strength/AP/Weapon DPS/Agility recalibrated to the real conversion math
-    -- (2:1 Strength:AP, 14:1 DPS:AP, Agility subordinated -- see the Weights
-    -- table comment above for the full derivation). Spirit/Intellect are left
-    -- untouched on purpose: this file's own "Spirit is King" leveling
-    -- philosophy (out-of-combat regen speed while soloing) is a deliberate
-    -- design choice, not a math error, so it doesn't get the same treatment.
-    -- Spirit still steps down at 41 and 52 with the band ladder (Warrior.lua's
-    -- LevelingWeights), once mounts and longer fights cut solo downtime; Hit/
-    -- Crit/Spell Power converge on RET_STANDARD by 52-59.
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=4.0, ["ITEM_MOD_HIT_RATING_SHORT"]=9.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=5.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.75 },
-    ["Leveling_Ret_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=17.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0 },
+-- Filled at load from Classes/Forever/Curves/Paladin_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling                Retribution: Solo Leveling (the default)
+--   Leveling_RetDungeon     Retribution: Dungeon Leveling
+--   Leveling_Tank           Protection: Solo Leveling
+--   Leveling_TankDungeon    Protection: Dungeon Leveling
+--   Leveling_Healer         Holy: Solo Leveling
+--   Leveling_HealerDungeon  Holy: Dungeon Leveling
+Paladin.LevelingWeights = {}
 
-    -- Healer/Tank leveling brackets have no early-level sibling to copy, so
-    -- these add the stats that were entirely absent (Spell Healing for the
-    -- healer; Hit and Defense Skill for the tank) at the same value their own
-    -- endgame profile (HOLY_RAID / PROT_DEEP) already uses.
-    -- 11-20 healer/tank: same shape as the 52-59 brackets below. The tank adds
-    -- Weapon DPS at half the DPS brackets' 14.0 (low-level threat comes almost
-    -- entirely from weapon damage) and weights Defense low -- see Warrior.lua's
-    -- Leveling_Tank_11_20 comment. The healer adds Mp5 at HOLY_RAID's
-    -- Mp5:Healing ratio.
-    ["Leveling_Healer_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
-    ["Leveling_Tank_11_20"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.045, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-
-    ["Leveling_Healer_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
-    ["Leveling_Healer_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
-    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0 },
-    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.3, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.06, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.8, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.3, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.6, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.0 },
-}
-
--- The Ret chain changes name at 52 (see MSC:GetLevelingRow's blend)
+-- The Retribution chain is named Leveling_Ret at 52-59 (see MSC:GetLevelingRow's blend).
 Paladin.LevelingNext = { ["Leveling_41_51"] = "Leveling_Ret_52_59" }
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Paladin.PrettyNames = {
-    ["HOLY_RAID"]       = "Healer: Holy (Illumination)",
-    ["HOLY_DEEP"]       = "Healer: Deep Holy (Buffs)",
-    ["PROT_DEEP"]       = "Tank: Deep Protection",
-    ["PROT_AOE"]        = "Farming: Protection AoE",
-    ["RET_STANDARD"]    = "DPS: Retribution",
-    ["SHOCKADIN"]       = "PvP: Shockadin (Burst)",
-    ["RECK_BOMB"]       = "PvP: Reck-Bomb (One-Shot)",
-    -- "RET_UTILITY" removed: GetSpec() used to route here but Paladin.Weights
-    -- never defined a matching entry, so selecting it would have resolved to
-    -- no weights at all. Folded into RET_STANDARD instead.
+    ["RET_STANDARD"] = L["Retribution: Raid"],
+    ["HOLY_RAID"]    = L["Holy: Raid"],
+    ["HOLY_DEEP"]    = L["Holy: Raid (old profile)"],
+    ["PROT_DEEP"]    = L["Protection: Raid"],
+    ["PROT_AOE"]     = L["Protection: AoE Farming"],
+    ["SHOCKADIN"]    = L["PvP: Shockadin (Burst)"],
+    ["RECK_BOMB"]    = L["PvP: Reck-Bomb (One-Shot)"],
 
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_Tank_11_20"] = "Leveling: Prot Tank (11-20)",
-    ["Leveling_Healer_11_20"] = "Leveling: Holy Healer (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Retribution (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Retribution (41-51)",
-    ["Leveling_Ret_52_59"]  = "Leveling: Pre-BiS Ret (52-59)",
-    ["Leveling_Tank_21_40"] = "Leveling: Prot Tank (21-40)",
-    ["Leveling_Tank_41_51"] = "Leveling: Prot Tank (41-51)",
-    ["Leveling_Tank_52_59"] = "Leveling: Pre-BiS Prot (52-59)",
-    ["Leveling_Healer_21_40"] = "Leveling: Holy Healer (21-40)",
-    ["Leveling_Healer_41_51"] = "Leveling: Holy Healer (41-51)",
-    ["Leveling_Healer_52_59"] = "Leveling: Pre-BiS Holy (52-59)",
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",               "Retribution: Solo Leveling" },
+    { "Leveling_RetDungeon",    "Retribution: Dungeon Leveling" },
+    { "Leveling_Tank",          "Protection: Solo Leveling" },
+    { "Leveling_TankDungeon",   "Protection: Dungeon Leveling" },
+    { "Leveling_Healer",        "Holy: Solo Leveling" },
+    { "Leveling_HealerDungeon", "Holy: Dungeon Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        -- The Retribution chain's 52-59 row is named Leveling_Ret (see LevelingNext above)
+        local role = (r[1] == "Leveling" and b[1] == 52) and "Leveling_Ret" or r[1]
+        Paladin.PrettyNames[role .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
--- WOW FOREVER TALENTS
+-- TALENTS (keys used by GetSpec and ApplyScalers -> Forever talent names)
 -- =============================================================
 Paladin.Talents = {
-    ["DIVINE_STR"]      = "Divine Strength",
-    ["DIVINE_INT"]      = "Divine Intellect",
-    ["HOLY_SHOCK"]      = "Holy Shock",
-    ["ILLUMINATION"]    = "Illumination",
-    ["HOLY_SHIELD"]     = "Holy Shield",
-    ["RECKONING"]       = "Reckoning",
-    ["SACRED_DUTY"]     = "Sacred Duty",
-    ["REPENTANCE"]      = "Repentance",
-    ["VENGEANCE"]       = "Vengeance",
-    ["TOUGHNESS"]       = "Toughness",
-    ["CHAMPION_LIGHT"]  = "Champion of the Light",
-    ["PRECISION"]       = "Precision", -- Protection t2, 3 ranks, +1%/rank Hit
-    ["HEALING_LIGHT"]   = "Healing Light", -- Holy t2, 3 ranks, +4%/rank Holy Light/FoL/Holy Shock healing
-    ["REDOUBT"]         = "Redoubt", -- Protection t1, 5 ranks, block chance after being hit
-    ["ANTICIPATION"]    = "Anticipation", -- Protection t2, 5 ranks, +20 Defense Skill
-    ["IMP_RIGHTEOUS_FURY"] = "Improved Righteous Fury", -- Protection t3, 3 ranks
-    ["SHIELD_SPEC"]     = "Shield Specialization", -- Protection t3, 3 ranks
-    ["SPIRITUAL_FOCUS"] = "Spiritual Focus", -- Holy t2, 2 ranks, pushback protection on heals
-    ["REVERENCE"]       = "Reverence", -- New in Forever, Holy t3, 3 ranks, mana regen while casting
-    ["SEAL_OF_COMMAND"] = "Seal of Command", -- Retribution t3 (level 20), 1 rank
-    ["TWOH_SPEC"]       = "Two-Handed Weapon Specialization", -- Retribution t5, 3 ranks, +2%/rank 2H damage
-    ["ONE_HAND_SPEC"]   = "One-Handed Weapon Specialization", -- Protection t4, 3 ranks, +3%/rank 1H damage
-    -- "Improved Blessing of Might" doesn't exist anywhere in Forever's Paladin
-    -- talent/ability list (confirmed via wowforevertools.com/changes/paladin,
-    -- direct search, all status filters). Its only use was a GetSpec() branch
-    -- for HOLY_DEEP, whose weights are already identical to HOLY_RAID's, so
-    -- removing it doesn't change any actual scoring -- just drops an unreachable
-    -- profile-name distinction.
+    -- Holy
+    ["DIVINE_STR"]         = "Divine Strength",         -- t1, +2%/rank Strength
+    ["DIVINE_INT"]         = "Divine Intellect",        -- t1, +2%/rank Intellect
+    ["HEALING_LIGHT"]      = "Healing Light",           -- t2, +4%/rank Holy Light / Flash of Light / Holy Shock healing
+    ["SPIRITUAL_FOCUS"]    = "Spiritual Focus",         -- t2, pushback protection
+    ["REVERENCE"]          = "Reverence",               -- t3, 10%/rank mana regeneration while casting
+    ["ILLUMINATION"]       = "Illumination",            -- t4, mana back on heal crits
+    ["DIVINE_FAVOR"]       = "Divine Favor",            -- t4
+    ["INFUSION_LIGHT"]     = "Infusion of Light",       -- t4
+    ["HOLY_SHOCK"]         = "Holy Shock",              -- t5
+    ["LIGHTS_VIGIL"]       = "Light's Vigil",           -- t7 (level 40)
+    -- Protection
+    ["TOUGHNESS"]          = "Toughness",               -- t1, +2%/rank armor from items
+    ["REDOUBT"]            = "Redoubt",                 -- t1, block chance after being hit
+    ["PRECISION"]          = "Precision",               -- t2, +1%/rank hit
+    ["ANTICIPATION"]       = "Anticipation",            -- t2, +4/rank Defense
+    ["IMP_SEAL_OF_FURY"]   = "Improved Seal of Fury",   -- t3, mana when the Seal of Fury absorb is used up
+    ["IMP_RIGHTEOUS_FURY"] = "Improved Righteous Fury", -- t3, -2%/rank damage taken
+    ["SHIELD_SPEC"]        = "Shield Specialization",   -- t3, Block Value and mana on block
+    ["SACRED_DUTY"]        = "Sacred Duty",             -- t3, +2%/rank Stamina
+    ["ONE_HAND_SPEC"]      = "One-Handed Weapon Specialization", -- t4, +3%/rank one-handed damage
+    ["RECKONING"]          = "Reckoning",               -- t5, extra attacks after blocks
+    ["IRON_CREED"]         = "Iron Creed",              -- t6, -2%/rank damage taken for 6 s after Holy Strike
+    ["HOLY_SHIELD"]        = "Holy Shield",             -- t7 (level 40)
+    -- Retribution
+    ["BENEDICTION"]        = "Benediction",             -- t1, -2%/rank mana on instant spells
+    ["HOLY_CONDUIT"]       = "Holy Conduit",            -- t2, -20%/rank Consecration / Holy Wrath / Exorcism / Hammer of Wrath mana
+    ["SEAL_OF_COMMAND"]    = "Seal of Command",         -- t3 (level 20)
+    ["REPENTANCE"]         = "Repentance",              -- t5
+    ["TWOH_SPEC"]          = "Two-Handed Weapon Specialization", -- t5, +2%/rank two-handed damage
+    ["VENGEANCE"]          = "Vengeance",               -- t5
+    ["CHAMPION_LIGHT"]     = "Champion of the Light",   -- t6, spell damage from 20%/rank of Intellect
 }
 
 -- =============================================================
@@ -153,11 +146,16 @@ Paladin.ValidWeapons = {
     [6]=true              -- Polearms
 }
 
--- Leveling role marker talents (see MSC:GetLowLevelRole). Divine Strength is
--- deliberately not a Holy marker -- it's the standard Ret leveling opener.
+-- Leveling roles picked from talents (MSC:GetLowLevelRole). Divine Strength,
+-- Divine Intellect and Reverence aren't Holy markers: Retribution builds take
+-- them too. The Dungeon roles have no markers (talents can't tell solo from
+-- group play), so they apply only when chosen, e.g. by a Talents plugin build.
 Paladin.LowLevelRoles = {
-    Leveling_Tank   = { "TOUGHNESS", "REDOUBT", "ANTICIPATION", "IMP_RIGHTEOUS_FURY", "SHIELD_SPEC", "SACRED_DUTY" },
-    Leveling_Healer = { "DIVINE_INT", "HEALING_LIGHT", "SPIRITUAL_FOCUS", "REVERENCE" },
+    Leveling_Tank          = { "TOUGHNESS", "REDOUBT", "ANTICIPATION", "IMP_RIGHTEOUS_FURY", "SHIELD_SPEC", "SACRED_DUTY" },
+    Leveling_Healer        = { "HEALING_LIGHT", "SPIRITUAL_FOCUS", "ILLUMINATION", "DIVINE_FAVOR", "INFUSION_LIGHT", "LIGHTS_VIGIL" },
+    Leveling_RetDungeon    = {},
+    Leveling_TankDungeon   = {},
+    Leveling_HealerDungeon = {},
 }
 
 function Paladin:GetSpec()
@@ -177,44 +175,51 @@ function Paladin:GetSpec()
         return "Leveling" .. suffix
     end
 
-    -- Endgame Spec Detection
+    -- Endgame Spec Detection. Forever builds mix trees (a Ret 30 / Holy 21
+    -- takes Holy Shock; Holy healers often skip Sacred Duty), so after the two
+    -- signature talents the tree with the most points decides.
     if Rank("RECKONING") > 0 and Rank("VENGEANCE") > 0 then return "RECK_BOMB" end
-    if Rank("REPENTANCE") > 0 then return "RET_STANDARD" end
     if Rank("HOLY_SHIELD") > 0 then return "PROT_DEEP" end
-    if Rank("HOLY_SHOCK") > 0 and Rank("SACRED_DUTY") == 0 then return "SHOCKADIN" end
-    if Rank("ILLUMINATION") > 0 and Rank("SACRED_DUTY") > 0 then return "HOLY_RAID" end
+    local holy, prot, ret = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if ret > holy and ret >= prot then return "RET_STANDARD" end
+    if prot > holy and prot > ret then return "PROT_DEEP" end
+    -- Holy: a healer with any healing talent; Holy Shock without them is the PvP Shockadin.
+    if Rank("HOLY_SHOCK") > 0 and Rank("ILLUMINATION") == 0 and Rank("LIGHTS_VIGIL") == 0
+        and Rank("HEALING_LIGHT") == 0 and Rank("DIVINE_FAVOR") == 0 then return "SHOCKADIN" end
     return "HOLY_RAID"
 end
 
 function Paladin:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
+    -- The simulator-built profiles already carry their talents: the talent hooks skip them (the hit cap still applies).
+    local hooks = not SIM_PROFILES[currentSpec or ""]
 
     -- [[ 1. Divine Strength (+10% Str) ]]
     local rStr = Rank("DIVINE_STR")
-    if rStr > 0 and weights["ITEM_MOD_STRENGTH_SHORT"] then 
-        weights["ITEM_MOD_STRENGTH_SHORT"] = weights["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rStr * 0.02)) 
+    if hooks and rStr > 0 and weights["ITEM_MOD_STRENGTH_SHORT"] then
+        weights["ITEM_MOD_STRENGTH_SHORT"] = weights["ITEM_MOD_STRENGTH_SHORT"] * (1 + (rStr * 0.02))
     end
 
     local rInt = Rank("DIVINE_INT")
-    if rInt > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then 
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rInt * 0.02)) 
+    if hooks and rInt > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rInt * 0.02))
     end
 
     local rTough = Rank("TOUGHNESS")
-    if rTough > 0 and weights["ITEM_MOD_ARMOR_SHORT"] then
+    if hooks and rTough > 0 and weights["ITEM_MOD_ARMOR_SHORT"] then
         weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
     end
 
     local rSacred = Rank("SACRED_DUTY")
-    if rSacred > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
+    if hooks and rSacred > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSacred * 0.02))
     end
 
     -- Champion of the Light (Ret t6, 3 ranks): spell damage from 20/40/60% of
     -- Intellect (Forever patch of 2 Oct; was 33/66/100%), damage only.
     local rChamp = Rank("CHAMPION_LIGHT")
-    if rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
+    if hooks and rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"]
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.20))
     end
@@ -227,12 +232,18 @@ function Paladin:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rHealLight * 0.04))
     end
 
-    -- [[ 1b. Leveling talent hooks (study: Paladin.txt) ]]
+    -- [[ 1b. Leveling talent hooks ]]
+    -- The study curves (Solo Leveling rows) bake few talents, so these hooks add
+    -- the ones the player has. The Retribution and Protection Dungeon Leveling
+    -- curves come from models run with their build's talents, so the hooks for
+    -- talents those models already include are skipped there (modelRow).
+    -- (The Holy Dungeon curve was built for these hooks, so they apply to it.)
     local level = UnitLevel("player")
     local isLeveling = currentSpec:find("^Leveling") ~= nil
     local isHealerRow = currentSpec:find("^Leveling_Healer") ~= nil
     local isTankRow = currentSpec:find("^Leveling_Tank") ~= nil
     local isRetRow = isLeveling and not isHealerRow and not isTankRow
+    local modelRow = currentSpec:find("^Leveling_TankDungeon") ~= nil or currentSpec:find("^Leveling_RetDungeon") ~= nil
 
     -- Multiply a key when present; a weight left in (0, 0.02) is zeroed.
     local function Mul(k, m)
@@ -259,7 +270,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
         -- a crit, about +2.25% average per rank. A crit also starts the buff, so
         -- crit gains a further 2%/rank; Agility gets the crit part by its share.
         local rVeng = Rank("VENGEANCE")
-        if rVeng > 0 and level >= 30 then
+        if rVeng > 0 and level >= 30 and not modelRow then
             local dmg = 1 + 0.0225 * rVeng
             MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
                      "MSC_WEAPON_DPS_MELEE", "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT",
@@ -272,7 +283,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
         -- Two-Handed Weapon Specialization (Ret t5, level 30): +2%/rank damage
         -- with a two-hander, about 1.3%/rank of total damage.
         local rTwoH = Rank("TWOH_SPEC")
-        if rTwoH > 0 then
+        if rTwoH > 0 and not modelRow then
             local link = GetInventoryItemLink("player", 16)
             local equipLoc = link and select(9, GetItemInfo(link))
             if equipLoc == "INVTYPE_2HWEAPON" then
@@ -337,18 +348,73 @@ function Paladin:ApplyScalers(weights, currentSpec)
         -- (its proc gives 4%/rank since the 2 Oct patch, was 6%), against a
         -- baked average block of 0.05 below 40 and 0.14 from 40 (Holy Shield).
         local rRed = Rank("REDOUBT")
-        if rRed > 0 then
+        if rRed > 0 and not modelRow then
             Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 1 + ((level >= 40) and 0.11 or 0.31) * rRed)
         end
 
         -- One-Handed Weapon Specialization (Prot t4, level 25): +3%/rank 1H
         -- damage on the physical share of tank damage.
         local rOneH = Rank("ONE_HAND_SPEC")
-        if rOneH > 0 then
+        if rOneH > 0 and not modelRow then
             local per = MSC.ForeverLevelLerp({ {40, 0.017}, {45, 0.012} }, level)
             MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
                      "MSC_WEAPON_DPS_MELEE" }, 1 + per * rOneH)
         end
+
+        -- Improved Seal of Fury (Prot t3, 1 rank; not baked): about 78 mana each
+        -- time the Seal of Fury absorb is used up (assumed ~1 per 17 s of
+        -- fighting, i.e. ~4.5 mana/s), which covers much of a pull's mana.
+        -- From the study model re-run with that income: Intellect x0.48 at 25-35
+        -- (x0.70 at 20), x0.88-0.91 from 40 where Shield Specialization's
+        -- proc already carries most of it; Mp5 x0.8 -> 0.67 at 25-35, back to
+        -- x1 from 40. Without Holy Shield the 25-35 values stay (mana use is
+        -- the same shape as before 40).
+        if Rank("IMP_SEAL_OF_FURY") > 0 and level >= 20 and not modelRow then
+            local noHS = Rank("HOLY_SHIELD") == 0
+            if noHS and level >= 35 then
+                Mul("ITEM_MOD_INTELLECT_SHORT", 0.50)
+                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", 0.70)
+            else
+                Mul("ITEM_MOD_INTELLECT_SHORT", MSC.ForeverLevelLerp({ {20, 0.70}, {25, 0.48}, {35, 0.50}, {40, 0.88}, {45, 0.89}, {59, 0.91} }, level))
+                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", MSC.ForeverLevelLerp({ {20, 0.90}, {25, 0.79}, {35, 0.67}, {40, 1.0} }, level))
+            end
+        end
+
+        -- Benediction (Ret t1, 5 ranks, -2%/rank mana on instant spells) and
+        -- Holy Conduit (Ret t2, 2 ranks, -20%/rank on Consecration/Hammer of
+        -- Wrath): the rows bake neither. Re-running the study model, 5 ranks of
+        -- Benediction cut Intellect and Spirit by 6% (1.2%/rank) and Holy
+        -- Conduit's 2 ranks by a further ~2.5% (1.2%/rank); Mp5 is unchanged,
+        -- since rest time is paid per mana either way.
+        local rMana = Rank("BENEDICTION") + Rank("HOLY_CONDUIT")
+        if rMana > 0 and level >= 15 and not modelRow then
+            MulAll({ "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT" }, 1 - 0.012 * rMana)
+        end
+
+        -- Reckoning (Prot t5, 5 ranks, not baked): 8%/rank chance of an extra
+        -- attack after a block (the 20%-after-crit part is rare on a tank).
+        -- Extra swings per swing = rank x 0.08 x blocks per mob hit x 1.5; at
+        -- ~0.6 of damage from swings and Seal of Fury procs, the physical
+        -- family gains about 0.07 x rank x block chance. Average block chance:
+        -- 5% base, +9% Holy Shield uptime (from 40, 30% patch value), +1.56%
+        -- per Redoubt rank (matching that hook).
+        local rRk = Rank("RECKONING")
+        if rRk > 0 and not modelRow then
+            local avgBlock = 0.05 + ((level >= 40 and Rank("HOLY_SHIELD") > 0) and 0.09 or 0) + 0.0156 * Rank("REDOUBT")
+            local rk = 1 + 0.07 * rRk * avgBlock
+            MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
+                     "MSC_WEAPON_DPS_MELEE", "ITEM_MOD_HIT_RATING_SHORT" }, rk)
+            MSC.ScaleForeverMeleeCrit(weights, rk, level)
+        end
+
+        -- Improved Righteous Fury (Prot t3, 3 ranks): -2%/rank damage taken
+        -- while Righteous Fury is up; Iron Creed (Prot t6, 5 ranks): -2%/rank
+        -- for 6 s after Holy Strike (10 s cooldown, 60% uptime = 1.2%/rank).
+        -- The rows price no damage reduction, so the safety stats (Stamina,
+        -- armor, avoidance, Block Value, Defense) rise by 1/(1 - reduction),
+        -- done through the shared damage-multiplier helper.
+        local dmgTaken = (1 - 0.02 * Rank("IMP_RIGHTEOUS_FURY")) * (1 - 0.012 * Rank("IRON_CREED"))
+        if dmgTaken < 1 and not modelRow then MSC.ApplyForeverDamageMult(weights, dmgTaken) end
     end
 
     -- [[ 2. Hit Cap ]]
@@ -356,6 +422,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- the level's cap, sliding to the raid cap from 50. Past it Hit keeps 10%
     -- of its value, the same as every other class.
     MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_RATING_SHORT", "MELEE", 0.1, "Hit", activeCaps)
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps)
 
     -- [[ 2b. Block for leveling tanks: Shield Specialization ]]
     -- Client data: only rank 3 of Shield Specialization makes blocks restore
@@ -364,7 +431,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- survival value (about 0.6 x Dodge, like other tanks) plus a mana part
     -- hedged to two-thirds for that "33%". So with 3/3 the mana part counts in
     -- full (x1.5), and without rank 3 block is worth its survival value only.
-    if currentSpec:find("^Leveling_Tank") then
+    if currentSpec:find("^Leveling_Tank") and not currentSpec:find("^Leveling_TankDungeon") then
         local block = weights["ITEM_MOD_BLOCK_RATING_SHORT"]
         local dodge = weights["ITEM_MOD_DODGE_RATING_SHORT"] or 0
         if block and block > 0 and dodge > 0 then
@@ -378,12 +445,13 @@ function Paladin:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 3. Tank caps: defense toward 440, uncrushable (from 50) ]]
-    if currentSpec:find("PROT") or currentSpec:find("Tank") then
+    -- Not for PROT_AOE: farming normal mobs at or below your level has no Defense target or crushing blows.
+    if (currentSpec:find("PROT") and currentSpec ~= "PROT_AOE") or currentSpec:find("Tank") then
         MSC.ApplyForeverDefenseTarget(weights, activeCaps)
         -- Holy Shield (talent): +30% block chance while active (2 Oct patch, was 20%)
         MSC.ApplyForeverUncrushable(weights, (Rank("HOLY_SHIELD") > 0) and 30 or 0, activeCaps)
     end
-    
+
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
@@ -397,14 +465,10 @@ end
 
 -- =============================================================
 -- LIBRAMS
--- Wiped for the beta (2026-09-21): these were real TBC Libram item IDs. TBC
--- content isn't part of Forever, so this starts blank and repopulates
--- organically with confirmed Forever Libram IDs, same as the ProcDB/TrinketDB
--- cleanup above.
 -- =============================================================
--- Forever librams as equivalent stats per spec (MSC.GetForeverRelicBonus).
--- role: "melee" (Retribution), "tank", "healer". Small cooldown/damage
--- effects are estimates for the spec that uses them.
+-- Forever and unchanged Classic librams as equivalent stats per spec
+-- (MSC.GetForeverRelicBonus). role: "melee" (Retribution), "tank", "healer".
+-- Small cooldown/damage effects are estimates for the spec that uses them.
 Paladin.Relics = {
     -- Tenets of the Silver Hand: +1% damage vs Undead. About a quarter of
     -- leveling kills are Undead, and weapon damage is about 2x AP-worth for
@@ -457,12 +521,8 @@ Paladin.Relics = {
     end,
 }
 
--- Register Profiles for UI
+-- Profiles for the UI (leveling rows are listed from LevelingWeights once the curves load)
 Paladin.Profiles = {}
 for k, v in pairs(Paladin.Weights) do Paladin.Profiles[k] = v end
-for k, v in pairs(Paladin.LevelingWeights) do Paladin.Profiles[k] = v end
 
 MSC.RegisterModule("PALADIN", Paladin)
-
-
-

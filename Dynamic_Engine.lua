@@ -383,7 +383,7 @@ local function ParseLevelingBand(key)
     return role, tonumber(lo), tonumber(hi)
 end
 
--- Forever per-spec curves (Classes/Forever/LevelingCurves.lua): an ordered
+-- Forever per-spec curves (Classes/Forever/Curves/<Class>_Curves.lua): an ordered
 -- list of { level, weights } keyframes. Linear between keyframes, flat
 -- outside them. A stat missing from one keyframe counts as 0 there; explicit
 -- 0s are kept in the result (MSC_WEAPON_DPS_MELEE = 0 is an override), and a

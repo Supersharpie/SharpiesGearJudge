@@ -811,8 +811,11 @@ function MSC.GetRawItemStats(itemLink)
     -- 4. OVERRIDES
     if itemID then
         if MSC.CurrentClass then
-            local classDB = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols or MSC.CurrentClass.ItemOverrides
-            if classDB and classDB[itemID] then
+            -- Classes with GetRelicBonus score relics per spec in SafeGetItemStats
+            -- (their entries can be role functions), so only ItemOverrides here.
+            local cc = MSC.CurrentClass
+            local classDB = cc.GetRelicBonus and cc.ItemOverrides or (cc.Relics or cc.Totems or cc.Idols or cc.ItemOverrides)
+            if classDB and type(classDB[itemID]) == "table" then
                 for statKey, val in pairs(classDB[itemID]) do
                     if type(val) == "number" and statKey ~= "note" then
                         finalStats[statKey] = (finalStats[statKey] or 0) + val

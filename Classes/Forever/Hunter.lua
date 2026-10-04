@@ -21,65 +21,73 @@ Hunter.Name = "HUNTER"
 -- (Survival/Nightfall/Leveling_Melee) = 1 (melee AP) + premium.
 Hunter.Weights = {
     ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["RAID_MM_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=3.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["RAID_MM_STARTER"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=3.5, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
-    ["RAID_SURV_DEEP"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+
+    -- The raid profiles come from the wowsims Forever sim (study/hunter2, 2026-10-03; NOTES.md there has the
+    -- numbers), run with each build's own talents, so ApplyScalers' talent hooks skip them. Ranged Attack Power
+    -- sits at 1.5; "+Attack Power" on items counts for both melee and ranged, so it carries the same weight.
+    -- Beast Mastery: Raid (BM 35 / MM 16 with Summon Hawk, level-63 boss, raid buffs). Hawks on cooldown leave
+    -- Beast Mastery short of mana, and Careful Aim turns all of your Intellect into Attack Power, so Intellect
+    -- and Mp5 rank above Agility.
+    ["BM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.13, ["ITEM_MOD_INTELLECT_SHORT"]=5.94, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=14.6, ["ITEM_MOD_HIT_RATING_SHORT"]=32.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=38.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Marksmanship: Raid (Lethal Attacks, Mortal Shots, Sniper Shot). About 19% behind Beast Mastery in the sim.
+    ["MM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.07, ["ITEM_MOD_INTELLECT_SHORT"]=4.64, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.7, ["ITEM_MOD_HIT_RATING_SHORT"]=36.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=35.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Survival: Raid (MM 15 / Survival 36, shooting; Lightning Reflexes makes Agility the best stat). About 23% behind Beast Mastery.
+    ["SV_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.61, ["ITEM_MOD_INTELLECT_SHORT"]=4.29, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.6, ["ITEM_MOD_HIT_RATING_SHORT"]=37.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+
+    -- PvP, melee support and farming profiles (not modelled).
     ["PVP_MM_UTIL"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["PVP_SURV_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["MELEE_NIGHTFALL"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["SOLO_DME_TRIBUTE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 }
+-- Old names, kept so a saved profile choice still works.
+Hunter.Weights["RAID_MM_STANDARD"] = Hunter.Weights["MM_RAID"]
+Hunter.Weights["RAID_MM_STARTER"] = Hunter.Weights["MM_RAID"]
+Hunter.Weights["RAID_SURV_DEEP"] = Hunter.Weights["SV_RAID"]
+-- The sim-built profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { BM_RAID = true, MM_RAID = true, SV_RAID = true, RAID_MM_STANDARD = true, RAID_MM_STARTER = true, RAID_SURV_DEEP = true }
 
 -- =============================================================
 -- LEVELING WEIGHTS
 -- =============================================================
-Hunter.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- Agility/Weapon DPS follow the Hunter AP formula and 14:1 Weapon DPS:AP
-    -- ratio (see comment above Hunter.Weights for the derivation). The ranged
-    -- rows carry no Strength (it only adds melee AP); the melee rows keep it
-    -- at 1.0 (1 melee AP per Strength).
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    -- Brought up to match Leveling_1_10/11_20's convention (Hit/Crit/Attack
-    -- Power were entirely absent -- zero weight, invisible to scoring; see
-    -- Warrior.lua's leveling-bracket comment for the item-database evidence)
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.35, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.25 },
-
-    -- Melee Hunter (same convention fix as above). 11-20 is the same shape
-    -- as 21-40 (the ranged 11-20/21-40 rows match too).
-    ["Leveling_Melee_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Melee_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Melee_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Melee_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-}
+-- Filled at load from Classes/Forever/Curves/Hunter_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling          Beast Mastery: Solo Leveling (ranged with the pet tanking, the default)
+--   Leveling_Dungeon  Beast Mastery: Dungeon Leveling
+--   Leveling_Melee    Survival: Melee Leveling
+Hunter.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Hunter.PrettyNames = {
-    ["RAID_MM_STANDARD"] = "Raid: Marksmanship (Standard)",
-    ["RAID_MM_STARTER"]  = "Raid: MM (Surefooted)",
-    ["RAID_SURV_DEEP"]   = "Raid: Deep Survival (Agi)",
+    ["BM_RAID"]          = L["Beast Mastery: Raid"],
+    ["MM_RAID"]          = L["Marksmanship: Raid"],
+    ["SV_RAID"]          = L["Survival: Raid"],
+    ["RAID_MM_STANDARD"] = L["Marksmanship: Raid (old profile)"],
+    ["RAID_MM_STARTER"]  = L["Marksmanship: Raid (old Surefooted profile)"],
+    ["RAID_SURV_DEEP"]   = L["Survival: Raid (old profile)"],
     ["PVP_MM_UTIL"]      = "PvP: Marksmanship Utility",
     ["PVP_SURV_TANK"]    = "PvP: Survival Tank",
     ["MELEE_NIGHTFALL"]  = "Support: Nightfall (Melee)",
     ["SOLO_DME_TRIBUTE"] = "Farming: DM North Solo",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Beast Mastery (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Beast Mastery (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Hunter (52-59)",
-    
-    ["Leveling_Melee_11_20"] = "Leveling: Melee/Survival (11-20)",
-    ["Leveling_Melee_21_40"] = "Leveling: Melee/Survival (21-40)",
-    ["Leveling_Melee_41_51"] = "Leveling: Melee/Survival (41-51)",
-    ["Leveling_Melee_52_59"] = "Leveling: Melee/Survival (52-59)",
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",         "Beast Mastery: Solo Leveling" },
+    { "Leveling_Dungeon", "Beast Mastery: Dungeon Leveling" },
+    { "Leveling_Melee",   "Survival: Melee Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Hunter.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -108,6 +116,8 @@ Hunter.Talents = {
     ["EFFICIENCY"]      = "Efficiency", -- MM t2, 5 ranks, -3%/rank mana cost
     ["RESOURCEFULNESS"] = "Resourcefulness", -- Survival t5, 2 ranks, -30%/rank trap/melee ability mana cost
     ["LONE_WOLF"]       = "Lone Wolf", -- MM t3, 1 rank, +20% damage without a pet
+    ["FEROCITY"]        = "Ferocity", -- BM t4, 5 ranks, +2% pet/hawk crit chance per rank
+    ["FRENZY"]          = "Frenzy", -- BM t6, 5 ranks, pet: 20% chance of +30% attack speed for 8 s after a crit
     -- Leveling role markers (tiers 1-3, see Hunter.LowLevelRoles)
     ["SAVAGE_STRIKES"]  = "Savage Strikes", -- Survival t2, 2 ranks, +2% melee ability crit
     ["IMP_WING_CLIP"]   = "Improved Wing Clip", -- Survival t2, 3 ranks
@@ -148,41 +158,30 @@ Hunter.StatsOnlyWeapons = { [16] = true }
 Hunter.LowLevelRoles = {
     Leveling       = { "HAWK_EYE", "IMP_CONC_SHOT", "IMP_STINGS", "IMP_ARCANE_SHOT", "RAPID_KILLING" },
     Leveling_Melee = { "DEFLECTION", "SAVAGE_STRIKES", "IMP_WING_CLIP", "COUNTERATTACK", "PREDATORS_EDGE", "LACERATING_STRIKES" },
+    -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_Dungeon = {},
 }
 
 function Hunter:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
 
-    -- Leveling Bracket Logic
     if level < 60 then
-        local suffix = ""
-        if level <= 10 then suffix = "_1_10"
-        elseif level <= 20 then suffix = "_11_20"
-        elseif level <= 40 then suffix = "_21_40"
-        elseif level <= 51 then suffix = "_41_51"
-        else suffix = "_52_59" end
-
-        local role = (level >= 10) and MSC:GetLowLevelRole(Hunter.LowLevelRoles) or "Leveling"
-        -- Level 10 brings the first talent point: a role it marks uses that
-        -- role's 11-20 row (the 1-10 band only has the default row).
-        if level == 10 and role ~= "Leveling" then suffix = "_11_20" end
-        local key = role .. suffix
-        if Hunter.LevelingWeights[key] then return key end
+        if level < 10 then return "Leveling_1_10" end
+        local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
+        local role = MSC:GetLowLevelRole(Hunter.LowLevelRoles) or "Leveling"
+        if Hunter.LevelingWeights[role .. suffix] then return role .. suffix end
+        if level == 10 then return "Leveling_1_10" end
         return "Leveling" .. suffix
     end
-    
-    -- Fallback Talent Tab Scan
-    local mmPoints = MSC.GetTabPointsSpent(2)
-    
-    -- Endgame
-    if Rank("LACERATING_STRIKES") > 0 then return "RAID_SURV_DEEP" end
-    if Rank("SNIPER_SHOT") > 0 and Rank("UNLEASHED_FURY") > 0 then return "RAID_MM_STANDARD" end
-    if Rank("SNIPER_SHOT") > 0 and Rank("SUREFOOTED") > 0 then return "RAID_MM_STARTER" end
+
+    -- Endgame: the PvP / melee signatures first, then the tree with the most points.
     if Rank("SNIPER_SHOT") > 0 and Rank("DETERRENCE") > 0 then return "PVP_MM_UTIL" end
-    if Rank("COUNTERATTACK") > 0 then return "MELEE_NIGHTFALL" end
-    if mmPoints >= 30 then return "RAID_MM_STANDARD" end
-    return "RAID_MM_STANDARD"
+    if Rank("COUNTERATTACK") > 0 and Rank("LACERATING_STRIKES") == 0 then return "MELEE_NIGHTFALL" end
+    local bm, mm, sv = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if bm >= mm and bm >= sv then return "BM_RAID" end
+    if sv > mm then return "SV_RAID" end
+    return "MM_RAID"
 end
 
 function Hunter:ApplyScalers(weights, currentSpec)
@@ -192,16 +191,19 @@ function Hunter:ApplyScalers(weights, currentSpec)
     local specU = (currentSpec or ""):upper()
     local isMeleeRow = specU:find("MELEE") ~= nil
     local level = UnitLevel("player")
+    -- The sim-built raid profiles already carry their talents: skip the talent hooks (sections up to the
+    -- caps) for them; the RAP-crit covariance, hit cap and melee-weapon rules below still apply.
+    local hooks = not SIM_PROFILES[currentSpec or ""]
 
     -- [[ 1. Lightning Reflexes (Agi Scaling) ]]
     -- Forever text: +2%/rank Agility (Classic was 3%)
     local rLR = Rank("LIGHTNING_REF")
-    if rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then
+    if hooks and rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then
         weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.02))
     end
 
     local rSurv = Rank("SURVIVALIST")
-    if rSurv > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
+    if hooks and rSurv > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSurv * 0.02))
     end
 
@@ -209,8 +211,25 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- the ratio against the AP-equivalent lands near x1.25, so +5%/rank on
     -- Crit (and its Agility crit share). Ranged-only.
     local rMortal = Rank("MORTAL_SHOTS")
-    if rMortal > 0 and not isMeleeRow then
+    if hooks and rMortal > 0 and not isMeleeRow then
         MSC.ScaleForeverMeleeCrit(weights, 1 + (rMortal * 0.05), level)
+    end
+
+    -- Pet-side Beast Mastery (Unleashed Fury, Ferocity, Frenzy): the leveling
+    -- curves assume the pet adds ~30% of kill damage with no pet talents.
+    -- Deep BM grows that share, which cuts what the hunter's own damage
+    -- stats (RAP/AP/Agi/Crit/Hit/weapon DPS) are worth against everything
+    -- else. Pet damage multiplier: Unleashed Fury +3%/rank, Ferocity +2%
+    -- crit/rank (~+2% damage), Frenzy ~+0.7%/rank (20% proc of +30% speed for
+    -- 8 s, only on pet crits). Total damage grows by 0.3*(M-1), so hunter keys
+    -- x 1/(1 + 0.3*(M-1)): ~x0.95 at 40, ~x0.91 at 59 for the solo BM build.
+    -- Endurance Training / Bestial Wrath are survival/burst only, not scored.
+    -- Ranged leveling rows only; Lone Wolf hunters have no pet.
+    if specU:find("LEVELING") and not isMeleeRow and Rank("LONE_WOLF") == 0 then
+        local petMult = (1 + 0.03 * Rank("UNLEASHED_FURY")) * (1 + 0.02 * Rank("FEROCITY")) * (1 + 0.007 * Rank("FRENZY"))
+        if petMult > 1 then
+            MSC.ScaleForeverKeys(weights, MSC.ForeverMeleeDamageKeys, 1 / (1 + 0.3 * (petMult - 1)))
+        end
     end
 
     -- Predator's Edge (New in Forever, Survival t4, 5 ranks): +30% crit
@@ -218,7 +237,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- so 1% crit is worth ~1.18x: +3.5%/rank. Melee-only. (Off-hand half is
     -- applied in section 3.)
     local rPredEdge = Rank("PREDATORS_EDGE")
-    if rPredEdge > 0 and isMeleeRow then
+    if hooks and rPredEdge > 0 and isMeleeRow then
         MSC.ScaleForeverMeleeCrit(weights, 1 + (rPredEdge * 0.035), level)
     end
 
@@ -240,7 +259,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
         dmgMult = dmgMult * (1 + Rank("BARRAGE") * 0.01)
         dmgMult = dmgMult * (1 + Rank("DEADLY_ASPECTS") * 0.014)
     end
-    MSC.ApplyForeverDamageMult(weights, dmgMult, MSC.ForeverManaKeys)
+    if hooks then MSC.ApplyForeverDamageMult(weights, dmgMult, MSC.ForeverManaKeys) end
 
     -- Bestial Discipline (BM t5, 2 ranks) and Rapid Recuperation (MM t5, 2
     -- ranks): regen while casting, worth +80% / +45% Spirit per rank (regen
@@ -248,7 +267,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- 2-rank Bestial Discipline equivalent (100% regen while casting).
     local regen = 0.8 * Rank("BESTIAL_DISCIPLINE") + 0.45 * Rank("RAPID_RECUPERATION")
     if regen > 1.6 then regen = 1.6 end
-    if regen > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+    if hooks and regen > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
         weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * (1 + regen)
     end
 
@@ -266,19 +285,19 @@ function Hunter:ApplyScalers(weights, currentSpec)
         manaMult = manaMult * math.min(1.6, 1 / (1 - 0.30 * rRes))
     end
     if manaMult > 1.8 then manaMult = 1.8 end
-    MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }, manaMult)
+    if hooks then MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }, manaMult) end
 
     -- Careful Aim (MM t2, 5 ranks): Intellect also gives AP (+0.2/rank),
     -- added after the mana-cost scalers so it is not multiplied by them.
     local rAim = Rank("CAREFUL_AIM")
-    if rAim > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) > 0 then
+    if hooks and rAim > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) > 0 then
         weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (rAim * 0.20))
     end
 
     -- Lone Wolf (MM t3): no pet by design, so the rows' pet-tanking
     -- assumption no longer holds. Ranged rows only.
     local loneWolf = Rank("LONE_WOLF") > 0 and not isMeleeRow
-    if loneWolf then
+    if hooks and loneWolf then
         MSC.ScaleForeverKeys(weights, { "ITEM_MOD_STAMINA_SHORT", "ITEM_MOD_HEALTH_SHORT" }, 1.5)
         MSC.ScaleForeverKeys(weights, { "ITEM_MOD_STRENGTH_SHORT" }, 2)
     end
@@ -340,7 +359,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- leveling curves set their own melee-slot DPS, so only fill it in when
     -- a profile leaves it out.
     local spec = (currentSpec or ""):upper()
-    local isMeleeSpec = spec:find("MELEE") or spec == "RAID_SURV_DEEP" or spec == "PVP_SURV_TANK"
+    local isMeleeSpec = spec:find("MELEE") or spec == "PVP_SURV_TANK"
     if not isMeleeSpec and weights["MSC_WEAPON_DPS_MELEE"] == nil and (weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] or 0) > 0 then
         weights["MSC_WEAPON_DPS_MELEE"] = weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] * (loneWolf and 0.30 or 0.15)
     end

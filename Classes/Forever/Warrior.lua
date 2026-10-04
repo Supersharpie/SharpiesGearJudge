@@ -3,172 +3,122 @@ local Warrior = {}
 Warrior.Name = "WARRIOR"
 
 -- =============================================================
--- WOW FOREVER STAT WEIGHTS (Beta Baseline)
+-- LEVEL-60 WEIGHTS
 -- =============================================================
--- Strength/Attack Power/Weapon DPS/Agility calibrated to real conversion math
--- (see Paladin.lua for the full derivation): 1 Strength = 2 Attack Power for
--- a plate melee class, 14 Attack Power = 1 point of weapon DPS, and Warriors
--- get 0 Attack Power from Agility (only Crit/Dodge/Armor), so it's
--- subordinated rather than matching Strength's magnitude.
+-- Hit, Crit, Dodge, Parry and Block weights are per 1%; Defense per skill
+-- point; the rest per point. Warriors get 2 Attack Power per Strength and none
+-- from Agility. The profiles come from the wowsims Forever sim run from the
+-- Research folder (study/warrior2, 2026-10-03; NOTES.md there has the numbers
+-- behind each one). The sim runs each profile's own talents, so their effects
+-- are already in these weights; ApplyScalers' talent hooks are for the leveling
+-- rows only (Toughness aside: the sim adds its armor as a fixed amount).
 Warrior.Weights = {
+    -- Fallback before a spec is known.
     ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["FURY_2H"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["FURY_DW"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["ARMS_MS"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- DEEP_PROT/FURY_PROT/ARMS_PROT never weighted Attack Power at all --
-    -- added at the 2:1 ratio (2.5 to credit Strength's Block Value bonus for
-    -- a shield-equipped tank). ARMS_PROT's Strength/Agility were still on the
-    -- old 15.0/10.0 scale (the same flaw Default had) -- fixed to match.
-    -- Armor 0.075 (was 0.5): the parser counts full base armor, and at raid
-    -- health one armor point is only ~4-6% of a Stamina point (armor math in
-    -- the band-ladder comment in LevelingWeights) -- 0.5 let shields and
-    -- plate chests win on armor alone.
-    ["DEEP_PROT"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["FURY_PROT"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=25.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["ARMS_PROT"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.8, ["ITEM_MOD_PARRY_RATING_SHORT"]=10.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+
+    -- Arms: Raid (Arms 34 / Fury 17, two-hander, level-63 boss, raid buffs, pre-raid gear). AP sits at 1.5.
+    -- Hit is worth more than Crit: a miss costs rage as well as the swing, and Overpower procs need hits.
+    -- Weapon DPS is above 14x AP because Mortal Strike and Overpower add weapon damage on top of the swing.
+    ["ARMS_RAID"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=24.5, ["ITEM_MOD_AGILITY_SHORT"]=2.37, ["ITEM_MOD_HIT_RATING_SHORT"]=60.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+
+    -- Fury profiles (no Talents plugin build: Arms out-damages them in Forever, 537 / 499 DPS against 601).
+    -- Dual wield: the off-hand's weapon DPS is worth a third of the main hand's (MSC_WEAPON_DPS_OH).
+    ["FURY_DW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.2, ["MSC_WEAPON_DPS_OH"]=4.2, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_HIT_RATING_SHORT"]=30.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=41.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Two-hander: Hit below the cap as for Arms (the sim's gear was already capped with Precision).
+    ["FURY_2H"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.7, ["ITEM_MOD_AGILITY_SHORT"]=2.27, ["ITEM_MOD_HIT_RATING_SHORT"]=60.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=42.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+
+    -- Protection: Raid (Shield Slam build with Improved Thunder Clap, level-63 boss; threat 35%, damage
+    -- taken 35%, effective health 30%). Boss hits are large, so dodge, parry, Defense and armor lead; Hit
+    -- and Crit carry the threat. Same scale as the leveling tank rows (Stamina 3.0).
+    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=43.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=43.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=6.45, ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.99, ["ITEM_MOD_HIT_RATING_SHORT"]=27.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=19.2, ["ITEM_MOD_AGILITY_SHORT"]=3.69, ["ITEM_MOD_STRENGTH_SHORT"]=1.52, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.67, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+
+    -- Protection: AoE Farming (5 level-60 mobs on you, Thunder Clap, Revenge, Shield Slam; mobs per hour
+    -- with eating). Avoidance and Block cut the eating, Crit and Strength drive the damage. Stamina is
+    -- the pack-size margin the sim doesn't price. Hit below the cap valued as Crit plus its rage. AP = 1.
+    ["PROT_AOE"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.05, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.89, ["ITEM_MOD_CRIT_RATING_SHORT"]=16.9, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=22.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=22.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=19.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.55, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.97, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.6, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 }
+-- Old names, kept so a saved profile choice still works.
+Warrior.Weights["ARMS_MS"] = Warrior.Weights["ARMS_RAID"]
+Warrior.Weights["DEEP_PROT"] = Warrior.Weights["PROT_RAID"]
 
 -- =============================================================
--- LEVELING WEIGHTS (The Spirit Meta)
+-- LEVELING WEIGHTS
 -- =============================================================
-Warrior.LevelingWeights = {
-    -- [[ BAND LADDER -- every Forever class's leveling brackets follow this ]]
-    -- Each row is the weights at the START of its band; MSC:GetLevelingRow
-    -- (Dynamic_Engine) slides them level by level toward the next band's row,
-    -- TBC-style, and a role's last band (52-59) holds flat. Rows don't slide
-    -- toward the raid profiles, which use different scales. Hit/Crit gear
-    -- only starts dropping at 41 (none below that in Forever's item data).
-    -- The value per band below is where that slide reaches at the band start.
-    --   * Spirit: full value through 40, halved at 41-51, about a quarter at
-    --     52-59. Priest/Mage taper slower; healers keep theirs (every Forever
-    --     healer has a spirit-while-casting talent).
-    --   * Mp5: worth the Spirit it replaces -- 1 Mp5 = 1.6 Spirit for Priest/
-    --     Mage, 2 for other casters; hybrids use their Spirit weight.
-    --   * Armor: the parser counts an item's full base armor, and by the
-    --     armor formula (A / (A + 400 + 85 x mob level)) one point is only
-    --     ~2-4% of a Stamina point for a tank: 0.045 / 0.05 / 0.06 / 0.075 at
-    --     Stamina 2.0 for 11-20 / 21-40 / 41-51 / 52-59 (bears, with Bear
-    --     Form's armor bonus: 0.08 / 0.1 / 0.17 / 0.19). Non-tanks get 0.025 x
-    --     their Stamina weight.
-    --   * Defense (tanks; 1 rating = 1 skill in Forever): ~0.18% less damage
-    --     per point vs 10 HP per Stamina, so it climbs with the health pool --
-    --     0.25 / 0.5 / 1.0 / 1.6 at Stamina 2.0, still under Stamina until the
-    --     raid profiles.
-    --   * Tank Weapon DPS tapers as talents take over threat.
-    --   * School spell damage ("+X Frost Spell Damage") = Spell Power x the
-    --     share of the spec's damage from that school.
-    --   * Casters' Spell Hit/Crit rise at 41+ (40/25, then 45/30 at Spell
-    --     Power 15) so hit/crit gear can compete with Spell Power gear.
-
-    -- Standard Arms/2H Fury
-    ["Leveling_1_10"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- Brought up to match Leveling_1_10/11_20's convention (was compressed to
-    -- an Era-leveling scale assuming secondary stats don't itemize until
-    -- mid-20s+; confirmed via foreverchanges.pro's item database that Forever
-    -- already itemizes Attack Power, Spell Power, Defense Rating, and school
-    -- damage on req-level 21-22 rares, so that assumption doesn't hold here).
-    -- Strength/Weapon DPS/Agility further corrected to the confirmed
-    -- Strength:AP (2:1) and Weapon DPS:AP (14:1) conversion math -- see the
-    -- comment above Warrior.Weights for the derivation.
-    ["Leveling_21_40"] = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-
-    -- Dual Wield Fury Leveling (same convention fix as above). 11-20 matches
-    -- the 2H 11-20 row; Warriors learn Dual Wield at 20.
-    ["Leveling_DW_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_DW_21_40"] = { ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_DW_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_DW_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-
-    -- Tank Leveling: Stamina/Agility/Armor/Spirit already matched DEEP_PROT's
-    -- own convention (that raid profile keeps them compressed too -- only
-    -- Hit/Weapon Skill/Defense sit high there), so those are untouched. Hit
-    -- and Defense Skill were entirely absent (zero weight, invisible to
-    -- scoring) and Weapon Skill was still on the old compressed scale --
-    -- added/raised to match DEEP_PROT's own values for those three. Attack
-    -- Power was completely unweighted (mirrors DEEP_PROT's own pre-fix gap)
-    -- -- added at 1.0, with Strength raised to 2.5 for the 2:1 ratio plus a
-    -- small Block Value credit, matching DEEP_PROT's endgame convention.
-    -- Armor, Defense, Weapon DPS and Block Value follow the band ladder above.
-    -- 11-20 tank: same shape as Leveling_Tank_21_40, plus Weapon DPS at half
-    -- the DPS brackets' 14.0 (low-level threat comes almost entirely from
-    -- weapon damage). Defense Rating converts 1:1 into Defense (Forever's flat
-    -- rating, see Database_Forever) but is weighted low: each point is ~0.04%
-    -- each of dodge/parry/block/miss/crit taken (~0.2% less damage), while 1
-    -- Stamina is ~1.5-2% more health on a 500-700 HP tank -- about 8x more.
-    ["Leveling_Tank_11_20"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.045, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["Leveling_Tank_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.3 },
-    ["Leveling_Tank_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.06, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0 },
-    ["Leveling_Tank_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.075, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.0, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.5 },
-}
+-- Filled at load from Classes/Forever/Curves/Warrior_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. Roles:
+--   Leveling              Arms: Solo Leveling (the default; two-hander)
+--   Leveling_ArmsDungeon  Arms: Dungeon Leveling
+--   Leveling_DW           Fury: Dual Wield Leveling (a weapon in the off-hand, or Fury's dual-wield talents)
+--   Leveling_Tank         Protection: Solo Leveling
+--   Leveling_TankDungeon  Protection: Dungeon Leveling
+Warrior.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Warrior.PrettyNames = {
-    ["FURY_DW"]         = "Raid: Fury (Dual Wield)",
-    ["FURY_2H"]         = "Raid: Fury (2H Slam)",
-    ["ARMS_MS"]         = "PvP: Arms (Mortal Strike)",
-    ["DEEP_PROT"]       = "Tank: Deep Protection",
-    ["FURY_PROT"]       = "Tank: Fury-Prot (Threat)",
-    ["ARMS_PROT"]       = "Tank: Arms (Dungeon Hybrid)",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Arms/Fury (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Arms/Fury (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Fury (52-59)",
-    
-    ["Leveling_DW_11_20"]   = "Leveling: Dual Wield (11-20)",
-    ["Leveling_DW_21_40"]   = "Leveling: Dual Wield (21-40)",
-    ["Leveling_DW_41_51"]   = "Leveling: Dual Wield (41-51)",
-    ["Leveling_DW_52_59"]   = "Leveling: Dual Wield (52-59)",
-    
-    ["Leveling_Tank_11_20"] = "Leveling: Tank (11-20)",
-    ["Leveling_Tank_21_40"] = "Leveling: Tank (21-40)",
-    ["Leveling_Tank_41_51"] = "Leveling: Tank (41-51)",
-    ["Leveling_Tank_52_59"] = "Leveling: Tank (52-59)",
+    ["ARMS_RAID"] = L["Arms: Raid"],
+    ["ARMS_MS"]   = L["Arms: Raid (old profile)"],
+    ["FURY_DW"]   = L["Fury: Raid (Dual Wield)"],
+    ["FURY_2H"]   = L["Fury: Raid (Two-Hander)"],
+    ["PROT_RAID"] = L["Protection: Raid"],
+    ["DEEP_PROT"] = L["Protection: Raid (old profile)"],
+    ["PROT_AOE"]  = L["Protection: AoE Farming"],
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",             "Arms: Solo Leveling" },
+    { "Leveling_ArmsDungeon", "Arms: Dungeon Leveling" },
+    { "Leveling_DW",          "Fury: Dual Wield Leveling" },
+    { "Leveling_Tank",        "Protection: Solo Leveling" },
+    { "Leveling_TankDungeon", "Protection: Dungeon Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Warrior.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
--- WOW FOREVER TALENTS
+-- TALENTS (keys used by GetSpec and ApplyScalers -> Forever talent names)
 -- =============================================================
-Warrior.Talents = { 
-    ["MORTAL_STRIKE"]    = "Mortal Strike",
-    ["BLOODTHIRST"]      = "Bloodthirst",
-    ["SHIELD_SLAM"]      = "Shield Slam",
-    ["DEEP_WOUNDS"]      = "Deep Wounds", -- Arms t3, 3 ranks, bleed from weapon damage
-    ["SPEARING_STRIKE"]  = "Spearing Strike", -- Arms t4, 1 rank
-    ["BLOODTHRILL"]      = "Bloodthrill", -- Arms t5, 5 ranks (Overpower on hit)
-    ["RAGING_BLOWS"]     = "Raging Blows", -- Fury t4, 1 rank (Whirlwind off-hand)
-    ["DEFIANCE"]         = "Defiance",
-    ["IMP_SLAM"]         = "Improved Slam",
-    ["DW_SPEC"]          = "Dual Wield Specialization",
-    ["TACTICAL_MASTERY"] = "Improved Tactical Mastery", -- Renamed in Forever
-    ["CRUELTY"]          = "Cruelty",
-    ["FLURRY"]           = "Flurry",
-    ["IMPALE"]           = "Impale",
-    ["TOUGHNESS"]        = "Toughness",
-    ["PRECISION"]        = "Precision", -- New in Forever (Fury t5, 3 ranks, +1%/rank Hit)
-    ["BASTION"]          = "Bastion", -- New in Forever (Prot t5 since the 2026-09-24 beta build, swapped with Focused Rage; 5 ranks, +2%/rank damage w/ shield)
-    ["WEAPONMASTER"]     = "Weaponmaster", -- New in Forever (Arms t5, 5 ranks, per-weapon-type bonus)
-    ["TWOH_SPEC"]        = "Two-Handed Weapon Specialization", -- Changed from Classic (Arms t4, 3 ranks, +1%/rank 2H melee damage)
-    ["SHIELD_SPEC"]      = "Shield Specialization", -- Prot t1, 5 ranks, +5% Block, Rage on block
-    ["ANTICIPATION"]     = "Anticipation", -- Prot t1, 5 ranks, +20 Defense Skill
-    ["MASTER_OF_DEFENSE"] = "Master of Defense", -- New in Forever, Prot t3, 2 ranks, Rage on Dodge/Parry with a shield
-    ["IMP_REVENGE"]      = "Improved Revenge", -- Prot t3, 3 ranks
-    ["LAST_STAND"]       = "Last Stand", -- Prot t3, 1 rank
-    -- "Vitality" is the only one of the three actually gone -- confirmed 0/126
-    -- matches on wowforevertools.com/changes/warrior even with every status
-    -- filter (New/Changed/Same as Classic) enabled. Impale and Toughness are
-    -- both present and unchanged from Classic (verified the same way after
-    -- initially missing them: the site's default view hides "Same as Classic"
-    -- talents, so absence from the default 90-of-126 list doesn't mean gone).
-    -- No confirmed Forever replacement covers Vitality's old Stamina+Strength
-    -- scaling role, so that ApplyScalers hook stays removed.
+Warrior.Talents = {
+    -- Arms
+    ["DEFLECTION"]       = "Deflection",               -- t1, +1%/rank parry
+    ["DEEP_WOUNDS"]      = "Deep Wounds",              -- t3, bleed of 20%/rank of average weapon damage on crits
+    ["SPEARING_STRIKE"]  = "Spearing Strike",          -- t4, 40% weapon damage every 20 s
+    ["TWOH_SPEC"]        = "Two-Handed Weapon Specialization", -- t4, +1%/rank two-handed damage
+    ["IMPALE"]           = "Impale",                   -- t4, +10%/rank ability crit bonus
+    ["BLOODTHRILL"]      = "Bloodthrill",              -- t5, 4%/rank Overpower on main-hand hits while Rend is up
+    ["WEAPONMASTER"]     = "Weaponmaster",             -- t5, per-weapon-type bonus (see GetWeaponmasterBonus)
+    ["IMP_SLAM"]         = "Improved Slam",            -- t6
+    ["MORTAL_STRIKE"]    = "Mortal Strike",            -- t7 (level 40)
+    ["ANGER_MANAGEMENT"] = "Anger Management",         -- t3, +1 rage per 3 s in combat
+    -- Fury
+    ["CRUELTY"]          = "Cruelty",                  -- t1, +1%/rank crit
+    ["UNBRIDLED_WRATH"]  = "Unbridled Wrath",          -- t2, 12%/rank +1 rage (2 with a two-hander) on hit
+    ["BLOOD_CRAZE"]      = "Blood Craze",              -- t3, health back after a crit taken
+    ["DW_SPEC"]          = "Dual Wield Specialization", -- t4, +5%/rank off-hand damage
+    ["RAGING_BLOWS"]     = "Raging Blows",             -- t4, Whirlwind strikes with the off-hand too
+    ["ENRAGE"]           = "Enrage",                   -- t4, +2%/rank Physical damage after being hit
+    ["PRECISION"]        = "Precision",                -- t5, +1%/rank hit
+    ["FLURRY"]           = "Flurry",                   -- t6, +5%/rank attack speed after a crit
+    ["BLOODTHIRST"]      = "Bloodthirst",              -- t7 (level 40)
+    -- Protection
+    ["SHIELD_SPEC"]      = "Shield Specialization",    -- t1, +1%/rank block, rage on block
+    ["ANTICIPATION"]     = "Anticipation",             -- t1, +4/rank Defense
+    ["TOUGHNESS"]        = "Toughness",                -- t2, +2%/rank armor from items
+    ["LAST_STAND"]       = "Last Stand",               -- t3
+    ["MASTER_OF_DEFENSE"] = "Master of Defense",       -- t3, rage on dodge/parry with a shield
+    ["IMP_REVENGE"]      = "Improved Revenge",         -- t3
+    ["DEFIANCE"]         = "Defiance",                 -- t3, +5%/rank threat in Defensive Stance with a shield
+    ["BASTION"]          = "Bastion",                  -- t5, +2%/rank damage with a shield
+    ["SHIELD_SLAM"]      = "Shield Slam",              -- t7 (level 40)
 }
 
 -- =============================================================
@@ -184,131 +134,154 @@ Warrior.ValidWeapons = {
     [2]=true, [3]=true, [18]=true, [16]=true -- Bow, Gun, Crossbow, Thrown
 }
 
-Warrior.EndgameTabMap = { [1] = "ARMS_MS", [2] = "FURY_DW", [3] = "DEEP_PROT" }
-
--- Leveling role marker talents (see MSC:GetLowLevelRole)
+-- Leveling roles picked from talents (MSC:GetLowLevelRole). The Dungeon roles
+-- have no markers (talents can't tell solo from group play), so they apply
+-- only when chosen, e.g. by a Talents plugin build.
 Warrior.LowLevelRoles = {
-    Leveling_Tank = { "SHIELD_SPEC", "ANTICIPATION", "MASTER_OF_DEFENSE", "IMP_REVENGE", "DEFIANCE", "LAST_STAND" },
+    Leveling_Tank        = { "SHIELD_SPEC", "ANTICIPATION", "MASTER_OF_DEFENSE", "IMP_REVENGE", "DEFIANCE", "LAST_STAND", "SHIELD_SLAM" },
+    Leveling_ArmsDungeon = {},
+    Leveling_TankDungeon = {},
 }
+
+-- A weapon in the off-hand (equipment changes clear the cached spec)
+local function DualWielding()
+    local offhand = GetInventoryItemLink("player", 17)
+    return offhand and select(6, GetItemInfoInstant(offhand)) == 2
+end
 
 function Warrior:GetSpec()
     local function Rank(k) return MSC:GetTalentRank(k) end
     local level = UnitLevel("player")
-    
-    if level >= 60 then
-        if Rank("SHIELD_SLAM") > 0 then return "DEEP_PROT", "high" end
-        if Rank("BLOODTHIRST") > 0 and Rank("DEFIANCE") > 0 then return "FURY_PROT", "high" end
-        if Rank("TACTICAL_MASTERY") > 0 and Rank("DEFIANCE") > 0 then return "ARMS_PROT", "high" end
-        if Rank("BLOODTHIRST") > 0 and Rank("IMP_SLAM") > 0 then return "FURY_2H", "high" end
-        if Rank("BLOODTHIRST") > 0 then return "FURY_DW", "high" end
-        if Rank("MORTAL_STRIKE") > 0 then return "ARMS_MS", "high" end
-        local fallback, conf = MSC:GetDominantTalentTree(Warrior.EndgameTabMap, 5)
-        if fallback then return fallback, conf end
-        return "FURY_DW", "ambiguous"
-    end
 
-    -- [[ 2. LEVELING SPEC DETECTION ]]
-    -- Fix: Match the strings to the LevelingWeights table exactly
-    local suffix = ""
-    if level <= 10 then suffix = "_1_10"
-        elseif level <= 20 then suffix = "_11_20"
-    elseif level <= 40 then suffix = "_21_40"
-    elseif level < 52 then suffix = "_41_51"
-    else suffix = "_52_59" end
+    if level < 60 then
+        -- Level 10 has its first talent point, so let roles apply from 10.
+        if level < 10 then return "Leveling_1_10" end
+        local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
 
-    -- Determine Role based on Talents
-    local role = "Leveling" -- Default to 2H/Arms style
-    if Rank("SHIELD_SLAM") > 0 or Rank("DEFIANCE") > 0 then 
-        role = "Leveling_Tank"
-    elseif Rank("DW_SPEC") > 0 or Rank("BLOODTHIRST") > 0 then
-        role = "Leveling_DW"
-    elseif level >= 10 then
-        role = MSC:GetLowLevelRole(Warrior.LowLevelRoles) or role
-        -- No low-tier talent marks dual wield (Fury's tier 1-3 picks suit a
-        -- 2H too), so check for a weapon in the off-hand instead. Equipment
-        -- changes clear the cached spec (Dynamic_Engine's talentTracker).
-        if role == "Leveling" then
-            local offhand = GetInventoryItemLink("player", 17)
-            local classID = offhand and select(6, GetItemInfoInstant(offhand))
-            if classID == 2 then role = "Leveling_DW" end
+        local role = MSC:GetLowLevelRole(Warrior.LowLevelRoles)
+        if role and Warrior.LevelingWeights[role .. suffix] then return role .. suffix end
+        if level == 10 then return "Leveling_1_10" end
+        -- Fury's dual-wield talents, or no other role and a weapon in the off-hand
+        -- (no low-tier talent marks dual wield; a Talents plugin Arms build keeps Arms)
+        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        if forced ~= "Leveling" and (Rank("DW_SPEC") > 0 or Rank("RAGING_BLOWS") > 0 or DualWielding()) then
+            return "Leveling_DW" .. suffix
         end
+        return "Leveling" .. suffix
     end
 
-    -- Construct Key (e.g., "Leveling_DW_21_40")
-    -- Level 10 brings the first talent point: a role it marks uses that
-    -- role's 11-20 row (the 1-10 band only has the default row).
-    if level == 10 and role ~= "Leveling" then suffix = "_11_20" end
-    local specificKey = role .. suffix
-    
-    -- Check if it exists, otherwise fall back to generic
-    if Warrior.LevelingWeights[specificKey] then return specificKey, "high" end
-    if Warrior.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
-    
-    return "Leveling_1_20", "low"
+    -- Endgame: Shield Slam or a Protection-heavy build tanks; otherwise the
+    -- signature talent, then the tree with the most points, decides.
+    if Rank("SHIELD_SLAM") > 0 then return "PROT_RAID" end
+    local arms, fury, prot = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
+    if prot > arms and prot > fury then return "PROT_RAID" end
+    if Rank("MORTAL_STRIKE") > 0 then return "ARMS_RAID" end
+    if Rank("BLOODTHIRST") > 0 or fury > arms then return DualWielding() and "FURY_DW" or "FURY_2H" end
+    return "ARMS_RAID"
 end
 
 function Warrior:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
 
-    -- Toughness: confirmed unchanged from Classic (+2%/rank Armor from items)
-    local rTough = Rank("TOUGHNESS")
-    if rTough > 0 and weights["ITEM_MOD_ARMOR_SHORT"] then
-        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
-    end
-
     local level = UnitLevel("player")
     local isLeveling = currentSpec:find("^Leveling") ~= nil
     local isDW = currentSpec:find("DW") ~= nil
     local isTank = (currentSpec:find("PROT") or currentSpec:find("Tank")) ~= nil
     local isLevelingTwoH = isLeveling and not isDW and not isTank
+    -- Dungeon rows come from the group models with the build's talents in, so the
+    -- hooks those models already cover are skipped for them.
+    local tankModel = currentSpec:find("^Leveling_TankDungeon") ~= nil
+    local groupDPS = currentSpec:find("^Leveling_ArmsDungeon") ~= nil
     local touched = {}
     local function Touch(k) if weights[k] then touched[k] = true end end
     local function Mul(k, m) if weights[k] then weights[k] = weights[k] * m; touched[k] = true end end
     local function Add(k, v) if weights[k] then weights[k] = weights[k] + v; touched[k] = true end end
 
+    -- Toughness (Prot t2, 5 ranks): +2%/rank armor from items. The dungeon tank model includes it.
+    local rTough = Rank("TOUGHNESS")
+    if rTough > 0 and not tankModel and weights["ITEM_MOD_ARMOR_SHORT"] then
+        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
+    end
+
     -- Deep Wounds (Arms t3, minLevel 20, 3 ranks): the bleed is 0.2 x rank of
     -- average WEAPON damage (no AP), so crit gets x(1 + 0.12 x rank) at all
     -- levels (Agility's crit share follows) and weapon DPS x(1 + 0.013 x rank).
-    -- Leveling rows only; 2H Fury shares the profile, so it is not baked in.
     local rDeepWounds = Rank("DEEP_WOUNDS")
-    if rDeepWounds > 0 and isLeveling then
+    if rDeepWounds > 0 and isLeveling and not tankModel then
         Touch("ITEM_MOD_CRIT_RATING_SHORT")
         MSC.ScaleForeverMeleeCrit(weights, 1 + 0.12 * rDeepWounds, level)
         Mul("MSC_WEAPON_DPS_MELEE", 1 + 0.013 * rDeepWounds)
     end
 
-    -- Impale (Arms t4, 2 ranks, Same as Classic): raises the crit bonus of
-    -- yellow attacks only. Leveling: x(1 + c x rank), c = 0.025 at 25-37,
-    -- 0.035 at 38-47, 0.04 at 48+ (Agility's crit share follows). Endgame
-    -- specs keep the old +10%/rank on all abilities.
+    -- Impale (Arms t4, 2 ranks): raises the crit bonus of yellow attacks only.
+    -- x(1 + c x rank), c = 0.025 at 25-37, 0.035 at 38-47, 0.04 at 48+
+    -- (Agility's crit share follows).
     local rImpale = Rank("IMPALE")
-    if rImpale > 0 and weights["ITEM_MOD_CRIT_RATING_SHORT"] then
+    if rImpale > 0 and isLeveling and not tankModel and weights["ITEM_MOD_CRIT_RATING_SHORT"] then
         Touch("ITEM_MOD_CRIT_RATING_SHORT")
-        if isLeveling then
-            local c = (level >= 48 and 0.04) or (level >= 38 and 0.035) or 0.025
-            MSC.ScaleForeverMeleeCrit(weights, 1 + c * rImpale, level)
-        else
-            weights["ITEM_MOD_CRIT_RATING_SHORT"] = weights["ITEM_MOD_CRIT_RATING_SHORT"] * (1 + (rImpale * 0.10))
-        end
+        local c = (level >= 48 and 0.04) or (level >= 38 and 0.035) or 0.025
+        MSC.ScaleForeverMeleeCrit(weights, 1 + c * rImpale, level)
     end
 
-    -- Bastion (New in Forever, Prot t5, 5 ranks): +2%/rank damage while a
-    -- shield is equipped. Every Protection profile requires a shield, so it is
-    -- applied unconditionally for PROT/Tank specs. A flat damage multiplier:
-    -- the safety keys (Stamina, Armor, Block...) divide by it so the whole
-    -- damage family rises together and the 2:1 Strength:AP ratio holds.
+    -- Bastion (Prot t5, 5 ranks): +2%/rank damage while a shield is equipped
+    -- (every Protection row assumes one). A flat damage multiplier: the safety
+    -- keys divide by it so the whole damage family rises together.
+    local armorBefore = weights["ITEM_MOD_ARMOR_SHORT"] -- for the useless-band floor below
     local rBastion = Rank("BASTION")
-    if rBastion > 0 and isTank then
+    if rBastion > 0 and isLeveling and isTank and not tankModel then
         MSC.ApplyForeverDamageMult(weights, 1 + rBastion * 0.02)
     end
 
-    -- Two-Handed Weapon Specialization (Changed from Classic, Arms t4, 3
-    -- ranks): +1%/rank 2H melee damage, a flat multiplier -- only the pure 2H
-    -- specs (not DW, not tank) apply.
+    -- Two-Handed Weapon Specialization (Arms t4, 3 ranks): +1%/rank 2H melee
+    -- damage, a flat multiplier for the two-hander leveling rows.
     local rTwoH = Rank("TWOH_SPEC")
-    if rTwoH > 0 and not isDW and not isTank then
+    if rTwoH > 0 and isLevelingTwoH then
         MSC.ApplyForeverDamageMult(weights, 1 + rTwoH * 0.01)
+    end
+
+    -- Enrage (Fury t4, 5 ranks): 2% Physical damage per rank for 12 s after
+    -- being hit (30% chance per hit; ~70% uptime on a pull) = a flat damage
+    -- multiplier of 1 + 0.014 x rank. Solo DPS rows only (in a group the tank is hit).
+    local rEnrage = Rank("ENRAGE")
+    if rEnrage > 0 and isLeveling and not isTank and not groupDPS then
+        MSC.ApplyForeverDamageMult(weights, 1 + 0.014 * rEnrage)
+    end
+
+    -- Damage-taken talents (solo DPS rows). Deflection (Arms t1, 5 ranks): +1%
+    -- Parry removes ~1.25% of the hits that would land. Blood Craze (Fury t3,
+    -- 3 ranks): 1% max HP over 6 s per crit taken, ~1.5% of the HP lost per
+    -- kill per rank. Both cut the net HP lost per kill, so the keys that save or
+    -- recover it shrink together. Stamina and Agility stay.
+    local survive = 1
+    if isLeveling and not isTank and not groupDPS then
+        survive = (1 - 0.0125 * Rank("DEFLECTION")) * (1 - 0.015 * Rank("BLOOD_CRAZE"))
+    end
+    if survive < 1 then
+        MSC.ScaleForeverKeys(weights, {
+            "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_HEALTH_REGENERATION_SHORT", "ITEM_MOD_ARMOR_SHORT",
+            "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+        }, survive)
+    end
+
+    -- Armor is kept just above the 0.02 "useless" band by the curve; the
+    -- survival and damage multipliers must not push it under (it would score 0).
+    if isLeveling and not isTank and armorBefore and armorBefore >= 0.02
+        and weights["ITEM_MOD_ARMOR_SHORT"] and weights["ITEM_MOD_ARMOR_SHORT"] < 0.0201 then
+        weights["ITEM_MOD_ARMOR_SHORT"] = 0.0201
+    end
+
+    -- Rage talents on a Mortal Strike build (the row's ability rate is
+    -- rage-limited: Mortal Strike about 1 per 8 s = 0.125 of the 0.18/s).
+    -- Total rage income ~6.9/s, so each +1 rage/s adds 14% rage and 0.7 x that
+    -- to the speed weight.
+    --   Anger Management (Arms t3, 1 rank): +1 rage per 3 s = +0.33/s.
+    --   Unbridled Wrath (Fury t2, 5 ranks): 12%/rank, +2 rage per 2H hit
+    --   (2 x 0.6 / 3.5 s = 0.34/s at 5/5).
+    -- Below 40 abilities are cooldown-limited, so no change there.
+    if isLevelingTwoH and level >= 40 and Rank("MORTAL_STRIKE") > 0 and weights["MSC_WEAPON_SPEED"] then
+        local extra = 0.33 * Rank("ANGER_MANAGEMENT") + 0.34 * math.min(1, 0.2 * Rank("UNBRIDLED_WRATH"))
+        if extra > 0 then Mul("MSC_WEAPON_SPEED", 1 + 0.7 * extra / 6.9) end
     end
 
     -- Mortal Strike speed gate (Arms t7, level 40, 1 rank): the 40-59 anchors
@@ -349,10 +322,9 @@ function Warrior:ApplyScalers(weights, currentSpec)
         Mul("MSC_WEAPON_DPS_OH", 1 + 0.05 * rDWSpec)
     end
 
-    -- Flurry (Fury t4, 5 ranks): the DW rows bake 5/5 as melee crit x1.25,
+    -- Flurry (Fury t6, 5 ranks): the DW rows bake 5/5 as melee crit x1.25,
     -- ramped one rank per level from 35 to 40. Undo the baked part a player
-    -- does not have (an Arms/Prot hybrid on the DW row, or 35-39 with fewer
-    -- ranks). Scaling crit also moves Agility's crit share.
+    -- does not have. Scaling crit also moves Agility's crit share.
     local rFlurry = Rank("FLURRY")
     if isLeveling and isDW and level >= 36 and rFlurry < 5 then
         local baked = 1 + 0.05 * math.min(5, math.max(0, level - 35))
@@ -370,8 +342,8 @@ function Warrior:ApplyScalers(weights, currentSpec)
     -- Shield Slam (Prot t7, level 40, 1 rank): each Block Value point adds 1
     -- damage to a Slam about every 7 s = +2.2 AP (Strength +0.11), and Slam
     -- is ~half of tank damage so crit and hit are worth x1.6 against AP.
-    -- Leveling tank rows only (DEEP_PROT already bakes it in).
-    if Rank("SHIELD_SLAM") > 0 and isLeveling and isTank then
+    -- Solo tank rows only (the dungeon tank model and the raid profile include it).
+    if Rank("SHIELD_SLAM") > 0 and isLeveling and isTank and not tankModel then
         Add("ITEM_MOD_BLOCK_VALUE_SHORT", 2.2)
         Add("ITEM_MOD_STRENGTH_SHORT", 0.11)
         Touch("ITEM_MOD_CRIT_RATING_SHORT")
@@ -404,16 +376,15 @@ function Warrior:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 1b. TANK CAPS: defense toward 440, uncrushable (from 50) ]]
-    if currentSpec:find("PROT") or currentSpec:find("Tank") then
+    -- Not for AoE farming: normal mobs can't crush, and the pack sets its own needs.
+    if isTank and currentSpec ~= "PROT_AOE" then
         MSC.ApplyForeverDefenseTarget(weights, activeCaps)
         -- Shield Block (learned at 16): +75% block chance for 2 attacks
         MSC.ApplyForeverUncrushable(weights, 75, activeCaps)
-        -- Tanks hold a shield, so an off-hand weapon's DPS is worth nothing
-        -- (without this it counted at half the main-hand weight).
-        weights["MSC_WEAPON_DPS_OH"] = 0
     end
-
-    -- [[ 2. WEAPON SKILL CAP (Removed in Forever) ]]
+    -- Tanks hold a shield, so an off-hand weapon's DPS is worth nothing
+    -- (without this it counted at half the main-hand weight).
+    if isTank then weights["MSC_WEAPON_DPS_OH"] = 0 end
 
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
@@ -470,5 +441,3 @@ for k, v in pairs(Warrior.Weights) do Warrior.Profiles[k] = v end
 for k, v in pairs(Warrior.LevelingWeights) do Warrior.Profiles[k] = v end
 
 MSC.RegisterModule("WARRIOR", Warrior)
-
-

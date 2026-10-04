@@ -7,118 +7,89 @@ Druid.Name = "DRUID"
 -- =============================================================
 Druid.Weights = {
     ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- Spell Hit 187.5 / Spell Crit 30 at this profile's Spell Power 15: 1%
-    -- Hit = 12.5 Spell Power (the raid standard on the Spell Power 2 profiles
-    -- elsewhere) and 1% Crit = 2 Spell Power before Vengeance doubles it.
-    ["BALANCE_BOOMKIN"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=187.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.0  },
+    -- The level-60 profiles (study/druid2, 2026-10-03; NOTES.md there has the numbers), each worked out with its build's own
+    -- talents, so ApplyScalers' talent hooks skip them. Hit and Crit per 1%.
+    -- Cat: Raid (Balance 9 / Feral 35 / Restoration 7, no Furor) from the wowsims Forever simulator, Attack Power 1.5 like the
+    -- other melee profiles. Agility (Attack Power and crit) edges Strength; Intellect and Mp5 count through Shifting Power,
+    -- which turns mana into Energy. Hit was measured below the cap (5% gear + Nature's Reach already reach it); the hit cap
+    -- logic below takes it down past that. Cat attacks ignore weapon damage, so Weapon DPS has no weight.
+    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.04, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.57, ["ITEM_MOD_SPIRIT_SHORT"]=0.27, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=24.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.0 },
+    -- Balance: Raid (Balance 33 / Feral 3 / Restoration 15) from the simulator, Spell Power 2.0. Starfire carries the damage,
+    -- so Arcane damage takes most of the Spell Power value.
+    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.62, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.38, ["ITEM_MOD_INTELLECT_SHORT"]=0.34, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.26, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=13.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.3 },
+    -- Restoration: Raid (Balance 11 / Feral 5 / Restoration 35) from our healing model (the simulator can't heal), Healing 2.0.
+    -- Most Druid healing is over time and HoTs can't crit, so Crit is worth little; Spirit and Mp5 lead the mana stats.
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.34, ["ITEM_MOD_SPIRIT_SHORT"]=1.86, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.86, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    -- Bear: Raid (Balance 9 / Feral 32 / Restoration 10) from the simulator's tank mode, as the Warrior's Protection: Raid:
+    -- threat 35% / damage taken 35% / effective health 30%, Stamina 3.0. Armor is item armor (Dire Bear Form multiplies it
+    -- by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
+    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.87, ["ITEM_MOD_DODGE_RATING_SHORT"]=32.5, ["ITEM_MOD_AGILITY_SHORT"]=3.78, ["ITEM_MOD_STRENGTH_SHORT"]=2.17, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.99, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.99, ["ITEM_MOD_HIT_RATING_SHORT"]=11.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=35.9 },
+
+    -- Older healer and hybrid profiles (not modelled).
     -- Healer Spell Crit: 1% crit is worth ~2.4 Healing (a crit heal adds 50%),
     -- so 48 at Healing 20 (the old 10 made it 0.5 Healing).
     ["RESTO_MOONGLOW"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
     ["RESTO_REGROWTH"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0  },
-    ["RESTO_DEEP"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
-    -- Cat melee AP = Strength x 2 + Agility (+ level) -- Druids get 2 AP per
-    -- Strength in every form, and Forever's Cat Form ("+12 plus Agility") adds
-    -- 1 AP per Agility on top. So Strength (2 AP) leads and Agility is 1 AP
-    -- plus its crit/dodge rider (1.4). The old Agility 3 / Strength 1 had
-    -- this backwards, citing a "double-rate" Agility conversion. Weapon DPS
-    -- is left out: Cat/Bear attacks use the form's own damage, not the
-    -- weapon's -- a feral weapon's "+X Attack Power in Cat, Bear..." counts
-    -- like Attack Power instead.
-    ["FERAL_CAT_DPS"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0 },
-    -- Armor 0.1 (was 0.2): Dire Bear's x4.6 item armor at raid health and
-    -- this profile's Stamina 1.0 -- the band-ladder armor math in Warrior.lua.
-    ["FERAL_BEAR_TANK"] = {  ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5  },
     ["HYBRID_HOTW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 }
+-- Old names, kept so a saved profile choice still works.
+Druid.Weights["BALANCE_BOOMKIN"] = Druid.Weights["BALANCE_RAID"]
+Druid.Weights["FERAL_CAT_DPS"] = Druid.Weights["CAT_RAID"]
+Druid.Weights["RESTO_DEEP"] = Druid.Weights["RESTO_RAID"]
+Druid.Weights["FERAL_BEAR_TANK"] = Druid.Weights["BEAR_RAID"]
+-- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
+local SIM_PROFILES = { CAT_RAID = true, BALANCE_RAID = true, RESTO_RAID = true, BEAR_RAID = true,
+    BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true }
 
 -- =============================================================
--- LEVELING WEIGHTS (Era Specific)
+-- LEVELING WEIGHTS
 -- =============================================================
-Druid.LevelingWeights = {
-    -- Band ladder (Spirit/Mp5/Armor/Defense/school damage by level): see Warrior.lua's LevelingWeights.
-    -- 1-10: caster form until Bear Form at 10 -- real weapon swings, so Weapon
-    -- DPS counts; Strength is 2 AP and Agility gives no AP (crit/armor only).
-    -- Attack Power 1.0 is the anchor.
-    ["Leveling_1_10"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- 11-20 is Bear Form, not Cat: Forever teaches Bear Form at 10 but Cat
-    -- Form not until 20 (wowforevertools ability data). Bear gets no Attack
-    -- Power from Agility and ignores weapon damage, so Strength (2 AP) leads,
-    -- Agility drops to Warrior's crit/dodge/armor value and Weapon DPS goes.
-    -- Armor comes from Bear Form's own armor math (+180% armor from items) --
-    -- see the band-ladder comment in Warrior.lua's LevelingWeights.
-    ["Leveling_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.04, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- 21+ is Cat Form (learned at 20): Strength 2.0 / Agility 1.4 per the Cat
-    -- AP formula in the comment above Druid.Weights' FERAL_CAT_DPS entry, and
-    -- no Weapon DPS (form attacks ignore the weapon's damage).
-    -- Hit/Crit were brought up to match Leveling_1_10/11_20's convention
-    -- (entirely absent before; see Warrior.lua's leveling-bracket comment for
-    -- the item-database evidence).
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.025, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.0 },
-
-    -- Bear Tank Leveling: matched to FERAL_BEAR_TANK's own endgame shape,
-    -- which weights Dodge/Defense/a modest Hit instead of Weapon Skill --
-    -- all three of those were entirely absent here before.
-    -- 11-20 weights Defense low (see Warrior.lua's Leveling_Tank_11_20
-    -- comment); Dodge Rating doesn't appear on 11-20 items.
-    ["Leveling_Bear_11_20"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.08, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
-    ["Leveling_Bear_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.1, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=4.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.5 },
-    ["Leveling_Bear_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.17, ["ITEM_MOD_SPIRIT_SHORT"]=0.4, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=8.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0 },
-    ["Leveling_Bear_52_59"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_ARMOR_SHORT"]=0.19, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=13.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.6 },
-
-    -- Balance: matched to BALANCE_BOOMKIN's own endgame convention (Spell
-    -- Hit/Crit were entirely absent here before)
-    ["Leveling_Caster_11_20"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0 },
-    ["Leveling_Caster_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0 },
-    ["Leveling_Caster_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.9, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=40.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.8 },
-    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.6, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=45.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=30.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2 },
-
-    -- Restoration: matched to RESTO_DEEP's own endgame convention. Spell
-    -- Healing was entirely absent -- a healer profile with zero credit for
-    -- healing power -- and Spell Power/Intellect were still on the old
-    -- compressed scale. 11-20 uses the same shape plus Mp5 at RESTO_DEEP's
-    -- Mp5:Healing ratio.
-    ["Leveling_Healer_11_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_Healer_21_40"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0 },
-    ["Leveling_Healer_41_51"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0 },
-    ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0 },
-}
+-- Filled at load from Classes/Forever/Curves/Druid_Curves.lua (generated from
+-- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
+-- blended by level in MSC:GetLevelingRow. The default line changes form by level: caster
+-- form to 9, Bear Form 10-19, Cat Form from 20. Roles:
+--   Leveling                Feral Cat: Solo Leveling (the default)
+--   Leveling_Dungeon        Cat: Dungeon Leveling
+--   Leveling_Bear           Bear: Dungeon Leveling (also the Bear raid build's leveling)
+--   Leveling_Caster         Balance: Leveling
+--   Leveling_Healer         Restoration: Leveling
+--   Leveling_HealerDungeon  Restoration: Dungeon Leveling
+Druid.LevelingWeights = {}
 
 -- =============================================================
--- DISPLAY NAMES
+-- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
+local L = MSC.L
+local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
 Druid.PrettyNames = {
-    ["BALANCE_BOOMKIN"]    = "DPS: Balance (Boomkin)",
-    ["RESTO_DEEP"]         = "Healer: Deep Restoration",
+    ["CAT_RAID"]        = L["Cat: Raid"],
+    ["BALANCE_RAID"]    = L["Balance: Raid"],
+    ["RESTO_RAID"]      = L["Restoration: Raid"],
+    ["BEAR_RAID"]       = L["Bear: Raid"],
+    ["FERAL_CAT_DPS"]   = L["Cat: Raid (old profile)"],
+    ["BALANCE_BOOMKIN"] = L["Balance: Raid (old profile)"],
+    ["RESTO_DEEP"]      = L["Restoration: Raid (old profile)"],
+    ["FERAL_BEAR_TANK"] = L["Bear: Raid (old profile)"],
     ["RESTO_MOONGLOW"]     = "Healer: Moonglow",
     ["RESTO_REGROWTH"]     = "Healer: Regrowth (Crit)",
-    ["FERAL_CAT_DPS"]      = "DPS: Feral Cat",
-    ["FERAL_BEAR_TANK"]    = "Tank: Feral Bear",
     ["HYBRID_HOTW"]        = "Hybrid: Heart of the Wild",
-    
-    ["Leveling_1_10"]       = "Leveling (1-10)",
-    
-    ["Leveling_11_20"]      = "Leveling: Bear Form (11-20)",
-    ["Leveling_21_40"]      = "Leveling: Feral Cat (21-40)",
-    ["Leveling_41_51"]      = "Leveling: Feral Cat (41-51)",
-    ["Leveling_52_59"]      = "Leveling: Pre-BiS Feral (52-59)",
-    
-    ["Leveling_Bear_11_20"] = "Leveling: Bear Tank (11-20)",
-    ["Leveling_Bear_21_40"] = "Leveling: Bear Tank (21-40)",
-    ["Leveling_Bear_41_51"] = "Leveling: Bear Tank (41-51)",
-    ["Leveling_Bear_52_59"] = "Leveling: Bear Tank (52-59)",
-    
-    ["Leveling_Caster_11_20"] = "Leveling: Balance (11-20)",
-    ["Leveling_Caster_21_40"] = "Leveling: Balance (21-40)",
-    ["Leveling_Caster_41_51"] = "Leveling: Balance (41-51)",
-    ["Leveling_Caster_52_59"] = "Leveling: Pre-BiS Balance (52-59)",
-    
-    ["Leveling_Healer_11_20"] = "Leveling: Resto Healer (11-20)",
-    ["Leveling_Healer_21_40"] = "Leveling: Resto Healer (21-40)",
-    ["Leveling_Healer_41_51"] = "Leveling: Resto Healer (41-51)",
-    ["Leveling_Healer_52_59"] = "Leveling: Pre-BiS Resto (52-59)",
+
+    ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
+-- One name per leveling role; each level band gets "(lo-hi)" added.
+local ROLE_NAMES = {
+    { "Leveling",               "Feral Cat: Solo Leveling" },
+    { "Leveling_Dungeon",       "Cat: Dungeon Leveling" },
+    { "Leveling_Bear",          "Bear: Dungeon Leveling" },
+    { "Leveling_Caster",        "Balance: Leveling" },
+    { "Leveling_Healer",        "Restoration: Leveling" },
+    { "Leveling_HealerDungeon", "Restoration: Dungeon Leveling" },
+}
+for _, r in ipairs(ROLE_NAMES) do
+    for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
+        Druid.PrettyNames[r[1] .. "_" .. b[1] .. "_" .. b[2]] = Band(r[2], b[1], b[2])
+    end
+end
 
 -- =============================================================
 -- WOW FOREVER TALENTS
@@ -154,6 +125,10 @@ Druid.Talents = {
     ["SHIFTING_POWER"]  = "Shifting Power", -- Feral t4, 1 rank (2 Oct patch): 55% base mana -> 40 Energy, 16 s cd
     ["IMP_SHIFTING_POWER"] = "Improved Shifting Power", -- Feral t5, 2 ranks: -4 s cooldown per rank
     ["PREDATORY_STRIKES"] = "Predatory Strikes", -- Feral t4 (minLevel 25), 3 ranks, +0.5 x level AP per rank in Cat/Bear
+    ["SHARPENED_CLAWS"] = "Sharpened Claws", -- Feral t3, 2 ranks, +3% crit per rank in Cat/Bear
+    ["NATURES_MAJESTY"] = "Nature's Majesty", -- Balance t2, 2 ranks, +2% spell AND melee crit per rank
+    ["SHREDDING_ATTACKS"] = "Shredding Attacks", -- Feral t3 (2 Oct patch), 3 ranks, -6 Shred energy per rank
+    ["REND_AND_TEAR"]   = "Rend and Tear", -- Feral t6, 5 ranks, +2%/rank melee ability damage on bleeding targets
 }
 
 -- Leveling role marker talents (see MSC:GetLowLevelRole). Furor is
@@ -164,7 +139,11 @@ Druid.Talents = {
 Druid.LowLevelRoles = {
     Leveling_Bear   = { "THICK_HIDE" },
     Leveling_Healer = { "NATURES_FOCUS", "SUBTLETY", "REFLECTION", "GIFT_OF_NATURE", "GIFT_OF_EARTHMOTHER" },
-    Leveling_Caster = { "IMP_WRATH", "MOONGLOW", "IMP_MOONFIRE", "NATURES_REACH", "VENGEANCE", "MOONFURY" },
+    -- (Nature's Reach is hit for every form, so Feral builds take it too: not a Balance marker)
+    Leveling_Caster = { "IMP_WRATH", "MOONGLOW", "IMP_MOONFIRE", "VENGEANCE", "MOONFURY" },
+    -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_Dungeon = {},
+    Leveling_HealerDungeon = {},
 }
 
 -- =============================================================
@@ -191,12 +170,23 @@ function Druid:GetSpec()
         elseif level <= 51 then suffix = "_41_51"
         else suffix = "_52_59" end
 
+        -- A Talents plugin build names its role; it wins over the talent checks below.
+        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        if forced and (forced == "Leveling" or Druid.LowLevelRoles[forced]) and level >= 10 then
+            local fs = (level == 10 and forced ~= "Leveling") and "_11_20" or suffix
+            if Druid.LevelingWeights[forced .. fs] then return forced .. fs end
+        end
+
         local role = "Leveling" -- Default to Cat
         if Rank("MOONKIN_FORM") > 0 then role = "Leveling_Caster"
         elseif Rank("SWIFTMEND") > 0 then role = "Leveling_Healer"
         elseif Rank("THICK_HIDE") >= 3 then role = "Leveling_Bear"
+        -- Shifting Power is Cat-only: keeps Cat builds that fill tiers with Nature's Focus / Genesis off the healer and caster weights
+        elseif Rank("SHIFTING_POWER") > 0 then role = "Leveling"
         elseif level >= 10 then role = MSC:GetLowLevelRole(Druid.LowLevelRoles) or role
         end
+        if role == "Leveling_Dungeon" then role = "Leveling" end
+        if role == "Leveling_HealerDungeon" then role = "Leveling_Healer" end
 
         -- Not every role has every bracket (e.g. no Leveling_Caster_21_40);
         -- returning a missing key would leave the profile with no weights
@@ -210,16 +200,16 @@ function Druid:GetSpec()
     end
 
     -- Endgame Spec Detection
-    if Rank("MOONKIN_FORM") > 0 then return "BALANCE_BOOMKIN" end
-    if Rank("WILD_GROWTH") > 0 then return "RESTO_DEEP" end
-    if Rank("SWIFTMEND") > 0 and Rank("LEADER_OF_PACK") == 0 then return "RESTO_DEEP" end
+    if Rank("MOONKIN_FORM") > 0 then return "BALANCE_RAID" end
+    if Rank("WILD_GROWTH") > 0 then return "RESTO_RAID" end
+    if Rank("SWIFTMEND") > 0 and Rank("LEADER_OF_PACK") == 0 then return "RESTO_RAID" end
     if Rank("MOONGLOW") > 0 and Rank("NATURES_SWIFT") > 0 then return "RESTO_MOONGLOW" end
     if Rank("IMP_REGROWTH") >= 3 then return "RESTO_REGROWTH" end
     if Rank("LEADER_OF_PACK") > 0 and Rank("NATURES_SWIFT") > 0 then return "HYBRID_HOTW" end
-    
+
     -- Feral Split: Bear vs Cat
-    if Rank("THICK_HIDE") >= 3 then return "FERAL_BEAR_TANK" end
-    return "FERAL_CAT_DPS"
+    if Rank("THICK_HIDE") >= 3 then return "BEAR_RAID" end
+    return "CAT_RAID"
 end
 
 function Druid:ApplyScalers(weights, currentSpec)
@@ -228,14 +218,17 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- The default leveling line changes form by level, not by band: caster
     -- form to 9, Bear Form 10-19, Cat Form (learned at 20) from 20 on.
     local level = UnitLevel("player")
-    local isCat = currentSpec:find("CAT") or currentSpec:match("^Leveling_[245]%d_%d%d$")
-        or (currentSpec == "Leveling_11_20" and level >= 20)
+    -- The study-built level-60 profiles already carry their talents: the talent hooks skip them (the caps still apply).
+    local hooks = not SIM_PROFILES[currentSpec or ""]
+    -- (Leveling_Dungeon is the Cat dungeon line: Bear Form before 20 like the default line)
+    local isCat = currentSpec:find("CAT") or currentSpec:match("^Leveling_[245]%d_%d%d$") or currentSpec:match("^Leveling_Dungeon_[245]%d_%d%d$")
+        or ((currentSpec == "Leveling_11_20" or currentSpec == "Leveling_Dungeon_11_20") and level >= 20)
     local isDefaultBear = (currentSpec == "Leveling_1_10" and level == 10)
-        or (currentSpec == "Leveling_11_20" and level < 20)
+        or ((currentSpec == "Leveling_11_20" or currentSpec == "Leveling_Dungeon_11_20") and level < 20)
     
     -- 1. Heart of the Wild
     local rHotW = Rank("HEART_WILD")
-    if rHotW > 0 then
+    if hooks and rHotW > 0 then
         if weights["ITEM_MOD_INTELLECT_SHORT"] then 
             weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rHotW * 0.02)) 
         end
@@ -249,7 +242,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     end
     
     local rLS = Rank("LIVING_SPIRIT")
-    if rLS > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+    if hooks and rLS > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
         weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * (1 + (rLS * 0.05))
     end
 
@@ -257,7 +250,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- bonus of your Arcane and Nature spells by 20%" -- same phrasing/math as
     -- Mage's Arcane Mind/Ice Shards -- 1+rank*0.20, reaching 2.0x at 5/5
     local rVengeance = Rank("VENGEANCE")
-    if rVengeance > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    if hooks and rVengeance > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rVengeance * 0.20))
     end
 
@@ -346,7 +339,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         MSC.ApplyForeverDamageMult(weights, m, { "ITEM_MOD_AGILITY_SHORT" })
         Touch(MSC.ForeverSafetyKeys)
         Touch({ "ITEM_MOD_AGILITY_SHORT" })
-    else
+    elseif hooks then
         if rMoonfury > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
             weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rMoonfury * 0.02))
         end
@@ -396,7 +389,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- melee crit damage bonus -- Cat and Bear leveling rows both carry Crit.
     -- The helper also moves Agility's crit share.
     local rPredInstincts = Rank("PREDATORY_INSTINCTS")
-    if rPredInstincts > 0 and (isCat or isBear) then
+    if hooks and rPredInstincts > 0 and (isCat or isBear) then
         MSC.ScaleForeverMeleeCrit(weights, 1 + 0.10 * rPredInstincts, level)
         Touch({ "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" })
     end
@@ -405,12 +398,52 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- damage, ~40% of Cat damage (Maul in Bear) -- +2% per rank on the
     -- offense keys, Bear Agility at half that.
     local rSavageFury = Rank("SAVAGE_FURY")
-    if rSavageFury > 0 and (isCat or isBear) then
+    if hooks and rSavageFury > 0 and (isCat or isBear) then
         Keys(weights, FERAL_OFFENSE, 1 + 0.02 * rSavageFury)
         if isBear and not isCat then
             -- FERAL_OFFENSE took Agility at the full +2%: pull it back to +1%.
             Keys(weights, { "ITEM_MOD_AGILITY_SHORT" }, (1 + 0.01 * rSavageFury) / (1 + 0.02 * rSavageFury))
         end
+        Touch(FERAL_OFFENSE)
+    end
+
+    -- Cat crit chance talents: Sharpened Claws (+3%/rank, Feral t3), Nature's
+    -- Majesty (+2%/rank melee and spell crit) and Leader of the Pack (+3%,
+    -- self included). The curve bakes none of them. A crit chance point
+    -- doesn't change what 1% of crit rating is worth (that's the damage per
+    -- hit x the crit bonus), but every other point of offense (Attack Power,
+    -- Strength, Feral AP, Hit, Agility's own Attack Power) is worth more
+    -- because it now feeds more crits: x(1 + extra crit x crit bonus) over a
+    -- base crit chance of about 9% at 22 to 22% at 59. Crit itself stays put.
+    local rSharp, rNatMaj, rLotP = Rank("SHARPENED_CLAWS"), Rank("NATURES_MAJESTY"), Rank("LEADER_OF_PACK")
+    local extraCrit = 0.03 * rSharp + 0.02 * rNatMaj + 0.03 * rLotP
+    if extraCrit > 0 and isCat and isLevelingRow then
+        local bonus = 1 + 0.10 * rPredInstincts
+        local baseCrit = MSC.ForeverLevelLerp({ { 22, 0.09 }, { 40, 0.15 }, { 59, 0.22 } }, level)
+        local m = 1 + extraCrit * bonus / (1 + baseCrit * bonus)
+        local agi = weights["ITEM_MOD_AGILITY_SHORT"]
+        if agi then
+            -- Only Agility's Attack Power part grows, not its crit share.
+            local critShare = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0) / MSC.GetForeverAgiPerCrit(level)
+            weights["ITEM_MOD_AGILITY_SHORT"] = agi + math.max(agi - critShare, 0) * (m - 1)
+        end
+        Keys(weights, { "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
+            "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_HIT_RATING_SHORT" }, m)
+        Touch({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT",
+            "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" })
+    end
+
+    -- Shredding Attacks (Feral t3, 3 ranks, -6 Shred energy per rank: 60 to 42
+    -- at 3/3, about +40% Shred per Energy) and Rend and Tear (Feral t6, 5
+    -- ranks, +2%/rank melee ability damage on bleeding targets). Neither is
+    -- baked: the curve's damage is paw plus Attack Power with no Energy
+    -- model. Shred needs the target's back and a Cat is only part Energy-
+    -- limited, so Shredding Attacks counts about +3.5% damage per rank; Rend
+    -- and Tear is 50% bleed uptime on 80% of damage, +0.8% per rank. Both
+    -- lift the whole offense family together, like Savage Fury above.
+    local rShredAtk, rRendTear = Rank("SHREDDING_ATTACKS"), Rank("REND_AND_TEAR")
+    if (rShredAtk > 0 or rRendTear > 0) and isCat and isLevelingRow then
+        Keys(weights, FERAL_OFFENSE, (1 + 0.035 * rShredAtk) * (1 + 0.008 * rRendTear))
         Touch(FERAL_OFFENSE)
     end
 
@@ -422,7 +455,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     end
 
     -- 2. Covariance (Mana Regen / Healing Synergy)
-    if currentSpec:find("RESTO") or currentSpec:find("Healer") then
+    if hooks and (currentSpec:find("RESTO") or currentSpec:find("Healer")) then
         local healPower = MSC.SanitizeStat(GetSpellBonusHealing()) -- Using Classic API directly via shim usually preferred
         if healPower > 500 then
              local hScaler = 1 + ((healPower - 500) / 5000)

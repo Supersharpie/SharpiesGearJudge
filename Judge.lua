@@ -750,7 +750,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         end
                         
                         local rawRelicTable = MSC.CurrentClass.Relics or MSC.CurrentClass.Totems or MSC.CurrentClass.Idols
-                        if rawRelicTable and rawRelicTable[itemID] and rawRelicTable[itemID].note then
+                        if rawRelicTable and type(rawRelicTable[itemID]) == "table" and rawRelicTable[itemID].note then
                             tooltip:AddLine(" ")
                             tooltip:AddLine(MSC.L["Judge's Note: "] .. "|cffA335ED" .. rawRelicTable[itemID].note .. "|r", 0.85, 0.6, 1.0, true)
                             noteDisplayed = true

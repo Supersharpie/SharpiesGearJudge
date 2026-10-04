@@ -1,5 +1,137 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.1.2
+
+### ✨ All Classes (Forever)
+- **Level-60 Weights Rebuilt**: Every class's level-60 weights were worked out with its builds' own talents. DPS and tank profiles come from the wowsims Forever simulator (tanks from its tank mode: threat, damage taken and effective health); healer profiles from our healing model, since the simulator can't heal, in which healers downrank as they do in game; farming profiles from rough models. Talents the simulator or model already ran no longer adjust these profiles a second time; they still adjust the leveling weights. PvP and hybrid profiles are unchanged unless noted below.
+- **Profiles Named After the Talent Builds**: Every class's profiles now carry the Talents plugin's build names (for example "Arms: Raid", "Holy: Dungeon Leveling"), so the profile list and the plugin agree. The names are translated for German, Spanish, French, Brazilian Portuguese and Russian. If you had picked an old profile by hand, it still works under its new name with "(old profile)" added.
+- **Dungeon Leveling Profiles**: Most classes get Dungeon Leveling profiles beside their Solo ones. For damage dealers the tank takes the hits, so Stamina, armor and the other survival stats count for less than half their solo value. For healers, your rest between pulls is what slows the group, so healing and the mana stats lead and damage stats count for little. Each is used when you pick it (for example through a Talents plugin Dungeon Leveling build); otherwise you keep your solo profile.
+- **Leveling Weights Follow More Talents**: Each class's leveling weights were checked level by level against the fastest solo leveling build for that class, and the talents those builds take that the weights ignored, or assumed too early, now adjust them (listed under each class).
+
+### ⚔️ Warrior (Forever)
+- **Level-60 Weights**:
+	- **Arms: Raid** (was "PvP: Arms"): Hit is worth more than Crit until you reach the hit cap, since a miss also costs rage and Overpower procs need hits. Weapon DPS counts for more than before, because Mortal Strike and Overpower add weapon damage on top of your swing.
+	- **Fury: Raid (Dual Wield)** and **Fury: Raid (Two-Hander)**: Crit now counts more than Hit, and an off-hand weapon's DPS is worth a third of the main hand's (was half).
+	- **Protection: Raid** (was "Tank: Deep Protection"): dodge, parry and block were missing before and now lead with Defense and armor; Hit and Crit carry the threat. Against Stamina, armor is worth about 1.7 times its old value against boss hits.
+	- **Protection: AoE Farming** (new): a Protection Warrior farms packs of level-60 mobs faster than Arms or Fury, because it takes a third of the damage and hardly needs to eat. Avoidance and block come first, then Crit and Strength. The raid Defense and crushing-blow targets don't apply to this profile.
+	- Talents already in these profiles: Impale, Two-Handed Weapon Specialization, Bastion.
+- **Profiles**: Arms: Raid, Protection: Raid and Protection: AoE Farming at 60; Arms and Protection Solo Leveling and Dungeon Leveling while leveling (dual wield keeps its own Fury: Dual Wield Leveling profile).
+- **New Dungeon Leveling Profiles**:
+	- **Arms: Dungeon Leveling**: Enrage and the damage-taken talents don't change your weights.
+	- **Protection: Dungeon Leveling**: the healer's rest between pulls is what slows a group, so dodge, parry, Defense and armor are worth about twice their solo value. Your threat on the kill target holds once Defensive Stance is up.
+- **Leveling**:
+	- Deflection and Blood Craze (you take less damage, so Armor, Dodge, Parry, Spirit and Hp5 are worth a little less), Enrage, and Anger Management and Unbridled Wrath (more rage, so Arms values weapon speed more from 40) now adjust your weights.
+	- From level 40, Crit is worth about 18% less and Agility about 15% less on the Arms leveling weights, after checking them against a model of Arms leveling that matches the simulator at 60.
+	- Fixed: Arms leveling counted Unbridled Wrath as a 100% chance at 5/5 for its extra rage. It's 12% per rank (60% at 5/5), so its boost to weapon speed from 40 is about a third smaller.
+- **Fixed: Spec at Level 60**: A level-60 Warrior is now scored by Shield Slam or the tree with the most points, then Mortal Strike or Bloodthirst. Before, any Warrior with Defiance and Bloodthirst, or Defiance and Improved Tactical Mastery, was scored as a tank, even a Fury or Arms DPS who had dipped into Protection; and a two-hander Fury Warrior without Improved Slam got the dual-wield weights. Fury now picks dual wield or two-hander from the weapon in your off-hand.
+
+### 🛡️ Paladin (Forever)
+- **Level-60 Weights**:
+	- **Retribution: Raid**, from the simulator, run with the Retribution: Raid build and its seal-twisting rotation (Twist of Light: Seal of Righteousness before each swing, then Seal of Command, so every swing carries both seals). White hits count double that way, so Crit is worth more than three times its old value and Hit leads every stat; Spell Power and Intellect are worth about twice as much, Agility counts more, and Spell Hit is scored (with its own cap). Holy damage is scored for the first time; Weapon DPS keeps its value. Talents already in it: Divine Strength, Divine Intellect, Champion of the Light.
+	- **Holy: Raid**, from the healing model: a Paladin healer is short of mana, so Intellect and Mp5 now count for more than +healing per point, and Spirit counts too. Crit was overrated, and Stamina (worth five times +healing before) no longer lets tank plate outrank healing gear.
+	- **Protection: Raid**, from the simulator's tank mode, run with the Vanguard build. Dodge and parry (missing before) lead, with Defense and armor; block counts for less, since it only takes your Block Value off each big boss hit. Threat is about half Holy and half melee, so Spell Power, Hit and Crit count, and Attack Power, Strength and weapon damage little. A boss fight doesn't run a tank out of mana, so Intellect and Mp5 count for little.
+	- **Protection: AoE Farming** (was "Farming: Protection AoE"), from a model of AoE farming at 60 (15-20 normal mobs with Consecration, Holy Shield and Retribution Aura, which now adds 10% of your spell power per hit). Spell Power is now the top stat, followed by block, dodge, parry, Defense and Stamina. Block Value, Intellect and Mp5 count for little when farming normal mobs, and the raid Defense and crushing-blow targets no longer apply to this profile.
+- **Profiles**: Retribution: Raid, Holy: Raid, Protection: Raid and Protection: AoE Farming at 60; Retribution, Holy and Protection Solo Leveling and Dungeon Leveling while leveling.
+- **New Dungeon Leveling Profiles**:
+	- **Holy: Dungeon Leveling**: Intellect, Mp5 and Spirit lead; crit and damage stats count for little. The existing Holy leveling weights become Holy: Solo Leveling.
+	- **Protection: Dungeon Leveling**: until about 40 your threat holds the group back, and a Paladin's threat is mostly Holy, so Spell Power is worth several times Attack Power; from 50 the healer's rest is the limit, so dodge, parry, block and Defense lead. Stamina stays where it was.
+	- **Retribution: Dungeon Leveling**: Consecration on packs and Judgement of the Crusader on bosses; Crit and Agility count a little more than solo.
+- **Leveling** (each leveling build was also run in the simulator at 60 in leveling-style fights, and the weights now meet those results at 59, fading in from 45; the simulator only runs at 60, so lower levels keep the earlier model):
+	- **Retribution**: Crit is worth about 15% more and Hit about 8% more from level 20 (Judgement of the Crusader and Retribution Aura findings). From 45, Hit, Crit and Agility rise further (Judgement of Command rolls on the melee table, so melee hit and crit carry over to it) and Spell Hit is scored. Solo Spell Power counts about a quarter more by 59; dungeon Spell Power had been rated almost twice too high and now counts about 40% less.
+	- **Protection**: Improved Seal of Fury (its mana return makes Intellect and Mp5 worth much less, about half from 25 to 35), Benediction and Holy Conduit, Reckoning (extra attacks on block), and Improved Righteous Fury and Iron Creed (less damage taken) now adjust your weights. From 45, Solo Leveling's Spell Power counts much more (about 2.7 times by 59: your Holy damage kills packs), block about half as much and Crit a third more; Dungeon Leveling's dodge, parry, block and Defense already matched the simulator, and its Spell Power counts about 40% less and Crit about twice as much.
+	- **Holy**: crit is scaled down from level 30 so it meets the level-60 value.
+- **Fixed: Spec at Level 60**: A level-60 Paladin's weights now follow the tree with the most points. Before, a Retribution Paladin without Repentance was scored with the Holy healer weights; a Retribution Paladin who took Holy Shock (a common Retribution 30 / Holy 21 build) was scored as the PvP Shockadin; and a Holy healer without Sacred Duty was also scored as the PvP Shockadin. The Shockadin weights now apply only to a Holy Paladin with Holy Shock and no healing talents.
+- **Fixed: Retribution Switching to Healer Weights While Leveling**: Retribution builds take Divine Intellect and Reverence for mana from about 45, which switched them to the Holy healer leveling weights. The healer weights now start from talents only a healer takes: Healing Light, Spiritual Focus, Illumination, Divine Favor, Infusion of Light or Light's Vigil.
+
+### 🗡️ Rogue (Forever)
+- **Level-60 Weights**:
+	- **Combat: Raid** (swords, was "Raid: Combat Swords"): Crit is worth about three times its old value and now sits level with Hit, and Agility counts a little more. An off-hand weapon's DPS is worth a quarter of the main hand's (was half).
+	- **Combat: Raid (Daggers)** (was "Raid: Combat Daggers") and **Assassination: Raid (Mutilate)** (was "Raid: Seal Fate"): the same changes; Mutilate hits with both weapons, so its off-hand weapon counts for more.
+	- Talents already in these profiles: Lethality.
+- **Profiles**: Combat: Raid at 60; Combat: Solo Leveling and Combat: Dungeon Leveling while leveling (daggers and Subtlety keep their own Combat Daggers: Solo Leveling and Subtlety: Solo Leveling profiles).
+- **New Dungeon Leveling Profile**: **Combat: Dungeon Leveling**, for daggers in a group, where you stand behind the mob and can Backstab.
+- **Leveling**: Malice, Ruthlessness, Relentless Strikes and Murder now count as damage talents, and Combat Rogues without Improved Eviscerate no longer get credit for it.
+- **Fixed: Spec at Level 60**: A level-60 Rogue is now scored by the tree with the most points and the weapon in your main hand. Before, any Rogue with Seal Fate got the Seal Fate weights, even a Combat Rogue who had taken it, and a Combat Rogue with daggers got the sword weights unless they had Puncturing Wounds. Combat now picks the dagger weights from a dagger in your main hand.
+
+### 🏹 Hunter (Forever)
+- **Level-60 Weights**:
+	- **Beast Mastery: Raid** (new): the strongest Hunter spec in Forever, about 19% ahead of Marksmanship, mostly thanks to Summon Hawk. It runs short of mana, and Careful Aim turns your Intellect into Attack Power, so Intellect and Mp5 now rank above Agility.
+	- **Marksmanship: Raid** (was "Raid: Marksmanship (Standard)" and "Raid: MM (Surefooted)") and **Survival: Raid** (was "Raid: Deep Survival"): Crit is worth about three times its old value and sits level with Hit; Intellect is worth several times more (mana and Careful Aim). Survival is now scored as the shooting build the simulator runs, with Agility first.
+	- The PvP, Nightfall and Dire Maul profiles are unchanged.
+- **Profiles**: Beast Mastery: Raid at 60; Beast Mastery: Solo Leveling and Beast Mastery: Dungeon Leveling while leveling (melee Hunters keep Survival: Melee Leveling).
+- **New Dungeon Leveling Profile**: **Beast Mastery: Dungeon Leveling**.
+- **Leveling**: Unleashed Fury, Ferocity and Frenzy make your pet a bigger share of your damage, so your own Agility, Attack Power, Crit and Hit are worth a little less (about 4% at 39, 9% at 59).
+- **Fixed: Spec at Level 60**: A level-60 Hunter is now scored by the tree with the most points. Before, almost every Hunter got the Marksmanship weights, including Beast Mastery Hunters.
+
+### 🔮 Mage (Forever)
+- **Level-60 Weights**:
+	- **Frost: Raid** (was "Raid: Frost (Winter's Chill)" and "Raid: Frost (Arcane Power)"): the strongest Mage spec in Forever. Crit is worth about four times its old value; in a three-minute raid fight a Frost Mage doesn't run out of mana, so Intellect counts for less (mostly its crit).
+	- **Fire: Raid** (was "Raid: Deep Fire") and **Arcane: Raid** (new): Fireball's mana cost makes Intellect, Spirit and Mp5 count for Fire; Arcane spell damage is scored for Arcane.
+	- **Frost: AoE Farming** (was "Farming: Frost AoE"), from a rough model of Blizzard pack farming at 60: Blizzard gets little from Spell Power next to its base damage, and drinking is a big part of each pull, so Crit, Intellect and Mp5 now count for a lot more against Spell Power.
+	- Talents already in the raid profiles: Ice Shards, Piercing Ice, Fire Power, Arcane Mind.
+- **Profiles**: Frost: Raid, Fire: Raid, Arcane: Raid and Frost: AoE Farming at 60; Frost: Solo Leveling, Frost: AoE Leveling, Frost: Dungeon Leveling and Fire: Solo Leveling while leveling.
+- **New Dungeon Leveling Profile**: **Frost: Dungeon Leveling**: Blizzard and Cone of Cold on packs make Crit worth about a third to half more than solo.
+- **Leveling**: Frost Channeling now lowers mana costs for single-target Frost Mages too, not only AoE Mages, so Intellect, Mana, Spirit and Mp5 are worth about 15% more at 3/3.
+- **Fixed: Spec at Level 60**: A level-60 Mage is now scored by the tree with the most points (AoE farming builds and the PvP builds are still recognised by their talents). Before, a Fire Mage without Combustion and every Arcane Mage got the Frost raid weights, and a Frost Mage with Ice Barrier but no Winter's Chill got the PvP weights.
+
+### ✝️ Priest (Forever)
+- **Level-60 Weights**:
+	- **Shadow: Raid** (was "DPS: Shadow (PvE)"), from the simulator, where Shadow does about 35-60% more damage than Smite. Hit is worth about a third less than before, Spirit and Mp5 no longer count (a raid fight never runs a Shadow Priest dry) and Intellect counts for less.
+	- **Holy: Raid** (was "Healer: Deep Holy") and **Discipline: Raid** (was "Healer: Disc (Power Infusion)"), from the healing model; the two used to share one set of weights. Mp5 is now worth about four times its old value and Intellect over twice; Discipline values Crit far more (about four times), because its crits shield through Divine Aegis.
+	- **Shadow: Multi-DoT Farming** (new), for Shadow Word: Pain and Devouring Plague on packs of 4-5 mobs. The pack hits you the whole time, so Stamina leads with the mana stats. From a rough model.
+	- Talents already in these profiles: Shadowform, Darkness, Spiritual Guidance, Spiritual Healing, Mental Strength. The PvP and Power Weaving profiles are unchanged.
+- **Profiles**: Shadow: Raid, Holy: Raid, Discipline: Raid and Shadow: Multi-DoT Farming at 60; Shadow: Solo Leveling, Shadow: Dungeon Leveling, Healer: Leveling, Healer: Dungeon Leveling and Smite: Solo Leveling while leveling.
+- **New Dungeon Leveling Profiles**: **Shadow: Dungeon Leveling** and **Healer: Dungeon Leveling** (from the healing model, healing a tank through dungeon pulls).
+- **Leveling**:
+	- Shadow: Hit was rated nearly worthless from level 19 because Shadow Focus was counted against all spells; only Shadow spells are capped now, so Hit keeps value for the wand and Starshards. Also fixed: wand and Spirit values doubled at 36-39 for Shadow Priests without Shadowform, Wand Specialization ignored at 49+, and Spirit Tap and Meditation not adding together. Shadow Weaving, Improved Mind Blast and Improved Shadow Word: Pain now count.
+	- Healers are found sooner: Divine Aegis and Prayer of Mending now also switch a leveling Priest to the healer weights, so a Discipline healer is recognised from Divine Aegis instead of keeping the Shadow weights until the 50s.
+- **Fixed: Spec at Level 60**: A level-60 Priest is now scored by Shadowform, then Prayer of Mending (Holy) or Penance / Power Infusion (Discipline), then the tree with the most points. Before, a Shadow Priest with Shadowform but neither Shadow Weaving nor Blackout got the healer weights.
+
+### 💀 Warlock (Forever)
+- **Level-60 Weights**:
+	- **Demonology: Raid** (was "Raid: Master Demonologist"): the Demonic Pact build, the strongest Warlock spec in Forever (about 19% ahead of Affliction).
+	- **Affliction: Raid** (was "Raid: Affliction (SM/Ruin)") and **Destruction: Raid** (was "Raid: Destruction (DS/Ruin)").
+	- For all three, Crit is worth about four times its old value and Hit about half (it was rated far above Crit); Shadow damage is scored separately from Fire, and Intellect and Stamina count for less (a three-minute raid fight never runs a Warlock dry). Talents already in them: Ruin, Pandemic, Shadow Mastery, Malediction, Agonizing Flames, Demonic Embrace. The PvP profiles are unchanged.
+	- **Demonology: AoE Farming** (new), for Rain of Fire / Hellfire pack farming with Soul Link. Hellfire burns you for as much as each enemy and Life Tap pays for mana in health, so Stamina leads, then Fire damage and mana stats. From a rough model.
+- **Profiles**: Demonology: Raid, Affliction: Raid, Destruction: Raid and Demonology: AoE Farming at 60; Affliction: Solo Leveling, Affliction: Dungeon Leveling, Demonology: Solo Leveling and Destruction: Solo Leveling while leveling.
+- **New Dungeon Leveling Profile**: **Affliction: Dungeon Leveling**.
+- **Leveling**: Improved Life Tap (Stamina worth more, Intellect less). Demonology leveling now counts Soul Link's real damage sharing (Armor and Stamina worth less) and its 3% damage, and only credits Demonic Knowledge for the ranks you have.
+- **Fixed: Spec at Level 60**: A level-60 Warlock is now scored by Demonic Pact or the tree with the most points. Before, every raid profile required Ruin, so a deep Affliction or Demonology Warlock without Ruin fell back to the generic default weights, and any Soul Link Warlock without Demonic Pact got the PvP tank weights.
+
+### ⚡ Shaman (Forever)
+- **Level-60 Weights**:
+	- **Enhancement: Raid** (was "DPS: Enhancement"), from the simulator: the two-hander build, the strongest Shaman spec in Forever. Hit is worth about twice its old value and Crit nearly four times, Intellect now counts (Mental Dexterity turns it into Attack Power, and the shocks need the mana), and so does Spell Power (Flame Shock, Earth Shock and Lightning Shield).
+	- **Elemental: Raid** (was "DPS: Elemental (PvE)"), from the simulator. Elemental runs out of mana in Forever, so Hit is now worth about half its old value, and Intellect (about four times), Spirit and Mp5 count for more. Nature and Fire damage are scored separately.
+	- **Restoration: Raid** (was "Healer: Deep Restoration"), from the healing model. Water Shield gives mana back on heal crits, so Crit is worth about half again its old value; Intellect and Mp5 about twice.
+	- **Tank: AoE Farming** (new), for pack farming with a one-hander and shield: Rockbiter with Spirit Weapons, Fire Nova, Magma Totem and Lightning Shield on about 4 mobs. Stamina, avoidance and the mana stats lead. From a rough model. A level-60 Shaman tank (Anticipation with Spirit Weapons) now uses it.
+	- Talents already in these profiles: Ancestral Knowledge, Toughness, Mental Dexterity, Mental Quickness, Elemental Fury, Concussion, Purification, Healing Way. The PvP, totem-support and hybrid profiles are unchanged.
+- **Profiles**: Enhancement: Raid, Elemental: Raid, Restoration: Raid and Tank: AoE Farming at 60; Enhancement: Solo Leveling, Enhancement: Dungeon Leveling, Elemental: Leveling, Restoration: Leveling, Restoration: Dungeon Leveling and Tank: Dungeon Leveling while leveling.
+- **New Dungeon Leveling Profiles**: **Enhancement: Dungeon Leveling** and **Restoration: Dungeon Leveling** (from the healing model, healing a tank through dungeon pulls).
+- **Leveling**: Improved Stormstrike's mana regen while casting now raises Spirit for Enhancement, not only for Shaman tanks.
+- **Fixed: Spec at Level 60**: Any Elemental Shaman with a point in Eye of the Storm was scored with the PvP weights; the best raid build takes two points of it to reach Elemental Fury. The PvP weights now need all three points. A Shaman without Lava Burst, Riptide, Rage of the Farseer or Stormstrike now gets the weights of the tree with the most points instead of the healer weights.
+- **Fixed: Enhancement Switching to Elemental Weights While Leveling**: An Enhancement Shaman who took the Elemental shock talents (Convection, Call of Flame, Reverberation) was moved to the Elemental leveling weights. Stormstrike now keeps them on the Enhancement weights.
+
+### 🐾 Druid (Forever)
+- **Level-60 Weights**:
+	- **Cat: Raid** (was "DPS: Feral Cat"), from the simulator. Agility now edges Strength (it was rated well below), Crit is worth more than twice its old value, and Intellect and Mp5 count (Shifting Power turns mana into Energy).
+	- **Balance: Raid** (was "DPS: Balance (Boomkin)"), from the simulator. Starfire does most of the damage, so Arcane damage counts for most of Spell Power's value. Hit is worth about half its old value and Crit about half again more.
+	- **Restoration: Raid** (was "Healer: Deep Restoration"), from the healing model. Most Druid healing comes from heal-over-time spells, which can't crit, so Crit is worth about half its old value; Spirit (it barely counted before) and Mp5 now lead.
+	- **Bear: Raid** (was "Tank: Feral Bear"), from the simulator's tank mode. Agility, Strength and Crit now count (they were missing); Dodge, Hit and Defense count for less and Armor about a third more. Dire Bear Form multiplies your armor so much that the simulator stops counting more past about 5,000.
+	- Talents already in these profiles: Heart of the Wild, Living Spirit, Vengeance, Moonfury, Genesis, Gift of Nature, Naturalist, Predatory Instincts, Savage Fury. The older healer and hybrid profiles are unchanged.
+- **Profiles**: Cat: Raid, Balance: Raid, Restoration: Raid and Bear: Raid at 60; Feral Cat: Solo Leveling, Cat: Dungeon Leveling, Bear: Dungeon Leveling, Balance: Leveling, Restoration: Leveling and Restoration: Dungeon Leveling while leveling.
+- **New Dungeon Leveling Profiles**: **Cat: Dungeon Leveling** and **Restoration: Dungeon Leveling** (from the healing model, healing a tank through dungeon pulls).
+- **Leveling**: Sharpened Claws, Leader of the Pack and Nature's Majesty (more crit makes Attack Power, Strength and Hit worth more), and Shredding Attacks and Rend and Tear (more damage) now adjust the Cat weights.
+- **Fixed: Feral Switching to Balance or Healer Weights While Leveling**: A Cat Druid with Nature's Reach (hit for every form) was moved to the Balance leveling weights, and one who filled a tier with Nature's Focus to the healer weights. Nature's Reach no longer marks Balance, and Shifting Power keeps a Druid on the Cat weights.
+
+### 🐛 Bug Fixes
+- **Lua Error on Druid Idols (Forever)**: Looking at a Forever idol whose value depends on your spec, such as Windcharged Leaf, caused a Lua error (Helpers.lua:816, "bad argument to 'pairs'"). Fixed. Librams, idols and totems on Forever (and TBC) were also being counted twice when scored; they now count once, for your spec. Thanks to dasper for the report.
+- **What's New Window on Era and TBC**: When an update only changes WoW Forever, the window now says so instead of opening with an empty list.
+
+### 🛠️ For Testers
+- **Leveling Weights Split Into One File per Class (Forever)**: The Forever leveling weights used to live in one file, `Classes/Forever/LevelingCurves.lua`. They're now split into one file per class in `Classes/Forever/Curves/` (`Warrior_Curves.lua` to `Druid_Curves.lua`), plus `Curves_Attach.lua`, which loads them. A change to one class's weights can no longer touch another class. The weights themselves are unchanged. If you copy files by hand instead of replacing the whole folder, delete the old `LevelingCurves.lua` and make sure the new `Curves` folder is there, or the leveling weights won't load.
+
+---
+
 ## 🚀 v3.1.1
 
 ### ✨ Improvements
