@@ -1,5 +1,80 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.1
+
+### 🧩 Item Sets & Procs (WoW Forever)
+- **Forever Set Data Rebuilt**: Forever was still using a copy of the Classic set list. It now uses all 532 item sets from the Forever client itself, built straight from the game's data so it can be regenerated after each patch.
+	- 55 Forever-only sets are now recognized, including Rotmender's Raiment, Stormcloth Regalia, Blessed Plate, Manaflare Regalia, The Spiritcaller, the Grovekeeper sets and the new spec PvP sets.
+	- 60 sets whose bonuses changed in Forever (Defias Leather, all nine Dungeon Set 1 sets, the PvP sets and more) now score their Forever bonuses instead of the Classic ones.
+	- Bonuses that are plain stats (Stamina, Attack Power, spell power, hit, crit, mana per 5 and so on) score exactly. Procs and class bonuses get an estimate based on the set's item level, counted as Spell Power for casters and healers or Attack Power for melee. Resistance, run speed, threat and spell penetration bonuses aren't scored.
+	- Violet Sorcerer's Vestments, Krol'dok Battlegear and Defias Enforcer's Garb are recognized, but the client doesn't hold their bonuses yet, so they have no bonus score.
+- **Fixed: Set Bonus Hit and Crit Overvalued**: Set bonus stats skipped the rating conversion that item stats get, so on Forever a hit or crit bonus counted 10–14 times over (Devilsaur Armor's 2-piece alone was worth more than most items). Set bonus stats are now scored exactly like item stats in every game version, which also gives healers credit for spell power bonuses.
+- **Fixed: Items in Two Sets**: A few items are listed in two sets (an old and a remade copy). Which set they counted for depended on load order; they now count for the set the item itself names.
+- **Procs Checked Against Forever**: The proc and use-effect list was checked against Forever's reworked items.
+	- Neltharion's Tear, Drake Fang Talisman, Thunderfury and Flurry Axe had a fixed score that replaced their whole score. They now score from their own stats; Thunderfury adds its lightning proc as weapon damage.
+	- Use-effect trinkets with stats (Slayer's Crest, Restrained Essence of Sapphiron, Eye of the Dead) and use-only trinkets (Talisman of Ephemeral Power, Earthstrike, Jom Gabbar, Zandalarian Hero Charm, Diamond Flask) now add their average effect on top of their stats instead of a fixed score.
+	- Zandalarian Hero Charm pointed at the wrong item (Royal Seal of Eldre'Thalas). Diamond Flask uses its Forever effect (+20 Strength after a heal).
+	- Kiss of the Spider scores from its stats; its haste isn't weighted on Forever.
+	- The TBC sets and procs, which never ran on Forever, are gone from the Forever file.
+
+### 🧩 Item Sets & Procs (Classic Era & TBC)
+- **Set Data Rebuilt for Era and TBC**: Era and TBC shared one hand-made set list, and much of it was wrong. Each game now has its own file built from its own client (Data_Sets_Era.lua with 476 sets, Data_Sets_TBC.lua with 307 sets), replacing Data_Sets.lua.
+	- In the old list, 86 of the 163 TBC sets had wrong items, many of them made-up item numbers: every Tier 6 set, nearly every arena set from Season 1 to 4, all the level-70 honor sets, and the Khorium Ward, Faith in Felsteel, Burning Rage and Doomplate sets. Their bonuses never counted.
+	- 11 Classic sets had wrong items: the Rank 12–14 Pursuit, Vestments and Sanctuary sets were mixed up, the four Rank 7–10 Champion's and Legionnaire's sets were random items, and "High Warlord (Plate)" used TBC items.
+	- Every set now scores its real bonuses for that game: Era bonuses in Era's units (Devilsaur Armor is 2% hit, it was counted as 32), TBC bonuses as ratings (Devilsaur Armor is 20 hit rating). Procs and class bonuses get the same item-level estimate as Forever.
+- **Procs Checked Against the Era and TBC Clients**: The same fixed-score problem existed here. Neltharion's Tear, Drake Fang Talisman, Thunderfury and Flurry Axe now score from their own stats.
+	- Use-effect trinkets now add their average effect on top of their stats, with values from each client: Diamond Flask is +75 Strength, and on TBC Kiss of the Spider (200 haste rating), Mind Quickening Gem (331 spell haste rating) and Badge of the Swarmguard (up to 1200 armor ignored) use their TBC effects.
+	- Zandalarian Hero Charm pointed at the wrong item.
+	- TBC: Darkmoon Card: Madness, Skyguard Silver Cross and Airman's Ribbon of Gallantry now score from their stats instead of a fixed score that ignored them, and Bangle of Endless Blessings adds its mana proc to its stats.
+
+### ✨ Enchants (All Versions)
+- **Enchant Lists Rebuilt**: The enchants the addon suggests (and subtracts from an item's stats) came from one hand-made list shared by every game version, and much of it was wrong. Each game now has its own list built from its client (Enchants_Era.lua with 101 enchants, Enchants_TBC.lua with 182, Enchants_Forever.lua with 136), replacing the enchant sections of Database.lua and Database_Forever.lua.
+	- Era and Forever were offered TBC enchants that don't exist there (Mongoose, the Glyphs, the Aldor and Scryer shoulder inscriptions, TBC bracer and boot enchants), which inflated projected scores at level 60.
+	- Many entries had the wrong stats for their ID (one ID was listed twice with different stats, so the second silently replaced the first), so the current enchant was often subtracted wrongly when comparing items.
+	- Each list holds only enchants the game can really apply: Enchanting recipes plus enchant items such as armor kits, arcanums, scopes, shoulder inscriptions and spellthreads, each on the slots the game allows. Forever's own enchants are included, among them the new armor kits, necklace enchants and Mighty Spell Power.
+	- Stats match each enchant's tooltip. Chance-on-hit enchants (Crusader, Mongoose, Executioner, Fiery Weapon and the like) count an estimated average instead of their full proc.
+	- Suggestions skip enchants above your level (recipes become suggestions about 10 levels before their natural level, since enchants have no level requirement) and class-only enchants for other classes, such as the Zul'Gurub idols. Ring enchants are left out because only Enchanters can use them.
+	- Enchant stats are now scored like item stats, so Forever ratings convert properly and healers get credit for spell power enchants.
+- **Fixed: Two TBC Item Bonuses on the Wrong Items**: Gorehowl was credited with Don Santos' Famous Hunting Rifle's attack power proc, and Spiteblade with a proc it doesn't have.
+
+### 🧹 Dataminer Removed (WoW Forever)
+- **Dataminer Removed**: The beta dataminer is gone: the `/sgjminer` command, the loot and quest-reward recording, its export window and the item history log. The Roadmap now gets Forever quest rewards from foreverchanges.pro instead (Roadmap 3.1.0), so nothing needs recording in game any more.
+	- Anything it recorded is cleared from your saved data the next time you log in, and the SGJ_History saved variable is no longer kept.
+	- `/sgjsave` stays; its prompt now says "Save addon data to disk?".
+
+### 🗡️ Weapon Racials in Tooltips (WoW Forever)
+- **Racial Shown in Gains and Losses**: When a weapon swap gains or loses a weapon racial, the tooltip now lists it under Gains or Losses, for example "Sword Specialization (Crit) -2%" when a Human swaps a sword for a mace. The score already counted it; now you can see why a weapon with better stats is only a small upgrade, or none. Covers Human Sword Specialization (2%), Dwarf Mace Specialization (1%) and Orc Axe Specialization (1%), including a two-hander clearing your off hand.
+- **New Option: Shield Tanks: No Two-Handers** (Comparison Logic, on by default): with a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you're holding one. Before, a shield tank already wielding a two-hander still saw other two-handers as upgrades. Turn it off to compare two-handers normally when you aren't using a shield. The Roadmap follows the same option.
+
+### 🌍 Translations (All Languages WoW Forever Ships In)
+- **Every Language Complete**: Gear Judge is now fully translated into every language WoW Forever launches with: German, Spanish (Spain and Latin America), French, Brazilian Portuguese, Russian, Korean and Traditional Chinese. **New:** Korean, Traditional Chinese and Latin American Spanish (before, Latin American Spanish clients got English). The existing languages were missing about 150 strings each (the newer options, the What's New lines and more), now filled.
+- **Official Game Names**: Talent, spell, dungeon and zone names come from the game client's own translations, so they match what you see in game. Enchant names in tooltips now come from the game in your language too (the enchant's recipe or item name).
+- **Fixed: Tooltip Reading in Other Languages**: The tooltip lines Gear Judge reads (weapon damage per second, armor, block, damage range, cooldowns, "Use:", "Equip:", "Chance on hit:", set and socket bonuses) are now built from each client's own wording. Before, many didn't match in the translated clients (for example French writes "Armure : 120"), and some used capital letters, which never match because tooltip lines are compared in lower case.
+- **Fixed: Talent Detection in Other Languages**: The talent names Gear Judge looks for (for talent-based weight changes) are now the game's own names in every language, so talents are detected on non-English clients.
+- **Fixed: Decimal Commas**: Tooltip numbers written with a decimal comma ("1,5") are now read correctly.
+- **Fixed: Word Order**: Gear Judge now works out which part of a tooltip line is the number and which is the stat name, so languages that put them in a different order than English (Korean, Chinese, Portuguese, Spanish) are read correctly.
+- **Fixed: Temporary Effects in German and Russian**: The words that mark an "Equip:" effect as temporary ("for 10 sec") were damaged for German and Russian, so temporary effects could be scored as permanent stats. Rebuilt for every language.
+
+### ⚡ Performance
+- **Fixed: Update Throttles**: Two throttles that should hold back repeated updates never worked, so a burst of events (opening bags, a vendor or a profession window, or the server sending item data) ran a full update for every single event. Each burst now runs one update.
+- **Less Work When Items Load**: When the server sends item data, Gear Judge no longer throws away every item's stats and rescores everything. Items whose data hasn't arrived yet are no longer stored half-read, so only those get read again. The open quest, vendor and profession windows and the bag overlays refresh once per burst, and only if they're visible.
+- **Bag Changes**: Moving or looting items no longer clears every saved tooltip score, only the weapon scores (they depend on which weapons are in your bags).
+- **Gear Swaps**: Swapping a whole gear set no longer saves your baseline once per slot. It saves once, half a second after the swap, and waits until combat ends if you're fighting. The automatic save no longer clears item stats or prints the "Locked in" line (the Save button still does).
+- **Faster Tooltips**: Item tooltips redraw five times a second while you hover. The stat-name shortening and colouring now remembers lines it has already done instead of searching every stat name again. Set bonus checks look only at the sets you wear instead of all 500+.
+- **Fewer Needless Recalculations**: Gear Judge no longer clears its weights on bag, ammo or durability changes and on party members' gear. It only clears tooltip scores on a form change when your form actually changed, and only when weights are rebuilt if your profile really changed.
+- **ElvUI and Baganator Bags**: ElvUI bag overlays no longer update while the bags are closed. Baganator refreshes once per burst of gear, level and talent changes.
+
+### 🐞 Bug Fixes
+- **Fixed: Receipt List Not Updating**: The Receipt list didn't refresh when your bags changed.
+- **Fixed: Wrong Scores for Copies of an Item**: Saved tooltip scores were stored by item number, so two copies with different random suffixes, enchants or gems could show each other's score.
+- **Fixed: Wearable Armor After Level 40**: Whether you can wear mail or plate is now checked again when you level up.
+- **Fixed: Wrong Item Matched After Loading**: An item that finished loading could refresh the tooltip of a different item whose number starts the same way (item 123 matched item 1234).
+- **Fixed: Socket Bonus Colour Check**: Only the red part of a socket bonus line's colour was read.
+- **Fixed: Blank Tooltip With Careful Aim**: A Hunter's Careful Aim could throw an error and leave the tooltip blank when no ranged attack power was listed yet.
+- **Fixed: Doubled Stat Names in Tooltips**: With Simplify Stats on, a stat name could be shortened twice when one name holds another: a weapon's "(8.3 damage per second)" line read "(8.3 Weapon Weapon DPS)". The shortening now finds every stat name in the original line first, longest first, so each word is replaced once ("Ranged Attack Power" no longer has its "Attack Power" part shortened on its own either).
+
+- The new text is translated for German, Spanish, French, Brazilian Portuguese and Russian.
+
 ## 🚀 v3.2.0
 
 ### 🖼️ Window Redesign

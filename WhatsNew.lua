@@ -10,18 +10,19 @@ local L = MSC.L
 -- Reopen any time with /sgj whatsnew.
 --
 -- Update WHATS_NEW for each release. forever = true lines only show on the
--- Forever client. Keep it short: the full list lives in CHANGELOG.md.
+-- Forever client; classic = true lines only show on Era and TBC. Keep it
+-- short: the full list lives in CHANGELOG.md.
 
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.0: add a line here for each change logged under v3.2.0 in CHANGELOG.md.
-    { text = "Bigger window: the main window is wider and taller, so its tabs have more room." },
-    { text = "Receipt redesigned: your score and alerts on the left, your character with each slot's score in the middle, and your stat totals on the right." },
-    { text = "Protocol redesigned: a section list on the left and the options in two columns, so most of them fit without scrolling." },
-    { text = "Stat Logic redesigned: your profile and cap rings on the left, and full-width stat weight bars on the right." },
-    { text = "Stat Logic rings match your spec: tanks, healers, casters and melee each get their own, with Forever's real hit and defense targets." },
-    { text = "Weapon Thunderdome redesigned: the six setups in two columns, with the winner and a ranking of every setup on the right." },
+    -- v3.2.1: add a line here for each change logged under v3.2.1 in CHANGELOG.md.
+    { text = "Item sets rebuilt from the Forever client: all 532 sets, including the new Forever sets, now score their real Forever bonuses.", forever = true },
+    { text = "Set bonus hit and crit no longer count many times over, and healers get credit for spell power set bonuses." },
+    { text = "Item sets rebuilt from your game's own data: every set counts its real bonuses, including many TBC sets that never counted before.", classic = true },
+    { text = "Proc and use-effect trinkets now add their effect on top of their stats instead of a fixed score that ignored them." },
+    { text = "Enchant suggestions rebuilt from your game's own data: only enchants your game really has, with their real stats, suited to your level and class." },
+    { text = "Roadmap 3.1.0: quest rewards for every Forever zone, filtered to your faction and class.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
@@ -114,7 +115,7 @@ function MSC.ShowWhatsNew()
     if not frame then frame = BuildFrame() end
     local lines = {}
     for _, entry in ipairs(WHATS_NEW) do
-        if not entry.forever or MSC.IsForever then
+        if (not entry.forever or MSC.IsForever) and (not entry.classic or not MSC.IsForever) then
             lines[#lines + 1] = "|cffffd100-|r " .. L[entry.text]
         end
     end

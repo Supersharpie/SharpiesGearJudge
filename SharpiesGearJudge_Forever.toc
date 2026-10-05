@@ -2,8 +2,8 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (Forever Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.2.0-Forever
-## SavedVariables: SGJ_History, SGJ_Settings, SharpiesGearJudgeDB
+## Version: 3.2.1-Forever
+## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
@@ -16,9 +16,10 @@ Locales/frFR.lua
 Locales/esES.lua
 Locales/ptBR.lua
 Locales/ruRU.lua
-## Locales/koKR.lua
+Locales/esMX.lua
+Locales/koKR.lua
+Locales/zhTW.lua
 ## Locales/zhCN.lua
-## Locales/zhTW.lua
 
 Init.lua
 CacheManager.lua
@@ -26,6 +27,7 @@ TooltipManager.lua
 ConflictManager.lua
 Database_Forever.lua
 Data_Sets_Forever.lua
+Enchants_Forever.lua
 Parse.lua
 PawnParser.lua
 SixtyUpgradesParser.lua

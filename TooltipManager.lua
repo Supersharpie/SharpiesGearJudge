@@ -38,14 +38,18 @@ TooltipManager:SetScript("OnEvent", function(self, event)
                         if success and MSC.PendingTooltipLink and MSC.PendingTooltip then
                             
                             -- Verify the item the server just sent is the one we are hovering over
-                            if MSC.PendingTooltip:IsVisible() and string.find(MSC.PendingTooltipLink, "item:" .. tostring(itemID)) then
+                            -- (full id only: "item:123" must not match "item:1234")
+                            local idStr = "item:" .. tostring(itemID)
+                            local pLink = MSC.PendingTooltipLink
+                            local idMatch = string.find(pLink, idStr .. ":", 1, true) or pLink:sub(-#idStr) == idStr
+                            if MSC.PendingTooltip:IsVisible() and idMatch then
                                 local tip = MSC.PendingTooltip
                                 local pendingLink = MSC.PendingTooltipLink
                                 MSC.PendingTooltipLink = nil
-                                
-                                -- Refresh the tooltip natively to clear the "Fetching" text, then evaluate!
-                                tip:SetHyperlink(pendingLink) 
-                                original_Evaluate(tip)
+
+                                -- Refresh the tooltip natively to clear the "Fetching" text. SetHyperlink
+                                -- fires the tooltip hooks, which evaluate it now the item is cached.
+                                tip:SetHyperlink(pendingLink)
                             end
                         end
                     end)

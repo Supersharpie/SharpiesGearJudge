@@ -13,7 +13,6 @@ local C_SpecializationInfo = C_SpecializationInfo
 local UnitClass = UnitClass
 local CreateFrame = CreateFrame
 local C_Timer = C_Timer
-local UIDropDownMenu_SetText = UIDropDownMenu_SetText
 
 -- =========================================================================
 -- 1. TALENT CACHING SYSTEM 
@@ -38,10 +37,7 @@ function MSC:BumpScoringRevision()
     if MSC.ColorMatchCache then wipe(MSC.ColorMatchCache) end
     if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
     if MSC.UsableCache then wipe(MSC.UsableCache) end
-    if MSC.UpdateSetBonusScores and MSC.GetCurrentWeights then
-        local weights = MSC.GetCurrentWeights()
-        if weights then MSC:UpdateSetBonusScores(weights) end
-    end
+    -- Weights (and set bonus scores) are rebuilt lazily by GetCurrentWeights.
 end
 
 function MSC:ApplyWeightPipeline(rawWeights, specKey)
@@ -541,6 +537,7 @@ function MSC:ApplyDynamicAdjustments()
 end
 
 -- [[ THE MASTER WRAPPER ]] --
+local lastWeightsSig = nil
 function MSC.GetCurrentWeights()
     if MSC.CachedWeights then
         return MSC.CachedWeights, MSC.CachedSpecKey, MSC.CachedCapText, MSC.CachedSpecConfidence
@@ -552,11 +549,19 @@ function MSC.GetCurrentWeights()
     MSC.CachedSpecKey = key
     MSC.CachedCapText = capText
     MSC.CachedSpecConfidence = MSC.CachedSpecConfidence or "high"
-    
+
+    if w and MSC.UpdateSetBonusScores then MSC:UpdateSetBonusScores(w) end
+
     -- [[ NUKE TOOLTIP CACHE WHEN PROFILE CHANGES ]]
-    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-    if MSC.SlotCache then wipe(MSC.SlotCache) end
-    
+    -- Only when the profile actually changed; weights are also rebuilt after
+    -- plain cache clears that leave every cached result valid.
+    local sig = tostring(key) .. "|" .. (MSC.ScoringRevision or 0) .. "|" .. tostring(MSC.ManualSpec) .. "|" .. (UnitLevel("player") or 0)
+    if sig ~= lastWeightsSig then
+        lastWeightsSig = sig
+        if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+        if MSC.SlotCache then wipe(MSC.SlotCache) end
+    end
+
     return w, key, capText, MSC.CachedSpecConfidence
 end
 
@@ -579,37 +584,27 @@ local talentTracker = CreateFrame("Frame")
 talentTracker:RegisterEvent("CHARACTER_POINTS_CHANGED")
 talentTracker:RegisterEvent("PLAYER_TALENT_UPDATE")
 talentTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-talentTracker:RegisterEvent("PLAYER_EQUIPMENT_CHANGED") 
-talentTracker:RegisterEvent("UNIT_INVENTORY_CHANGED")
+-- PLAYER_EQUIPMENT_CHANGED: CacheManager bumps the scoring revision.
+-- UNIT_INVENTORY_CHANGED is not used: it fires for bags/ammo/durability and
+-- party members, and gear changes already arrive as PLAYER_EQUIPMENT_CHANGED.
 talentTracker:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 talentTracker:RegisterEvent("PLAYER_LEVEL_UP") -- Forever leveling weights blend by level
 -- Forever's trait-based talent window commits through the trait config
 -- (unknown events raise an error on Classic clients, hence the pcall)
 pcall(talentTracker.RegisterEvent, talentTracker, "TRAIT_CONFIG_UPDATED")
 
-talentTracker:SetScript("OnEvent", function(self, event, unit)
-    if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
-
+talentTracker:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_TALENT_UPDATE" or event == "CHARACTER_POINTS_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED"
         or event == "TRAIT_CONFIG_UPDATED" then
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
         MSC:BumpScoringRevision()
-    elseif event == "PLAYER_EQUIPMENT_CHANGED" then
-        MSC:BumpScoringRevision()
     else
         MSC.CachedWeights = nil
         MSC.CachedSpecKey = nil
         if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
-    end
-    
-    if MyStatCompareFrame and MyStatCompareFrame:IsShown() and MyStatCompareFrame.ProfileDD then
-        local _, detectedKey = MSC.GetCurrentWeights()
-        local displayName = detectedKey
-        if MSC.PrettyNames and MSC.PrettyNames[detectedKey] then
-            displayName = MSC.PrettyNames[detectedKey]
-        end
-        UIDropDownMenu_SetText(MyStatCompareFrame.ProfileDD, string.format(MSC.L["Auto: %s"], displayName))
+        -- Mail/plate become wearable at 40
+        if event == "PLAYER_LEVEL_UP" and MSC.UsableCache then wipe(MSC.UsableCache) end
     end
 end)
 
@@ -664,7 +659,8 @@ function MSC:GetPlayerKey()
 end
 
 -- Saves the currently equipped gear AND talents to the specific spec
-function MSC:SaveBaselineProfile(specName)
+-- silent: automatic save (AutoUpdateBaseline), no chat line.
+function MSC:SaveBaselineProfile(specName, silent)
     if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
     if not SGJ_Settings.TalentProfiles then SGJ_Settings.TalentProfiles = {} end
     
@@ -680,16 +676,47 @@ function MSC:SaveBaselineProfile(specName)
     MSC:BuildTalentCache()
     SGJ_Settings.TalentProfiles[playerKey][specName] = MSC:SafeCopy(MSC.TalentCache)
     
-    -- 3. Flush the cache
+    -- 3. Flush the cache (raw item stats don't depend on gear/talents)
     if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
     if MSC.SlotCache then wipe(MSC.SlotCache) end
-    if MSC.StatCache then wipe(MSC.StatCache) end
-    
+
+    if silent then return end
     local prettyName = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName]) or specName
     print(string.format(MSC.L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"], prettyName))
 end
 
+-- Called per PLAYER_EQUIPMENT_CHANGED (once per slot, so up to ~17 times on a
+-- gear-set swap): runs once 0.5 s after the last call, and after combat ends
+-- when called in combat.
+local baselinePending, baselineCallId = false, 0
+local baselineRegenFrame = CreateFrame("Frame")
+baselineRegenFrame:SetScript("OnEvent", function(self)
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    MSC:RunAutoUpdateBaseline()
+end)
+
 function MSC:AutoUpdateBaseline()
+    baselineCallId = baselineCallId + 1
+    if baselinePending then return end
+    baselinePending = true
+    local function Fire(id)
+        if id ~= baselineCallId then
+            local latest = baselineCallId
+            C_Timer.After(0.5, function() Fire(latest) end)
+            return
+        end
+        baselinePending = false
+        if InCombatLockdown and InCombatLockdown() then
+            baselineRegenFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        else
+            MSC:RunAutoUpdateBaseline()
+        end
+    end
+    local id = baselineCallId
+    C_Timer.After(0.5, function() Fire(id) end)
+end
+
+function MSC:RunAutoUpdateBaseline()
     if not SGJ_Settings then return end
     local weights, specName = self.GetCurrentWeights()
     if not weights or not specName then return end
@@ -709,6 +736,6 @@ function MSC:AutoUpdateBaseline()
     end
     
     if liveScore >= savedScore then
-        self:SaveBaselineProfile(specName)
+        self:SaveBaselineProfile(specName, true)
     end
 end

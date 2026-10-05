@@ -109,309 +109,8 @@ MSC.BaseRegenTable = {
 -- ============================================================================
 -- 2. ENCHANTS
 -- ============================================================================
-MSC.EnchantDB = {
-    -- [[ WEAPON: TBC ENDGAME ]]
-    [2673] = { name = MSC.L["Mongoose"], stats = { ITEM_MOD_AGILITY_SHORT = 120, ITEM_MOD_HASTE_RATING_SHORT = 30 } }, 
-    [2674] = { name = MSC.L["Sunfire"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 50, ITEM_MOD_ARCANE_DAMAGE_SHORT = 50 } },
-    [2675] = { name = MSC.L["Soulfrost"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 54, ITEM_MOD_FROST_DAMAGE_SHORT = 54 } },
-    [3225] = { name = MSC.L["Executioner"], stats = { ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT = 120 } }, 
-    [2669] = { name = MSC.L["Major Spellpower"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 40 } },
-    [2642] = { name = MSC.L["Major Healing"], stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 81 } },
-    [2671] = { name = MSC.L["Sunfire (Healing)"], stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 50 } },
-    [2666] = { name = MSC.L["Major Intellect"], stats = { ITEM_MOD_INTELLECT_SHORT = 30 } },
-    [2667] = { name = MSC.L["Savagery"], stats = { ITEM_MOD_ATTACK_POWER_SHORT = 70 } }, 
-    [2668] = { name = MSC.L["Major Agility"], stats = { ITEM_MOD_AGILITY_SHORT = 20 } },
-    [3222] = { name = MSC.L["Greater Agility (2H)"], stats = { ITEM_MOD_AGILITY_SHORT = 35 }, requires2H = true }, 
-    [2672] = { name = MSC.L["Spell Surge"], stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 10 } },
-    [2670] = { name = MSC.L["Potency"], stats = { ITEM_MOD_STRENGTH_SHORT = 20 } },
-    [2621] = { name = MSC.L["Crusader"], stats = { ITEM_MOD_STRENGTH_SHORT = 60 } }, 
-
-    -- [[ WEAPON: CLASSIC / LEVELING ]]
-    [803]  = { name = MSC.L["Fiery Weapon"], stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 4 } }, 
-    [1897] = { name = MSC.L["Weapon Dmg +5"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, 
-    [2504] = { name = MSC.L["Spellpower +30"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 30 } },
-    [2505] = { name = MSC.L["Healing +55"], stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 55 } },
-    [1900] = { name = MSC.L["Unholy Weapon"], stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 4 } }, 
-    [2563] = { name = MSC.L["Major Strength (+15)"], stats = { ITEM_MOD_STRENGTH_SHORT = 15 } },
-    [1898] = { name = MSC.L["Lifestealing"], stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 3 } },
-    [943]  = { name = MSC.L["Lesser Striking (+3)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } },
-    [1894] = { name = MSC.L["Icy Chill"], stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 4 } },
-    [2564] = { name = MSC.L["Agility +15"], stats = { ITEM_MOD_AGILITY_SHORT = 15 } },
-    [805]  = { name = MSC.L["Major Striking (+4)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.5 } },
-    [1896] = { name = MSC.L["Superior Striking (+5)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } },
-    [963]  = { name = MSC.L["Greater Striking (+4)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.5 } },
-    [249]  = { name = MSC.L["Striking (+3)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } },
-    [250]  = { name = MSC.L["Lesser Striking (+2)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.7 } },
-    [254]  = { name = MSC.L["Minor Striking (+1)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.3 } },
-    [912]  = { name = MSC.L["Demonslaying"], stats = { ITEM_MOD_ATTACK_POWER_SHORT = 5 } },
-    [964]  = { name = MSC.L["Lesser Beastslayer"], stats = { ITEM_MOD_ATTACK_POWER_SHORT = 3 } },
-    [33]   = { name = MSC.L["Minor Beastslayer"], stats = { ITEM_MOD_ATTACK_POWER_SHORT = 1 } },
-
-    -- [[ SCOPES ]]
-    [23766] = { slot = 18, isScope = true, stats = {ITEM_MOD_CRIT_RATING_SHORT=14, ITEM_MOD_DAMAGE_PER_SECOND_SHORT=3}, name = MSC.L["Adamantite Scope"] }, 
-    [23764] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=3}, name = MSC.L["Khorium Scope"] }, 
-    [23765] = { slot = 18, isScope = true, stats = {ITEM_MOD_CRIT_RATING_SHORT=28}, name = MSC.L["Stabilized Eternium Scope"] },
-    [10548] = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=2}, name = MSC.L["Sniper Scope"] }, 
-    [33]    = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=1}, name = MSC.L["Accurate Scope"] },
-    [664]   = { slot = 18, isScope = true, stats = {ITEM_MOD_DAMAGE_PER_SECOND_SHORT=0.5}, name = MSC.L["Standard Scope"] },
-    [2523]  = { slot = 18, isScope = true, stats = {ITEM_MOD_HIT_RATING_SHORT=30}, name = MSC.L["Biznicks Accurascope"] },
-
-    -- [[ SHIELD & SPIKES ]]
-    [2655] = { name = MSC.L["Major Stamina"], slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 18 } },
-    [2654] = { name = MSC.L["Intellect"], slot = 17, isShield = true, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
-    [2659] = { name = MSC.L["Shield Block"], slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 15 } },
-    [1071] = { name = MSC.L["Lesser Stamina"], slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 3 } }, 
-    [1880] = { name = MSC.L["Greater Spirit"], slot = 17, isShield = true, stats = { ITEM_MOD_SPIRIT_SHORT = 9 } },
-    [1881] = { name = MSC.L["Greater Stamina"], slot = 17, isShield = true, stats = { ITEM_MOD_STAMINA_SHORT = 7 } },
-    [2748] = { name = MSC.L["Felsteel Shield Spike"], slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 32 } }, 
-    [2747] = { name = MSC.L["Thorium Shield Spike"], slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 25 } },
-    [2746] = { name = MSC.L["Mithril Shield Spike"], slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 20 } },
-    [2745] = { name = MSC.L["Iron Shield Spike"], slot = 17, isShield = true, stats = { ITEM_MOD_BLOCK_VALUE_SHORT = 15 } },
-
-    -- [[ HEAD ]]
-    [3012] = { name = MSC.L["Glyph of Power"], slot = 1, stats = { ITEM_MOD_SPELL_POWER_SHORT = 22, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } },
-    [3010] = { name = MSC.L["Glyph of Ferocity"], slot = 1, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 34, ITEM_MOD_HIT_RATING_SHORT = 16 } },
-    [3013] = { name = MSC.L["Glyph of the Defender"], slot = 1, stats = { ITEM_MOD_DODGE_RATING_SHORT = 16, ITEM_MOD_BLOCK_VALUE_SHORT = 17 } },
-    [3011] = { name = MSC.L["Glyph of Renewal"], slot = 1, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 35, ITEM_MOD_MANA_REGENERATION_SHORT = 7 } },
-    [3003] = { name = MSC.L["Glyph of the Gladiator"], slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 18, ITEM_MOD_RESILIENCE_RATING_SHORT = 20 } },
-    [3002] = { name = MSC.L["Glyph of the Outcast"], slot = 1, stats = { ITEM_MOD_STRENGTH_SHORT = 17, ITEM_MOD_INTELLECT_SHORT = 16 } },
-    [2543] = { name = MSC.L["Lesser Arcanum (Agi)"], slot = 1, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
-    [2544] = { name = MSC.L["Lesser Arcanum (Int)"], slot = 1, stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
-    [2545] = { name = MSC.L["Lesser Arcanum (Str)"], slot = 1, stats = { ITEM_MOD_STRENGTH_SHORT = 8 } },
-    [2588] = { name = MSC.L["Syncretist's Sigil"], slot = 1, stats = { ITEM_MOD_STAMINA_SHORT = 10, ITEM_MOD_ATTACK_POWER_SHORT = 20 } },
-
-    -- [[ SHOULDER ]]
-    [3004] = { name = MSC.L["Greater Inscription of the Orb"], slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
-    [3007] = { name = MSC.L["Greater Inscription of Vengeance"], slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
-    [3009] = { name = MSC.L["Greater Inscription of the Knight"], slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } },
-    [3005] = { name = MSC.L["Greater Inscription of the Oracle"], slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } },
-    [2992] = { name = MSC.L["Inscription of the Orb"], slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } },
-    [2998] = { name = MSC.L["Inscription of Vengeance"], slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } },
-    [2994] = { name = MSC.L["Inscription of the Knight"], slot = 3, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 13 } },
-    [2993] = { name = MSC.L["Inscription of the Oracle"], slot = 3, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 5 } },
-    [2721] = { name = MSC.L["Zandalar Signet of Mojo"], slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 18 } },
-    [2716] = { name = MSC.L["Zandalar Signet of Might"], slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30 } },
-    [2717] = { name = MSC.L["Zandalar Signet of Serenity"], slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 33 } },
-    -- [[ SHOULDER: ALDOR / SCRYER (EXALTED) ]]
-    [2996] = { name = MSC.L["Greater Inscription of the Orb"], slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } }, -- Aldor
-    [2999] = { name = MSC.L["Greater Inscription of Vengeance"], slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } }, -- Aldor
-    [3000] = { name = MSC.L["Greater Inscription of the Knight"], slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } }, -- Aldor
-    [2997] = { name = MSC.L["Greater Inscription of the Oracle"], slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- Aldor
-    [3004] = { name = MSC.L["Greater Inscription of the Orb"], slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_CRIT_RATING_SHORT = 12 } }, -- Scryer (Duplicate Stat, diff ID)
-    [3007] = { name = MSC.L["Greater Inscription of Vengeance"], slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 30, ITEM_MOD_CRIT_RATING_SHORT = 10 } }, -- Scryer
-    [3009] = { name = MSC.L["Greater Inscription of the Knight"], slot = 3, stats = { ITEM_MOD_DODGE_RATING_SHORT = 10, ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 15 } }, -- Scryer
-    [3005] = { name = MSC.L["Greater Inscription of the Oracle"], slot = 3, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 22, ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- Scryer
-
-    -- [[ BACK ]]
-    [2653] = { name = MSC.L["Greater Agility (+12)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2662] = { name = MSC.L["Spell Penetration"], slot = 15, stats = { ITEM_MOD_SPELL_PENETRATION_SHORT = 20 } },
-    [3296] = { name = MSC.L["Steelweave"], slot = 15, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } },
-    [3294] = { name = MSC.L["Major Armor"], slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 120 } },
-    [849]  = { name = MSC.L["Lesser Agility (+3)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 3 } }, 
-    [2502] = { name = MSC.L["Greater Resistance"], slot = 15, stats = { ["ITEM_MOD_ALL_RESISTANCE_SHORT"] = 5 } },
-    [1889] = { name = MSC.L["Superior Defense (+70)"], slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 70 } },
-    [853]  = { name = MSC.L["Greater Defense (+50)"], slot = 15, stats = { ITEM_MOD_ARMOR_SHORT = 50 } },
-    [13421] = { name = MSC.L["Minor Agility (+1)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
-    [250]   = { name = MSC.L["Minor Agility (+1)"], slot = 15, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
-    [2521] = { name = MSC.L["Subtlety (-2% Threat]"], slot = 15, stats = { MSC_THREAT_MOD = -2 } },
-    [2622] = { name = MSC.L["Dodge (+1%)"], slot = 15, stats = { ITEM_MOD_DODGE_RATING_SHORT = 15 } },
-    [3256] = { name = MSC.L["Major Resistance (+7)"], slot = 15, stats = { ["ITEM_MOD_ALL_RESISTANCE_SHORT"] = 7 } },
-    -- [[ CLOAK: RESISTANCES ]]
-    [2662] = { name = MSC.L["Spell Penetration"], slot = 15, stats = { ITEM_MOD_SPELL_PENETRATION_SHORT = 20 } },
-    [2794] = { name = MSC.L["Greater Shadow Resistance"], slot = 15, stats = { ITEM_MOD_SHADOW_RESISTANCE_SHORT = 15 } },
-    [2521] = { name = MSC.L["Subtlety"], slot = 15, stats = { MSC_THREAT_MOD = -2 } }, -- -2% Threat
-
-    -- [[ CHEST ]]
-    [2661] = { name = MSC.L["Exceptional Stats (+6)"], slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=6, ITEM_MOD_STRENGTH_SHORT=6, ITEM_MOD_INTELLECT_SHORT=6, ITEM_MOD_STAMINA_SHORT=6 } },
-    [2653] = { name = MSC.L["Major Health (+150)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 150 } },
-    [3297] = { name = MSC.L["Major Resilience"], slot = 5, stats = { ITEM_MOD_RESILIENCE_RATING_SHORT = 15 } },
-    [2657] = { name = MSC.L["Restore Mana Prime"], slot = 5, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 6 } },
-    [1891] = { name = MSC.L["Greater Stats (+4)"], slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } },
-    [843]  = { name = MSC.L["Minor Stats (+1)"], slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=1, ITEM_MOD_STRENGTH_SHORT=1, ITEM_MOD_INTELLECT_SHORT=1, ITEM_MOD_STAMINA_SHORT=1 } },
-    [1892] = { name = MSC.L["Major Health (+100)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 100 } },
-    [866]  = { name = MSC.L["Stats (+3)"], slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=3, ITEM_MOD_STRENGTH_SHORT=3, ITEM_MOD_INTELLECT_SHORT=3, ITEM_MOD_STAMINA_SHORT=3 } },
-    [850]  = { name = MSC.L["Lesser Stats (+2)"], slot = 5, stats = { ITEM_MOD_AGILITY_SHORT=2, ITEM_MOD_STRENGTH_SHORT=2, ITEM_MOD_INTELLECT_SHORT=2, ITEM_MOD_STAMINA_SHORT=2 } },
-    [846]  = { name = MSC.L["Major Mana (+100)"], slot = 5, stats = { ITEM_MOD_MANA_SHORT = 100 } },
-    [865]  = { name = MSC.L["Superior Health (+50)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 50 } },
-    [243]  = { name = MSC.L["Minor Health (+5)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 5 } },
-    [248]  = { name = MSC.L["Lesser Health (+15)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 15 } },
-    [255]  = { name = MSC.L["Health (+25)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 25 } },
-    [856]  = { name = MSC.L["Greater Health (+35)"], slot = 5, stats = { ITEM_MOD_HEALTH_SHORT = 35 } },
-    [857]  = { name = MSC.L["Mana (+50)"], slot = 5, stats = { ITEM_MOD_MANA_SHORT = 50 } },
-    [244]  = { name = MSC.L["Lesser Mana (+30)"], slot = 5, stats = { ITEM_MOD_MANA_SHORT = 30 } },
-
-    -- [[ WRIST ]]
-    [2647] = { name = MSC.L["Brawn (+12 Str)"], slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, 
-    [2650] = { name = MSC.L["Spellpower (+15)"], slot = 9, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15 } }, 
-    [2651] = { name = MSC.L["Major Healing (+30)"], slot = 9, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30 } }, 
-    [2649] = { name = MSC.L["Assault (+24 AP)"], slot = 9, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 24 } }, 
-    [2646] = { name = MSC.L["Major Defense"], slot = 9, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } },
-    [2655] = { name = MSC.L["Fortitude (+12 Stam)"], slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 12 } }, 
-    [1883] = { name = MSC.L["Intellect +7"], slot = 9, stats = { ITEM_MOD_INTELLECT_SHORT = 7 } },
-    [1884] = { name = MSC.L["Spirit +9"], slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 9 } },
-    [905]  = { name = MSC.L["Minor Strength (+1)"], slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 1 } },
-    [1885] = { name = MSC.L["Superior Strength (+9)"], slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 9 } },
-    [1886] = { name = MSC.L["Superior Stamina (+9)"], slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 9 } },
-    [1893] = { name = MSC.L["Mana Regen (+4mp5)"], slot = 9, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 4 } },
-    [2508] = { name = MSC.L["Healing Power (+24)"], slot = 9, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 24 } },
-    [2793] = { name = MSC.L["Major Strength (+12)"], slot = 9, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } },
-    [2794] = { name = MSC.L["Major Intellect (+12)"], slot = 9, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } },
-    [246]  = { name = MSC.L["Minor Spirit (+1)"], slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } },
-    [256]  = { name = MSC.L["Lesser Spirit (+3)"], slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } },
-    [262]  = { name = MSC.L["Spirit (+5)"], slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } },
-    [852]  = { name = MSC.L["Greater Spirit (+7)"], slot = 9, stats = { ITEM_MOD_SPIRIT_SHORT = 7 } },
-    [279]  = { name = MSC.L["Minor Stamina (+1)"], slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 1 } },
-    [258]  = { name = MSC.L["Lesser Stamina (+3)"], slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 3 } },
-    [265]  = { name = MSC.L["Stamina (+5)"], slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 5 } },
-    [851]  = { name = MSC.L["Greater Stamina (+7)"], slot = 9, stats = { ITEM_MOD_STAMINA_SHORT = 7 } },
-    [263]  = { name = MSC.L["Minor Agility (+1)"], slot = 9, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
-
-    -- [[ HANDS ]]
-    [2562] = { name = MSC.L["Superior Agility (+15)"], slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, 
-    [2937] = { name = MSC.L["Major Spellpower (+20)"], slot = 10, stats = { ITEM_MOD_SPELL_POWER_SHORT = 20 } }, 
-    [2935] = { name = MSC.L["Major Healing (+35)"], slot = 10, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 35 } }, 
-    [2648] = { name = MSC.L["Assault (+26 AP)"], slot = 10, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26 } }, 
-    [2613] = { name = MSC.L["Threat (+Hit)"], slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } }, 
-    [3246] = { name = MSC.L["Blast (+Crit)"], slot = 10, stats = { ITEM_MOD_SPELL_CRIT_RATING_SHORT = 10 } },
-    [1886] = { name = MSC.L["Agility +7"], slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 7 } },
-    [1888] = { name = MSC.L["Greater Strength (+7)"], slot = 10, stats = { ITEM_MOD_STRENGTH_SHORT = 7 } },
-    [2506] = { name = MSC.L["Greater Agility (Classic +7)"], slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 7 } },
-    [847]  = { name = MSC.L["Agility (+5)"], slot = 10, stats = { ITEM_MOD_AGILITY_SHORT = 5 } },
-    [930]  = { name = MSC.L["Riding Skill"], slot = 10, stats = { MSC_SPEED_BONUS = 2 } },
-    [854]  = { name = MSC.L["Greater Strength (+7)"], slot = 10, stats = { ITEM_MOD_STRENGTH_SHORT = 7 } },
-    [848]  = { name = MSC.L["Strength (+5)"], slot = 10, stats = { ITEM_MOD_STRENGTH_SHORT = 5 } },
-    [2614] = { name = MSC.L["Shadow Power (+20)"], slot = 10, stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 20 } },
-    [2615] = { name = MSC.L["Frost Power (+20)"], slot = 10, stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 20 } },
-    [2616] = { name = MSC.L["Fire Power (+20)"], slot = 10, stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 20 } },
-    [2617] = { name = MSC.L["Healing Power (+30)"], slot = 10, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30 } }, 
-    [3231] = { name = MSC.L["Precision (+15 Hit)"], slot = 10, stats = { ITEM_MOD_HIT_RATING_SHORT = 15 } },
-    [3245] = { name = MSC.L["Spell Strike (+15 Hit)"], slot = 10, stats = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 15 } },
-   
-   -- [[ GLOVES: UTILITY ]]
-    [3220] = { name = MSC.L["Glove Reinforcements"], slot = 10, stats = { ITEM_MOD_ARMOR_SHORT = 240 } },
-
-    -- [[ LEGS ]]
-    [3154] = { name = MSC.L["Runic Spellthread"], slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 35, ITEM_MOD_STAMINA_SHORT = 20 } },
-    [3153] = { name = MSC.L["Golden Spellthread"], slot = 7, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
-    [2953] = { name = MSC.L["Nethercobra Leg Armor"], slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
-    [2952] = { name = MSC.L["Nethercleft Leg Armor"], slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 40, ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2741] = { name = MSC.L["Cobrahide Leg Armor"], slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 40, ITEM_MOD_CRIT_RATING_SHORT = 10 } },
-    [2427] = { name = MSC.L["Mystic Spellthread"], slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 25, ITEM_MOD_STAMINA_SHORT = 15 } },
-    [2743] = { name = MSC.L["Clefthide Leg Armor"], slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } },
-    [2543] = { name = MSC.L["Lesser Arcanum (Agi)"], slot = 7, stats = { ITEM_MOD_AGILITY_SHORT = 8 } },
-    [2544] = { name = MSC.L["Lesser Arcanum (Int)"], slot = 7, stats = { ITEM_MOD_INTELLECT_SHORT = 8 } },
-    [2545] = { name = MSC.L["Lesser Arcanum (Str)"], slot = 7, stats = { ITEM_MOD_STRENGTH_SHORT = 8 } },
-    [2588] = { name = MSC.L["Syncretist's Sigil"], slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 10, ITEM_MOD_ATTACK_POWER_SHORT = 20 } }, 
-    [1503] = { name = MSC.L["Lesser Arcanum of Rumination"], slot = 7, stats = { ITEM_MOD_MANA_SHORT = 150 } },
-    [1504] = { name = MSC.L["Lesser Arcanum of Constitution"], slot = 7, stats = { ITEM_MOD_HEALTH_SHORT = 100 } },
-    [3016] = { name = MSC.L["Clefthide Leg Armor"], slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 30, ITEM_MOD_AGILITY_SHORT = 10 } },
-
-    -- [[ FEET ]]
-    [2939] = { name = MSC.L["Boar's Speed"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 9, MSC_SPEED_BONUS = 8 } },
-    [2656] = { name = MSC.L["Cat's Swiftness"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 6, MSC_SPEED_BONUS = 8 } },
-    [3232] = { name = MSC.L["Surefooted"], slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10, ITEM_MOD_CRIT_RATING_SHORT = 5 } }, 
-    [2564] = { name = MSC.L["Agility +7"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 7 } },
-    [911]  = { name = MSC.L["Minor Agility (+1)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 1 } },
-    [910]  = { name = MSC.L["Minor Speed"], slot = 8, stats = { MSC_SPEED_BONUS = 8 } },
-    [859]  = { name = MSC.L["Spirit (+5)"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } },
-    [860]  = { name = MSC.L["Lesser Spirit (+3)"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } },
-    [273]  = { name = MSC.L["Minor Spirit (+1)"], slot = 8, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } },
-    [858]  = { name = MSC.L["Greater Stamina (+7)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 7 } },
-    [845]  = { name = MSC.L["Stamina (+5)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 5 } },
-    [844]  = { name = MSC.L["Lesser Stamina (+3)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 3 } },
-    [274]  = { name = MSC.L["Minor Stamina (+1)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 1 } },
-    [849]  = { name = MSC.L["Agility (+5)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, 
-    [842]  = { name = MSC.L["Lesser Agility (+3)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 3 } },
-    [371] = { name = MSC.L["Fortitude (+12 Stam)"], slot = 8, stats = { ITEM_MOD_STAMINA_SHORT = 12 } },
-    [2657] = { name = MSC.L["Dexterity (+12 Agi)"], slot = 8, stats = { ITEM_MOD_AGILITY_SHORT = 12 } },
-    [2658] = { name = MSC.L["Surefooted (+5% Resist)"], slot = 8, stats = { ITEM_MOD_HIT_RATING_SHORT = 10 } },
-
-    -- [[ RINGS ]]
-    [2931] = { name = MSC.L["Spellpower"], slot = 11, stats = { ITEM_MOD_SPELL_POWER_SHORT = 12 } }, 
-    [2933] = { name = MSC.L["Healing Power"], slot = 11, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 20 } }, 
-    [2934] = { name = MSC.L["Stats"], slot = 11, stats = { ITEM_MOD_AGILITY_SHORT=4, ITEM_MOD_STRENGTH_SHORT=4, ITEM_MOD_INTELLECT_SHORT=4, ITEM_MOD_STAMINA_SHORT=4 } }, 
-    [2629] = { name = MSC.L["Striking"], slot = 11, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } },
-
-    -- [[ MISSING LOW-LEVEL / TWINK ENCHANTS ]] --
-    -- [[ GLOVES ]]
-    -- Highly valued by twinks/levelers for the cheap Haste
-    [931]  = { name = MSC.L["Minor Haste"], stats = { ITEM_MOD_HASTE_RATING_SHORT = 10 } }, -- ~1% Haste
-
-    -- [[ WEAPON (CASTER / SPIRIT) ]]
-    -- Great budget options for Level 40-60 casters
-    [2443] = { name = MSC.L["Winter's Might (+7 SP)"], stats = { ITEM_MOD_SPELL_POWER_SHORT = 7, ITEM_MOD_FROST_DAMAGE_SHORT = 7 } },
-    [804]  = { name = MSC.L["Lesser Intellect (+6)"], stats = { ITEM_MOD_INTELLECT_SHORT = 6 } },
-    [2566] = { name = MSC.L["Major Intellect (+22)"], stats = { ITEM_MOD_INTELLECT_SHORT = 22 } }, -- Classic Endgame
-    [2565] = { name = MSC.L["Major Spirit (+20)"], stats = { ITEM_MOD_SPIRIT_SHORT = 20 } },    -- Classic Endgame
-    -- [[ 2H WEAPON ]]
-    [1899] = { name = MSC.L["Impact (+5 Dmg)"], stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.4 }, requires2H = true },   
-    -- [[ CHEST ]]
-    [1951] = { name = MSC.L["Lesser Absorption"], stats = { MSC_EHP_MOD = 5 } }, -- (Abstracted value for proc)
-    -- [[ SHOULDER: NAXXRAMAS / SAPPHIRON ]]
-    [2613] = { name = MSC.L["Power of the Scourge"], slot = 3, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15, ITEM_MOD_HIT_SPELL_RATING_SHORT = 14 } }, -- Rockbiter is different ID
-    [2611] = { name = MSC.L["Fortitude of the Scourge"], slot = 3, stats = { ITEM_MOD_STAMINA_SHORT = 16, ITEM_MOD_ARMOR_SHORT = 100 } },
-    [2612] = { name = MSC.L["Might of the Scourge"], slot = 3, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 26, ITEM_MOD_CRIT_RATING_SHORT = 14 } },
-    [2610] = { name = MSC.L["Resilience of the Scourge"], slot = 3, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 13, ITEM_MOD_STAMINA_SHORT = 10 } },
-    -- [[ LEGS: EPIC ]]
-    [3154] = { name = MSC.L["Runic Spellthread"], slot = 7, stats = { ITEM_MOD_SPELL_POWER_SHORT = 35, ITEM_MOD_STAMINA_SHORT = 20 } },
-    [3153] = { name = MSC.L["Golden Spellthread"], slot = 7, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 66, ITEM_MOD_STAMINA_SHORT = 20 } },
-    [2953] = { name = MSC.L["Nethercobra Leg Armor"], slot = 7, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 50, ITEM_MOD_CRIT_RATING_SHORT = 12 } },
-    [2952] = { name = MSC.L["Nethercleft Leg Armor"], slot = 7, stats = { ITEM_MOD_STAMINA_SHORT = 40, ITEM_MOD_AGILITY_SHORT = 12 } },
-}
-
--- ============================================================================
--- 3. ENCHANT CANDIDATES (The Search Lists)
--- ============================================================================
--- These lists tell the evaluator which IDs to check for each slot.
-
-MSC.EnchantCandidates = {
-    -- [[ HEAD ]]
-    [1] = { 3012, 3010, 3013, 3011, 3003, 3002, 2543, 2544, 2545, 2588 },
-    -- [[ SHOULDER ]]
-    [3] = { 
-        2996, 2999, 3000, 2997, -- Aldor Exalted
-        3004, 3007, 3009, 3005, -- Scryer Exalted
-        2613, 2611, 2612, 2610, -- Naxxramas
-        2992, 2998, 2994, 2993, 2721, 2716, 2717 -- Rares / ZG
-    },
-    -- [[ CHEST ]]
-    [5] = { 2661, 2653, 3297, 2657, 1891, 1892, 843, 866, 850, 846, 865, 856 },
-    -- [[ LEGS ]]
-    [7] = { 3154, 3153, 2953, 2952, 2427, 2741, 2743, 3016, 2543, 2544, 2545, 1503, 1504 },
-    -- [[ FEET ]]
-    [8] = { 2939, 2656, 3232, 2564, 911, 910, 371, 2657, 2658, 859, 860, 858, 845, 849 },
-    -- [[ WRIST ]]
-    [9] = { 2647, 2650, 2651, 2649, 2646, 2655, 1883, 1884, 905, 1885, 1886, 1893, 2508, 2793, 2794, 852, 851 },
-    -- [[ HANDS ]]
-    [10] = { 2562, 2937, 2935, 2648, 2613, 3246, 3220, 1886, 1888, 2506, 847, 930, 854, 848, 2614, 2615, 2616, 2617, 3231, 3245 },
-    -- [[ RINGS ]]
-    [11] = { 2931, 2933, 2934, 2629 },
-    [12] = { 2931, 2933, 2934, 2629 },
-    -- [[ BACK ]]
-    [15] = { 2653, 2662, 3296, 3294, 2502, 2794, 849, 1889, 853, 250, 2521, 2622, 3256 },
-    -- [[ WEAPON (MAIN/2H) ]]
-    [16] = { 2673, 2674, 2675, 3225, 2669, 2642, 2671, 2666, 2667, 2668, 3222, 2621, 1897, 803, 1900, 2563, 1898, 2504, 2505, 943, 2672, 2670, 805, 1896, 963 },
-    -- [[ OFFHAND / SHIELD ]]
-    [17] = { 2655, 2654, 2659, 1071, 1880, 1881, 2748, 2747, 2746, 2745, 2673, 2674, 2675, 3225, 2669, 2642, 2666, 2668, 2621, 803 },
-    -- [[ RANGED ]]
-    [18] = { 23766, 23764, 23765, 10548, 33, 664, 2523 } 
-}
-
--- LEVELING LIST (Includes cheaper/lower level options)
-MSC.EnchantCandidates_Leveling = {
-    [1] = {}, [3] = {}, 
-    [5] = { 1891, 1892, 843, 850, 243, 248, 255, 2653 }, 
-    [9] = { 2655, 1885, 1883, 1884, 905, 246, 256, 262, 279, 258, 265, 263 }, 
-    [10] = { 2562, 1886, 1888, 847, 848, 930, 931 },
-    [6] = {},
-    [7] = { 2741, 2743, 2427 }, -- (Armor Kits usually)
-    [8] = { 910, 2564, 911, 273, 845, 844, 274, 842 }, 
-    [15] = { 849, 1889, 250 }, 
-    [16] = { 2621, 803, 1900, 1898, 2504, 2505, 943, 1897, 2563, 1894, 2564, 249, 250, 254, 912, 964, 33, 2443, 804, 2566, 2565, 1899 },
-    [17] = { 2621, 803, 1900, 1898, 2655, 1071, 2747, 2746, 2745 }, 
-    [11] = {}, [12] = {},
-    [18] = { 10548, 33, 664 } 
-}
+-- MSC.EnchantDB and MSC.EnchantCandidates are generated from each game's client
+-- and live in Enchants_Era.lua / Enchants_TBC.lua / Enchants_Forever.lua.
 
 -- ============================================================================
 -- 3. GEM DATABASE
@@ -424,372 +123,372 @@ LEVELING_PRISMATIC = {
 			-- ========================================================================
 			-- [[ Leveling: Prismatic ]]
 			-- ========================================================================
-			{ id=22460, stat="ITEM_MOD_ALL_RESISTANCE_SHORT", val=3, name=MSC.L["Prismatic Sphere"], colorType="PRISMATIC", quality=3 },
+			{ id=22460, stat="ITEM_MOD_ALL_RESISTANCE_SHORT", val=3, name="Prismatic Sphere", colorType="PRISMATIC", quality=3 },
 		},
 		
 		LEVELING_RED = {
 			-- ========================================================================
 			-- [[ COMMON (Quality 1 / Vendor: Tourmaline) ]]
 			-- ========================================================================
-			{ id=28458, stat="ITEM_MOD_STRENGTH_SHORT", val=4, name=MSC.L["Bold Tourmaline"], colorType="RED", quality=1 },
-			{ id=28459, stat="ITEM_MOD_AGILITY_SHORT", val=4, name=MSC.L["Delicate Tourmaline"], colorType="RED", quality=1 },
-			{ id=28460, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=3, name=MSC.L["Teardrop Tourmaline"], colorType="RED", quality=1 },
-			{ id=28461, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, name=MSC.L["Runed Tourmaline"], colorType="RED", quality=1 },
-			{ id=28462, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, name=MSC.L["Bright Tourmaline"], colorType="RED", quality=1 },
+			{ id=28458, stat="ITEM_MOD_STRENGTH_SHORT", val=4, name="Bold Tourmaline", colorType="RED", quality=1 },
+			{ id=28459, stat="ITEM_MOD_AGILITY_SHORT", val=4, name="Delicate Tourmaline", colorType="RED", quality=1 },
+			{ id=28460, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=3, name="Teardrop Tourmaline", colorType="RED", quality=1 },
+			{ id=28461, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, name="Runed Tourmaline", colorType="RED", quality=1 },
+			{ id=28462, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, name="Bright Tourmaline", colorType="RED", quality=1 },
 			
 			-- ========================================================================
 			-- [[ UNCOMMON (Quality 2 / Leveling: Blood Garnet) ]]
 			-- ========================================================================
-			{ id=23094, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=13, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name=MSC.L["Teardrop Blood Garnet"], colorType="RED", quality=2 },
-			{ id=23095, stat="ITEM_MOD_STRENGTH_SHORT", val=6, name=MSC.L["Bold Blood Garnet"], colorType="RED", quality=2 },
-			{ id=23096, stat="ITEM_MOD_SPELL_POWER_SHORT", val=7, name=MSC.L["Runed Blood Garnet"], colorType="RED", quality=2 },
-			{ id=23097, stat="ITEM_MOD_AGILITY_SHORT", val=6, name=MSC.L["Delicate Blood Garnet"], colorType="RED", quality=2 },
-			{ id=28595, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=12, name=MSC.L["Bright Blood Garnet"], colorType="RED", quality=2 },
+			{ id=23094, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=13, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name="Teardrop Blood Garnet", colorType="RED", quality=2 },
+			{ id=23095, stat="ITEM_MOD_STRENGTH_SHORT", val=6, name="Bold Blood Garnet", colorType="RED", quality=2 },
+			{ id=23096, stat="ITEM_MOD_SPELL_POWER_SHORT", val=7, name="Runed Blood Garnet", colorType="RED", quality=2 },
+			{ id=23097, stat="ITEM_MOD_AGILITY_SHORT", val=6, name="Delicate Blood Garnet", colorType="RED", quality=2 },
+			{ id=28595, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=12, name="Bright Blood Garnet", colorType="RED", quality=2 },
 		},
 		
 		LEVELING_BLUE = {
 		    -- ========================================================================
 			-- [[ COMMON (Quality 1 / Vendor: Zircon) ]]
 			-- ========================================================================
-			{ id=28463, stat="ITEM_MOD_STAMINA_SHORT", val=6, name=MSC.L["Solid Zircon"], colorType="BLUE", quality=1 },
-			{ id=28464, stat="ITEM_MOD_SPIRIT_SHORT", val=4, name=MSC.L["Sparkling Zircon"], colorType="BLUE", quality=1 },
-			{ id=28465, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=1, name=MSC.L["Lustrous Zircon"], colorType="BLUE", quality=1 },
+			{ id=28463, stat="ITEM_MOD_STAMINA_SHORT", val=6, name="Solid Zircon", colorType="BLUE", quality=1 },
+			{ id=28464, stat="ITEM_MOD_SPIRIT_SHORT", val=4, name="Sparkling Zircon", colorType="BLUE", quality=1 },
+			{ id=28465, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=1, name="Lustrous Zircon", colorType="BLUE", quality=1 },
 			
 			-- ========================================================================
 			-- [[ UNCOMMON (Quality 2 / Leveling: Azure Moonstone) ]]
 			-- ========================================================================
-			{ id=23118, stat="ITEM_MOD_STAMINA_SHORT", val=9, name=MSC.L["Solid Azure Moonstone"], colorType="BLUE", quality=2 },
-			{ id=23119, stat="ITEM_MOD_SPIRIT_SHORT", val=6, name=MSC.L["Sparkling Azure Moonstone"], colorType="BLUE", quality=2 },
-			{ id=23120, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=8, name=MSC.L["Stormy Azure Moonstone"], colorType="BLUE", quality=2 },
-			{ id=23121, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2, name=MSC.L["Lustrous Azure Moonstone"], colorType="BLUE", quality=2 },
+			{ id=23118, stat="ITEM_MOD_STAMINA_SHORT", val=9, name="Solid Azure Moonstone", colorType="BLUE", quality=2 },
+			{ id=23119, stat="ITEM_MOD_SPIRIT_SHORT", val=6, name="Sparkling Azure Moonstone", colorType="BLUE", quality=2 },
+			{ id=23120, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=8, name="Stormy Azure Moonstone", colorType="BLUE", quality=2 },
+			{ id=23121, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=2, name="Lustrous Azure Moonstone", colorType="BLUE", quality=2 },
 		},
 		
 		LEVELING_YELLOW = {
 		    -- ========================================================================
 			-- [[ COMMON (Quality 1 / Vendor: Amber) ]]
 			-- ========================================================================
-			{ id=28466, stat="ITEM_MOD_INTELLECT_SHORT", val=4, name=MSC.L["Brilliant Amber"], colorType="YELLOW", quality=1 },
-			{ id=28467, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, name=MSC.L["Smooth Amber"], colorType="YELLOW", quality=1 },
-			{ id=28468, stat="ITEM_MOD_HIT_RATING_SHORT", val=4, name=MSC.L["Rigid Amber"], colorType="YELLOW", quality=1 },
-			{ id=28469, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, name=MSC.L["Gleaming Amber"], colorType="YELLOW", quality=1 },
-			{ id=28470, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=4, name=MSC.L["Thick Amber"], colorType="YELLOW", quality=1 },
+			{ id=28466, stat="ITEM_MOD_INTELLECT_SHORT", val=4, name="Brilliant Amber", colorType="YELLOW", quality=1 },
+			{ id=28467, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, name="Smooth Amber", colorType="YELLOW", quality=1 },
+			{ id=28468, stat="ITEM_MOD_HIT_RATING_SHORT", val=4, name="Rigid Amber", colorType="YELLOW", quality=1 },
+			{ id=28469, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, name="Gleaming Amber", colorType="YELLOW", quality=1 },
+			{ id=28470, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=4, name="Thick Amber", colorType="YELLOW", quality=1 },
 			
 			-- ========================================================================
 			-- [[ UNCOMMON (Quality 2 / Leveling: Golden Draenite) ]]
 			-- ========================================================================
-			{ id=23113, stat="ITEM_MOD_INTELLECT_SHORT", val=6, name=MSC.L["Brilliant Golden Draenite"], colorType="YELLOW", quality=2 },
-			{ id=23114, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=6, name=MSC.L["Gleaming Golden Draenite"], colorType="YELLOW", quality=2 },
-			{ id=23115, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=6, name=MSC.L["Thick Golden Draenite"], colorType="YELLOW", quality=2 },
-			{ id=23116, stat="ITEM_MOD_HIT_RATING_SHORT", val=6, name=MSC.L["Rigid Golden Draenite"], colorType="YELLOW", quality=2 },
-			{ id=28290, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, name=MSC.L["Smooth Golden Draenite"], colorType="YELLOW", quality=2 },
-			{ id=31860, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=6, name=MSC.L["Great Golden Draenite"], colorType="YELLOW", quality=2 },
+			{ id=23113, stat="ITEM_MOD_INTELLECT_SHORT", val=6, name="Brilliant Golden Draenite", colorType="YELLOW", quality=2 },
+			{ id=23114, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=6, name="Gleaming Golden Draenite", colorType="YELLOW", quality=2 },
+			{ id=23115, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=6, name="Thick Golden Draenite", colorType="YELLOW", quality=2 },
+			{ id=23116, stat="ITEM_MOD_HIT_RATING_SHORT", val=6, name="Rigid Golden Draenite", colorType="YELLOW", quality=2 },
+			{ id=28290, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, name="Smooth Golden Draenite", colorType="YELLOW", quality=2 },
+			{ id=31860, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=6, name="Great Golden Draenite", colorType="YELLOW", quality=2 },
 		},
 		
 		LEVELING_ORANGE = {
 		    -- ========================================================================
 			-- [[ UNCOMMON (Leveling: Flame Spessarite) ]]
 			-- ========================================================================
-			{ id=23098, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STRENGTH_SHORT", val2=3, name=MSC.L["Inscribed Flame Spessarite"], colorType="ORANGE", quality=2 },
-			{ id=23099, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_INTELLECT_SHORT", val2=3, name=MSC.L["Luminous Flame Spessarite"], colorType="ORANGE", quality=2 },
-			{ id=23100, stat="ITEM_MOD_HIT_RATING_SHORT", val=3, stat2="ITEM_MOD_AGILITY_SHORT", val2=3, name=MSC.L["Glinting Flame Spessarite"], colorType="ORANGE", quality=2 },
-			{ id=23101, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=4, name=MSC.L["Potent Flame Spessarite"], colorType="ORANGE", quality=2 },
-			{ id=31866, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=4, name=MSC.L["Veiled Flame Spessarite"], colorType="ORANGE", quality=2 },
-			{ id=31869, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=6, name=MSC.L["Wicked Flame Spessarite"], colorType="ORANGE", quality=2 },
+			{ id=23098, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STRENGTH_SHORT", val2=3, name="Inscribed Flame Spessarite", colorType="ORANGE", quality=2 },
+			{ id=23099, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_INTELLECT_SHORT", val2=3, name="Luminous Flame Spessarite", colorType="ORANGE", quality=2 },
+			{ id=23100, stat="ITEM_MOD_HIT_RATING_SHORT", val=3, stat2="ITEM_MOD_AGILITY_SHORT", val2=3, name="Glinting Flame Spessarite", colorType="ORANGE", quality=2 },
+			{ id=23101, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=4, name="Potent Flame Spessarite", colorType="ORANGE", quality=2 },
+			{ id=31866, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=4, name="Veiled Flame Spessarite", colorType="ORANGE", quality=2 },
+			{ id=31869, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=6, name="Wicked Flame Spessarite", colorType="ORANGE", quality=2 },
 		},
 		
 		LEVELING_PURPLE = {
 		    -- ========================================================================
 			-- [[ UNCOMMON (Leveling: Shadow Draenite & Jaggal Pearl) ]]
 			-- ========================================================================
-			{ id=23108, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Glowing Shadow Draenite"], colorType="PURPLE", quality=2 },
-			{ id=23109, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name=MSC.L["Royal Shadow Draenite"], colorType="PURPLE", quality=2 },
-			{ id=23110, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Shifting Shadow Draenite"], colorType="PURPLE", quality=2 },
-			{ id=23111, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Sovereign Shadow Draenite"], colorType="PURPLE", quality=2 },
-			{ id=31862, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Balanced Shadow Draenite"], colorType="PURPLE", quality=2 },
-			{ id=31864, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=6, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name=MSC.L["Infused Shadow Draenite"], colorType="PURPLE", quality=2 },
-			{ id=32833, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_SPIRIT_SHORT", val2=3, name=MSC.L["Purified Jaggal Pearl"], colorType="PURPLE", quality=2 },
+			{ id=23108, stat="ITEM_MOD_SPELL_POWER_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Glowing Shadow Draenite", colorType="PURPLE", quality=2 },
+			{ id=23109, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name="Royal Shadow Draenite", colorType="PURPLE", quality=2 },
+			{ id=23110, stat="ITEM_MOD_AGILITY_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Shifting Shadow Draenite", colorType="PURPLE", quality=2 },
+			{ id=23111, stat="ITEM_MOD_STRENGTH_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Sovereign Shadow Draenite", colorType="PURPLE", quality=2 },
+			{ id=31862, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Balanced Shadow Draenite", colorType="PURPLE", quality=2 },
+			{ id=31864, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=6, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name="Infused Shadow Draenite", colorType="PURPLE", quality=2 },
+			{ id=32833, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=7, stat2="ITEM_MOD_SPIRIT_SHORT", val2=3, name="Purified Jaggal Pearl", colorType="PURPLE", quality=2 },
 		},
 		
 		LEVELING_GREEN = {
 		    -- ========================================================================
 			-- [[ UNCOMMON (Leveling: Deep Peridot) ]]
 			-- ========================================================================
-			{ id=23103, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=4, name=MSC.L["Radiant Deep Peridot"], colorType="GREEN", quality=2 },
-			{ id=23104, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Jagged Deep Peridot"], colorType="GREEN", quality=2 },
-			{ id=23105, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Enduring Deep Peridot"], colorType="GREEN", quality=2 },
-			{ id=23106, stat="ITEM_MOD_INTELLECT_SHORT", val=3, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name=MSC.L["Dazzling Deep Peridot"], colorType="GREEN", quality=2 },
+			{ id=23103, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=4, name="Radiant Deep Peridot", colorType="GREEN", quality=2 },
+			{ id=23104, stat="ITEM_MOD_CRIT_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Jagged Deep Peridot", colorType="GREEN", quality=2 },
+			{ id=23105, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=3, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Enduring Deep Peridot", colorType="GREEN", quality=2 },
+			{ id=23106, stat="ITEM_MOD_INTELLECT_SHORT", val=3, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=1, name="Dazzling Deep Peridot", colorType="GREEN", quality=2 },
 		},
 
 		PRISMATIC_P1 = {
 			-- ========================================================================
 			-- [[ PHASE 1: PRISMATIC ]]
 			-- ========================================================================
-			{ id=22459, stat="ITEM_MOD_ALL_RESISTANCE_SHORT", val=4, name=MSC.L["Void Sphere"], colorType="PRISMATIC", quality=3 },
+			{ id=22459, stat="ITEM_MOD_ALL_RESISTANCE_SHORT", val=4, name="Void Sphere", colorType="PRISMATIC", quality=3 },
 		},
 		
 		RED_P1 = {
 			-- ========================================================================
 			-- [[ RARE (Phase 1: Living Ruby) ]]
 			-- ========================================================================
-			{ id=24027, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name=MSC.L["Bold Living Ruby"], colorType="RED", quality=3 },
-			{ id=24028, stat="ITEM_MOD_AGILITY_SHORT", val=8, name=MSC.L["Delicate Living Ruby"], colorType="RED", quality=3 },
-			{ id=24029, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=18, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Teardrop Living Ruby"], colorType="RED", quality=3 },
-			{ id=24030, stat="ITEM_MOD_SPELL_POWER_SHORT", val=9, name=MSC.L["Runed Living Ruby"], colorType="RED", quality=3 },
-			{ id=24031, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=16, name=MSC.L["Bright Living Ruby"], colorType="RED", quality=3 },
-			{ id=24032, stat="ITEM_MOD_DODGE_RATING_SHORT", val=8, name=MSC.L["Subtle Living Ruby"], colorType="RED", quality=3 },
-			{ id=24036, stat="ITEM_MOD_PARRY_RATING_SHORT", val=8, name=MSC.L["Flashing Living Ruby"], colorType="RED", quality=3 },
+			{ id=24027, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Bold Living Ruby", colorType="RED", quality=3 },
+			{ id=24028, stat="ITEM_MOD_AGILITY_SHORT", val=8, name="Delicate Living Ruby", colorType="RED", quality=3 },
+			{ id=24029, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=18, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name="Teardrop Living Ruby", colorType="RED", quality=3 },
+			{ id=24030, stat="ITEM_MOD_SPELL_POWER_SHORT", val=9, name="Runed Living Ruby", colorType="RED", quality=3 },
+			{ id=24031, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=16, name="Bright Living Ruby", colorType="RED", quality=3 },
+			{ id=24032, stat="ITEM_MOD_DODGE_RATING_SHORT", val=8, name="Subtle Living Ruby", colorType="RED", quality=3 },
+			{ id=24036, stat="ITEM_MOD_PARRY_RATING_SHORT", val=8, name="Flashing Living Ruby", colorType="RED", quality=3 },
 			-- PvP / Faction Gems
-			{ id=27777, stat="ITEM_MOD_SPELL_POWER_SHORT", val=8, name=MSC.L["Stark Blood Garnet"], colorType="RED", unique=true, quality=3 },
-			{ id=28118, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name=MSC.L["Runed Ornate Ruby"], colorType="RED", unique=true, quality=3 },
-			{ id=28360, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=14, name=MSC.L["Mighty Blood Garnet"], colorType="RED", unique=true, quality=3 },
-			{ id=28362, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, name=MSC.L["Bold Ornate Ruby"], colorType="RED", unique=true, quality=3 },
+			{ id=27777, stat="ITEM_MOD_SPELL_POWER_SHORT", val=8, name="Stark Blood Garnet", colorType="RED", unique=true, quality=3 },
+			{ id=28118, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Ornate Ruby", colorType="RED", unique=true, quality=3 },
+			{ id=28360, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=14, name="Mighty Blood Garnet", colorType="RED", unique=true, quality=3 },
+			{ id=28362, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, name="Bold Ornate Ruby", colorType="RED", unique=true, quality=3 },
 			
 			-- Heroic Dungeon Drops (Epic)
-			{ id=30571, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name=MSC.L["Don Rodrigo's Heart"], colorType="RED", unique=true, quality=4 },
-			{ id=30598, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name=MSC.L["Don Amancio's Heart"], colorType="RED", unique=true, quality=4 },
+			{ id=30571, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Don Rodrigo's Heart", colorType="RED", unique=true, quality=4 },
+			{ id=30598, stat="ITEM_MOD_STRENGTH_SHORT", val=8, name="Don Amancio's Heart", colorType="RED", unique=true, quality=4 },
 		},
 		
 		BLUE_P1 = {
 			-- ========================================================================
 			-- [[ RARE (Phase 1: Star of Elune) ]]
 			-- ========================================================================
-			{ id=24033, stat="ITEM_MOD_STAMINA_SHORT", val=12, name=MSC.L["Solid Star of Elune"], colorType="BLUE", quality=3 },
-			{ id=24035, stat="ITEM_MOD_SPIRIT_SHORT", val=8, name=MSC.L["Sparkling Star of Elune"], colorType="BLUE", quality=3 },
-			{ id=24037, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name=MSC.L["Lustrous Star of Elune"], colorType="BLUE", quality=3 },
-			{ id=24039, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=10, name=MSC.L["Stormy Star of Elune"], colorType="BLUE", quality=3 },
+			{ id=24033, stat="ITEM_MOD_STAMINA_SHORT", val=12, name="Solid Star of Elune", colorType="BLUE", quality=3 },
+			{ id=24035, stat="ITEM_MOD_SPIRIT_SHORT", val=8, name="Sparkling Star of Elune", colorType="BLUE", quality=3 },
+			{ id=24037, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=3, name="Lustrous Star of Elune", colorType="BLUE", quality=3 },
+			{ id=24039, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=10, name="Stormy Star of Elune", colorType="BLUE", quality=3 },
 			-- Special Drops / Zul'Aman (Epic)
-			{ id=34256, stat="ITEM_MOD_STAMINA_SHORT", val=15, name=MSC.L["Charmed Amani Jewel"], colorType="BLUE", unique=true, quality=4 },
+			{ id=34256, stat="ITEM_MOD_STAMINA_SHORT", val=15, name="Charmed Amani Jewel", colorType="BLUE", unique=true, quality=4 },
 		},
 				
 		YELLOW_P1 = {
 			-- ========================================================================
 			-- [[ RARE (Phase 1: Dawnstone) ]]
 			-- ========================================================================
-			{ id=24047, stat="ITEM_MOD_INTELLECT_SHORT", val=8, name=MSC.L["Brilliant Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=24048, stat="ITEM_MOD_CRIT_RATING_SHORT", val=8, name=MSC.L["Smooth Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=24050, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=8, name=MSC.L["Gleaming Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=24051, stat="ITEM_MOD_HIT_RATING_SHORT", val=8, name=MSC.L["Rigid Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=24052, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=8, name=MSC.L["Thick Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=24053, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=8, name=MSC.L["Mystic Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=31861, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=8, name=MSC.L["Great Dawnstone"], colorType="YELLOW", quality=3 },
-			{ id=35315, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=8, name=MSC.L["Quick Dawnstone"], colorType="YELLOW", quality=3 },
+			{ id=24047, stat="ITEM_MOD_INTELLECT_SHORT", val=8, name="Brilliant Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=24048, stat="ITEM_MOD_CRIT_RATING_SHORT", val=8, name="Smooth Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=24050, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=8, name="Gleaming Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=24051, stat="ITEM_MOD_HIT_RATING_SHORT", val=8, name="Rigid Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=24052, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=8, name="Thick Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=24053, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=8, name="Mystic Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=31861, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=8, name="Great Dawnstone", colorType="YELLOW", quality=3 },
+			{ id=35315, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=8, name="Quick Dawnstone", colorType="YELLOW", quality=3 },
 			
 			-- ========================================================================
             -- [[ UNIQUE-EQUIPPED (PvP, Faction) ]]
             -- ========================================================================
-            { id=27679, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=10, name=MSC.L["Sublime Mystic Dawnstone"], colorType="YELLOW", unique=true, quality=3 },
-            { id=28119, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name=MSC.L["Smooth Ornate Dawnstone"], colorType="YELLOW", unique=true, quality=3 },
-            { id=28120, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=10, name=MSC.L["Gleaming Ornate Dawnstone"], colorType="YELLOW", unique=true, quality=3 },
+            { id=27679, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=10, name="Sublime Mystic Dawnstone", colorType="YELLOW", unique=true, quality=3 },
+            { id=28119, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name="Smooth Ornate Dawnstone", colorType="YELLOW", unique=true, quality=3 },
+            { id=28120, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=10, name="Gleaming Ornate Dawnstone", colorType="YELLOW", unique=true, quality=3 },
             -- Faction Twins (Not Unique)
-            { id=38546, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=10, name=MSC.L["Gleaming Ornate Dawnstone"], colorType="YELLOW", quality=3 },
-            { id=38550, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name=MSC.L["Smooth Ornate Dawnstone"], colorType="YELLOW", quality=3 },
+            { id=38546, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=10, name="Gleaming Ornate Dawnstone", colorType="YELLOW", quality=3 },
+            { id=38550, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name="Smooth Ornate Dawnstone", colorType="YELLOW", quality=3 },
         },
 		
 		ORANGE_P1 = {
             -- ========================================================================
             -- [[ RARE (Phase 1: Noble Topaz) ]]
             -- ========================================================================
-            { id=24058, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STRENGTH_SHORT", val2=4, name=MSC.L["Inscribed Noble Topaz"], colorType="ORANGE", quality=3 },
-            { id=24059, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name=MSC.L["Potent Noble Topaz"], colorType="ORANGE", quality=3 },
-            { id=24060, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name=MSC.L["Luminous Noble Topaz"], colorType="ORANGE", quality=3 },
-            { id=24061, stat="ITEM_MOD_HIT_RATING_SHORT", val=4, stat2="ITEM_MOD_AGILITY_SHORT", val2=4, name=MSC.L["Glinting Noble Topaz"], colorType="ORANGE", quality=3 },
-            { id=31867, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name=MSC.L["Veiled Noble Topaz"], colorType="ORANGE", quality=3 },
-            { id=31868, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=8, name=MSC.L["Wicked Noble Topaz"], colorType="ORANGE", quality=3 },
+            { id=24058, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STRENGTH_SHORT", val2=4, name="Inscribed Noble Topaz", colorType="ORANGE", quality=3 },
+            { id=24059, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name="Potent Noble Topaz", colorType="ORANGE", quality=3 },
+            { id=24060, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Luminous Noble Topaz", colorType="ORANGE", quality=3 },
+            { id=24061, stat="ITEM_MOD_HIT_RATING_SHORT", val=4, stat2="ITEM_MOD_AGILITY_SHORT", val2=4, name="Glinting Noble Topaz", colorType="ORANGE", quality=3 },
+            { id=31867, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name="Veiled Noble Topaz", colorType="ORANGE", quality=3 },
+            { id=31868, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=8, name="Wicked Noble Topaz", colorType="ORANGE", quality=3 },
 
             -- ========================================================================
             -- [[ UNIQUE-EQUIPPED (PvP & Heroic Fire Opals) ]]
             -- ========================================================================
             -- Phase 2 Unstable Raid Drops (Epic)
-            { id=32634, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Unstable Amethyst"], colorType="ORANGE", unique=true, quality=4 },
-            { id=32635, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Unstable Peridot"], colorType="ORANGE", unique=true, quality=4 },
-            { id=32636, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name=MSC.L["Unstable Sapphire"], colorType="ORANGE", unique=true, quality=4 },
-            { id=32637, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name=MSC.L["Unstable Citrine"], colorType="ORANGE", unique=true, quality=4 },
-            { id=32638, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name=MSC.L["Unstable Topaz"], colorType="ORANGE", unique=true, quality=4 },
+            { id=32634, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Unstable Amethyst", colorType="ORANGE", unique=true, quality=4 },
+            { id=32635, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Unstable Peridot", colorType="ORANGE", unique=true, quality=4 },
+            { id=32636, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Unstable Sapphire", colorType="ORANGE", unique=true, quality=4 },
+            { id=32637, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name="Unstable Citrine", colorType="ORANGE", unique=true, quality=4 },
+            { id=32638, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Unstable Topaz", colorType="ORANGE", unique=true, quality=4 },
         
             -- PvP / Faction Gems (Rare)
-            { id=28123, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name=MSC.L["Potent Ornate Topaz"], colorType="ORANGE", unique=true, quality=3 },
-            { id=28363, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name=MSC.L["Inscribed Ornate Topaz"], colorType="ORANGE", unique=true, quality=3 },
-            { id=38547, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name=MSC.L["Inscribed Ornate Topaz"], colorType="ORANGE", quality=3 }, -- Faction Twin
-            { id=38548, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name=MSC.L["Potent Ornate Topaz"], colorType="ORANGE", quality=3 }, -- Faction Twin
+            { id=28123, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name="Potent Ornate Topaz", colorType="ORANGE", unique=true, quality=3 },
+            { id=28363, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Ornate Topaz", colorType="ORANGE", unique=true, quality=3 },
+            { id=38547, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Inscribed Ornate Topaz", colorType="ORANGE", quality=3 }, -- Faction Twin
+            { id=38548, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=5, name="Potent Ornate Topaz", colorType="ORANGE", quality=3 }, -- Faction Twin
 
             -- Heroic Dungeon Drops (Epic)
-            { id=30601, stat="ITEM_MOD_DODGE_RATING_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name=MSC.L["Beaming Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30547, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name=MSC.L["Luminous Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30584, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name=MSC.L["Enscribed Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30585, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val2=5, name=MSC.L["Glistening Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30587, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val2=4, name=MSC.L["Champion's Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30588, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name=MSC.L["Potent Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30553, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name=MSC.L["Pristine Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30554, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_DODGE_RATING_SHORT", val2=4, name=MSC.L["Stalwart Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30559, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name=MSC.L["Etched Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30604, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name=MSC.L["Resplendent Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30607, stat="ITEM_MOD_PARRY_RATING_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name=MSC.L["Splendid Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30551, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name=MSC.L["Infused Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30591, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=5, name=MSC.L["Empowered Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30558, stat="ITEM_MOD_PARRY_RATING_SHORT", val=5, stat2="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val2=4, name=MSC.L["Glimmering Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30556, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name=MSC.L["Glinting Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30582, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name=MSC.L["Deadly Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30575, stat="ITEM_MOD_DODGE_RATING_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name=MSC.L["Nimble Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30581, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name=MSC.L["Durable Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30573, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=5, name=MSC.L["Mysterious Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30565, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, stat2="ITEM_MOD_DODGE_RATING_SHORT", val2=5, name=MSC.L["Assassin's Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
-            { id=30564, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name=MSC.L["Shining Fire Opal"], colorType="ORANGE", unique=true, quality=4 },
+            { id=30601, stat="ITEM_MOD_DODGE_RATING_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name="Beaming Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30547, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Luminous Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30584, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=4, name="Enscribed Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30585, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val2=5, name="Glistening Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30587, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val2=4, name="Champion's Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30588, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val2=4, name="Potent Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30553, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Pristine Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30554, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_DODGE_RATING_SHORT", val2=4, name="Stalwart Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30559, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Etched Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30604, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name="Resplendent Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30607, stat="ITEM_MOD_PARRY_RATING_SHORT", val=5, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name="Splendid Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30551, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_INTELLECT_SHORT", val2=4, name="Infused Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30591, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=5, name="Empowered Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30558, stat="ITEM_MOD_PARRY_RATING_SHORT", val=5, stat2="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val2=4, name="Glimmering Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30556, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Glinting Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30582, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_CRIT_RATING_SHORT", val2=5, name="Deadly Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30575, stat="ITEM_MOD_DODGE_RATING_SHORT", val=5, stat2="ITEM_MOD_HIT_RATING_SHORT", val2=4, name="Nimble Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30581, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_RESILIENCE_RATING_SHORT", val2=4, name="Durable Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30573, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=5, name="Mysterious Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30565, stat="ITEM_MOD_CRIT_RATING_SHORT", val=6, stat2="ITEM_MOD_DODGE_RATING_SHORT", val2=5, name="Assassin's Fire Opal", colorType="ORANGE", unique=true, quality=4 },
+            { id=30564, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_HIT_SPELL_RATING_SHORT", val2=5, name="Shining Fire Opal", colorType="ORANGE", unique=true, quality=4 },
         },
 		
 		PURPLE_P1 = {
             -- ========================================================================
             -- [[ RARE (Phase 1: Nightseye & Shadow Pearl) ]]
             -- ========================================================================
-            { id=24054, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Sovereign Nightseye"], colorType="PURPLE", quality=3 },
-            { id=24055, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Shifting Nightseye"], colorType="PURPLE", quality=3 },
-            { id=24056, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Glowing Nightseye"], colorType="PURPLE", quality=3 },
-            { id=24057, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Royal Nightseye"], colorType="PURPLE", quality=3 },
-            { id=31863, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Balanced Nightseye"], colorType="PURPLE", quality=3 },
-            { id=31865, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Infused Nightseye"], colorType="PURPLE", quality=3 },
-            { id=32836, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name=MSC.L["Purified Shadow Pearl"], colorType="PURPLE", quality=3 },
-            { id=35707, stat="ITEM_MOD_DODGE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Regal Nightseye"], colorType="PURPLE", quality=3 },
+            { id=24054, stat="ITEM_MOD_STRENGTH_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Nightseye", colorType="PURPLE", quality=3 },
+            { id=24055, stat="ITEM_MOD_AGILITY_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Nightseye", colorType="PURPLE", quality=3 },
+            { id=24056, stat="ITEM_MOD_SPELL_POWER_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Nightseye", colorType="PURPLE", quality=3 },
+            { id=24057, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Nightseye", colorType="PURPLE", quality=3 },
+            { id=31863, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Balanced Nightseye", colorType="PURPLE", quality=3 },
+            { id=31865, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=8, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Infused Nightseye", colorType="PURPLE", quality=3 },
+            { id=32836, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Purified Shadow Pearl", colorType="PURPLE", quality=3 },
+            { id=35707, stat="ITEM_MOD_DODGE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Regal Nightseye", colorType="PURPLE", quality=3 },
 
             -- ========================================================================
             -- [[ UNIQUE-EQUIPPED (Heroic Tanzanites) & BoP (Karazhan) ]]
             -- ========================================================================
-            { id=30600, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name=MSC.L["Fluorescent Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30546, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Sovereign Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30552, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Blessed Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30563, stat="ITEM_MOD_DODGE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Regal Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30603, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Royal Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30549, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Shifting Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30555, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Glowing Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30574, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Brutal Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30572, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name=MSC.L["Imperial Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
-            { id=30566, stat="ITEM_MOD_PARRY_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Defender's Tanzanite"], colorType="PURPLE", unique=true, quality=4 },
+            { id=30600, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_SPIRIT_SHORT", val2=4, name="Fluorescent Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30546, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Sovereign Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30552, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Blessed Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30563, stat="ITEM_MOD_DODGE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Regal Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30603, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30549, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Shifting Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30555, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Glowing Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30574, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Brutal Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30572, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=9, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Imperial Tanzanite", colorType="PURPLE", unique=true, quality=4 },
+            { id=30566, stat="ITEM_MOD_PARRY_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Defender's Tanzanite", colorType="PURPLE", unique=true, quality=4 },
             
             -- Quest Rewards (Karazhan)
-            { id=31116, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Infused Amethyst"], colorType="PURPLE", unique=true, quality=4 }, 
-			{ id=31117, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Soothing Amethyst"], colorType="PURPLE", unique=true, quality=4 }, 
-			{ id=31118, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Pulsing Amethyst"], colorType="PURPLE", unique=true, quality=4 },
+            { id=31116, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Infused Amethyst", colorType="PURPLE", unique=true, quality=4 }, 
+			{ id=31117, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Soothing Amethyst", colorType="PURPLE", unique=true, quality=4 }, 
+			{ id=31118, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Pulsing Amethyst", colorType="PURPLE", unique=true, quality=4 },
 		},
         
         GREEN_P1 = {
             -- ========================================================================
             -- [[ RARE (Phase 1: Talasite) ]]
             -- ========================================================================
-            { id=24062, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Enduring Talasite"], colorType="GREEN", quality=3 },
-            { id=24065, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Dazzling Talasite"], colorType="GREEN", quality=3 },
-            { id=24066, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=5, name=MSC.L["Radiant Talasite"], colorType="GREEN", quality=3 },
-            { id=24067, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Jagged Talasite"], colorType="GREEN", quality=3 },
-            { id=33782, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Steady Talasite"], colorType="GREEN", quality=3 },
-            { id=35318, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Forceful Talasite"], colorType="GREEN", quality=3 },
+            { id=24062, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Enduring Talasite", colorType="GREEN", quality=3 },
+            { id=24065, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Dazzling Talasite", colorType="GREEN", quality=3 },
+            { id=24066, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=5, name="Radiant Talasite", colorType="GREEN", quality=3 },
+            { id=24067, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Jagged Talasite", colorType="GREEN", quality=3 },
+            { id=33782, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Steady Talasite", colorType="GREEN", quality=3 },
+            { id=35318, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Forceful Talasite", colorType="GREEN", quality=3 },
 
             -- ========================================================================
             -- [[ UNIQUE-EQUIPPED / BoP (Heroics, Faction & Phase 2 Raid) ]]
             -- ========================================================================
-            { id=32639, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Unstable Talasite"], colorType="GREEN", unique=true, quality=4 },
+            { id=32639, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Unstable Talasite", colorType="GREEN", unique=true, quality=4 },
         
             -- PvP / Faction Gems
-            { id=27785, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name=MSC.L["Notched Deep Peridot"], colorType="GREEN", unique=true, quality=3 },
-            { id=27786, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name=MSC.L["Barbed Deep Peridot"], colorType="GREEN", unique=true, quality=3 },
-            { id=27809, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name=MSC.L["Barbed Deep Peridot"], colorType="GREEN", unique=true, quality=3 }, 
-            { id=27820, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name=MSC.L["Notched Deep Peridot"], colorType="GREEN", unique=true, quality=3 }, 
+            { id=27785, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name="Notched Deep Peridot", colorType="GREEN", unique=true, quality=3 },
+            { id=27786, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name="Barbed Deep Peridot", colorType="GREEN", unique=true, quality=3 },
+            { id=27809, stat="ITEM_MOD_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name="Barbed Deep Peridot", colorType="GREEN", unique=true, quality=3 }, 
+            { id=27820, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=3, name="Notched Deep Peridot", colorType="GREEN", unique=true, quality=3 }, 
             
             -- Phase 2 Unstable Raid Drop
-            { id=32639, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name=MSC.L["Unstable Talasite"], colorType="GREEN", unique=true, quality=4 }, 
+            { id=32639, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=4, stat2="ITEM_MOD_STAMINA_SHORT", val2=4, name="Unstable Talasite", colorType="GREEN", unique=true, quality=4 }, 
 
             -- Heroic Dungeon Drops
-            { id=30594, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Effulgent Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30592, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Steady Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30602, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Jagged Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30548, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Polished Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30583, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Timeless Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30586, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name=MSC.L["Seer's Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30560, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Rune Covered Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30605, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Vivid Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30606, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Lambent Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30608, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=5, name=MSC.L["Radiant Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30550, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Sundered Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30589, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Dazzling Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
-            { id=30590, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name=MSC.L["Enduring Chrysoprase"], colorType="GREEN", unique=true, quality=4 },
+            { id=30594, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Effulgent Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30592, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Steady Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30602, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Jagged Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30548, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Polished Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30583, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Timeless Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30586, stat="ITEM_MOD_INTELLECT_SHORT", val=4, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Seer's Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30560, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Rune Covered Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30605, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Vivid Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30606, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Lambent Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30608, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=5, name="Radiant Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30550, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Sundered Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30589, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Dazzling Chrysoprase", colorType="GREEN", unique=true, quality=4 },
+            { id=30590, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=6, name="Enduring Chrysoprase", colorType="GREEN", unique=true, quality=4 },
         },
 		
 		META_P1 = {
 		    -- ========================================================================
 			-- [[ PHASE 1: STANDARD METAS ]]
 			-- ========================================================================
-			{ id=25890, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=14, special=MSC.L["1% Spell Reflect"], name=MSC.L["Destructive Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25893, special=MSC.L["Chance to Increase Spell Cast Speed"], name=MSC.L["Mystical Skyfire Diamond"], isMeta=true, colorType="META", quality=3 }, 
-			{ id=25894, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25895, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, special=MSC.L["5% Snare/Root Resist"], name=MSC.L["Enigmatic Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25896, stat="ITEM_MOD_STAMINA_SHORT", val=18, special=MSC.L["5% Stun Resist"], name=MSC.L["Powerful Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25897, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=9, special=MSC.L["2% Reduced Threat"], name=MSC.L["Bracing Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25898, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special=MSC.L["Chance to Restore 120-180 HP on melee"], name=MSC.L["Tenacious Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25899, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", val=3, special=MSC.L["Chance to Stun Target"], name=MSC.L["Brutal Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, special=MSC.L["5% chance to restore 300 mana"], name=MSC.L["Insightful Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=32409, stat="ITEM_MOD_AGILITY_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name=MSC.L["Relentless Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=32410, special=MSC.L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"], name=MSC.L["Thundering Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=34220, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name=MSC.L["Chaotic Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },
-			{ id=28556, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Windfire Diamond"], isMeta=true, colorType="META", unique=true, quality=3 },
-            { id=28557, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, special=MSC.L["Minor Run Speed"], name=MSC.L["Swift Starfire Diamond"], isMeta=true, colorType="META", unique=true, quality=4 },
-            { id=32640, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["5% Stun Resistance"], name=MSC.L["Potent Unstable Diamond"], isMeta=true, colorType="META", unique=true, quality=4 },
-            { id=32641, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["5% Stun Resistance"], name=MSC.L["Imbued Unstable Diamond"], isMeta=true, colorType="META", unique=true, quality=4 },
+			{ id=25890, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=14, special=MSC.L["1% Spell Reflect"], name="Destructive Skyfire Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25893, special=MSC.L["Chance to Increase Spell Cast Speed"], name="Mystical Skyfire Diamond", isMeta=true, colorType="META", quality=3 }, 
+			{ id=25894, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["Minor Run Speed"], name="Swift Skyfire Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25895, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, special=MSC.L["5% Snare/Root Resist"], name="Enigmatic Skyfire Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25896, stat="ITEM_MOD_STAMINA_SHORT", val=18, special=MSC.L["5% Stun Resist"], name="Powerful Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25897, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=9, special=MSC.L["2% Reduced Threat"], name="Bracing Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25898, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special=MSC.L["Chance to Restore 120-180 HP on melee"], name="Tenacious Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25899, stat="ITEM_MOD_DAMAGE_PER_SECOND_SHORT", val=3, special=MSC.L["Chance to Stun Target"], name="Brutal Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=25901, stat="ITEM_MOD_INTELLECT_SHORT", val=12, special=MSC.L["5% chance to restore 300 mana"], name="Insightful Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=32409, stat="ITEM_MOD_AGILITY_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name="Relentless Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=32410, special=MSC.L["Chance for +240 Melee/Ranged Haste (6s, 40s CD)"], name="Thundering Skyfire Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=34220, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, special=MSC.L["3% Increased Crit Damage"], name="Chaotic Skyfire Diamond", isMeta=true, colorType="META", quality=3 },
+			{ id=28556, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, special=MSC.L["Minor Run Speed"], name="Swift Windfire Diamond", isMeta=true, colorType="META", unique=true, quality=3 },
+            { id=28557, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, special=MSC.L["Minor Run Speed"], name="Swift Starfire Diamond", isMeta=true, colorType="META", unique=true, quality=4 },
+            { id=32640, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, special=MSC.L["5% Stun Resistance"], name="Potent Unstable Diamond", isMeta=true, colorType="META", unique=true, quality=4 },
+            { id=32641, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["5% Stun Resistance"], name="Imbued Unstable Diamond", isMeta=true, colorType="META", unique=true, quality=4 },
         },
 		
 		RED_P3 = {
 		    -- ========================================================================
 			-- [[ EPIC (Phase 3: Crimson Spinel) ]]
 			-- ========================================================================
-			{ id=32193, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name=MSC.L["Bold Crimson Spinel"], colorType="RED", quality=4 },
-			{ id=32194, stat="ITEM_MOD_AGILITY_SHORT", val=10, name=MSC.L["Delicate Crimson Spinel"], colorType="RED", quality=4 },
-			{ id=32195, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=22, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=8, name=MSC.L["Teardrop Crimson Spinel"], colorType="RED", quality=4 },
-			{ id=32196, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name=MSC.L["Runed Crimson Spinel"], colorType="RED", quality=4 },
-			{ id=32197, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, name=MSC.L["Bright Crimson Spinel"], colorType="RED", quality=4 },
-			{ id=32198, stat="ITEM_MOD_DODGE_RATING_SHORT", val=10, name=MSC.L["Subtle Crimson Spinel"], colorType="RED", quality=4 },
-			{ id=32199, stat="ITEM_MOD_PARRY_RATING_SHORT", val=10, name=MSC.L["Flashing Crimson Spinel"], colorType="RED", quality=4 },
+			{ id=32193, stat="ITEM_MOD_STRENGTH_SHORT", val=10, name="Bold Crimson Spinel", colorType="RED", quality=4 },
+			{ id=32194, stat="ITEM_MOD_AGILITY_SHORT", val=10, name="Delicate Crimson Spinel", colorType="RED", quality=4 },
+			{ id=32195, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=22, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=8, name="Teardrop Crimson Spinel", colorType="RED", quality=4 },
+			{ id=32196, stat="ITEM_MOD_SPELL_POWER_SHORT", val=12, name="Runed Crimson Spinel", colorType="RED", quality=4 },
+			{ id=32197, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20, name="Bright Crimson Spinel", colorType="RED", quality=4 },
+			{ id=32198, stat="ITEM_MOD_DODGE_RATING_SHORT", val=10, name="Subtle Crimson Spinel", colorType="RED", quality=4 },
+			{ id=32199, stat="ITEM_MOD_PARRY_RATING_SHORT", val=10, name="Flashing Crimson Spinel", colorType="RED", quality=4 },
 		},
 		
 		BLUE_P3 = {
 			-- ========================================================================
 			-- [[ EPIC (Phase 3: Empyrean Sapphire) ]]
 			-- ========================================================================
-			{ id=32200, stat="ITEM_MOD_STAMINA_SHORT", val=15, name=MSC.L["Solid Empyrean Sapphire"], colorType="BLUE", quality=4 },
-			{ id=32201, stat="ITEM_MOD_SPIRIT_SHORT", val=10, name=MSC.L["Sparkling Empyrean Sapphire"], colorType="BLUE", quality=4 },
-			{ id=32202, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=4, name=MSC.L["Lustrous Empyrean Sapphire"], colorType="BLUE", quality=4 },
-			{ id=32203, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=13, name=MSC.L["Stormy Empyrean Sapphire"], colorType="BLUE", quality=4 },
+			{ id=32200, stat="ITEM_MOD_STAMINA_SHORT", val=15, name="Solid Empyrean Sapphire", colorType="BLUE", quality=4 },
+			{ id=32201, stat="ITEM_MOD_SPIRIT_SHORT", val=10, name="Sparkling Empyrean Sapphire", colorType="BLUE", quality=4 },
+			{ id=32202, stat="ITEM_MOD_MANA_REGENERATION_SHORT", val=4, name="Lustrous Empyrean Sapphire", colorType="BLUE", quality=4 },
+			{ id=32203, stat="ITEM_MOD_SPELL_PENETRATION_SHORT", val=13, name="Stormy Empyrean Sapphire", colorType="BLUE", quality=4 },
 		},
 		
 		YELLOW_P3 = {
 			-- ========================================================================
             -- [[ EPIC (Phase 3: Lionseye) ]]
             -- ========================================================================
-            { id=32204, stat="ITEM_MOD_INTELLECT_SHORT", val=10, name=MSC.L["Brilliant Lionseye"], colorType="YELLOW", quality=4 },
-            { id=32205, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name=MSC.L["Smooth Lionseye"], colorType="YELLOW", quality=4 },
-            { id=32206, stat="ITEM_MOD_HIT_RATING_SHORT", val=10, name=MSC.L["Rigid Lionseye"], colorType="YELLOW", quality=4 },
-            { id=32207, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=10, name=MSC.L["Gleaming Lionseye"], colorType="YELLOW", quality=4 },
-            { id=32208, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=10, name=MSC.L["Thick Lionseye"], colorType="YELLOW", quality=4 },
-            { id=32209, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=10, name=MSC.L["Mystic Lionseye"], colorType="YELLOW", quality=4 },
-            { id=32210, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=10, name=MSC.L["Great Lionseye"], colorType="YELLOW", quality=4 },
+            { id=32204, stat="ITEM_MOD_INTELLECT_SHORT", val=10, name="Brilliant Lionseye", colorType="YELLOW", quality=4 },
+            { id=32205, stat="ITEM_MOD_CRIT_RATING_SHORT", val=10, name="Smooth Lionseye", colorType="YELLOW", quality=4 },
+            { id=32206, stat="ITEM_MOD_HIT_RATING_SHORT", val=10, name="Rigid Lionseye", colorType="YELLOW", quality=4 },
+            { id=32207, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=10, name="Gleaming Lionseye", colorType="YELLOW", quality=4 },
+            { id=32208, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=10, name="Thick Lionseye", colorType="YELLOW", quality=4 },
+            { id=32209, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=10, name="Mystic Lionseye", colorType="YELLOW", quality=4 },
+            { id=32210, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=10, name="Great Lionseye", colorType="YELLOW", quality=4 },
 		},
 		
 		ORANGE_P3 = {
 		    -- ========================================================================
 			-- [[ EPIC (Phase 3: Pyrestone) ]]
 			-- ========================================================================
-			{ id=32217, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STRENGTH_SHORT", val2=5, name=MSC.L["Inscribed Pyrestone"], colorType="ORANGE", quality=4 },
-			{ id=32218, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Potent Pyrestone"], colorType="ORANGE", quality=4 },
-			{ id=32219, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name=MSC.L["Luminous Pyrestone"], colorType="ORANGE", quality=4 },
-			{ id=32220, stat="ITEM_MOD_HIT_RATING_SHORT", val=5, stat2="ITEM_MOD_AGILITY_SHORT", val2=5, name=MSC.L["Glinting Pyrestone"], colorType="ORANGE", quality=4 },
-			{ id=32221, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Veiled Pyrestone"], colorType="ORANGE", quality=4 },
-			{ id=32222, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=10, name=MSC.L["Wicked Pyrestone"], colorType="ORANGE", quality=4 },
+			{ id=32217, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STRENGTH_SHORT", val2=5, name="Inscribed Pyrestone", colorType="ORANGE", quality=4 },
+			{ id=32218, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name="Potent Pyrestone", colorType="ORANGE", quality=4 },
+			{ id=32219, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_INTELLECT_SHORT", val2=5, name="Luminous Pyrestone", colorType="ORANGE", quality=4 },
+			{ id=32220, stat="ITEM_MOD_HIT_RATING_SHORT", val=5, stat2="ITEM_MOD_AGILITY_SHORT", val2=5, name="Glinting Pyrestone", colorType="ORANGE", quality=4 },
+			{ id=32221, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name="Veiled Pyrestone", colorType="ORANGE", quality=4 },
+			{ id=32222, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_ATTACK_POWER_SHORT", val2=10, name="Wicked Pyrestone", colorType="ORANGE", quality=4 },
 		},
 		
 		PURPLE_P3 = {
 		    -- ========================================================================
             -- [[ EPIC (Phase 3: Shadowsong Amethyst) ]]
             -- ========================================================================
-            { id=32211, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Sovereign Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
-            { id=32212, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Shifting Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
-            { id=32213, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Balanced Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
-            { id=32214, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Infused Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
-            { id=32215, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Glowing Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
-            { id=32216, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Royal Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
+            { id=32211, stat="ITEM_MOD_STRENGTH_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Sovereign Shadowsong Amethyst", colorType="PURPLE", quality=4 },
+            { id=32212, stat="ITEM_MOD_AGILITY_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Shifting Shadowsong Amethyst", colorType="PURPLE", quality=4 },
+            { id=32213, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Balanced Shadowsong Amethyst", colorType="PURPLE", quality=4 },
+            { id=32214, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=10, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Infused Shadowsong Amethyst", colorType="PURPLE", quality=4 },
+            { id=32215, stat="ITEM_MOD_SPELL_POWER_SHORT", val=6, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Glowing Shadowsong Amethyst", colorType="PURPLE", quality=4 },
+            { id=32216, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Royal Shadowsong Amethyst", colorType="PURPLE", quality=4 },
 		
 		},
 		
@@ -797,10 +496,10 @@ LEVELING_PRISMATIC = {
 		    -- ========================================================================
 			-- [[ EPIC (Phase 3: Seaspray Emerald) ]]
 			-- ========================================================================
-			{ id=32223, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Enduring Seaspray Emerald"], colorType="GREEN", quality=4 },
-			{ id=32224, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=6, name=MSC.L["Radiant Seaspray Emerald"], colorType="GREEN", quality=4 },
-			{ id=32225, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name=MSC.L["Dazzling Seaspray Emerald"], colorType="GREEN", quality=4 },
-			{ id=32226, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Jagged Seaspray Emerald"], colorType="GREEN", quality=4 },
+			{ id=32223, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Enduring Seaspray Emerald", colorType="GREEN", quality=4 },
+			{ id=32224, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_PENETRATION_SHORT", val2=6, name="Radiant Seaspray Emerald", colorType="GREEN", quality=4 },
+			{ id=32225, stat="ITEM_MOD_INTELLECT_SHORT", val=5, stat2="ITEM_MOD_MANA_REGENERATION_SHORT", val2=2, name="Dazzling Seaspray Emerald", colorType="GREEN", quality=4 },
+			{ id=32226, stat="ITEM_MOD_CRIT_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Jagged Seaspray Emerald", colorType="GREEN", quality=4 },
 		},
 		
 		META_P3 = {
@@ -819,72 +518,72 @@ LEVELING_PRISMATIC = {
 		    -- ========================================================================
 			-- [[ EPIC (Phase 5: Lionseye) ]]
 			-- ========================================================================
-			{ id=35761, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=10, name=MSC.L["Quick Lionseye"], colorType="YELLOW", quality=4 },	
+			{ id=35761, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=10, name="Quick Lionseye", colorType="YELLOW", quality=4 },	
 		},
 		
 		ORANGE_P5 = {
 		    -- ========================================================================
 			-- [[ RARE (Phase 5: Noble Topaz) ]]
 			-- ========================================================================
-			{ id=35316, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name=MSC.L["Reckless Noble Topaz"], colorType="ORANGE", quality=3 },
+			{ id=35316, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=4, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=5, name="Reckless Noble Topaz", colorType="ORANGE", quality=3 },
 			-- ========================================================================
 			-- [[ EPIC (Phase 5: Pyrestone) ]]
 			-- ========================================================================
-			{ id=35760, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name=MSC.L["Reckless Pyrestone"], colorType="ORANGE", quality=4 },
+			{ id=35760, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=6, name="Reckless Pyrestone", colorType="ORANGE", quality=4 },
 		},
 		
 		PURPLE_P5 = {
 		    -- ========================================================================
 			-- [[ EPIC (Phase 5: Shadowsong Amethyst) ]]
 			-- ========================================================================
-			{ id=37503, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name=MSC.L["Purified Shadowsong Amethyst"], colorType="PURPLE", quality=4 },
+			{ id=37503, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=11, stat2="ITEM_MOD_SPIRIT_SHORT", val2=5, name="Purified Shadowsong Amethyst", colorType="PURPLE", quality=4 },
 		},
 		
 		GREEN_P5 = {
 		    -- ========================================================================
 			-- [[ EPIC (Phase 5: Seaspray Emerald) ]]
 			-- ========================================================================
-			{ id=35758, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Steady Seaspray Emerald"], colorType="GREEN", quality=4 },
-			{ id=35759, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name=MSC.L["Forceful Seaspray Emerald"], colorType="GREEN", quality=4 },
+			{ id=35758, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Steady Seaspray Emerald", colorType="GREEN", quality=4 },
+			{ id=35759, stat="ITEM_MOD_SPELL_HASTE_RATING_SHORT", val=5, stat2="ITEM_MOD_STAMINA_SHORT", val2=7, name="Forceful Seaspray Emerald", colorType="GREEN", quality=4 },
 		},
 		
 		META_P5 = {
 			-- ========================================================================
             -- [[ PHASE 5 METAS ]]
             -- ========================================================================
-			{ id=35501, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special=MSC.L["+10% Shield Block Value"], name=MSC.L["Eternal Earthstorm Diamond"], isMeta=true, colorType="META", quality=3 },
-            { id=35503, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["+2% Intellect"], name=MSC.L["Ember Skyfire Diamond"], isMeta=true, colorType="META", quality=3 },	
+			{ id=35501, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, special=MSC.L["+10% Shield Block Value"], name="Eternal Earthstorm Diamond", isMeta=true, colorType="META", quality=3 },
+            { id=35503, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, special=MSC.L["+2% Intellect"], name="Ember Skyfire Diamond", isMeta=true, colorType="META", quality=3 },	
 		},
 		
 		JC_RED = {
 			-- ========================================================================
 			-- [[JC-Only UNIQUE-EQUIPPED ]]
 			-- ========================================================================
-			{ id=33131, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, name=MSC.L["Crimson Sun"], colorType="RED", unique=true, isJC=true, quality=4 },
-			{ id=33132, stat="ITEM_MOD_AGILITY_SHORT", val=12, name=MSC.L["Delicate Fire Ruby"], colorType="RED", unique=true, isJC=true, quality=4 },
-			{ id=33133, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, name=MSC.L["Don Julio's Heart"], colorType="RED", unique=true, isJC=true, quality=4 },
-			{ id=33134, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=9, name=MSC.L["Kailee's Rose"], colorType="RED", unique=true, isJC=true, quality=4 },
+			{ id=33131, stat="ITEM_MOD_ATTACK_POWER_SHORT", val=24, name="Crimson Sun", colorType="RED", unique=true, isJC=true, quality=4 },
+			{ id=33132, stat="ITEM_MOD_AGILITY_SHORT", val=12, name="Delicate Fire Ruby", colorType="RED", unique=true, isJC=true, quality=4 },
+			{ id=33133, stat="ITEM_MOD_SPELL_POWER_SHORT", val=14, name="Don Julio's Heart", colorType="RED", unique=true, isJC=true, quality=4 },
+			{ id=33134, stat="ITEM_MOD_SPELL_HEALING_DONE_SHORT", val=26, stat2="ITEM_MOD_SPELL_POWER_SHORT", val2=9, name="Kailee's Rose", colorType="RED", unique=true, isJC=true, quality=4 },
 		},
 		
 		JC_BLUE = {
 			-- ========================================================================
 			-- [[JC-Only UNIQUE-EQUIPPED ]]
 			-- ========================================================================
-		    { id=33135, stat="ITEM_MOD_STAMINA_SHORT", val=18, name=MSC.L["Falling Star"], colorType="BLUE", unique=true, isJC=true, quality=4 },
-			{ id=33137, stat="ITEM_MOD_SPIRIT_SHORT", val=12, name=MSC.L["Sparkling Falling Star"], colorType="BLUE", unique=true, isJC=true, quality=4 },
+		    { id=33135, stat="ITEM_MOD_STAMINA_SHORT", val=18, name="Falling Star", colorType="BLUE", unique=true, isJC=true, quality=4 },
+			{ id=33137, stat="ITEM_MOD_SPIRIT_SHORT", val=12, name="Sparkling Falling Star", colorType="BLUE", unique=true, isJC=true, quality=4 },
 		},
 		
 		JC_YELLOW = {
 			-- ========================================================================
 			-- [[JC-Only UNIQUE-EQUIPPED ]]
 			-- ========================================================================
-			{ id=33138, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=12, name=MSC.L["Mystic Bladestone"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
-			{ id=33139, stat="ITEM_MOD_INTELLECT_SHORT", val=12, name=MSC.L["Brilliant Bladestone"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
-			{ id=33140, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, name=MSC.L["Blood of Amber"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
-			{ id=33141, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=12, name=MSC.L["Great Bladestone"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
-			{ id=33142, stat="ITEM_MOD_HIT_RATING_SHORT", val=12, name=MSC.L["Rigid Bladestone"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
-			{ id=33143, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name=MSC.L["Stone of Blades"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
-			{ id=33144, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, name=MSC.L["Facet of Eternity"], colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33138, stat="ITEM_MOD_RESILIENCE_RATING_SHORT", val=12, name="Mystic Bladestone", colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33139, stat="ITEM_MOD_INTELLECT_SHORT", val=12, name="Brilliant Bladestone", colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33140, stat="ITEM_MOD_SPELL_CRIT_RATING_SHORT", val=12, name="Blood of Amber", colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33141, stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", val=12, name="Great Bladestone", colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33142, stat="ITEM_MOD_HIT_RATING_SHORT", val=12, name="Rigid Bladestone", colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33143, stat="ITEM_MOD_CRIT_RATING_SHORT", val=12, name="Stone of Blades", colorType="YELLOW", unique=true, isJC=true, quality=4 },
+			{ id=33144, stat="ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", val=12, name="Facet of Eternity", colorType="YELLOW", unique=true, isJC=true, quality=4 },
 		},
 	}
 
@@ -1155,9 +854,8 @@ AddOverrides({
     [30627] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=75 }, note = MSC.L["Equip: 75 Avg AP (Tsunami)"] }, -- Tsunami Talisman
     [32505] = { _AUTO_PROC = { stat="ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT", val=186 }, note = MSC.L["Equip: 186 Avg ArP (Madness)"] }, -- Madness of the Betrayer
     [34472] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=102 }, note = MSC.L["Equip: 102 Avg AP (Shard of Contempt)"] }, -- Shard of Contempt
-    [28773] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = MSC.L["Equip: 55 Avg AP (Don Santos)"] }, -- Don Santos' Famous Hunting Rifle
+    [31323] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=55 }, note = MSC.L["Equip: 55 Avg AP (Don Santos)"] }, -- Don Santos' Famous Hunting Rifle
     [28573] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Equip: 60 Avg AP (Despair)"] }, -- Despair
-    [28729] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=50 }, note = MSC.L["Equip: 50 Avg AP (Blight)"] }, -- Blight
     [32262] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=60 }, note = MSC.L["Equip: 60 Avg AP (Syphon of the Nathrezim)"] }, -- Syphon of the Nathrezim
     [29301] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=26 }, note = MSC.L["Equip: 26 Avg AP (Band of Eternal Champion)"] },
     [29305] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=21 }, note = MSC.L["Equip: 21 Avg SP (Band of Eternal Sage)"] },
@@ -1209,7 +907,7 @@ AddPvPTrinkets()
 -- ============================================================================
 -- 5. INITIALIZATION STRUCTURE
 -- ============================================================================
--- We define these here, but Data_Sets.lua populates them.
+-- We define these here, but Data_Sets_<Edition>.lua populates them.
 if not MSC.ItemSetMap then MSC.ItemSetMap = {} end
 MSC.SetNameToID = {}
 MSC.RawSetData = {}

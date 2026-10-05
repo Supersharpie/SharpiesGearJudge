@@ -65,6 +65,7 @@ local Scratch_Gear = {}
 local Scratch_Stats = {}
 local Scratch_Accumulator = {}
 local Scratch_SetCounts = {}
+local Scratch_EquivStat = {}
 local Scratch_Colors = { RED = 0, YELLOW = 0, BLUE = 0 }
 local Scratch_Stats_Old = {} 
 
@@ -118,7 +119,8 @@ function MSC:BuildEvalCacheKey(newItemLink, targetSlotID, specName, baselineGear
     local cacheType = baselineGear and "S" or "L"
     local rev = MSC.ScoringRevision or 0
     local fp = baselineGear and MSC:BuildGearFingerprint(baselineGear) or "live"
-    local itemId = GetItemInfoInstant(newItemLink) or 0
+    -- Full item string so random-suffix / enchanted / gemmed copies don't share an entry.
+    local itemId = newItemLink:match("item:[%-?%d:]+") or GetItemInfoInstant(newItemLink) or 0
     return itemId .. "|" .. (targetSlotID or 0) .. "|" .. (specName or "Default") .. "|" .. cacheType .. "|" .. rev .. "|" .. fp
 end
 
@@ -281,12 +283,29 @@ function MSC:GetTotalCharacterScore(gearTable, weights, specName)
              if scoreData then
                  for reqCount, bonusData in pairs(scoreData) do
                      if count >= reqCount then
+                         -- Bonus stats score like item stats (GetItemScore converts
+                         -- Forever ratings to % and folds Spell Power into healing).
+                         -- equiv is an estimate for a proc or class bonus: it counts
+                         -- toward the score but not toward the character's stat totals.
                          if bonusData.stats then
                              for stat, val in pairs(bonusData.stats) do
                                  Scratch_Accumulator[stat] = (Scratch_Accumulator[stat] or 0) + val
-                                 if weights[stat] then totalScore = totalScore + (val * weights[stat]) end
                              end
-                         elseif bonusData.score then
+                             totalScore = totalScore + MSC.GetItemScore(bonusData.stats, weights, specName)
+                         end
+                         if bonusData.equiv then
+                             -- Each equiv stat is an alternative (Spell Power for casters,
+                             -- Attack Power for melee), so a hybrid takes the best one.
+                             local best = 0
+                             for stat, val in pairs(bonusData.equiv) do
+                                 Scratch_EquivStat[stat] = val
+                                 local s = MSC.GetItemScore(Scratch_EquivStat, weights, specName)
+                                 Scratch_EquivStat[stat] = nil
+                                 if s > best then best = s end
+                             end
+                             totalScore = totalScore + best
+                         end
+                         if not bonusData.stats and not bonusData.equiv and bonusData.score then
                              totalScore = totalScore + bonusData.score
                          end
                      end
@@ -329,12 +348,7 @@ end
 		LastSpec = nil 
 	}
 
-	-- [[ B. EVENT LISTENER ]]
-	local CacheWatcher = CreateFrame("Frame")
-	CacheWatcher:RegisterEvent("BAG_UPDATE")
-	CacheWatcher:SetScript("OnEvent", function() 
-		MSC.WeaponBagCache.Dirty = true 
-	end)
+	-- [[ B. EVENT LISTENER ]] Dirty flag is set by CacheCleaner (section 5).
 
 	-- [[ C. INTERNAL SCANNERS (The heavy lifting) ]]
 	function MSC:Internal_ScanBestMainHand(weights, specName)
@@ -345,7 +359,9 @@ end
 			local numSlots = GetBagSlots(bag) 
 			for slot = 1, numSlots do
 				local link = GetBagLink(bag, slot)
-				if link and MSC.IsItemUsable(link) then 
+				-- Slot filter first so non-weapons skip the usability tooltip scan.
+				local iLoc = link and select(4, GetItemInfoInstant(link))
+				if (iLoc == "INVTYPE_WEAPON" or iLoc == "INVTYPE_WEAPONMAINHAND") and MSC.IsItemUsable(link) then
 					local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
 					if (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND") and IsEquippableItem(link) then
 						local stats = MSC.SafeGetItemStats(link, 16, weights, specName)
@@ -381,9 +397,12 @@ end
 			local numSlots = GetBagSlots(bag) 
 			for slot = 1, numSlots do
 				local link = GetBagLink(bag, slot)
-				if link and MSC.IsItemUsable(link) then
+				-- Slot filter first so non-offhand items skip the usability tooltip scan.
+				local iLoc = link and select(4, GetItemInfoInstant(link))
+				if (iLoc == "INVTYPE_WEAPON" or iLoc == "INVTYPE_WEAPONOFFHAND" or iLoc == "INVTYPE_SHIELD" or iLoc == "INVTYPE_HOLDABLE")
+					and MSC.IsItemUsable(link) then
 					local _, _, _, _, _, _, _, _, loc = GetItemInfo(link)
-					
+
 					local isWeapon   = (loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONOFFHAND")
 					local isStandard = (loc == "INVTYPE_SHIELD" or loc == "INVTYPE_HOLDABLE")
 					
@@ -441,25 +460,41 @@ CacheCleaner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 CacheCleaner:RegisterEvent("PLAYER_TALENT_UPDATE")
 CacheCleaner:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 CacheCleaner:RegisterEvent("PLAYER_LEVEL_UP")
-CacheCleaner:RegisterEvent("BAG_UPDATE") 
-CacheCleaner:RegisterEvent("PLAYER_ENTERING_WORLD") 
-CacheCleaner:RegisterEvent("GET_ITEM_INFO_RECEIVED") 
+CacheCleaner:RegisterEvent("BAG_UPDATE")
+CacheCleaner:RegisterEvent("BAG_UPDATE_DELAYED")
+CacheCleaner:RegisterEvent("PLAYER_ENTERING_WORLD")
+CacheCleaner:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 
-local wipeTimer = nil
+-- C_Timer.After returns nothing, so coalesce with a flag (one wipe per 0.5s burst).
+-- Stat caches are not wiped here: Helpers no longer caches stats for unloaded items.
+local wipePending = false
+local function WipeEvaluationCache()
+    if not wipePending then return end
+    wipePending = false
+    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+end
+-- Lets UI refreshes that run before the timer drop entries scored before the item loaded.
+MSC.FlushEvaluationCacheWipe = WipeEvaluationCache
 
 CacheCleaner:SetScript("OnEvent", function(self, event)
     if event == "GET_ITEM_INFO_RECEIVED" then
-        if not wipeTimer then
-            wipeTimer = C_Timer.After(0.5, function()
-                if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-                if MSC.ProcessedStatCache then wipe(MSC.ProcessedStatCache) end
-                if MSC.StatCache then wipe(MSC.StatCache) end
-                wipeTimer = nil
-            end)
+        if not wipePending then
+            wipePending = true
+            C_Timer.After(0.5, WipeEvaluationCache)
         end
     elseif event == "BAG_UPDATE" then
         if MSC.WeaponBagCache then MSC.WeaponBagCache.Dirty = true end
-        if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    elseif event == "BAG_UPDATE_DELAYED" then
+        -- Only main/off-hand results depend on bag contents (best weapon pairing).
+        -- Key layout: itemString|slot|spec|type|rev|fp
+        if MSC.WeaponBagCache then MSC.WeaponBagCache.Dirty = true end
+        local cache = MSC.EvaluationCache
+        if cache then
+            for key in pairs(cache) do
+                local slot = key:match("^[^|]*|(%d+)|")
+                if slot == "16" or slot == "17" then cache[key] = nil end
+            end
+        end
     elseif event == "PLAYER_EQUIPMENT_CHANGED" then
         if MSC.EquippedSlotScoreCache then wipe(MSC.EquippedSlotScoreCache) end
         MSC.EquippedScoreCache = nil
@@ -527,7 +562,8 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     -- Shield tanks (Protection Warriors and Paladins, Shaman tank profiles)
     -- need the shield for Shield Block, Shield Slam, Holy Shield and their
     -- block stats, so a two-hander is never shown as an upgrade for them.
-    -- Skipped when a two-hander is already equipped (no shield to lose).
+    -- With "Shield Tanks: No Two-Handers" off, skipped when a two-hander is
+    -- already equipped (no shield to lose).
     local blocks2HForTank = false
     if isNew2H and targetSlotID == 16 and specName then
         local _, cls = UnitClass("player")
@@ -536,7 +572,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
             and (string_find(upSpec, "TANK") or string_find(upSpec, "PROT")) then
             local currLoc = originalMH and select(9, GetItemInfo(originalMH))
             local isCurrent2H = (currLoc == "INVTYPE_2HWEAPON" or currLoc == "INVTYPE_STAFF" or currLoc == "INVTYPE_POLEARM")
-            blocks2HForTank = not isCurrent2H
+            blocks2HForTank = not isCurrent2H or not (SGJ_Settings and SGJ_Settings.ShieldTankNo2H == false)
         end
     end
 
@@ -598,12 +634,13 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     local newScore, newStatsTotal, newTotalColors, newSetCounts = MSC:GetTotalCharacterScore(Scratch_Gear, weights, specName)
 
 	-- [[ 6. CONTEXT: DETECT SET COMPLETION ]]
-    if MSC.SetBonusScores then
-        for setID, scores in pairs(MSC.SetBonusScores) do
-             local nC = (newSetCounts and newSetCounts[setID]) or 0
+    -- A set can only gain pieces if it is in newSetCounts, so walk that instead of every set.
+    if MSC.SetBonusScores and newSetCounts then
+        for setID, nC in pairs(newSetCounts) do
+             local scores = MSC.SetBonusScores[setID]
              local oC = (oldSetCounts and oldSetCounts[setID]) or 0
-             
-             if nC > oC then
+
+             if scores and nC > oC then
                  for req, _ in pairs(scores) do
                      local rN = tonumber(req)
                      if rN and nC >= rN and oC < rN then

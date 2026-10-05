@@ -16,14 +16,24 @@ CacheManager:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 CacheManager:RegisterEvent("PLAYER_TALENT_UPDATE")
 CacheManager:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
+local lastShapeshiftForm = nil
+
 CacheManager:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_EQUIPMENT_CHANGED" then
+        -- The one scoring-revision bump per gear change (Dynamic_Engine no longer bumps here)
         if MSC.BumpScoringRevision then
             MSC:BumpScoringRevision()
         end
         if MSC.EquippedSlotScoreCache then wipe(MSC.EquippedSlotScoreCache) end
         if MSC.EquippedScoreCache then MSC.EquippedScoreCache = nil end
         return
+    end
+
+    -- Fires often without a real form change (e.g. buffs, mounting)
+    if event == "UPDATE_SHAPESHIFT_FORM" then
+        local form = GetShapeshiftForm and GetShapeshiftForm() or 0
+        if form == lastShapeshiftForm then return end
+        lastShapeshiftForm = form
     end
 
     if MSC.EvaluationCache then

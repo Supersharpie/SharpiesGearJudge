@@ -13,7 +13,26 @@ local pcall = pcall
 local CreateFrame = CreateFrame
 local WorldFrame = WorldFrame
 
+-- Tooltip numbers: some languages write decimals with a comma ("1,5"), so
+-- convert that to a dot before tonumber.
+local function ScanNum(x)
+    if type(x) == "string" then x = x:gsub(",", ".") end
+    return tonumber(x)
+end
+
 MSC.Scanner = {}
+
+-- Value and stat name from a pattern's captures. A translated pattern may capture
+-- them in the other order (Korean and Chinese tooltips often put the number after
+-- the stat name), so when the capture meant as the value isn't a number but the
+-- other one is, they are swapped.
+function MSC.Scanner.OrderCaptures(pat, m1, m2)
+    local v = (pat.valIdx == 1) and m1 or m2
+    local n
+    if pat.nameIdx then n = (pat.nameIdx == 1) and m1 or m2 else n = (pat.valIdx == 1) and m2 or m1 end
+    if n and not ScanNum(v) and ScanNum(n) then v, n = n, v end
+    return ScanNum(v), n
+end
 
 -- =============================================================
 -- 1. DATA MAPS (Shared Dictionaries)
@@ -297,8 +316,8 @@ MSC.Scanner.EquipPatterns = {
     { p = MSC.L["healing.-(%d+).-damage.-(%d+)"], 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
-              local h = tonumber(heal) or 0
-              local d = tonumber(dmg) or 0
+              local h = ScanNum(heal) or 0
+              local d = ScanNum(dmg) or 0
               outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + d
               local bonus = h - d
               if bonus > 0 then
@@ -334,8 +353,8 @@ MSC.Scanner.EquipPatterns = {
     { p = MSC.L["healing.-(%d+).-damage.-(%d+)"], 
       func = function(heal, dmg, _, outputStats) 
           if outputStats then
-              local h = tonumber(heal) or 0
-              local d = tonumber(dmg) or 0
+              local h = ScanNum(heal) or 0
+              local d = ScanNum(dmg) or 0
               outputStats["ITEM_MOD_SPELL_POWER_SHORT"] = (outputStats["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + d
               local bonus = h - d
               if bonus > 0 then
@@ -440,9 +459,9 @@ end
 local function ParseCooldown(text)
     local lowerText = string_lower(text)
     local min = string_match(lowerText, MSC.L["%((%d+)%s*min[s%a]*%s*cooldown%)"] or "%((%d+)%s*min[s%a]*%s*cooldown%)")
-	if min then return tonumber(min) * 60 end
+	if min then return ScanNum(min) * 60 end
 	local sec = string_match(lowerText, MSC.L["%((%d+)%s*sec[s%a]*%s*cooldown%)"] or "%((%d+)%s*sec[s%a]*%s*cooldown%)")
-    if sec then return tonumber(sec) end
+    if sec then return ScanNum(sec) end
     return 120 
 end
 
@@ -484,8 +503,8 @@ function MSC.Scanner.ParseSetHeader(text, metaTable)
     local setName, current, total = string_match(cleanText, MSC.L["^(.*)%s+%(?(%d+)/(%d+)%)?$"])
     if setName then 
         metaTable.SetName = string_gsub(setName, "^%s*(.-)%s*$", "%1")
-        metaTable.SetCount = tonumber(current)
-        metaTable.SetTotal = tonumber(total)
+        metaTable.SetCount = ScanNum(current)
+        metaTable.SetTotal = ScanNum(total)
         return true
     end
 end
@@ -497,9 +516,16 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     -- [[ PROCS & BUFFS ESCAPE HATCH ]]
     -- Prevents temporary buffs from being read as permanent passive stats.
     local isTemporary = false
+    -- Matched against the lower-cased line (Lua lower-cases ASCII only).
     local durationMarkers = {
-        " for %d+ sec", " f r %d+ sek", " pendant %d+ s", 
-        " durante %d+ s", "  %d+ ", " por %d+ s"
+        " for %d+ sec",          -- English
+        " für %d+ sek",          -- German
+        " pendant %d+ s",        -- French
+        " durante %d+ s",        -- Spanish
+        " por %d+ s",            -- Portuguese
+        " на %d+ сек",           -- Russian
+        "%d+초 동안",             -- Korean
+        "持續%s*%d+%s*秒",        -- Traditional Chinese
     }
     for _, marker in ipairs(durationMarkers) do
         if string_match(cleanText, marker) then
@@ -518,8 +544,8 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
         if match1 then
             if pat.func then pat.func(match1, match2, match3, outputStats); return end
 
-            local val = tonumber(pat.valIdx == 1 and match1 or match2)
-            local name = pat.nameIdx and (pat.nameIdx == 1 and match1 or match2)
+            local val, name = MSC.Scanner.OrderCaptures(pat, match1, match2)
+            if not pat.nameIdx then name = nil end
 
             if val and pat.isPercent and MSC.IsTBC then
                 local mult = 15.8 
@@ -598,7 +624,7 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
                 local cleanName = string_gsub(stat, "[%s%.]+$", "")
                 local key = MSC.Scanner.BaseStatMap[cleanName]
                 if key then 
-                    outputTable[key] = (outputTable[key] or 0) + tonumber(val)
+                    outputTable[key] = (outputTable[key] or 0) + ScanNum(val)
                     return 
                 end
             end
@@ -620,7 +646,7 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
     -- [[ ALL STATS EXPLODER ]]
     -- Instantly breaks "+X All Stats" into the big 5 attributes
     if string_find(cleanText, "all stats") then
-        local val = tonumber(string_match(cleanText, "%d+"))
+        local val = ScanNum(string_match(cleanText, "%d+"))
         if val then
             outputTable["ITEM_MOD_STRENGTH_SHORT"]  = (outputTable["ITEM_MOD_STRENGTH_SHORT"] or 0) + val
             outputTable["ITEM_MOD_AGILITY_SHORT"]   = (outputTable["ITEM_MOD_AGILITY_SHORT"] or 0) + val
@@ -644,18 +670,17 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
         local m1, m2, m3 = string_match(cleanText, pat.p)
         if m1 then
             if pat.type == "RANGE" then
-                outputTable["MSC_DAMAGE_RANGE_MIN"] = tonumber(m1)
-                outputTable["MSC_DAMAGE_RANGE_MAX"] = tonumber(m2)
+                outputTable["MSC_DAMAGE_RANGE_MIN"] = ScanNum(m1)
+                outputTable["MSC_DAMAGE_RANGE_MAX"] = ScanNum(m2)
                 return
             elseif pat.fixedStat then
-                local val = tonumber(m1)
+                local val = ScanNum(m1)
                 if val then 
                     outputTable[pat.fixedStat] = (outputTable[pat.fixedStat] or 0) + val; 
                     return 
                 end
             else
-                local val = tonumber(pat.valIdx == 1 and m1 or m2)
-                local name = pat.valIdx == 1 and m2 or m1
+                local val, name = MSC.Scanner.OrderCaptures(pat, m1, m2)
                 if val and name then
                     local cleanName = string_gsub(string_gsub(name, MSC.L["^to "], ""), "[%s%.]+$", "")
                     local key = MSC.Scanner.BaseStatMap[cleanName]
@@ -682,18 +707,18 @@ function MSC.Scanner.ParseProcLine(text, outputProcs)
             if pat.type == "DAMAGE" then
                 procObj.type = "Damage"
                 local valStr = (pat.valIdx == 2) and m2 or m1
-                procObj.val = tonumber(valStr) or 0
+                procObj.val = ScanNum(valStr) or 0
                 if m2 and not pat.valIdx then 
-                    local maxVal = tonumber(m2) or 0
+                    local maxVal = ScanNum(m2) or 0
                     procObj.val = (procObj.val + maxVal) / 2 
                 end
             elseif pat.type == "HEAL" or pat.type == "MANA" then
                 procObj.type = pat.type
-                procObj.val = tonumber(m1)
+                procObj.val = ScanNum(m1)
             elseif pat.valIdx then
                 procObj.type = "Stat"
-                procObj.val = tonumber(pat.valIdx == 1 and m1 or m2)
-                procObj.duration = tonumber(pat.valIdx == 1 and m2 or m3)
+                procObj.val = ScanNum(pat.valIdx == 1 and m1 or m2)
+                procObj.duration = ScanNum(pat.valIdx == 1 and m2 or m3)
                 procObj.statName = pat.nameIdx and (pat.nameIdx == 1 and m1 or m2) or m1
             else 
                 procObj.type = "Generic" 
@@ -714,12 +739,12 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
         if m1 then
             local effect = { raw = text, cooldown = cooldown }
             if pat.type == "BUFF" then
-                local val = tonumber(pat.valIdx == 1 and m1 or m2)
-                local name = pat.nameIdx and (pat.nameIdx == 1 and m1 or m2)
+                local val, name = MSC.Scanner.OrderCaptures(pat, m1, m2)
+                if not pat.nameIdx then name = nil end
                 
                 if not val then return end
 
-                local duration = tonumber(m3) or pat.defaultDur or 15
+                local duration = ScanNum(m3) or pat.defaultDur or 15
                 effect.averageVal = val * (duration / cooldown)
                 effect.duration = duration
                 
@@ -731,8 +756,8 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                 end
                 effect.type = "Stat"
             elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then
-                local val = tonumber(m1)
-                if m2 then val = (val + tonumber(m2)) / 2 end
+                local val = ScanNum(m1)
+                if m2 then val = (val + ScanNum(m2)) / 2 end
                 effect.statKey = string_find(pat.type, "MANA") and "ITEM_MOD_MANA_REGENERATION_SHORT" or "ITEM_MOD_HEALTH_REGENERATION_SHORT"
                 effect.averageVal = (val / cooldown) * 5
                 effect.type = "Resource"
@@ -761,7 +786,8 @@ function MSC.Scanner.Scan(itemLink)
     for i = 2, tip:NumLines() do 
         local leftLine = _G["MSC_NewScannerTooltipTextLeft"..i]
         local leftText = leftLine and leftLine:GetText()
-        local r, g, b = leftLine and leftLine:GetTextColor() or 1, 1, 1
+        local r, g, b = 1, 1, 1
+        if leftLine then r, g, b = leftLine:GetTextColor() end
         
         local rightLine = _G["MSC_NewScannerTooltipTextRight"..i]
         local rightText = rightLine and rightLine:GetText()

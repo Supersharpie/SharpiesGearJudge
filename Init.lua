@@ -131,5 +131,12 @@ end
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("PLAYER_LOGIN")
 loader:SetScript("OnEvent", function()
+    -- The dataminer was removed in 3.2.1; drop what it recorded from saved data.
+    if SharpiesGearJudgeDB then
+        SharpiesGearJudgeDB.DropDatabase = nil
+        SharpiesGearJudgeDB.QuestDatabase = nil
+        SharpiesGearJudgeDB.EnableDataminer = nil
+    end
+    if SGJ_Settings then SGJ_Settings.MinerEnabled = nil end
     MSC:ForceInit()
 end)

@@ -95,17 +95,73 @@ MSC.Pools = {
 }
 
 -- [[ NEW THROTTLE SYSTEM (C_Timer based) ]]
-local updateTimer = nil
+-- C_Timer.After returns nothing, so a flag coalesces each 0.5s burst into one update.
+local updatePending = false
 local function TriggerFullUpdate()
+    updatePending = false
+    if MSC.FlushEvaluationCacheWipe then MSC.FlushEvaluationCacheWipe() end
     if MSC.UpdateReceipt then MSC.UpdateReceipt() end
     if MSC.UpdateLogic then MSC.UpdateLogic() end
-    updateTimer = nil
 end
 
 local function RequestUpdate()
-    if not updateTimer then
-        updateTimer = C_Timer.After(0.5, TriggerFullUpdate)
+    if not updatePending then
+        updatePending = true
+        C_Timer.After(0.5, TriggerFullUpdate)
     end
+end
+
+-- Quest events and the QuestInfo/QuestLog hooks share one pending refresh.
+local questRefreshPending = false
+local function RunQuestRefresh()
+    questRefreshPending = false
+    if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
+end
+local function QueueQuestRefresh()
+    if questRefreshPending then return end
+    questRefreshPending = true
+    -- 0.15s lets the server populate the item links in the UI
+    C_Timer.After(0.15, RunQuestRefresh)
+end
+
+-- GET_ITEM_INFO_RECEIVED arrives in storms (e.g. TRADE_SKILL_SHOW queries every
+-- recipe), so one coalesced job refreshes the visible windows per burst.
+local itemInfoRefreshPending = false
+local function RunItemInfoRefresh()
+    itemInfoRefreshPending = false
+    if MSC.FlushEvaluationCacheWipe then MSC.FlushEvaluationCacheWipe() end
+
+    -- NPC Windows
+    if QuestInfoFrame and QuestInfoFrame:IsVisible() then
+        if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end
+        if MSC.UpdateQuestAcceptOverlays then MSC.UpdateQuestAcceptOverlays() end
+    end
+    -- Quest Log Window
+    if QuestLogFrame and QuestLogFrame:IsVisible() then
+        if MSC.UpdateQuestLogOverlays then MSC.UpdateQuestLogOverlays() end
+    end
+    -- Merchant Window
+    if MerchantFrame and MerchantFrame:IsVisible() then
+        if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end
+    end
+    -- Crafting / Trade Skill
+    if TradeSkillFrame and TradeSkillFrame:IsShown() then
+        if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
+    end
+    if CraftFrame and CraftFrame:IsShown() and MSC.UpdateCraftOverlays then
+        MSC.UpdateCraftOverlays()
+    end
+    -- TSM compatibility
+    if TSM_API and TSM_API.IsWindowVisible and TSM_API.IsWindowVisible("CRAFTING") then
+        if MSC.UpdateTSMOverlays then MSC.UpdateTSMOverlays() end
+    end
+
+    if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
+end
+local function QueueItemInfoRefresh()
+    if itemInfoRefreshPending then return end
+    itemInfoRefreshPending = true
+    C_Timer.After(0.15, RunItemInfoRefresh)
 end
 
 function MSC.GetFromPool(poolType, parent, creatorFunc)
@@ -154,15 +210,13 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1) 
     if event == "BAG_UPDATE" then 
-        MSC.BagCache.Dirty = true
+        -- The Receipt reads MSC.BagCacheDirty (BagCache.Dirty was never read).
+        MSC.BagCacheDirty = true
         if RequestUpdate then RequestUpdate() end
 
     elseif event == "QUEST_COMPLETE" or event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_ITEM_UPDATE" then
-        -- We use a 0.15s delay to ensure the server has populated the item links to the UI
-        C_Timer.After(0.15, function()
-            if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
-        end)
-		
+        QueueQuestRefresh()
+
 	elseif event == "START_LOOT_ROLL" then
         -- A tiny 0.1s delay ensures the Blizzard UI has finished creating the frame and assigning the rollID
         C_Timer.After(0.1, function()
@@ -189,55 +243,21 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
             end
         
 		elseif event == "GET_ITEM_INFO_RECEIVED" then
-        local itemID = arg1
-        
-        -- Wipe caches so the newly loaded item gets a fresh scan
-        if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-        if MSC.StatCache then wipe(MSC.StatCache) end
+        local itemID = tonumber(arg1)
 
-        C_Timer.After(0.15, function()
-            -- NPC Windows
-            if QuestInfoFrame and QuestInfoFrame:IsVisible() then 
-                if MSC.UpdateQuestOverlays then MSC.UpdateQuestOverlays() end 
-                if MSC.UpdateQuestAcceptOverlays then MSC.UpdateQuestAcceptOverlays() end
-            end
-            
-            -- Quest Log Window
-            if QuestLogFrame and QuestLogFrame:IsVisible() then 
-                if MSC.UpdateQuestLogOverlays then MSC.UpdateQuestLogOverlays() end 
-            end
-            
-            -- Merchant Window
-            if MerchantFrame and MerchantFrame:IsVisible() then 
-                if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end 
-            end
-        end)
+        -- Window overlays, TSM and bag arrows refresh once per burst
+        -- (the EvaluationCache wipe is coalesced in Evaluator.lua).
+        QueueItemInfoRefresh()
 
-        -- [[ CRAFTING/TRADE SKILL CHECK ]]
-        if TradeSkillFrame and TradeSkillFrame:IsShown() then
-            -- Small defer ensures the Blizzard UI is ready to provide the link
-            C_Timer.After(0.1, function()
-                if MSC.UpdateTradeSkillOverlays then MSC.UpdateTradeSkillOverlays() end
-            end)
-        end
-        if CraftFrame and CraftFrame:IsShown() then
-            C_Timer.After(0.1, MSC.UpdateCraftOverlays)
-        end
-
-        -- [[ TSM COMPATIBILITY ]]
-        if TSM_API and TSM_API.IsWindowVisible and TSM_API.IsWindowVisible("CRAFTING") then
-            if MSC.UpdateTSMOverlays then MSC.UpdateTSMOverlays() end
-        end
-        
-        if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
-
-        if GameTooltip:IsVisible() then
+        if itemID and GameTooltip:IsVisible() then
             local _, link = MSC_GetTooltipItem(GameTooltip)
             if not link and MSC.HoveredQuestLink then link = MSC.HoveredQuestLink end
-            
-            if link and string.find(link, "item:" .. itemID) then
+
+            -- Exact id match: "item:123" must not match "item:1234"
+            if link and tonumber(link:match("item:(%d+)")) == itemID then
                  if RequestUpdate then RequestUpdate() end
-                 if MSC.EvaluateAndDrawTooltip then 
+                 if MSC.FlushEvaluationCacheWipe then MSC.FlushEvaluationCacheWipe() end
+                 if MSC.EvaluateAndDrawTooltip then
                      MSC.EvaluateAndDrawTooltip(GameTooltip) 
                  end
             end
@@ -1472,7 +1492,9 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         elvScanner:RegisterEvent("EQUIPMENT_SWAP_FINISHED")
 
         local scanPending = false
-        local function ScanElvUIBags()
+        local hookedShow = {}
+        local ScanElvUIBags
+        function ScanElvUIBags()
             scanPending = false
             if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
 
@@ -1481,6 +1503,15 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
             local B = E:GetModule('Bags')
             local f = B and B.BagFrame
             if not f or not f.Bags then return end
+            -- Slots report IsShown() while the bag frame is closed; skip the scan
+            -- and make sure opening the frame triggers one.
+            if f.IsVisible and not f:IsVisible() then
+                if not hookedShow[f] and f.HookScript then
+                    hookedShow[f] = true
+                    f:HookScript("OnShow", function() C_Timer.After(0.2, ScanElvUIBags) end)
+                end
+                return
+            end
 
             for bagID = 0, 4 do
                 local bag = f.Bags[bagID]
@@ -1507,6 +1538,7 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         -- Also scan when the bag frame is shown/toggled
         local bagFrame = _G["ElvUI_ContainerFrame"]
         if bagFrame then
+            hookedShow[bagFrame] = true
             bagFrame:HookScript("OnShow", function()
                 C_Timer.After(0.2, ScanElvUIBags)
             end)
@@ -1517,12 +1549,29 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         if E then
             local B = E:GetModule('Bags')
             if B and B.UpdateSlot then
+                -- UpdateSlot fires many times per refresh; batch and evaluate next frame
+                -- (same pattern as Bagnon below).
+                local pendingBag, pendingSlot, flushQueued = {}, {}, false
+                local function FlushElvSlots()
+                    flushQueued = false
+                    for slot, bagID in pairs(pendingBag) do
+                        local slotID = pendingSlot[slot]
+                        pendingBag[slot] = nil
+                        pendingSlot[slot] = nil
+                        EvaluateAndDraw(slot, slot.itemLink or GetContainerItemLink(bagID, slotID))
+                    end
+                end
                 hooksecurefunc(B, "UpdateSlot", function(self, frame, bagID, slotID)
                     -- Signature is: B:UpdateSlot(frame, bagID, slotID)
                     -- When hooked via hooksecurefunc, the first arg passed is self (B), second is frame, third is bagID, fourth is slotID
                     local slot = frame and frame.Bags and frame.Bags[bagID] and frame.Bags[bagID][slotID]
                     if slot then
-                        EvaluateAndDraw(slot, slot.itemLink or GetContainerItemLink(bagID, slotID))
+                        pendingBag[slot] = bagID
+                        pendingSlot[slot] = slotID
+                        if not flushQueued then
+                            flushQueued = true
+                            C_Timer.After(0, FlushElvSlots)
+                        end
                     end
                 end)
             end
@@ -1694,9 +1743,18 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         baganatorEvents:RegisterEvent("PLAYER_TALENT_UPDATE")
         baganatorEvents:RegisterEvent("CHARACTER_POINTS_CHANGED")
         baganatorEvents:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        -- One refresh per 0.5s burst of events.
+        local baganatorRefreshPending = false
+        local function RunBaganatorRefresh()
+            baganatorRefreshPending = false
+            MSC.RequestBaganatorRefresh()
+        end
         baganatorEvents:SetScript("OnEvent", function()
             wipe(verdictCache)
-            C_Timer.After(0.5, MSC.RequestBaganatorRefresh)
+            if not baganatorRefreshPending then
+                baganatorRefreshPending = true
+                C_Timer.After(0.5, RunBaganatorRefresh)
+            end
         end)
     end
 
@@ -2812,6 +2870,12 @@ function MSC.InitSettingsView(parent)
         local gemQualTip = MSC.L["Selects the quality tier of gems the Judge will use when projecting empty sockets."]
         CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {{ text = MSC.L["Common (White/Vendor)"], val = 1 }, { text = MSC.L["Uncommon (Green)"], val = 2 }, { text = MSC.L["Rare (Blue)"], val = 3 }, { text = MSC.L["Epic (Purple)"], val = 4 }}, ddGem, -5, gemQualTip)
     end
+    local cbTank2H = CreateCheck(MSC.L["Shield Tanks: No Two-Handers"], "ShieldTankNo2H", MSC.L["With a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you hold one, and the Roadmap builds a one-hander and shield set. Turn off to compare two-handers normally while you aren't using a shield."], cLogic.Last, 0, -5)
+    cbTank2H:HookScript("OnClick", function()
+        if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
+        MSC.BagCacheDirty = true
+        if RequestUpdate then RequestUpdate() end
+    end)
 
     -- ==========================================
     -- SECTION 4: BUFF ASSUMPTIONS (right column)
@@ -3259,7 +3323,6 @@ f:SetScript("OnEvent", function(self, event, arg1)
     elseif event == "PLAYER_ENTERING_WORLD" then
         RequestUpdate()
     elseif event == "GET_ITEM_INFO_RECEIVED" then
-        if MSC.StatCache then wipe(MSC.StatCache) end
         MSC.BagCacheDirty = true
         RequestUpdate()      
     else
@@ -3297,11 +3360,9 @@ if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", function(link)
 if DressUpItemLink then hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
 
 if hooksecurefunc then
-    local function TriggerQuestUpdate()
-        C_Timer.After(0.15, function()
-            if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
-        end)
-    end
+    -- Shares one pending refresh with the QUEST_* events (QueueQuestRefresh).
+    -- Wrapped so hook arguments are not passed through.
+    local function TriggerQuestUpdate() QueueQuestRefresh() end
 
     if QuestInfo_Display then hooksecurefunc("QuestInfo_Display", TriggerQuestUpdate) end
     if QuestLog_Update then hooksecurefunc("QuestLog_Update", TriggerQuestUpdate) end
@@ -3320,14 +3381,6 @@ if hooksecurefunc then
             if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
         end)
     end
-end
-
-if hooksecurefunc and MerchantFrame_UpdateMerchantInfo then
-    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
-        C_Timer.After(0.05, function()
-            if MSC.UpdateMerchantOverlays then MSC.UpdateMerchantOverlays() end
-        end)
-    end)
 end
 
 -- [[ CLIENT-SAFE BAG ARROW REFRESH ]]
@@ -3528,6 +3581,7 @@ loader:SetScript("OnEvent", function(self, event, name)
             AssumeWorldBuffs = false,
             AssumeCampingBuffs = false,
             GearForRaiding = true, -- Forever: hit/defense targets slide to raid caps from 50
+            ShieldTankNo2H = true, -- shield tanks never see a two-hander as an upgrade
             RaidBuffPreset = "off",
             WorldBuffPreset = "off",
             RaidBuffToggles = {},
@@ -3756,7 +3810,6 @@ local function SGJCheckCorrupt2()
         end
     end
     if SharpiesGearJudgeDB then checkLevel(SharpiesGearJudgeDB, "SharpiesGearJudgeDB") end
-    if SGJ_History then checkLevel(SGJ_History, "SGJ_History") end
     
     if #bads > 0 then
         for _, msg in ipairs(bads) do print("|cffff0000CORRUPT:|r", msg) end
@@ -3782,7 +3835,7 @@ SlashCmdList["SGJ_FORCE"] = ForceWriteSGJ
 -- ============================================================================
 
 StaticPopupDialogs["SGJ_QUICK_SAVE"] = {
-    text = "Save datamined data to disk?\n\nThis will trigger a UI Reload to forcefully write all SavedVariables into your WTF folder. (This bypasses the Beta client crash bug).",
+    text = "Save addon data to disk?\n\nThis will trigger a UI Reload to forcefully write all SavedVariables into your WTF folder. (This bypasses the Beta client crash bug).",
     button1 = "Save (Reload UI)",
     button2 = "Cancel",
     OnAccept = function()
@@ -3804,66 +3857,6 @@ end
 
 SLASH_SGJ_SAVE1 = "/sgjsave"
 SlashCmdList["SGJ_SAVE"] = QuickSaveSGJ
-
--- ============================================================================
--- DATAMINER (ITEM HISTORY LOGGER)
--- ============================================================================
-
-local function ToggleMiner()
-    if not SGJ_Settings then SGJ_Settings = {} end
-    SGJ_Settings.MinerEnabled = not SGJ_Settings.MinerEnabled
-    if SGJ_Settings.MinerEnabled then
-        if not SGJ_History then SGJ_History = {} end
-        print("|cff00ff00SGJ Dataminer:|r ENABLED. Recording all seen items to SGJ_History.")
-    else
-        print("|cffff0000SGJ Dataminer:|r DISABLED.")
-    end
-end
-
-SLASH_SGJ_MINER1 = "/sgjminer"
-SlashCmdList["SGJ_MINER"] = function(msg)
-    if msg == "toggle" or msg == "" then
-        ToggleMiner()
-    elseif msg == "clear" then
-        SGJ_History = {}
-        print("|cff00ff00SGJ Dataminer:|r SGJ_History has been cleared.")
-    else
-        print("|cff00ccffSGJ Miner Commands:|r")
-        print("  /sgjminer toggle - Turns the miner on/off")
-        print("  /sgjminer clear  - Wipes the stored item history")
-    end
-end
-
--- Hook into the main evaluate function to record items
-local original_EvaluateMiner = MSC.EvaluateAndDrawTooltip
-MSC.EvaluateAndDrawTooltip = function(tooltip)
-    if original_EvaluateMiner then original_EvaluateMiner(tooltip) end
-    
-    if SGJ_Settings and SGJ_Settings.MinerEnabled and tooltip then
-        local name, link = tooltip:GetItem()
-        if link then
-            local itemID = link:match("item:(%d+)")
-            if itemID then
-                itemID = tonumber(itemID)
-                if not SGJ_History then SGJ_History = {} end
-                if not SGJ_History[itemID] then
-                    local itemName, _, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc = GetItemInfo(link)
-                    if itemName then
-                        SGJ_History[itemID] = {
-                            link = link,
-                            name = itemName,
-                            loc = itemEquipLoc or "",
-                            ilvl = itemLevel or 0,
-                            subType = itemSubType or "",
-                            time = date("%Y-%m-%d %H:%M:%S")
-                        }
-                    end
-                end
-            end
-        end
-    end
-end
-
 
 -- Slot order/labels match Laboratory.lua's OrderedSlots so scalar dumps and
 -- Lab imports read the same way.

@@ -378,7 +378,7 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
             local int = dest["ITEM_MOD_INTELLECT_SHORT"] or 0
             if int > 0 then
                 local rapFromInt = int * (0.15 * r) -- 15/30/45%
-                dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] + rapFromInt
+                dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = (dest["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] or 0) + rapFromInt
             end
         end
     end
@@ -397,6 +397,10 @@ local Scratch_Tooltip_Old = {}
 local Scratch_Tooltip_Diffs = {}
 local TEX_UP = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Upgrade.png:14:14:0:-2|t"
 local TEX_DOWN = "|TInterface\\AddOns\\SharpiesGearJudge\\Textures\\Downgrade.png:14:14:0:-2|t"
+-- Judge's Note colours (read-only)
+local NOTE_CL_DEFAULT, NOTE_CR_DEFAULT = {r=0.85, g=0.6, b=1.0}, {r=0.64, g=0.21, b=0.93}
+local NOTE_CL_PVP, NOTE_CR_PVP = {r=1.0, g=0.6, b=0.6}, {r=1.0, g=0.2, b=0.2}
+local NOTE_CL_WEAPON, NOTE_CR_WEAPON = {r=1.0, g=0.8, b=0.4}, {r=1.0, g=0.5, b=0.0}
 
 -- [[ 1. VISUAL OPTIMIZATION: STATIC TABLES ]]
 
@@ -471,6 +475,102 @@ local function Colorize(text)
     return text
 end
 
+-- [[ WORD HIGHLIGHTING CACHE ]]
+-- Tooltips refresh ~5x/sec while hovered, so the stat-name list is lowered and
+-- sorted once (longest first, ties alphabetical) and per-line work reuses scratch arrays.
+local HL_Names = {}      -- { lname, localName, key }, longest lname first
+local HL_MapSize = -1    -- BaseStatMap size HL_Names was built from
+local HL_SpanS, HL_SpanE, HL_SpanIdx = {}, {}, {} -- accepted spans, ordered by start
+
+local function HL_MapCount(map)
+    local n = 0
+    for _ in pairs(map) do n = n + 1 end
+    return n
+end
+
+local function HL_Rebuild(map, size)
+    wipe(HL_Names)
+    for localName, internalKey in pairs(map) do
+        HL_Names[#HL_Names + 1] = { lname = localName:lower(), localName = localName, key = internalKey }
+    end
+    table_sort(HL_Names, function(a, b)
+        local la, lb = #a.lname, #b.lname
+        if la ~= lb then return la > lb end
+        if a.lname ~= b.lname then return a.lname < b.lname end
+        return a.localName < b.localName
+    end)
+    HL_MapSize = size
+end
+
+-- Wraps/shortens every stat name in the line. Names are matched against the original
+-- line, longest first, skipping any overlapping an accepted one, then replaced right
+-- to left -- replacing as we went let a later name match text an earlier one inserted
+-- ("damage per second" -> "Weapon DPS", then "dps" -> "Weapon DPS" again).
+local function HighlightWords(newText)
+    local lowerNewText = newText:lower()
+    local n = 0
+    for idx = 1, #HL_Names do
+        local entry = HL_Names[idx]
+        local s, e = string_find(lowerNewText, entry.lname, 1, true)
+        if s then
+            local clear, pos = true, n + 1
+            for j = 1, n do
+                if s <= HL_SpanE[j] and e >= HL_SpanS[j] then clear = false; break end
+                if pos > n and s < HL_SpanS[j] then pos = j end
+            end
+            if clear then
+                for j = n, pos, -1 do
+                    HL_SpanS[j + 1], HL_SpanE[j + 1], HL_SpanIdx[j + 1] = HL_SpanS[j], HL_SpanE[j], HL_SpanIdx[j]
+                end
+                HL_SpanS[pos], HL_SpanE[pos], HL_SpanIdx[pos] = s, e, idx
+                n = n + 1
+            end
+        end
+    end
+
+    local shortNames = MSC.StatShortNames
+    for j = n, 1, -1 do -- right to left so positions hold
+        local s, e = HL_SpanS[j], HL_SpanE[j]
+        local entry = HL_Names[HL_SpanIdx[j]]
+        local localName, internalKey = entry.localName, entry.key
+        local actualText = string.sub(newText, s, e)
+        local replacement = actualText
+
+        -- 1. SHORTEN
+        local shortName = shortNames and shortNames[internalKey]
+        if SGJ_Settings.SimplifyStats and shortName then
+            replacement = shortName
+        end
+
+        -- 2. COLOR
+        local color = nil
+        if shortName and VISUAL_COLORS[shortName] then
+            color = VISUAL_COLORS[shortName]
+        elseif VISUAL_COLORS[localName] then
+            color = VISUAL_COLORS[localName]
+        elseif VISUAL_COLORS[actualText] then
+            color = VISUAL_COLORS[actualText]
+        end
+
+        if SGJ_Settings.ColorizeStats and color then
+            replacement = "|c" .. color .. replacement .. "|r"
+        end
+
+        -- 3. REPLACE
+        if replacement ~= actualText then
+            newText = string.sub(newText, 1, s-1) .. replacement .. string.sub(newText, e+1)
+        end
+    end
+    return newText
+end
+
+-- Line memo: input text -> rewritten text (relic tooltips skip Compact Equip, so they
+-- get their own table). Each output is also stored as mapping to itself, so a line we
+-- already rewrote is left alone on the next refresh (the rewrite is not idempotent).
+local BT_Memo, BT_MemoRelic = {}, {}
+local BT_MemoCount = 0
+local BT_MemoFlags = nil
+
 function MSC:BeautifyTooltip(tooltip)
     if not SGJ_Settings then return end
     if not MSC.Scanner or not MSC.Scanner.EquipPatterns or not MSC.Scanner.ClassifyLine then return end
@@ -494,11 +594,29 @@ function MSC:BeautifyTooltip(tooltip)
 
     local prefix = tooltipName .. "TextLeft"
 
+    -- Memo results depend only on the line text, these settings and the stat map.
+    local baseMap = MSC.Scanner.BaseStatMap
+    local mapSize = baseMap and HL_MapCount(baseMap) or 0
+    local flags = (SGJ_Settings.SimplifyStats and "1" or "0") .. (SGJ_Settings.ColorizeStats and "1" or "0")
+        .. (SGJ_Settings.CompactEquip and "1" or "0") .. mapSize
+    if flags ~= BT_MemoFlags or BT_MemoCount > 2000 then
+        wipe(BT_Memo); wipe(BT_MemoRelic)
+        BT_MemoCount = 0
+        BT_MemoFlags = flags
+    end
+    if baseMap and mapSize ~= HL_MapSize then HL_Rebuild(baseMap, mapSize) end
+    local memo = isRelic and BT_MemoRelic or BT_Memo
+
     for i = 2, numLines do
         local leftObj = _G[prefix .. i]
         if leftObj then
             local text = leftObj:GetText()
+            local cached = nil
             if text and not MSC_IsSecret(text) then
+                cached = memo[text]
+                if cached and cached ~= text then leftObj:SetText(cached) end
+            end
+            if text and not cached and not MSC_IsSecret(text) then
                 local newText = text
                 local lineChanged = false
                 
@@ -535,8 +653,7 @@ function MSC:BeautifyTooltip(tooltip)
                                 if pat.p and not pat.func then
                                     local m1, m2 = string.match(cleanText, pat.p)
                                     if m1 then
-                                        local val = tonumber(pat.valIdx == 1 and m1 or m2)
-                                        local rawName = (pat.nameIdx == 1 and m1 or m2)
+                                        local val, rawName = MSC.Scanner.OrderCaptures(pat, m1, m2)
                                         local finalName = nil
 
                                         if pat.fixedStat and MSC.StatShortNames then
@@ -575,46 +692,15 @@ function MSC:BeautifyTooltip(tooltip)
                 end
 
                 -- [[ PHASE 2: WORD HIGHLIGHTING ]]
-                if not lineChanged and MSC.Scanner.BaseStatMap then
-                    local lowerNewText = newText:lower()
-                    
-                    for localName, internalKey in pairs(MSC.Scanner.BaseStatMap) do
-                        local s, e = string.find(lowerNewText, localName:lower(), 1, true)
-                        
-                        if s then
-                             local actualText = string.sub(newText, s, e)
-                             local replacement = actualText
-                             
-                             -- 1. SHORTEN
-                             local shortName = MSC.StatShortNames and MSC.StatShortNames[internalKey]
-                             if SGJ_Settings.SimplifyStats and shortName then 
-                                 replacement = shortName 
-                             end
-                             
-                             -- 2. COLOR
-                             local color = nil
-                             if shortName and VISUAL_COLORS[shortName] then
-                                 color = VISUAL_COLORS[shortName]
-                             elseif VISUAL_COLORS[localName] then
-                                 color = VISUAL_COLORS[localName]
-                             elseif VISUAL_COLORS[actualText] then
-                                 color = VISUAL_COLORS[actualText]
-                             end
-
-                             if SGJ_Settings.ColorizeStats and color then
-                                 replacement = "|c" .. color .. replacement .. "|r"
-                             end
-
-                             -- 3. REPLACE
-                             if replacement ~= actualText then
-                                 newText = string.sub(newText, 1, s-1) .. replacement .. string.sub(newText, e+1)
-                                 lowerNewText = newText:lower() 
-                             end
-                        end
-                    end
+                if not lineChanged and baseMap then
+                    newText = HighlightWords(newText)
                 end
 
+                memo[text] = newText
+                BT_MemoCount = BT_MemoCount + 1
                 if newText ~= text then
+                    memo[newText] = newText
+                    BT_MemoCount = BT_MemoCount + 1
                     leftObj:SetText(newText)
                 end
             end
@@ -760,12 +846,12 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
 
                 if not noteDisplayed then
                     local entry = nil
-                    local cL = {r=0.85, g=0.6, b=1.0}; local cR = {r=0.64, g=0.21, b=0.93}
+                    local cL, cR = NOTE_CL_DEFAULT, NOTE_CR_DEFAULT
 
                     if MSC.PvPDB and MSC.PvPDB[itemID] then
-                        entry = MSC.PvPDB[itemID]; cL = {r=1.0, g=0.6, b=0.6}; cR = {r=1.0, g=0.2, b=0.2} 
+                        entry = MSC.PvPDB[itemID]; cL, cR = NOTE_CL_PVP, NOTE_CR_PVP
                     elseif MSC.WeaponDB and MSC.WeaponDB[itemID] then
-                        entry = MSC.WeaponDB[itemID]; cL = {r=1.0, g=0.8, b=0.4}; cR = {r=1.0, g=0.5, b=0.0} 
+                        entry = MSC.WeaponDB[itemID]; cL, cR = NOTE_CL_WEAPON, NOTE_CR_WEAPON
                     elseif MSC.TrinketDB and MSC.TrinketDB[itemID] then
                         entry = MSC.TrinketDB[itemID]
                     elseif MSC.ProcDB and MSC.ProcDB[itemID] then
@@ -806,10 +892,13 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             end
 
             if MSC.SetBonusScores and oldSetCounts and newSetCounts then
-                for setID, scores in pairs(MSC.SetBonusScores) do
+                -- Only sets worn before or after the swap can change (not all 500+ sets).
+                local function CheckSet(setID)
+                    local scores = MSC.SetBonusScores[setID]
+                    if not scores then return end
                     local oC = oldSetCounts[setID] or 0
                     local nC = newSetCounts[setID] or 0
-                    
+
                     if nC < oC then
                         for req, _ in pairs(scores) do
                             local rN = tonumber(req)
@@ -821,6 +910,10 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                             if rN and nC >= rN and oC < rN then tooltip:AddLine(string_format(MSC.L["|cff00ff00+++ GAINED: %d-pc Set Bonus! +++|r"], rN)) end
                         end
                     end
+                end
+                for setID in pairs(oldSetCounts) do CheckSet(setID) end
+                for setID in pairs(newSetCounts) do
+                    if oldSetCounts[setID] == nil then CheckSet(setID) end
                 end
             end
 
@@ -855,10 +948,12 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                                 tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
 
                                 if oSC and nSC and MSC.SetBonusScores then
-                                    for setID, scores in pairs(MSC.SetBonusScores) do
+                                    -- Breaking needs oC > nC >= 0, so only sets worn before the swap.
+                                    for setID in pairs(oSC) do
+                                        local scores = MSC.SetBonusScores[setID]
                                         local oC = oSC[setID] or 0
                                         local nC = nSC[setID] or 0
-                                        if nC < oC then
+                                        if scores and nC < oC then
                                             for req, _ in pairs(scores) do
                                                 local rN = tonumber(req)
                                                 if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN)) end
@@ -952,17 +1047,14 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
-            local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
-            table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
-
             local function PrintList(label, list, cR, cG, cB)
                 local hp, lp = false, 0
                 for _, d in ipairs(list) do
                     if lp < 8 then 
                         if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
-                        local name = (MSC.GetCleanStatName(d.key) or d.key)
+                        local name = d.label or (MSC.GetCleanStatName(d.key) or d.key)
                         local level = UnitLevel("player")
-                        if MSC.GetRatingPercent then
+                        if MSC.GetRatingPercent and not d.label then
                              local percentVal = MSC:GetRatingPercent(d.key, math_abs(d.val), level)
                              if percentVal and percentVal > 0.01 then
                                  name = name .. string_format(" |cff888888(%.2f%%)|r", percentVal)
@@ -970,10 +1062,23 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         end
                         name = name .. (d.nameSuffix or "")
                         local valStr = (d.val%1==0) and string_format("%d", math_abs(d.val)) or string_format("%.1f", math_abs(d.val))
+                        if d.valSuffix then valStr = valStr .. d.valSuffix end
                         if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
                         tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)
                         lp = lp + 1
                     end
+                end
+            end
+
+            -- Forever weapon racial (e.g. Human Sword Specialization, +2% crit): the
+            -- score already counts it, so show it too when this swap gains or loses it.
+            local racialEntry
+            if MSC.GetForeverRacialSwapChange then
+                local racialName, critChange = MSC.GetForeverRacialSwapChange(link, slotId)
+                if racialName then
+                    racialEntry = { key = "MSC_RACIAL_CRIT", val = critChange, valSuffix = "%",
+                                    label = racialName .. " |cff888888(" .. (MSC.L["Crit"] or "Crit") .. ")|r" }
+                    table_insert(critChange > 0 and totalGains or totalLosses, 1, racialEntry)
                 end
             end
 
@@ -993,6 +1098,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                     end
                 end
                 table_sort(itemGains, StableSort); table_sort(itemLosses, StableSort)
+                if racialEntry then table_insert(racialEntry.val > 0 and itemGains or itemLosses, 1, racialEntry) end
 
                 -- [[ SMART DISPLAY: Only show dual lists if they actually differ ]]
                 if ListsAreDifferent(itemGains, totalGains) or ListsAreDifferent(itemLosses, totalLosses) then
@@ -1054,231 +1160,4 @@ end
 
 -- Quest tooltip hooks live in TooltipManager.lua
 
-
--- ============================================================================
--- PASSIVE LOOT DATA MINER (RECORD-STYLE)
--- ============================================================================
-local miner = CreateFrame("Frame")
-miner:RegisterEvent("LOOT_OPENED")
-miner:SetScript("OnEvent", function(self, event, ...)
-    if not MSC.IsForever then return end
-    
-    SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
-    if not SharpiesGearJudgeDB.EnableDataminer then return end
-    SharpiesGearJudgeDB.DropDatabase = SharpiesGearJudgeDB.DropDatabase or {}
-    
-    if event == "LOOT_OPENED" then
-        if UnitExists("target") and UnitIsDead("target") and not UnitIsPlayer("target") then
-            local guid = UnitGUID("target")
-            if not guid then return end
-            
-            local npcID = nil
-            -- Safely check for modern GUID format
-            local ok, hasDash = pcall(string.find, guid, "-")
-            if not ok then return end -- 11.5 Engine: 'secret string value' taint block
-            
-            if hasDash then
-                local parts = {strsplit("-", guid)}
-                if parts[1] == "Creature" or parts[1] == "Vehicle" then
-                    npcID = tonumber(parts[6])
-                end
-            -- Handle Vanilla/TBC Hex GUID format (0xF130000A23000000)
-            else
-                local okSub, hexPrefix = pcall(string.sub, guid, 1, 3)
-                if okSub and hexPrefix == "0xF" then
-                    npcID = tonumber(string.sub(guid, 6, 10), 16)
-                end
-            end
-            
-            if npcID then
-                local npcName = UnitName("target") or "Unknown"
-                local zoneName = GetRealZoneText() or "Unknown Zone"
-                
-                SharpiesGearJudgeDB.DropDatabase[npcID] = SharpiesGearJudgeDB.DropDatabase[npcID] or {
-                    name = npcName,
-                    zone = zoneName,
-                    drops = {}
-                }
-                
-                local numItems = GetNumLootItems()
-                for i = 1, numItems do
-                    local link = GetLootSlotLink(i)
-                    if link then
-                        local itemID = string.match(link, "item:(%d+)")
-                        if itemID then
-                            SharpiesGearJudgeDB.DropDatabase[npcID].drops[tonumber(itemID)] = true
-                        end
-                    end
-                end
-            end
-        end
-    end
-end)
-
-SlashCmdList["SGJ_MINER"] = function(msg)
-    msg = string.lower(msg or "")
-    SharpiesGearJudgeDB = SharpiesGearJudgeDB or {}
-    
-    if msg == "toggle" then
-        SharpiesGearJudgeDB.EnableDataminer = not SharpiesGearJudgeDB.EnableDataminer
-        local status = SharpiesGearJudgeDB.EnableDataminer and "|cff00ff00ON|r" or "|cffff0000OFF|r"
-        print("|cff00ffffSGJ Data Miner:|r Tracking and Roadmap Injection is now " .. status)
-        return
-    end
-
-    SharpiesGearJudgeDB.DropDatabase = SharpiesGearJudgeDB.DropDatabase or {}
-    local npcCount, itemCount = 0, 0
-    for npcID, data in pairs(SharpiesGearJudgeDB.DropDatabase) do
-        npcCount = npcCount + 1
-        for itemID, _ in pairs(data.drops) do
-            itemCount = itemCount + 1
-        end
-    end
-    local status = SharpiesGearJudgeDB.EnableDataminer and "|cff00ff00ON|r" or "|cffff0000OFF|r"
-    print(string.format("|cff00ffffSGJ Data Miner (%s):|r Tracking %d drops across %d unique NPCs.", status, itemCount, npcCount))
-end
-SLASH_SGJ_MINER1 = "/sgjminer"
-
-
-miner:RegisterEvent("QUEST_COMPLETE")
-local originalOnEvent = miner:GetScript("OnEvent")
-miner:SetScript("OnEvent", function(self, event, ...)
-    if originalOnEvent then originalOnEvent(self, event, ...) end
-    
-    if not MSC.IsForever then return end
-    if not SharpiesGearJudgeDB.EnableDataminer then return end
-    
-    SharpiesGearJudgeDB.QuestDatabase = SharpiesGearJudgeDB.QuestDatabase or {}
-    
-    if event == "QUEST_COMPLETE" then
-        local questID = GetQuestID and GetQuestID() or 0
-        if questID == 0 then return end -- Some very old clients don't support GetQuestID
-        
-        local questName = GetTitleText() or "Unknown Quest"
-        local zoneName = GetRealZoneText() or "Unknown Zone"
-        
-        SharpiesGearJudgeDB.QuestDatabase[questID] = SharpiesGearJudgeDB.QuestDatabase[questID] or {
-            name = questName,
-            zone = zoneName,
-            rewards = {}
-        }
-        
-        local numChoices = GetNumQuestChoices()
-        for i = 1, numChoices do
-            local link = GetQuestItemLink("choice", i)
-            if link then
-                local itemID = string.match(link, "item:(%d+)")
-                if itemID then
-                    SharpiesGearJudgeDB.QuestDatabase[questID].rewards[tonumber(itemID)] = true
-                end
-            end
-        end
-        
-        local numRewards = GetNumQuestRewards()
-        for i = 1, numRewards do
-            local link = GetQuestItemLink("reward", i)
-            if link then
-                local itemID = string.match(link, "item:(%d+)")
-                if itemID then
-                    SharpiesGearJudgeDB.QuestDatabase[questID].rewards[tonumber(itemID)] = true
-                end
-            end
-        end
-    end
-end)
-
--- Hook the slash command to include quest counts
-local oldSlash = SlashCmdList["SGJ_MINER"]
-SlashCmdList["SGJ_MINER"] = function(msg)
-    if oldSlash then oldSlash(msg) end
-    msg = string.lower(msg or "")
-    if msg == "toggle" then return end -- Handled by first slash command
-    
-    SharpiesGearJudgeDB.QuestDatabase = SharpiesGearJudgeDB.QuestDatabase or {}
-    local qCount, qItems = 0, 0
-    for qID, data in pairs(SharpiesGearJudgeDB.QuestDatabase) do
-        qCount = qCount + 1
-        for itemID, _ in pairs(data.rewards) do
-            qItems = qItems + 1
-        end
-    end
-    print(string.format("|cff00ffffSGJ Data Miner:|r Tracking %d rewards across %d unique Quests.", qItems, qCount))
-end
-
-
--- =========================================================================
--- [DATAMINER EXPORT UI]
--- =========================================================================
-function MSC.ShowMinerExport()
-    if not SGJ_MinerExportFrame then
-        local f = CreateFrame("Frame", "SGJ_MinerExportFrame", UIParent, "BasicFrameTemplateWithInset")
-        f:SetSize(600, 450)
-        f:SetPoint("CENTER")
-        f:SetFrameStrata("DIALOG")
-        f:SetMovable(true)
-        f:EnableMouse(true)
-        f:RegisterForDrag("LeftButton")
-        f:SetScript("OnDragStart", f.StartMoving)
-        f:SetScript("OnDragStop", f.StopMovingOrSizing)
-        f.TitleText:SetText("SGJ Dataminer Export (Ctrl+C to Copy)")
-        
-        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
-        sf:SetPoint("TOPLEFT", 10, -30)
-        sf:SetPoint("BOTTOMRIGHT", -30, 10)
-        
-        local eb = CreateFrame("EditBox", nil, sf)
-        eb:SetMultiLine(true)
-        eb:SetFontObject("ChatFontNormal")
-        eb:SetWidth(550)
-        eb:SetScript("OnEscapePressed", function() f:Hide() end)
-        sf:SetScrollChild(eb)
-        f.EditBox = eb
-        
-        -- Select all text when clicked
-        eb:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
-    end
-    
-    local lines = {}
-    table.insert(lines, "-- ==========================================")
-    table.insert(lines, "-- SGJ DATAMINER EXPORT")
-    table.insert(lines, "-- Paste this into Discord or the Addon files!")
-    table.insert(lines, "-- ==========================================")
-    
-    table.insert(lines, "local Drops = {")
-    if SharpiesGearJudgeDB and SharpiesGearJudgeDB.DropDatabase then
-        for npcID, data in pairs(SharpiesGearJudgeDB.DropDatabase) do
-            local dropStr = ""
-            for itemID, _ in pairs(data.drops) do
-                dropStr = dropStr .. itemID .. ", "
-            end
-            table.insert(lines, string.format('    [%d] = { name = "%s", zone = "%s", drops = { %s} },', npcID, tostring(data.name), tostring(data.zone), dropStr))
-        end
-    end
-    table.insert(lines, "}")
-    
-    table.insert(lines, "local Quests = {")
-    if SharpiesGearJudgeDB and SharpiesGearJudgeDB.QuestDatabase then
-        for questID, data in pairs(SharpiesGearJudgeDB.QuestDatabase) do
-            local rewStr = ""
-            for itemID, _ in pairs(data.rewards) do
-                rewStr = rewStr .. itemID .. ", "
-            end
-            table.insert(lines, string.format('    [%d] = { name = "%s", zone = "%s", rewards = { %s} },', questID, tostring(data.name), tostring(data.zone), rewStr))
-        end
-    end
-    table.insert(lines, "}")
-    
-    SGJ_MinerExportFrame.EditBox:SetText(table.concat(lines, "\n"))
-    SGJ_MinerExportFrame:Show()
-end
-
--- Hook the export command
-local oldMinerHook = SlashCmdList["SGJ_MINER"]
-SlashCmdList["SGJ_MINER"] = function(msg)
-    if msg and string.lower(msg) == "export" then
-        if MSC.ShowMinerExport then MSC.ShowMinerExport() end
-        return
-    end
-    if oldMinerHook then oldMinerHook(msg) end
-end
 

@@ -328,10 +328,45 @@ end
 -- per-class GetWeaponBonus), so this is shared across every class rather than
 -- reimplemented per profile.
 MSC.ForeverWeaponRacials = {
-    Human = { critPct = 2, subclasses = { [7] = true, [8] = true } },  -- Sword Specialization
-    Dwarf = { critPct = 1, subclasses = { [4] = true, [5] = true } },  -- Mace Specialization
-    Orc   = { critPct = 1, subclasses = { [0] = true, [1] = true } },  -- Axe Specialization
+    Human = { critPct = 2, subclasses = { [7] = true, [8] = true }, name = MSC.L["Sword Specialization"] },
+    Dwarf = { critPct = 1, subclasses = { [4] = true, [5] = true }, name = MSC.L["Mace Specialization"] },
+    Orc   = { critPct = 1, subclasses = { [0] = true, [1] = true }, name = MSC.L["Axe Specialization"] },
 }
+
+-- Racial crit change from equipping itemLink in slotId (16 or 17), against the
+-- weapons worn now: returns racial name and +critPct (gained), -critPct (lost),
+-- or nil when nothing changes. A two-hander in the main hand clears the off hand;
+-- an off-hand item next to a worn two-hander replaces it.
+function MSC.GetForeverRacialSwapChange(itemLink, slotId)
+    if not MSC.IsForever or not itemLink or (slotId ~= 16 and slotId ~= 17) then return nil end
+    local _, race = UnitRace("player")
+    local racial = race and MSC.ForeverWeaponRacials[race]
+    if not racial then return nil end
+
+    local function Qualifies(link)
+        if not link then return false end
+        local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(link)
+        return classID == 2 and subClassID ~= nil and racial.subclasses[subClassID] == true
+    end
+    local function Is2H(link)
+        local loc = link and select(9, GetItemInfo(link))
+        return loc == "INVTYPE_2HWEAPON" or loc == "INVTYPE_STAFF" or loc == "INVTYPE_POLEARM"
+    end
+
+    local mh, oh = GetInventoryItemLink("player", 16), GetInventoryItemLink("player", 17)
+    local had = Qualifies(mh) or Qualifies(oh)
+    local newMH, newOH = mh, oh
+    if slotId == 16 then
+        newMH = itemLink
+        if Is2H(itemLink) then newOH = nil end
+    else
+        newOH = itemLink
+        if Is2H(mh) then newMH = nil end
+    end
+    local has = Qualifies(newMH) or Qualifies(newOH)
+    if has == had then return nil end
+    return racial.name, has and racial.critPct or -racial.critPct
+end
 
 -- otherHandLink: the weapon in the other hand. The racial applies once while
 -- either hand holds that weapon type, so when the other hand already
@@ -873,7 +908,9 @@ function MSC.GetRawItemStats(itemLink)
     -- curated entry was found.
     if scanData.Procs and #scanData.Procs > 0 then finalStats._RAW_PROCS = scanData.Procs end
 
-    MSC.StatCache[itemLink] = finalStats
+    -- Don't cache a scan of an item whose data hasn't loaded (it would be
+    -- incomplete); the next call after GET_ITEM_INFO_RECEIVED rescans it.
+    if GetItemInfo(itemLink) then MSC.StatCache[itemLink] = finalStats end
     return finalStats
 end
 
@@ -900,26 +937,54 @@ function MSC:GetValidEnchantType(itemLink)
     return "Armor"
 end
 
+-- An enchant's name in the player's language: the game's own name for its
+-- Enchanting recipe (spell) or enchant item (item), falling back to the English
+-- name in Enchants_<Edition>.lua. showStats adds "+8 Str"-style stats for items
+-- that share a name (the Voracity arcanums).
+function MSC.GetEnchantName(data)
+    if not data then return "" end
+    local name
+    if data.spell then
+        if C_Spell and C_Spell.GetSpellName then name = C_Spell.GetSpellName(data.spell)
+        elseif GetSpellInfo then name = GetSpellInfo(data.spell) end
+    elseif data.item then
+        name = GetItemInfo(data.item)
+    end
+    if not name then return data.name or "" end
+    if data.showStats and data.stats then
+        local parts = {}
+        for stat, val in pairs(data.stats) do
+            parts[#parts + 1] = "+" .. val .. " " .. (MSC.GetCleanStatName(stat) or stat)
+        end
+        table.sort(parts)
+        name = name .. " (" .. table.concat(parts, ", ") .. ")"
+    end
+    return name
+end
+
 function MSC.GetEnchantScore(enchantID, weights)
     if not enchantID or not MSC.EnchantDB[enchantID] then return 0 end
     local stats = MSC.EnchantDB[enchantID].stats
     if not stats then return 0 end
-    local score = 0
-    for stat, value in pairs(stats) do
-        if weights[stat] then score = score + (value * weights[stat]) end
-    end
-    return score
+    -- Same scoring as item stats (Forever ratings converted to %, Spell Power's
+    -- healing half counted for healers).
+    return MSC.GetItemScore(stats, weights)
 end
 
 function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
-    local candidates = (level < 60 and MSC.EnchantCandidates_Leveling and MSC.EnchantCandidates_Leveling[slotId])
-    if not candidates or #candidates == 0 then candidates = MSC.EnchantCandidates and MSC.EnchantCandidates[slotId] end
+    local candidates = MSC.EnchantCandidates and MSC.EnchantCandidates[slotId]
     if not candidates then return nil end
+
+    local _, _, classID = UnitClass("player")
+    local classBit = classID and 2 ^ (classID - 1)
 
     local bestID, bestScore = nil, -1
     for _, id in ipairs(candidates) do
         local data = MSC.EnchantDB[id]
-        if data then
+        -- lvl: the level an enchant becomes a sensible suggestion; classMask: class-only
+        -- enchant items such as the Zul'Gurub idols (Enchants_<Edition>.lua).
+        if data and (not data.lvl or not level or data.lvl <= level)
+            and (not data.classMask or not classBit or bit.band(data.classMask, classBit) ~= 0) then
             local allowed = true
             if data.requires2H and enchantType ~= "2H" then allowed = false end
             if slotId == 17 then
@@ -1147,7 +1212,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
     local gemMode = SGJ_Settings and SGJ_Settings.GemMode or 1
     local gemQuality = SGJ_Settings and SGJ_Settings.GemQuality or 3
     local uniqueKey = ""
-    if globalUniques then
+    if globalUniques and next(globalUniques) ~= nil then
         local parts = {}
         for id, _ in pairs(globalUniques) do table_insert(parts, tostring(id)) end
         table_sort(parts)
@@ -1160,6 +1225,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
         return MSC:SafeCopy(MSC.ProcessedStatCache[procKey], {})
     end
     
+    local gemNameMissing = false
     local rawStats = MSC.GetRawItemStats(itemLink)
     local finalStats = {}
     for k,v in pairs(rawStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
@@ -1235,7 +1301,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                         end
                     end
                     finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = eqData.name .. " " .. MSC.L["(Equipped)"]
+                    finalStats.ENCHANT_TEXT = MSC.GetEnchantName(eqData) .. " " .. MSC.L["(Equipped)"]
                 end
             end
             
@@ -1259,7 +1325,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                         end
                     end
                     finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = bestData.name
+                    finalStats.ENCHANT_TEXT = MSC.GetEnchantName(bestData)
                 end
             end
         end
@@ -1412,7 +1478,8 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                     local gName = GetItemInfo(id)
                     local cType = MSC.GetGemColor(id) or "Unknown"
                     if type(cType) == "string" then cType = cType:sub(1,1)..cType:sub(2):lower() end
-                    if not gName then 
+                    if not gName then
+                        gemNameMissing = true
                         local g = MSC.GetGemStatsByID(id)
                         gName = g and (MSC.StatShortNames[g.stat] or MSC.L["Gem"]) or MSC.L["Gem"]
                     end
@@ -1472,7 +1539,9 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
             finalStats.MSC_WEAPON_SPEED = nil
         end
     end
-    if weights and MSC.ProcessedStatCache and not (globalUniques and next(globalUniques)) then
+    -- Skip the cache while item or projected-gem data is still loading
+    if weights and MSC.ProcessedStatCache and not (globalUniques and next(globalUniques))
+        and not gemNameMissing and GetItemInfo(itemLink) then
         MSC.ProcessedStatCache[procKey] = MSC:SafeCopy(finalStats, {})
     end
     return finalStats

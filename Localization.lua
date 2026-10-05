@@ -912,6 +912,9 @@ L["Dagger Specialization"] = "Dagger Specialization"
 L["Fist Weapon Specialization"] = "Fist Weapon Specialization"
 L["Sword Specialization"] = "Sword Specialization"
 L["Mace Specialization"] = "Mace Specialization"
+L["Axe Specialization"] = "Axe Specialization"
+L["Shield Tanks: No Two-Handers"] = "Shield Tanks: No Two-Handers"
+L["With a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you hold one, and the Roadmap builds a one-hander and shield set. Turn off to compare two-handers normally while you aren't using a shield."] = "With a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you hold one, and the Roadmap builds a one-hander and shield set. Turn off to compare two-handers normally while you aren't using a shield."
 L["Dual Wield Specialization"] = "Dual Wield Specialization"
 
 -- Shaman
