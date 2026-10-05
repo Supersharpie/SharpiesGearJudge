@@ -23,6 +23,12 @@ local WHATS_NEW = {
     { text = "Proc and use-effect trinkets now add their effect on top of their stats instead of a fixed score that ignored them." },
     { text = "Enchant suggestions rebuilt from your game's own data: only enchants your game really has, with their real stats, suited to your level and class." },
     { text = "Roadmap 3.1.0: quest rewards for every Forever zone, filtered to your faction and class.", forever = true },
+    { text = "Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly." },
+    { text = "Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans.", forever = true },
+    { text = "New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap." },
+    { text = "Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish." },
+    { text = "Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips." },
+    { text = "The beta dataminer is gone; anything it recorded is cleared from your saved data.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

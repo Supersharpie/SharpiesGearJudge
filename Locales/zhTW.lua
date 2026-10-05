@@ -1115,3 +1115,13 @@ L["|cff00FF00Sharpie's Gear Judge|r\n\nI see Pawn is active.\n\nFor conflict-fre
 L["|cff00FF00Sharpie's Gear Judge|r\n\nI see RestedXP is active.\n\nIt is currently showing its own gear tips.\n\nDo you want me to disable their **Item Upgrade** setting?"] = "|cff00FF00Sharpie's Gear Judge|r\n\n偵測到 RestedXP 已啟用。\n\n它目前正在顯示自己的裝備提示。\n\n要我停用它的 **物品升級** 設定嗎？"
 L["|cff00FF00Sharpie's Gear Judge|r\n\nI see Zygor Guides is active.\n\nIt adds its own 'Gear Score' to tooltips.\n\nDo you want me to disable their **Auto Gear** system?"] = "|cff00FF00Sharpie's Gear Judge|r\n\n偵測到 Zygor Guides 已啟用。\n\n它會在浮動提示中加入自己的「裝備分數」。\n\n要我停用它的 **自動裝備** 系統嗎？"
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\n設定檔匯入成功！\n\n必須重新載入介面才能讓變更生效。"
+
+-- =============================================================
+-- ADDED IN 3.2.1 (missing-string pass)
+-- =============================================================
+L["Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips."] = "更快：背包、商人或物品資料變動時，不必要的更新大幅減少，浮動提示也更輕快。"
+L["Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish."] = "已完整翻譯成 WoW Forever 推出的所有語言，現在也包括韓文、繁體中文和拉丁美洲西班牙文。"
+L["New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap."] = "新選項 盾牌坦克：不用雙手武器（預設開啟）：雙手武器不再在浮動提示和 Roadmap 中顯示為盾牌坦克的升級。"
+L["Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly."] = "Roadmap 3.1.0：新的核取方塊可選擇地城戰利品、地城任務和野外任務，掃描也更順暢。"
+L["The beta dataminer is gone; anything it recorded is cleared from your saved data."] = "Beta 資料收集器已移除；它記錄的內容會從你的儲存資料中清除。"
+L["Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans."] = "切換武器時，浮動提示現在會顯示你獲得或失去的武器種族天賦，例如人類的劍類武器專精。"

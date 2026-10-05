@@ -1636,3 +1636,13 @@ L["|cffffffffAuto-Detect:|r Automatically selects a profile based on your talent
 L["|cffffffffThe Casual:|r Simple gemming logic, usually respects socket colors."] = "|cffffffffEl Casual:|r Lógica de gemas simple, normalmente respeta los colores de las ranuras."
 L["|cffffffffThe Pro:|r Min-max gemming logic, prioritizes absolute highest score."] = "|cffffffffEl Pro:|r Lógica de gemas min-max, prioriza la puntuación más alta posible."
 L["|cffffffffThe Skeptic:|r Empty sockets are worth 0. Socket bonuses are ignored unless fully met."] = "|cffffffffEl Escéptico:|r Las ranuras vacías valen 0. Las bonificaciones de ranura se ignoran a menos que se cumplan por completo."
+
+-- =============================================================
+-- ADDED IN 3.2.1 (missing-string pass)
+-- =============================================================
+L["Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips."] = "Más rápido: muchas menos actualizaciones innecesarias cuando cambian tus bolsas, los vendedores o los datos de los objetos, y descripciones más ligeras."
+L["Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish."] = "Traducido por completo a todos los idiomas en los que sale WoW Forever, ahora también coreano, chino tradicional y español de Latinoamérica."
+L["New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap."] = "Nueva opción Tanques con escudo: sin armas a dos manos (activada por defecto): las armas a dos manos ya no aparecen como mejora para los tanques con escudo, ni en las descripciones ni en el Roadmap."
+L["Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly."] = "Roadmap 3.1.0: nuevas casillas eligen botín de mazmorra, misiones de mazmorra y misiones del mundo, y los escaneos van más fluidos."
+L["The beta dataminer is gone; anything it recorded is cleared from your saved data."] = "El recopilador de datos de la beta ya no está; todo lo que registró se borra de tus datos guardados."
+L["Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans."] = "Al cambiar de arma, la descripción muestra ahora el racial de arma que ganas o pierdes, por ejemplo Especialización en espada para los humanos."

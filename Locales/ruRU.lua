@@ -1756,3 +1756,13 @@ L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatica
 -- =============================================================
 -- ADDED IN 3.2.1 (missing-string pass)
 -- =============================================================
+
+-- =============================================================
+-- ADDED IN 3.2.1 (missing-string pass)
+-- =============================================================
+L["Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips."] = "Быстрее: гораздо меньше лишних обновлений при изменении сумок, торговцев или данных предметов, и более лёгкие подсказки."
+L["Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish."] = "Полностью переведено на все языки, на которых выходит WoW Forever, теперь также на корейский, традиционный китайский и латиноамериканский испанский."
+L["New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap."] = "Новая настройка «Танки со щитом: без двуручного оружия» (включена по умолчанию): двуручное оружие больше не показывается танкам со щитом как улучшение, ни в подсказках, ни в Roadmap."
+L["Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly."] = "Roadmap 3.1.0: новые флажки выбирают добычу из подземелий, задания подземелий и задания в мире, а поиск идёт плавнее."
+L["The beta dataminer is gone; anything it recorded is cleared from your saved data."] = "Сборщик данных беты удалён; всё, что он записал, стирается из ваших сохранённых данных."
+L["Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans."] = "При смене оружия подсказка теперь показывает получаемую или теряемую расовую способность к оружию, например Специализацию на владении мечами у людей."

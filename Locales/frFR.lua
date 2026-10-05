@@ -1761,3 +1761,13 @@ L["Manually override the scoring profile.\n\n|cffffffffAuto-Detect:|r Automatica
 -- =============================================================
 -- ADDED IN 3.2.1 (missing-string pass)
 -- =============================================================
+
+-- =============================================================
+-- ADDED IN 3.2.1 (missing-string pass)
+-- =============================================================
+L["Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips."] = "Plus rapide : beaucoup moins de mises à jour inutiles quand vos sacs, les marchands ou les données d'objets changent, et des infobulles plus légères."
+L["Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish."] = "Entièrement traduit dans toutes les langues de WoW Forever, désormais aussi en coréen, en chinois traditionnel et en espagnol d'Amérique latine."
+L["New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap."] = "Nouvelle option Tanks à bouclier : pas d'armes à deux mains (activée par défaut) : les armes à deux mains ne sont plus proposées comme amélioration aux tanks à bouclier, ni dans les infobulles ni dans la Roadmap."
+L["Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly."] = "Roadmap 3.1.0 : de nouvelles cases choisissent butin de donjon, quêtes de donjon et quêtes du monde, et les analyses sont plus fluides."
+L["The beta dataminer is gone; anything it recorded is cleared from your saved data."] = "Le collecteur de données de la bêta a disparu ; tout ce qu'il avait enregistré est effacé de vos données sauvegardées."
+L["Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans."] = "Lors d'un changement d'arme, l'infobulle indique maintenant le racial d'arme gagné ou perdu, par exemple Spécialisation Epée pour les humains."

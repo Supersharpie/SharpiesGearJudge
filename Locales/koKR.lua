@@ -1115,3 +1115,13 @@ L["|cff00FF00Sharpie's Gear Judge|r\n\nI see Pawn is active.\n\nFor conflict-fre
 L["|cff00FF00Sharpie's Gear Judge|r\n\nI see RestedXP is active.\n\nIt is currently showing its own gear tips.\n\nDo you want me to disable their **Item Upgrade** setting?"] = "|cff00FF00Sharpie's Gear Judge|r\n\nRestedXP가 활성화되어 있습니다.\n\n현재 자체 장비 팁을 표시하고 있습니다.\n\n해당 애드온의 **아이템 업그레이드** 설정을 끌까요?"
 L["|cff00FF00Sharpie's Gear Judge|r\n\nI see Zygor Guides is active.\n\nIt adds its own 'Gear Score' to tooltips.\n\nDo you want me to disable their **Auto Gear** system?"] = "|cff00FF00Sharpie's Gear Judge|r\n\nZygor Guides가 활성화되어 있습니다.\n\n툴팁에 자체 '장비 점수'를 추가합니다.\n\n해당 애드온의 **자동 장비** 기능을 끌까요?"
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\n프로필을 가져왔습니다!\n\n변경 사항을 적용하려면 UI를 리로드해야 합니다."
+
+-- =============================================================
+-- ADDED IN 3.2.1 (missing-string pass)
+-- =============================================================
+L["Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips."] = "더 빨라짐: 가방, 상인, 아이템 정보가 바뀔 때 불필요한 업데이트가 크게 줄고 툴팁이 가벼워졌습니다."
+L["Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish."] = "WoW Forever가 출시되는 모든 언어로 완전히 번역되었습니다. 이제 한국어, 번체 중국어, 중남미 스페인어도 포함됩니다."
+L["New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap."] = "새 옵션 방패 탱커: 양손 무기 제외 (기본 켜짐): 방패 탱커에게 양손 무기가 더 이상 툴팁과 Roadmap에서 업그레이드로 표시되지 않습니다."
+L["Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly."] = "Roadmap 3.1.0: 새 체크박스로 던전 전리품, 던전 퀘스트, 필드 퀘스트를 고를 수 있고 검색이 더 부드러워졌습니다."
+L["The beta dataminer is gone; anything it recorded is cleared from your saved data."] = "베타 데이터 수집기가 제거되었습니다. 기록된 내용은 저장된 데이터에서 지워집니다."
+L["Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans."] = "무기를 바꿀 때 얻거나 잃는 무기 종족 특성이 이제 툴팁에 표시됩니다. 예: 인간의 도검류 전문화."
