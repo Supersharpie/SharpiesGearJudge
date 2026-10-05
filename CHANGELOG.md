@@ -68,6 +68,7 @@
 - **Fixed: Receipt List Not Updating**: The Receipt list didn't refresh when your bags changed.
 - **Fixed: Wrong Scores for Copies of an Item**: Saved tooltip scores were stored by item number, so two copies with different random suffixes, enchants or gems could show each other's score.
 - **Fixed: Wearable Armor After Level 40**: Whether you can wear mail or plate is now checked again when you level up.
+- **Fixed: Unwearable Items Counted as Wearable**: An item checked before the game had loaded its data was remembered as wearable for the rest of the session. The check now waits until the item has loaded.
 - **Fixed: Wrong Item Matched After Loading**: An item that finished loading could refresh the tooltip of a different item whose number starts the same way (item 123 matched item 1234).
 - **Fixed: Socket Bonus Colour Check**: Only the red part of a socket bonus line's colour was read.
 - **Fixed: Blank Tooltip With Careful Aim**: A Hunter's Careful Aim could throw an error and leave the tooltip blank when no ranged attack power was listed yet.

@@ -121,8 +121,9 @@ function MSC.IsItemUsable(itemLink)
         end
     end
     
-    -- Save to Cache
-    MSC.UsableCache[itemLink] = result
+    -- Save to Cache (not while the item is still loading: classID is nil then, so
+    -- the checks above defaulted to usable and the tooltip scan read nothing)
+    if classID then MSC.UsableCache[itemLink] = result end
     return result
 end
 
