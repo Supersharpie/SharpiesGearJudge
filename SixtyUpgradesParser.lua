@@ -104,6 +104,14 @@ local suNumericMap = {
 -- 2. SIXTY UPGRADES PARSER LOGIC
 -- =============================================================
 
+-- Store weights under the key items carry on this game version (e.g. Forever
+-- weapon DPS is ITEM_MOD_DAMAGE_PER_SECOND_SHORT, not MSC_WEAPON_DPS).
+-- Socket keys (EMPTY_SOCKET_*) have no alias and pass through.
+local function Normalize(key)
+    if key and MSC.NormalizeStatKey then return MSC.NormalizeStatKey(key) end
+    return key
+end
+
 function MSC:ParseSixtyUpgradesString(inputString)
     if not inputString or type(inputString) ~= "string" then return nil end
     local weights = {}
@@ -113,7 +121,7 @@ function MSC:ParseSixtyUpgradesString(inputString)
     -- Try 1: JSON Format
     if string_find(inputString, "^{") or string_find(inputString, "\"stamina\"") then
         for key, val in string_gmatch(inputString, "\"([%w_]+)\"%s*:%s*([%-%d%.]+)") do
-            local internalKey = suStatMap[key]
+            local internalKey = Normalize(suStatMap[key])
             local numberVal = tonumber(val)
             if internalKey and numberVal and numberVal ~= 0 then
                 weights[internalKey] = (weights[internalKey] or 0) + numberVal
@@ -132,7 +140,7 @@ function MSC:ParseSixtyUpgradesString(inputString)
         -- Need to handle text keys and numeric keys
         for key, val in string_gmatch(inputString, "([%w]+)=([%-%d%.]+)") do
             if key ~= "name" then
-                local internalKey = suStatMap[key] or suNumericMap[key]
+                local internalKey = Normalize(suStatMap[key] or suNumericMap[key])
                 local numberVal = tonumber(val)
                 if internalKey and numberVal and numberVal ~= 0 then
                     weights[internalKey] = (weights[internalKey] or 0) + numberVal
@@ -145,7 +153,7 @@ function MSC:ParseSixtyUpgradesString(inputString)
     elseif string_find(inputString, "Stat,Value") or string_find(inputString, "\n") then
         for key, val in string_gmatch(inputString, "([%w_]+),([%-%d%.]+)") do
             if key ~= "Stat" then
-                local internalKey = suStatMap[key]
+                local internalKey = Normalize(suStatMap[key])
                 local numberVal = tonumber(val)
                 if internalKey and numberVal and numberVal ~= 0 then
                     weights[internalKey] = (weights[internalKey] or 0) + numberVal

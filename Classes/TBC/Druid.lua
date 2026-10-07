@@ -436,7 +436,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0, -- TBC gearing
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5,
 			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, 
 			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         },
@@ -449,7 +449,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.0,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
 			["ITEM_MOD_NATURE_DAMAGE_SHORT"] = 1.0, 
 			["ITEM_MOD_ARCANE_DAMAGE_SHORT"] = 1.0
         }
@@ -522,7 +522,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -531,7 +531,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 1.5,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0
         }
     },
 }
@@ -708,11 +708,19 @@ function Druid:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -951,7 +959,14 @@ end
 Druid.Profiles = {}
 for k, v in pairs(Druid.Weights) do Druid.Profiles[k] = v end
 if Druid.LevelingBrackets then
-    for k, v in pairs(Druid.LevelingBrackets) do Druid.Profiles[k] = v.End end
+    for k, v in pairs(Druid.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Druid.Profiles[k] = prof
+    end
 end
 if Druid.LevelingWeights then
     for k, v in pairs(Druid.LevelingWeights) do Druid.Profiles[k] = v end

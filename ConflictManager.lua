@@ -50,7 +50,7 @@ local function CheckForConflicts()
         if RXPSettings and RXPSettings.profileKeys then
             local myKey = UnitName("player") .. " - " .. GetRealmName()
             local profileName = RXPSettings.profileKeys[myKey]
-            if profileName and RXPSettings.profiles[profileName] and RXPSettings.profiles[profileName].enableItemUpgrades ~= false then
+            if profileName and RXPSettings.profiles and RXPSettings.profiles[profileName] and RXPSettings.profiles[profileName].enableItemUpgrades ~= false then
                 StaticPopup_Show("SGJ_DISABLE_RXP_GEAR"); return
             end
         end

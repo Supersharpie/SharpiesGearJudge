@@ -25,6 +25,7 @@ MSC.L = L
 -- =============================================================
 L["Classic Era"] = "Classic Era"
 L["TBC Edition"] = "TBC Edition"
+L["Forever Edition"] = "Forever Edition"
 L["|cff00ff00Sharpie's Gear Judge:|r Loaded %s"] = "|cff00ff00Sharpie's Gear Judge:|r Loaded %s"
 L["|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."] = "|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."
 L["|cffffd100SGJ Warning:|r 'Pawn' is loaded. Tooltips may look cluttered."] = "|cffffd100SGJ Warning:|r 'Pawn' is loaded. Tooltips may look cluttered."
@@ -40,6 +41,18 @@ L["OFF"] = "OFF"
 L["|cff00ff00SGJ:|r Text Simplification is now "] = "|cff00ff00SGJ:|r Text Simplification is now "
 L["|cff00ff00SGJ:|r Stat Coloring is now "] = "|cff00ff00SGJ:|r Stat Coloring is now "
 L["|cff00ff00SGJ:|r Jewelcrafter evaluation is now "] = "|cff00ff00SGJ:|r Jewelcrafter evaluation is now "
+-- /sgj hitcheck and /sgj talents (checks in game)
+L["|cff00ff00SGJ hit (%s):|r %.2f%% = %.2f%% from Hit Rating + %.2f%% from talents/other | target %.1f%%"] = "|cff00ff00SGJ hit (%s):|r %.2f%% = %.2f%% from Hit Rating + %.2f%% from talents/other | target %.1f%%"
+L["|cff00ff00SGJ:|r raid blend %.0f%%, defense %d, defense target %s"] = "|cff00ff00SGJ:|r raid blend %.0f%%, defense %d, defense target %s"
+L["none below 50"] = "none below 50"
+L["Melee"] = "Melee"
+L["Spell"] = "Spell"
+L["|cff00ff00SGJ talents:|r read from %s"] = "|cff00ff00SGJ talents:|r read from %s"
+L["trait tree"] = "trait tree"
+L["Classic talent API"] = "Classic talent API"
+L["(no talent points found)"] = "(no talent points found)"
+L["points per tree: %d / %d / %d"] = "points per tree: %d / %d / %d"
+L["profile: %s"] = "profile: %s"
 
 -- =============================================================
 -- 2. UI, MENUS & SETTINGS
@@ -299,6 +312,11 @@ L["Yellow Hit"] = "Yellow Hit"
 L["Y-Hit (Soft)"] = "Y-Hit (Soft)"
 L["Y-Hit (Rage)"] = "Y-Hit (Rage)"
 L["Hit (Capped)"] = "Hit (Capped)"
+L["Uncrushable"] = "Uncrushable"
+-- Hit cap modifier sources (TBC raid buff assumptions)
+L["Heroic Presence (Racial)"] = "Heroic Presence (Racial)"
+L["Improved Faerie Fire"] = "Improved Faerie Fire"
+L["Draenei in Raid"] = "Draenei in Raid"
 
 -- Stat Explanations (Logic Panel)
 L["Need %d more rating to cap."] = "Need %d more rating to cap."
@@ -437,6 +455,13 @@ L["spell power.-(%d+)"] = "spell power.-(%d+)"
 L["healing.-(%d+)"] = "healing.-(%d+)"
 L["mana per 5.-(%d+)"] = "mana per 5.-(%d+)"
 L["health per 5.-(%d+)"] = "health per 5.-(%d+)"
+-- Era/TBC "Restores 5 mana per 5 sec." (ITEM_MOD_MANA_REGENERATION)
+L["restores (%d+) mana per 5"] = "restores (%d+) mana per 5"
+L["restores (%d+) health per 5"] = "restores (%d+) health per 5"
+-- TBC "Increases attack power by %s in Cat, Bear, Dire Bear, and Moonkin forms only."
+L["attack power by (%d+) in cat"] = "attack power by (%d+) in cat"
+-- The amount on "... within 30 yards by up to 62." party-aura lines
+L["by up to (%d+)"] = "by up to (%d+)"
 L["spell critical hit.-(%d+)"] = "spell critical hit.-(%d+)"
 L["spell critical.-(%d+)"] = "spell critical.-(%d+)"
 L["critical hit with spells.-(%d+)"] = "critical hit with spells.-(%d+)"

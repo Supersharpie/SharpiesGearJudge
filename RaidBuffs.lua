@@ -135,14 +135,17 @@ function BE:ApplyWorldPreset(preset)
     self:InvalidateCaches()
 end
 
+-- (The toggle tables are nil after /sgjwipe until InitSettings runs again.)
 function BE:IsRaidBuffOn(id)
     if not SGJ_Settings or not SGJ_Settings.AssumeRaidBuffs then return false end
-    return SGJ_Settings.RaidBuffToggles[id] == true
+    local toggles = SGJ_Settings.RaidBuffToggles
+    return toggles ~= nil and toggles[id] == true
 end
 
 function BE:IsWorldBuffOn(id)
     if not SGJ_Settings or not SGJ_Settings.AssumeWorldBuffs then return false end
-    return SGJ_Settings.WorldBuffToggles[id] == true
+    local toggles = SGJ_Settings.WorldBuffToggles
+    return toggles ~= nil and toggles[id] == true
 end
 
 function BE:PlayerHasTalent(talentKey)
@@ -199,15 +202,45 @@ end
 -- Cap hysteresis (shared by all classes)
 -- -------------------------------------------------------------
 
+-- Callers pass the game's combat-rating id (the GetCombatRating index), but
+-- MSC.CombatRatingScalars (Database.lua) has its own column order:
+--   { WepS, Def, Dodge, Parry, Block, Hit, Crit, Haste, SpellHit, SpellCrit, SpellHaste, Resil }
+-- Indexing it with the game id read spell hit (8) from the Haste column and
+-- ranged hit (7) from the Crit column (spell hit cap 252 rating instead of 202).
+local CR_TO_SCALAR_COLUMN = {
+    [1] = 1,   -- CR_WEAPON_SKILL
+    [2] = 2,   -- CR_DEFENSE_SKILL
+    [3] = 3,   -- CR_DODGE
+    [4] = 4,   -- CR_PARRY
+    [5] = 5,   -- CR_BLOCK
+    [6] = 6,   -- CR_HIT_MELEE
+    [7] = 6,   -- CR_HIT_RANGED
+    [8] = 9,   -- CR_HIT_SPELL
+    [9] = 7,   -- CR_CRIT_MELEE
+    [10] = 7,  -- CR_CRIT_RANGED
+    [11] = 10, -- CR_CRIT_SPELL
+    [15] = 12, [16] = 12, [17] = 12, -- CR_CRIT_TAKEN_* (resilience)
+    [18] = 8,  -- CR_HASTE_MELEE
+    [19] = 8,  -- CR_HASTE_RANGED
+    [20] = 11, -- CR_HASTE_SPELL
+    [24] = 1,  -- CR_EXPERTISE
+}
+-- Rating per 1% at level 60, same column order (for the formula fallback).
+local SCALAR_AT_60 = { 2.5, 1.5, 12, 20, 5, 10, 14, 10, 8, 14, 10, 25 }
+
 function BE:GetRatingScalar(ratingId, level)
-    level = level or UnitLevel("player")
+    level = level or UnitLevel("player") or 70
     if level > 70 then level = 70 end
-    if MSC.CombatRatingScalars and MSC.CombatRatingScalars[level] and MSC.CombatRatingScalars[level][ratingId] then
-        return MSC.CombatRatingScalars[level][ratingId]
-    end
-    if ratingId == 8 then return 12.6 end  -- spell hit
-    if ratingId == 7 or ratingId == 6 then return 15.8 end  -- melee / ranged hit
-    return 15.8
+    -- TBC's rating curve is flat below level 10 (the table's 8-9 rows are 0 /
+    -- half, which made every point of hit look capped at level 8).
+    if level < 10 then level = 10 end
+    local col = CR_TO_SCALAR_COLUMN[ratingId] or 6
+    local row = MSC.CombatRatingScalars and MSC.CombatRatingScalars[level]
+    if row and row[col] and row[col] > 0 then return row[col] end
+    -- No row for this level: TBC's formula (level 60 value scaled by
+    -- (L - 8) / 52 below 60 and 82 / (262 - 3L) from 60 to 70).
+    local mult = (level >= 60) and (82 / (262 - 3 * level)) or ((level - 8) / 52)
+    return SCALAR_AT_60[col] * mult
 end
 
 --[[
@@ -363,6 +396,9 @@ function BE:GetEffectiveHitRatingBase(statKey, classTalentKey, talentRatingPerRa
     return math_max(0, base - creditRating)
 end
 
+-- `source` is an English L key: Interface.lua translates it when drawing
+-- (MSC.L[mod.source]) and compares it to "Heroic Presence (Racial)", so it
+-- stays untranslated here. The keys are listed in Localization.lua.
 function BE:GetCapModifiersForUI(specKey, hitType)
     local mods = {}
     if self:GetPersonalRacialHitPct() > 0 then

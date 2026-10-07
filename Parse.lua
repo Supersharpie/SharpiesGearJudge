@@ -202,6 +202,7 @@ MSC.Scanner.TermMap = {
     [MSC.L["damage done by frost spells and effects"]]  = "ITEM_MOD_FROST_DAMAGE_SHORT",
     [MSC.L["damage done by arcane spells and effects"]] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
     [MSC.L["damage done by nature spells and effects"]] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    [MSC.L["damage done by holy spells and effects"]]   = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     [MSC.L["holy damage"]]     = "ITEM_MOD_HOLY_DAMAGE_SHORT",
     
     -- TBC Short Forms
@@ -292,6 +293,8 @@ MSC.Scanner.StatPatterns = {
     { p = MSC.L["^(%d+) block$"], valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
 
     -- [[ 4. WEAPON & DPS ]]
+    -- (Translations capture "2,60" too: German, French, Spanish, Portuguese
+    -- and Russian tooltips write the decimal with a comma; ScanNum reads it.)
     { p = MSC.L["speed (%d+%.?%d*)"], valIdx = 1, fixedStat = "MSC_WEAPON_SPEED" },
     { p = MSC.L["^%((%d+%.?%d*) damage per second%)$"], valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
     { p = MSC.L["^%((%d+%.?%d*) dps%)$"], valIdx = 1, fixedStat = "MSC_WEAPON_DPS" },
@@ -311,7 +314,21 @@ MSC.Scanner.EquipPatterns = {
     -- ========================================================================
     -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority / Lazy Matching) ]]
     -- ========================================================================
-    
+
+    -- [[ MANA / HEALTH PER 5 ]]
+    -- Era/TBC print Mp5/Hp5 as "Equip: Restores 5 mana per 5 sec." (TBC's
+    -- ITEM_MOD_MANA_REGENERATION / _HEALTH_REGENERATION). Without these the
+    -- line fell through to "Proc not yet modeled" and scored 0. Forever's
+    -- "+5 Mana Regeneration" is read by the short form at the bottom.
+    { p = MSC.L["restores (%d+) mana per 5"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+    { p = MSC.L["restores (%d+) health per 5"], valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+
+    -- [[ FERAL ATTACK POWER (TBC) ]]
+    -- "Increases attack power by 140 in Cat, Bear, Dire Bear, and Moonkin forms
+    -- only." (ITEM_MOD_FERAL_ATTACK_POWER) -- must beat the generic
+    -- "increases (.*) by (%d+)" below, which read it as normal Attack Power.
+    { p = MSC.L["attack power by (%d+) in cat"], valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+
     -- [[ HYBRID HEAL/DAMAGE SPLIT ]]
     { p = MSC.L["healing.-(%d+).-damage.-(%d+)"], 
       func = function(heal, dmg, _, outputStats) 
@@ -328,21 +345,24 @@ MSC.Scanner.EquipPatterns = {
     },
     
     -- [[ ELEMENTAL DAMAGE (Must be checked BEFORE generic spell damage) ]]
-    { p = MSC.L["shadow damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
-    { p = MSC.L["fire damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
-    { p = MSC.L["frost damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
-    { p = MSC.L["arcane damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
-    { p = MSC.L["nature damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
-    { p = MSC.L["holy damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+    -- upTo: the lazy ".-(%d+)" takes the first number on the line, which on a
+    -- party aura ("...of all party members within 30 yards by up to 62") is
+    -- the range; the "by up to N" amount wins when the line has one.
+    { p = MSC.L["shadow damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT", upTo = true },
+    { p = MSC.L["fire damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT", upTo = true },
+    { p = MSC.L["frost damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT", upTo = true },
+    { p = MSC.L["arcane damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT", upTo = true },
+    { p = MSC.L["nature damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT", upTo = true },
+    { p = MSC.L["holy damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT", upTo = true },
 
     -- [[ CASTING STATS ]]
-    { p = MSC.L["damage and healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = MSC.L["damage done by magical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = MSC.L["damage done by spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = MSC.L["spell damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = MSC.L["spell power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
-    { p = MSC.L["healing done.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
-    { p = MSC.L["healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT" },
+    { p = MSC.L["damage and healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT", upTo = true },
+    { p = MSC.L["damage done by magical.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT", upTo = true },
+    { p = MSC.L["damage done by spells.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT", upTo = true },
+    { p = MSC.L["spell damage.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT", upTo = true },
+    { p = MSC.L["spell power.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT", upTo = true },
+    { p = MSC.L["healing done.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT", upTo = true },
+    { p = MSC.L["healing.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_HEALING_DONE_SHORT", upTo = true },
     { p = MSC.L["spell penetration.-(%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
 
     -- ========================================================================
@@ -465,6 +485,50 @@ local function ParseCooldown(text)
     return 120 
 end
 
+-- Stat key for the name part of an Equip/Use line ("strength", "chance to
+-- dodge an attack", "the block value of your shield").
+local function EscapePattern(s) return (string_gsub(s, "[%^%$%(%)%%%.%[%]%*%+%-%?]", "%%%0")) end
+local yourPrefix, termFragments
+function MSC.Scanner.LookupTerm(name, allowFragments)
+    if not name then return nil end
+    local TermMap, BaseStatMap = MSC.Scanner.TermMap, MSC.Scanner.BaseStatMap
+    if not yourPrefix then
+        yourPrefix = "^" .. EscapePattern(string_lower(MSC.L["your "]))
+        -- Era avoidance lines name more than the stat: "chance to dodge an
+        -- attack", "chance to parry an attack", "chance to block attacks with
+        -- a shield". Matched by the stat's own phrase inside the name.
+        termFragments = {
+            { string_lower(MSC.L["chance to dodge"]), "ITEM_MOD_DODGE_RATING_SHORT" },
+            { string_lower(MSC.L["chance to parry"]), "ITEM_MOD_PARRY_RATING_SHORT" },
+            { string_lower(MSC.L["chance to block"]), "ITEM_MOD_BLOCK_RATING_SHORT" },
+        }
+    end
+    -- Strip a LEADING "your " only: stripping it anywhere broke names that
+    -- contain it ("the block value of your shield" became "the block value
+    -- of shield" and matched nothing).
+    local raw = string_gsub(name, "[%s%.]+$", "")
+    local cleanName = string_gsub(string_gsub(raw, "^your ", ""), yourPrefix, "")
+    local key = TermMap[cleanName] or BaseStatMap[cleanName] or TermMap[raw] or BaseStatMap[raw]
+    if key or not allowFragments then return key end
+    for _, f in ipairs(termFragments) do
+        if f[1] ~= "" and string_find(cleanName, f[1], 1, true) then return f[2] end
+    end
+    return nil
+end
+
+-- "Unique-Equipped" (and TBC's "Unique-Equipped: <category> (n)") contain the
+-- word "equip" but aren't effects.
+local function IsUniqueEquippedLine(text)
+    if ITEM_UNIQUE_EQUIPPABLE and ITEM_UNIQUE_EQUIPPABLE ~= "" and string_find(text, ITEM_UNIQUE_EQUIPPABLE, 1, true) == 1 then return true end
+    for _, fmt in ipairs({ ITEM_LIMIT_CATEGORY_MULTIPLE, ITEM_LIMIT_CATEGORY }) do
+        if type(fmt) == "string" then
+            local prefix = string_match(fmt, "^([^%%]+)")
+            if prefix and #prefix > 3 and string_find(text, prefix, 1, true) == 1 then return true end
+        end
+    end
+    return false
+end
+
 function MSC.Scanner.ClassifyLine(text)
     if not text or MSC_IsSecret(text) or text == "" then return "SKIP" end
     local lower = string_lower(text)
@@ -475,6 +539,7 @@ function MSC.Scanner.ClassifyLine(text)
         or text == ITEM_SOULBOUND or string_find(lower, "^binds ") then
         return "FLUFF"
     end
+    if IsUniqueEquippedLine(text) then return "FLUFF" end
 
     -- [[ OPTIMIZATION: SIMPLE CHECKS FIRST ]]
 	if string_find(lower, MSC.L["chance on"]) then return "PROC" end
@@ -546,6 +611,10 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
 
             local val, name = MSC.Scanner.OrderCaptures(pat, match1, match2)
             if not pat.nameIdx then name = nil end
+            if pat.upTo then
+                local upTo = ScanNum(string_match(cleanText, MSC.L["by up to (%d+)"]))
+                if upTo then val = upTo end
+            end
 
             if val and pat.isPercent and MSC.IsTBC then
                 local mult = 15.8 
@@ -565,9 +634,7 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
                 outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + (val or 1)
                 return
             elseif val and name then
-                -- Use "[%s%.]+$" to strip trailing spaces AND periods
-                local cleanName = string_gsub(string_gsub(name, "your ", ""), "[%s%.]+$", "")
-                local key = MSC.Scanner.TermMap[cleanName] or MSC.Scanner.BaseStatMap[cleanName]
+                local key = MSC.Scanner.LookupTerm(name, true)
                 if key then outputStats[key] = (outputStats[key] or 0) + val; return end
             end
         end
@@ -751,8 +818,7 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                 if pat.fixedStat then 
                     effect.statKey = pat.fixedStat
                 elseif name then
-                    local cleanName = string_gsub(string_gsub(name, "your ", ""), "[%s%.]+$", "")
-                    effect.statKey = MSC.Scanner.TermMap[cleanName] or MSC.Scanner.BaseStatMap[cleanName]
+                    effect.statKey = MSC.Scanner.LookupTerm(name)
                 end
                 effect.type = "Stat"
             elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then
@@ -781,17 +847,26 @@ function MSC.Scanner.Scan(itemLink)
 
     local tip = _G["MSC_NewScannerTooltip"] or CreateFrame("GameTooltip", "MSC_NewScannerTooltip", nil, "GameTooltipTemplate")
     tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
-    pcall(function() tip:SetHyperlink(itemLink) end)
+    local setOK = pcall(function() tip:SetHyperlink(itemLink) end)
+    local numLines = tip:NumLines() or 0
+    -- Incomplete: the tooltip didn't load (or some text was a secret value we
+    -- can't read); GetRawItemStats doesn't cache such a scan.
+    if not setOK or numLines < 2 then result.Meta.Incomplete = true end
 
-    for i = 2, tip:NumLines() do 
+    for i = 2, numLines do
         local leftLine = _G["MSC_NewScannerTooltipTextLeft"..i]
         local leftText = leftLine and leftLine:GetText()
         local r, g, b = 1, 1, 1
         if leftLine then r, g, b = leftLine:GetTextColor() end
-        
+
         local rightLine = _G["MSC_NewScannerTooltipTextRight"..i]
         local rightText = rightLine and rightLine:GetText()
-        
+
+        -- Secret values error on compare/concatenate, so check before either.
+        if MSC_IsSecret(leftText) then leftText = nil; result.Meta.Incomplete = true end
+        if MSC_IsSecret(rightText) then rightText = nil; result.Meta.Incomplete = true end
+        if MSC_IsSecret(r) or MSC_IsSecret(g) or MSC_IsSecret(b) then r, g, b = 1, 1, 1 end
+
         local fullText = (leftText or "")
         if rightText and rightText ~= "" then
             fullText = fullText .. " " .. rightText

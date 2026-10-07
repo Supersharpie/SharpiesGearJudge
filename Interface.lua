@@ -111,6 +111,19 @@ local function RequestUpdate()
     end
 end
 
+-- A Protocol option that changes scores (profile, enchant/gem modes, buff
+-- assumptions, shield-tank 2H rule, Gear for Raiding) was changed: drop the
+-- cached scores and redraw every bag arrow, Baganator's included. Only called
+-- from those settings handlers, never from the per-BAG_UPDATE path.
+function MSC.OnScoringSettingsChanged()
+    if MSC.BumpScoringRevision then MSC:BumpScoringRevision()
+    elseif MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    MSC.BagCacheDirty = true
+    RequestUpdate()
+    if MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
+    if MSC.RequestBaganatorRefresh then MSC.RequestBaganatorRefresh() end
+end
+
 -- Quest events and the QuestInfo/QuestLog hooks share one pending refresh.
 local questRefreshPending = false
 local function RunQuestRefresh()
@@ -1493,10 +1506,14 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
 
         local scanPending = false
         local hookedShow = {}
+        local arrowsCleared = false -- arrows already hidden while Show Bag Arrows is off
         local ScanElvUIBags
         function ScanElvUIBags()
             scanPending = false
-            if SGJ_Settings and SGJ_Settings.ShowBagArrows == false then return end
+            -- With Show Bag Arrows off the scan still runs once to hide the
+            -- arrows already drawn (EvaluateAndDraw draws nothing then).
+            local arrowsOff = SGJ_Settings and SGJ_Settings.ShowBagArrows == false
+            if arrowsOff and arrowsCleared then return end
 
             local E = ElvUI and unpack(ElvUI)
             if not E then return end
@@ -1526,14 +1543,19 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                     end
                 end
             end
+            arrowsCleared = arrowsOff
         end
 
-        elvScanner:SetScript("OnEvent", function()
+        -- One scan per burst, shared by ElvUI's own events and
+        -- MSC.RefreshAllBagOverlays (both fire on BAG_UPDATE_DELAYED).
+        local function QueueElvUIScan()
             if not scanPending then
                 scanPending = true
                 C_Timer.After(0.15, ScanElvUIBags)
             end
-        end)
+        end
+        MSC.RefreshElvUIBagOverlays = QueueElvUIScan
+        elvScanner:SetScript("OnEvent", QueueElvUIScan)
 
         -- Also scan when the bag frame is shown/toggled
         local bagFrame = _G["ElvUI_ContainerFrame"]
@@ -2090,7 +2112,7 @@ local function GetClassRings(class, stats, weights, profileKey)
             local sotf = GetTalentRank(2, "Survival of the Fittest")
             if sotf > 0 then
                 local reduction = (sotf == 3 and 75) or (sotf == 2 and 50) or (sotf == 1 and 25) or 0
-                AddMod("Current Defense", "Survival of the Fittest", "Cap reduced by " .. reduction, false)
+                AddMod("Current Defense", "Survival of the Fittest", string.format(MSC.L["Cap reduced by %d"], reduction), false)
             end
             if sotf == 3 then CAP_DEF = maxBaseDef + 65
             elseif sotf == 2 then CAP_DEF = maxBaseDef + 90
@@ -2591,7 +2613,7 @@ function MSC.UpdateLogic()
                         else
                             modValStr = string_format(mod.isPct and "+%.0f%%" or "+%d", mod.val)
                         end
-                        GameTooltip:AddDoubleLine(mod.source, modValStr, 0.8, 0.8, 0.8, 0, 1, 0)
+                        GameTooltip:AddDoubleLine(mod.source and MSC.L[mod.source] or "", modValStr, 0.8, 0.8, 0.8, 0, 1, 0)
                     end
                 end
 
@@ -2766,7 +2788,8 @@ function MSC.InitSettingsView(parent)
         return h
     end
 
-    local function CreateDropdown(label, key, options, relTo, yOff, tooltip)
+    -- onChange (optional) runs after the setting is stored, e.g. to sync a paired checkbox.
+    local function CreateDropdown(label, key, options, relTo, yOff, tooltip, onChange)
         local frame = CreateFrame("Frame", nil, curCard); frame:SetSize(200, 50); frame:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, yOff); frame:EnableMouse(true)
         if tooltip then
             frame:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(label, 1, 1, 1); GameTooltip:AddLine(tooltip, nil, nil, nil, true); GameTooltip:Show() end)
@@ -2774,23 +2797,26 @@ function MSC.InitSettingsView(parent)
         end
         local lbl = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); lbl:SetPoint("TOPLEFT", 0, 0); lbl:SetText(label); lbl:SetTextColor(0.6, 0.6, 0.6)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
+        -- Shows the text of the option matching the saved setting (it can change outside this dropdown).
+        local function RefreshText()
+            local currentText = MSC.L["Select..."]
+            for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
+            UIDropDownMenu_SetText(dd, currentText)
+        end
         local function OnClick(self)
             UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
             if key == "Mode" then MSC.ManualSpec = self.value end
             if key == "RaidBuffPreset" and MSC.BuffEngine then MSC.BuffEngine:ApplyRaidPreset(self.value) end
             if key == "WorldBuffPreset" and MSC.BuffEngine then MSC.BuffEngine:ApplyWorldPreset(self.value) end
-            if key == "Mode" or key == "EnchantMode" or key == "GemMode" or key == "GemQuality" then
-                if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
-            elseif MSC.EvaluationCache then
-                wipe(MSC.EvaluationCache)
-            end
-            if MSC.BuffEngine and (key == "RaidBuffPreset" or key == "WorldBuffPreset") then MSC.BuffEngine:InvalidateCaches() end
-            MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end
+            RefreshText()
+            if onChange then onChange(self.value) end
+            MSC.OnScoringSettingsChanged()
         end
         local function Init(self, level) for _, opt in ipairs(options) do local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val); UIDropDownMenu_AddButton(info, level) end end
         UIDropDownMenu_Initialize(dd, Init)
-        local currentText = MSC.L["Select..."]; for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
-        UIDropDownMenu_SetText(dd, currentText); if key == "Mode" then f.ProfileDD = dd end
+        RefreshText(); if key == "Mode" then f.ProfileDD = dd end
+        frame:SetScript("OnShow", RefreshText)
+        frame.RefreshText = RefreshText
         curCard.Last = frame
         return frame
     end
@@ -2840,7 +2866,14 @@ function MSC.InitSettingsView(parent)
     local cb1 = CreateCheck(MSC.L["Hide Minimap Button"], "HideMinimap", MSC.L["Hides the circular button on your minimap."], hInterface, 0, -10)
     local cb2 = CreateCheck(MSC.L["Hide Tooltip Verdict"], "HideTooltips", MSC.L["Stops the addon from adding scores to item tooltips."], cb1, 0, -5)
     local cbShift = CreateCheck(MSC.L["Show Only via Shift Key"], "ShiftOnlyTooltip", MSC.L["Only shows the Judge score in tooltips while holding the SHIFT key."], cb2, 20, -5)
-    cb2:HookScript("OnClick", function(self) if self:GetChecked() then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end end)
+    -- Shift-only does nothing while tooltip verdicts are hidden: grey it out then
+    -- (on build, whenever the panel opens, and when Hide Tooltip Verdict is clicked).
+    local function SyncShiftCheck()
+        if SGJ_Settings.HideTooltips then cbShift:SetAlpha(0.5); cbShift:Disable() else cbShift:SetAlpha(1); cbShift:Enable() end
+    end
+    cb2:HookScript("OnClick", SyncShiftCheck)
+    cbShift:HookScript("OnShow", SyncShiftCheck)
+    SyncShiftCheck()
     local cb3 = CreateCheck(MSC.L["Mute Error Sounds"], "MuteSounds", MSC.L["Stops the error sound when clicking invalid items."], cbShift, -20, -5)
     local cb4 = CreateCheck(MSC.L["Disable Conflict Check"], "DisableConflictCheck", MSC.L["Stops the chat warning about Pawn/Zygor."], cb3, 0, -5)
     local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
@@ -2871,11 +2904,7 @@ function MSC.InitSettingsView(parent)
         CreateDropdown(MSC.L["Gem Quality"], "GemQuality", {{ text = MSC.L["Common (White/Vendor)"], val = 1 }, { text = MSC.L["Uncommon (Green)"], val = 2 }, { text = MSC.L["Rare (Blue)"], val = 3 }, { text = MSC.L["Epic (Purple)"], val = 4 }}, ddGem, -5, gemQualTip)
     end
     local cbTank2H = CreateCheck(MSC.L["Shield Tanks: No Two-Handers"], "ShieldTankNo2H", MSC.L["With a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you hold one, and the Roadmap builds a one-hander and shield set. Turn off to compare two-handers normally while you aren't using a shield."], cLogic.Last, 0, -5)
-    cbTank2H:HookScript("OnClick", function()
-        if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
-        MSC.BagCacheDirty = true
-        if RequestUpdate then RequestUpdate() end
-    end)
+    cbTank2H:HookScript("OnClick", MSC.OnScoringSettingsChanged)
 
     -- ==========================================
     -- SECTION 4: BUFF ASSUMPTIONS (right column)
@@ -2884,9 +2913,11 @@ function MSC.InitSettingsView(parent)
     local hBuffs = CreateHeader(MSC.L["Buff Assumptions"])
     local function InvalidateBuffCaches()
         if MSC.BuffEngine then MSC.BuffEngine:InvalidateCaches() end
-        MSC.BagCacheDirty = true
-        if RequestUpdate then RequestUpdate() end
+        MSC.OnScoringSettingsChanged()
     end
+    -- Each Assume checkbox and its preset dropdown mirror one another: picking
+    -- a preset ticks/unticks the box, and clicking the box updates the preset.
+    local ddRaidPreset, ddWorldPreset
     local cbRaid = CreateCheck(MSC.L["Assume Raid Buffed"], "AssumeRaidBuffs", MSC.L["Assume raid buffs and debuffs when scoring gear (ToW, IFF, Kings, Draenei in raid, etc.)."], hBuffs, 0, -10)
     cbRaid:HookScript("OnClick", function(self)
         if self:GetChecked() and SGJ_Settings.RaidBuffPreset == "off" then
@@ -2894,6 +2925,8 @@ function MSC.InitSettingsView(parent)
         elseif not self:GetChecked() and MSC.BuffEngine then
             MSC.BuffEngine:ApplyRaidPreset("off")
         end
+        self:SetChecked(SGJ_Settings.AssumeRaidBuffs == true)
+        if ddRaidPreset then ddRaidPreset.RefreshText() end
         InvalidateBuffCaches()
     end)
     local raidPresetOpts = {
@@ -2901,7 +2934,9 @@ function MSC.InitSettingsView(parent)
         { text = MSC.L["25-Man Full"], val = "full25" },
         { text = MSC.L["10-Man Minimal"], val = "minimal10" },
     }
-    local ddRaidPreset = CreateDropdown(MSC.L["Raid Buff Preset"], "RaidBuffPreset", raidPresetOpts, cbRaid, -5)
+    ddRaidPreset = CreateDropdown(MSC.L["Raid Buff Preset"], "RaidBuffPreset", raidPresetOpts, cbRaid, -5, nil, function()
+        cbRaid:SetChecked(SGJ_Settings.AssumeRaidBuffs == true)
+    end)
     local cbWorld = CreateCheck(MSC.L["Assume World Buffed"], "AssumeWorldBuffs", MSC.L["Assume classic world buffs (Ony, ZG, Songflower, DM Tribute). Usually off at 70 in Outland raids."], ddRaidPreset, 0, -5)
     cbWorld:HookScript("OnClick", function(self)
         if self:GetChecked() and SGJ_Settings.WorldBuffPreset == "off" then
@@ -2909,6 +2944,8 @@ function MSC.InitSettingsView(parent)
         elseif not self:GetChecked() and MSC.BuffEngine then
             MSC.BuffEngine:ApplyWorldPreset("off")
         end
+        self:SetChecked(SGJ_Settings.AssumeWorldBuffs == true)
+        if ddWorldPreset then ddWorldPreset.RefreshText() end
         InvalidateBuffCaches()
     end)
     local worldPresetOpts = {
@@ -2916,7 +2953,9 @@ function MSC.InitSettingsView(parent)
         { text = MSC.L["Full World Buffed"], val = "full" },
         { text = MSC.L["DM Tribute Only"], val = "dmTribute" },
     }
-    local ddWorldPreset = CreateDropdown(MSC.L["World Buff Preset"], "WorldBuffPreset", worldPresetOpts, cbWorld, -5)
+    ddWorldPreset = CreateDropdown(MSC.L["World Buff Preset"], "WorldBuffPreset", worldPresetOpts, cbWorld, -5, nil, function()
+        cbWorld:SetChecked(SGJ_Settings.AssumeWorldBuffs == true)
+    end)
 
     local cbCamping = CreateCheck(MSC.L["Assume Consumables"], "AssumeCampingBuffs", MSC.L["Assumes temporary weapon buffs like Sharpening Stones or Weightstones."], ddWorldPreset, 0, -5)
     cbCamping:HookScript("OnClick", InvalidateBuffCaches)
@@ -2967,8 +3006,10 @@ function MSC.InitSettingsView(parent)
         if selected and SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[selected] then
             SharpiesGearJudgeDB.customWeights[selected] = nil
             SGJ_Settings.Mode = "AUTO"; MSC.ManualSpec = "AUTO"; MSC.CachedWeights = nil
+            ddProfile.RefreshText() -- back to "Auto-Detect"
+            MSC.OnScoringSettingsChanged()
             print(string.format(MSC.L["|cff00ff00SGJ:|r Deleted custom profile: %s"], selected))
-            StaticPopup_Show("SGJ_RELOAD_REQUIRED")
+            StaticPopup_Show("SGJ_PROFILE_DELETED")
         else print(MSC.L["|cffff0000SGJ:|r You can only delete custom imported profiles."]) end
     end)
     cProfile.Last = bDeleteProfile
@@ -2980,13 +3021,24 @@ function MSC.InitSettingsView(parent)
     local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."]
     local hSpec = CreateHeader(MSC.L["Secondary Specs & Baselines"], specTip)
 
+    -- Row layout, in pixels from the checkbox's left edge (the card's inner padding).
+    local SPEC_NAME_W = 270                                   -- profile name text
+    local SPEC_BTN_X = 310                                    -- Save button
+    local SPEC_ROW_RIGHT = SETTINGS_CONTENT_W - 2 * SETTINGS_PAD -- inner right edge of the card
+    local function FitButtonWidth(btn, minW)
+        local fs = btn.GetFontString and btn:GetFontString()
+        local w = fs and fs:GetStringWidth() or 0
+        return math.max(minW, math.ceil(w) + 24)
+    end
+
     local lastAnchor = hSpec
+    local nextRowGap = -5
     for _, p in ipairs(profileList) do
         -- 1. The Tracking Checkbox
         local cb = CreateFrame("CheckButton", nil, cSpecs, "UICheckButtonTemplate")
-        if lastAnchor == hSpec then cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -10) else cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -5) end
+        if lastAnchor == hSpec then cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -10) else cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, nextRowGap) end
         cb.Text:SetText(p.text); cb.Text:SetTextColor(0.8, 0.8, 0.8)
-        cb.Text:SetWidth(300); cb.Text:SetJustifyH("LEFT"); cb.Text:SetWordWrap(false)
+        cb.Text:SetWidth(SPEC_NAME_W); cb.Text:SetJustifyH("LEFT"); cb.Text:SetWordWrap(false)
         cb:HookScript("OnShow", function(self) self:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val]) end); cb:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val])
         cb:HookScript("OnClick", function(self)
             if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
@@ -2994,10 +3046,11 @@ function MSC.InitSettingsView(parent)
         end)
 
         -- 2. The "Save Profile" Button
+        -- Buttons are sized from their (translated) text so longer languages fit.
         local btnSave = CreateFrame("Button", nil, cSpecs, "UIPanelButtonTemplate")
-        btnSave:SetSize(90, 22)
-        btnSave:SetPoint("LEFT", cb, "LEFT", 345, 0)
         btnSave:SetText(MSC.L["Save Profile"])
+        btnSave:SetSize(FitButtonWidth(btnSave, 90), 22)
+        btnSave:SetPoint("LEFT", cb, "LEFT", SPEC_BTN_X, 0)
         btnSave:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetText(MSC.L["Lock Baseline Profile"], 1, 1, 1)
@@ -3008,13 +3061,27 @@ function MSC.InitSettingsView(parent)
 
         -- 3. The "Clear Baseline" Button
         local btnClear = CreateFrame("Button", nil, cSpecs, "UIPanelButtonTemplate")
-        btnClear:SetSize(60, 22)
-        btnClear:SetPoint("LEFT", btnSave, "RIGHT", 5, 0)
         btnClear:SetText(MSC.L["Clear"])
+        btnClear:SetSize(FitButtonWidth(btnClear, 60), 22)
+        btnClear:SetPoint("LEFT", btnSave, "RIGHT", 5, 0)
 
-        -- 4. The Status Label
+        -- 4. The Status Label: beside the buttons when it fits in the card,
+        -- otherwise on its own line under them.
         local statusLbl = cSpecs:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-        statusLbl:SetPoint("LEFT", btnClear, "RIGHT", 10, 0)
+        statusLbl:SetJustifyH("LEFT"); statusLbl:SetWordWrap(false)
+        local inlineW = SPEC_ROW_RIGHT - (SPEC_BTN_X + btnSave:GetWidth() + 5 + btnClear:GetWidth() + 10)
+        statusLbl:SetText("|cff00ff00" .. MSC.L["Saved:"] .. "|r 9999.9")
+        local needW = statusLbl:GetStringWidth() or 0
+        statusLbl:SetText("|cff888888" .. MSC.L["Not Set"] .. "|r")
+        needW = math.max(needW, statusLbl:GetStringWidth() or 0) + 4
+        local statusOwnLine = needW > inlineW
+        if statusOwnLine then
+            statusLbl:SetPoint("TOPLEFT", btnSave, "BOTTOMLEFT", 2, -3)
+            statusLbl:SetWidth(SPEC_ROW_RIGHT - SPEC_BTN_X)
+        else
+            statusLbl:SetPoint("LEFT", btnClear, "RIGHT", 10, 0)
+            statusLbl:SetWidth(inlineW)
+        end
 
         local function UpdateStatusLabel()
             local pk = MSC:GetPlayerKey()
@@ -3057,7 +3124,9 @@ function MSC.InitSettingsView(parent)
         end)
 
         lastAnchor = cb
-        cSpecs.Last = cb
+        -- A status line under the buttons needs room before the next row
+        nextRowGap = statusOwnLine and -18 or -5
+        cSpecs.Last = statusOwnLine and statusLbl or cb
     end
 
     -- ==========================================
@@ -3241,6 +3310,10 @@ function MSC.SwitchTab(id)
     end
     for _, tab in ipairs(MSC.RegisteredTabs) do if MSC[tab.view] then MSC[tab.view]:Hide() end end
     local tab = MSC.RegisteredTabs[id]
+    -- The header shows the open tab's name next to the version.
+    if tab and MSC.MainFrame and MSC.MainFrame.SubTitle then
+        MSC.MainFrame.SubTitle:SetText(string.format("v%s %s", MSC.Version or "", tab.name or ""))
+    end
     if tab then
         local init = tab.directFunc or (tab.funcName and MSC[tab.funcName])
         if not MSC[tab.view] and init then init(MSC.MainFrame.Content) end
@@ -3355,8 +3428,18 @@ end
 
 -- hooksecurefunc errors on a missing global, which at file scope would abort
 -- the rest of this file, so each Blizzard function is checked first.
-if HandleModifiedItemClick then hooksecurefunc("HandleModifiedItemClick", function(link) if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
-if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
+-- One shift-click runs both hooks below (Blizzard's HandleModifiedItemClick
+-- calls ChatEdit_InsertLink), so the same link seen again within the same
+-- frame (same GetTime()) is the same click and is skipped.
+local lastLabLink, lastLabLinkTime
+local function LabLinkClickOnce(link)
+    local now = GetTime()
+    if link == lastLabLink and now == lastLabLinkTime then return end
+    lastLabLink, lastLabLinkTime = link, now
+    MSC.OnItemLinkClick(link)
+end
+if HandleModifiedItemClick then hooksecurefunc("HandleModifiedItemClick", function(link) if link and IsShiftKeyDown() and MSC.ViewLab and MSC.ViewLab:IsShown() then LabLinkClickOnce(link) end end) end
+if ChatEdit_InsertLink then hooksecurefunc("ChatEdit_InsertLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then LabLinkClickOnce(link) end end) end
 if DressUpItemLink then hooksecurefunc("DressUpItemLink", function(link) if link and MSC.ViewLab and MSC.ViewLab:IsShown() then MSC.OnItemLinkClick(link) end end) end
 
 if hooksecurefunc then
@@ -3402,6 +3485,7 @@ function MSC.RefreshAllBagOverlays()
     end)
     if MSC.RefreshBagnonOverlays then MSC.RefreshBagnonOverlays() end
     if MSC.RefreshGudaBagsOverlays then MSC.RefreshGudaBagsOverlays() end
+    if MSC.RefreshElvUIBagOverlays then MSC.RefreshElvUIBagOverlays() end
 end
 
 function MSC.QueueBagOverlayRefresh()
@@ -3553,52 +3637,63 @@ function MSC.ShowHistory()
     MSC.ExportFrame = f
 end
 
+-- Fills every missing setting with its default, keeping existing choices.
+-- Used on load and again by /sgjwipe. The defaults table is rebuilt each call
+-- so no two wipes share the same nested tables.
+function MSC.ApplySettingsDefaults()
+    SGJ_Settings = SGJ_Settings or {}
+
+    -- DEFINE DEFAULTS (These only apply if the setting doesn't exist yet)
+    local defaults = {
+        EnchantMode = 1,       -- Off
+        GemMode = 1,           -- Skeptic
+        GemQuality = 3,        -- NEW: Rare (Blue) Default
+        Mode = "AUTO",         -- Auto-Detect
+        HideMinimap = false,
+        HideTooltips = false,
+        MuteSounds = false,
+        CompactEquip = false,
+        ColorizeStats = true,
+        SimplifyStats = false,
+        TrackedSpecs = {},
+        GearProfiles = {},
+        ShowBagArrows = false,
+        FastBagArrows = true,
+        ShowLootArrows = false,
+        AssumeRaidBuffs = false,
+        AssumeWorldBuffs = false,
+        AssumeCampingBuffs = false,
+        GearForRaiding = true, -- Forever: hit/defense targets slide to raid caps from 50
+        ShieldTankNo2H = true, -- shield tanks never see a two-hander as an upgrade
+        RaidBuffPreset = "off",
+        WorldBuffPreset = "off",
+        RaidBuffToggles = {},
+        WorldBuffToggles = {},
+        ContentPhase = 1,
+    }
+
+    -- FILL MISSING SETTINGS ONLY
+    -- This loop preserves existing user choices during updates
+    for key, value in pairs(defaults) do
+        if SGJ_Settings[key] == nil then
+            SGJ_Settings[key] = value
+        end
+    end
+    if MSC.BuffEngine and MSC.BuffEngine.InitSettings then MSC.BuffEngine:InitSettings() end
+
+    -- Ensure the manual spec override is actually loaded into the engine!
+    MSC.ManualSpec = SGJ_Settings.Mode
+end
+
 local loader = CreateFrame("Frame")
 loader:RegisterEvent("ADDON_LOADED")
 loader:SetScript("OnEvent", function(self, event, name)
     if name == addonName then
         -- 1. INITIALIZE SAVED VARIABLES
-        SGJ_Settings = SGJ_Settings or {}
         SharpiesGearJudgeDB = SharpiesGearJudgeDB or { customWeights = {} }
-        
-        -- 2. DEFINE DEFAULTS (These only apply if the setting doesn't exist yet)
-        local defaults = {
-            EnchantMode = 1,       -- Off
-            GemMode = 1,           -- Skeptic
-            GemQuality = 3,        -- NEW: Rare (Blue) Default
-            Mode = "AUTO",         -- Auto-Detect
-            HideMinimap = false,
-            HideTooltips = false,
-            MuteSounds = false,
-            CompactEquip = false,
-            ColorizeStats = true,
-            SimplifyStats = false,
-            TrackedSpecs = {},
-            ShowBagArrows = false,
-            FastBagArrows = true,
-            ShowLootArrows = false,
-            AssumeRaidBuffs = false,
-            AssumeWorldBuffs = false,
-            AssumeCampingBuffs = false,
-            GearForRaiding = true, -- Forever: hit/defense targets slide to raid caps from 50
-            ShieldTankNo2H = true, -- shield tanks never see a two-hander as an upgrade
-            RaidBuffPreset = "off",
-            WorldBuffPreset = "off",
-            RaidBuffToggles = {},
-            WorldBuffToggles = {},
-            ContentPhase = 1,
-        }
 
-        -- 3. FILL MISSING SETTINGS ONLY
-        -- This loop preserves existing user choices during updates
-        for key, value in pairs(defaults) do
-            if SGJ_Settings[key] == nil then
-                SGJ_Settings[key] = value
-            end
-        end
-
-        -- NEW: Ensure the manual spec override is actually loaded into the engine!
-        MSC.ManualSpec = SGJ_Settings.Mode
+        -- 2. DEFAULTS FOR ANY MISSING SETTING
+        MSC.ApplySettingsDefaults()
 
         if not MSC.IsVanillaRules and MSC.BuildGemOptionsForPhase then
             MSC:BuildGemOptionsForPhase(SGJ_Settings.ContentPhase or 1)
@@ -3632,12 +3727,13 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
         f.Content = CreateFrame("Frame", nil, f)
         f.Content:SetPoint("TOPLEFT", 25, -50)
         f.Content:SetPoint("BOTTOMRIGHT", -25, 25)
+        -- Positioned once: after a drag it stays where the player put it
+        f:SetPoint("CENTER")
         MSC.BreakdownFrame = f
     end
-    
+
     local f = MSC.BreakdownFrame
     f:Show()
-    f:SetPoint("CENTER") 
     
     local weights, specName = MSC.GetCurrentWeights()
     if not weights and MSC.CurrentClass then 
@@ -3659,15 +3755,8 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
             end
         end
     end
-    if stats._AUTO_PROC then
-        local p = stats._AUTO_PROC
-        local w = weights[p.stat] or 0
-        if w > 0 then
-            local subScore = p.val * w
-            totalScore = totalScore + subScore
-            table_insert(sorted, { k=p.stat, v=p.val, w=w, s=subScore })
-        end
-    end
+    -- (An item's _AUTO_PROC value is already folded into its stats by
+    -- SafeGetItemStats, so it isn't added again here.)
 
     table_sort(sorted, function(a,b) return a.s > b.s end)
     
@@ -3768,7 +3857,11 @@ badScanner:SetScript("OnEvent", DumpBadSettings)
 
 local function SGJWipeSettings()
     SGJ_Settings = {}
-    print("|cff00ff00SGJ:|r Settings wiped. Please /reload to recreate defaults.")
+    -- Put every default back at once (buff toggles included) so nothing that
+    -- reads the settings meets a missing table before the next /reload.
+    MSC.ApplySettingsDefaults()
+    MSC.OnScoringSettingsChanged()
+    print(MSC.L["|cff00ff00SGJ:|r Settings reset to defaults. /reload to refresh any open windows."])
 end
 SLASH_SGJ_WIPE1 = "/sgjwipe"
 SlashCmdList["SGJ_WIPE"] = SGJWipeSettings
@@ -3834,10 +3927,24 @@ SlashCmdList["SGJ_FORCE"] = ForceWriteSGJ
 -- QUICK SAVE WORKAROUND (PTR/BETA SAVEDVARIABLES BUG FIX)
 -- ============================================================================
 
+-- Shown after "Delete Custom Profile" (SGJ_RELOAD_REQUIRED's text is about imports).
+StaticPopupDialogs["SGJ_PROFILE_DELETED"] = {
+    text = MSC.L["|cff00ccffSharpie's Gear Judge|r\n\nCustom profile deleted.\n\nReload your UI to remove it from the profile lists."],
+    button1 = MSC.L["Reload Now"],
+    button2 = MSC.L["Later"],
+    OnAccept = function()
+        ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+}
+
 StaticPopupDialogs["SGJ_QUICK_SAVE"] = {
-    text = "Save addon data to disk?\n\nThis will trigger a UI Reload to forcefully write all SavedVariables into your WTF folder. (This bypasses the Beta client crash bug).",
-    button1 = "Save (Reload UI)",
-    button2 = "Cancel",
+    text = MSC.L["Save addon data to disk?\n\nThis will trigger a UI Reload to forcefully write all SavedVariables into your WTF folder. (This bypasses the Beta client crash bug)."],
+    button1 = MSC.L["Save (Reload UI)"],
+    button2 = MSC.L["Cancel"],
     OnAccept = function()
         ReloadUI()
     end,
@@ -3849,7 +3956,7 @@ StaticPopupDialogs["SGJ_QUICK_SAVE"] = {
 
 local function QuickSaveSGJ()
     if InCombatLockdown() then
-        print("|cffff0000SGJ:|r Cannot quick-save while in combat!")
+        print(MSC.L["|cffff0000SGJ:|r Cannot quick-save while in combat!"])
         return
     end
     StaticPopup_Show("SGJ_QUICK_SAVE")

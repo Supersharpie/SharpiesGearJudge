@@ -59,7 +59,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
         MSC.ManualSpec = SGJ_Settings.Mode
         
-        local version = MSC.IsForever and "Forever Edition" or (MSC.IsEra and MSC.L["Classic Era"] or MSC.L["TBC Edition"])
+        local version = MSC.IsForever and MSC.L["Forever Edition"] or (MSC.IsEra and MSC.L["Classic Era"] or MSC.L["TBC Edition"])
         print(string.format(MSC.L["|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."], version))
         
     elseif event == "PLAYER_LOGIN" then
@@ -114,6 +114,8 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         MSC:DebugItem()
     elseif cmd == "jc" then
         SGJ_Settings.IsJC = not SGJ_Settings.IsJC
+        -- Gem projections depend on it: drop scores cached under the old setting.
+        if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
         print(MSC.L["|cff00ff00SGJ:|r Jewelcrafter evaluation is now "] .. (SGJ_Settings.IsJC and onText or offText))
     elseif cmd == "options" or cmd == "config" then 
         if MSC.OpenSettingsTab then MSC.OpenSettingsTab() end
@@ -122,30 +124,31 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
     elseif cmd == "hitcheck" and MSC.GetForeverHitPercent then
         -- Shows the pieces of the Forever hit reading, so it can be checked
         -- against the character sheet with a hit item on and off.
+        local kindNames = { MELEE = MSC.L["Melee"], RANGED = MSC.L["Ranged"], SPELL = MSC.L["Spell"] }
         for _, kind in ipairs({ "MELEE", "RANGED", "SPELL" }) do
             local total, fromRating, modifier = MSC:GetForeverHitPercent(kind)
             local cap = MSC.GetForeverCapTarget(kind == "RANGED" and "MELEE" or kind)
-            print(string.format("|cff00ff00SGJ hit (%s):|r %.2f%% = %.2f%% from Hit Rating + %.2f%% from talents/other | target %.1f%%", kind, total, fromRating, modifier, cap or 0))
+            print(string.format(MSC.L["|cff00ff00SGJ hit (%s):|r %.2f%% = %.2f%% from Hit Rating + %.2f%% from talents/other | target %.1f%%"], kindNames[kind], total, fromRating, modifier, cap or 0))
         end
         local def = MSC.GetForeverDefenseTarget and MSC.GetForeverDefenseTarget()
-        print(string.format("|cff00ff00SGJ:|r raid blend %.0f%%, defense %d, defense target %s", (MSC.GetRaidBlend() or 0) * 100, MSC:GetPlayerStat("DEFENSE"), def and string.format("%d", def) or "none below 50"))
+        print(string.format(MSC.L["|cff00ff00SGJ:|r raid blend %.0f%%, defense %d, defense target %s"], (MSC.GetRaidBlend() or 0) * 100, MSC:GetPlayerStat("DEFENSE"), def and string.format("%d", def) or MSC.L["none below 50"]))
     elseif cmd == "talents" then
         -- What SGJ reads from the talent tree, the points per tree, and the
         -- profile that picks (for checking talent detection in game).
         MSC.TalentCacheLoaded = false
         MSC:BuildTalentCache()
-        print(string.format("|cff00ff00SGJ talents:|r read from %s", MSC.TraitTalentData and "trait tree" or "Classic talent API"))
+        print(string.format(MSC.L["|cff00ff00SGJ talents:|r read from %s"], MSC.TraitTalentData and MSC.L["trait tree"] or MSC.L["Classic talent API"]))
         local shown = 0
         for name, rank in pairs(MSC.TalentCache or {}) do
             if rank > 0 then print("   " .. name .. " " .. rank); shown = shown + 1 end
         end
-        if shown == 0 then print("   (no talent points found)") end
-        print(string.format("   points per tree: %d / %d / %d", MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)))
+        if shown == 0 then print("   " .. MSC.L["(no talent points found)"]) end
+        print("   " .. string.format(MSC.L["points per tree: %d / %d / %d"], MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)))
         -- Clears the cached weights and profile together (clearing only the
         -- profile left tooltips with weights but no profile name)
         MSC:BumpScoringRevision()
         local _, specKey = MSC.GetCurrentWeights()
-        print("   profile: " .. tostring(specKey))
+        print("   " .. string.format(MSC.L["profile: %s"], tostring(specKey)))
     elseif cmd == "whatsnew" or cmd == "news" then
         if MSC.ShowWhatsNew then MSC.ShowWhatsNew() end
     else
@@ -247,6 +250,16 @@ end
 -- =============================================================
 -- 3. STAT CALCULATOR (The Breakdown Display)
 -- =============================================================
+-- Era item crit is a percent, so derived crit is added as a percent. Forever
+-- items carry Crit Rating instead, so derived crit is converted to rating
+-- there (flat 14 rating per 1%, from Database_Forever's CombatRatingScalars;
+-- col 7 = Crit, col 10 = Spell Crit) to sit in the same key as item crit.
+local function PercentToRating(percent, col)
+    if not MSC.IsForever then return percent end
+    local row = MSC.CombatRatingScalars and (MSC.CombatRatingScalars[UnitLevel("player")] or MSC.CombatRatingScalars[60])
+    return percent * ((row and row[col]) or 14)
+end
+
 function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
     wipe(outTable or {})
     local dest = outTable or {}
@@ -284,8 +297,11 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
         -- 3. Spell Crit (Version Branch)
         if MSC.IsVanillaRules then
             -- VANILLA: Roughly 59.5 Int = 1% Crit (Mage), others vary. Using ~60 as generic.
-            local critPercent = int / 60
-            dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) + critPercent
+            local intPerCrit = 60
+            -- Forever: the class's real Int per 1% spell crit at this level
+            if MSC.IsForever and MSC.GetForeverIntPerSpellCrit then intPerCrit = MSC.GetForeverIntPerSpellCrit() end
+            local critPercent = int / intPerCrit
+            dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] or 0) + PercentToRating(critPercent, 10)
         else
             -- TBC: Returns RATING.
             local intPerPercent = (class == "WARLOCK") and 82 or 80
@@ -302,8 +318,10 @@ function MSC.ExpandDerivedStats(baseStats, itemLink, outTable)
             -- VANILLA: Hunter/Rogue 29/20 Agi = 1%. War/Pal 20 Agi = 1%.
             local div = 20
             if class == "HUNTER" then div = 53 elseif class == "ROGUE" then div = 29 end
+            -- Forever: the class's real Agi per 1% crit at this level
+            if MSC.IsForever and MSC.GetForeverAgiPerCrit then div = MSC.GetForeverAgiPerCrit() end
             local critPercent = agi / div
-            dest["ITEM_MOD_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_CRIT_RATING_SHORT"] or 0) + critPercent
+            dest["ITEM_MOD_CRIT_RATING_SHORT"] = (dest["ITEM_MOD_CRIT_RATING_SHORT"] or 0) + PercentToRating(critPercent, 7)
         else
             -- TBC: Returns RATING.
             local agiPerPercent = (class == "HUNTER" or class == "ROGUE") and 40 or 25
@@ -588,7 +606,8 @@ function MSC:BeautifyTooltip(tooltip)
 
     local isRelic = false
     if link then
-        local _, _, _, equipLoc, _, classID, subClassID = GetItemInfo(link)
+        -- GetItemInfoInstant order: itemID, type, subType, equipLoc, icon, classID, subClassID
+        local _, _, _, equipLoc, _, classID, subClassID = GetItemInfoInstant(link)
         isRelic = (equipLoc == "INVTYPE_RELIC") or (classID == 4 and (subClassID == 7 or subClassID == 8 or subClassID == 9 or subClassID == 11))
     end
 
@@ -708,6 +727,42 @@ function MSC:BeautifyTooltip(tooltip)
     end
 end
 
+-- [[ WORN COPY DETECTION ]]
+-- Rings, trinkets and dual-wield weapons compare against the other slot of
+-- their pair, so an item worn in slot 11 is compared against slot 12. That is
+-- right for a copy in the bags, but the worn copy itself should read
+-- "* EQUIPPED *". Returns the slot the hovered copy is worn in, or nil.
+local TWIN_SLOT = { [11] = 12, [12] = 11, [13] = 14, [14] = 13, [16] = 17, [17] = 16 }
+local GetBagNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
+local GetBagItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
+
+local function GetWornSlot(tooltip, link, slotId)
+    if GetInventoryItemLink("player", slotId) == link then return slotId end
+    local twin = TWIN_SLOT[slotId]
+    if not twin or GetInventoryItemLink("player", twin) ~= link then return nil end
+
+    -- The same item is worn in the twin slot. Hovering a character-sheet slot
+    -- (CharacterFinger0Slot etc.) settles it.
+    local owner = tooltip.GetOwner and tooltip:GetOwner()
+    if owner and owner.GetName and owner.GetID then
+        local ok, name = pcall(owner.GetName, owner)
+        if ok and type(name) == "string" and not MSC_IsSecret(name) and string_find(name, "^Character%w+Slot$") then
+            return (owner:GetID() == twin) and twin or nil
+        end
+    end
+
+    -- Otherwise (other character frames, chat links): it's the worn copy unless
+    -- a copy with the same link sits in the bags.
+    if GetBagNumSlots and GetBagItemLink then
+        for bag = 0, 4 do
+            for bagSlot = 1, (GetBagNumSlots(bag) or 0) do
+                if GetBagItemLink(bag, bagSlot) == link then return nil end
+            end
+        end
+    end
+    return twin
+end
+
 function MSC.EvaluateAndDrawTooltip(tooltip)
     -- [[ 1. INSTANT CHECKS & LAYOUT PROTECTION ]]
     if MSC.IsCalculating then return end
@@ -785,9 +840,15 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         local slotId = MSC.GetComparisonSlot(link, equipLoc, weights, specName)
         if not slotId then return end
 
-        local newScore, oldScore, itemNewStats, itemOldStats, newStatsTotal, oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg = MSC:EvaluateUpgrade(link, slotId, weights, specName)
+        -- A worn ring/trinket/dual-wield weapon: GetComparisonSlot points at
+        -- the other slot of the pair (right for a copy in the bags), so score
+        -- the worn copy in its own slot and mark it equipped.
+        local wornSlot = GetWornSlot(tooltip, link, slotId)
+        local isEquipped = (wornSlot ~= nil)
+        if wornSlot then slotId = wornSlot end
+
+        local newScore, oldScore, itemNewStats, itemOldStats, newStatsTotal, oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg, pairedFromBags = MSC:EvaluateUpgrade(link, slotId, weights, specName)
         local delta = newScore - oldScore
-        local isEquipped = (GetInventoryItemLink("player", slotId) == link)
         
         -- [[ THE HEADER ]]
         tooltip:AddLine(" ")
@@ -944,7 +1005,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                             if tDelta > 0.01 then
                                 local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
                                 local label = "|cff00ccff" .. prettySpec .. ":|r"
-                                if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(Saved):|r" end
+                                if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(" .. MSC.L["Saved"] .. "):|r" end
                                 tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
 
                                 if oSC and nSC and MSC.SetBonusScores then
@@ -1043,7 +1104,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 -- [[ THE FIX: ONLY dual-list if we are actively combining 1H items ]]
                 if not isNew2H then
                     if isCurrent2H then isWeaponSetSwap = true end
-                    if contextMsg and string_find(contextMsg, "w/ ") then isWeaponSetSwap = true end
+                    if pairedFromBags then isWeaponSetSwap = true end
                 end
             end
 

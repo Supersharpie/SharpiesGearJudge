@@ -514,11 +514,19 @@ function Mage:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -582,7 +590,14 @@ function Mage:GetWeaponBonus(itemLink) return 0 end
 Mage.Profiles = {}
 for k, v in pairs(Mage.Weights) do Mage.Profiles[k] = v end
 if Mage.LevelingBrackets then
-    for k, v in pairs(Mage.LevelingBrackets) do Mage.Profiles[k] = v.End end
+    for k, v in pairs(Mage.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Mage.Profiles[k] = prof
+    end
 end
 if Mage.LevelingWeights then
     for k, v in pairs(Mage.LevelingWeights) do Mage.Profiles[k] = v end

@@ -86,6 +86,156 @@ MSC.PendingModules = {} -- Storage for modules waiting for player login
 function MSC.RegisterModule(className, classTable)
     -- Store them all. We don't know who we are yet.
     MSC.PendingModules[className] = classTable
+    -- Every class's weapon bonus stays reachable after login (the modules
+    -- themselves are dropped), so plugins can score weapons for other
+    -- characters. These functions don't use self or their module table.
+    if classTable.GetWeaponBonus then
+        MSC.ClassWeaponBonus[className:upper()] = classTable.GetWeaponBonus
+    end
+    -- Same for relics (librams, idols, totems), but only the relic table is
+    -- kept: the classes' GetRelicBonus methods reach their whole module
+    -- through an upvalue, so keeping them would keep every module alive.
+    -- MSC.GetClassRelicBonus rebuilds their result from the table (below).
+    local relics = classTable.Relics or classTable.Totems or classTable.Idols
+    if type(relics) == "table" then
+        MSC.ClassRelics[className:upper()] = relics
+    end
+end
+
+-- =============================================================
+-- 2b. WHO A WEAPON BONUS IS FOR
+-- =============================================================
+-- Weapon bonuses (racials, weapon talents) read the character through these.
+-- A plugin scoring for another character sets MSC.BonusContext to
+-- { race = "Human", level = 20, ap = 300, talentRanks = { WEAPONMASTER = 2 } }
+-- for the length of the call; nil means the logged-in player.
+MSC.ClassWeaponBonus = MSC.ClassWeaponBonus or {}
+MSC.BonusContext = nil
+
+-- Some languages name a talent tree differently per class while the English
+-- profile/build name is shared (Korean: Warrior Protection 방어, Paladin 보호).
+-- MSC.ClassL(class, key) returns the "key|CLASS" translation when the locale has
+-- one, else MSC.L[key]. rawget: MSC.L caches every key it is asked for.
+function MSC.ClassL(class, key)
+    local L = MSC.L
+    return (class and key and rawget(L, key .. "|" .. class)) or L[key]
+end
+
+function MSC.CtxRace()
+    local ctx = MSC.BonusContext
+    if ctx and ctx.race then return ctx.race end
+    local _, race = UnitRace("player")
+    return race
+end
+
+function MSC.CtxLevel()
+    local ctx = MSC.BonusContext
+    if ctx and ctx.level then return ctx.level end
+    return UnitLevel("player")
+end
+
+function MSC.CtxAttackPower()
+    local ctx = MSC.BonusContext
+    if ctx and ctx.ap then return ctx.ap end
+    if not UnitAttackPower then return 0 end
+    local base, pos, neg = UnitAttackPower("player")
+    return (base or 0) + (pos or 0) + (neg or 0)
+end
+
+-- =============================================================
+-- 2c. RELICS FOR ANY CLASS
+-- =============================================================
+-- MSC.GetClassRelicBonus(className, relicID, specName) -> stat table or nil
+-- The equivalent stats a relic gives a class/spec, for any class (plugins
+-- scoring other characters). Same result as that class's own GetRelicBonus:
+--   * a relic entry that is a stat table -> a copy of it (Era, TBC, Forever;
+--     may carry non-number keys such as note/estimate: use the numbers);
+--   * an entry that is a function(role, ctx, spec) (Forever) -> its result,
+--     as MSC.GetForeverRelicBonus does;
+--   * TBC Idol of the Raven Goddess (32387) -> its per-spec bonus, mirrored
+--     from Classes/TBC/Druid.lua (the only relic handled in code there).
+-- For the logged-in class it calls the class's own GetRelicBonus.
+-- nil: unknown class, not one of that class's relics, or an error.
+-- With MSC.BonusContext set (another character), relic effects that read
+-- character stats use its level/ap (and spirit/itemArmor/shieldBlock when
+-- given) and talent checks use its talentRanks; otherwise the logged-in
+-- character's live stats are used.
+MSC.ClassRelics = MSC.ClassRelics or {}
+
+local function CopyStats(t)
+    local out = {}
+    for k, v in pairs(t) do out[k] = v end
+    return out
+end
+
+local function RavenGoddessTBC(spec)
+    local bonus = {}
+    if spec:find("RESTO") or spec:find("Healer") then
+        bonus.ITEM_MOD_SPELL_HEALING_DONE_SHORT = 44
+    elseif spec:find("FERAL") or spec:find("Cat") or spec:find("Bear") then
+        bonus.ITEM_MOD_CRIT_RATING_SHORT = 20
+    elseif spec:find("BALANCE") or spec:find("Caster") then
+        bonus.ITEM_MOD_SPELL_CRIT_RATING_SHORT = 20
+    end
+    return bonus
+end
+
+local function RelicBonusFromTable(classKey, relicID, spec)
+    if MSC.IsTBC and classKey == "DRUID" and relicID == 32387 then return RavenGoddessTBC(spec) end
+    local relics = MSC.ClassRelics[classKey]
+    local entry = relics and relics[relicID]
+    if entry == nil then return nil end
+    -- The shared body in Helpers (function or stat-table entries)
+    if MSC.GetForeverRelicBonus then return MSC.GetForeverRelicBonus(relics, relicID, spec) end
+    if type(entry) == "table" then return CopyStats(entry) end
+    return nil
+end
+
+function MSC.GetClassRelicBonus(className, relicID, specName)
+    if type(className) ~= "string" or type(relicID) ~= "number" then return nil end
+    local classKey = className:upper()
+    local spec = specName or ""
+    local _, playerClass = UnitClass("player")
+    local isPlayerClass = (playerClass == classKey)
+
+    -- Relic effects read the character through MSC.GetRelicContext. For
+    -- another class or character, swap in a context with its values for
+    -- this call only (restored below, even after an error).
+    local liveContext = MSC.GetRelicContext
+    local swapped = false
+    if liveContext and (type(MSC.BonusContext) == "table" or not isPlayerClass) then
+        MSC.GetRelicContext = function()
+            local c = liveContext()
+            local bc = MSC.BonusContext
+            if type(bc) == "table" then
+                if bc.level then c.level = bc.level end
+                if bc.ap then c.ap = bc.ap end
+                if bc.spirit then c.spirit = bc.spirit end
+                if bc.itemArmor then c.itemArmor = bc.itemArmor end
+                if bc.shieldBlock then c.shieldBlock = bc.shieldBlock end
+            end
+            -- Classic regen from Spirit (Shamans have a higher base), as in GetRelicContext
+            c.spiritRegen5 = ((classKey == "SHAMAN") and (17 + (c.spirit or 0) / 5) or (15 + (c.spirit or 0) / 5)) * 2.5
+            return c
+        end
+        swapped = true
+    end
+
+    local ok, result = pcall(function()
+        local cc = MSC.CurrentClass
+        if isPlayerClass and cc and cc.GetRelicBonus then
+            local res = cc:GetRelicBonus(relicID, spec)
+            if type(res) ~= "table" then return nil end
+            -- {} for an item that isn't one of the class's relics -> nil
+            if next(res) == nil and RelicBonusFromTable(classKey, relicID, spec) == nil then return nil end
+            return res
+        end
+        return RelicBonusFromTable(classKey, relicID, spec)
+    end)
+
+    if swapped then MSC.GetRelicContext = liveContext end
+    if ok then return result end
+    return nil
 end
 
 -- =============================================================

@@ -24,6 +24,10 @@ Paladin.Weights = {
     ["RET_STANDARD"] = {
         ["ITEM_MOD_STRENGTH_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HIT_RATING_SHORT"]=22.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2 
     },
+    -- Ret with Blessing of Kings (GetSpec: Repentance + Kings). The build's extra value is
+    -- the raid buff, not a different gear need: it fights as a Ret Paladin, so it uses
+    -- RET_STANDARD's weights (copied below the table).
+    ["RET_UTILITY"] = {},
     ["SHOCKADIN"] = {
         ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5 
     },
@@ -31,6 +35,7 @@ Paladin.Weights = {
         ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.5 
     },
 }
+for stat, w in pairs(Paladin.Weights["RET_STANDARD"]) do Paladin.Weights["RET_UTILITY"][stat] = w end
 
 -- =============================================================
 -- LEVELING LOGIC
@@ -146,7 +151,7 @@ function Paladin:GetWeaponBonus(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
+    local race = MSC.CtxRace()
 
     -- Racial: Human (Sword/Mace)
     if race == "Human" and (subClassID == 7 or subClassID == 4 or subClassID == 8 or subClassID == 5) then 

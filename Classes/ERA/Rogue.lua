@@ -184,7 +184,7 @@ function Rogue:GetWeaponBonus(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
+    local race = MSC.CtxRace()
 
     -- Racial: Human (Sword/Mace) +5 Skill is massive in Era
     if race == "Human" and (subClassID == 7 or subClassID == 4) then 

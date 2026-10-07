@@ -561,9 +561,10 @@ function Hunter:GetSpec()
         role = "Leveling_Melee"
     -- 2. Check for Standard Ranged Survival (Expose Weakness / Surv Instincts)
     elseif Rank("SURVIVAL_INST") > 0 or Rank("EXPOSE_WEAKNESS") > 0 then 
-        role = "Leveling_Survival" 
-        if level > 40 then suffix = "_41_70" end
-    end 
+        role = "Leveling_Survival"
+        -- Survival uses the normal 41_51 / 52_59 / 60_70 brackets (there is no 1_20 row,
+        -- so low levels fall through to the generic Leveling key below).
+    end
 
     local specificKey = role .. suffix
     if Hunter.LevelingBrackets and Hunter.LevelingBrackets[specificKey] then return specificKey end
@@ -615,11 +616,19 @@ function Hunter:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -677,8 +686,8 @@ function Hunter:GetWeaponBonus(itemLink, weights)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
-    local level = UnitLevel("player")
+    local race = MSC.CtxRace()
+    local level = MSC.CtxLevel()
     if level > 70 then level = 70 end
     
     -- Dynamically calculate how much score 1% Crit is worth right now
@@ -699,7 +708,14 @@ end
 Hunter.Profiles = {}
 for k, v in pairs(Hunter.Weights) do Hunter.Profiles[k] = v end
 if Hunter.LevelingBrackets then
-    for k, v in pairs(Hunter.LevelingBrackets) do Hunter.Profiles[k] = v.End end
+    for k, v in pairs(Hunter.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Hunter.Profiles[k] = prof
+    end
 end
 if Hunter.LevelingWeights then
     for k, v in pairs(Hunter.LevelingWeights) do Hunter.Profiles[k] = v end

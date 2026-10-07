@@ -41,6 +41,18 @@ MSC.PawnStatMap = {
     ["SpellHitRating"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
     ["SpellHasteRating"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT", 
     ["Mp5"] = "ITEM_MOD_MANA_REGENERATION_SHORT",
+    ["Hp5"] = "ITEM_MOD_HEALTH_REGENERATION_SHORT",
+    -- Pawn's Classic spell keys (Era/TBC scales export these, not SpellPower)
+    ["SpellDamage"] = "ITEM_MOD_SPELL_POWER_SHORT",
+    ["SpellHit"] = "ITEM_MOD_HIT_SPELL_RATING_SHORT",
+    ["SpellCrit"] = "ITEM_MOD_SPELL_CRIT_RATING_SHORT",
+    ["SpellHaste"] = "ITEM_MOD_SPELL_HASTE_RATING_SHORT",
+    ["FireSpellDamage"] = "ITEM_MOD_FIRE_DAMAGE_SHORT",
+    ["FrostSpellDamage"] = "ITEM_MOD_FROST_DAMAGE_SHORT",
+    ["ShadowSpellDamage"] = "ITEM_MOD_SHADOW_DAMAGE_SHORT",
+    ["ArcaneSpellDamage"] = "ITEM_MOD_ARCANE_DAMAGE_SHORT",
+    ["NatureSpellDamage"] = "ITEM_MOD_NATURE_DAMAGE_SHORT",
+    ["HolySpellDamage"] = "ITEM_MOD_HOLY_DAMAGE_SHORT",
 	["SpellPenetration"] = "ITEM_MOD_SPELL_PENETRATION_SHORT",
     
     -- Tank
@@ -132,6 +144,10 @@ function MSC:ParsePawnString(pawnString)
         local statBlock = string_sub(clean, endPos + 1)
         for stat, val in string_gmatch(statBlock, "([^%s=,]+)%s*=%s*([%-%d%.]+)") do
             local internalKey = MSC.PawnStatMap[stat]
+            -- Store under the key items actually carry on this game version
+            -- (Forever weapon DPS is ITEM_MOD_DAMAGE_PER_SECOND_SHORT, not
+            -- MSC_WEAPON_DPS), or the imported weight scores nothing.
+            if internalKey and MSC.NormalizeStatKey then internalKey = MSC.NormalizeStatKey(internalKey) end
             local numberVal = tonumber(val)
             
             if internalKey and numberVal and numberVal ~= 0 then
@@ -177,7 +193,7 @@ function MSC:SavePawnProfile(profileName, rawWeights, baseSpec)
         BaseSpec = baseSpec 
     }
     
-    print(string.format("|cff00ff00SGJ:|r Successfully imported %s", uniqueName))
+    print(string.format(MSC.L["|cff00ff00SGJ:|r Successfully imported %s"], uniqueName))
     StaticPopup_Show("SGJ_RELOAD_REQUIRED")
 end
 

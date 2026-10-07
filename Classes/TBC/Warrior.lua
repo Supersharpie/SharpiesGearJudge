@@ -272,12 +272,14 @@ Warrior.LevelingBrackets = {
     },      
 
     -- [[ 2. FURY / DUAL WIELD ]]
+    -- MSC_OH_WEAPON_SPEED 0: the off hand's speed isn't scored (it would otherwise use the
+    -- MH Speed weight). A fast-OH preference would need a negative weight, which the scorer ignores.
     ["Leveling_DW_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 10.0, 
             ["MSC_WEAPON_SPEED"] = 1.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -1.0, 
+            ["MSC_OH_WEAPON_SPEED"] = -1.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
@@ -291,7 +293,7 @@ Warrior.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 11.0, 
             ["MSC_WEAPON_SPEED"] = 1.2, 
-            ["MSC_OH_WEAPON_SPEED"] = -1.2,
+            ["MSC_OH_WEAPON_SPEED"] = -1.2, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.25, -- Added
             ["ITEM_MOD_AGILITY_SHORT"] = 1.8,
@@ -308,7 +310,7 @@ Warrior.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"] = 11.0, 
             ["MSC_WEAPON_SPEED"] = 1.5, 
-            ["MSC_OH_WEAPON_SPEED"] = -1.5, 
+            ["MSC_OH_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.0,
@@ -321,7 +323,7 @@ Warrior.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 1.8, 
-            ["MSC_OH_WEAPON_SPEED"] = -1.8, 
+            ["MSC_OH_WEAPON_SPEED"] = -1.8, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.6, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.2, 
@@ -337,7 +339,7 @@ Warrior.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 2.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.0,
+            ["MSC_OH_WEAPON_SPEED"] = -2.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.2, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.6, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5,
@@ -350,7 +352,7 @@ Warrior.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 13.0, 
             ["MSC_WEAPON_SPEED"] = 2.2, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.2,
+            ["MSC_OH_WEAPON_SPEED"] = -2.2, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.75, -- Added
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.8,
@@ -366,7 +368,7 @@ Warrior.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
             ["MSC_WEAPON_SPEED"] = 2.5, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.5,
+            ["MSC_OH_WEAPON_SPEED"] = -2.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 3.5, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.75, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 2.8, 
@@ -381,7 +383,7 @@ Warrior.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
             ["MSC_WEAPON_SPEED"] = 3.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -3.0,
+            ["MSC_OH_WEAPON_SPEED"] = -3.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STRENGTH_SHORT"] = 4.0, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 2.0, -- Added
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 3.5, 
@@ -396,11 +398,12 @@ Warrior.LevelingBrackets = {
     },
 
     -- [[ 3. PROT / TANK ]]
+    -- MSC_WEAPON_SPEED 0: weapon speed isn't scored for tanks (no "prefer fast" in the scorer).
     ["Leveling_Tank_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
-            ["MSC_WEAPON_SPEED"] = -1.0, 
+            ["MSC_WEAPON_SPEED"] = -1.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.8, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 0.9, -- Added
@@ -414,7 +417,7 @@ Warrior.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
@@ -431,7 +434,7 @@ Warrior.LevelingBrackets = {
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 8.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5, 
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 2.0, 
@@ -445,7 +448,7 @@ Warrior.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 9.0,
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 4.0, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, 
@@ -462,7 +465,7 @@ Warrior.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 9.0,
-            ["MSC_WEAPON_SPEED"] = -1.5, 
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 4.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2.0,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, 
@@ -641,6 +644,8 @@ function Warrior:GetSpec()
     local specificKey = role .. suffix
     if Warrior.LevelingBrackets and Warrior.LevelingBrackets[specificKey] then return specificKey, "high" end
     if Warrior.LevelingWeights[specificKey] then return specificKey, "high" end
+    -- Shared rows (only Leveling_1_20 exists) live in LevelingBrackets, not LevelingWeights
+    if Warrior.LevelingBrackets and Warrior.LevelingBrackets["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
     if Warrior.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
     return "Leveling_2H" .. suffix, "low"
 end
@@ -703,11 +708,19 @@ function Warrior:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -733,9 +746,9 @@ function Warrior:ApplyScalers(weights, currentSpec)
         -- Fury/DW Spec
         weights["MSC_WEAPON_DPS_OH"] = 0.625 -- 50% Base + 25% Talent = 62.5% effective DPS
         
-        -- [[ SPEED TRICK INJECTION ]]
-        -- If we haven't defined a specific OH Speed weight, create one by inverting MH speed.
-        -- This ensures Fast OH is preferred even if the bracket doesn't have the key.
+        -- [[ OFF-HAND SPEED ]]
+        -- Slow MH, fast OH: a negative OH Speed weight means "prefer fast"
+        -- (GetItemScore scores it as |w| x (4.0 - speed)).
         if not weights["MSC_OH_WEAPON_SPEED"] and weights["MSC_WEAPON_SPEED"] then
             weights["MSC_OH_WEAPON_SPEED"] = -1 * math.abs(weights["MSC_WEAPON_SPEED"])
         end
@@ -836,7 +849,7 @@ function Warrior:GetWeaponBonus(itemLink, weights)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
+    local race = MSC.CtxRace()
     local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
     local critScoreValue = (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 1.0) * 22.1 -- rough fallback if scalar fails
 
@@ -863,7 +876,14 @@ end
 Warrior.Profiles = {}
 for k, v in pairs(Warrior.Weights) do Warrior.Profiles[k] = v end
 if Warrior.LevelingBrackets then
-    for k, v in pairs(Warrior.LevelingBrackets) do Warrior.Profiles[k] = v.End end
+    for k, v in pairs(Warrior.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Warrior.Profiles[k] = prof
+    end
 end
 if Warrior.LevelingWeights then
     for k, v in pairs(Warrior.LevelingWeights) do Warrior.Profiles[k] = v end

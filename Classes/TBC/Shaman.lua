@@ -354,7 +354,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- TBC Stat
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
 			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         },
         End = { 
@@ -368,21 +368,22 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
 			["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 0.8 -- Secondary priority below Nature/SP
         }
     },
 
     -- [[ SHAMAN TANK (Warden) ]]
-    -- High Stamina + Block + Agility (Dodge). Weapon Speed = Fast (Threat application).
+    -- High Stamina + Block + Agility (Dodge). Weapon Speed 0 = not scored: a fast weapon
+    -- (Rockbiter/Frostbrand threat) would need a negative weight, which the scorer ignores.
     ["Leveling_Tank_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05,
         min = 21, max = 40,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
-            ["MSC_WEAPON_SPEED"] = -1.0, -- Fast Dagger/Mace for Rockbiter/Frostbrand spam
+            ["MSC_WEAPON_SPEED"] = -1.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
@@ -393,14 +394,14 @@ Shaman.LevelingBrackets = {
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 1.5, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.8,
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
@@ -410,7 +411,7 @@ Shaman.LevelingBrackets = {
         min = 41, max = 51,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 2.8, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
@@ -419,13 +420,13 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8, 
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5, 
@@ -434,7 +435,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8, 
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.0, 
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         }
@@ -443,7 +444,7 @@ Shaman.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 2.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
@@ -453,12 +454,12 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0,
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.0, -- Added for Sync
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0, -- Added for Sync
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1 -- Added for Sync
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 5.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.8, 
@@ -468,7 +469,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         }
     },
@@ -476,7 +477,7 @@ Shaman.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["MSC_WEAPON_DPS"] = 6.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5,
@@ -488,13 +489,13 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8,
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.5, -- Added for Sync
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5, -- Added for Sync
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0, -- Added for Sync
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1 -- Added for Sync
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 6.0, 
-            ["MSC_WEAPON_SPEED"] = -1.5,
+            ["MSC_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_STAMINA_SHORT"] = 4.0, 
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 3.5, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 2.0, 
@@ -506,7 +507,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8,
-            ["ITEM_MOD_SHIELD_BLOCK_RATING_SHORT"] = 1.5,
+            ["ITEM_MOD_BLOCK_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1
         }
@@ -571,7 +572,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, -- Added for Sync
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0, -- Added for Sync
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 -- TBC Stat
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5 -- TBC Stat
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0,
@@ -582,7 +583,7 @@ Shaman.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0
         }
     },
 }
@@ -693,6 +694,10 @@ function Shaman:GetSpec()
 
     local specificKey = role .. suffix
     if Shaman.LevelingBrackets and Shaman.LevelingBrackets[specificKey] then return specificKey, "high" end
+    -- The Elemental and Restoration rows for this band are named _40_51 (they start at 40)
+    if suffix == "_41_51" and Shaman.LevelingBrackets and Shaman.LevelingBrackets[role .. "_40_51"] then
+        return role .. "_40_51", "high"
+    end
     return "Leveling" .. suffix, "low"
 end
 
@@ -754,11 +759,19 @@ function Shaman:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -880,7 +893,7 @@ function Shaman:GetWeaponBonus(itemLink, weights)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
+    local race = MSC.CtxRace()
     local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
 
     -- Racial: Orc (Axe/Fist)
@@ -966,7 +979,14 @@ end
 Shaman.Profiles = {}
 for k, v in pairs(Shaman.Weights) do Shaman.Profiles[k] = v end
 if Shaman.LevelingBrackets then
-    for k, v in pairs(Shaman.LevelingBrackets) do Shaman.Profiles[k] = v.End end
+    for k, v in pairs(Shaman.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Shaman.Profiles[k] = prof
+    end
 end
 if Shaman.LevelingWeights then
     for k, v in pairs(Shaman.LevelingWeights) do Shaman.Profiles[k] = v end

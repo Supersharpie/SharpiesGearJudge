@@ -11,8 +11,9 @@ Paladin.Name = "PALADIN"
 -- The model-built profiles come from the Research folder (study/ret_build,
 -- 2026-10-03; NOTES.md there has the numbers behind each one).
 Paladin.Weights = {
-    -- Fallback before a spec is known.
-    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=3.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Fallback before a spec is known. Stamina, Hit, Crit and Weapon Skill on the same scale as the
+    -- other Forever Defaults (Stamina 0.5, Hit 20 / Crit 12 per 1%, Weapon Skill 13).
+    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- Retribution: Raid (Ret 33 / Holy 18 with Twist of Light, pre-raid gear) from the wowsims Forever simulator (study/paladin3,
     -- 2026-10-03), 70% raid boss / 30% dungeon boss, Attack Power 1.5. The rotation seal-twists: Seal of Righteousness up before
@@ -69,13 +70,13 @@ Paladin.LevelingNext = { ["Leveling_41_51"] = "Leveling_Ret_52_59" }
 -- DISPLAY NAMES (match the Talents plugin's builds; translated in Locales/*.lua)
 -- =============================================================
 local L = MSC.L
-local function Band(label, lo, hi) return L[label] .. " (" .. lo .. "-" .. hi .. ")" end
+local function Band(label, lo, hi) return MSC.ClassL("PALADIN", label) .. " (" .. lo .. "-" .. hi .. ")" end
 Paladin.PrettyNames = {
     ["RET_STANDARD"] = L["Retribution: Raid"],
     ["HOLY_RAID"]    = L["Holy: Raid"],
     ["HOLY_DEEP"]    = L["Holy: Raid (old profile)"],
-    ["PROT_DEEP"]    = L["Protection: Raid"],
-    ["PROT_AOE"]     = L["Protection: AoE Farming"],
+    ["PROT_DEEP"]    = MSC.ClassL("PALADIN", "Protection: Raid"),
+    ["PROT_AOE"]     = MSC.ClassL("PALADIN", "Protection: AoE Farming"),
     ["SHOCKADIN"]    = L["PvP: Shockadin (Burst)"],
     ["RECK_BOMB"]    = L["PvP: Reck-Bomb (One-Shot)"],
 

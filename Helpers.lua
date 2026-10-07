@@ -65,6 +65,7 @@ function MSC.IsItemUsable(itemLink)
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     local localizedClass, playerClass = UnitClass("player")
     local result = true -- Default to true, prove false
+    local scanIncomplete = false
 
     -- 1. WEAPON CHECK
     if classID == 2 then 
@@ -103,11 +104,15 @@ function MSC.IsItemUsable(itemLink)
         local tip = _G["MSC_ScannerTooltip"] or CreateFrame("GameTooltip", "MSC_ScannerTooltip", nil, "GameTooltipTemplate")
         tip:SetOwner(WorldFrame, "ANCHOR_NONE"); tip:ClearLines()
         local status = pcall(function() tip:SetHyperlink(itemLink) end)
-        
+
+        if not status then scanIncomplete = true end
         if status then
             for i = 2, tip:NumLines() do
                 local line = _G["MSC_ScannerTooltipTextLeft"..i]
                 local text = line and line:GetText()
+                -- Secret values error on string_find; skip the line and don't
+                -- cache a verdict built without it.
+                if text and MSC_IsSecret(text) then text = nil; scanIncomplete = true end
                 if text then
                     if string_find(text, "Classes:") or (ITEM_CLASSES_ALLOWED and string_find(text, string_gsub(ITEM_CLASSES_ALLOWED, "%%s", ""))) then
                         if not string_find(text, localizedClass) then result = false; break end
@@ -123,7 +128,7 @@ function MSC.IsItemUsable(itemLink)
     
     -- Save to Cache (not while the item is still loading: classID is nil then, so
     -- the checks above defaulted to usable and the tooltip scan read nothing)
-    if classID then MSC.UsableCache[itemLink] = result end
+    if classID and not scanIncomplete then MSC.UsableCache[itemLink] = result end
     return result
 end
 
@@ -204,7 +209,8 @@ function MSC:GetSpiritValueInMP5(level, spiritPoints)
     else
         if not level or level > 70 then level = 70 end
         local base = MSC.BaseRegenTable[level] or 0.009327
-        local intel = MSC.SanitizeStat(UnitStat("player", 4)) or 100
+        -- UnitStat returns base, effective, ...: the effective (gear + buffs) value
+        local intel = MSC.SanitizeStat(select(2, UnitStat("player", 4))) or 100
         return 5 * (0.001 + base * math_sqrt(intel) * points)
     end
 end
@@ -375,7 +381,7 @@ end
 -- off-hand sword next to a main-hand sword).
 function MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
     if not itemLink or not weights then return 0 end
-    local _, race = UnitRace("player")
+    local race = MSC.CtxRace()
     local racial = race and MSC.ForeverWeaponRacials[race]
     if not racial then return 0 end
 
@@ -508,7 +514,7 @@ function MSC.ApplyForeverHitKnees(weights, key, kind, knees, label, activeCaps, 
     local byKey = MSC.ForeverHitCapState[weights] or {}
     byKey[key] = { kind = kind, extra = extraHit or 0, knees = knees, mult = mult }
     MSC.ForeverHitCapState[weights] = byKey
-    if reached and activeCaps then table.insert(activeCaps, string_format("%s (%.1f%%)", label or "Hit", reached)) end
+    if reached and activeCaps then table.insert(activeCaps, string_format("%s (%.1f%%)", label or MSC.L["Hit"], reached)) end
 end
 
 -- Value of `hit` percent points under a knee curve, in units of the full weight.
@@ -560,7 +566,7 @@ function MSC.ApplyForeverDefenseTarget(weights, activeCaps)
     local def = MSC:GetPlayerStat("DEFENSE")
     if def >= target then
         weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = w * 0.3
-        if activeCaps then table.insert(activeCaps, string_format("Defense (%d)", target)) end
+        if activeCaps then table.insert(activeCaps, string_format("%s (%d)", MSC.L["Defense"], target)) end
     end
 end
 
@@ -580,7 +586,7 @@ function MSC.ApplyForeverUncrushable(weights, activeBlockPct, activeCaps)
         end
         if weights["ITEM_MOD_STAMINA_SHORT"] then weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * 1.2 end
         if weights["ITEM_MOD_ARMOR_SHORT"] then weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * 1.2 end
-        if activeCaps then table.insert(activeCaps, "Uncrushable") end
+        if activeCaps then table.insert(activeCaps, MSC.L["Uncrushable"]) end
     end
 end
 
@@ -594,8 +600,9 @@ end
 function MSC.GetRelicContext()
     local _, class = UnitClass("player")
     local level = UnitLevel("player") or 1
-    local spirit = MSC.SanitizeStat(UnitStat("player", 5))
-    local agi = MSC.SanitizeStat(UnitStat("player", 2))
+    -- UnitStat returns base, effective, ...: use the effective value (with gear)
+    local spirit = MSC.SanitizeStat(select(2, UnitStat("player", 5)))
+    local agi = MSC.SanitizeStat(select(2, UnitStat("player", 2)))
     local baseArmor = UnitArmor and MSC.SanitizeStat((UnitArmor("player"))) or 0
     local apBase, apPos, apNeg = 0, 0, 0
     if UnitAttackPower then apBase, apPos, apNeg = UnitAttackPower("player") end
@@ -821,6 +828,8 @@ function MSC.GetRawItemStats(itemLink)
         local status, result = pcall(MSC.Scanner.Scan, itemLink)
         if status and result then scanData = result end
     end
+    -- A failed or partial scan (error, empty tooltip, secret text) isn't cached.
+    local scanIncomplete = not scanData or (scanData.Meta and scanData.Meta.Incomplete)
     if not scanData then scanData = { Stats = {}, UseEffects = {}, Procs = {}, Meta = {} } end
     
     -- 2. FLATTEN STATS
@@ -850,7 +859,14 @@ function MSC.GetRawItemStats(itemLink)
             -- Classes with GetRelicBonus score relics per spec in SafeGetItemStats
             -- (their entries can be role functions), so only ItemOverrides here.
             local cc = MSC.CurrentClass
-            local classDB = cc.GetRelicBonus and cc.ItemOverrides or (cc.Relics or cc.Totems or cc.Idols or cc.ItemOverrides)
+            -- (Explicit if/else: "a and b or c" fell through to cc.Relics when
+            -- ItemOverrides was nil, adding relic stats here AND in SafeGetItemStats.)
+            local classDB
+            if cc.GetRelicBonus then
+                classDB = cc.ItemOverrides
+            else
+                classDB = cc.Relics or cc.Totems or cc.Idols or cc.ItemOverrides
+            end
             if classDB and type(classDB[itemID]) == "table" then
                 for statKey, val in pairs(classDB[itemID]) do
                     if type(val) == "number" and statKey ~= "note" then
@@ -867,7 +883,15 @@ function MSC.GetRawItemStats(itemLink)
 
         if entry then
             -- [[ PROC MATH CALCULATION ]]
-            local calcVal = entry.val
+            local entryStat, entryVal = entry.stat, entry.val
+            -- ItemOverrides entries (Database.lua AddOverrides, also filed in
+            -- TrinketDB) carry their averaged value as _AUTO_PROC = { stat, val }
+            -- with no stat/val of their own, so it never reached the score.
+            -- Fold it in here, once (the Evaluator no longer adds _AUTO_PROC).
+            if (not entryStat or not entryVal) and type(entry._AUTO_PROC) == "table" then
+                entryStat, entryVal = entry._AUTO_PROC.stat, entry._AUTO_PROC.val
+            end
+            local calcVal = entryVal
             if entry.ppm and entry.val then
                 if entry.dur then
                     calcVal = (entry.val * entry.ppm * entry.dur) / 60
@@ -880,8 +904,8 @@ function MSC.GetRawItemStats(itemLink)
                 end
             end
 
-            if calcVal and entry.stat then
-                local sk = MSC.NormalizeStatKey(entry.stat)
+            if calcVal and entryStat then
+                local sk = MSC.NormalizeStatKey(entryStat)
                 finalStats[sk] = (finalStats[sk] or 0) + calcVal
                 if not finalStats._AUTO_PROC then finalStats._AUTO_PROC = { stat=sk, val=calcVal } end
             end
@@ -911,7 +935,7 @@ function MSC.GetRawItemStats(itemLink)
 
     -- Don't cache a scan of an item whose data hasn't loaded (it would be
     -- incomplete); the next call after GET_ITEM_INFO_RECEIVED rescans it.
-    if GetItemInfo(itemLink) then MSC.StatCache[itemLink] = finalStats end
+    if GetItemInfo(itemLink) and not scanIncomplete then MSC.StatCache[itemLink] = finalStats end
     return finalStats
 end
 
@@ -1232,7 +1256,19 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
     for k,v in pairs(rawStats) do if k ~= "_BONUS_STATS" then finalStats[k] = v end end
     if MSC.IsForever and finalStats.MSC_WEAPON_DPS and not finalStats.ITEM_MOD_DAMAGE_PER_SECOND_SHORT then finalStats.ITEM_MOD_DAMAGE_PER_SECOND_SHORT = finalStats.MSC_WEAPON_DPS end
     local bonusStats = rawStats._BONUS_STATS or {}
-    local baseLink = MSC.GetBaseLink and MSC.GetBaseLink(itemLink) or nil
+    -- Compare against the same item with only its enchant removed. Item
+    -- strings on Era 1.15, TBC and Forever all read
+    --   item:itemID:enchantID:gem1:gem2:gem3:gem4:suffixID:uniqueID:...
+    -- and a random-suffix item's "of the Bear" stats live in suffixID (scaled
+    -- by uniqueID), so those fields and the gems must stay. GetBaseLink zeroes
+    -- everything: diffing against it read an unenchanted Bracers of Strength's
+    -- +5 Str as enchant 856 and removed it. With the enchant field already 0
+    -- there is nothing to compare (baseLink == itemLink), so no inference runs.
+    local baseLink = itemLink
+    local enchantField = tonumber(string_match(itemLink, "item:%-?%d+:(%-?%d*)") or "")
+    if enchantField and enchantField ~= 0 then
+        baseLink = string_gsub(itemLink, "(item:%-?%d+:)%-?%d*", "%10", 1)
+    end
     local baseRaw = nil
 
     if baseLink and baseLink ~= itemLink then
@@ -1361,19 +1397,13 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                 socketsToFill = GetItemStats(baseLink) or {} 
                 
             elseif gemMode == 2 then
+                -- "The Casual": keep the gems already in the item (their stats
+                -- are on the scanned tooltip, so they stay in finalStats) and
+                -- only project gems for the empty sockets. Subtracting them
+                -- here, as before, dropped their stats from the score entirely.
                 socketsToFill = GetItemStats(itemLink) or {} 
                 local _, _, ids = MSC:GetItemGems(itemLink)
                 for _, id in ipairs(ids) do table_insert(existingGems, id) end
-                for _, gID in ipairs(existingGems) do
-                    local id = tonumber(gID)
-                    if id and id > 0 then
-                        local gData = MSC.GetGemStatsByID(id)
-                        if gData then
-                            if gData.stat then finalStats[gData.stat] = math_max(0, (finalStats[gData.stat] or 0) - (gData.val or 0)) end
-                            if gData.stat2 then finalStats[gData.stat2] = math_max(0, (finalStats[gData.stat2] or 0) - (gData.val2 or 0)) end
-                        end
-                    end
-                end
             end
 
             local totalSockets = 0
@@ -1498,7 +1528,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                 end
                 if bonusActive and next(bonusStats) then
                     local bParts = {}
-                    for k, v in pairs(bonusStats) do table_insert(bParts, "+" .. v .. " " .. ((MSC.StatShortNames and MSC.StatShortNames[k]) or "Stat")) end
+                    for k, v in pairs(bonusStats) do table_insert(bParts, "+" .. v .. " " .. ((MSC.StatShortNames and MSC.StatShortNames[k]) or MSC.L["Stat"])) end
                     finalStats.PROJECTION_DATA.Bonus = MSC.L["Socket Bonus: "] .. table_concat(bParts, ", ")
                 end
                 local statParts = {}
@@ -1541,8 +1571,9 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
         end
     end
     -- Skip the cache while item or projected-gem data is still loading
+    -- (StatCache[itemLink] is only set for a complete, loaded scan.)
     if weights and MSC.ProcessedStatCache and not (globalUniques and next(globalUniques))
-        and not gemNameMissing and GetItemInfo(itemLink) then
+        and not gemNameMissing and GetItemInfo(itemLink) and MSC.StatCache[itemLink] then
         MSC.ProcessedStatCache[procKey] = MSC:SafeCopy(finalStats, {})
     end
     return finalStats
@@ -1583,6 +1614,12 @@ end
 -- =============================================================
 -- 10. SCORING ENGINE
 -- =============================================================
+-- A negative weight on a weapon speed means "prefer fast weapons" (a Rogue's
+-- poison off hand, a Shaman's Rockbiter/Frostbrand weapon). It scores
+-- |weight| x (FAST_SPEED_REF - speed), floored at 0: faster weapons score higher,
+-- by exactly the old weight per second of speed, and no score goes below 0.
+local FAST_SPEED_REF = 4.0
+
 function MSC.GetItemScore(stats, weights, specName, slotId)
     if not stats or not weights then return 0 end
     if stats._MANUAL_SCORE and stats._MANUAL_SCORE > 0 then
@@ -1641,6 +1678,11 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
                 end
             end
 
+            if w < 0 and (weightKey == "MSC_WEAPON_SPEED" or weightKey == "MSC_OH_WEAPON_SPEED") then
+                local fast = -w * math_max(0, FAST_SPEED_REF - val)
+                score = score + fast
+                if fast > 0 then usefulRaw = usefulRaw + val end
+            end
             if w > 0 then
                 local finalVal = val
                 if foreverLevel and MSC.RatingIndexMap[stat] then

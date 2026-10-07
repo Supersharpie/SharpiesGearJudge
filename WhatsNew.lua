@@ -17,11 +17,17 @@ local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
     -- v3.2.1: add a line here for each change logged under v3.2.1 in CHANGELOG.md.
+    { text = "New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too." },
     { text = "Item sets rebuilt from the Forever client: all 532 sets, including the new Forever sets, now score their real Forever bonuses.", forever = true },
     { text = "Set bonus hit and crit no longer count many times over, and healers get credit for spell power set bonuses." },
     { text = "Item sets rebuilt from your game's own data: every set counts its real bonuses, including many TBC sets that never counted before.", classic = true },
     { text = "Proc and use-effect trinkets now add their effect on top of their stats instead of a fixed score that ignored them." },
     { text = "Enchant suggestions rebuilt from your game's own data: only enchants your game really has, with their real stats, suited to your level and class." },
+    { text = "Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\") keep their bonus stats, and feral attack power is read as feral.", classic = true },
+    { text = "Leveling weights fixed: some specs and levels scored every item 0. TBC leveling now counts armor and favours fast off-hand weapons where it should.", classic = true },
+    { text = "Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up." },
+    { text = "Characters that share a first name no longer share saved specs, gear sets or talent builds.", forever = true },
+    { text = "The window title now shows the name of the open tab." },
     { text = "Roadmap 3.1.0: quest rewards for every Forever zone, filtered to your faction and class.", forever = true },
     { text = "Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly." },
     { text = "Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans.", forever = true },

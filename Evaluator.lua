@@ -507,6 +507,10 @@ end)
 
 
 function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, baselineGear)
+    -- Returns: newScore, oldScore, newItemStats, oldItemStats, newStatsTotal,
+    -- oldStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg,
+    -- pairedFromBags (true when the other hand was filled from the bags to
+    -- complete the weapon set; added last so existing callers are unaffected).
     if not newItemLink then return 0, 0, {}, {}, {} end
     if not weights then weights, specName = MSC.GetCurrentWeights() end
 
@@ -514,7 +518,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     local cacheKey = MSC:BuildEvalCacheKey(newItemLink, targetSlotID, specName, baselineGear)
     
     if MSC.EvaluationCache[cacheKey] then
-        return unpack(MSC.EvaluationCache[cacheKey])
+        return unpack(MSC.EvaluationCache[cacheKey], 1, 11)
     end
 
     -- [[ 2. SETUP & CURRENT SCORE ]]
@@ -531,6 +535,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     local originalMH   = Scratch_Gear[16]
     local originalOH   = Scratch_Gear[17]
     local contextMsg   = nil
+    local pairedFromBags = false
 
     -- [[ 3. PRE-CALCULATE ITEM STATS ]]
     local parsedNewStats = MSC.SafeGetItemStats(newItemLink, targetSlotID, weights, specName)
@@ -544,12 +549,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     
     if oldItemLink then 
         local fs = MSC.SafeGetItemStats(oldItemLink, targetSlotID, weights, specName) 
+        -- (A Use/proc effect's stat is already folded into these stats by
+        -- SafeGetItemStats; _AUTO_PROC only records which one it was.)
         for k,v in pairs(fs) do finalOldStats[k] = v end
-
-        if finalOldStats._AUTO_PROC then
-             local p = finalOldStats._AUTO_PROC
-             finalOldStats[p.stat] = (finalOldStats[p.stat] or 0) + p.val
-        end
     end
 
     -- [[ 4. SWAP GEAR & HANDLE MH/OH LOGIC ]]
@@ -600,6 +602,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
 					local bestBagOH = MSC:GetBestOffHandInBags(weights, specName)
 					if bestBagOH then
 						Scratch_Gear[17] = bestBagOH
+						pairedFromBags = true
 						local bagName = GetItemInfo(bestBagOH)
 						contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
 					else
@@ -620,6 +623,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
 				local bestBagMH = MSC:GetBestMainHandInBags(weights, specName)
 				if bestBagMH then
 					Scratch_Gear[16] = bestBagMH
+					pairedFromBags = true
 					local bagName = GetItemInfo(bestBagMH)
 					contextMsg = string_format(MSC.L["|cff00ff00(w/ %s)|r"], (bagName or MSC.L["Bag Item"]))
 				else
@@ -761,8 +765,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     Scratch_Gear[16] = originalMH
     Scratch_Gear[17] = originalOH
     
-    local result = { newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg }
+    local result = { newScore, currentScore, finalNewStats, finalOldStats, newStatsTotal, currentStatsTotal, newTotalColors, oldSetCounts, newSetCounts, contextMsg, pairedFromBags }
     MSC.EvaluationCache[cacheKey] = result
     
-    return unpack(result)
+    -- Explicit length: contextMsg can be nil, which leaves a hole in the table.
+    return unpack(result, 1, 11)
 end

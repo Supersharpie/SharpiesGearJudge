@@ -113,7 +113,7 @@ Rogue.LevelingBrackets = {
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 1.4, 
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
-            ["MSC_OH_WEAPON_SPEED"] = -1.5,
+            ["MSC_OH_WEAPON_SPEED"] = -1.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, -- Added for Sync
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, -- Added for Sync
@@ -122,7 +122,7 @@ Rogue.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 2.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.0, -- Start looking for Fast OH (Poisons)
+            ["MSC_OH_WEAPON_SPEED"] = -2.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_AGILITY_SHORT"] = 2.5, 
             ["ITEM_MOD_CRIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.2,
@@ -138,7 +138,7 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"] = 12.0, 
             ["MSC_WEAPON_SPEED"] = 2.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.0,
+            ["MSC_OH_WEAPON_SPEED"] = -2.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_AGILITY_SHORT"] = 2.5, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
@@ -150,7 +150,7 @@ Rogue.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
             ["MSC_WEAPON_SPEED"] = 2.5, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.5, 
+            ["MSC_OH_WEAPON_SPEED"] = -2.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_AGILITY_SHORT"] = 2.8, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
@@ -165,7 +165,7 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"] = 14.0, 
             ["MSC_WEAPON_SPEED"] = 2.5, 
-            ["MSC_OH_WEAPON_SPEED"] = -2.5,
+            ["MSC_OH_WEAPON_SPEED"] = -2.5, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_AGILITY_SHORT"] = 2.8, 
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.8,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0, 
@@ -177,7 +177,7 @@ Rogue.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
             ["MSC_WEAPON_SPEED"] = 3.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -3.0,
+            ["MSC_OH_WEAPON_SPEED"] = -3.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 3.0,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2, 
@@ -192,7 +192,7 @@ Rogue.LevelingBrackets = {
         Start = { 
             ["MSC_WEAPON_DPS"] = 15.0, 
             ["MSC_WEAPON_SPEED"] = 3.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -3.0,
+            ["MSC_OH_WEAPON_SPEED"] = -3.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 3.0,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.2, 
@@ -206,7 +206,7 @@ Rogue.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 18.0, -- Weapon DPS is king for SS
             ["MSC_WEAPON_SPEED"] = 4.0, 
-            ["MSC_OH_WEAPON_SPEED"] = -4.0, -- Max Speed Logic
+            ["MSC_OH_WEAPON_SPEED"] = -4.0, -- negative = prefer fast (scored as |w| x (4.0 - speed))
             ["ITEM_MOD_HIT_RATING_SHORT"] = 2.5, -- Combat loves Hit past cap (White dmg)
             ["ITEM_MOD_AGILITY_SHORT"] = 3.5,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.5, 
@@ -556,11 +556,19 @@ function Rogue:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -587,7 +595,8 @@ function Rogue:ApplyScalers(weights, currentSpec)
         weights["MSC_WEAPON_DPS_OH"] = ohMult
 
         -- [[ 2. AUTO-SPEED LOGIC ]]
-        -- If we want Slow MH (Positive), force Fast OH (Negative)
+        -- Slow MH is wanted, fast OH for poisons: a negative OH Speed weight means
+        -- "prefer fast" (GetItemScore scores it as |w| x (4.0 - speed)).
         if not weights["MSC_OH_WEAPON_SPEED"] and weights["MSC_WEAPON_SPEED"] and weights["MSC_WEAPON_SPEED"] > 0 then
              weights["MSC_OH_WEAPON_SPEED"] = -1 * weights["MSC_WEAPON_SPEED"]
         end
@@ -678,8 +687,8 @@ function Rogue:GetWeaponBonus(itemLink, weights)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
-    local level = UnitLevel("player")
+    local race = MSC.CtxRace()
+    local level = MSC.CtxLevel()
     if level > 70 then level = 70 end
     
     -- Dynamically calculate how much score 1% Crit is worth right now
@@ -710,7 +719,14 @@ end
 Rogue.Profiles = {}
 for k, v in pairs(Rogue.Weights) do Rogue.Profiles[k] = v end
 if Rogue.LevelingBrackets then
-    for k, v in pairs(Rogue.LevelingBrackets) do Rogue.Profiles[k] = v.End end
+    for k, v in pairs(Rogue.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Rogue.Profiles[k] = prof
+    end
 end
 if Rogue.LevelingWeights then
     for k, v in pairs(Rogue.LevelingWeights) do Rogue.Profiles[k] = v end

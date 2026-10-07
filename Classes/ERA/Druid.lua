@@ -25,7 +25,7 @@ Druid.Weights = {
         ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=26.0, ["ITEM_MOD_HIT_RATING_SHORT"]=22.0 
     },
     ["FERAL_BEAR_TANK"] = {
-        ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=1.0, ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5 
+        ["ITEM_MOD_ARMOR_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5 
     },
     ["HYBRID_HOTW"] = {
         ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=0.8, ["ITEM_MOD_ARMOR_SHORT"]=0.2 
@@ -37,19 +37,21 @@ Druid.Weights = {
 -- =============================================================
 Druid.LevelingWeights = {
     -- Cat Form (Standard)
+    -- Armor counts through ITEM_MOD_ARMOR_SHORT; the bear values already include Bear/Dire Bear
+    -- Form's armor bonus (the old ARMOR_MODIFIER entries matched no item stat and were removed).
     ["Leveling_1_20"]  = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]= 0.2, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 },
     ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_AGILITY_SHORT"]=1.4, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8 },
     ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.4, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.5, ["ITEM_MOD_AGILITY_SHORT"]=1.8, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0 },
 
     -- Bear Tank Leveling
-    ["Leveling_Bear_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.2, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_DODGE_RATING_SHORT"]=5.0 },
-    ["Leveling_Bear_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.4, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=2.5, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=8.0 },
-    ["Leveling_Bear_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.8, ["ITEM_MOD_ARMOR_MODIFIER_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5 },
+    ["Leveling_Bear_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.2, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_DODGE_RATING_SHORT"]=5.0 },
+    ["Leveling_Bear_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.4, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=8.0 },
+    ["Leveling_Bear_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]= 0.8, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5 },
 
     -- Balance
     ["Leveling_Caster_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_CRIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
+    ["Leveling_Caster_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0 },
 
     -- Restoration
     ["Leveling_Healer_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.2 },
@@ -121,10 +123,17 @@ function Druid:GetSpec()
         elseif level <= 51 then suffix = "_41_51"
         else suffix = "_52_59" end
 
-        if Rank("MOONKIN_FORM") > 0 then return "Leveling_Caster" .. suffix end
-        if Rank("SWIFTMEND") > 0 then return "Leveling_Healer" .. suffix end
-        if Rank("THICK_HIDE") >= 3 then return "Leveling_Bear" .. suffix end
-        return "Leveling" .. suffix -- Default to Cat
+        local role = "Leveling" -- Default to Cat
+        if Rank("MOONKIN_FORM") > 0 then role = "Leveling_Caster"
+        elseif Rank("SWIFTMEND") > 0 then role = "Leveling_Healer"
+        elseif Rank("THICK_HIDE") >= 3 then role = "Leveling_Bear"
+        end
+
+        -- Not every role has a row for every band (no Bear 1-20, Caster before 41,
+        -- Healer before 52): use the Cat row of that band instead of empty weights.
+        local key = role .. suffix
+        if Druid.LevelingWeights[key] then return key end
+        return "Leveling" .. suffix
     end
 
     -- Endgame Spec Detection
@@ -157,7 +166,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- 2. Covariance (Mana Regen / Healing Synergy)
     if currentSpec:find("RESTO") or currentSpec:find("Healer") then
         local healPower = MSC.SanitizeStat(GetSpellBonusHealing()) -- Using Classic API directly via shim usually preferred
-        if healPower > 500 then
+        if healPower > 500 and weights["ITEM_MOD_SPIRIT_SHORT"] then -- RESTO_REGROWTH has no Spirit weight
              local hScaler = 1 + ((healPower - 500) / 5000)
              weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler
         end

@@ -466,7 +466,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, 
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0, 
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, 
@@ -477,7 +477,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.0,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0
         }
     },
 
@@ -793,7 +793,7 @@ function Paladin:GetSpec()
     else suffix = "_60_70" end
 
     -- Determine Role based on Talents
-    local role = "Leveling_Ret" -- Default
+    local role = "Leveling_RET" -- Default (bracket keys are upper-case: Leveling_RET_21_40 ...)
     
     if Rank("HOLY_SHIELD") > 0 or Rank("AVENGERS_SHIELD") > 0 then 
         role = "Leveling_PROT_AOE" -- Changed to match your keys
@@ -814,6 +814,8 @@ function Paladin:GetSpec()
     
     if Paladin.LevelingBrackets and Paladin.LevelingBrackets[specificKey] then return specificKey, "high" end
     if Paladin.LevelingWeights[specificKey] then return specificKey, "high" end
+    -- Shared rows (only Leveling_1_20 exists) live in LevelingBrackets, not LevelingWeights
+    if Paladin.LevelingBrackets and Paladin.LevelingBrackets["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
     if Paladin.LevelingWeights["Leveling" .. suffix] then return "Leveling" .. suffix, "high" end
 
     return "Leveling_RET" .. suffix, "low"
@@ -872,11 +874,19 @@ function Paladin:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -1074,7 +1084,7 @@ function Paladin:GetWeaponBonus(itemLink, weights)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, raceID = UnitRace("player")
+    local raceID = MSC.CtxRace()
     local apScoreValue = (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1.0)
 
     if raceID == "Human" and (subClassID == 7 or subClassID == 8 or subClassID == 4 or subClassID == 5) then 
@@ -1090,7 +1100,14 @@ end
 Paladin.Profiles = {}
 for k, v in pairs(Paladin.Weights) do Paladin.Profiles[k] = v end
 if Paladin.LevelingBrackets then
-    for k, v in pairs(Paladin.LevelingBrackets) do Paladin.Profiles[k] = v.End end
+    for k, v in pairs(Paladin.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Paladin.Profiles[k] = prof
+    end
 end
 if Paladin.LevelingWeights then
     for k, v in pairs(Paladin.LevelingWeights) do Paladin.Profiles[k] = v end

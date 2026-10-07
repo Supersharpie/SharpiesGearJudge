@@ -420,11 +420,7 @@ local function GetWeaponmasterBonus(itemLink, weights)
         local stats = getStats(itemLink)
         dps = (stats and stats["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]) or 0
     end
-    local ap = 0
-    if UnitAttackPower then
-        local base, pos, neg = UnitAttackPower("player")
-        ap = (base or 0) + (pos or 0) + (neg or 0)
-    end
+    local ap = MSC.CtxAttackPower()
     local apWeight = weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1
     return rWM * perRank * (ap + 14 * dps) * apWeight
 end

@@ -216,7 +216,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- TBC Stat
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1 -- Added for Sync
         },
         End = { 
@@ -228,7 +228,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 2.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5, -- NERFED: Crit is weak for Shadow
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
@@ -321,7 +321,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.2,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, -- TBC Stat
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1 -- Added for Sync
         },
         End = { 
@@ -333,7 +333,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.2,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
     },
@@ -373,7 +373,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8, 
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -384,7 +384,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.0, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.0,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0
         }
     },
 }	
@@ -532,11 +532,19 @@ function Priest:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 
@@ -640,7 +648,14 @@ function Priest:GetWeaponBonus(itemLink) return 0 end
 Priest.Profiles = {}
 for k, v in pairs(Priest.Weights) do Priest.Profiles[k] = v end
 if Priest.LevelingBrackets then
-    for k, v in pairs(Priest.LevelingBrackets) do Priest.Profiles[k] = v.End end
+    for k, v in pairs(Priest.LevelingBrackets) do
+        local prof = {}
+        for stat, w in pairs(v.End or {}) do prof[stat] = w end
+        for stat, w in pairs(v) do
+            if type(w) == "number" and stat ~= "min" and stat ~= "max" and prof[stat] == nil then prof[stat] = w end
+        end
+        Priest.Profiles[k] = prof
+    end
 end
 if Priest.LevelingWeights then
     for k, v in pairs(Priest.LevelingWeights) do Priest.Profiles[k] = v end

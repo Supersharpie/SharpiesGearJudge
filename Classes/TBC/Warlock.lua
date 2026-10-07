@@ -237,7 +237,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.5,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5 
         },
         End = { 
             ["MSC_WAND_DPS"] = 0.1, 
@@ -250,7 +250,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.8,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0
         }
     },
 
@@ -348,7 +348,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.4, 
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
@@ -361,7 +361,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
@@ -460,7 +460,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.4, 
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
@@ -473,7 +473,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.4,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
@@ -573,7 +573,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5,           
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5, 
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
@@ -586,7 +586,7 @@ Warlock.LevelingBrackets = {
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
-            ["ITEM_MOD_HASTE_SPELL_RATING_SHORT"] = 1.0,
+            ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_HEALTH_REGENERATION_SHORT"] = 0.3,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         }
@@ -644,7 +644,8 @@ Warlock.Talents = {
     ["DARK_PACT"]       = MSC.L["Dark Pact"], 
     ["UNSTABLE_AFF"]    = MSC.L["Unstable Affliction"], 
     ["SIPHON_LIFE"]     = MSC.L["Siphon Life"], 
-    ["SOUL_LINK"]       = MSC.L["Soul Link"], 
+    ["SOUL_LINK"]       = MSC.L["Soul Link"],
+    ["FEL_DOMINATION"]  = MSC.L["Fel Domination"], -- read by GetSpec (Soul Link leveling route)
     ["SUMMON_FELGUARD"] = MSC.L["Summon Felguard"], 
     ["CONFLAGRATE"]     = MSC.L["Conflagrate"], 
     ["RUIN"]            = MSC.L["Ruin"], 
@@ -764,11 +765,19 @@ function Warlock:GetDynamicWeights(forceKey)
             local result = startValue + ((endValue - startValue) * progress)
             
             -- Safety: Never return negative weight
-            if result < 0 then result = 0 end
+            if result < 0 and not stat:find("WEAPON_SPEED", 1, true) then result = 0 end -- (negative speed = prefer fast)
             
             dynamicWeights[stat] = result
         end
         
+        -- Weights set on the bracket itself (outside Start/End, e.g. armor) apply
+        -- flat across the whole bracket. They were silently dropped before.
+        for stat, v in pairs(bracket) do
+            if type(v) == "number" and stat ~= "min" and stat ~= "max" and dynamicWeights[stat] == nil then
+                dynamicWeights[stat] = v
+            end
+        end
+
         return dynamicWeights, specKey
     end
 

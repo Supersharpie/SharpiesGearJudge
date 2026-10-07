@@ -40,6 +40,30 @@ function MSC:BumpScoringRevision()
     -- Weights (and set bonus scores) are rebuilt lazily by GetCurrentWeights.
 end
 
+-- Imported (Pawn / Sixty Upgrades) weights saved before 3.2.1 kept the
+-- importer's stat keys, e.g. MSC_WEAPON_DPS, which Forever items never carry
+-- (their DPS is ITEM_MOD_DAMAGE_PER_SECOND_SHORT), so that weight scored
+-- nothing. Add each alias's weight under the key items use, keeping the
+-- original too. Memoized per saved table (weak keys).
+local normalizedCustom = setmetatable({}, { __mode = "k" })
+local function NormalizeCustomWeights(raw)
+    if type(raw) ~= "table" or not MSC.NormalizeStatKey then return raw end
+    local cached = normalizedCustom[raw]
+    if cached then return cached end
+    local out, changed = {}, false
+    for k, v in pairs(raw) do
+        if out[k] == nil then out[k] = v end
+        local nk = MSC.NormalizeStatKey(k)
+        if nk ~= k and type(v) == "number" then
+            changed = true
+            if raw[nk] == nil and (type(out[nk]) ~= "number" or math.abs(v) > math.abs(out[nk])) then out[nk] = v end
+        end
+    end
+    local result = changed and out or raw
+    normalizedCustom[raw] = result
+    return result
+end
+
 function MSC:ApplyWeightPipeline(rawWeights, specKey)
     local finalWeights = {}
     if rawWeights then
@@ -62,10 +86,10 @@ function MSC:LookupRawWeights(profileName)
     if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[profileName] then
         local data = SharpiesGearJudgeDB.customWeights[profileName]
         if type(data) == "table" and data.weights then
-            rawWeights = data.weights
+            rawWeights = NormalizeCustomWeights(data.weights)
             if data.BaseSpec then mathSpec = data.BaseSpec end
         else
-            rawWeights = data
+            rawWeights = NormalizeCustomWeights(data)
         end
     end
 
@@ -285,6 +309,9 @@ function MSC:BuildTalentCache()
 end
 
 function MSC:GetTalentRank(talentKey)
+    -- Scoring for another character (MSC.BonusContext): its saved ranks by key.
+    local ctx = MSC.BonusContext
+    if ctx and ctx.talentRanks then return ctx.talentRanks[talentKey] or 0 end
     if not MSC.CurrentClass or not MSC.CurrentClass.Talents then return 0 end
 
     if not MSC.TalentCacheLoaded then 
@@ -472,10 +499,10 @@ function MSC:ApplyDynamicAdjustments()
              local data = SharpiesGearJudgeDB.customWeights[specKey]
              
              if type(data) == "table" and data.weights then
-                 rawWeights = data.weights
+                 rawWeights = NormalizeCustomWeights(data.weights)
                  if data.BaseSpec then mathSpec = data.BaseSpec end -- Only set mathSpec, leave specKey alone!
              else
-                 rawWeights = data
+                 rawWeights = NormalizeCustomWeights(data)
              end
              found = true
         end
@@ -599,12 +626,17 @@ talentTracker:SetScript("OnEvent", function(self, event)
         MSC.TalentCache = {} 
         MSC.TalentCacheLoaded = false
         MSC:BumpScoringRevision()
+    elseif event == "PLAYER_LEVEL_UP" then
+        -- Weights blend by level (Forever curves), rating values and enchant/gem
+        -- suggestions depend on level, and mail/plate become wearable at 40:
+        -- bumping the revision drops the weights, the equipped-slot scores,
+        -- the processed item stats and the usable cache together. (Clearing
+        -- only the weights left bag arrows comparing against old scores.)
+        MSC:BumpScoringRevision()
     else
         MSC.CachedWeights = nil
         MSC.CachedSpecKey = nil
         if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
-        -- Mail/plate become wearable at 40
-        if event == "PLAYER_LEVEL_UP" and MSC.UsableCache then wipe(MSC.UsableCache) end
     end
 end)
 
@@ -651,11 +683,54 @@ end)
 -- BASELINE PROFILE MANAGER
 -- =========================================================================
 
+-- The character's full name. WoW Forever characters have a first and a last
+-- name, and UnitName returns only the first ("Super" for "Super Sharpie"), so
+-- characters sharing a first name used to share one key. GetUnitName(unit, true)
+-- returns the full name (it appends "-Realm" only for other realms; stripped just
+-- in case). On Classic Era and TBC this is the same as UnitName.
+function MSC.GetCharacterName()
+    local full = GetUnitName and GetUnitName("player", true)
+    if type(full) == "string" and full ~= "" then
+        return full:match("^(.-)%-[^%-]+$") or full
+    end
+    return UnitName("player") or "Unknown"
+end
+
+-- The key from before the full-name fix (first name only), for one-time copies.
+function MSC.GetLegacyPlayerKey()
+    return (UnitName("player") or "Unknown") .. "-" .. (GetRealmName() or "Local")
+end
+
 -- Generates a unique key for the current character
 function MSC:GetPlayerKey()
-    local name = UnitName("player") or "Unknown"
-    local realm = GetRealmName() or "Local"
-    return name .. "-" .. realm
+    return MSC.GetCharacterName() .. "-" .. (GetRealmName() or "Local")
+end
+
+-- Copies per-character data saved under the old first-name key to the full-name
+-- key, once. Copied, not moved: several characters may share the old key.
+function MSC.MigrateCharacterKey(tbl)
+    if type(tbl) ~= "table" then return end
+    local new, old = MSC:GetPlayerKey(), MSC.GetLegacyPlayerKey()
+    if new ~= old and tbl[new] == nil and tbl[old] ~= nil then
+        local function Copy(v)
+            if type(v) ~= "table" then return v end
+            local c = {}
+            for k, x in pairs(v) do c[k] = Copy(x) end
+            return c
+        end
+        tbl[new] = Copy(tbl[old])
+    end
+end
+
+do
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_LOGIN")
+    f:SetScript("OnEvent", function()
+        if SGJ_Settings then
+            MSC.MigrateCharacterKey(SGJ_Settings.GearProfiles)
+            MSC.MigrateCharacterKey(SGJ_Settings.TalentProfiles)
+        end
+    end)
 end
 
 -- Saves the currently equipped gear AND talents to the specific spec

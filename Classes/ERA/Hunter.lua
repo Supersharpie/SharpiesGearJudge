@@ -180,7 +180,7 @@ function Hunter:GetWeaponBonus(itemLink)
     if classID ~= 2 then return 0 end 
 
     local bonus = 0
-    local _, race = UnitRace("player")
+    local race = MSC.CtxRace()
 
     -- Racial: Dwarf (Gun) / Troll (Bow) +5 Skill
     -- In Era, Weapon Skill is very valuable for hit/glancing reduction

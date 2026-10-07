@@ -44,7 +44,43 @@
 
 ### 🗡️ Weapon Racials in Tooltips (WoW Forever)
 - **Racial Shown in Gains and Losses**: When a weapon swap gains or loses a weapon racial, the tooltip now lists it under Gains or Losses, for example "Sword Specialization (Crit) -2%" when a Human swaps a sword for a mace. The score already counted it; now you can see why a weapon with better stats is only a small upgrade, or none. Covers Human Sword Specialization (2%), Dwarf Mace Specialization (1%) and Orc Axe Specialization (1%), including a two-hander clearing your off hand.
-- **New Option: Shield Tanks: No Two-Handers** (Comparison Logic, on by default): with a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you're holding one. Before, a shield tank already wielding a two-hander still saw other two-handers as upgrades. Turn it off to compare two-handers normally when you aren't using a shield. The Roadmap follows the same option.
+
+### ⚙️ Options (All Versions)
+- **New Option: Shield Tanks: No Two-Handers**: On by default, under Comparison Logic. With a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you're holding one. Before, a shield tank already wielding a two-hander still saw other two-handers as upgrades. Turn it off to compare two-handers normally when you aren't using a shield. The Roadmap follows the same option.
+
+### 🔌 For Plugins (All Versions)
+- **Weapon Bonuses for Your Other Characters**: Class and racial weapon bonuses (racials, Weaponmaster, Hack and Slash, the TBC weapon specializations) can now be worked out for a character other than the one you're logged in on. The new Roster plugin uses this to score weapons for your alts. Your own scores don't change.
+- **Relic Bonuses for Your Other Characters**: Librams, idols and totems can now be valued for a class other than the one you're logged in on. The Roster plugin uses this to score relics for your alts. Your own scores don't change.
+
+### ⚖️ Stat Weights (Classic Era & TBC)
+- **Fixed: Survival Hunter Leveling Weights (TBC)**: Survival Hunters from 41 to 59 got no stat weights at all, so every item scored 0. They now use the Survival leveling weights for 41-51 and 52-59.
+- **Fixed: Paladin and Warrior Weights at Levels 1-20 (TBC)**: Paladins and Warriors at 1-20 got no stat weights, so nothing was ever shown as an upgrade. They now use the level 1-20 leveling weights.
+- **Fixed: Elemental and Restoration Shaman at 41-51 (TBC)**: Elemental and Restoration Shamans at 41-51 were judged with the Enhancement weights. They now use their own Elemental and Restoration weights for that range.
+- **Fixed: Druid Leveling Weights (Classic Era)**: Balance Druids below 41, Restoration Druids below 52 and Bear Druids at 1-20 got no stat weights. They now use the Feral leveling weights for those levels until their own spec's weights start.
+- **Fixed: Retribution Paladins with Blessing of Kings (Classic Era)**: Retribution Paladins who took Blessing of Kings at 60 got no stat weights. They now use the Retribution weights.
+- **Fixed: Spell Critical Strike Worth Nothing (Classic Era)**: Spell Critical Strike was worth 0 for Balance Druids and Elemental Shamans at 52-59. It now counts.
+- **Fixed: Spell Haste Worth Nothing (TBC)**: Spell Haste Rating was worth 0 in the leveling weights for Druids, Paladins, Priests, Shamans and Warlocks. It now counts.
+- **Fixed: Block Rating Worth Nothing for Tank Shamans (TBC)**: Block Rating was worth 0 in the tank Shaman leveling weights. It now counts.
+- **Fixed: Fel Domination Not Detected (TBC)**: The Soul Link leveling check couldn't see Fel Domination. Warlocks who take Fel Domination now get the Soul Link leveling weights.
+- **Fixed: Error for Regrowth Druids (Classic Era)**: Restoration Druids on the Regrowth profile could get a Lua error once their bonus healing went over 500. That no longer happens.
+- **Fixed: Armor Ignored While Leveling (TBC)**: Every class's leveling weights had an armor value that the level-by-level blend dropped, so armor counted for nothing from level 21 on. It now counts in every leveling bracket.
+- **Fast Weapons Preferred Again (TBC)**: Rogues (off hand, for poisons), Fury and dual-wield Warriors (off hand) and Enhancement Shamans while leveling are meant to favour faster weapons, but the scorer could only reward slow ones, so that preference never applied. A faster weapon now scores higher by the profile's amount per second of speed (a 1.4 dagger over a 2.6 sword in a Rogue's off hand is worth up to about 5 points), and the main-hand preference for slow weapons is unchanged.
+- **Fixed: Armor in Feral Leveling 52-59 (Classic Era)**: The Druid leveling weights for 52-59 had no armor value at all (it was stored under a stat name no item has). Armor now counts there like in the brackets before it. Bear weights already counted armor and are unchanged.
+
+### ⚖️ Stat Weights (WoW Forever)
+- **Fixed: Paladin Starting Profile**: Before the addon knew your spec, Paladins got Stamina weighted far above everything else and Hit and Crit almost ignored. That profile now matches the other classes (Stamina 0.5, Hit 20, Crit 12, Weapon Skill 13).
+- **Fixed: Heart of the Wild Druid Profile**: Strength, Stamina, Armor and Weapon Skill were worth almost nothing next to the healing stats in the "Hybrid: Heart of the Wild" profile. They are now scaled the same way as the healing stats, so the old feral/healing balance is back.
+
+### 🔎 Tooltip Reading (Classic Era & TBC)
+- **Fixed: Mana and Health Per 5 on Gear Scored Nothing**: "Equip: Restores 5 mana per 5 sec." (and health) showed "Proc not yet modeled" and added 0 to the score. It now counts as Mp5 / Hp5 in every language.
+- **Fixed: Enchant Check Removed Random-suffix Stats**: An unenchanted "of Strength"/"of the Bear" item could have its suffix stats mistaken for an enchant and removed (Bracers of Strength lost their +5 Strength). The enchant check now only looks at the item's real enchant.
+- **Fixed: Dodge, Parry, Block and Holy Damage Lines Scored Nothing**: "Increases your chance to dodge an attack by 1%", "...parry an attack...", "...block attacks with a shield by 2%", "Increases the block value of your shield by 20" and "Increases damage done by Holy spells and effects by up to 10" are now read.
+
+### 🔎 Tooltip Reading (TBC)
+- **Fixed: Feral Attack Power Counted as Normal Attack Power**: "Increases attack power by 140 in Cat, Bear, Dire Bear, and Moonkin forms only" was read as +140 Attack Power, so feral staves looked great to Warriors and Hunters. It is now Feral Attack Power.
+- **Fixed: "The Casual" Gem Mode Dropped Your Gems**: With gem mode 2, the gems already in an item were taken out of its score instead of kept. They are kept now and only empty sockets get suggested gems.
+- **Fixed: Wrong Hit Caps with Raid Buffs Assumed**: The spell hit cap was worked out as 252 rating instead of 202 and the ranged hit cap as 199 instead of 142. Both are right now, and low levels no longer treat hit as capped.
+- **Fixed: Error after /sgjwipe with Buffs Assumed**: Turning on Assume Raid/World Buffed after a wipe raised an error on every score. Fixed.
 
 ### 🌍 Translations (All Languages WoW Forever Ships In)
 - **Every Language Complete**: Gear Judge is now fully translated into every language WoW Forever launches with: German, Spanish (Spain and Latin America), French, Brazilian Portuguese, Russian, Korean and Traditional Chinese. **New:** Korean, Traditional Chinese and Latin American Spanish (before, Latin American Spanish clients got English). The existing languages were missing about 150 strings each (the newer options, the What's New lines and more), now filled.
@@ -54,6 +90,12 @@
 - **Fixed: Decimal Commas**: Tooltip numbers written with a decimal comma ("1,5") are now read correctly.
 - **Fixed: Word Order**: Gear Judge now works out which part of a tooltip line is the number and which is the stat name, so languages that put them in a different order than English (Korean, Chinese, Portuguese, Spanish) are read correctly.
 - **Fixed: Temporary Effects in German and Russian**: The words that mark an "Equip:" effect as temporary ("for 10 sec") were damaged for German and Russian, so temporary effects could be scored as permanent stats. Rebuilt for every language.
+- **Fixed: A Few English Words in Other Languages**: The "Defense", "Hit", "Uncrushable" and "Stat" labels, the hit cap modifier names (Heroic Presence, Improved Faerie Fire, Draenei in Raid) and the "Successfully imported" message are now translatable.
+- **More Text Translated**: The "Forever Edition" login line, the "(Saved)" tag on tracked-spec tooltip lines, and the /sgj hitcheck and /sgj talents output can now be translated.
+- **Fixed: Korean Protection Names**: Korean names the Warrior Protection tree 방어 and the Paladin one 보호, but Gear Judge used one word for both classes' Protection profiles, so one class always saw the other's name. Each class now sees its own.
+
+### 🖼️ Window
+- **Open Tab in the Title**: The header next to the version always read "Laboratory", whichever tab was open. It now shows the open tab's name (Weapon Thunderdome, Receipt, Stat Logic, Roadmap, Roster and so on).
 
 ### ⚡ Performance
 - **Fixed: Update Throttles**: Two throttles that should hold back repeated updates never worked, so a burst of events (opening bags, a vendor or a profession window, or the server sending item data) ran a full update for every single event. Each burst now runs one update.
@@ -73,8 +115,33 @@
 - **Fixed: Socket Bonus Colour Check**: Only the red part of a socket bonus line's colour was read.
 - **Fixed: Blank Tooltip With Careful Aim**: A Hunter's Careful Aim could throw an error and leave the tooltip blank when no ranged attack power was listed yet.
 - **Fixed: Doubled Stat Names in Tooltips**: With Simplify Stats on, a stat name could be shortened twice when one name holds another: a weapon's "(8.3 damage per second)" line read "(8.3 Weapon Weapon DPS)". The shortening now finds every stat name in the original line first, longest first, so each word is replaced once ("Ranged Attack Power" no longer has its "Attack Power" part shortened on its own either).
-
-- The new text is translated for German, Spanish, French, Brazilian Portuguese and Russian.
+- **Fixed: Old Scores After a Level-Up**: After a level-up, bag arrows and tooltips kept comparing against the scores your gear had at the old level. Levelling up now refreshes every saved score, so weights, rating values and enchant/gem suggestions for the new level apply right away.
+- **Fixed: Some Items with a "Use:" Effect Scored Nothing for It**: Items whose Use effect has a hand-made estimate (such as the Manual Crowd Pummeler's haste burst or the Emerald Owl's mana) never had that value added to their score. It now counts, once.
+- **Fixed: Relic Stats Counted Twice**: Some librams, idols and totems added their stats twice. They now count once.
+- **Fixed: Party-Aura Items Read the Wrong Number**: "...of all party members within 30 yards by up to 62" (Atiesh) was read as 30. The "by up to" amount is used now.
+- **Fixed: "Unique-Equipped" Showed as an Unmodeled Effect**: The line was treated as an Equip effect and flagged "Proc not yet modeled". It is now ignored.
+- **Fixed: Pawn and Sixty Upgrades Imports Lost Some Stats**: Pawn's SpellDamage, school spell damage (Fire, Frost, Shadow, Arcane, Nature, Holy), SpellHit, SpellCrit, SpellHaste and Hp5 weights were dropped, and on Forever an imported weapon DPS weight scored nothing. They are all read now, including profiles you imported before.
+- **Fixed: Weapon Speed Read Wrong in Some Languages**: German, French, Spanish, Portuguese and Russian tooltips write "2,60", which was read as 2. The decimal is read now.
+- **Fixed: Item Data Could Get Stuck Incomplete**: A tooltip that hadn't loaded (or had protected text) was saved as an item with no stats until reload. Such scans are no longer saved and are read again next time.
+- **Fixed: Wrong Spirit/Intellect/Agility in Some Estimates**: Relic values and the Spirit regen estimate used your naked stats instead of your stats with gear. They use your full stats now.
+- **Fixed: Worn Rings, Trinkets and Off-Hand Weapons Compared with Themselves**: Hovering a ring, trinket or dual-wield weapon you were wearing showed "vs." your other ring (or weapon) and an Upgrade or Downgrade, scored as if you wore two copies of it. It now shows "* EQUIPPED *" like every other worn item. A second copy in your bags is still compared against your other slot.
+- **Fixed: Relic Tooltips Shortened**: Compact Equip was meant to leave librams, idols and totems alone, but it never recognized them, so their Equip lines could be shortened or rewritten. Relic text now stays as the game writes it.
+- **Fixed: Weapon Pairing Lists Missing in Other Languages**: When a one-hander is scored together with a weapon from your bags ("w/ ..."), the tooltip shows separate Item and Combined gains and losses. That only worked in English; it now works in every language.
+- **Fixed: Crit from Agility and Intellect in Forever Tooltips**: On Forever, the crit you gain from Agility and Intellect was added to the Gains/Losses list as a percent next to Crit Rating, so it barely showed (20 Agility added "1" instead of about 14 rating). It is now converted to Crit Rating using your class's real Agility and Intellect per 1% crit at your level. Display only; scores didn't change.
+- **Fixed: Use Effects Counted Twice in the Item Lists**: An equipped item's Use effect (for example a mana-per-5 trinket) was added twice to the "Item Losses" list when you compared a replacement. Display only; scores didn't change.
+- **Fixed: /sgj jc Needed a Reload**: Toggling the Jewelcrafter setting with /sgj jc kept showing gem projections from before the change until something else cleared the scores. Scores now refresh right away.
+- **Fixed: RestedXP Check Error**: The startup check for RestedXP's own gear tips could error when RestedXP's settings had no profiles yet.
+- **Fixed: Characters With the Same First Name (Forever)**: WoW Forever names have two parts ("Super Sharpie"), but Gear Judge told characters apart by first name only, so characters sharing one (Sharpie Hustlegear, Sharpie Windfield…) shared their saved spec gear and talents in Secondary Specs & Baselines. Each character now uses its full name. Saved data carries over the first time you log in.
+- **Fixed: Bag Arrows after Changing Scoring Options**: Changing the scoring profile, Enchant Mode, Gemming Logic, Gem Quality, Shield Tanks: No Two-Handers, any buff assumption or Gear for Raiding left the bag arrows (and Baganator's arrows and `upgrade` search) showing the old verdicts until something else refreshed them. They now update right away.
+- **Fixed: Errors after /sgjwipe**: After `/sgjwipe`, turning on Assume Raid Buffed or Assume World Buffed caused an error on every score until a reload. The wipe now puts every default back straight away, and its message is translated.
+- **Fixed: Raid and World Buff Presets Out of Sync**: Picking a buff preset didn't tick or untick its Assume ... Buffed box, and ticking the box didn't change the preset shown. Each box and its preset now always match.
+- **Fixed: Delete Custom Profile Message**: Deleting an imported profile showed a popup saying "Profile imported successfully!" and the profile list still showed the deleted name. The popup now says the profile was deleted, and the list shows Auto-Detect.
+- **Fixed: Weapon Thunderdome Shift-Click Added Items Twice**: Shift-clicking an item into the Weapon Thunderdome filled two slots with it. It now goes in once.
+- **Fixed: Score Breakdown Window Jumped Back to the Center**: After dragging the score breakdown window, opening another breakdown snapped it back to the middle of the screen. It now stays where you put it.
+- **Fixed: ElvUI Bag Arrows Ignored the Show Bag Upgrade Arrows Option**: With ElvUI bags, turning Show Bag Upgrade Arrows off left the arrows on screen, and option changes didn't redraw them. Turning it off now clears them, and they refresh with the other bag addons.
+- **Fixed: Secondary Specs Rows Overflowing**: In languages with longer words (French, German, ...), the Save Profile button text and the saved score spilled out of the Secondary Specs & Baselines card. The buttons now size to their text and the status moves under the buttons when it won't fit beside them.
+- **Fixed: Show Only via Shift Key Looked Usable While Tooltips Were Hidden**: The option was only greyed out after clicking Hide Tooltip Verdict, not when the settings opened with tooltips already hidden. It is now greyed out whenever Hide Tooltip Verdict is on.
+- **Fixed: Untranslated Text in Stat Logic and /sgjsave**: The Stat Logic ring tooltips' modifier names (talents and racials) and the Druid "Cap reduced by" line, plus the `/sgjsave` popup and its combat warning, were always in English. They now use the translations.
 
 ## 🚀 v3.2.0
 

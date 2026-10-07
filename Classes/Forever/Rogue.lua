@@ -299,7 +299,7 @@ local function GetDaggerMainHandBonus(itemLink, weights, slotId, specName)
     if not points then return 0 end
     local _, _, _, _, _, classID, subClassID = GetItemInfoInstant(itemLink)
     if classID ~= 2 or subClassID ~= 15 then return 0 end
-    local level = UnitLevel("player")
+    local level = MSC.CtxLevel()
     local ap = points[#points][2]
     if level <= points[1][1] then ap = points[1][2]
     else
@@ -328,7 +328,7 @@ local function GetHackAndSlashProcBonus(itemLink, weights, slotId, specName)
     local _, _, _, _, _, classID, subClassID = GetItemInfoInstant(itemLink)
     if classID ~= 2 or (subClassID ~= 7 and subClassID ~= 4) then return 0 end
 
-    local level = UnitLevel("player")
+    local level = MSC.CtxLevel()
     if level < 30 then return 0 end
     local D = MSC.ForeverLevelLerp(HS_TOTAL_DAMAGE, level)
     local ap
