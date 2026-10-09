@@ -175,8 +175,9 @@ function MSC:GetPlayerStat(statType)
         return (MSC:GetForeverHitPercent(statType == "HIT" and "MELEE" or "SPELL"))
     end
     if MSC.IsVanillaRules then
-        if statType == "HIT" then val = GetHitModifier()
-        elseif statType == "SPELL_HIT" then val = MSC.SanitizeStat(GetSpellHitModifier())
+        -- gear + talents: hit % from live buffs comes off, assumed buffs add theirs
+        if statType == "HIT" then local j = MSC.GetJudgingStats(); val = math_max(0, MSC.SanitizeStat(GetHitModifier()) - j.buffHitPct) + j.assumedHitPct
+        elseif statType == "SPELL_HIT" then local j = MSC.GetJudgingStats(); val = math_max(0, MSC.SanitizeStat(GetSpellHitModifier()) - j.buffSpellHitPct) + j.assumedSpellHitPct
         elseif statType == "CRIT" then val = MSC.SanitizeStat(GetCritChance())
         elseif statType == "SPELL_CRIT" then val = MSC.SanitizeStat(GetSpellCritChance(2))
         elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = MSC.SanitizeStat(b) + MSC.SanitizeStat(m)
@@ -184,8 +185,9 @@ function MSC:GetPlayerStat(statType)
         elseif statType == "SPELL_POWER" then val = MSC.SanitizeStat(GetSpellBonusDamage(2))
         end
     else
-        if statType == "HIT" then val = GetCombatRating(6)
-        elseif statType == "SPELL_HIT" then val = MSC.SanitizeStat(GetCombatRating(8))
+        -- Hit Rating from the gear (unbuffed), live rating until it's scanned
+        if statType == "HIT" then val = MSC.GetGearHitRating("MELEE") or GetCombatRating(6)
+        elseif statType == "SPELL_HIT" then val = MSC.GetGearHitRating("SPELL") or MSC.SanitizeStat(GetCombatRating(8))
         elseif statType == "CRIT" then val = MSC.SanitizeStat(GetCombatRating(9))
         elseif statType == "SPELL_CRIT" then val = MSC.SanitizeStat(GetCombatRating(11))
         elseif statType == "DEFENSE" then local b, m = UnitDefense("player"); val = MSC.SanitizeStat(b) + MSC.SanitizeStat(m)
@@ -209,8 +211,9 @@ function MSC:GetSpiritValueInMP5(level, spiritPoints)
     else
         if not level or level > 70 then level = 70 end
         local base = MSC.BaseRegenTable[level] or 0.009327
-        -- UnitStat returns base, effective, ...: the effective (gear + buffs) value
-        local intel = MSC.SanitizeStat(select(2, UnitStat("player", 4))) or 100
+        -- Intellect with gear, without live buffs, with assumed ones
+        local intel = MSC.GetJudgingStats().int
+        if intel <= 0 then intel = 100 end
         return 5 * (0.001 + base * math_sqrt(intel) * points)
     end
 end
@@ -436,8 +439,11 @@ function MSC.IsGearingForRaids()
     return not (SGJ_Settings and SGJ_Settings.GearForRaiding == false)
 end
 
--- 0 below 50 (or when not gearing for raids), 1 at 60+.
+-- 0 below 50 (or when not gearing for raids), 1 at 60+. Always 0 while
+-- PvP weights are active: other players are your level, so hit and defense
+-- keep the leveling targets.
 function MSC.GetRaidBlend(level)
+    if MSC.IsPvPWeightsActive() then return 0 end
     level = level or UnitLevel("player") or 1
     if level >= 60 then return 1 end
     if not MSC.IsGearingForRaids() then return 0 end
@@ -463,15 +469,219 @@ function MSC.GetForeverDefenseTarget(level)
     return base + (MSC.ForeverCaps.DEFENSE_RAID - base) * t
 end
 
+-- Gear is judged unbuffed: caps read the stats on the equipped gear (with
+-- its real enchants and gems) plus active set bonuses, not the live numbers,
+-- which move with food, elixirs and party buffs. Cached per equipment set.
+-- Returns nil while an equipped item isn't scanned yet (callers then use
+-- the live value).
+local GEAR_TOTAL_SLOTS = { 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }
+local gearTotals, gearTotalsKey = nil, nil
+function MSC.GetGearStatTotals()
+    local links = {}
+    for i, slot in ipairs(GEAR_TOTAL_SLOTS) do links[i] = GetInventoryItemLink("player", slot) or "-" end
+    local key = table.concat(links, ";")
+    if gearTotals and gearTotalsKey == key then return gearTotals end
+    local totals, setCounts = {}, {}
+    for i, slot in ipairs(GEAR_TOTAL_SLOTS) do
+        local link = links[i]
+        if link ~= "-" then
+            local stats = MSC.GetRawItemStats(link)
+            if not MSC.StatCache[link] then return nil end -- not scanned yet
+            for k, v in pairs(stats) do
+                if type(v) == "number" then totals[k] = (totals[k] or 0) + v end
+            end
+            local itemID = tonumber(string_match(link, "item:(%d+)"))
+            local setID = itemID and MSC.ItemSetMap and MSC.ItemSetMap[itemID]
+            if setID then setCounts[setID] = (setCounts[setID] or 0) + 1 end
+        end
+    end
+    for setID, count in pairs(setCounts) do
+        for reqCount, bonus in pairs((MSC.SetBonusScores and MSC.SetBonusScores[setID]) or {}) do
+            if count >= reqCount and type(bonus) == "table" and bonus.stats then
+                for k, v in pairs(bonus.stats) do totals[k] = (totals[k] or 0) + v end
+            end
+        end
+    end
+    gearTotals, gearTotalsKey = totals, key
+    return totals
+end
+
+-- Hit Rating on the gear for a kind of attack ("MELEE", "RANGED", "SPELL"),
+-- or nil when the gear isn't scanned yet. Forever's hit rating counts for
+-- every kind (one unified stat); TBC keeps spell hit apart.
+function MSC.GetGearHitRating(kind)
+    local t = MSC.GetGearStatTotals()
+    if not t then return nil end
+    local hit, melee, ranged, spell = t["ITEM_MOD_HIT_RATING_SHORT"] or 0, t["ITEM_MOD_HIT_MELEE_RATING_SHORT"] or 0,
+        t["ITEM_MOD_HIT_RANGED_RATING_SHORT"] or 0, t["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0
+    if MSC.IsForever then return hit + melee + ranged + spell end
+    if kind == "SPELL" then return spell end
+    return hit + ((kind == "RANGED") and ranged or melee)
+end
+
+-- The character's stats without buffs: the live numbers minus what the
+-- active buffs add (MSC.BuffAuras, per game version in Buffs_<version>.lua:
+-- spell id -> flat STR/AGI/STA/INT/SPI/ALL, <stat>_PCT, AP, RAP, AP_PCT,
+-- RAP_PCT, SP (every school), SP_<SCHOOL>, HEAL, ARMOR, MANA, HIT/SPELL_HIT %).
+-- A % buff multiplies the stat, a flat one adds; Strength/Agility/Intellect
+-- lost this way also come off Attack Power, armor and mana. Fields: str,
+-- agi, sta, int, spi, ap, rap, sp, heal, armor, mana, spSchool[school],
+-- buffHitPct, buffSpellHitPct (hit % the live buffs give).
+-- Talents that multiply a stat aren't divided out of a flat buff's share,
+-- which is close enough for the thresholds this feeds.
+local AP_PER = { -- AttackPowerPerStrength, AttackPowerPerAgility, RangedAttackPowerPerAgility (ChrClasses)
+    WARRIOR = { 2, 0, 1 }, PALADIN = { 2, 0, 0 }, SHAMAN = { 2, 0, 0 }, DRUID = { 2, 0, 0 },
+    ROGUE = { 1, 1, 2 }, HUNTER = { 1, 1, 2 },
+}
+local STAT_INDEX = { str = 1, agi = 2, sta = 3, int = 4, spi = 5 }
+local STAT_KEY = { str = "STR", agi = "AGI", sta = "STA", int = "INT", spi = "SPI" }
+local SCHOOL_KEY = { [2] = "SP_HOLY", [3] = "SP_FIRE", [4] = "SP_NATURE", [5] = "SP_FROST", [6] = "SP_SHADOW", [7] = "SP_ARCANE" }
+
+-- Sum of buff effects: flat[s], mult[s], ap, rap, apMult, rapMult, sp,
+-- spSchool[school], heal, armor, mana, hit, spellHit.
+function MSC.NewBuffSum()
+    return { flat = { str = 0, agi = 0, sta = 0, int = 0, spi = 0 }, mult = { str = 1, agi = 1, sta = 1, int = 1, spi = 1 },
+        ap = 0, rap = 0, apMult = 1, rapMult = 1, sp = 0, spSchool = { 0, 0, 0, 0, 0, 0, 0 },
+        heal = 0, armor = 0, mana = 0, hit = 0, spellHit = 0 }
+end
+
+-- Adds one buff (a MSC.BuffAuras entry) to a sum. pointsValue: the live
+-- value of an entry with P (read from the aura's points).
+function MSC.AddBuffEffects(sum, b, pointsValue)
+    local function V(k)
+        if b.P == k and pointsValue then return pointsValue end
+        return b[k] or 0
+    end
+    for s, K in pairs(STAT_KEY) do
+        sum.flat[s] = sum.flat[s] + V(K) + V("ALL")
+        local pct = V(K .. "_PCT") + V("ALL_PCT")
+        if pct ~= 0 then sum.mult[s] = sum.mult[s] * (1 + pct / 100) end
+    end
+    sum.ap, sum.rap = sum.ap + V("AP"), sum.rap + V("RAP")
+    if V("AP_PCT") ~= 0 then sum.apMult = sum.apMult * (1 + V("AP_PCT") / 100) end
+    if V("RAP_PCT") ~= 0 then sum.rapMult = sum.rapMult * (1 + V("RAP_PCT") / 100) end
+    sum.sp, sum.heal = sum.sp + V("SP"), sum.heal + V("HEAL")
+    for school, K in pairs(SCHOOL_KEY) do sum.spSchool[school] = sum.spSchool[school] + V(K) end
+    sum.armor, sum.mana = sum.armor + V("ARMOR"), sum.mana + V("MANA")
+    sum.hit, sum.spellHit = sum.hit + V("HIT"), sum.spellHit + V("SPELL_HIT")
+end
+
+-- The live value of a shared aura (a MSC.BuffAuras entry with P): the first
+-- non-zero of the aura's points, or nil when the client doesn't give them.
+local function AuraPointsValue(auraData)
+    local pts = auraData and auraData.points
+    if type(pts) ~= "table" then return nil end
+    for _, v in ipairs(pts) do
+        v = MSC.SanitizeStat(v)
+        if v ~= 0 then return v end
+    end
+    return nil
+end
+
+local unbuffed, unbuffedTime = nil, nil
+function MSC.GetUnbuffedStats()
+    local now = GetTime and GetTime() or 0
+    if unbuffed and unbuffedTime == now then return unbuffed end
+    local sum = MSC.NewBuffSum()
+    local db = MSC.BuffAuras
+    if db then
+        MSC.ForEachPlayerBuff(function(spellId, auraData)
+            local b = db[spellId]
+            if b then MSC.AddBuffEffects(sum, b, b.P and AuraPointsValue(auraData)) end
+        end)
+    end
+    local u, delta = {}, {}
+    for s, i in pairs(STAT_INDEX) do
+        local live = MSC.SanitizeStat(select(2, UnitStat("player", i)))
+        u[s] = math_max(0, live / sum.mult[s] - sum.flat[s])
+        delta[s] = live - u[s]
+    end
+    local _, class = UnitClass("player")
+    local per = AP_PER[class] or { 1, 0, 0 }
+    local liveAP, liveRAP = 0, 0
+    if UnitAttackPower then
+        local b, p, n = UnitAttackPower("player")
+        liveAP = MSC.SanitizeStat(b) + MSC.SanitizeStat(p) + MSC.SanitizeStat(n)
+    end
+    if UnitRangedAttackPower then
+        local b, p, n = UnitRangedAttackPower("player")
+        liveRAP = MSC.SanitizeStat(b) + MSC.SanitizeStat(p) + MSC.SanitizeStat(n)
+    end
+    u.ap = math_max(0, liveAP / sum.apMult - sum.ap - delta.str * per[1] - delta.agi * per[2])
+    u.rap = math_max(0, liveRAP / sum.rapMult - sum.rap - delta.agi * per[3])
+    u.spSchool = {}
+    u.sp = 0
+    for school = 2, 7 do
+        local live = GetSpellBonusDamage and MSC.SanitizeStat(GetSpellBonusDamage(school)) or 0
+        u.spSchool[school] = math_max(0, live - sum.sp - sum.spSchool[school])
+        u.sp = math_max(u.sp, u.spSchool[school])
+    end
+    u.heal = math_max(0, (GetSpellBonusHealing and MSC.SanitizeStat(GetSpellBonusHealing()) or 0) - sum.heal)
+    local liveArmor = UnitArmor and MSC.SanitizeStat(select(2, UnitArmor("player"))) or 0
+    u.armor = math_max(0, liveArmor - sum.armor - 2 * delta.agi)
+    local liveMana = UnitPowerMax and MSC.SanitizeStat(UnitPowerMax("player", 0)) or 0
+    u.mana = math_max(0, liveMana - sum.mana - 15 * delta.int)
+    u.buffHitPct, u.buffSpellHitPct = sum.hit, sum.spellHit
+    unbuffed, unbuffedTime = u, now
+    return u
+end
+
+-- The stats gear is judged with: unbuffed, plus the buffs Buff Assumptions
+-- assume (MSC.BuffEngine:GetAssumedBuffSum). Same fields as
+-- MSC.GetUnbuffedStats, plus assumedHitPct / assumedSpellHitPct.
+local judging, judgingTime, judgingRev = nil, nil, nil
+function MSC.GetJudgingStats()
+    local now, rev = GetTime and GetTime() or 0, MSC.ScoringRevision or 0
+    if judging and judgingTime == now and judgingRev == rev then return judging end
+    local u = MSC.GetUnbuffedStats()
+    local a = MSC.BuffEngine and MSC.BuffEngine.GetAssumedBuffSum and MSC.BuffEngine:GetAssumedBuffSum()
+    local j = {}
+    for k, v in pairs(u) do j[k] = v end
+    j.assumedHitPct, j.assumedSpellHitPct = 0, 0
+    if a then
+        local d = {}
+        for s in pairs(STAT_INDEX) do
+            j[s] = (u[s] + a.flat[s]) * a.mult[s]
+            d[s] = j[s] - u[s]
+        end
+        local _, class = UnitClass("player")
+        local per = AP_PER[class] or { 1, 0, 0 }
+        j.ap = (u.ap + a.ap + d.str * per[1] + d.agi * per[2]) * a.apMult
+        j.rap = (u.rap + a.rap + d.agi * per[3]) * a.rapMult
+        j.spSchool, j.sp = {}, 0
+        for school = 2, 7 do
+            j.spSchool[school] = (u.spSchool[school] or 0) + a.sp + a.spSchool[school]
+            j.sp = math_max(j.sp, j.spSchool[school])
+        end
+        j.heal = u.heal + a.heal
+        j.armor = u.armor + a.armor + 2 * d.agi
+        j.mana = u.mana + a.mana + 15 * d.int
+        j.assumedHitPct, j.assumedSpellHitPct = a.hit, a.spellHit
+    end
+    judging, judgingTime, judgingRev = j, now, rev
+    return j
+end
+
+-- Spell damage of one school (2 Holy, 3 Fire, 4 Nature, 5 Frost, 6 Shadow,
+-- 7 Arcane) that gear is judged with: GetSpellBonusDamage(school) without
+-- live buffs, with assumed ones.
+function MSC.GetJudgingSpellDamage(school)
+    return MSC.GetJudgingStats().spSchool[school] or 0
+end
+
 -- Current hit % in one place, talents included once. Forever gear carries
 -- Hit Rating (10 = 1%), which the old GetHitModifier() path didn't see.
 -- kind: "MELEE", "RANGED" or "SPELL". /sgj hitcheck prints the parts.
+-- The rating part is the gear's (unbuffed); the live rating is the fallback.
 local CR_HIT = { MELEE = 6, RANGED = 7, SPELL = 8 }
 function MSC:GetForeverHitPercent(kind)
     kind = kind or "MELEE"
     local cr = CR_HIT[kind] or 6
     local fromRating
-    if GetCombatRatingBonus then
+    local gear = MSC.GetGearHitRating(kind)
+    if gear then
+        fromRating = gear / 10
+    elseif GetCombatRatingBonus then
         fromRating = MSC.SanitizeStat(GetCombatRatingBonus(cr))
     else
         fromRating = MSC.SanitizeStat(GetCombatRating and GetCombatRating(cr) or 0) / 10
@@ -481,6 +691,13 @@ function MSC:GetForeverHitPercent(kind)
         modifier = MSC.SanitizeStat(GetSpellHitModifier and GetSpellHitModifier() or 0)
     else
         modifier = MSC.SanitizeStat(GetHitModifier and GetHitModifier() or 0)
+    end
+    -- talents and racials: hit % from live buffs comes off, assumed buffs add theirs
+    local j = MSC.GetJudgingStats()
+    if kind == "SPELL" then
+        modifier = math_max(0, modifier - j.buffSpellHitPct) + j.assumedSpellHitPct
+    else
+        modifier = math_max(0, modifier - j.buffHitPct) + j.assumedHitPct
     end
     return fromRating + modifier, fromRating, modifier
 end
@@ -574,11 +791,46 @@ end
 -- block ability) reaches 102.4%, crushing blows can't land, so more
 -- avoidance/block is worth less and effective health takes over. From 50
 -- when gearing for raids (dungeon and raid bosses are +2/+3), always at 60.
+-- Calls fn(spellId, auraData) for each of the player's buffs; stops when fn
+-- returns true.
+function MSC.ForEachPlayerBuff(fn)
+    if C_UnitAuras and C_UnitAuras.GetAuraDataByIndex then
+        for i = 1, 40 do
+            local a = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
+            if not a then break end
+            if fn(MSC.SanitizeStat(a.spellId), a) then return end
+        end
+    elseif UnitBuff then
+        for i = 1, 40 do
+            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
+            if not name then break end
+            if fn(MSC.SanitizeStat(spellId)) then return end
+        end
+    end
+end
+
+-- Active block abilities (spell id -> block %): while one is up it is part
+-- of GetBlockChance(), but the uncrushable check adds the ability itself.
+MSC.ActiveBlockAuras = {
+    [2565] = 75, [12169] = 75, [467891] = 30,                -- Shield Block
+    [20925] = 30, [20927] = 30, [20928] = 30, [27179] = 30,  -- Holy Shield
+}
+
+-- Block chance without an active Shield Block / Holy Shield.
+function MSC.GetPassiveBlockChance()
+    local block = GetBlockChance and MSC.SanitizeStat(GetBlockChance()) or 0
+    MSC.ForEachPlayerBuff(function(spellId)
+        local pct = MSC.ActiveBlockAuras[spellId]
+        if pct then block = block - pct end
+    end)
+    return math_max(0, block)
+end
+
 function MSC.ApplyForeverUncrushable(weights, activeBlockPct, activeCaps)
     if MSC.GetRaidBlend() <= 0 then return end
     local dodge = GetDodgeChance and MSC.SanitizeStat(GetDodgeChance()) or 0
     local parry = GetParryChance and MSC.SanitizeStat(GetParryChance()) or 0
-    local block = GetBlockChance and MSC.SanitizeStat(GetBlockChance()) or 0
+    local block = MSC.GetPassiveBlockChance()
     local total = 5 + dodge + parry + block + (activeBlockPct or 0)
     if total >= MSC.ForeverCaps.UNCRUSHABLE then
         for _, k in ipairs({ "ITEM_MOD_BLOCK_RATING_SHORT", "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT" }) do
@@ -600,13 +852,10 @@ end
 function MSC.GetRelicContext()
     local _, class = UnitClass("player")
     local level = UnitLevel("player") or 1
-    -- UnitStat returns base, effective, ...: use the effective value (with gear)
-    local spirit = MSC.SanitizeStat(select(2, UnitStat("player", 5)))
-    local agi = MSC.SanitizeStat(select(2, UnitStat("player", 2)))
+    -- Without live buffs, with assumed ones (MSC.GetJudgingStats)
+    local u = MSC.GetJudgingStats()
+    local spirit, agi, ap = u.spi, u.agi, u.ap
     local baseArmor = UnitArmor and MSC.SanitizeStat((UnitArmor("player"))) or 0
-    local apBase, apPos, apNeg = 0, 0, 0
-    if UnitAttackPower then apBase, apPos, apNeg = UnitAttackPower("player") end
-    local ap = MSC.SanitizeStat(apBase) + MSC.SanitizeStat(apPos) + MSC.SanitizeStat(apNeg)
     -- Classic mana regen from Spirit, per 5 sec outside the five-second rule
     local regenPerTick = (class == "SHAMAN") and (17 + spirit / 5) or (15 + spirit / 5)
     return {
@@ -624,6 +873,22 @@ function MSC.RelicRole(spec)
     if s:find("TANK") or s:find("BEAR") or s:find("PROT") then return "tank" end
     if s:find("CASTER") or s:find("BALANCE") or s:find("BOOMKIN") or s:find("ELE") then return "caster" end
     return "melee"
+end
+
+-- Classic Era racial weapon skill (+5 with a weapon type, e.g. Human swords):
+-- worth `skill` points of the profile's own Weapon Skill weight, read from the
+-- class module's unscaled row (ApplyScalers cuts that weight once a racial
+-- already gives the +5, which is the value of skill beyond the racial, not of
+-- the racial itself). Profiles without a Weapon Skill weight (leveling rows)
+-- use a tenth of the Hit weight per point: against mobs of your level each
+-- point is about 0.1% fewer misses. `module` is the class module (Roster
+-- scores other characters' classes), weights the profile's final weights.
+function MSC.EraWeaponSkillBonus(module, weights, specName, skill)
+    local K = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT"
+    local raw = module and specName and ((module.Weights and module.Weights[specName]) or (module.LevelingWeights and module.LevelingWeights[specName]))
+    local per = (type(raw) == "table" and raw[K]) or (weights and weights[K])
+    if not per or per <= 0 then per = 0.1 * ((weights and weights["ITEM_MOD_HIT_RATING_SHORT"]) or 0) end
+    return skill * per
 end
 
 -- Shared GetRelicBonus body: Relics entries are either a stat table or a
@@ -816,6 +1081,281 @@ MSC.ForeverManaKeys = {
 }
 
 -- =============================================================
+-- 5.10 FOREVER PVP
+-- =============================================================
+-- PvP can't be simmed like a raid boss, so this is a model laid over the
+-- PvE weights (Research/study/pvp has the reasoning and a print-out of every
+-- row). A fight between two players is roughly a race of time-to-kill: 1%
+-- more health buys about as much as 1% more damage. Each row keeps its
+-- damage stats and gets:
+--   * Stamina priced from the row's own damage unit: what +1% output is
+--     worth in that row, times SURVIVAL (0.5: winning needs the kill as well
+--     as staying up), divided by the Stamina that adds 1% health at the
+--     level. The unit is healing for healer rows, Attack Power for any row
+--     with a real AP weight (Ret, Enhancement, Feral and tanks too: their
+--     spell share is small and its base damage isn't a nuke's), otherwise
+--     Spell Power. Healers come out Stamina-heavy: at high level a point of
+--     healing is a small share of a big base heal.
+--   * Armor, Defense and Dodge priced from that Stamina value, by how much
+--     they cut incoming damage (half of it physical, 40% melee swings).
+--   * Crit a little higher (burst decides fights), Spirit and Mp5 lower for
+--     damage rows (fights are short).
+-- Survival stats only ever go up (the row's own value stays if it's
+-- higher), and hit stays at the player-vs-player targets because
+-- GetRaidBlend returns 0 while PvP weights are active.
+-- Level tables (keyframes, blended by level):
+--   HP: the client's ExpectedStat PlayerHealth (naked) x 1.35 for gear
+--       (x1.25 at 10, x1.4 at 60).
+--   AP_EQ: attack power + 14 x weapon DPS of an average leveler.
+--   SP_EQ: the main nuke's base damage over its coefficient + spell power
+--       from gear; HEAL_EQ the same for heals (base about 2.5x).
+MSC.ForeverPvP = {
+    SURVIVAL = 0.5,
+    PHYSICAL_SHARE = 0.5, -- of incoming damage, for armor
+    MELEE_SHARE = 0.4,    -- of incoming damage that can be dodged
+    DEFENSE_EHP = 0.0007, -- health fraction one Defense point is worth (crit taken + avoidance)
+    CRIT_MULT = 1.1,
+    REGEN_MULT = 0.6,
+    LEVELS  = { 10,  20,  30,   40,   50,   60 },
+    HP      = { 238, 679, 1185, 1827, 2603, 3644 },
+    AP_EQ   = { 138, 330, 572,  834,  1140, 1500 },
+    SP_EQ   = { 31,  94,  224,  421,  650,  911 },
+    HEAL_EQ = { 78,  235, 615,  1160, 1690, 2050 },
+    -- Average armor from gear per level, by what the class wears
+    -- (cloth 13 x level, leather 26, mail 45 from 40, plate 75 from 40).
+    ARMOR_PER_LEVEL = {
+        MAGE = { 13, 13 }, PRIEST = { 13, 13 }, WARLOCK = { 13, 13 },
+        ROGUE = { 26, 26 }, DRUID = { 26, 26 },
+        HUNTER = { 26, 45 }, SHAMAN = { 26, 45 },
+        WARRIOR = { 45, 75 }, PALADIN = { 45, 75 },
+    },
+}
+
+-- A level-60 PvP profile: a copy of the PvE profile it plays like (the PvP
+-- model goes on top at runtime), with optional overrides.
+function MSC.ForeverPvPFrom(base, overrides)
+    local w = {}
+    for k, v in pairs(base or {}) do w[k] = v end
+    for k, v in pairs(overrides or {}) do w[k] = v end
+    return w
+end
+
+-- Profiles that are PvP by design get the PvP model even with the option off.
+-- A class can list extra keys in its PvPProfiles set (e.g. Shockadin).
+function MSC.IsPvPProfile(specKey)
+    if type(specKey) ~= "string" then return false end
+    if string_find(string_upper(specKey), "PVP", 1, true) then return true end
+    local cls = MSC.CurrentClass
+    return (cls and cls.PvPProfiles and cls.PvPProfiles[specKey]) and true or false
+end
+
+-- Per spec (MSC.GetSpecSetting): group defaults to the spec being scored.
+function MSC.IsGearingForPvP(group)
+    return MSC.IsForever and SGJ_Settings and MSC.GetSpecSetting("GearForPvP", group) == true or false
+end
+
+-- Turns the option on or off from anywhere (options page, main window,
+-- PvP realm prompt, /sgj pvp) and tells every toggle to redraw.
+MSC.PvPToggleListeners = MSC.PvPToggleListeners or {}
+-- Sets it for the active spec only.
+function MSC.SetGearForPvP(on)
+    if not SGJ_Settings then return end
+    MSC.SetSpecSetting("GearForPvP", on and true or false)
+    if MSC.OnScoringSettingsChanged then MSC.OnScoringSettingsChanged()
+    elseif MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
+    MSC.NotifyPvPToggle()
+end
+
+-- Redraws every Gear for PvP toggle (also after a spec switch).
+function MSC.NotifyPvPToggle()
+    local on = MSC.IsGearingForPvP(MSC.GetActiveSpecGroup())
+    for _, fn in ipairs(MSC.PvPToggleListeners) do pcall(fn, on) end
+end
+
+-- PvP weights for the active profile: the option, a PvP talent build, or a
+-- PvP profile in use (or being built by the weight pipeline).
+function MSC.IsPvPWeightsActive()
+    if not MSC.IsForever then return false end
+    if MSC.IsGearingForPvP() or MSC.PvPPipelineSpec or MSC.IsPvPTalentBuild() then return true end
+    -- The other spec (MSC.WithSpecGroup) is judged by its own profile.
+    return MSC.IsPvPProfile(MSC.EvalSpecGroup and MSC.EvalSpecKey or MSC.CachedSpecKey)
+end
+
+-- A PvP build picked in the Talents plugin (MSC.SetTalentBuildRole).
+function MSC.IsPvPTalentBuild()
+    return (MSC.TalentBuildRole and MSC.TalentBuildRole.pvp) and true or false
+end
+
+local function PvPLevelValue(tbl, level)
+    local P = MSC.ForeverPvP
+    local lv = P.LEVELS
+    if level <= lv[1] then return tbl[1] * level / lv[1] end
+    for i = 1, #lv - 1 do
+        if level <= lv[i + 1] then
+            local t = (level - lv[i]) / (lv[i + 1] - lv[i])
+            return tbl[i] + (tbl[i + 1] - tbl[i]) * t
+        end
+    end
+    return tbl[#lv]
+end
+MSC.PvPLevelValue = PvPLevelValue
+
+local PVP_PHYS_KEYS = { "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_RANGED_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" }
+local PVP_SPELL_KEYS = {
+    "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT", "ITEM_MOD_FIRE_DAMAGE_SHORT", "ITEM_MOD_FROST_DAMAGE_SHORT",
+    "ITEM_MOD_ARCANE_DAMAGE_SHORT", "ITEM_MOD_NATURE_DAMAGE_SHORT", "ITEM_MOD_SHADOW_DAMAGE_SHORT", "ITEM_MOD_HOLY_DAMAGE_SHORT",
+}
+local function MaxWeight(weights, keys)
+    local m = 0
+    for _, k in ipairs(keys) do
+        local w = weights[k]
+        if type(w) == "number" and w > m then m = w end
+    end
+    return m
+end
+
+-- Applies the PvP model to a finished weights table in place. level and
+-- class default to the player's. Returns a short label for the caps line.
+function MSC.ApplyForeverPvP(weights, level, class)
+    if not weights then return end
+    local P = MSC.ForeverPvP
+    level = math_max(1, math_min(60, level or UnitLevel("player") or 1))
+    if not class then class = select(2, UnitClass("player")) end
+
+    -- The row's value of +1% output, per damage family; the largest decides.
+    local apW = MaxWeight(weights, PVP_PHYS_KEYS)
+    local physical = apW * PvPLevelValue(P.AP_EQ, level) / 100
+    local spell = MaxWeight(weights, PVP_SPELL_KEYS) * PvPLevelValue(P.SP_EQ, level) / 100
+    local healing = (weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) * PvPLevelValue(P.HEAL_EQ, level) / 100
+    local family, perPct = "damage", (apW >= 0.5) and physical or spell
+    if healing > math_max(physical, spell) then family, perPct = "healing", healing end
+    if perPct <= 0 then return end
+
+    local hp = PvPLevelValue(P.HP, level)
+    local staminaPerPct = hp / 1000 -- 10 health per Stamina
+    local stam = P.SURVIVAL * perPct / staminaPerPct
+    local function raise(key, v)
+        if v > (weights[key] or 0) then weights[key] = v end
+    end
+    raise("ITEM_MOD_STAMINA_SHORT", stam)
+    raise("ITEM_MOD_HEALTH_SHORT", stam / 10)
+
+    -- One point of each, as a fraction of health, converted to Stamina.
+    local stamFrac = 10 / hp
+    local apl = P.ARMOR_PER_LEVEL[class] or { 26, 26 }
+    local armor = (level >= 40 and apl[2] or apl[1]) * level
+    local armorFrac = P.PHYSICAL_SHARE / (400 + 85 * level + armor)
+    raise("ITEM_MOD_ARMOR_SHORT", stam * armorFrac / stamFrac)
+    raise("ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", stam * P.DEFENSE_EHP / stamFrac)
+    raise("ITEM_MOD_DODGE_RATING_SHORT", stam * (P.MELEE_SHARE / 100) / stamFrac)
+
+    for _, k in ipairs({ "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }) do
+        if weights[k] then weights[k] = weights[k] * P.CRIT_MULT end
+    end
+    if family == "damage" then
+        for _, k in ipairs({ "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }) do
+            if weights[k] then weights[k] = weights[k] * P.REGEN_MULT end
+        end
+    end
+    return MSC.L["PvP"]
+end
+
+-- =============================================================
+-- 5.11 SPEC GROUPS (Dual Specialization)
+-- =============================================================
+-- WoW Forever unlocks Dual Specialization at 40. Each spec group keeps its
+-- own manual profile choice and Gear for PvP setting (per character); until a
+-- group has its own value it uses the account-wide one, so nothing changes
+-- for a character with one spec. MSC.EvalSpecGroup is set while the other
+-- group's weights are being built (MSC.WithSpecGroup), so everything that
+-- asks "which spec" during that build gets the other one.
+function MSC.GetNumSpecGroups()
+    local f = GetNumSpecGroups or GetNumTalentGroups
+    if not f then return 1 end
+    local ok, n = pcall(f)
+    n = ok and tonumber(n) or 1
+    return (n and n > 1) and n or 1
+end
+
+function MSC.HasDualSpec() return MSC.GetNumSpecGroups() > 1 end
+
+function MSC.GetActiveSpecGroup()
+    local s = C_SpecializationInfo
+    local f = (s and s.GetActiveSpecGroup) or GetActiveSpecGroup or GetActiveTalentGroup
+    if not f then return 1 end
+    local ok, g = pcall(f)
+    g = ok and tonumber(g)
+    return (g and g >= 1) and g or 1
+end
+
+-- The spec being scored: the active one, or the other while its weights are built.
+function MSC.GetScoringSpecGroup() return MSC.EvalSpecGroup or MSC.GetActiveSpecGroup() end
+
+-- Cache-key tag for results scored for the inactive spec ("" otherwise), so
+-- the two specs never share cached scores (same profile name, other weights).
+function MSC.SpecGroupTag()
+    return MSC.EvalSpecGroup and ("|g" .. MSC.EvalSpecGroup) or ""
+end
+
+local function SpecSettingsFor(create)
+    if not SGJ_Settings or not MSC.GetPlayerKey then return nil end
+    local pk = MSC:GetPlayerKey()
+    if create then
+        SGJ_Settings.SpecSettings = SGJ_Settings.SpecSettings or {}
+        SGJ_Settings.SpecSettings[pk] = SGJ_Settings.SpecSettings[pk] or {}
+    end
+    return SGJ_Settings.SpecSettings and SGJ_Settings.SpecSettings[pk]
+end
+
+-- A per-spec setting (Mode, GearForPvP): this character's value for the group,
+-- else the account-wide one.
+function MSC.GetSpecSetting(key, group)
+    if not SGJ_Settings then return nil end
+    group = group or MSC.GetScoringSpecGroup()
+    local mine = SpecSettingsFor(false)
+    local g = mine and mine[group]
+    if g and g[key] ~= nil then return g[key] end
+    return SGJ_Settings[key]
+end
+
+function MSC.SetSpecSetting(key, value, group)
+    local mine = SpecSettingsFor(true)
+    if not mine then return end
+    group = group or MSC.GetActiveSpecGroup()
+    mine[group] = mine[group] or {}
+    mine[group][key] = value
+end
+
+-- The manual profile choice for a spec ("AUTO" = auto-detect). The old
+-- account-wide choice is only used if it is a profile of this character's
+-- class (it used to follow you onto every character).
+function MSC.GetManualSpec(group)
+    local mine = SpecSettingsFor(false)
+    local g = mine and mine[group or MSC.GetScoringSpecGroup()]
+    if g and g.Mode ~= nil then return g.Mode end
+    local mode = SGJ_Settings and SGJ_Settings.Mode
+    if not mode or mode == "AUTO" then return "AUTO" end
+    local cls = MSC.CurrentClass
+    if not cls then return mode end -- class not known yet (early load): re-checked at login
+    local custom = SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights
+    if (custom and custom[mode]) or (cls and ((cls.Weights and cls.Weights[mode]) or (cls.LevelingWeights and cls.LevelingWeights[mode]))) then
+        return mode
+    end
+    return "AUTO"
+end
+
+function MSC.SetManualSpec(mode)
+    MSC.SetSpecSetting("Mode", mode or "AUTO")
+    MSC.ManualSpec = mode or "AUTO"
+end
+
+-- Display name of a spec group ("Primary" / "Secondary", the game's own words).
+function MSC.SpecGroupName(group)
+    if group == 2 then return _G.DUAL_SPEC_SECONDARY or MSC.L["Secondary"] end
+    return _G.DUAL_SPEC_PRIMARY or MSC.L["Primary"]
+end
+
+-- =============================================================
 -- 6. SCANNING
 -- =============================================================
 function MSC.GetRawItemStats(itemLink)
@@ -987,13 +1527,15 @@ function MSC.GetEnchantName(data)
     return name
 end
 
-function MSC.GetEnchantScore(enchantID, weights)
+function MSC.GetEnchantScore(enchantID, weights, slotId)
     if not enchantID or not MSC.EnchantDB[enchantID] then return 0 end
     local stats = MSC.EnchantDB[enchantID].stats
     if not stats then return 0 end
     -- Same scoring as item stats (Forever ratings converted to %, Spell Power's
-    -- healing half counted for healers).
-    return MSC.GetItemScore(stats, weights)
+    -- healing half counted for healers). The slot matters for weapon damage:
+    -- in the weapon slots it uses the melee weapon's weight (0 for casters,
+    -- whose Weapon DPS weight is their wand's), not the ranged one.
+    return MSC.GetItemScore(stats, weights, nil, slotId)
 end
 
 function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
@@ -1019,7 +1561,7 @@ function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights
             end
             if slotId == 18 and ((enchantType == "Bow" and not data.isScope) or (enchantType == "Relic")) then allowed = false end
             if allowed then
-                local score = MSC.GetEnchantScore(id, weights)
+                local score = MSC.GetEnchantScore(id, weights, slotId)
                 if score > bestScore then bestScore = score; bestID = id end
             end
         end
@@ -1243,7 +1785,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
         table_sort(parts)
         uniqueKey = table.concat(parts, ",")
     end
-    local procKey = itemLink .. "|" .. tostring(slotId or 0) .. "|" .. tostring(specName or "") .. "|" .. enchantMode .. "|" .. gemMode .. "|" .. gemQuality .. "|" .. (MSC.ScoringRevision or 0) .. "|" .. uniqueKey
+    local procKey = itemLink .. "|" .. tostring(slotId or 0) .. "|" .. tostring(specName or "") .. "|" .. enchantMode .. "|" .. gemMode .. "|" .. gemQuality .. "|" .. (MSC.ScoringRevision or 0) .. "|" .. uniqueKey .. MSC.SpecGroupTag()
     if globalUniques and next(globalUniques) then
         -- skip cache when tracking unique-equipped gems across character score
     elseif weights and MSC.ProcessedStatCache and MSC.ProcessedStatCache[procKey] then
@@ -1862,7 +2404,7 @@ dbLoader:RegisterEvent("PLAYER_LOGIN")
 dbLoader:SetScript("OnEvent", function()
     C_Timer.After(0.5, function()
         if SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SGJ_Settings then
-            local mode = SGJ_Settings.Mode
+            local mode = MSC.GetManualSpec(MSC.GetActiveSpecGroup())
             if mode and mode ~= "AUTO" and SharpiesGearJudgeDB.customWeights[mode] then
                 MSC.CachedWeights = nil
                 MSC.CachedWeightsBySpec = MSC.CachedWeightsBySpec or {}

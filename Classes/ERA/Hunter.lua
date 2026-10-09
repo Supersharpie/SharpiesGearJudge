@@ -138,11 +138,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     
     -- [[ 2. Covariance (Crit scales with RAP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-        local rawBase, rawPos, rawNeg = UnitRangedAttackPower("player")
-        local base = MSC.SanitizeStat(rawBase)
-        local pos = MSC.SanitizeStat(rawPos)
-        local neg = MSC.SanitizeStat(rawNeg)
-        local totalRAP = base + pos + neg
+        local totalRAP = MSC.GetJudgingStats().rap -- unbuffed, plus assumed buffs
         if totalRAP > 1500 then
             local rapScaler = 1 + ((totalRAP - 1500) / 10000)
             if rapScaler > 1.2 then rapScaler = 1.2 end
@@ -154,8 +150,8 @@ function Hunter:ApplyScalers(weights, currentSpec)
     if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         -- FIX: Use Shim. Note: "HIT" generally returns melee/range combined in Vanilla API.
         local currentHit = MSC:GetPlayerStat("HIT")
-        local talentHit = Rank("SUREFOOTED") -- 1% per rank in Era
-        local totalHit = currentHit + talentHit
+        -- GetHitModifier already includes hit from talents (and gear), so the talent isn't added again.
+        local totalHit = currentHit
 
         if totalHit >= 9 then
             weights["ITEM_MOD_HIT_RATING_SHORT"] = 2.0 -- Cap reached (keep relevant for PvP/higher level mobs)
@@ -174,7 +170,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Hunter:GetWeaponBonus(itemLink)
+function Hunter:GetWeaponBonus(itemLink, weights, slotId, specName)
     if not itemLink then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
@@ -184,8 +180,8 @@ function Hunter:GetWeaponBonus(itemLink)
 
     -- Racial: Dwarf (Gun) / Troll (Bow) +5 Skill
     -- In Era, Weapon Skill is very valuable for hit/glancing reduction
-    if race == "Dwarf" and subClassID == 3 then bonus = bonus + 20 end
-    if race == "Troll" and subClassID == 2 then bonus = bonus + 20 end
+    if race == "Dwarf" and subClassID == 3 then bonus = bonus + MSC.EraWeaponSkillBonus(Hunter, weights, specName, 5) end
+    if race == "Troll" and subClassID == 2 then bonus = bonus + MSC.EraWeaponSkillBonus(Hunter, weights, specName, 5) end
     
     return bonus
 end

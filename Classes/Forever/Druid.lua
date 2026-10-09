@@ -6,24 +6,28 @@ Druid.Name = "DRUID"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Druid.Weights = {
-    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    -- The level-60 profiles (study/druid2, 2026-10-03; NOTES.md there has the numbers), each worked out with its build's own
-    -- talents, so ApplyScalers' talent hooks skip them. Hit and Crit per 1%.
+    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    -- The level-60 profiles (study/druid2, 2026-10-03; Cat, Balance and Bear re-run 2026-10-08 from
+    -- SharpiesGearJudge-SimStudio), each worked out with its build's own talents, so ApplyScalers' talent hooks skip them.
+    -- Hit and Crit per 1%.
     -- Cat: Raid (Balance 9 / Feral 35 / Restoration 7, no Furor) from the wowsims Forever simulator, Attack Power 1.5 like the
-    -- other melee profiles. Agility (Attack Power and crit) edges Strength; Intellect and Mp5 count through Shifting Power,
-    -- which turns mana into Energy. Hit was measured below the cap (5% gear + Nature's Reach already reach it); the hit cap
-    -- logic below takes it down past that. Cat attacks ignore weapon damage, so Weapon DPS has no weight.
-    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.04, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.57, ["ITEM_MOD_SPIRIT_SHORT"]=0.27, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=24.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.0 },
+    -- other melee profiles. Agility (Attack Power and crit) edges Strength. Forever's Furor refunds no extra energy, so the
+    -- cat no longer powershifts and Intellect, Spirit and Mp5 are worth almost nothing. Hit was measured below the cap
+    -- (5% gear + Nature's Reach already reach it); the hit cap logic below takes it down past that. Cat attacks ignore
+    -- weapon damage, so Weapon DPS has no weight.
+    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.05, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.06, ["ITEM_MOD_SPIRIT_SHORT"]=0.03, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.14, ["ITEM_MOD_HIT_RATING_SHORT"]=30.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.8 },
     -- Balance: Raid (Balance 33 / Feral 3 / Restoration 15) from the simulator, Spell Power 2.0. Starfire carries the damage,
     -- so Arcane damage takes most of the Spell Power value.
-    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.62, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.38, ["ITEM_MOD_INTELLECT_SHORT"]=0.34, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.26, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=13.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.3 },
+    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.61, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.39, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.27, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.62, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.8 },
     -- Restoration: Raid (Balance 11 / Feral 5 / Restoration 35) from our healing model (the simulator can't heal), Healing 2.0.
     -- Most Druid healing is over time and HoTs can't crit, so Crit is worth little; Spirit and Mp5 lead the mana stats.
-    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.34, ["ITEM_MOD_SPIRIT_SHORT"]=1.86, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.86, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
+    -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=1.34, ["ITEM_MOD_SPIRIT_SHORT"]=1.86, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.86, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Bear: Raid (Balance 9 / Feral 32 / Restoration 10) from the simulator's tank mode, as the Warrior's Protection: Raid:
     -- threat 35% / damage taken 35% / effective health 30%, Stamina 3.0. Armor is item armor (Dire Bear Form multiplies it
     -- by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
-    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.87, ["ITEM_MOD_DODGE_RATING_SHORT"]=32.5, ["ITEM_MOD_AGILITY_SHORT"]=3.78, ["ITEM_MOD_STRENGTH_SHORT"]=2.17, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.99, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.99, ["ITEM_MOD_HIT_RATING_SHORT"]=11.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=35.9 },
+    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.36, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.49, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.4, ["ITEM_MOD_AGILITY_SHORT"]=3.55, ["ITEM_MOD_STRENGTH_SHORT"]=1.91, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.87, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.87, ["ITEM_MOD_HIT_RATING_SHORT"]=15.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=34.5 },
 
     -- Older healer and hybrid profiles (not modelled).
     -- Healer Spell Crit: 1% crit is worth ~2.4 Healing (a crit heal adds 50%),
@@ -40,9 +44,19 @@ Druid.Weights["BALANCE_BOOMKIN"] = Druid.Weights["BALANCE_RAID"]
 Druid.Weights["FERAL_CAT_DPS"] = Druid.Weights["CAT_RAID"]
 Druid.Weights["RESTO_DEEP"] = Druid.Weights["RESTO_RAID"]
 Druid.Weights["FERAL_BEAR_TANK"] = Druid.Weights["BEAR_RAID"]
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+-- Picked by the Talents plugin's PvP builds or by hand.
+Druid.Weights["FERAL_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["CAT_RAID"])
+Druid.Weights["BALANCE_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["BALANCE_RAID"])
+Druid.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["RESTO_RAID"])
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { CAT_RAID = true, BALANCE_RAID = true, RESTO_RAID = true, BEAR_RAID = true,
-    BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true }
+    BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true, FERAL_PVP = true, BALANCE_PVP = true, RESTO_PVP = true }
+-- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
+-- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
+Druid.PvPCounterpart = { CAT_RAID = "FERAL_PVP", FERAL_CAT_DPS = "FERAL_PVP", BALANCE_RAID = "BALANCE_PVP", BALANCE_BOOMKIN = "BALANCE_PVP",
+    RESTO_RAID = "RESTO_PVP", RESTO_DEEP = "RESTO_PVP" }
 
 -- =============================================================
 -- LEVELING WEIGHTS
@@ -76,6 +90,9 @@ Druid.PrettyNames = {
     ["RESTO_MOONGLOW"]     = "Healer: Moonglow",
     ["RESTO_REGROWTH"]     = "Healer: Regrowth (Crit)",
     ["HYBRID_HOTW"]        = "Hybrid: Heart of the Wild",
+    ["FERAL_PVP"]          = L["PvP: Feral (Cat)"],
+    ["BALANCE_PVP"]        = L["PvP: Balance"],
+    ["RESTO_PVP"]          = L["PvP: Restoration"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
@@ -116,7 +133,7 @@ Druid.Talents = {
     ["MOONFURY"]        = "Moonfury", -- Balance t6, 5 ranks, +2%/rank Arcane/Nature spell damage
     ["GENESIS"]         = "Genesis", -- New in Forever, Balance t1, 5 ranks, +1%/rank periodic damage AND healing
     ["GIFT_OF_NATURE"]  = "Gift of Nature", -- Restoration t3, 5 ranks, +2%/rank universal healing (Same as Classic)
-    ["PREDATORY_INSTINCTS"] = "Predatory Instincts", -- New in Forever, Feral t5, 2 ranks, +10%/rank melee crit damage bonus
+    ["NATURAL_INSTINCT"] = "Natural Instinct", -- Feral t5, 2 ranks (Predatory Instincts until client 70291): +10%/rank melee crit damage bonus, spell healing +12.5%/rank of Intellect
     ["SAVAGE_FURY"]     = "Savage Fury", -- Feral t3, 2 ranks, +5%/rank Claw/Rake/Shred/Maul/Swipe damage
     ["NATURALIST"]      = "Naturalist", -- Restoration t2, 5 ranks, +1%/rank all damage dealt
     ["NATURES_FOCUS"]   = "Nature's Focus", -- Restoration t1, 5 ranks, pushback protection on Nature/Arcane casts
@@ -388,13 +405,19 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- Predator's Instincts (New in Forever, Feral t5, 2 ranks): +10%/rank
-    -- melee crit damage bonus -- Cat and Bear leveling rows both carry Crit.
-    -- The helper also moves Agility's crit share.
-    local rPredInstincts = Rank("PREDATORY_INSTINCTS")
-    if hooks and rPredInstincts > 0 and (isCat or isBear) then
-        MSC.ScaleForeverMeleeCrit(weights, 1 + 0.10 * rPredInstincts, level)
+    -- Natural Instinct (Feral t5, 2 ranks; Predatory Instincts before client
+    -- 70291): +10%/rank melee crit damage bonus -- Cat and Bear leveling rows
+    -- both carry Crit. The helper also moves Agility's crit share.
+    local rNatInstinct = Rank("NATURAL_INSTINCT")
+    if hooks and rNatInstinct > 0 and (isCat or isBear) then
+        MSC.ScaleForeverMeleeCrit(weights, 1 + 0.10 * rNatInstinct, level)
         Touch({ "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" })
+    end
+    -- Its new healing part: spell healing +12.5%/rank of Intellect, so each
+    -- Intellect also heals for that much (any row that values healing).
+    if rNatInstinct > 0 and (weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"]
+            + 0.125 * rNatInstinct * weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]
     end
 
     -- Savage Fury (Feral t3, 2 ranks): +5%/rank Claw/Rake/Shred/Maul/Swipe
@@ -421,7 +444,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     local rSharp, rNatMaj, rLotP = Rank("SHARPENED_CLAWS"), Rank("NATURES_MAJESTY"), Rank("LEADER_OF_PACK")
     local extraCrit = 0.03 * rSharp + 0.02 * rNatMaj + 0.03 * rLotP
     if extraCrit > 0 and isCat and isLevelingRow then
-        local bonus = 1 + 0.10 * rPredInstincts
+        local bonus = 1 + 0.10 * rNatInstinct
         local baseCrit = MSC.ForeverLevelLerp({ { 22, 0.09 }, { 40, 0.15 }, { 59, 0.22 } }, level)
         local m = 1 + extraCrit * bonus / (1 + baseCrit * bonus)
         local agi = weights["ITEM_MOD_AGILITY_SHORT"]
@@ -459,7 +482,7 @@ function Druid:ApplyScalers(weights, currentSpec)
 
     -- 2. Covariance (Mana Regen / Healing Synergy)
     if hooks and (currentSpec:find("RESTO") or currentSpec:find("Healer")) then
-        local healPower = MSC.SanitizeStat(GetSpellBonusHealing()) -- Using Classic API directly via shim usually preferred
+        local healPower = MSC.GetJudgingStats().heal -- unbuffed, plus assumed buffs
         if healPower > 500 then
              local hScaler = 1 + ((healPower - 500) / 5000)
              weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler

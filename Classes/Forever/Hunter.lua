@@ -22,20 +22,20 @@ Hunter.Name = "HUNTER"
 Hunter.Weights = {
     ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
-    -- The raid profiles come from the wowsims Forever sim (study/hunter2, 2026-10-03; NOTES.md there has the
-    -- numbers), run with each build's own talents, so ApplyScalers' talent hooks skip them. Ranged Attack Power
-    -- sits at 1.5; "+Attack Power" on items counts for both melee and ranged, so it carries the same weight.
-    -- Beast Mastery: Raid (BM 35 / MM 16 with Summon Hawk, level-63 boss, raid buffs). Hawks on cooldown leave
-    -- Beast Mastery short of mana, and Careful Aim turns all of your Intellect into Attack Power, so Intellect
-    -- and Mp5 rank above Agility.
-    ["BM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.13, ["ITEM_MOD_INTELLECT_SHORT"]=5.94, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=14.6, ["ITEM_MOD_HIT_RATING_SHORT"]=32.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=38.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    -- Marksmanship: Raid (Lethal Attacks, Mortal Shots, Sniper Shot). About 19% behind Beast Mastery in the sim.
-    ["MM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.07, ["ITEM_MOD_INTELLECT_SHORT"]=4.64, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.7, ["ITEM_MOD_HIT_RATING_SHORT"]=36.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=35.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    -- Survival: Raid (MM 15 / Survival 36, shooting; Lightning Reflexes makes Agility the best stat). About 23% behind Beast Mastery.
-    ["SV_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.61, ["ITEM_MOD_INTELLECT_SHORT"]=4.29, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.6, ["ITEM_MOD_HIT_RATING_SHORT"]=37.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- The raid profiles come from the wowsims Forever sim (study/hunter2, 2026-10-03; re-run 2026-10-08 from
+    -- SharpiesGearJudge-SimStudio after upstream reworked Summon Hawk and the Marksmanship rotation), run with each
+    -- build's own talents, so ApplyScalers' talent hooks skip them. Ranged Attack Power sits at 1.5; "+Attack
+    -- Power" on items counts for both melee and ranged, so it carries the same weight.
+    -- Beast Mastery: Raid (BM 35 / MM 16 with Summon Hawk, level-63 boss, raid buffs). Hawks on cooldown cost
+    -- mana and Careful Aim turns all of your Intellect into Attack Power, so Intellect ranks above Agility; the
+    -- reworked hawks leave more mana than before, so Mp5 counts less and Hit more.
+    ["BM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.99, ["ITEM_MOD_INTELLECT_SHORT"]=5.21, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=7.2, ["ITEM_MOD_HIT_RATING_SHORT"]=40.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=31.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Marksmanship: Raid (Lethal Attacks, Mortal Shots, Sniper Shot). About 10% behind Beast Mastery in the sim.
+    ["MM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.16, ["ITEM_MOD_INTELLECT_SHORT"]=4.67, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.9, ["ITEM_MOD_HIT_RATING_SHORT"]=40.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Survival: Raid (MM 15 / Survival 36, shooting; Lightning Reflexes makes Agility the best stat). About 20% behind Beast Mastery.
+    ["SV_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.65, ["ITEM_MOD_INTELLECT_SHORT"]=4.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.0, ["ITEM_MOD_HIT_RATING_SHORT"]=40.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- PvP, melee support and farming profiles (not modelled).
-    ["PVP_MM_UTIL"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["PVP_SURV_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["MELEE_NIGHTFALL"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     ["SOLO_DME_TRIBUTE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
@@ -44,8 +44,15 @@ Hunter.Weights = {
 Hunter.Weights["RAID_MM_STANDARD"] = Hunter.Weights["MM_RAID"]
 Hunter.Weights["RAID_MM_STARTER"] = Hunter.Weights["MM_RAID"]
 Hunter.Weights["RAID_SURV_DEEP"] = Hunter.Weights["SV_RAID"]
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+-- Survival Tank (melee, not modelled) keeps its own row; the model still adds the PvP part.
+Hunter.Weights["PVP_MM_UTIL"] = MSC.ForeverPvPFrom(Hunter.Weights["MM_RAID"])
 -- The sim-built profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { BM_RAID = true, MM_RAID = true, SV_RAID = true, RAID_MM_STANDARD = true, RAID_MM_STARTER = true, RAID_SURV_DEEP = true }
+local SIM_PROFILES = { BM_RAID = true, MM_RAID = true, SV_RAID = true, RAID_MM_STANDARD = true, RAID_MM_STARTER = true, RAID_SURV_DEEP = true, PVP_MM_UTIL = true }
+-- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
+-- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
+Hunter.PvPCounterpart = { MM_RAID = "PVP_MM_UTIL", RAID_MM_STANDARD = "PVP_MM_UTIL", RAID_MM_STARTER = "PVP_MM_UTIL" }
 
 -- =============================================================
 -- LEVELING WEIGHTS
@@ -70,8 +77,8 @@ Hunter.PrettyNames = {
     ["RAID_MM_STANDARD"] = L["Marksmanship: Raid (old profile)"],
     ["RAID_MM_STARTER"]  = L["Marksmanship: Raid (old Surefooted profile)"],
     ["RAID_SURV_DEEP"]   = L["Survival: Raid (old profile)"],
-    ["PVP_MM_UTIL"]      = "PvP: Marksmanship Utility",
-    ["PVP_SURV_TANK"]    = "PvP: Survival Tank",
+    ["PVP_MM_UTIL"]      = L["PvP: Marksmanship Utility"],
+    ["PVP_SURV_TANK"]    = L["PvP: Survival Tank"],
     ["MELEE_NIGHTFALL"]  = "Support: Nightfall (Melee)",
     ["SOLO_DME_TRIBUTE"] = "Farming: DM North Solo",
 
@@ -312,11 +319,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
 
     -- [[ 2. Covariance (Crit scales with RAP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-        local rawBase, rawPos, rawNeg = UnitRangedAttackPower("player")
-        local base = MSC.SanitizeStat(rawBase)
-        local pos = MSC.SanitizeStat(rawPos)
-        local neg = MSC.SanitizeStat(rawNeg)
-        local totalRAP = base + pos + neg
+        local totalRAP = MSC.GetJudgingStats().rap -- unbuffed, plus assumed buffs
         if totalRAP > 1500 then
             local rapScaler = 1 + ((totalRAP - 1500) / 10000)
             if rapScaler > 1.2 then rapScaler = 1.2 end

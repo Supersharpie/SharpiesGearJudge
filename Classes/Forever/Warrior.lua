@@ -9,9 +9,11 @@ Warrior.Name = "WARRIOR"
 -- point; the rest per point. Warriors get 2 Attack Power per Strength and none
 -- from Agility. The profiles come from the wowsims Forever sim run from the
 -- Research folder (study/warrior2, 2026-10-03; NOTES.md there has the numbers
--- behind each one). The sim runs each profile's own talents, so their effects
+-- behind each one), re-run on 2026-10-09 for client 70291 (resim_70291.py,
+-- prot_weights.py): Precision and Toughness gone, Dual Wield Specialization
+-- without hit, Furious Precision for off-hand hit, Bloodthirst 45% AP. The sim runs each profile's own talents, so their effects
 -- are already in these weights; ApplyScalers' talent hooks are for the leveling
--- rows only (Toughness aside: the sim adds its armor as a fixed amount).
+-- rows only.
 Warrior.Weights = {
     -- Fallback before a spec is known.
     ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
@@ -19,24 +21,33 @@ Warrior.Weights = {
     -- Arms: Raid (Arms 34 / Fury 17, two-hander, level-63 boss, raid buffs, pre-raid gear). AP sits at 1.5.
     -- Hit is worth more than Crit: a miss costs rage as well as the swing, and Overpower procs need hits.
     -- Weapon DPS is above 14x AP because Mortal Strike and Overpower add weapon damage on top of the swing.
-    ["ARMS_RAID"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=24.5, ["ITEM_MOD_AGILITY_SHORT"]=2.37, ["ITEM_MOD_HIT_RATING_SHORT"]=60.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["ARMS_RAID"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=24.5, ["ITEM_MOD_AGILITY_SHORT"]=2.33, ["ITEM_MOD_HIT_RATING_SHORT"]=59.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=41.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
-    -- Fury profiles (no Talents plugin build: Arms out-damages them in Forever, 537 / 499 DPS against 601).
-    -- Dual wield: the off-hand's weapon DPS is worth a third of the main hand's (MSC_WEAPON_DPS_OH).
-    ["FURY_DW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.2, ["MSC_WEAPON_DPS_OH"]=4.2, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_HIT_RATING_SHORT"]=30.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=41.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
-    -- Two-hander: Hit below the cap as for Arms (the sim's gear was already capped with Precision).
-    ["FURY_2H"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.7, ["ITEM_MOD_AGILITY_SHORT"]=2.27, ["ITEM_MOD_HIT_RATING_SHORT"]=60.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=42.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Fury profiles (no Talents plugin build: Arms out-damages them in Forever, 493 / 438 DPS against 553).
+    -- Dual wield: the off-hand's weapon DPS is worth about a third of the main hand's (MSC_WEAPON_DPS_OH).
+    -- Hit is worth much more than before 70291: Dual Wield Specialization lost its off-hand hit, so more
+    -- white swings miss (Furious Precision gives some back, off-hand only).
+    ["FURY_DW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.2, ["MSC_WEAPON_DPS_OH"]=4.5, ["ITEM_MOD_AGILITY_SHORT"]=2.43, ["ITEM_MOD_HIT_RATING_SHORT"]=44.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=45.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Two-hander: the sim's own Hit below the cap (it used to copy Arms, when the sim's gear was
+    -- capped with Precision).
+    ["FURY_2H"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.9, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_HIT_RATING_SHORT"]=47.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- Protection: Raid (Shield Slam build with Improved Thunder Clap, level-63 boss; threat 35%, damage
     -- taken 35%, effective health 30%). Boss hits are large, so dodge, parry, Defense and armor lead; Hit
     -- and Crit carry the threat. Same scale as the leveling tank rows (Stamina 3.0).
-    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=43.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=43.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=6.45, ["ITEM_MOD_ARMOR_SHORT"]=0.25, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.99, ["ITEM_MOD_HIT_RATING_SHORT"]=27.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=19.2, ["ITEM_MOD_AGILITY_SHORT"]=3.69, ["ITEM_MOD_STRENGTH_SHORT"]=1.52, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.67, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=42.1, ["ITEM_MOD_PARRY_RATING_SHORT"]=42.1, ["ITEM_MOD_BLOCK_RATING_SHORT"]=9.7, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=6.45, ["ITEM_MOD_ARMOR_SHORT"]=0.26, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.95, ["ITEM_MOD_HIT_RATING_SHORT"]=28.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=18.0, ["ITEM_MOD_AGILITY_SHORT"]=3.7, ["ITEM_MOD_STRENGTH_SHORT"]=1.48, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.65, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
     -- Protection: AoE Farming (5 level-60 mobs on you, Thunder Clap, Revenge, Shield Slam; mobs per hour
     -- with eating). Avoidance and Block cut the eating, Crit and Strength drive the damage. Stamina is
     -- the pack-size margin the sim doesn't price. Hit below the cap valued as Crit plus its rage. AP = 1.
-    ["PROT_AOE"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.05, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.89, ["ITEM_MOD_CRIT_RATING_SHORT"]=16.9, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=22.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=22.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=19.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.55, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.97, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.6, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_AOE"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.05, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.91, ["ITEM_MOD_CRIT_RATING_SHORT"]=16.9, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=23.7, ["ITEM_MOD_PARRY_RATING_SHORT"]=23.7, ["ITEM_MOD_BLOCK_RATING_SHORT"]=18.9, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.76, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7.1, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 }
+-- PvP profile: a copy of Arms: Raid; the PvP model (Helpers 5.10) adds Stamina, armor and burst on top
+-- and keeps hit at the player-vs-player caps. Picked by the Talents plugin's PvP build or by hand.
+Warrior.Weights["ARMS_PVP"] = MSC.ForeverPvPFrom(Warrior.Weights["ARMS_RAID"])
+-- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
+-- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
+Warrior.PvPCounterpart = { ARMS_RAID = "ARMS_PVP", ARMS_MS = "ARMS_PVP" }
 -- Old names, kept so a saved profile choice still works.
 Warrior.Weights["ARMS_MS"] = Warrior.Weights["ARMS_RAID"]
 Warrior.Weights["DEEP_PROT"] = Warrior.Weights["PROT_RAID"]
@@ -67,6 +78,7 @@ Warrior.PrettyNames = {
     ["PROT_RAID"] = L["Protection: Raid"],
     ["DEEP_PROT"] = L["Protection: Raid (old profile)"],
     ["PROT_AOE"]  = L["Protection: AoE Farming"],
+    ["ARMS_PVP"]  = L["PvP: Arms (Mortal Strike)"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
@@ -103,21 +115,19 @@ Warrior.Talents = {
     ["CRUELTY"]          = "Cruelty",                  -- t1, +1%/rank crit
     ["UNBRIDLED_WRATH"]  = "Unbridled Wrath",          -- t2, 12%/rank +1 rage (2 with a two-hander) on hit
     ["BLOOD_CRAZE"]      = "Blood Craze",              -- t3, health back after a crit taken
-    ["DW_SPEC"]          = "Dual Wield Specialization", -- t4, +5%/rank off-hand damage
+    ["DW_SPEC"]          = "Dual Wield Specialization", -- t4, +5%/rank off-hand damage (no hit since 70291)
     ["RAGING_BLOWS"]     = "Raging Blows",             -- t4, Whirlwind strikes with the off-hand too
     ["ENRAGE"]           = "Enrage",                   -- t4, +2%/rank Physical damage after being hit
-    ["PRECISION"]        = "Precision",                -- t5, +1%/rank hit
     ["FLURRY"]           = "Flurry",                   -- t6, +5%/rank attack speed after a crit
     ["BLOODTHIRST"]      = "Bloodthirst",              -- t7 (level 40)
     -- Protection
     ["SHIELD_SPEC"]      = "Shield Specialization",    -- t1, +1%/rank block, rage on block
-    ["ANTICIPATION"]     = "Anticipation",             -- t1, +4/rank Defense
-    ["TOUGHNESS"]        = "Toughness",                -- t2, +2%/rank armor from items
+    ["ANTICIPATION"]     = "Anticipation",             -- t2, +4/rank Defense
     ["LAST_STAND"]       = "Last Stand",               -- t3
     ["MASTER_OF_DEFENSE"] = "Master of Defense",       -- t3, rage on dodge/parry with a shield
     ["IMP_REVENGE"]      = "Improved Revenge",         -- t3
     ["DEFIANCE"]         = "Defiance",                 -- t3, +5%/rank threat in Defensive Stance with a shield
-    ["BASTION"]          = "Bastion",                  -- t5, +2%/rank damage with a shield
+    ["BASTION"]          = "Bastion",                  -- t6, +2%/rank damage with a shield
     ["SHIELD_SLAM"]      = "Shield Slam",              -- t7 (level 40)
 }
 
@@ -198,10 +208,11 @@ function Warrior:ApplyScalers(weights, currentSpec)
     local function Mul(k, m) if weights[k] then weights[k] = weights[k] * m; touched[k] = true end end
     local function Add(k, v) if weights[k] then weights[k] = weights[k] + v; touched[k] = true end end
 
-    -- Toughness (Prot t2, 5 ranks): +2%/rank armor from items. The dungeon tank model includes it.
-    local rTough = Rank("TOUGHNESS")
-    if rTough > 0 and not tankModel and weights["ITEM_MOD_ARMOR_SHORT"] then
-        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
+    -- Toughness (+2%/rank armor from items) was removed in client 70291. The
+    -- dungeon tank rows were modelled with 5/5 (+10% item armor), so their
+    -- armor weight comes down by that much.
+    if tankModel and weights["ITEM_MOD_ARMOR_SHORT"] then
+        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] / 1.10
     end
 
     -- Deep Wounds (Arms t3, minLevel 20, 3 ranks): the bleed is 0.2 x rank of
@@ -224,7 +235,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
         MSC.ScaleForeverMeleeCrit(weights, 1 + c * rImpale, level)
     end
 
-    -- Bastion (Prot t5, 5 ranks): +2%/rank damage while a shield is equipped
+    -- Bastion (Prot t6, 5 ranks): +2%/rank damage while a shield is equipped
     -- (every Protection row assumes one). A flat damage multiplier: the safety
     -- keys divide by it so the whole damage family rises together.
     local armorBefore = weights["ITEM_MOD_ARMOR_SHORT"] -- for the useless-band floor below
@@ -358,9 +369,10 @@ function Warrior:ApplyScalers(weights, currentSpec)
     end
 
     -- [[ 1. HIT CAP ]]
-    -- Hit % comes from MSC:GetForeverHitPercent (gear rating + talents such
-    -- as Precision, counted once); the target is the level's cap, sliding to
-    -- the raid cap from 50 (MSC.ForeverCaps).
+    -- Hit % comes from MSC:GetForeverHitPercent (gear rating + any hit talent
+    -- in the game's number; Warriors have none since client 70291, when
+    -- Precision was removed and Dual Wield Specialization lost its hit). The
+    -- target is the level's cap, sliding to the raid cap from 50 (MSC.ForeverCaps).
     if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         if currentSpec:find("DW") then
             -- Dual wield: past the yellow cap Hit keeps cutting white-swing
@@ -395,8 +407,8 @@ end
 --   Sword: rank x 0.007 x damage base (extra-attack proc chance).
 -- Damage base is (AP + Battle Shout + 14 x weapon DPS) in AP equivalents; the
 -- total-damage figure isn't available here, so it is approximated from the
--- item's own DPS and the player's current Attack Power (Battle Shout is part
--- of UnitAttackPower while active, so it is not added separately).
+-- item's own DPS and the player's unbuffed Attack Power (gear is judged
+-- without buffs, Battle Shout included).
 local function GetWeaponmasterBonus(itemLink, weights)
     local rWM = MSC:GetTalentRank("WEAPONMASTER")
     if rWM <= 0 or not itemLink or not weights then return 0 end

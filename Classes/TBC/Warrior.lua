@@ -70,7 +70,7 @@ Warrior.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_SPIRIT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0,
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=0.02,
     },      
-    ["DEEP_PROT"] = { 
+    ["DEEP_PROT"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.096, 
         ["MSC_WEAPON_DPS"]                  = 1.5, 
         ["ITEM_MOD_STAMINA_SHORT"]          = 1.6, 
         ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]= 2.4, 
@@ -87,7 +87,7 @@ Warrior.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=0.02,
         ["ITEM_MOD_SPIRIT_SHORT"]=0.02, ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0,
     },
-    ["FURY_PROT"] = {
+    ["FURY_PROT"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.084,
         ["MSC_WEAPON_DPS"]                  = 4.0,
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.9,
         ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.6,
@@ -100,7 +100,7 @@ Warrior.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02, ["ITEM_MOD_SPIRIT_SHORT"]=0.02, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.02,
         ["ITEM_MOD_MANA_SHORT"]=0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0,
     },
-    ["ARMS_PROT"] = {
+    ["ARMS_PROT"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.078,
         ["MSC_WEAPON_DPS"]                  = 3.5,
         ["MSC_WEAPON_SPEED"]                = 10.0,
         ["ITEM_MOD_HIT_RATING_SHORT"]       = 1.5,
@@ -784,7 +784,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
 	-- [[ E. CRUSH CAP (Prot) ]]
     if currentSpec:find("PROT") and weights["ITEM_MOD_BLOCK_RATING_SHORT"] then
         -- 5% Base Miss + Dodge + Parry + Block + 75% Shield Block
-        local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + 75.0
+        local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + MSC.GetPassiveBlockChance() + 75.0
         
         -- Tier 1: SAFELY CAPPED (102.8%+)
         if avoidance >= 102.8 then

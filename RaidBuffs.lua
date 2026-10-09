@@ -1,7 +1,10 @@
 local _, MSC = ...
 
 -- =============================================================
--- Raid / World Buff Assumption Engine (TBC)
+-- Raid / World Buff Assumption Engine (all versions)
+-- The buffs themselves (what each one adds, by rank) are in Buffs_<version>.lua
+-- (MSC.BuffList). TBC also has hit credits for Totem of Wrath, Improved Faerie
+-- Fire and Draenei, used by its rating caps.
 -- =============================================================
 
 MSC.BuffEngine = MSC.BuffEngine or {}
@@ -18,28 +21,68 @@ local GetCombatRating = GetCombatRating
 -- Preset toggle tables (buff id -> default on)
 -- -------------------------------------------------------------
 
-local RAID_PRESETS = {
-    off = {},
-    full25 = {
-        TOTEM_OF_WRATH = true, IMPROVED_FAERIE_FIRE = true, HEROIC_PRESENCE = true,
-        MOONKIN_AURA = true, LEADER_OF_THE_PACK = true, BLESSING_OF_KINGS = true,
-        MARK_OF_THE_WILD = true, TRUESHOT_AURA = true, STRENGTH_OF_EARTH = true,
-        GRACE_OF_AIR = true,
-    },
-    minimal10 = {
-        IMPROVED_FAERIE_FIRE = true, HEROIC_PRESENCE = true, BLESSING_OF_KINGS = true,
-        TOTEM_OF_WRATH = true,
-    },
-}
-
-local WORLD_PRESETS = {
+local RAID_PRESETS, WORLD_PRESETS
+if MSC.IsTBC then
+    RAID_PRESETS = {
+        off = {},
+        full25 = {
+            TOTEM_OF_WRATH = true, IMPROVED_FAERIE_FIRE = true, HEROIC_PRESENCE = true,
+            MOONKIN_AURA = true, LEADER_OF_THE_PACK = true, BLESSING_OF_KINGS = true,
+            MARK_OF_THE_WILD = true, TRUESHOT_AURA = true, STRENGTH_OF_EARTH_TOTEM = true,
+            GRACE_OF_AIR_TOTEM = true, POWER_WORD_FORTITUDE = true, ARCANE_INTELLECT = true,
+            DIVINE_SPIRIT = true, BLESSING_OF_MIGHT = true, BATTLE_SHOUT = true,
+            WRATH_OF_AIR_TOTEM = true, UNLEASHED_RAGE = true,
+        },
+        minimal10 = {
+            IMPROVED_FAERIE_FIRE = true, HEROIC_PRESENCE = true, BLESSING_OF_KINGS = true,
+            TOTEM_OF_WRATH = true, MARK_OF_THE_WILD = true, POWER_WORD_FORTITUDE = true,
+            ARCANE_INTELLECT = true,
+        },
+    }
+else
+    -- Era and Forever: Paladins are Alliance and Shamans Horde, so their buffs
+    -- are only assumed for that side (BE:GetAssumedBuffSum).
+    RAID_PRESETS = {
+        off = {},
+        raid = {
+            MARK_OF_THE_WILD = true, POWER_WORD_FORTITUDE = true, DIVINE_SPIRIT = true,
+            ARCANE_INTELLECT = true, BLESSING_OF_KINGS = true, BLESSING_OF_MIGHT = true,
+            BATTLE_SHOUT = true, TRUESHOT_AURA = true, BLOOD_PACT = true,
+            STRENGTH_OF_EARTH_TOTEM = true, GRACE_OF_AIR_TOTEM = true,
+        },
+        group = {
+            MARK_OF_THE_WILD = true, POWER_WORD_FORTITUDE = true, ARCANE_INTELLECT = true,
+            BLESSING_OF_KINGS = true, STRENGTH_OF_EARTH_TOTEM = true,
+        },
+    }
+end
+WORLD_PRESETS = {
     off = {},
     full = {
-        DRAGONSLAYER = true, FACTION_HEAD = true, SPIRIT_OF_ZANDALAR = true,
-        SONGFLOWER = true, FENGUS = true, MOLDAR = true, SLIPKIK = true,
+        RALLYING_CRY_OF_THE_DRAGONSLAYER = true, SPIRIT_OF_ZANDALAR = true, SONGFLOWER_SERENADE = true,
+        WARCHIEF_S_BLESSING = true, MIGHT_OF_STORMWIND = true,
+        FENGUS_FEROCITY = true, MOL_DAR_S_MOXIE = true, SLIP_KIK_S_SAVVY = true,
     },
-    dmTribute = { FENGUS = true, MOLDAR = true, SLIPKIK = true },
+    dmTribute = { FENGUS_FEROCITY = true, MOL_DAR_S_MOXIE = true, SLIP_KIK_S_SAVVY = true },
 }
+
+-- Saved settings from before the buff lists were generated used other keys.
+local OLD_KEYS = {
+    STRENGTH_OF_EARTH = "STRENGTH_OF_EARTH_TOTEM", GRACE_OF_AIR = "GRACE_OF_AIR_TOTEM",
+    DRAGONSLAYER = "RALLYING_CRY_OF_THE_DRAGONSLAYER", FACTION_HEAD = "RALLYING_CRY_OF_THE_DRAGONSLAYER",
+    SONGFLOWER = "SONGFLOWER_SERENADE", FENGUS = "FENGUS_FEROCITY", MOLDAR = "MOL_DAR_S_MOXIE",
+    SLIPKIK = "SLIP_KIK_S_SAVVY",
+}
+-- Era and Forever showed TBC's preset names before they had their own.
+local OLD_PRESETS = { full25 = "raid", minimal10 = "group" }
+
+-- Preset choices for the options dropdowns: { value, English L key }.
+function BE:GetRaidPresetOptions()
+    if MSC.IsTBC then
+        return { { "off", "Off" }, { "full25", "25-Man Full" }, { "minimal10", "10-Man Minimal" } }
+    end
+    return { { "off", "Off" }, { "raid", "Full Raid" }, { "group", "5-Player Group" } }
+end
 
 -- -------------------------------------------------------------
 -- Spec role resolution
@@ -104,6 +147,21 @@ function BE:InitSettings()
     if not SGJ_Settings.RaidBuffToggles then SGJ_Settings.RaidBuffToggles = {} end
     if not SGJ_Settings.WorldBuffToggles then SGJ_Settings.WorldBuffToggles = {} end
     if SGJ_Settings.ContentPhase == nil then SGJ_Settings.ContentPhase = 1 end
+    -- Old keys and preset names (see OLD_KEYS / OLD_PRESETS)
+    for _, toggles in ipairs({ SGJ_Settings.RaidBuffToggles, SGJ_Settings.WorldBuffToggles }) do
+        for old, new in pairs(OLD_KEYS) do
+            if toggles[old] ~= nil then
+                if toggles[new] == nil then toggles[new] = toggles[old] end
+                toggles[old] = nil
+            end
+        end
+    end
+    if not MSC.IsTBC and OLD_PRESETS[SGJ_Settings.RaidBuffPreset] then
+        local preset = OLD_PRESETS[SGJ_Settings.RaidBuffPreset]
+        SGJ_Settings.RaidBuffPreset = preset
+        SGJ_Settings.RaidBuffToggles = {}
+        for id, on in pairs(RAID_PRESETS[preset]) do SGJ_Settings.RaidBuffToggles[id] = on end
+    end
 end
 
 function BE:InvalidateCaches()
@@ -251,7 +309,10 @@ function BE:ApplyRatingCap(weights, activeCaps, weightKey, ratingId, baseCapPct,
     if not weights[weightKey] or weights[weightKey] <= 0.1 then return end
     options = options or {}
 
-    local hitRating = MSC.SanitizeStat(GetCombatRating(ratingId))
+    -- Hit Rating from the gear (unbuffed); the live rating until it's scanned
+    local GEAR_KIND = { [6] = "MELEE", [7] = "RANGED", [8] = "SPELL" }
+    local hitRating = GEAR_KIND[ratingId] and MSC.GetGearHitRating and MSC.GetGearHitRating(GEAR_KIND[ratingId])
+        or MSC.SanitizeStat(GetCombatRating(ratingId))
     local scalar = self:GetRatingScalar(ratingId)
     local finalCapRating = math_max(0, baseCapPct - (creditPct or 0)) * scalar
     local hardVal = options.hardVal or 0.05
@@ -307,63 +368,70 @@ function BE:ApplySpellHitCap(weights, activeCaps, currentSpec, talentHitPct, opt
 end
 
 -- -------------------------------------------------------------
--- Stat synergy (raid + world buffs deflate gear stat weights)
+-- Assumed buffs
 -- -------------------------------------------------------------
 
-local SYNERGY_BUFFS = {
-    -- raid
-    { id = "BLESSING_OF_KINGS", pct = 5, stats = { "STR", "AGI", "STA", "INT" }, raid = true },
-    { id = "MARK_OF_THE_WILD", pct = 4, stats = { "STR", "AGI", "STA", "INT" }, raid = true },
-    { id = "SPIRIT_OF_ZANDALAR", pct = 15, stats = { "STR", "AGI", "STA", "INT" }, world = true },
-    { id = "SONGFLOWER", pct = 3, stats = { "STR", "AGI", "STA", "INT" }, world = true }, -- ~15 flat ≈ small % at 70
-}
-
 local STAT_KEYS = {
-    STR = "ITEM_MOD_STRENGTH_SHORT",
-    AGI = "ITEM_MOD_AGILITY_SHORT",
-    STA = "ITEM_MOD_STAMINA_SHORT",
-    INT = "ITEM_MOD_INTELLECT_SHORT",
-    SPI = "ITEM_MOD_SPIRIT_SHORT",
+    str = "ITEM_MOD_STRENGTH_SHORT",
+    agi = "ITEM_MOD_AGILITY_SHORT",
+    sta = "ITEM_MOD_STAMINA_SHORT",
+    int = "ITEM_MOD_INTELLECT_SHORT",
+    spi = "ITEM_MOD_SPIRIT_SHORT",
 }
 
-function BE:IsSynergyBuffActive(entry)
-    if entry.raid and self:IsRaidBuffOn(entry.id) then return true end
-    if entry.world and self:IsWorldBuffOn(entry.id) then return true end
-    return false
+-- The rank of a buff a player of `level` gets (the highest one learned by
+-- then), or nil below the first rank.
+local function RankAt(entry, level)
+    local id
+    for _, r in ipairs(entry.ranks) do
+        if r[1] <= level then id = r[2] end
+    end
+    return id
 end
 
-function BE:GetCombinedStatSynergyPct()
-    local pcts = {}
-    for _, entry in ipairs(SYNERGY_BUFFS) do
-        if self:IsSynergyBuffActive(entry) then
-            table.insert(pcts, entry.pct)
+-- Sum (MSC.NewBuffSum) of every assumed raid and world buff that's on, at
+-- the player's level. nil when none is assumed. On Era and Forever, Paladin
+-- buffs are Alliance-only and Shaman totems Horde-only.
+local assumedSum, assumedKey = nil, nil
+function BE:GetAssumedBuffSum()
+    if not SGJ_Settings or not MSC.BuffList or not MSC.BuffAuras or not MSC.NewBuffSum then return nil end
+    if not SGJ_Settings.AssumeRaidBuffs and not SGJ_Settings.AssumeWorldBuffs then return nil end
+    local level = UnitLevel("player") or 1
+    local faction = UnitFactionGroup and UnitFactionGroup("player") or nil
+    local key = (MSC.ScoringRevision or 0) .. "|" .. level .. "|" .. tostring(faction)
+    if assumedKey == key then return assumedSum end
+    local sum, any = MSC.NewBuffSum(), false
+    for buffKey, entry in pairs(MSC.BuffList) do
+        local wrongSide = not MSC.IsTBC and ((entry.source == "PALADIN" and faction == "Horde") or (entry.source == "SHAMAN" and faction == "Alliance"))
+        if (self:IsRaidBuffOn(buffKey) or self:IsWorldBuffOn(buffKey)) and not wrongSide then
+            local id = RankAt(entry, level)
+            local b = id and MSC.BuffAuras[id]
+            if b then
+                MSC.AddBuffEffects(sum, b)
+                any = true
+            end
         end
     end
-    if #pcts == 0 then return 0 end
-    table.sort(pcts, function(a, b) return a > b end)
-    local total = pcts[1]
-    for i = 2, #pcts do total = total + pcts[i] * 0.5 end
-    return total
+    assumedSum, assumedKey = any and sum or nil, key
+    return assumedSum
 end
 
+-- Assumed % buffs make every point of a stat on gear worth more (Blessing
+-- of Kings: +10% to each), so that stat's weight goes up by the same factor;
+-- likewise Attack Power with a % Attack Power buff. Flat buffs don't change
+-- what a point of gear is worth: they're added to the stats the caps and
+-- thresholds read (MSC.GetJudgingStats).
 function BE:ApplyStatSynergy(weights, specKey)
-    local synergyPct = self:GetCombinedStatSynergyPct()
-    if synergyPct <= 0 then return end
-    local mult = 1 / (1 + synergyPct / 100)
-    for _, key in pairs(STAT_KEYS) do
-        if weights[key] then weights[key] = weights[key] * mult end
+    local a = self:GetAssumedBuffSum()
+    if not a then return end
+    for s, key in pairs(STAT_KEYS) do
+        if a.mult[s] ~= 1 and weights[key] then weights[key] = weights[key] * a.mult[s] end
     end
-    -- Flat AP world buffs
-    if self:IsWorldBuffOn("FENGUS") or self:IsWorldBuffOn("FACTION_HEAD") then
-        local apMult = 0.92
-        if weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
-            weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * apMult
-        end
+    if a.apMult ~= 1 and weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
+        weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * a.apMult
     end
-    if self:IsWorldBuffOn("DRAGONSLAYER") then
-        if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-            weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * 0.9
-        end
+    if a.rapMult ~= 1 and weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] then
+        weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"] * a.rapMult
     end
 end
 

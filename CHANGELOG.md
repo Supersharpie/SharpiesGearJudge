@@ -1,5 +1,99 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.2
+
+### 📊 Level-60 Profiles Re-Simulated (WoW Forever)
+- **Refreshed Raid Profiles**: The level-60 profiles were re-run on the current wowsims Forever simulator (the 2026-10-08 build, after a week of upstream class fixes). Warrior, Warlock, Priest and Paladin came out the same; these moved:
+	- **Rogue**: Hit counts a little more for Combat (swords and daggers); Mutilate's Hit and Crit a little less.
+	- **Hunter**: Summon Hawk and the Marksmanship rotation were reworked upstream. Beast Mastery wants more Hit and less Crit, Intellect and Mp5 than before; Marksmanship and Survival want more Hit and Crit.
+	- **Mage**: Arcane now edges Frost in the simulator (it was 6% behind). Arcane is mana-bound with Arcane Blast stacking, so its Hit, Intellect, Spirit and Mp5 rise a lot; Fire's mana stats and Hit rise a little.
+	- **Shaman**: Enhancement's rotation now casts Fire Nova, which makes it mana-bound: Mp5 is worth about seven times what it was and Intellect more, Crit a little less. Elemental is re-run too, with Hit a touch higher.
+	- **Druid**: Forever's Furor refunds no extra energy, so the Cat no longer powershifts: Intellect, Spirit and Mp5 drop to almost nothing for Cat: Raid and Hit counts more. Balance's mana stats rise; Bear's avoidance, Defense and armor count a little less and Hit more.
+- **Paladin Dungeon Curves**: The Protection: Dungeon Leveling and Holy: Dungeon Leveling rows were rebuilt from the leveling models after their client 70291 update (Retribution Aura cut, Reckoning lockout). Block, Intellect and Mp5 come down for the tank in the 30s and 40s; the healer's Intellect goes up a little from 40.
+- The models and the simulator driver now live in the SharpiesGearJudge-SimStudio repository; the curve files say so in their header.
+
+### ⚔️ PvP Weights (WoW Forever)
+- **New: Gear for PvP**: A new option scores gear for fighting other players, at every level from 1 to 60, for open-world PvP while leveling as well as battlegrounds at 60. It's off by default. Turn it on with the checkbox at the top of the /sgj window, in Options next to Gear for Raiding, or with /sgj pvp.
+	- Each profile keeps its damage stats; Stamina is priced against them (in a fight between players, 1% more health is worth about as much as 1% more damage). Stamina ends up worth about 2 Attack Power for melee, about 1.25 Spell Power for casters and about 3 healing for healers, and more at low levels, where each point is a bigger share of your health.
+	- Armor, Defense and Dodge are valued by how much damage they stop, Crit counts a little more (burst decides fights), and Spirit and Mp5 a little less for damage dealers (fights are short).
+	- Hit stops at the player-vs-player caps (5% melee, 3% spell) instead of sliding to the raid caps from level 50, since other players are your level.
+	- Forever has no Resilience, so Stamina and armor carry the defensive side.
+	- Gear for Raiding is greyed out while Gear for PvP is on (it has no effect then); your choice comes back when you turn PvP off.
+- **New: PvP Realm Prompt**: The first time a realm looks like a PvP realm (you're flagged automatically in contested and enemy zones), Gear Judge offers to turn Gear for PvP on, once per realm. /sgj realm shows what it checks.
+- **Rebuilt: Level-60 PvP Profiles**: The old PvP profiles were placeholder numbers on an old scale. Each one is now a copy of the PvE profile its build plays like, with the PvP model on top, and PvP profiles always use the PvP model, with or without the option:
+	- Rogue: Hemo Control and Mace Specialization (from Combat: Raid), Cold Blood Burst (from Combat: Raid (Daggers)).
+	- Mage: Deep Frost and Elemental (Shatter) from Frost: Raid, PoM Pyro from Fire: Raid.
+	- Warlock: Nightfall / Conflagrate (from Affliction, more Fire), Destruction (Conflag) (from Destruction, mostly Fire), Soul Link (from Demonology, with a Stamina floor).
+	- Paladin: Reck-Bomb (from Ret: Raid; Forever's Reckoning stores up to 4 extra attacks and releases them all on your next hit), Shockadin (from Holy: Raid, with Holy Shock's damage counted).
+	- Priest: Shadow (Blackout) from Shadow: Raid; Shaman: Elemental (Burst) from Elemental: Raid; Hunter: Marksmanship Utility from Marksmanship: Raid.
+- **New PvP Profiles**: Retribution for Paladins; Arms (Mortal Strike) for Warriors; Feral (Cat), Balance and Restoration for Druids; Discipline Healer for Priests; Restoration Healer for Shamans.
+- **Talents Plugin Link**: A PvP build picked in the Talents plugin turns on PvP weights for that character at every level, even with the option off.
+- **Auto-Detect With Gear for PvP**: With the option on, auto-detect shows the PvP profile for raid specs that have one (Retribution, Arms, Marksmanship, Frost, Shadow, Discipline, Elemental, Restoration Shaman, Feral, Balance and Restoration Druid). A Paladin with Holy Shock is read as a Shockadin even with Divine Favor or Light's Vigil taken.
+
+### 🔀 Dual Specialization (WoW Forever)
+- **Ready for Dual Specialization**: WoW Forever unlocks a second spec at level 40. Gear Judge now keeps these per spec, for each character:
+	- **Gear for PvP**: a PvE main spec and a PvP second spec each score gear their own way, and switching spec switches the weights.
+	- **Scoring profile**: the Active Scoring Profile choice. It used to be shared by every character on the account; now each character (and each spec) has its own, starting from the old choice if it fits the class.
+	- **Gear**: the gear you last wore in each spec is remembered.
+- **New: Other Spec on Tooltips**: once you have two specs, item tooltips also show if an item is an upgrade for the spec you're not in ("Secondary (Protection: Raid): +12"), scored with that spec's own talents, profile and Gear for PvP setting against the gear you last wore in it. Turn it off in Options (Show Other Spec on Tooltips). Tracked Specs work as before.
+- **Which spec**: the Stat Logic page shows Primary or Secondary next to the profile name, and /sgj dualspec lists what Gear Judge reads for each spec.
+- Nothing changes for characters with one spec. Dual Specialization can't be reached in the beta yet (level cap 30), so this has only been tested with simulated specs.
+
+### 🧪 Buffs (All Versions)
+- **Gear Is Judged Without Buffs**: Hit caps, tank caps and some profiles' stat thresholds read your live stats, which include food, elixirs, flasks and party buffs. A score could change when a buff landed or wore off, and stay that way until the weights were next rebuilt. They now use your gear (with its enchants, gems and set bonuses) and talents only:
+	- Hit: Hit Rating comes from your gear, so hit food and other buffs no longer push you over a cap. Hit % from buffs is left out too.
+	- Uncrushable: the check adds Shield Block (Warriors) or Holy Shield (Paladins) on top of your block chance, so pressing it before a scan counted it twice. An active Shield Block or Holy Shield is now taken out of your block chance first. The Crush Cap ring on the Stat Logic page is fixed the same way.
+	- Relics (WoW Forever), Weaponmaster (Forever Warriors) and the attack power, spell power, healing, Intellect and mana thresholds in Era, TBC and Forever profiles leave out what buffs add.
+	- Each game version has its own buff list, built from its client (Buffs_Era.lua, Buffs_TBC.lua, Buffs_Forever.lua): class buffs at every rank, totems, auras, world buffs, elixirs, flasks, scrolls and food, so the addon knows what each buff adds. Forever's changed buffs (Battle Shout, Blessing of Might, Mark of the Wild, Fortitude, its own world buffs and food) use Forever's numbers.
+- **Buff Assumptions on Every Version**: the Assume Raid Buffed and Assume World Buffed options only did something on TBC. They now work on Classic Era and WoW Forever too:
+	- Era and Forever presets: Full Raid (Mark of the Wild, Fortitude, Divine Spirit, Arcane Intellect, Blessings of Kings and Might, Battle Shout, Trueshot Aura, Blood Pact, Strength of Earth and Grace of Air) and 5-Player Group (Mark of the Wild, Fortitude, Arcane Intellect, Kings, Strength of Earth). Paladin blessings are assumed for the Alliance and Shaman totems for the Horde. World buffs: Rallying Cry, Spirit of Zandalar, Songflower, Warchief's Blessing (and Forever's Might of Stormwind) and the Dire Maul Tribute buffs.
+	- Each buff is assumed at the rank you'd get at your level.
+	- Flat buffs (Stamina, attack power, spell power and so on) are added to the stats the caps and thresholds read, and hit buffs count toward the hit caps.
+	- TBC's presets also assume Fortitude, Arcane Intellect, Divine Spirit, Might, Battle Shout, Wrath of Air and Unleashed Rage in the 25-man preset, and Mark of the Wild, Fortitude and Arcane Intellect in the 10-man one. Your saved choices carry over.
+- **Fixed: Percent Buffs Lowered Stat Weights (TBC)**: With raid or world buffs assumed, Blessing of Kings, Spirit of Zandalar and the like made Strength, Agility, Stamina, Intellect and Spirit on gear worth less, when each point is actually worth more with them (Kings turns 10 Strength into 11). They now raise those weights by the buff's percent, and a percent attack power buff (Unleashed Rage) raises the attack power weight. Flat attack power world buffs no longer lower the attack power weight.
+- **Fixed: Wrong Spell School Read**: Some caster profiles scale spell crit or haste with your spell power, but read the wrong school: Mage profiles read Holy or Fire spell power (labelled Frost), and TBC Shadow Priest and Warlock profiles read Fire as Shadow (and Destruction Warlocks read Holy). Mages now use their highest school, Shadow profiles read Shadow and Destruction reads Fire.
+- **Fixed: Classic Era Hit Talents Counted Twice**: On Era the game's hit % already includes hit talents, but Rogue (Precision), Hunter (Surefooted) and Shaman (Nature's Guidance) profiles added them again, so hit looked capped early. The warning when an item would drop a Warrior, Rogue or Hunter below the hit cap had the same problem.
+
+### 🛠️ Beta Patch 1.60.1.70291 (WoW Forever)
+- **Warriors**: The patch removed Toughness, Precision, Improved Cleave and Boundless Rage, and Dual Wield Specialization no longer gives hit (Furious Precision now raises off-hand hit only).
+	- Toughness no longer raises the armor weight, and the dungeon tank leveling weights, which were modelled with 5/5 Toughness, value armor 10% less.
+	- Hit is read from the game, so hit caps already work without Precision; Warriors now need all their hit from gear.
+	- **Level-60 profiles re-simulated** with the current Forever simulator and the 70291 talents. The old Fury profiles assumed Precision's 3% hit, so Fury (Dual Wield) now values Hit much higher (30 to 44) and Crit and Agility a little higher; Fury (Two-Hander) gets its own Hit value (47) instead of copying Arms. Arms and the Protection profiles change only slightly (Protection: Block rating is worth less, 12.5 to 9.7).
+- **Discipline Priests**: Penance heals and hits for less (its spell power share went from 28.5% to 19% per pulse) and costs more mana. Re-run through the healing model: Discipline: Raid values Intellect, Spirit and Mp5 about 8% higher and Crit a little lower, and the dungeon healer leveling weights value Intellect more from 30 (Spirit and Mp5 no longer drop out at 40-41, where the old cheap Penance made mana not matter).
+- **Restoration Shamans**: Water Shield lost its 15-second cooldown, so its globes (2% mana on a heal crit) can come every 3.5 seconds, with a recast every 3 globes. Restoration: Raid values Crit about 15% lower (each extra globe now also costs recast time) and the mana stats slightly higher; the dungeon healer leveling weights change most around 35-45.
+- **Protection Paladins**: Retribution Aura does a third less damage per hit (20 at the top rank, was 30) and Reckoning can give an extra attack at most once every 1.5 seconds. Re-run through the farming, dungeon tank and raid tank models:
+	- Protection: AoE Farming: getting hit pays less, so the stats that let you pull bigger packs count for less against Spell Power (Stamina 1.65 to 0.95, Block 58 to 31, Dodge and Parry 29.5 to 21.4, Defense 7.4 to 5). It's still the fastest farming build, about 12% slower than before.
+	- Dungeon tank leveling: Block rating is worth 15% less from 31 (it feeds Reckoning); the rest is unchanged.
+	- Protection: Raid is unchanged: against one boss Reckoning rarely procs faster than the new limit (threat and Block within 3% in the simulator).
+- **Caster Leveling (early spell ranks)**: The patch rescaled the early ranks of the main nukes and heals (less damage growth per level, some bigger bases): rank 2 of Frostbolt, Fireball, Shadow Bolt, Wrath, Smite and Lightning Bolt lost 8-17% at levels 6-13, while Frostbolt, Fireball and Lightning Bolt ranks around levels 20-35 gained 8-17%. Checked against each class's leveling model, where it matters Spell Power changes against the other stats:
+	- Mage leveling: Spell Power and spell damage are worth 10% more around level 10.
+	- Balance Druid leveling: 7% more around level 10.
+	- Elemental Shaman leveling: 5% less from level 20 to 30, where Lightning Bolt hits harder.
+	- Priest leveling: Smite's change doesn't move kill speed (the early levels run on the wand and Shadow Word: Pain), but the stronger Lesser Heal makes healing yourself cheaper, so Intellect, Spirit and Mp5 count up to 25% less from level 10 to 20 for Shadow and solo healer leveling. The dungeon healer leveling weights also take the new Lesser Heal and Heal: Intellect a little lower up to 25, Spirit, Mp5 and Crit a little higher.
+	- Warlocks (who level on damage over time) and Enhancement Shamans change by less than 5%, so their weights stay.
+- **Druids**: Predatory Instincts is now Natural Instinct. Its crit damage bonus still raises Cat and Bear crit weights, and its new healing part (spell healing +12.5% of Intellect per rank) makes Intellect worth more for any profile that values healing.
+
+### 🐛 Bug Fixes
+- **Fixed: Classic Era Weapon Damage Didn't Count**: Era profiles value a weapon's damage per second, but the addon read it from the tooltip under a different name, so on Era a weapon's DPS was worth nothing: weapons were compared on their stats and racial bonuses only, and a much stronger white weapon could show as a downgrade. Weapon and wand DPS now count on Era (WoW Forever and TBC were not affected). Alt upgrades in the Roster plugin use the same fix.
+- **Fixed: Dual Wield Weapons Compared With the Wrong Hand**: For a character holding a one-hander in each hand, a new one-hander was always compared with whichever equipped weapon scored lower, usually the off hand, even when it would be far better in the main hand (where weapon damage counts most). It's now judged in the hand where it gains the most, and the tooltip adds a line for the other hand ("In the off hand: +6.5").
+- **New: Item Score on Tooltips**: Judge's Score is your whole character's score with the item on, so it reads the same on every item you wear and barely moves between two items. A new Item Score line under it shows the item's own score in its slot (its stats, projected enchant and gems, and weapon bonuses), and when comparing, the score of the item you wear there ("Item Score: 58.2 (worn: 25.8)").
+- **Projected Enchant on Worn Items**: With Enchant Mode on Project Best, the item you're wearing is scored with the best enchant for its slot too, but only the item you were comparing showed which enchant that was. The worn item's tooltip now shows it as well, marked "(already on it)" when the item has it, so you can see which enchant to get.
+- **Fixed: Classic Era Racial Weapon Skill**: The +5 weapon skill racials (Human swords and maces, Orc axes, Dwarf guns, Troll bows) added a fixed 20 to 60 points to every matching weapon at every level, more than a level-14 weapon's whole damage. They're now worth 5 points of the profile's own Weapon Skill value (or a tenth of its Hit value per point for profiles without one, about what +5 skill does against mobs of your level).
+- **Fixed: Healers Counted Spell Power Twice**: On WoW Forever an item's Spell Power heals as well as damages, so its healing is scored at the Healing weight and the Spell Power weight only counts the damage. The raid healer profiles (Holy and Discipline Priest, Holy Paladin, Restoration Shaman and Druid) and the dungeon healer leveling weights set Spell Power as high as Healing, so a point of Spell Power counted twice and damage-only Spell Damage counted as healing. Spell Power now scores the same as Healing for healers, and Spell Damage counts only as much as the damage healers actually deal. Most visible on enchants: a Restoration Druid was offered Zandalar Signet of Mojo instead of a healing shoulder enchant.
+- **Fixed: Classic Era and TBC Healers Counted Spell Power Twice**: The same problem on Classic Era and TBC. "Damage and healing" gear heals one-for-one, and its healing already counts at the Healing weight, but these healer profiles gave it a Spell Power weight on top, so it scored up to twice as much as +Healing gear: Era Holy Paladin (Raid) and the Priest's Pre-BiS Healer leveling profile; TBC Holy Paladin (Illumination), Priest Circle of Healing and Discipline (Pain Suppression), and the Priest's starting profile (which keeps a small damage value until your spec is known). Spiritual Guidance now values its Spirit bonus at both damage and healing, so Holy Priests' Spirit doesn't lose that value.
+- **Fixed: Classic Era Weapons Judged by Their Stats Only**: 24 Era profiles had no weapon damage weight, so weapons were compared on their stats alone (a green sword with Agility could beat a much stronger raid sword): every Rogue raid and PvP profile and most Rogue leveling brackets, Warrior Fury (Dual Wield), Fury/Prot, the Warrior leveling brackets from 21 to 51, Paladin Retribution, Shaman Stormstrike and the Enhancement/Restoration hybrid, plus the Paladin, Rogue and Warrior starting profiles. They now value weapon damage like the rest of Era's profiles.
+- **Fixed: Other Era and TBC Weights**: an audit of every Era and TBC profile and leveling bracket found and fixed:
+	- Rogue Strength missing from 10 Era profiles and TBC's Subtlety PvP profile (it gives Rogues attack power).
+	- Single-school damage worth more than Spell Power, which covers every school: Era Fire Mage and Fire Warlock leveling; TBC Retribution and Protection AoE leveling (Holy), Shadow (Raid) and Elemental (Raid).
+	- TBC Priest healer leveling (52-70) counted "damage and healing" gear twice, like the raid healers.
+	- Staves and other melee weapons were scored at a caster's wand weight in Era caster leveling and in TBC Mage and Priest profiles.
+	- TBC Bear leveling valued Strength below its attack power (2 attack power in Bear Form).
+	- Era and TBC Warrior tank profiles and Era Paladin tank profiles didn't value armor.
+- **Fixed: Fallback Profiles (WoW Forever)**: The profiles used before a spec is detected had a few wrong weights: Paladins and Shamans valued weapons by their stats only (no weapon damage), Shaman and Druid Strength counted half (it gives them 2 attack power), and Paladin and Shaman Agility counted as if it gave them attack power (it doesn't).
+- **Fixed: Weapon Damage Enchants for Casters**: With Enchant Mode on Project Best, casters were offered weapon damage enchants such as Lesser Striking, because the enchant was valued at their wand's weight. Weapon enchants now score like the weapon slot they go on, so casters get stat or spell power enchants instead.
+
+---
+
 ## 🚀 v3.2.1
 
 ### 🧩 Item Sets & Procs (WoW Forever)

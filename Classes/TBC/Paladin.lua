@@ -13,13 +13,14 @@ Paladin.Weights = {
         ["ITEM_MOD_INTELLECT_SHORT"]=0.02,
         ["MSC_WEAPON_DPS"]=2.0 
     },
+    -- Spell Power is the damage value only: "damage and healing" gear also heals, and the scorer adds that at the Healing weight.
     ["HOLY_RAID"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.02, -- Just to avoid poison on weapons        
         -- INTELLECT (The Stat King in 2.5.5)
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.75,
         -- THROUGHPUT
         ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.9,         
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0,         
         -- HASTE (Sunwell Meta)
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 1.1,
         -- SUSTAIN
@@ -147,7 +148,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 0.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8,
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         },
@@ -164,7 +165,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2,
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8,
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
@@ -184,7 +185,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0, 
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.0, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         },
@@ -201,7 +202,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 0.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.5 
         }
@@ -217,7 +218,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_AGILITY_SHORT"] = 1.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 0.3, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_ATTACK_POWER_SHORT"] = 1.0,
             ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1.5, 
@@ -291,7 +292,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 5.0,
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.0, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 2.0, 
@@ -306,7 +307,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 5.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 2.8,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_MANA_SHORT"] = 0.02,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
@@ -324,7 +325,7 @@ Paladin.LevelingBrackets = {
             ["ITEM_MOD_BLOCK_VALUE_SHORT"] = 5.5,
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0,
             ["ITEM_MOD_STRENGTH_SHORT"] = 0.5,
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 1.5, 
             ["ITEM_MOD_BLOCK_RATING_SHORT"] = 2.0, 
@@ -929,8 +930,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
 
 	-- [[ RETRIBUTION DYNAMIC SCALING ]]
     if currentSpec:find("RET") then
-        local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
-        local totalAP = base + pos + neg
+        local totalAP = MSC.GetJudgingStats().ap -- unbuffed, plus assumed buffs
         
         -- 1. CRIT SCALING (Universal)
         -- Everyone needs Crit to keep Vengeance active
@@ -961,7 +961,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     elseif currentSpec == "SHOCKADIN_PVP" then
         -- SHOCKADIN: Spell Power -> Spell Crit
         if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-            local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) -- 2 = Holy
+            local spellPower = MSC.GetJudgingSpellDamage(2) -- 2 = Holy
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
                  if spScaler > 1.2 then spScaler = 1.2 end
@@ -970,7 +970,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
         end
 
 	elseif currentSpec:find("HOLY") then
-        local spellPower = MSC.SanitizeStat(GetSpellBonusHealing())
+        local spellPower = MSC.GetJudgingStats().heal
         
         -- 1. LOW GEAR (Fresh 70): Survival Mode
         -- If we have low SP, we assume we have low mana. Prioritize Efficiency.
@@ -1030,7 +1030,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
 
     -- D. CRUSH CAP (Prot) - (Remains purely Avoidance Percentage, no rating scalars needed!)
     if currentSpec:find("PROT") and weights["ITEM_MOD_BLOCK_RATING_SHORT"] then
-        local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + GetBlockChance() + 30.0
+        local avoidance = 5.0 + GetDodgeChance() + GetParryChance() + MSC.GetPassiveBlockChance() + 30.0
         if avoidance >= 102.8 then
             weights["ITEM_MOD_BLOCK_RATING_SHORT"] = 0.5
             weights["ITEM_MOD_BLOCK_VALUE_SHORT"] = (weights["ITEM_MOD_BLOCK_VALUE_SHORT"] or 1.0) * 0.8

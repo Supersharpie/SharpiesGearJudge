@@ -70,8 +70,19 @@ function MSC:ApplyWeightPipeline(rawWeights, specKey)
         for k, v in pairs(rawWeights) do finalWeights[k] = v end
     end
     local capText = nil
+    -- PvP (the option, or a PvP profile): caps use the player-vs-player
+    -- targets while the class hooks run, then the PvP model goes on top.
+    local pvp = MSC.IsForever and (MSC.IsGearingForPvP() or MSC.IsPvPTalentBuild() or MSC.IsPvPProfile(specKey))
+    if pvp then MSC.PvPPipelineSpec = specKey or true end
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
-        finalWeights, capText = MSC.CurrentClass:ApplyScalers(finalWeights, specKey)
+        local ok, w, t = pcall(MSC.CurrentClass.ApplyScalers, MSC.CurrentClass, finalWeights, specKey)
+        if not ok then MSC.PvPPipelineSpec = nil; error(w, 0) end
+        finalWeights, capText = w, t
+    end
+    if pvp then
+        MSC.PvPPipelineSpec = nil
+        local label = MSC.ApplyForeverPvP(finalWeights)
+        if label then capText = capText and capText ~= "" and (capText .. ", " .. label) or label end
     end
     if MSC.BuffEngine and MSC.BuffEngine.ApplyStatSynergy then
         MSC.BuffEngine:ApplyStatSynergy(finalWeights, specKey)
@@ -154,20 +165,22 @@ local MAX_TALENT_TIERS, MAX_TALENT_COLUMNS = 11, 4
 -- Forever's talent window is the modern trait system (Blizzard_PlayerSpells,
 -- Camelot overrides): one trait tree per class whose node groups are the
 -- three Classic trees, in Classic tab order. Talents are trait nodes, read
--- from the active spec group's config. Returns configID, treeID or nil
--- (Classic Era / TBC have no class-talent trait config and use the globals).
-local function GetTraitTalentConfig()
+-- from a spec group's config (the active one unless group is given). Returns
+-- configID, treeID or nil (Classic Era / TBC have no class-talent trait
+-- config and use the globals; a group never set up has no config).
+local function GetTraitTalentConfig(forGroup)
     if not (C_Traits and C_Traits.GetConfigInfo and C_Traits.GetTreeNodes and C_Traits.GetNodeInfo) then return nil end
     local configID
     local spec = C_SpecializationInfo
     if spec and spec.GetActiveSpecGroup and spec.GetCombatConfigIDForSpecGroup then
-        local ok, group = pcall(spec.GetActiveSpecGroup)
+        local ok, group = true, forGroup
+        if not group then ok, group = pcall(spec.GetActiveSpecGroup) end
         if ok and group then
             local ok2, id = pcall(spec.GetCombatConfigIDForSpecGroup, group)
             if ok2 then configID = id end
         end
     end
-    if not configID and C_ClassTalents and C_ClassTalents.GetActiveConfigID then
+    if not configID and not forGroup and C_ClassTalents and C_ClassTalents.GetActiveConfigID then
         local ok, id = pcall(C_ClassTalents.GetActiveConfigID)
         if ok then configID = id end
     end
@@ -196,9 +209,10 @@ end
 
 -- Calls fn(name, rank, tab, node) for every named talent node in the trait
 -- tree (node is the C_Traits node info: .ID, .maxRanks, ...). Returns false
--- when this client has no class-talent trait config.
-function MSC.ForEachTraitTalent(fn)
-    local configID, treeID = GetTraitTalentConfig()
+-- when this client has no class-talent trait config. group: a spec group
+-- (default: the active one).
+function MSC.ForEachTraitTalent(fn, group)
+    local configID, treeID = GetTraitTalentConfig(group)
     if not configID then return false end
 
     local tabOfGroup = {}
@@ -308,6 +322,71 @@ function MSC:BuildTalentCache()
     MSC.TalentCacheLoaded = true
 end
 
+-- =========================================================================
+-- 1b. DUAL SPECIALIZATION (the inactive spec group)
+-- =========================================================================
+-- A spec group's talents without touching the live cache: returns
+-- talentCache, traitData (like MSC.TalentCache / MSC.TraitTalentData) or nil
+-- when the group has no talent config (never set up, or not Forever).
+function MSC.ReadTalentsForGroup(group)
+    local cache, data = {}, {}
+    if not MSC.ForEachTraitTalent(function(name, rank, tab)
+        table.insert(data, { name = name, rank = rank, tab = tab })
+    end, group) or #data == 0 then
+        return nil
+    end
+    for _, t in ipairs(data) do
+        local k = TalentKey(t.name)
+        cache[k] = math.max(cache[k] or 0, t.rank)
+    end
+    return cache, data
+end
+
+-- Runs fn(...) as if spec group `group` were active: its talents, its manual
+-- profile choice, its Talents-plugin build (MSC.GetTalentBuildRoleForGroup,
+-- filled by the plugin) and its Gear for PvP (MSC.EvalSpecGroup). Everything
+-- is restored afterwards, also on error. For the active group it just calls fn.
+-- Returns nil when the other group's talents can't be read.
+function MSC.WithSpecGroup(group, fn, ...)
+    if not group or group == MSC.GetActiveSpecGroup() or MSC.EvalSpecGroup then return fn(...) end
+    local cache, data = MSC.ReadTalentsForGroup(group)
+    if not cache then return nil end
+    local saved = {
+        TalentCache = MSC.TalentCache, TraitTalentData = MSC.TraitTalentData, TalentCacheLoaded = MSC.TalentCacheLoaded,
+        ManualSpec = MSC.ManualSpec, TalentBuildRole = MSC.TalentBuildRole, CachedSpecConfidence = MSC.CachedSpecConfidence,
+    }
+    MSC.TalentCache, MSC.TraitTalentData, MSC.TalentCacheLoaded = cache, data, true
+    MSC.EvalSpecGroup = group
+    MSC.ManualSpec = MSC.GetManualSpec(group)
+    MSC.TalentBuildRole = MSC.GetTalentBuildRoleForGroup and MSC.GetTalentBuildRoleForGroup(group) or nil
+    local res = { pcall(fn, ...) }
+    MSC.TalentCache, MSC.TraitTalentData, MSC.TalentCacheLoaded = saved.TalentCache, saved.TraitTalentData, saved.TalentCacheLoaded
+    MSC.ManualSpec, MSC.TalentBuildRole, MSC.CachedSpecConfidence = saved.ManualSpec, saved.TalentBuildRole, saved.CachedSpecConfidence
+    MSC.EvalSpecGroup = nil
+    if not res[1] then
+        if MSC.Debug then print("|cff00ccffSGJ|r other-spec error:", res[2]) end
+        return nil
+    end
+    return unpack(res, 2)
+end
+
+-- Weights and profile key for a spec group (the active one = GetCurrentWeights).
+-- The other group's are rebuilt when scoring settings change or you level.
+MSC.GroupWeightsCache = {}
+function MSC:GetWeightsForGroup(group)
+    if not group or group == MSC.GetActiveSpecGroup() then
+        local w, key = MSC.GetCurrentWeights()
+        return w, key
+    end
+    local stamp = (MSC.ScoringRevision or 0) .. "|" .. (UnitLevel("player") or 0)
+    local c = MSC.GroupWeightsCache[group]
+    if c and c.stamp == stamp then return c.weights, c.key end
+    local w, key = MSC.WithSpecGroup(group, function() return MSC:ApplyDynamicAdjustments() end)
+    if not w then return nil end
+    MSC.GroupWeightsCache[group] = { stamp = stamp, weights = w, key = key }
+    return w, key
+end
+
 function MSC:GetTalentRank(talentKey)
     -- Scoring for another character (MSC.BonusContext): its saved ranks by key.
     local ctx = MSC.BonusContext
@@ -365,12 +444,18 @@ end
 -- profile it is built for, so the weights follow the build even before its
 -- marker talents are taken. leveling is a LowLevelRoles key (e.g.
 -- "Leveling_Tank") or "Leveling" for the class's default chain; endgame is a
--- Weights key used at 60. nil, nil clears it.
-function MSC.SetTalentBuildRole(leveling, endgame)
+-- Weights key used at 60. pvp (optional) marks a PvP build: its weights get
+-- the PvP model at every level, as with Gear for PvP. nil, nil clears it.
+function MSC.SetTalentBuildRole(leveling, endgame, pvp)
     local cur = MSC.TalentBuildRole
-    if (cur and cur.leveling) == leveling and (cur and cur.endgame) == endgame then return end
-    MSC.TalentBuildRole = (leveling or endgame) and { leveling = leveling, endgame = endgame } or nil
+    pvp = pvp and true or nil
+    if (cur and cur.leveling) == leveling and (cur and cur.endgame) == endgame and (cur and cur.pvp) == pvp then return end
+    MSC.TalentBuildRole = (leveling or endgame) and { leveling = leveling, endgame = endgame, pvp = pvp } or nil
     MSC.CachedWeights = nil
+    if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
+    -- A PvP build can share its profile key with the PvE one, so a PvP change
+    -- wouldn't clear the cached item scores by itself: drop them all.
+    if (cur and cur.pvp) ~= pvp and MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
 end
 
 function MSC:GetLowLevelRole(roleMarkers)
@@ -554,6 +639,16 @@ function MSC:ApplyDynamicAdjustments()
             elseif MSC.CurrentClass.LevelingWeights and MSC.CurrentClass.LevelingWeights[specKey] then
                 rawWeights = MSC:GetLevelingRow(MSC.CurrentClass, specKey)
             end
+        end
+    end
+
+    -- 3b. Gear for PvP: auto-detect names the class's PvP profile for a raid
+    -- spec that has one (same weights; the PvP model is added either way).
+    if (not MSC.ManualSpec or MSC.ManualSpec == "AUTO") and MSC.IsForever and MSC.IsGearingForPvP() then
+        local cls = MSC.CurrentClass
+        local pvpKey = cls and cls.PvPCounterpart and cls.PvPCounterpart[specKey]
+        if pvpKey and cls.Weights and cls.Weights[pvpKey] then
+            specKey, rawWeights = pvpKey, cls.Weights[pvpKey]
         end
     end
 
@@ -791,8 +886,30 @@ function MSC:AutoUpdateBaseline()
     C_Timer.After(0.5, function() Fire(id) end)
 end
 
+-- The gear a spec group was last used with (the other spec's tooltip line
+-- compares against it). Saved on every gear change while the group is active,
+-- except just after a spec switch, while the old spec's gear may still be on.
+function MSC.SaveSpecGear(group)
+    if not SGJ_Settings or not MSC.GetPlayerKey then return end
+    local pk = MSC:GetPlayerKey()
+    SGJ_Settings.SpecGear = SGJ_Settings.SpecGear or {}
+    SGJ_Settings.SpecGear[pk] = SGJ_Settings.SpecGear[pk] or {}
+    SGJ_Settings.SpecGear[pk][group or MSC.GetActiveSpecGroup()] = MSC:GetEquippedGear()
+end
+
+function MSC.GetSpecGear(group)
+    local all = SGJ_Settings and SGJ_Settings.SpecGear
+    local mine = all and MSC.GetPlayerKey and all[MSC:GetPlayerKey()]
+    return mine and mine[group] or nil
+end
+
+local SPEC_SWITCH_SETTLE = 5 -- seconds for an equipment-manager swap to finish
+
 function MSC:RunAutoUpdateBaseline()
     if not SGJ_Settings then return end
+    if not (MSC.LastSpecSwitch and GetTime() - MSC.LastSpecSwitch < SPEC_SWITCH_SETTLE) then
+        MSC.SaveSpecGear(MSC.GetActiveSpecGroup())
+    end
     local weights, specName = self.GetCurrentWeights()
     if not weights or not specName then return end
 
@@ -813,4 +930,28 @@ function MSC:RunAutoUpdateBaseline()
     if liveScore >= savedScore then
         self:SaveBaselineProfile(specName, true)
     end
+end
+
+-- Spec switches: load the new spec's profile choice and Gear for PvP, redraw
+-- their controls, and save its gear once a gear-set swap has settled.
+do
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
+    f:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    f:SetScript("OnEvent", function(self, event, curr)
+        if not SGJ_Settings then return end
+        MSC.ManualSpec = MSC.GetManualSpec(MSC.GetActiveSpecGroup())
+        if MSC.GroupWeightsCache then wipe(MSC.GroupWeightsCache) end
+        if MSC.NotifyPvPToggle then MSC.NotifyPvPToggle() end
+        if MSC.ProfileDropdown and MSC.ProfileDropdown.RefreshText then MSC.ProfileDropdown.RefreshText() end
+        if event == "ACTIVE_TALENT_GROUP_CHANGED" then
+            MSC.LastSpecSwitch = GetTime()
+            MSC.CachedWeights = nil
+            if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
+            local group = tonumber(curr) or MSC.GetActiveSpecGroup()
+            C_Timer.After(SPEC_SWITCH_SETTLE + 0.5, function()
+                if MSC.GetActiveSpecGroup() == group and not InCombatLockdown() then MSC.SaveSpecGear(group) end
+            end)
+        end
+    end)
 end

@@ -273,7 +273,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.5, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.2, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, -- Bumped from 1.0
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.6, -- Bumped from 1.0
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.5, 
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8 -- Bumped from 0.5
@@ -283,7 +283,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_ARMOR_SHORT"] = 0.8, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5, 
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2, 
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.6, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2,
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8
@@ -299,7 +299,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 0.8, 
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.2, 
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.6,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 0.5 
         },
         End = { 
@@ -310,7 +310,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_DODGE_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"] = 0.8,
             ["ITEM_MOD_AGILITY_SHORT"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.2,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.6,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.0
         }
     },
@@ -363,7 +363,7 @@ Druid.LevelingBrackets = {
             ["ITEM_MOD_RESILIENCE_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_HIT_RATING_SHORT"] = 1.5,
             ["ITEM_MOD_ARMOR_SHORT"] = 1.5,
-            ["ITEM_MOD_STRENGTH_SHORT"] = 1.0,
+            ["ITEM_MOD_STRENGTH_SHORT"] = 1.6,
             ["ITEM_MOD_HASTE_RATING_SHORT"] = 1.0, -- Added: Threat
             ["ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT"] = 0.5
         }
@@ -808,12 +808,12 @@ function Druid:ApplyScalers(weights, currentSpec)
         if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
             -- [[ MANA SAFETY ]]
             -- If max mana is too low (<7000), Haste burns you out.
-            local maxMana = MSC.SanitizeStat(UnitPowerMax("player", 0))
+            local maxMana = MSC.GetJudgingStats().mana
             if maxMana < 7000 then
                  w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.2 -- Heavy penalty until geared
             end
 
-            local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(4)) -- 4 = Nature
+            local spellPower = MSC.GetJudgingSpellDamage(4) -- 4 = Nature
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
                  if spScaler > 1.2 then spScaler = 1.2 end
@@ -823,8 +823,7 @@ function Druid:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("FERAL") or currentSpec:find("Bear") or currentSpec:find("Cat") then
         if w["ITEM_MOD_CRIT_RATING_SHORT"] then
-            local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
-            local totalAP = base + pos + neg
+            local totalAP = MSC.GetJudgingStats().ap -- unbuffed, plus assumed buffs
             if totalAP > 2000 then 
                  local apScaler = 1 + ((totalAP - 2000) / 20000)
                  if apScaler > 1.15 then apScaler = 1.15 end

@@ -399,7 +399,6 @@ L["nature damage.-(%d+)"] = "урон от магии природы.-(%d+)"
 L["holy damage.-(%d+)"] = "урон от светлой магии.-(%d+)"
 L["healing.-(%d+).-damage.-(%d+)"] = "исцеление.-(%d+).-урон.-(%d+)"
 
-
 -- Added Missing Parse.lua Patterns
 L["mana per 5 sec."] = "маны каждые 5 сек."
 L["restores (%d+) mana per 5"] = "(%d+) ед%. маны в 5"
@@ -735,7 +734,6 @@ L["Divine Intellect"] = "Божественный интеллект"
 L["Combat Expertise"] = "Мастерство боя"
 L["Sacred Duty"] = "Священный долг"
 L["Holy Guidance"] = "Священное руководство"
-
 
 -- Paladin (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Retribution: Raid"] = "Воздаяние: Рейд"
@@ -1819,3 +1817,77 @@ L["Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\"
 L["New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too."] = "Новый плагин: Sharpie's Gear Judge - Roster (улучшения для твинков). Подсказки предметов показывают, каких из ваших других персонажей предмет улучшит, а таблица показывает экипировку всех. Сумки, банк и почта тоже учитываются."
 L["The window title now shows the name of the open tab."] = "Заголовок окна теперь показывает название открытой вкладки."
 L["Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up."] = "Надетые кольца, аксессуары и оружие в обеих руках теперь отмечаются как «Надето», а оценки обновляются сразу после повышения уровня."
+
+-- =============================================================
+-- ADDED IN 3.2.2 (PvP)
+-- =============================================================
+L["Gear for PvP"] = "Экипировка для PvP"
+L["Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers."] = "Профили PvP для 60 уровня пересобраны на основе смоделированных рейдовых профилей, добавлены новые профили PvP для воинов, паладинов Воздаяния, друидов и лекарей-жрецов и шаманов."
+L["New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp."] = "Новое: Экипировка для PvP. Оценивает экипировку для боев с другими игроками на любом уровне, для PvP в открытом мире при прокачке и на полях боя на 60 уровне: выносливость, броня и бурст ценятся выше, а меткость останавливается на капах для боев игрока с игроком. Включите ее флажком в верхней части окна /sgj или командой /sgj pvp."
+L["Not Now"] = "Не сейчас"
+L["On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)."] = "На PvP-мире Gear Judge предлагает включить Экипировку для PvP (один раз для каждого игрового мира)."
+L["PvP"] = "PvP"
+L["PvP: Balance"] = "PvP: Баланс"
+L["PvP: Cold Blood Burst"] = "PvP: Хладнокровие (бурст)"
+L["PvP: Deep Frost"] = "PvP: Глубокий лед"
+L["PvP: Destruction (Conflag)"] = "PvP: Разрушение (Поджигание)"
+L["PvP: Discipline Healer"] = "PvP: Лекарь Послушания"
+L["PvP: Elemental (Burst)"] = "PvP: Стихии (бурст)"
+L["PvP: Elemental (Shatter)"] = "PvP: Стихии (Обледенение)"
+L["PvP: Feral (Cat)"] = "PvP: Сила зверя (Кот)"
+L["PvP: Hemo Control"] = "PvP: Кровоизлияние (контроль)"
+L["PvP: Mace Specialization"] = "PvP: Специализация на дробящем оружии"
+L["PvP: Marksmanship Utility"] = "PvP: Стрельба (полезность)"
+L["PvP: Nightfall / Conflagrate"] = "PvP: Сумерки / Поджигание"
+L["PvP: PoM Pyro (3-Min Mage)"] = "PvP: Присутствие разума / Огненная глыба (маг, 3 мин.)"
+L["PvP: Restoration Healer"] = "PvP: Лекарь Исцеления"
+L["PvP: Restoration"] = "PvP: Исцеление"
+L["PvP: Retribution"] = "PvP: Воздаяние"
+L["PvP: Shadow (Blackout)"] = "PvP: Тьма (Затмение)"
+L["PvP: Soul Link (Tank)"] = "PvP: Связка души (танк)"
+L["PvP: Survival Tank"] = "PvP: Выживание (танк)"
+L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."] = "Оценивает экипировку для боев с другими игроками на любом уровне: выносливость, броня и бурст ценятся выше, меткость остается на капах для боев игрока с игроком (5% ближний бой, 3% заклинания). Профили PvP всегда используют этот режим."
+L["Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character."] = "Плагин талантов: новая группа PvP с 16 билдами, каждый с полным порядком талантов с 10 по 60 уровень. Выбор билда включает веса PvP для этого персонажа."
+L["Turn On"] = "Включить"
+L["|cff00ccffSharpie's Gear Judge|r\n\nThis looks like a PvP realm.\n\nTurn on |cffff5555Gear for PvP|r? Gear is then scored for fighting other players (more Stamina, armor and burst). You can change it any time with the checkbox at the top of the /sgj window."] = "|cff00ccffSharpie's Gear Judge|r\n\nПохоже, это PvP-мир.\n\nВключить |cffff5555Экипировку для PvP|r? Тогда экипировка будет оцениваться для боев с другими игроками (больше выносливости, брони и бурста). Изменить это можно в любой момент флажком в верхней части окна /sgj."
+L["|cff00ff00SGJ realm:|r zone type %s, flagged %s, PvP wanted %s, PvP timer %s -> PvP realm: %s"] = "|cff00ff00SGJ realm:|r тип зоны %s, помечена %s, нужен PvP %s, таймер PvP %s -> PvP-мир: %s"
+L["|cff00ff00SGJ:|r Gear for PvP is now "] = "|cff00ff00SGJ:|r Экипировка для PvP теперь "
+
+L["Not used while Gear for PvP is on: hit and defense stay at the player-vs-player targets."] = "Не используется, пока включена «Экипировка для PvP»: меткость и защита остаются на целях для PvP."
+
+L["   %s: config %s, %d talents read, profile %s (choice %s), Gear for PvP %s, saved gear %d items"] = "   %s: конфиг %s, прочитано талантов: %d, профиль %s (выбор %s), Экипировка для PvP %s, сохранено предметов: %d"
+L["Primary"] = "Основное"
+L["Saved for each spec; this sets it for your %s spec."] = "Сохраняется для каждой специализации; это относится к специализации: %s."
+L["Secondary"] = "Дополнительное"
+L["Show Other Spec on Tooltips"] = "Показывать другую специализацию в подсказках"
+L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "При двойной специализации (уровень 40) в подсказках предметов также показывается, является ли предмет улучшением для вашей другой специализации. Оценка учитывает таланты, профиль и настройку «Экипировка для PvP» этой специализации и сравнивается с экипировкой, которую вы носили в ней в последний раз. Экипировка для PvP и профиль оценки сохраняются отдельно для каждой специализации."
+L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ двойная специализация:|r групп специализации: %d, активна %d"
+
+L["5-Player Group"] = "Группа из 5"
+L["Assume group buffs when scoring gear (Kings, Mark of the Wild, Fortitude, Battle Shout, totems, etc.). Blessings are assumed for the Alliance and totems for the Horde. Without this, gear is judged without buffs, whatever you have on right now."] = "Учитывать групповые баффы при оценке снаряжения (Благословение королей, Знак дикой природы, Слово силы: Стойкость, Боевой крик, тотемы и т. д.). Благословения учитываются для Альянса, тотемы — для Орды. Без этого снаряжение оценивается без баффов, какие бы ни были на вас сейчас."
+L["Assume world buffs (Rallying Cry of the Dragonslayer, Spirit of Zandalar, Songflower Serenade, Dire Maul Tribute)."] = "Учитывать мировые баффы (Ободряющий клич Драконоборца, Дух Зандалара, Серенада песнецвета, Дань Забытого Города)."
+L["Full Raid"] = "Полный рейд"
+
+L["Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it."] = "Учёт баффов работает во всех версиях игры: есть шаблоны для полного рейда, группы из 5 и мировых баффов. Процентные баффы, например Благословение королей, теперь повышают ценность характеристик на снаряжении, а не понижают её."
+L["Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable."] = "Снаряжение теперь оценивается без баффов: еда, эликсиры и групповые баффы больше не сдвигают пороги меткости, пороги танка и оценки, а активный Блок щитом или Щит небес больше не учитывается дважды для защиты от сокрушающих ударов."
+
+L["Natural Instinct"] = "Природный инстинкт"
+
+L["In the main hand: %s"] = "В правой руке: %s"
+L["In the off hand: %s"] = "В левой руке: %s"
+
+L["Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level."] = "Исправлено: в Classic Era и Season of Discovery урон в секунду оружия не учитывался, и оружие оценивалось только по характеристикам. Расовое владение оружием больше не добавляет фиксированные 20–60 очков на каждом уровне."
+L["One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well."] = "Одноручное оружие для бойцов с двумя оружиями оценивается в той руке, где оно даёт больше всего, а подсказка показывает и другую руку."
+L["Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells."] = "Перепроверено всё остальное, что изменил патч: профили воина для 60 уровня, жрец Послушания (Исповедь), шаман Исцеления (Водный щит), паладин Защиты (Расплата и Аура воздаяния) и ранние ранги заклинаний заклинателей."
+L["Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees."] = "Обновлено для бета-патча 1.60.1.70291: воины потеряли Точность, Стойкость и Безграничную ярость и получили Яростную точность, а Хищные инстинкты теперь называются Природный инстинкт. Веса воина и друида и сборки воина в плагине Talents следуют новым деревьям."
+
+L["|cff00ff00(already on it)|r"] = "|cff00ff00(уже наложено)|r"
+
+L[" |cff999999(worn: %.1f)|r"] = " |cff999999(надето: %.1f)|r"
+L["Item Score:"] = "Оценка предмета:"
+
+L["Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too."] = "Подсказки показывают собственную оценку предмета под оценкой Судьи (оценкой всего персонажа), а при сравнении и оценку надетого предмета. В режиме чар «Лучшие (прогноз)» надетый предмет тоже показывает прогнозируемые чары."
+
+L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "Профили 60 уровня пересчитаны на текущем симуляторе wowsims Forever: рейдовые веса разбойника, охотника, мага, шамана и друида изменились (Тайная магия теперь чуть впереди Льда, Совершенствованию и Повелителю зверей не хватает маны, Кошка больше не меняет облик ради энергии); воин, чернокнижник, жрец и паладин остались прежними. Строки танка и лекаря для подземелий у паладина тоже пересобраны."
+L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "Готово к Двойной специализации: у каждой специализации свой профиль оценки, своя настройка «Снаряжение для PvP» и свое запомненное снаряжение, подсказки показывают, будет ли предмет улучшением для вашей другой специализации, а плагин Talents хранит по билду на специализацию."
+L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Плагин Talents: таланты не изменились, но восемь описаний билдов теперь приводят цифры текущего симулятора. Лед остается рейдовым билдом мага, Тайная магия отстает на несколько процентов."

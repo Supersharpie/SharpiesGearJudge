@@ -8,31 +8,40 @@ Mage.Name = "MAGE"
 Mage.Weights = {
     ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_SHORT"]=0.02, ["ITEM_MOD_STAMINA_SHORT"]=0.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
 
-    -- The raid profiles come from the wowsims Forever sim (study/mage2, 2026-10-03; NOTES.md there has the numbers),
-    -- run with each build's own talents, so ApplyScalers' talent hooks skip them. Spell Power sits at 2.0; Hit and
-    -- Crit are per 1%. In a three-minute fight with raid buffs a Frost or Arcane mage doesn't run out of mana, so
-    -- Intellect counts mostly for its crit.
+    -- The raid profiles come from the wowsims Forever sim (study/mage2, 2026-10-03; re-run 2026-10-08 from
+    -- SharpiesGearJudge-SimStudio), run with each build's own talents, so ApplyScalers' talent hooks skip them.
+    -- Spell Power sits at 2.0; Hit and Crit are per 1%. In a three-minute fight with raid buffs a Frost mage doesn't
+    -- run out of mana, so Intellect counts mostly for its crit; Arcane stacks Arcane Blast and does run short.
     -- Frost: Raid (Frost with Ice Lance, Fingers of Frost and Winter's Chill; bosses can't be frozen).
-    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=24.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.28 },
-    -- Fire: Raid (Fire 35 / Frost 16). About 17% behind Frost in the sim; Fireball's mana cost makes Intellect, Spirit and Mp5 count.
-    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=18.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.98, ["ITEM_MOD_SPIRIT_SHORT"]=1.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.32 },
-    -- Arcane: Raid (Arcane Blast and Arcane Missiles). About 6% behind Frost.
-    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.82, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.18, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.46, ["ITEM_MOD_SPIRIT_SHORT"]=0.24, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.38 },
+    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=24.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.29 },
+    -- Fire: Raid (Fire 35 / Frost 16). About 12% behind Frost in the sim; Fireball's mana cost makes Intellect, Spirit and Mp5 count.
+    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.3, ["ITEM_MOD_INTELLECT_SHORT"]=1.13, ["ITEM_MOD_SPIRIT_SHORT"]=1.19, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.45 },
+    -- Arcane: Raid (Arcane Blast and Arcane Missiles). About 3% ahead of Frost since the missiles keep the Arcane
+    -- Blast stacks; mana-bound, so Hit, Intellect, Spirit and Mp5 count for more than on Frost.
+    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.69, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.07, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=29.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=16.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.68, ["ITEM_MOD_SPIRIT_SHORT"]=0.53, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.86, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.24 },
     -- Frost: AoE Farming (Blizzard kiting packs at 60; study/mage2/farm.js, a rough model, tempered). Blizzard's spell
     -- power share is small next to its base damage and drinking is a big part of each pull, so Crit, Intellect and Mp5
     -- count for a lot against Spell Power; Stamina keeps you alive when a pull goes wrong.
     ["FROST_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=3.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
 
-    -- PvP profiles (not modelled).
-    ["POM_PYRO"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
-    ["ELEMENTAL"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
-    ["FROST_PVP"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
 }
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+-- Elemental (Shatter) casts both schools, so each school key takes half.
+Mage.Weights["POM_PYRO"] = MSC.ForeverPvPFrom(Mage.Weights["FIRE_RAID"])
+Mage.Weights["ELEMENTAL"] = MSC.ForeverPvPFrom(Mage.Weights["FROST_RAID"], { ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0 })
+Mage.Weights["FROST_PVP"] = MSC.ForeverPvPFrom(Mage.Weights["FROST_RAID"])
+-- PvP builds whose key doesn't say PvP (MSC.IsPvPProfile).
+Mage.PvPProfiles = { POM_PYRO = true, ELEMENTAL = true }
 -- Old names, kept so a saved profile choice still works.
 Mage.Weights["FROST_WC"] = Mage.Weights["FROST_RAID"]
 Mage.Weights["FROST_AP"] = Mage.Weights["FROST_RAID"]
 -- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { FROST_RAID = true, FIRE_RAID = true, ARCANE_RAID = true, FROST_WC = true, FROST_AP = true }
+local SIM_PROFILES = { FROST_RAID = true, FIRE_RAID = true, ARCANE_RAID = true, FROST_WC = true, FROST_AP = true,
+    POM_PYRO = true, ELEMENTAL = true, FROST_PVP = true }
+-- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
+-- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
+Mage.PvPCounterpart = { FROST_RAID = "FROST_PVP", FROST_WC = "FROST_PVP", FROST_AP = "FROST_PVP" }
 
 -- =============================================================
 -- LEVELING WEIGHTS
@@ -58,9 +67,9 @@ Mage.PrettyNames = {
     ["FROST_AOE"]   = L["Frost: AoE Farming"],
     ["FROST_WC"]    = L["Frost: Raid (old profile)"],
     ["FROST_AP"]    = L["Frost: Raid (old Arcane Power profile)"],
-    ["POM_PYRO"]        = "PvP: PoM Pyro (3-Min Mage)",
-    ["ELEMENTAL"]       = "PvP: Elemental (Shatter)",
-    ["FROST_PVP"]       = "PvP: Deep Frost",
+    ["POM_PYRO"]        = L["PvP: PoM Pyro (3-Min Mage)"],
+    ["ELEMENTAL"]       = L["PvP: Elemental (Shatter)"],
+    ["FROST_PVP"]       = L["PvP: Deep Frost"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
@@ -306,9 +315,8 @@ function Mage:ApplyScalers(weights, currentSpec)
 
     -- [[ 2. Covariance (SP -> Crit) ]]
     if weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-        -- FIX: Use MSC.SanitizeStat(GetSpellBonusDamage(2)) via shim ideally, but for now we shim via manual GetSpellBonusDamage call if needed
-        -- Note: Era API returns number directly.
-        local sp = MSC.SanitizeStat(GetSpellBonusDamage(3)) -- 3=Frost
+        -- Frost spell damage without buffs (gear is judged unbuffed)
+        local sp = MSC.GetJudgingStats().sp -- largest school
         if sp > 400 then
             local spScaler = 1 + ((sp - 400) / 4000)
             weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * spScaler

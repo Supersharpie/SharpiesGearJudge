@@ -137,6 +137,7 @@ end
 function MSC.CtxAttackPower()
     local ctx = MSC.BonusContext
     if ctx and ctx.ap then return ctx.ap end
+    if MSC.GetJudgingStats then return MSC.GetJudgingStats().ap end -- unbuffed, plus assumed buffs
     if not UnitAttackPower then return 0 end
     local base, pos, neg = UnitAttackPower("player")
     return (base or 0) + (pos or 0) + (neg or 0)

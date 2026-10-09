@@ -1200,3 +1200,77 @@ L["Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\"
 L["New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too."] = "新插件：Sharpie's Gear Judge - Roster（分身升級）。物品浮動提示會顯示這件物品能讓你的哪些其他角色升級，表格則列出所有角色的裝備。你的背包、銀行和信件也會計算在內。"
 L["The window title now shows the name of the open tab."] = "視窗標題現在會顯示目前開啟的分頁名稱。"
 L["Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up."] = "穿戴中的戒指、飾品與雙持武器現在會顯示為已裝備，升級後評分也會立即更新。"
+
+-- =============================================================
+-- ADDED IN 3.2.2 (PvP)
+-- =============================================================
+L["Gear for PvP"] = "為PvP配裝"
+L["Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers."] = "60級PvP設定檔已根據模擬的團隊設定檔重新建立，並為戰士、懲戒聖騎士、德魯伊，以及牧師和薩滿的治療者新增了PvP設定檔。"
+L["New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp."] = "新增：為PvP配裝。在每個等級都以對戰其他玩家的角度為裝備評分，適用於練功時的野外PvP和60級的戰場：耐力、護甲和爆發的權重更高，命中在玩家對玩家的上限時停止累積。可用 /sgj 視窗頂端的核取方塊或輸入 /sgj pvp 開啟。"
+L["Not Now"] = "暫時不要"
+L["On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)."] = "在PvP伺服器上，Gear Judge 會詢問是否開啟為PvP配裝（每個伺服器一次）。"
+L["PvP"] = "PvP"
+L["PvP: Balance"] = "PvP：平衡"
+L["PvP: Cold Blood Burst"] = "PvP：冷血爆發"
+L["PvP: Deep Frost"] = "PvP：深度冰霜"
+L["PvP: Destruction (Conflag)"] = "PvP：毀滅（焚燒）"
+L["PvP: Discipline Healer"] = "PvP：戒律治療"
+L["PvP: Elemental (Burst)"] = "PvP：元素（爆發）"
+L["PvP: Elemental (Shatter)"] = "PvP：元素（碎冰）"
+L["PvP: Feral (Cat)"] = "PvP：野性（獵豹）"
+L["PvP: Hemo Control"] = "PvP：出血控場"
+L["PvP: Mace Specialization"] = "PvP：錘類武器專精"
+L["PvP: Marksmanship Utility"] = "PvP：射擊效用"
+L["PvP: Nightfall / Conflagrate"] = "PvP：夜幕／焚燒"
+L["PvP: PoM Pyro (3-Min Mage)"] = "PvP：氣定神閒炎爆術（3分鐘法師）"
+L["PvP: Restoration Healer"] = "PvP：恢復治療"
+L["PvP: Restoration"] = "PvP：恢復"
+L["PvP: Retribution"] = "PvP：懲戒"
+L["PvP: Shadow (Blackout)"] = "PvP：暗影（昏厥）"
+L["PvP: Soul Link (Tank)"] = "PvP：靈魂鏈結（坦克）"
+L["PvP: Survival Tank"] = "PvP：生存坦克"
+L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."] = "在每個等級都以對戰其他玩家的角度為裝備評分：耐力、護甲和爆發的權重更高，命中維持在玩家對玩家的上限（近戰5%，法術3%）。PvP設定檔一律使用此選項。"
+L["Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character."] = "天賦插件：新增PvP分類，共16套配置，每套都是從10級到60級的完整天賦順序。選擇其中一套會為該角色開啟PvP權重。"
+L["Turn On"] = "開啟"
+L["|cff00ccffSharpie's Gear Judge|r\n\nThis looks like a PvP realm.\n\nTurn on |cffff5555Gear for PvP|r? Gear is then scored for fighting other players (more Stamina, armor and burst). You can change it any time with the checkbox at the top of the /sgj window."] = "|cff00ccffSharpie's Gear Judge|r\n\n這看起來是PvP伺服器。\n\n要開啟|cffff5555為PvP配裝|r嗎？開啟後會以對戰其他玩家的角度為裝備評分（更重視耐力、護甲和爆發）。你隨時可以用 /sgj 視窗頂端的核取方塊更改。"
+L["|cff00ff00SGJ realm:|r zone type %s, flagged %s, PvP wanted %s, PvP timer %s -> PvP realm: %s"] = "|cff00ff00SGJ 伺服器：|r區域類型 %s，已標記 %s，需要PvP %s，PvP計時 %s -> PvP伺服器：%s"
+L["|cff00ff00SGJ:|r Gear for PvP is now "] = "|cff00ff00SGJ：|r為PvP配裝現在 "
+
+L["Not used while Gear for PvP is on: hit and defense stay at the player-vs-player targets."] = "開啟為PvP配裝時不使用：命中與防禦維持在PvP目標值。"
+
+L["   %s: config %s, %d talents read, profile %s (choice %s), Gear for PvP %s, saved gear %d items"] = "   %s：設定 %s，已讀取 %d 個天賦，設定檔 %s（選擇 %s），為PvP配裝 %s，已儲存裝備 %d 件"
+L["Primary"] = "主要"
+L["Saved for each spec; this sets it for your %s spec."] = "每個專精分別儲存；此設定適用於以下專精：%s。"
+L["Secondary"] = "次要"
+L["Show Other Spec on Tooltips"] = "在提示中顯示另一個專精"
+L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "擁有雙天賦專精（40級）時，物品提示也會顯示該物品對你另一個專精是否為升級，並以該專精的天賦、設定檔及為PvP配裝設定評分，與你上次在該專精穿戴的裝備比較。為PvP配裝與評分設定檔會為每個專精分別儲存。"
+L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ 雙天賦專精：|r %d 個專精組，使用中 %d"
+
+L["5-Player Group"] = "5人隊伍"
+L["Assume group buffs when scoring gear (Kings, Mark of the Wild, Fortitude, Battle Shout, totems, etc.). Blessings are assumed for the Alliance and totems for the Horde. Without this, gear is judged without buffs, whatever you have on right now."] = "評分裝備時假設有隊伍增益(王者祝福、野性印記、真言術:韌、戰鬥怒吼、圖騰等)。祝福假設為聯盟,圖騰假設為部落。關閉時,無論你目前身上有什麼增益,裝備都以無增益評分。"
+L["Assume world buffs (Rallying Cry of the Dragonslayer, Spirit of Zandalar, Songflower Serenade, Dire Maul Tribute)."] = "假設有世界增益(屠龍者的咆哮、贊達拉之魂、輕歌花小夜曲、厄運之槌貢品)。"
+L["Full Raid"] = "完整團隊"
+
+L["Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it."] = "增益假設現在在所有遊戲版本都有效,並提供完整團隊、5人隊伍和世界增益預設。王者祝福等百分比增益現在會提高裝備屬性的價值,而不是降低。"
+L["Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable."] = "裝備現在以無增益狀態評分:食物、藥劑和隊伍增益不再改變命中上限、坦克上限或分數,啟動中的盾牌格擋或神聖之盾也不再重複計入免疫碾壓。"
+
+L["Natural Instinct"] = "自然本能"
+
+L["In the main hand: %s"] = "主手：%s"
+L["In the off hand: %s"] = "副手：%s"
+
+L["Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level."] = "已修正：在經典永久版與探索賽季中，武器的每秒傷害沒有計入，武器只按屬性評分。種族武器技能不再在每個等級都固定加上20到60分。"
+L["One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well."] = "雙持角色的單手武器會以收益最大的那隻手評分，提示也會顯示另一隻手的結果。"
+L["Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells."] = "已重新檢查修補程式改動的其他內容：戰士60級設定檔、戒律牧師（懺悟）、恢復薩滿（水之護盾）、防護聖騎士（清算和懲罰光環），以及施法者法術的早期等級。"
+L["Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees."] = "已針對測試版修補程式 1.60.1.70291 更新：戰士失去精確、堅韌和無盡怒氣並獲得狂暴精確，掠食本能現在改名為自然本能。戰士和德魯伊的權重以及天賦插件的戰士配置都依照新的天賦樹。"
+
+L["|cff00ff00(already on it)|r"] = "|cff00ff00(已附魔)|r"
+
+L[" |cff999999(worn: %.1f)|r"] = " |cff999999(已裝備：%.1f)|r"
+L["Item Score:"] = "物品分數："
+
+L["Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too."] = "提示會在裁判分數（整個角色的分數）下方顯示物品本身的分數，比較時也會顯示已裝備物品的分數。附魔模式設為預測最佳時，已裝備的物品也會顯示預測的附魔。"
+
+L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "60級設定檔已在目前的 wowsims Forever 模擬器上重新計算：盜賊、獵人、法師、薩滿和德魯伊的團隊權重有變動（秘法現在略勝冰霜，增強和野獸控制會缺法力，獵豹不再為了能量變身）；戰士、術士、牧師和聖騎士維持不變。聖騎士的地城坦克和治療列也已重建。"
+L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "已支援雙天賦：每個天賦保有自己的評分設定檔、PvP 裝備設定和記住的裝備，提示會顯示物品對你另一個天賦是否為升級，Talents 插件也會為每個天賦各記住一個配置。"
+L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Talents 插件：天賦沒有變動，但八則配置說明現在引用目前模擬器的數字。冰霜仍是法師的團隊配置，秘法只差幾個百分點。"

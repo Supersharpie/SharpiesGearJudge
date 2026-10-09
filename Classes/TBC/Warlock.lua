@@ -840,8 +840,8 @@ function Warlock:ApplyScalers(weights, currentSpec)
     -- [[ 3. COVARIANCE (Destro Loves Crit/Haste) ]]
     if currentSpec:find("DESTRUCT") then
         local spellPower = 0
-        if currentSpec:find("SHADOW") then spellPower = MSC.SanitizeStat(GetSpellBonusDamage(3)) 
-        else spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) end
+        if currentSpec:find("SHADOW") then spellPower = MSC.GetJudgingSpellDamage(6) -- Shadow 
+        else spellPower = MSC.GetJudgingSpellDamage(3) end -- Fire
         
         if spellPower > 600 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             local scaler = 1 + ((spellPower - 600) / 10000)

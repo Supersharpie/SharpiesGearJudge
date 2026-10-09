@@ -13,7 +13,7 @@ Paladin.Name = "PALADIN"
 Paladin.Weights = {
     -- Fallback before a spec is known. Stamina, Hit, Crit and Weapon Skill on the same scale as the
     -- other Forever Defaults (Stamina 0.5, Hit 20 / Crit 12 per 1%, Weapon Skill 13).
-    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
+    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=0.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- Retribution: Raid (Ret 33 / Holy 18 with Twist of Light, pre-raid gear) from the wowsims Forever simulator (study/paladin3,
     -- 2026-10-03), 70% raid boss / 30% dungeon boss, Attack Power 1.5. The rotation seal-twists: Seal of Righteousness up before
@@ -25,7 +25,9 @@ Paladin.Weights = {
     -- Holy: Raid (pre-raid healer, raid buffs, long / potion / burst fights). Downranking allowed: Forever
     -- gives every rank the full coefficient (a mild cut is assumed for ranks 10+ levels below you). A
     -- Paladin healer runs short of mana before casting time, so Intellect and Mp5 rank above +healing.
-    ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.3, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5  },
+    -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
+    -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
+    ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.3, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5  },
 
     -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
     -- 2026-10-04), as the Warrior's and Druid's raid tanks: threat 35% / damage taken 35% / effective health 30%, Stamina 3.0.
@@ -34,20 +36,33 @@ Paladin.Weights = {
     -- Mp5 keep only a small floor for longer fights.
     ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=30.5, ["ITEM_MOD_BLOCK_RATING_SHORT"]=13.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.22, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.79, ["ITEM_MOD_AGILITY_SHORT"]=2.62, ["ITEM_MOD_STRENGTH_SHORT"]=0.78, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.34, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.43, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.43, ["ITEM_MOD_HIT_RATING_SHORT"]=16.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
-    -- Protection: AoE Farming (15-20 normal mobs at 55-57, some Undead; Consecration, Holy Shield and
-    -- Retribution Aura at 30 + 10% of spell power per hit taken). Spell Power drives the damage; Block,
+    -- Protection: AoE Farming (about 12 normal mobs at 55-57, some Undead; Consecration, Holy Shield and
+    -- Retribution Aura at 20 + 10% of spell power per hit taken). Spell Power drives the damage; Block,
     -- Dodge, Parry, Defense and Stamina set the pack size; Block Value and mana barely matter. Scaled to
-    -- Spell Power = 3.0.
-    ["PROT_AOE"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=1.65, ["ITEM_MOD_BLOCK_RATING_SHORT"]=58.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=29.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=7.4, ["ITEM_MOD_HIT_RATING_SHORT"]=18.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.2, ["ITEM_MOD_STRENGTH_SHORT"]=0.47, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.23, ["ITEM_MOD_ARMOR_SHORT"]=0.16, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5  },
+    -- Spell Power = 3.0. Client 70291 cut Retribution Aura (30 -> 20 per hit) and limited Reckoning to once
+    -- per 1.5 s: getting hit pays less, so the survival stats come down (study/ret_build/farm_weights.js).
+    ["PROT_AOE"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=0.95, ["ITEM_MOD_BLOCK_RATING_SHORT"]=30.6, ["ITEM_MOD_DODGE_RATING_SHORT"]=21.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=21.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.0, ["ITEM_MOD_HIT_RATING_SHORT"]=16.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.4, ["ITEM_MOD_STRENGTH_SHORT"]=0.35, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.17, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5  },
 
-    -- PvP profiles (not modelled).
-    ["SHOCKADIN"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
-    ["RECK_BOMB"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 }
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+-- Shockadin: Holy: Raid with Holy Shock's damage half counted (Spell Power and Holy damage as well as healing, Hit
+-- for the damage). Retribution and Reck-Bomb: Ret: Raid (Reck-Bomb for builds with Reckoning and Vengeance: Forever's
+-- Reckoning stores up to 4 extra attacks and releases them all on the next melee hit).
+Paladin.Weights["SHOCKADIN"] = MSC.ForeverPvPFrom(Paladin.Weights["HOLY_RAID"], {
+    ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.0,
+    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.0 })
+Paladin.Weights["RECK_BOMB"] = MSC.ForeverPvPFrom(Paladin.Weights["RET_STANDARD"])
+Paladin.Weights["RET_PVP"] = MSC.ForeverPvPFrom(Paladin.Weights["RET_STANDARD"])
+-- PvP builds whose key doesn't say PvP (MSC.IsPvPProfile).
+Paladin.PvPProfiles = { SHOCKADIN = true, RECK_BOMB = true }
 -- Old name for Holy: Raid, kept so a saved profile choice still works.
 Paladin.Weights["HOLY_DEEP"] = Paladin.Weights["HOLY_RAID"]
 -- The simulator-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { RET_STANDARD = true, PROT_DEEP = true }
+local SIM_PROFILES = { RET_STANDARD = true, PROT_DEEP = true, SHOCKADIN = true, RECK_BOMB = true, RET_PVP = true }
+-- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
+-- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
+Paladin.PvPCounterpart = { RET_STANDARD = "RET_PVP" }
 
 -- =============================================================
 -- LEVELING WEIGHTS
@@ -79,6 +94,7 @@ Paladin.PrettyNames = {
     ["PROT_AOE"]     = MSC.ClassL("PALADIN", "Protection: AoE Farming"),
     ["SHOCKADIN"]    = L["PvP: Shockadin (Burst)"],
     ["RECK_BOMB"]    = L["PvP: Reck-Bomb (One-Shot)"],
+    ["RET_PVP"]      = L["PvP: Retribution"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
@@ -185,8 +201,10 @@ function Paladin:GetSpec()
     if ret > holy and ret >= prot then return "RET_STANDARD" end
     if prot > holy and prot > ret then return "PROT_DEEP" end
     -- Holy: a healer with any healing talent; Holy Shock without them is the PvP Shockadin.
-    if Rank("HOLY_SHOCK") > 0 and Rank("ILLUMINATION") == 0 and Rank("LIGHTS_VIGIL") == 0
-        and Rank("HEALING_LIGHT") == 0 and Rank("DIVINE_FAVOR") == 0 then return "SHOCKADIN" end
+    -- With Gear for PvP on, any Holy Shock build is the Shockadin (it takes Divine Favor and
+    -- Light's Vigil for burst).
+    if Rank("HOLY_SHOCK") > 0 and (MSC.IsGearingForPvP() or (Rank("ILLUMINATION") == 0 and Rank("LIGHTS_VIGIL") == 0
+        and Rank("HEALING_LIGHT") == 0 and Rank("DIVINE_FAVOR") == 0)) then return "SHOCKADIN" end
     return "HOLY_RAID"
 end
 

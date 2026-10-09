@@ -6,25 +6,25 @@ Rogue.Name = "ROGUE"
 -- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
 -- =============================================================
 Rogue.Weights = {
-    ["Default"] = {
+    ["Default"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0 
     },
-    ["RAID_COMBAT_SWORDS"] = {
+    ["RAID_COMBAT_SWORDS"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_HIT_RATING_SHORT"]=22.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0 
     },
-    ["RAID_COMBAT_DAGGERS"] = {
+    ["RAID_COMBAT_DAGGERS"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_CRIT_RATING_SHORT"]=28.0, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0 
     },
-    ["RAID_SEAL_FATE"] = {
+    ["RAID_SEAL_FATE"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_CRIT_RATING_SHORT"]=32.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_HIT_RATING_SHORT"]=18.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
     },
-    ["PVP_HEMO"] = {
+    ["PVP_HEMO"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0 
     },
-    ["PVP_CB_DAGGER"] = {
+    ["PVP_CB_DAGGER"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=1.0 
     },
-    ["PVP_MACE"] = {
+    ["PVP_MACE"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=1.8 
     },
 }
@@ -35,19 +35,19 @@ Rogue.Weights = {
 Rogue.LevelingWeights = {
     -- Combat Swords/Maces
     ["Leveling_1_20"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] = 6.0, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.5 },
-    ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
-    ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
-    ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
+    ["Leveling_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.1, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0 },
+    ["Leveling_41_51"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_AGILITY_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
+    ["Leveling_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_HIT_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=10.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2 },
 
     -- Dagger Leveling
     ["Leveling_Dagger_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8 },
-    ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0 },
+    ["Leveling_Dagger_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=8.0 },
     ["Leveling_Dagger_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_CRIT_RATING_SHORT"]=15.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=15.0, ["ITEM_MOD_AGILITY_SHORT"]=2.8, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
 
     -- Hemo Leveling
-    ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.0 },
-    ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0 },
-    ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
+    ["Leveling_Hemo_21_40"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=8.4, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_STRENGTH_SHORT"]=1.2 },
+    ["Leveling_Hemo_41_51"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=8.4, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=1.8, ["ITEM_MOD_AGILITY_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0 },
+    ["Leveling_Hemo_52_59"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=8.4, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.2, ["ITEM_MOD_HIT_RATING_SHORT"]=10.0 },
 }
 
 -- =============================================================
@@ -145,8 +145,8 @@ function Rogue:ApplyScalers(weights, currentSpec)
     if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         -- FIX: Use Shim
         local currentHit = MSC:GetPlayerStat("HIT")
-        local talentHit = Rank("PRECISION") -- 1% per rank in Era
-        local totalHit = currentHit + talentHit
+        -- GetHitModifier already includes hit from talents (and gear), so the talent isn't added again.
+        local totalHit = currentHit
         
         local weaponSkillBonus = Rank("WEAP_EXPERTISE") * 2.5 -- Est. weapon skill value
         local _, race = UnitRace("player")
@@ -178,7 +178,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Rogue:GetWeaponBonus(itemLink)
+function Rogue:GetWeaponBonus(itemLink, weights, slotId, specName)
     if not itemLink then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
@@ -186,9 +186,9 @@ function Rogue:GetWeaponBonus(itemLink)
     local bonus = 0
     local race = MSC.CtxRace()
 
-    -- Racial: Human (Sword/Mace) +5 Skill is massive in Era
+    -- Racial: Human (Sword/Mace) +5 Skill, at the profile's Weapon Skill value
     if race == "Human" and (subClassID == 7 or subClassID == 4) then 
-        bonus = bonus + 50 
+        bonus = bonus + MSC.EraWeaponSkillBonus(Rogue, weights, specName, 5)
     end
     
     return bonus

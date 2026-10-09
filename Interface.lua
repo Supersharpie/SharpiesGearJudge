@@ -2274,7 +2274,7 @@ local function GetClassRings(class, stats, weights, profileKey)
 			end
 			
 			-- 5% Base Miss + Avoidance Stats + Active Buff
-			val = 5.0 + MSC.SanitizeStat(GetDodgeChance()) + MSC.SanitizeStat(GetParryChance()) + MSC.SanitizeStat(GetBlockChance()) + buffBonus
+			val = 5.0 + MSC.SanitizeStat(GetDodgeChance()) + MSC.SanitizeStat(GetParryChance()) + MSC.GetPassiveBlockChance() + buffBonus
 			currentDisplay = val
 			capRating = capTarget
             
@@ -2536,10 +2536,11 @@ function MSC.UpdateLogic()
 
     local uncertainNote
     local profileLabel = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[detectedKey]) or detectedKey or ""
-    if SGJ_Settings and SGJ_Settings.Mode == "AUTO" and specConfidence and specConfidence ~= "high" then
+    if SGJ_Settings and MSC.ManualSpec == "AUTO" and specConfidence and specConfidence ~= "high" then
         uncertainNote = MSC.L[" (uncertain — pick profile manually if wrong)"]:gsub("^%s*%((.-)%)%s*$", "%1")
     end
     local view = MSC.ViewLogic
+    if MSC.HasDualSpec() then profileLabel = profileLabel .. " |cff888888(" .. MSC.SpecGroupName(MSC.GetActiveSpecGroup()) .. ")|r" end
     view.ProfileName:SetText(profileLabel)
     if specConfidence == "ambiguous" then view.ProfileName:SetTextColor(1, 0.6, 0.2) else view.ProfileName:SetTextColor(1, 1, 1) end
     view.ProfileNote:SetText(uncertainNote or "")
@@ -2797,31 +2798,36 @@ function MSC.InitSettingsView(parent)
         end
         local lbl = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); lbl:SetPoint("TOPLEFT", 0, 0); lbl:SetText(label); lbl:SetTextColor(0.6, 0.6, 0.6)
         local dd = CreateFrame("Frame", nil, frame, "UIDropDownMenuTemplate"); dd:SetPoint("TOPLEFT", -15, -15); UIDropDownMenu_SetWidth(dd, 180)
+        -- The profile choice ("Mode") is kept per spec (MSC.GetManualSpec); the rest are account settings.
+        local function Get() if key == "Mode" then return MSC.GetManualSpec(MSC.GetActiveSpecGroup()) end return SGJ_Settings[key] end
         -- Shows the text of the option matching the saved setting (it can change outside this dropdown).
         local function RefreshText()
             local currentText = MSC.L["Select..."]
-            for _, opt in ipairs(options) do if SGJ_Settings[key] == opt.val then currentText = opt.text end end
+            local cur = Get()
+            for _, opt in ipairs(options) do if cur == opt.val then currentText = opt.text end end
             UIDropDownMenu_SetText(dd, currentText)
         end
         local function OnClick(self)
-            UIDropDownMenu_SetSelectedID(dd, self:GetID()); SGJ_Settings[key] = self.value
-            if key == "Mode" then MSC.ManualSpec = self.value end
+            UIDropDownMenu_SetSelectedID(dd, self:GetID())
+            if key == "Mode" then MSC.SetManualSpec(self.value) else SGJ_Settings[key] = self.value end
             if key == "RaidBuffPreset" and MSC.BuffEngine then MSC.BuffEngine:ApplyRaidPreset(self.value) end
             if key == "WorldBuffPreset" and MSC.BuffEngine then MSC.BuffEngine:ApplyWorldPreset(self.value) end
             RefreshText()
             if onChange then onChange(self.value) end
             MSC.OnScoringSettingsChanged()
         end
-        local function Init(self, level) for _, opt in ipairs(options) do local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (SGJ_Settings[key] == opt.val); UIDropDownMenu_AddButton(info, level) end end
+        local function Init(self, level) for _, opt in ipairs(options) do local info = UIDropDownMenu_CreateInfo(); info.text = opt.text; info.value = opt.val; info.func = OnClick; info.checked = (Get() == opt.val); UIDropDownMenu_AddButton(info, level) end end
         UIDropDownMenu_Initialize(dd, Init)
-        RefreshText(); if key == "Mode" then f.ProfileDD = dd end
+        RefreshText(); if key == "Mode" then f.ProfileDD = dd; MSC.ProfileDropdown = frame end
         frame:SetScript("OnShow", RefreshText)
         frame.RefreshText = RefreshText
         curCard.Last = frame
         return frame
     end
 
-    local function CreateCheck(label, key, tooltip, relTo, xOff, yOff)
+    -- getter (optional): where the box reads its state (e.g. a per-spec setting);
+    -- then a click doesn't write SGJ_Settings[key] and the caller's hook saves it.
+    local function CreateCheck(label, key, tooltip, relTo, xOff, yOff, getter)
         local cb = CreateFrame("CheckButton", nil, curCard, "UICheckButtonTemplate")
         cb:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", xOff, yOff)
 
@@ -2834,13 +2840,14 @@ function MSC.InitSettingsView(parent)
         cb.Text:SetWidth(SETTINGS_COL_W - 70); cb.Text:SetJustifyH("LEFT")
 
         -- Force visual update when the menu opens to bypass hidden-frame template bugs
+        local function Read() if getter then return getter() == true end return SGJ_Settings[key] == true end
         cb:HookScript("OnShow", function(self)
-            self:SetChecked(SGJ_Settings[key] == true)
+            self:SetChecked(Read())
         end)
-        cb:SetChecked(SGJ_Settings[key] == true)
+        cb:SetChecked(Read())
 
         cb:HookScript("OnClick", function(self)
-            SGJ_Settings[key] = self:GetChecked()
+            if not getter then SGJ_Settings[key] = self:GetChecked() end
             if key == "HideMinimap" then MSC.UpdateMinimapPosition() end
             if (key == "ShowBagArrows" or key == "FastBagArrows") and MSC.QueueBagOverlayRefresh then MSC.QueueBagOverlayRefresh() end
             if key == "FastBagArrows" and MSC.RequestBaganatorRefresh then MSC.RequestBaganatorRefresh() end
@@ -2918,10 +2925,21 @@ function MSC.InitSettingsView(parent)
     -- Each Assume checkbox and its preset dropdown mirror one another: picking
     -- a preset ticks/unticks the box, and clicking the box updates the preset.
     local ddRaidPreset, ddWorldPreset
-    local cbRaid = CreateCheck(MSC.L["Assume Raid Buffed"], "AssumeRaidBuffs", MSC.L["Assume raid buffs and debuffs when scoring gear (ToW, IFF, Kings, Draenei in raid, etc.)."], hBuffs, 0, -10)
+    -- Gear is always judged without the buffs you happen to have; these add
+    -- the ones you'd have in a group or raid (presets per game version).
+    local raidTip, worldTip
+    if MSC.IsTBC then
+        raidTip = MSC.L["Assume raid buffs and debuffs when scoring gear (ToW, IFF, Kings, Draenei in raid, etc.)."]
+        worldTip = MSC.L["Assume classic world buffs (Ony, ZG, Songflower, DM Tribute). Usually off at 70 in Outland raids."]
+    else
+        raidTip = MSC.L["Assume group buffs when scoring gear (Kings, Mark of the Wild, Fortitude, Battle Shout, totems, etc.). Blessings are assumed for the Alliance and totems for the Horde. Without this, gear is judged without buffs, whatever you have on right now."]
+        worldTip = MSC.L["Assume world buffs (Rallying Cry of the Dragonslayer, Spirit of Zandalar, Songflower Serenade, Dire Maul Tribute)."]
+    end
+    local defaultRaidPreset = MSC.IsTBC and "full25" or "raid"
+    local cbRaid = CreateCheck(MSC.L["Assume Raid Buffed"], "AssumeRaidBuffs", raidTip, hBuffs, 0, -10)
     cbRaid:HookScript("OnClick", function(self)
         if self:GetChecked() and SGJ_Settings.RaidBuffPreset == "off" then
-            if MSC.BuffEngine then MSC.BuffEngine:ApplyRaidPreset("full25") end
+            if MSC.BuffEngine then MSC.BuffEngine:ApplyRaidPreset(defaultRaidPreset) end
         elseif not self:GetChecked() and MSC.BuffEngine then
             MSC.BuffEngine:ApplyRaidPreset("off")
         end
@@ -2929,15 +2947,14 @@ function MSC.InitSettingsView(parent)
         if ddRaidPreset then ddRaidPreset.RefreshText() end
         InvalidateBuffCaches()
     end)
-    local raidPresetOpts = {
-        { text = MSC.L["Off"], val = "off" },
-        { text = MSC.L["25-Man Full"], val = "full25" },
-        { text = MSC.L["10-Man Minimal"], val = "minimal10" },
-    }
+    local raidPresetOpts = {}
+    for _, o in ipairs(MSC.BuffEngine and MSC.BuffEngine:GetRaidPresetOptions() or { { "off", "Off" } }) do
+        table.insert(raidPresetOpts, { text = MSC.L[o[2]], val = o[1] })
+    end
     ddRaidPreset = CreateDropdown(MSC.L["Raid Buff Preset"], "RaidBuffPreset", raidPresetOpts, cbRaid, -5, nil, function()
         cbRaid:SetChecked(SGJ_Settings.AssumeRaidBuffs == true)
     end)
-    local cbWorld = CreateCheck(MSC.L["Assume World Buffed"], "AssumeWorldBuffs", MSC.L["Assume classic world buffs (Ony, ZG, Songflower, DM Tribute). Usually off at 70 in Outland raids."], ddRaidPreset, 0, -5)
+    local cbWorld = CreateCheck(MSC.L["Assume World Buffed"], "AssumeWorldBuffs", worldTip, ddRaidPreset, 0, -5)
     cbWorld:HookScript("OnClick", function(self)
         if self:GetChecked() and SGJ_Settings.WorldBuffPreset == "off" then
             if MSC.BuffEngine then MSC.BuffEngine:ApplyWorldPreset("full") end
@@ -2970,6 +2987,46 @@ function MSC.InitSettingsView(parent)
             if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
             InvalidateBuffCaches()
         end)
+        -- PvP model over every profile (MSC.ApplyForeverPvP); also on the
+        -- main window and offered on PvP realms.
+        local cbPvP = CreateCheck(MSC.L["Gear for PvP"], "GearForPvP", MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."], cbRaidPrep, 0, -5,
+            function() return MSC.IsGearingForPvP(MSC.GetActiveSpecGroup()) end)
+        cbPvP:HookScript("OnClick", function(self)
+            MSC.SetGearForPvP(self:GetChecked())
+            InvalidateBuffCaches()
+        end)
+        cbPvP:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."], nil, nil, nil, nil, true)
+            if MSC.HasDualSpec() then
+                GameTooltip:AddLine(string.format(MSC.L["Saved for each spec; this sets it for your %s spec."], MSC.SpecGroupName(MSC.GetActiveSpecGroup())), 0.6, 0.8, 1, true)
+            end
+            GameTooltip:Show()
+        end)
+        -- Gear for PvP keeps hit and defense at the player-vs-player targets, so
+        -- Gear for Raiding does nothing while it's on: grey it out (its saved
+        -- choice is kept for when PvP is turned off).
+        local raidTip = MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 16% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."]
+        local function PaintRaidPrep(pvpOn)
+            if pvpOn then
+                cbRaidPrep:Disable(); cbRaidPrep.Text:SetTextColor(0.5, 0.5, 0.5)
+            else
+                cbRaidPrep:Enable(); cbRaidPrep.Text:SetTextColor(0.9, 0.9, 0.9)
+            end
+        end
+        cbRaidPrep:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(raidTip, nil, nil, nil, nil, true)
+            if MSC.IsGearingForPvP() then
+                GameTooltip:AddLine(MSC.L["Not used while Gear for PvP is on: hit and defense stay at the player-vs-player targets."], 1, 0.4, 0.4, true)
+            end
+            GameTooltip:Show()
+        end)
+        cbRaidPrep:HookScript("OnShow", function() PaintRaidPrep(MSC.IsGearingForPvP()) end)
+        PaintRaidPrep(MSC.IsGearingForPvP())
+        table_insert(MSC.PvPToggleListeners, function(on) cbPvP:SetChecked(on); PaintRaidPrep(on) end)
+        -- Dual Specialization: a line on item tooltips for the spec you're not in.
+        CreateCheck(MSC.L["Show Other Spec on Tooltips"], "ShowOtherSpec", MSC.L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."], cbPvP, 0, -5)
     end
 
     -- ==========================================
@@ -3002,10 +3059,10 @@ function MSC.InitSettingsView(parent)
     bDeleteProfile:SetScript("OnEnter", function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(MSC.L["Delete Custom Profile"], 1, 1, 1); GameTooltip:AddLine(MSC.L["Deletes the selected profile if it is one you imported. Built-in profiles can't be deleted."], nil, nil, nil, true); GameTooltip:Show() end)
     bDeleteProfile:SetScript("OnLeave", GameTooltip_Hide)
     bDeleteProfile:SetScript("OnClick", function()
-        local selected = SGJ_Settings.Mode
+        local selected = MSC.GetManualSpec(MSC.GetActiveSpecGroup())
         if selected and SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights and SharpiesGearJudgeDB.customWeights[selected] then
             SharpiesGearJudgeDB.customWeights[selected] = nil
-            SGJ_Settings.Mode = "AUTO"; MSC.ManualSpec = "AUTO"; MSC.CachedWeights = nil
+            MSC.SetManualSpec("AUTO"); MSC.CachedWeights = nil
             ddProfile.RefreshText() -- back to "Auto-Detect"
             MSC.OnScoringSettingsChanged()
             print(string.format(MSC.L["|cff00ff00SGJ:|r Deleted custom profile: %s"], selected))
@@ -3280,6 +3337,32 @@ function MSC.ToggleMainMenu()
     f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
     f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0); f.ScaleHint:SetText(MSC.L["Scroll to Scale"]); f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
+    -- Forever: Gear for PvP in the header, so open-world PvP players see it
+    -- without opening the options (same setting as the options checkbox).
+    if MSC.IsForever then
+        local pvp = CreateFrame("CheckButton", nil, f.Header, "UICheckButtonTemplate")
+        pvp:SetSize(24, 24)
+        local lbl = pvp:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        lbl:SetPoint("RIGHT", pvp, "LEFT", -2, 0); lbl:SetText(MSC.L["Gear for PvP"])
+        pvp:SetPoint("RIGHT", f.ScaleHint, "LEFT", -20, 0)
+        local function Paint(on)
+            pvp:SetChecked(on)
+            if on then lbl:SetTextColor(1, 0.3, 0.3) else lbl:SetTextColor(0.7, 0.7, 0.7) end
+        end
+        Paint(MSC.IsGearingForPvP(MSC.GetActiveSpecGroup()))
+        pvp:SetScript("OnClick", function(self) MSC.SetGearForPvP(self:GetChecked()) end)
+        pvp:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOM"); GameTooltip:SetText(MSC.L["Gear for PvP"], 1, 1, 1)
+            GameTooltip:AddLine(MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."], nil, nil, nil, true)
+            if MSC.HasDualSpec() then
+                GameTooltip:AddLine(string.format(MSC.L["Saved for each spec; this sets it for your %s spec."], MSC.SpecGroupName(MSC.GetActiveSpecGroup())), 0.6, 0.8, 1, true)
+            end
+            GameTooltip:Show()
+        end)
+        pvp:SetScript("OnLeave", GameTooltip_Hide)
+        table_insert(MSC.PvPToggleListeners, Paint)
+        f.PvPToggle = pvp
+    end
 
     f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
     f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
@@ -3664,6 +3747,8 @@ function MSC.ApplySettingsDefaults()
         AssumeWorldBuffs = false,
         AssumeCampingBuffs = false,
         GearForRaiding = true, -- Forever: hit/defense targets slide to raid caps from 50
+        GearForPvP = false,    -- Forever: PvP model over every profile (MSC.ApplyForeverPvP); per spec in SpecSettings
+        ShowOtherSpec = true,  -- Dual Specialization: tooltip line for the inactive spec
         ShieldTankNo2H = true, -- shield tanks never see a two-hander as an upgrade
         RaidBuffPreset = "off",
         WorldBuffPreset = "off",
@@ -3682,7 +3767,7 @@ function MSC.ApplySettingsDefaults()
     if MSC.BuffEngine and MSC.BuffEngine.InitSettings then MSC.BuffEngine:InitSettings() end
 
     -- Ensure the manual spec override is actually loaded into the engine!
-    MSC.ManualSpec = SGJ_Settings.Mode
+    MSC.ManualSpec = MSC.GetManualSpec(MSC.GetActiveSpecGroup())
 end
 
 local loader = CreateFrame("Frame")

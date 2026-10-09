@@ -52,7 +52,7 @@ Rogue.Weights = {
     },
 
     -- [[ 3. SUBTLETY (PvP / Hemo) ]]
-    ["PVP_SUBTLETY"] = { 
+    ["PVP_SUBTLETY"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1, 
         ["MSC_WEAPON_DPS"]                  = 3.0, -- Lower priority in PvP than stats
         ["ITEM_MOD_RESILIENCE_RATING_SHORT"]= 1.8, 
         ["ITEM_MOD_STAMINA_SHORT"]          = 1.5, 
@@ -625,8 +625,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
 
     -- [[ 2. COVARIANCE (Crit scales with AP) ]]
     if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-        local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
-        local totalAP = base + pos + neg
+        local totalAP = MSC.GetJudgingStats().ap -- unbuffed, plus assumed buffs
         
         if totalAP > 1000 then
             local apScaler = 1 + ((totalAP - 1000) / 20000)

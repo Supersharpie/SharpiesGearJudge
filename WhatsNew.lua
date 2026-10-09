@@ -16,25 +16,21 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.1: add a line here for each change logged under v3.2.1 in CHANGELOG.md.
-    { text = "New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too." },
-    { text = "Item sets rebuilt from the Forever client: all 532 sets, including the new Forever sets, now score their real Forever bonuses.", forever = true },
-    { text = "Set bonus hit and crit no longer count many times over, and healers get credit for spell power set bonuses." },
-    { text = "Item sets rebuilt from your game's own data: every set counts its real bonuses, including many TBC sets that never counted before.", classic = true },
-    { text = "Proc and use-effect trinkets now add their effect on top of their stats instead of a fixed score that ignored them." },
-    { text = "Enchant suggestions rebuilt from your game's own data: only enchants your game really has, with their real stats, suited to your level and class." },
-    { text = "Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\") keep their bonus stats, and feral attack power is read as feral.", classic = true },
-    { text = "Leveling weights fixed: some specs and levels scored every item 0. TBC leveling now counts armor and favours fast off-hand weapons where it should.", classic = true },
-    { text = "Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up." },
-    { text = "Characters that share a first name no longer share saved specs, gear sets or talent builds.", forever = true },
-    { text = "The window title now shows the name of the open tab." },
-    { text = "Roadmap 3.1.0: quest rewards for every Forever zone, filtered to your faction and class.", forever = true },
-    { text = "Roadmap 3.1.0: new checkboxes choose dungeon loot, dungeon quests and world quests, and scans run more smoothly." },
-    { text = "Weapon swaps now show any weapon racial you gain or lose in the tooltip, for example Sword Specialization for Humans.", forever = true },
-    { text = "New option Shield Tanks: No Two-Handers (on by default): two-handers no longer show as upgrades for shield tanks, in tooltips and the Roadmap." },
-    { text = "Fully translated into every language WoW Forever ships in, now including Korean, Traditional Chinese and Latin American Spanish." },
-    { text = "Faster: far fewer needless updates when your bags, vendors or item data change, and lighter tooltips." },
-    { text = "The beta dataminer is gone; anything it recorded is cleared from your saved data.", forever = true },
+    -- v3.2.2: add a line here for each change logged under v3.2.2 in CHANGELOG.md.
+    { forever = true, text = "Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too." },
+    { forever = true, text = "Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent." },
+    { forever = true, text = "Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec." },
+    { forever = true, text = "New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp." },
+    { forever = true, text = "On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)." },
+    { forever = true, text = "Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers." },
+    { forever = true, text = "Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character." },
+    { text = "Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable." },
+    { text = "Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it." },
+    { forever = true, text = "Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees." },
+    { forever = true, text = "Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells." },
+    { classic = true, text = "Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level." },
+    { text = "One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well." },
+    { text = "Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

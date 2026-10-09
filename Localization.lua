@@ -683,6 +683,7 @@ L["Feral Charge"] = "Feral Charge"
 L["Insect Swarm"] = "Insect Swarm"
 L["Lunar Guidance"] = "Lunar Guidance"
 L["Predatory Instincts"] = "Predatory Instincts"
+L["Natural Instinct"] = "Natural Instinct"
 L["Balance of Power"] = "Balance of Power"
 L["Survival of the Fittest"] = "Survival of the Fittest"
 

@@ -6,28 +6,30 @@ Paladin.Name = "PALADIN"
 -- CLASSIC ERA STAT WEIGHTS (Vanilla / SoD)
 -- =============================================================
 Paladin.Weights = {
-    ["Default"] = {
+    ["Default"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
     },
+    -- Spell Power is the damage value only: "damage and healing" gear also heals, and the
+    -- scorer adds that at the Healing weight (0.8 here counted it almost twice).
     ["HOLY_RAID"] = {
-        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=0.2 
+        ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_STAMINA_SHORT"]=0.2 
     },
     ["HOLY_DEEP"] = {
         ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0 
     },
-    ["PROT_DEEP"] = {
+    ["PROT_DEEP"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.09,
         ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.6, ["ITEM_MOD_DODGE_RATING_SHORT"]=1.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=1.5 
     },
-    ["PROT_AOE"]  = {
+    ["PROT_AOE"]  = { ["ITEM_MOD_ARMOR_SHORT"]=0.072,
         ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=1.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.5 
     },
-    ["RET_STANDARD"] = {
+    ["RET_STANDARD"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HIT_RATING_SHORT"]=22.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.2 
     },
     -- Ret with Blessing of Kings (GetSpec: Repentance + Kings). The build's extra value is
     -- the raid buff, not a different gear need: it fights as a Ret Paladin, so it uses
     -- RET_STANDARD's weights (copied below the table).
-    ["RET_UTILITY"] = {},
+    ["RET_UTILITY"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,},
     ["SHOCKADIN"] = {
         ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_STRENGTH_SHORT"]=0.5 
     },
@@ -145,7 +147,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Paladin:GetWeaponBonus(itemLink)
+function Paladin:GetWeaponBonus(itemLink, weights, slotId, specName)
     if not itemLink then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
@@ -155,7 +157,7 @@ function Paladin:GetWeaponBonus(itemLink)
 
     -- Racial: Human (Sword/Mace)
     if race == "Human" and (subClassID == 7 or subClassID == 4 or subClassID == 8 or subClassID == 5) then 
-        bonus = bonus + 60 
+        bonus = bonus + MSC.EraWeaponSkillBonus(Paladin, weights, specName, 5)
     end
     -- Racial: Orc (No benefit for Paladins, but kept for symmetry/safety)
     

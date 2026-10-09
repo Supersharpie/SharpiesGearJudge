@@ -26,17 +26,22 @@ Warlock.Weights = {
     -- Spell Power counts little (Hellfire and Rain of Fire take a small share of it).
     ["DEMO_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05 },
 
-    -- PvP profiles (not modelled).
-    ["PVP_NF_CONFLAG"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
-    ["PVP_SOUL_LINK"] = {  ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
-    ["PVP_DEEP_DESTRO"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=5.0  },
 }
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+-- Nightfall/Conflagrate mixes Shadow Bolt procs with Conflagrate, so Fire takes a bigger share than in the raid build;
+-- Deep Destruction is mostly Fire (Searing Pain, Conflagrate, Shadowburn). Soul Link moves part of the damage you take
+-- to the demon and Life Tap pays for spells in health, so its Stamina floor is the farming build's.
+Warlock.Weights["PVP_NF_CONFLAG"] = MSC.ForeverPvPFrom(Warlock.Weights["AFF_RAID"], { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.3, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.7 })
+Warlock.Weights["PVP_DEEP_DESTRO"] = MSC.ForeverPvPFrom(Warlock.Weights["DESTRO_RAID"], { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.6, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.4 })
+Warlock.Weights["PVP_SOUL_LINK"] = MSC.ForeverPvPFrom(Warlock.Weights["DEMO_PACT_RAID"], { ["ITEM_MOD_STAMINA_SHORT"]=3.0 })
 -- Old names, kept so a saved profile choice still works.
 Warlock.Weights["PVE_MD_RUIN"] = Warlock.Weights["DEMO_PACT_RAID"]
 Warlock.Weights["RAID_SM_RUIN"] = Warlock.Weights["AFF_RAID"]
 Warlock.Weights["RAID_DS_RUIN"] = Warlock.Weights["DESTRO_RAID"]
 -- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { DEMO_PACT_RAID = true, AFF_RAID = true, DESTRO_RAID = true, PVE_MD_RUIN = true, RAID_SM_RUIN = true, RAID_DS_RUIN = true }
+local SIM_PROFILES = { DEMO_PACT_RAID = true, AFF_RAID = true, DESTRO_RAID = true, PVE_MD_RUIN = true, RAID_SM_RUIN = true, RAID_DS_RUIN = true,
+    PVP_NF_CONFLAG = true, PVP_DEEP_DESTRO = true, PVP_SOUL_LINK = true }
 
 -- =============================================================
 -- LEVELING WEIGHTS
@@ -63,9 +68,9 @@ Warlock.PrettyNames = {
     ["PVE_MD_RUIN"]    = L["Demonology: Raid (old profile)"],
     ["RAID_SM_RUIN"]   = L["Affliction: Raid (old profile)"],
     ["RAID_DS_RUIN"]   = L["Destruction: Raid (old profile)"],
-    ["PVP_NF_CONFLAG"]  = "PvP: Nightfall / Conflagrate",
-    ["PVP_SOUL_LINK"]   = "PvP: Soul Link (Tank)",
-    ["PVP_DEEP_DESTRO"] = "PvP: Destruction (Conflag)",
+    ["PVP_NF_CONFLAG"]  = L["PvP: Nightfall / Conflagrate"],
+    ["PVP_SOUL_LINK"]   = L["PvP: Soul Link (Tank)"],
+    ["PVP_DEEP_DESTRO"] = L["PvP: Destruction (Conflag)"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }

@@ -57,7 +57,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if SGJ_Settings.CompactEquip == nil then SGJ_Settings.CompactEquip = true end
         if MSC.BuffEngine then MSC.BuffEngine:InitSettings() end
         -- [[ SYNC ENGINE WITH SAVED SETTING ]]
-        MSC.ManualSpec = SGJ_Settings.Mode
+        MSC.ManualSpec = MSC.GetManualSpec(MSC.GetActiveSpecGroup())
         
         local version = MSC.IsForever and MSC.L["Forever Edition"] or (MSC.IsEra and MSC.L["Classic Era"] or MSC.L["TBC Edition"])
         print(string.format(MSC.L["|cff00ff00Sharpie's Gear Judge|r (%s) Loaded. Type /sgj for menu."], version))
@@ -151,10 +151,85 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         print("   " .. string.format(MSC.L["profile: %s"], tostring(specKey)))
     elseif cmd == "whatsnew" or cmd == "news" then
         if MSC.ShowWhatsNew then MSC.ShowWhatsNew() end
+    elseif cmd == "pvp" and MSC.IsForever then
+        MSC.SetGearForPvP(not MSC.IsGearingForPvP())
+        print(MSC.L["|cff00ff00SGJ:|r Gear for PvP is now "] .. (MSC.IsGearingForPvP() and onText or offText))
+    elseif cmd == "dualspec" then
+        -- What SGJ reads for each spec group, for checking Dual Specialization in game.
+        print(string.format(MSC.L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"], MSC.GetNumSpecGroups(), MSC.GetActiveSpecGroup()))
+        for g = 1, math.max(2, MSC.GetNumSpecGroups()) do
+            local cfg = C_SpecializationInfo and C_SpecializationInfo.GetCombatConfigIDForSpecGroup and select(2, pcall(C_SpecializationInfo.GetCombatConfigIDForSpecGroup, g))
+            local _, data = MSC.ReadTalentsForGroup(g)
+            local _, key = MSC:GetWeightsForGroup(g)
+            local gear = MSC.GetSpecGear(g)
+            local n = 0; for _ in pairs(gear or {}) do n = n + 1 end
+            print(string.format(MSC.L["   %s: config %s, %d talents read, profile %s (choice %s), Gear for PvP %s, saved gear %d items"],
+                MSC.SpecGroupName(g), tostring(cfg), data and #data or 0, tostring(key), tostring(MSC.GetManualSpec(g)),
+                MSC.IsGearingForPvP(g) and onText or offText, n))
+        end
+    elseif cmd == "realm" then
+        -- The signals the PvP realm check reads, for checking it in game.
+        local pvpType = MSC.GetZonePvPType()
+        print(string.format(MSC.L["|cff00ff00SGJ realm:|r zone type %s, flagged %s, PvP wanted %s, PvP timer %s -> PvP realm: %s"],
+            tostring(pvpType), tostring(UnitIsPVP("player") and true or false),
+            tostring(GetPVPDesired and GetPVPDesired() and true or false),
+            tostring(IsPVPTimerRunning and IsPVPTimerRunning() and true or false),
+            tostring(MSC.DetectPvPRealm())))
     else
         if MSC.ToggleMainMenu then MSC.ToggleMainMenu() end 
     end 
 end
+
+-- =============================================================
+-- PVP REALM CHECK (Forever)
+-- =============================================================
+-- There's no realm-type API, so this reads the flag state: on a PvP realm
+-- you're flagged automatically in contested and enemy zones without asking
+-- for it; on a normal realm you're only flagged if you turned PvP on (or
+-- the 5-minute timer from a fight is running). The first time a realm looks
+-- like PvP, SGJ offers Gear for PvP once (per realm). /sgj realm prints the
+-- signals.
+function MSC.GetZonePvPType()
+    local fn = (C_PvP and C_PvP.GetZonePVPInfo) or GetZonePVPInfo
+    if not fn then return nil end
+    local ok, pvpType = pcall(fn)
+    return ok and pvpType or nil
+end
+
+function MSC.DetectPvPRealm()
+    local pvpType = MSC.GetZonePvPType()
+    if pvpType ~= "contested" and pvpType ~= "hostile" then return false end
+    if not UnitIsPVP("player") then return false end
+    if GetPVPDesired and GetPVPDesired() then return false end
+    if IsPVPTimerRunning and IsPVPTimerRunning() then return false end
+    return true
+end
+
+StaticPopupDialogs["SGJ_PVP_REALM"] = {
+    text = MSC.L["|cff00ccffSharpie's Gear Judge|r\n\nThis looks like a PvP realm.\n\nTurn on |cffff5555Gear for PvP|r? Gear is then scored for fighting other players (more Stamina, armor and burst). You can change it any time with the checkbox at the top of the /sgj window."],
+    button1 = MSC.L["Turn On"],
+    button2 = MSC.L["Not Now"],
+    OnAccept = function() MSC.SetGearForPvP(true) end,
+    timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+}
+
+local pvpRealmCheck = CreateFrame("Frame")
+pvpRealmCheck:RegisterEvent("PLAYER_ENTERING_WORLD")
+pvpRealmCheck:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+pvpRealmCheck:SetScript("OnEvent", function(self)
+    if not MSC.IsForever or not SGJ_Settings then return end
+    local realm = GetRealmName and GetRealmName() or "?"
+    SGJ_Settings.PvPRealmAsked = SGJ_Settings.PvPRealmAsked or {}
+    if SGJ_Settings.PvPRealmAsked[realm] then self:UnregisterAllEvents(); return end
+    -- Flag state settles a moment after a zone change.
+    C_Timer.After(3, function()
+        if SGJ_Settings.PvPRealmAsked[realm] or InCombatLockdown() then return end
+        if not MSC.DetectPvPRealm() then return end
+        SGJ_Settings.PvPRealmAsked[realm] = true
+        self:UnregisterAllEvents()
+        if not MSC.IsGearingForPvP() then StaticPopup_Show("SGJ_PVP_REALM") end
+    end)
+end)
 
 StaticPopupDialogs["SGJ_RELOAD_REQUIRED"] = {
     text = MSC.L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."],
@@ -172,6 +247,15 @@ StaticPopupDialogs["SGJ_RELOAD_REQUIRED"] = {
 -- =============================================================
 -- 2. SMART SLOT LOGIC (Optimized with Cache)
 -- =============================================================
+-- Whether the player can hold a weapon in each hand (TBC Shamans with the
+-- Dual Wield talent; Forever Shamans can't).
+function MSC.CanDualWield()
+    local _, class = UnitClass("player")
+    if class == "WARRIOR" or class == "ROGUE" or class == "HUNTER" then return true end
+    if class == "SHAMAN" and MSC.GetTalentRank then return MSC:GetTalentRank("DUAL_WIELD") > 0 end
+    return false
+end
+
 function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName, baselineGear)
     local defaultSlot = MSC.SlotMap and MSC.SlotMap[equipLoc] or nil
     if not defaultSlot then return nil end
@@ -206,31 +290,31 @@ function MSC.GetComparisonSlot(itemLink, equipLoc, weights, specName, baselineGe
     end
 
     if equipLoc == "INVTYPE_WEAPON" then
-        local _, class = UnitClass("player")
-        local canDW = (class == "WARRIOR" or class == "ROGUE" or class == "HUNTER")
-        if class == "SHAMAN" and MSC.GetTalentRank then
-            canDW = MSC:GetTalentRank("DUAL_WIELD") > 0
-        end
-        
-        if canDW then
+        if MSC.CanDualWield() then
             local l1 = baselineGear and baselineGear[16] or GetInventoryItemLink("player", 16)
             local l2 = baselineGear and baselineGear[17] or GetInventoryItemLink("player", 17)
             
             if itemLink == l1 then return 17 end
             if itemLink == l2 then return 16 end
             
-            if MSC.SlotCache[cacheKey] then return MSC.SlotCache[cacheKey] end
-
             if l1 and l2 then
                 local _,_,_,_,_,_,_,_, loc2 = GetItemInfo(l2)
                 if loc2 == "INVTYPE_WEAPON" or loc2 == "INVTYPE_WEAPONOFFHAND" then
-                    local stats1 = MSC.SafeGetItemStats(l1, 16, weights, specName)
-                    local stats2 = MSC.SafeGetItemStats(l2, 17, weights, specName)
-                    local score1 = MSC.GetItemScore(stats1, weights, specName, 16)
-                    local score2 = MSC.GetItemScore(stats2, weights, specName, 17)
-                    
-                    local winner = (score2 < score1) and 17 or 16
-                    MSC.SlotCache[cacheKey] = winner
+                    -- The hand where this weapon gains the most over what that
+                    -- hand holds now (weapon DPS counts far more in the main
+                    -- hand). It used to be the hand holding the lower-scoring
+                    -- weapon, so a strong one-hander was only ever compared
+                    -- with a weak off-hand, never with a weak main hand.
+                    local key = cacheKey .. "|" .. itemLink
+                    if MSC.SlotCache[key] then return MSC.SlotCache[key] end
+                    local function HandScore(link, slot, otherHand)
+                        local s = MSC.GetItemScore(MSC.SafeGetItemStats(link, slot, weights, specName), weights, specName, slot)
+                        return s + ((MSC.GetWeaponSpecBonus and MSC:GetWeaponSpecBonus(link, MSC.CurrentClass, specName, weights, slot, otherHand)) or 0)
+                    end
+                    local gainMH = HandScore(itemLink, 16, l2) - HandScore(l1, 16, l2)
+                    local gainOH = HandScore(itemLink, 17, l1) - HandScore(l2, 17, l1)
+                    local winner = (gainOH > gainMH) and 17 or 16
+                    MSC.SlotCache[key] = winner
                     return winner
                 end
             end
@@ -855,6 +939,28 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         local scoreLabel = MSC.L["Judge's Score:"]
         if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end
         tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
+
+        -- The item's own score in that slot (its stats with any projected
+        -- enchant and gems, plus weapon bonuses); Judge's Score above is the
+        -- whole character wearing it. When comparing, the worn item's too.
+        local function SlotScore(stats, itemLink)
+            if not stats then return nil end
+            local s = MSC.GetItemScore(stats, weights, specName, slotId)
+            if itemLink and (slotId == 16 or slotId == 17) and MSC.GetWeaponSpecBonus then
+                s = s + (MSC:GetWeaponSpecBonus(itemLink, MSC.CurrentClass, specName, weights, slotId, GetInventoryItemLink("player", slotId == 16 and 17 or 16)) or 0)
+            end
+            return s
+        end
+        local itemScore = SlotScore(itemNewStats, link)
+        if itemScore then
+            local txt = string_format("|cffffffff%.1f|r", itemScore)
+            local wornLink = GetInventoryItemLink("player", slotId)
+            if not isEquipped and wornLink and itemOldStats and next(itemOldStats) then
+                local o = SlotScore(itemOldStats, wornLink)
+                if o then txt = txt .. string_format(MSC.L[" |cff999999(worn: %.1f)|r"], o) end
+            end
+            tooltip:AddDoubleLine(MSC.L["Item Score:"], txt, 1, 0.82, 0)
+        end
         
         local displayName = specName or "?"
         if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName] then displayName = MSC.CurrentClass.PrettyNames[specName] end
@@ -866,6 +972,18 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         -- [[ THE EQUIPPED SPLIT ]]
         if isEquipped then
             tooltip:AddLine(MSC.L["|cff00ffff* EQUIPPED *|r"])
+            -- Enchant Mode "Project Best": the worn item is scored with the best
+            -- enchant for its slot too (so the comparison is like for like).
+            -- Show which one, and whether the item already has it.
+            if SGJ_Settings and SGJ_Settings.EnchantMode == 3 and itemNewStats and itemNewStats.IS_PROJECTED and itemNewStats.ENCHANT_TEXT then
+                local name = CleanText(itemNewStats.ENCHANT_TEXT)
+                local eid = tonumber(string_match(link, "item:%-?%d+:(%-?%d+)")) or 0
+                local current = eid > 0 and MSC.EnchantDB and MSC.EnchantDB[eid]
+                if current and MSC.GetEnchantName(current) == itemNewStats.ENCHANT_TEXT then
+                    name = name .. " " .. MSC.L["|cff00ff00(already on it)|r"]
+                end
+                tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], name, 0, 1, 1, 1, 1, 1)
+            end
         else
             if equipLoc == "INVTYPE_FINGER" or equipLoc == "INVTYPE_TRINKET" then
                 local comparedItemLink = GetInventoryItemLink("player", slotId)
@@ -952,6 +1070,18 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 tooltip:AddLine(MSC.L["|cff888888= Sidegrade (0.0)|r"]) 
             end
 
+            -- A one-hander for a dual-wielder can go in either hand: the
+            -- verdict above is for the hand where it gains the most, this
+            -- line is the other hand's.
+            if equipLoc == "INVTYPE_WEAPON" and (slotId == 16 or slotId == 17) and MSC.CanDualWield() then
+                local otherSlot = (slotId == 16) and 17 or 16
+                local oNew, oOld = MSC:EvaluateUpgrade(link, otherSlot, weights, specName)
+                local d = (oNew or 0) - (oOld or 0)
+                local color = (d > 0.01 and "|cff00ff00") or (d < -0.01 and "|cffff0000") or "|cff888888"
+                local fmt = (otherSlot == 17) and MSC.L["In the off hand: %s"] or MSC.L["In the main hand: %s"]
+                tooltip:AddLine(string_format(fmt, string_format("%s%+.1f|r", color, d)), 0.7, 0.7, 0.7)
+            end
+
             if MSC.SetBonusScores and oldSetCounts and newSetCounts then
                 -- Only sets worn before or after the swap can change (not all 500+ sets).
                 local function CheckSet(setID)
@@ -1030,6 +1160,43 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         if not ok and MSC.Debug then print("|cff00ccffSGJ|r tracked-spec error:", err) end
                     end
                 end
+            end
+
+            -- [[ 5b. THE OTHER SPEC (Dual Specialization) ]]
+            -- Scored with that spec's own talents, profile choice, Talents build
+            -- and Gear for PvP (MSC.WithSpecGroup), against the gear last worn in
+            -- it. Skipped when its profile is already a Tracked Spec line.
+            if MSC.HasDualSpec() and SGJ_Settings.ShowOtherSpec ~= false then
+                local other = (MSC.GetActiveSpecGroup() == 1) and 2 or 1
+                MSC.WithSpecGroup(other, function()
+                    local oWeights, oSpec = MSC:GetWeightsForGroup(other)
+                    if not oWeights or not oSpec then return end
+                    if SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[oSpec] then return end
+                    MSC.EvalSpecKey = oSpec
+                    local baselineGear = MSC.GetSpecGear(other)
+                    local oSlot = MSC.GetComparisonSlot(link, equipLoc, oWeights, oSpec, baselineGear)
+                    if not oSlot then return end
+                    local oNew, oOld, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, oSlot, oWeights, oSpec, baselineGear)
+                    local oDelta = oNew - oOld
+                    if oDelta > 0.01 then
+                        local pretty = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[oSpec]) or oSpec
+                        local label = "|cff00ccff" .. MSC.SpecGroupName(other) .. " |cff888888(" .. pretty .. "):|r"
+                        tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(oDelta)), 1, 1, 1, 1, 1, 1)
+                        if oSC and nSC and MSC.SetBonusScores then
+                            for setID in pairs(oSC) do
+                                local scores = MSC.SetBonusScores[setID]
+                                local oC, nC = oSC[setID] or 0, nSC[setID] or 0
+                                if scores and nC < oC then
+                                    for req in pairs(scores) do
+                                        local rN = tonumber(req)
+                                        if rN and oC >= rN and nC < rN then tooltip:AddLine(string_format(MSC.L["  |cffff0000(Breaks %d-pc Set Bonus!)|r"], rN)) end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+                MSC.EvalSpecKey = nil
             end
 
             -- [[ 6. PROJECTIONS ]]

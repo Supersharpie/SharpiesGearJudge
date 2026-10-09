@@ -6,9 +6,10 @@ Priest.Name = "PRIEST"
 -- ENDGAME STAT WEIGHTS (Static Profiles)
 -- =============================================================
 Priest.Weights = {
+    -- Before a spec is known: Spell Power keeps a small damage value (it heals at the Healing weight too).
     ["Default"] = { 
         ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0,
-		["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0,		
+		["ITEM_MOD_SPELL_POWER_SHORT"]      = 0.3,		
         ["ITEM_MOD_SPIRIT_SHORT"]=1.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]=0.8, 
         ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
@@ -17,10 +18,11 @@ Priest.Weights = {
     },
     
     -- [[ 1. HOLY (Deep Healing) ]]
+    -- Spell Power is the damage value only: "damage and healing" gear also heals, and the scorer adds that at the Healing weight.
     ["HOLY_DEEP"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.0,
         ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 1.1, -- Spiritual Guidance
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.5, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.8, 
@@ -34,11 +36,12 @@ Priest.Weights = {
     },
 
     -- [[ 2. DISC (Support/Efficiency) ]]
+    -- Spell Power is the damage value only: "damage and healing" gear also heals, and the scorer adds that at the Healing weight.
     ["DISC_SUPPORT"] = { 
         ["MSC_WEAPON_DPS"]                  = 0.0,
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.5, -- Max Mana = Rapture
         ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]    = 1.0, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0,
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 0,
         ["ITEM_MOD_MANA_REGENERATION_SHORT"]= 2.0, 
         ["ITEM_MOD_SPIRIT_SHORT"]           = 0.6, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.5,
@@ -54,7 +57,7 @@ Priest.Weights = {
         ["MSC_WEAPON_DPS"]                  = 0.0,
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.4, -- Cap is #1
         ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]    = 1.2, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.2, 
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.8, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.4, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.3, 
@@ -108,7 +111,7 @@ Priest.LevelingBrackets = {
     -- Wand is primary DPS source. Spirit is primary Mana source.
     ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
 		min = 1, max = 20,
-		Start = { 
+		Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
 			["MSC_WAND_DPS"] = 4.0, -- Priest 1-20 is 50% Wanding. Priority #1.
 			["MSC_WEAPON_DPS"] = 0.1,
 			["ITEM_MOD_SPIRIT_SHORT"] = 3.0, 
@@ -118,7 +121,7 @@ Priest.LevelingBrackets = {
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
 			["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 0.2
 		},
-		End = { 
+		End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
 			["MSC_WAND_DPS"] = 3.0, 
 			["MSC_WEAPON_DPS"] = 0.1,
 			["ITEM_MOD_SPIRIT_SHORT"] = 2.5, 
@@ -133,7 +136,7 @@ Priest.LevelingBrackets = {
     -- [[ 2. SHADOW / SPIRIT TAP (21-40) ]]
     ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 2.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
@@ -143,7 +146,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1, -- Added for Sync
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 2.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 2.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
@@ -158,7 +161,7 @@ Priest.LevelingBrackets = {
     -- [[ 3. SHADOWFORM ERA (41-59) ]]
     ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.5, 
@@ -168,7 +171,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.0, -- Spells taking over
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.8, 
@@ -181,7 +184,7 @@ Priest.LevelingBrackets = {
     },
     ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 1.8,
@@ -191,7 +194,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.2, 
@@ -207,7 +210,7 @@ Priest.LevelingBrackets = {
     -- Crit nerfed significantly (DoTs don't crit). SP/Shadow bumped.
     ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.5, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 2.5,
@@ -219,7 +222,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 3.0, 
             ["ITEM_MOD_SHADOW_DAMAGE_SHORT"] = 3.0, -- Frozen Shadoweave is BiS
@@ -237,7 +240,7 @@ Priest.LevelingBrackets = {
     -- Unlike Shadow, Smite DOES Crit. Keep Crit high here.
     ["Leveling_Smite_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 2.0, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.0, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8,
@@ -248,7 +251,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1, -- Added for Sync
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 1.2, 
@@ -262,7 +265,7 @@ Priest.LevelingBrackets = {
     },
     ["Leveling_Smite_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.0,
@@ -273,7 +276,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1, -- Added for Sync
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_HOLY_DAMAGE_SHORT"] = 1.5, 
@@ -287,7 +290,7 @@ Priest.LevelingBrackets = {
     },
     ["Leveling_Smite_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0,
@@ -298,7 +301,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1, -- Added for Sync
             ["ITEM_MOD_STAMINA_SHORT"] = 0.8 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.4, 
@@ -312,7 +315,7 @@ Priest.LevelingBrackets = {
     },
     ["Leveling_Smite_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.8, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,
@@ -324,7 +327,7 @@ Priest.LevelingBrackets = {
             ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] = 0.5, -- TBC Stat
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.4, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.0, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.8, 
@@ -343,7 +346,7 @@ Priest.LevelingBrackets = {
         min = 52, max = 59,
         Start = { 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.2, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, -- [[ ADDED ]]
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, -- [[ ADDED ]]
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.0,
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -354,7 +357,7 @@ Priest.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, -- [[ ADDED ]]
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, -- [[ ADDED ]]
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5, 
@@ -366,7 +369,7 @@ Priest.LevelingBrackets = {
         min = 60, max = 70,
         Start = { 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.5, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, -- [[ ADDED ]]
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, -- [[ ADDED ]]
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.5, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 2.5,
             ["MSC_WEAPON_DPS"] = 0.0, 
@@ -378,7 +381,7 @@ Priest.LevelingBrackets = {
         End = { 
             ["MSC_WEAPON_DPS"] = 0.0, 
             ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = 1.8, 
-            ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, -- [[ ADDED ]]
+            ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.2, -- [[ ADDED ]]
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPIRIT_SHORT"] = 1.8, 
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 3.0, 
@@ -602,8 +605,11 @@ function Priest:ApplyScalers(weights, currentSpec)
     local rSpiritGuide = Rank("SPIRIT_GUIDANCE")
     if rSpiritGuide > 0 and w["ITEM_MOD_SPIRIT_SHORT"] then
         local bonus = rSpiritGuide * 0.05
-        -- Spirit now gives SP too. Add that value.
-        w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] + (bonus * (w["ITEM_MOD_SPELL_POWER_SHORT"] or 1.0))
+        -- Spirit now gives damage and healing too: worth what a point of Spell Power
+        -- scores (its damage weight plus its healing at the Healing weight).
+        local spValue = (w["ITEM_MOD_SPELL_POWER_SHORT"] or 0) + (w["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0)
+        if spValue <= 0 then spValue = 1.0 end
+        w["ITEM_MOD_SPIRIT_SHORT"] = w["ITEM_MOD_SPIRIT_SHORT"] + (bonus * spValue)
     end
     
     -- ... (Rest of function remains the same: Covariance, Hit Cap, etc.)
@@ -612,8 +618,8 @@ function Priest:ApplyScalers(weights, currentSpec)
     if currentSpec:find("SHADOW") or currentSpec:find("SMITE") then
         if w["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] or w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
             local spellPower = 0
-            if currentSpec:find("SHADOW") then spellPower = MSC.SanitizeStat(GetSpellBonusDamage(3))
-            else spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) end 
+            if currentSpec:find("SHADOW") then spellPower = MSC.GetJudgingSpellDamage(6) -- Shadow
+            else spellPower = MSC.GetJudgingSpellDamage(2) end 
             
             if spellPower > 700 then
                  local spScaler = 1 + ((spellPower - 700) / 10000)

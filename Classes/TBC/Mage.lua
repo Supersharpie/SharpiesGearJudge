@@ -6,7 +6,7 @@ Mage.Name = "MAGE"
 -- ENDGAME STAT WEIGHTS (Static Profiles)
 -- =============================================================
 Mage.Weights = {
-    ["Default"] = { 
+    ["Default"] = { ["MSC_WEAPON_DPS_MELEE"]=0, 
         ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, 
         ["ITEM_MOD_INTELLECT_SHORT"]=0.5, 
         ["ITEM_MOD_STAMINA_SHORT"]=0.5, 
@@ -16,7 +16,7 @@ Mage.Weights = {
     },
 
     -- [[ 1. ARCANE (Mana Battery / Burst) ]]
-    ["ARCANE_RAID"] = { 
+    ["ARCANE_RAID"] = { ["MSC_WEAPON_DPS_MELEE"]=0, 
         ["MSC_WEAPON_DPS"]                  = 0.02,
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.2, -- King Stat (Mind Mastery)
         ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
@@ -33,7 +33,7 @@ Mage.Weights = {
     },
 
     -- [[ 2. FIRE (Crit / Ignite) ]]
-    ["FIRE_RAID"] = { 
+    ["FIRE_RAID"] = { ["MSC_WEAPON_DPS_MELEE"]=0, 
         ["MSC_WEAPON_DPS"]                  = 0.02,
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.3, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.95, -- Ignite
@@ -50,7 +50,7 @@ Mage.Weights = {
     },
 
     -- [[ 3. FROST PVE (Safe DPS) ]]
-    ["FROST_PVE"] = { 
+    ["FROST_PVE"] = { ["MSC_WEAPON_DPS_MELEE"]=0, 
         ["MSC_WEAPON_DPS"]                  = 0.02,
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.3, 
         ["ITEM_MOD_FROST_DAMAGE_SHORT"]     = 1.0, 
@@ -67,7 +67,7 @@ Mage.Weights = {
     },
 
     -- [[ 4. FROST PVP ]]
-    ["FROST_PVP"] = { 
+    ["FROST_PVP"] = { ["MSC_WEAPON_DPS_MELEE"]=0, 
         ["MSC_WEAPON_DPS"]                  = 0.02,
         ["ITEM_MOD_RESILIENCE_RATING_SHORT"]= 1.5, 
         ["ITEM_MOD_STAMINA_SHORT"]          = 1.2, 
@@ -85,7 +85,7 @@ Mage.Weights = {
     },
 
     -- [[ 5. FROST AOE ]]
-    ["FROST_AOE"] = { 
+    ["FROST_AOE"] = { ["MSC_WEAPON_DPS_MELEE"]=0, 
         ["MSC_WEAPON_DPS"]                  = 0.02,
         ["ITEM_MOD_STAMINA_SHORT"]          = 1.5, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 1.5, -- Mana Pool
@@ -112,7 +112,7 @@ Mage.LevelingBrackets = {
     -- Wand DPS is king early.
     ["Leveling_1_20"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
 		min = 1, max = 20,
-		Start = { 
+		Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
 			["MSC_WAND_DPS"] = 3.0, -- CRITICAL FIX: Wand, not Melee
 			["MSC_WEAPON_DPS"] = 0.1, -- Melee is useless
 			["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
@@ -122,7 +122,7 @@ Mage.LevelingBrackets = {
 			["ITEM_MOD_FROST_DAMAGE_SHORT"] = 0.5,
 			["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
 		},
-		End = { 
+		End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
 			["MSC_WAND_DPS"] = 2.0, 
 			["MSC_WEAPON_DPS"] = 0.1,
 			["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
@@ -135,7 +135,7 @@ Mage.LevelingBrackets = {
 	},
     ["Leveling_21_40"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 21, max = 40,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 0.8,
@@ -145,7 +145,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1,
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.2 -- Added for Sync
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.8, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.5, 
             ["ITEM_MOD_STAMINA_SHORT"] = 1.2, 
@@ -158,7 +158,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.6, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,
@@ -168,7 +168,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_FROST_DAMAGE_SHORT"] = 1.5, 
@@ -181,7 +181,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2,
@@ -192,7 +192,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 0.2, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2, 
@@ -206,7 +206,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.2,
@@ -217,7 +217,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.1, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.2, 
@@ -234,7 +234,7 @@ Mage.LevelingBrackets = {
     -- Crit is vital for Master of Elements (Mana Sustain).
     ["Leveling_Fire_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.8, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.2,
@@ -244,7 +244,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.5, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.5, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
@@ -257,7 +257,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_Fire_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.5, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.5, 
@@ -267,7 +267,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 0.8, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.2, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 1.8, 
@@ -280,7 +280,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_Fire_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.2, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 1.5, 
             ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = 1.2,
@@ -290,7 +290,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0, -- Added for Sync
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.1
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_FIRE_DAMAGE_SHORT"] = 2.2, 
             ["ITEM_MOD_SPELL_POWER_SHORT"] = 2.2, 
@@ -306,7 +306,7 @@ Mage.LevelingBrackets = {
     -- Stamina (Don't Die) > Int (Don't OOM) > SP (Kill).
     ["Leveling_AoE_41_51"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 41, max = 51,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 1.8,
@@ -314,7 +314,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.2
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0, 
@@ -325,7 +325,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_AoE_52_59"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 52, max = 59,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 2.5, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.0,
@@ -333,7 +333,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.2
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5, 
@@ -344,7 +344,7 @@ Mage.LevelingBrackets = {
     },
     ["Leveling_AoE_60_70"] = { ["ITEM_MOD_ARMOR_SHORT"]=0.05, 
         min = 60, max = 70,
-        Start = { 
+        Start = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 3.0, 
             ["ITEM_MOD_INTELLECT_SHORT"] = 2.5,
@@ -352,7 +352,7 @@ Mage.LevelingBrackets = {
             ["ITEM_MOD_SPIRIT_SHORT"] = 0.5,
             ["ITEM_MOD_MANA_REGENERATION_SHORT"] = 0.2
         },
-        End = { 
+        End = { ["MSC_WEAPON_DPS_MELEE"]=0, 
             ["MSC_WEAPON_DPS"] = 0.1, 
             ["ITEM_MOD_STAMINA_SHORT"] = 3.5, -- Effective Health is King
             ["ITEM_MOD_INTELLECT_SHORT"] = 3.0, -- Mana Pool is Queen
@@ -562,7 +562,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     
     -- [[ 2. COVARIANCE ]]
     if w["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
-        local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(2)) -- Frost
+        local spellPower = MSC.GetJudgingStats().sp -- largest school
         if spellPower > 500 then
             local spScaler = 1 + ((spellPower - 500) / 2000)
             if spScaler > 1.15 then spScaler = 1.15 end

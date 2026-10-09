@@ -165,7 +165,7 @@ function Druid:ApplyScalers(weights, currentSpec)
 
     -- 2. Covariance (Mana Regen / Healing Synergy)
     if currentSpec:find("RESTO") or currentSpec:find("Healer") then
-        local healPower = MSC.SanitizeStat(GetSpellBonusHealing()) -- Using Classic API directly via shim usually preferred
+        local healPower = MSC.GetJudgingStats().heal -- unbuffed, plus assumed buffs
         if healPower > 500 and weights["ITEM_MOD_SPIRIT_SHORT"] then -- RESTO_REGROWTH has no Spirit weight
              local hScaler = 1 + ((healPower - 500) / 5000)
              weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler

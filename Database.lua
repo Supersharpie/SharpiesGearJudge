@@ -77,6 +77,14 @@ MSC.ShortNames = {
 MSC.StatAliases = {
     ["ITEM_MOD_RESISTANCE_ALL_SHORT"] = "ITEM_MOD_ALL_RESISTANCE_SHORT",
 }
+-- Classic Era profiles (Classes/ERA) weight weapon and wand DPS as
+-- ITEM_MOD_DAMAGE_PER_SECOND_SHORT, like Forever's, but the scanner reads it
+-- as MSC_WEAPON_DPS / MSC_WAND_DPS, so without these a weapon's DPS scored
+-- nothing on Era. (TBC profiles use MSC_WEAPON_DPS itself: no alias there.)
+if MSC.IsEra then
+    MSC.StatAliases["MSC_WEAPON_DPS"] = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT"
+    MSC.StatAliases["MSC_WAND_DPS"] = "ITEM_MOD_DAMAGE_PER_SECOND_SHORT"
+end
 
 MSC.PrettyNames = {
     ["Leveling_1_20"]  = MSC.L["Starter (1-20)"],

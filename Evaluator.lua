@@ -121,21 +121,21 @@ function MSC:BuildEvalCacheKey(newItemLink, targetSlotID, specName, baselineGear
     local fp = baselineGear and MSC:BuildGearFingerprint(baselineGear) or "live"
     -- Full item string so random-suffix / enchanted / gemmed copies don't share an entry.
     local itemId = newItemLink:match("item:[%-?%d:]+") or GetItemInfoInstant(newItemLink) or 0
-    return itemId .. "|" .. (targetSlotID or 0) .. "|" .. (specName or "Default") .. "|" .. cacheType .. "|" .. rev .. "|" .. fp
+    return itemId .. "|" .. (targetSlotID or 0) .. "|" .. (specName or "Default") .. "|" .. cacheType .. "|" .. rev .. "|" .. fp .. MSC.SpecGroupTag()
 end
 
 function MSC:GetCachedCharacterScore(gearTable, weights, specName, baselineGear)
     local rev = MSC.ScoringRevision or 0
     local fp = MSC:BuildGearFingerprint(gearTable)
     local tag = baselineGear and "saved" or "live"
-    local key = (specName or "Default") .. "|" .. rev .. "|" .. tag .. "|" .. fp
+    local key = (specName or "Default") .. "|" .. rev .. "|" .. tag .. "|" .. fp .. MSC.SpecGroupTag()
 
     if not baselineGear and MSC.EquippedScoreCache and MSC.EquippedScoreCache.key == key then
         return MSC.EquippedScoreCache.score, MSC.EquippedScoreCache.stats, MSC.EquippedScoreCache.colors, MSC.EquippedScoreCache.sets
     end
 
     local score, stats, colors, sets = MSC:GetTotalCharacterScore(gearTable, weights, specName)
-    if not baselineGear then
+    if not baselineGear and not MSC.EvalSpecGroup then -- the one-entry cache is the active spec's
         MSC.EquippedScoreCache = { key = key, score = score, stats = stats, colors = colors, sets = sets }
     end
     return score, stats, colors, sets
@@ -688,8 +688,10 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                 -- handled above
             elseif rule.stat ~= "DEFENSE_FLOOR" then
                 local trueCap = rule.base
-                if rule.talent then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
-                if MSC.BuffEngine and (rule.stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then
+                -- (Era: the game's melee hit % already includes hit talents; school
+                -- talents such as Elemental Precision aren't in its spell hit %)
+                if rule.talent and not (MSC.IsEra and rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
+                if MSC.IsTBC and MSC.BuffEngine and (rule.stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then
                     trueCap = MSC.BuffEngine:GetEffectiveHitRatingBase(rule.stat, rule.talent, rule.tVal, specName)
                 end
                 

@@ -409,8 +409,6 @@ L["spell damage.-(%d+)"] = "zauberschaden.-(%d+)"
 L["spell power.-(%d+)"] = "zaubermacht.-(%d+)"
 L["healing.-(%d+)"] = "heilung.-(%d+)"
 
-
-
 -- Added Missing Parse.lua Patterns
 L["spell crit rating"] = "zauberkritische trefferwertung"
 L["critical hit with spells"] = "kritische zaubertreffer"
@@ -436,7 +434,6 @@ L["increased defense.-(%d+)"] = "erhöhte verteidigung.-(%d+)"
 L["chance to dodge.-(%d+)"] = "ausweichchance.-(%d+)"
 L["chance to parry.-(%d+)"] = "parierchance.-(%d+)"
 L["increases (.*) by up to (%d+) for (%d+) sec"] = "erhöht (.*) um bis zu (%d+) für (%d+) sek"
-
 
 L["mana per 5 sec"] = "mana alle 5 sek"
 L["health per 5 sec"] = "gesundheit alle 5 sek"
@@ -740,7 +737,6 @@ L["Divine Intellect"] = "Göttliche Weisheit"
 L["Combat Expertise"] = "Kampfexpertise"
 L["Sacred Duty"] = "Heilige Pflicht"
 L["Holy Guidance"] = "Heilige Führung"
-
 
 -- Paladin (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Retribution: Raid"] = "Vergeltung: Schlachtzug"
@@ -1829,3 +1825,77 @@ L["Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\"
 L["New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too."] = "Neues Plugin: Sharpie's Gear Judge - Roster (Twink-Upgrades). Gegenstands-Tooltips zeigen, welche deiner anderen Charaktere ein Gegenstand verbessert, und ein Raster listet die Ausrüstung aller Charaktere. Taschen, Bank und Post zählen mit."
 L["The window title now shows the name of the open tab."] = "Der Fenstertitel zeigt jetzt den Namen des geöffneten Reiters."
 L["Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up."] = "Getragene Ringe, Schmuckstücke und Zweitwaffen werden jetzt als Angelegt angezeigt, und Wertungen aktualisieren sich direkt beim Stufenaufstieg."
+
+-- =============================================================
+-- ADDED IN 3.2.2 (PvP)
+-- =============================================================
+L["Gear for PvP"] = "Ausrüstung für PvP"
+L["Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers."] = "Die PvP-Profile für Stufe 60 werden aus den simulierten Schlachtzugsprofilen neu aufgebaut, mit neuen PvP-Profilen für Krieger, Vergeltungs-Paladine, Druiden sowie Priester- und Schamanenheiler."
+L["New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp."] = "Neu: Ausrüstung für PvP. Bewertet Ausrüstung für Kämpfe gegen andere Spieler auf jeder Stufe, für Open-World-PvP beim Leveln und Schlachtfelder auf 60: Ausdauer, Rüstung und Burst zählen mehr, und Trefferwertung hört an den Spieler-gegen-Spieler-Grenzen auf. Aktiviere es mit dem Kontrollkästchen oben im /sgj-Fenster oder mit /sgj pvp."
+L["Not Now"] = "Nicht jetzt"
+L["On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)."] = "Auf einem PvP-Realm bietet Gear Judge an, Ausrüstung für PvP zu aktivieren (einmal pro Realm)."
+L["PvP"] = "PvP"
+L["PvP: Balance"] = "PvP: Gleichgewicht"
+L["PvP: Cold Blood Burst"] = "PvP: Kaltblütigkeit-Burst"
+L["PvP: Deep Frost"] = "PvP: Tiefer Frost"
+L["PvP: Destruction (Conflag)"] = "PvP: Zerstörung (Feuersbrunst)"
+L["PvP: Discipline Healer"] = "PvP: Disziplin-Heiler"
+L["PvP: Elemental (Burst)"] = "PvP: Elementar (Burst)"
+L["PvP: Elemental (Shatter)"] = "PvP: Elementar (Zertrümmern)"
+L["PvP: Feral (Cat)"] = "PvP: Wilder Kampf (Katze)"
+L["PvP: Hemo Control"] = "PvP: Blutsturz-Kontrolle"
+L["PvP: Mace Specialization"] = "PvP: Streitkolben-Spezialisierung"
+L["PvP: Marksmanship Utility"] = "PvP: Treffsicherheit (Nutzen)"
+L["PvP: Nightfall / Conflagrate"] = "PvP: Einbruch der Nacht / Feuersbrunst"
+L["PvP: PoM Pyro (3-Min Mage)"] = "PvP: Geistesgegenwart-Pyro (3-Min-Magier)"
+L["PvP: Restoration Healer"] = "PvP: Wiederherstellungs-Heiler"
+L["PvP: Restoration"] = "PvP: Wiederherstellung"
+L["PvP: Retribution"] = "PvP: Vergeltung"
+L["PvP: Shadow (Blackout)"] = "PvP: Schatten (Blackout)"
+L["PvP: Soul Link (Tank)"] = "PvP: Seelenverbindung (Tank)"
+L["PvP: Survival Tank"] = "PvP: Überlebens-Tank"
+L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."] = "Bewertet Ausrüstung für Kämpfe gegen andere Spieler auf jeder Stufe: Ausdauer, Rüstung und Burst zählen mehr, Trefferwertung bleibt an den Spieler-gegen-Spieler-Grenzen (5 % Nahkampf, 3 % Zauber). PvP-Profile nutzen dies immer."
+L["Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character."] = "Talents-Plugin: eine neue PvP-Gruppe mit 16 Builds, jeweils eine vollständige Talentreihenfolge von 10 bis 60. Die Wahl eines Builds aktiviert die PvP-Gewichtungen für diesen Charakter."
+L["Turn On"] = "Aktivieren"
+L["|cff00ccffSharpie's Gear Judge|r\n\nThis looks like a PvP realm.\n\nTurn on |cffff5555Gear for PvP|r? Gear is then scored for fighting other players (more Stamina, armor and burst). You can change it any time with the checkbox at the top of the /sgj window."] = "|cff00ccffSharpie's Gear Judge|r\n\nDas sieht nach einem PvP-Realm aus.\n\n|cffff5555Ausrüstung für PvP|r aktivieren? Ausrüstung wird dann für Kämpfe gegen andere Spieler bewertet (mehr Ausdauer, Rüstung und Burst). Du kannst das jederzeit mit dem Kontrollkästchen oben im /sgj-Fenster ändern."
+L["|cff00ff00SGJ realm:|r zone type %s, flagged %s, PvP wanted %s, PvP timer %s -> PvP realm: %s"] = "|cff00ff00SGJ-Realm:|r Zonentyp %s, markiert %s, PvP gewünscht %s, PvP-Timer %s -> PvP-Realm: %s"
+L["|cff00ff00SGJ:|r Gear for PvP is now "] = "|cff00ff00SGJ:|r Ausrüstung für PvP ist jetzt "
+
+L["Not used while Gear for PvP is on: hit and defense stay at the player-vs-player targets."] = "Wird nicht genutzt, solange Ausrüstung für PvP aktiv ist: Trefferwertung und Verteidigung bleiben bei den PvP-Zielwerten."
+
+L["   %s: config %s, %d talents read, profile %s (choice %s), Gear for PvP %s, saved gear %d items"] = "   %s: Konfig %s, %d Talente gelesen, Profil %s (Wahl %s), Ausrüstung für PvP %s, gespeicherte Ausrüstung %d Gegenstände"
+L["Primary"] = "Primär"
+L["Saved for each spec; this sets it for your %s spec."] = "Wird für jede Spezialisierung gespeichert; dies gilt für die Spezialisierung: %s."
+L["Secondary"] = "Sekundär"
+L["Show Other Spec on Tooltips"] = "Andere Spezialisierung in Tooltips anzeigen"
+L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "Mit Dualer Spezialisierung (Stufe 40) zeigen Gegenstands-Tooltips auch, ob ein Gegenstand eine Verbesserung für deine andere Spezialisierung ist. Bewertet wird mit den Talenten, dem Profil und der Einstellung Ausrüstung für PvP dieser Spezialisierung, im Vergleich zur Ausrüstung, die du zuletzt darin getragen hast. Ausrüstung für PvP und das Bewertungsprofil werden für jede Spezialisierung separat gespeichert."
+L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ Duale Spezialisierung:|r %d Spezialisierungsgruppe(n), aktiv %d"
+
+L["5-Player Group"] = "5er-Gruppe"
+L["Assume group buffs when scoring gear (Kings, Mark of the Wild, Fortitude, Battle Shout, totems, etc.). Blessings are assumed for the Alliance and totems for the Horde. Without this, gear is judged without buffs, whatever you have on right now."] = "Nimmt bei der Bewertung Gruppen-Buffs an (Segen der Könige, Mal der Wildnis, Seelenstärke, Schlachtruf, Totems usw.). Segen werden für die Allianz angenommen, Totems für die Horde. Ohne diese Option wird Ausrüstung ohne Buffs bewertet, egal welche du gerade hast."
+L["Assume world buffs (Rallying Cry of the Dragonslayer, Spirit of Zandalar, Songflower Serenade, Dire Maul Tribute)."] = "Nimmt Welt-Buffs an (Schlachtruf der Drachentöter, Geist von Zandalar, Liedblumenserenade, Tribut von Düsterbruch)."
+L["Full Raid"] = "Voller Schlachtzug"
+
+L["Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it."] = "Buff-Annahmen funktionieren in jeder Spielversion, mit Vorlagen für einen vollen Schlachtzug, eine 5er-Gruppe und Welt-Buffs. Prozent-Buffs wie Segen der Könige erhöhen jetzt den Wert von Werten auf Ausrüstung, statt ihn zu senken."
+L["Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable."] = "Ausrüstung wird jetzt ohne Buffs bewertet: Essen, Elixiere und Gruppen-Buffs verschieben keine Trefferobergrenzen, Tank-Grenzen oder Wertungen mehr, und ein aktiver Schildblock oder Heiliger Schild zählt nicht mehr doppelt für die Schmetterstoß-Immunität."
+
+L["Natural Instinct"] = "Natürlicher Instinkt"
+
+L["In the main hand: %s"] = "In der Waffenhand: %s"
+L["In the off hand: %s"] = "In der Schildhand: %s"
+
+L["Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level."] = "Behoben: In Classic Era und Season of Discovery zählte der Schaden pro Sekunde einer Waffe nicht, Waffen wurden also nur nach ihren Werten bewertet. Rassen-Waffenfertigkeit fügt nicht mehr auf jeder Stufe feste 20 bis 60 Punkte hinzu."
+L["One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well."] = "Einhandwaffen werden für Beidhandkämpfer in der Hand bewertet, in der sie am meisten bringen, und der Tooltip zeigt auch die andere Hand."
+L["Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells."] = "Alles andere, was der Patch geändert hat, wurde neu geprüft: die Krieger-Profile für Stufe 60, Disziplin-Priester (Sühne), Wiederherstellungs-Schamanen (Wasserschild), Schutz-Paladine (Abrechnung und Aura der Vergeltung) und die frühen Ränge der Zauber von Zauberwirkern."
+L["Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees."] = "Aktualisiert für Beta-Patch 1.60.1.70291: Krieger verlieren Präzision, Zähigkeit und Grenzenlose Wut und erhalten Wütende Präzision, und Räuberische Instinkte heißt jetzt Natürlicher Instinkt. Die Gewichtungen für Krieger und Druiden und die Krieger-Builds des Talents-Plugins folgen den neuen Bäumen."
+
+L["|cff00ff00(already on it)|r"] = "|cff00ff00(bereits darauf)|r"
+
+L[" |cff999999(worn: %.1f)|r"] = " |cff999999(getragen: %.1f)|r"
+L["Item Score:"] = "Gegenstandswertung:"
+
+L["Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too."] = "Tooltips zeigen unter der Richter-Wertung (die Wertung deines ganzen Charakters) die eigene Gegenstandswertung des Gegenstands, beim Vergleich auch die des getragenen Gegenstands. Mit Verzauberungsmodus „Beste projizieren“ zeigt auch der getragene Gegenstand seine projizierte Verzauberung."
+
+L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "Die Profile für Stufe 60 wurden auf dem aktuellen wowsims-Forever-Simulator neu berechnet: Die Schlachtzugs-Gewichtungen von Schurke, Jäger, Magier, Schamane und Druide haben sich verschoben (Arkan liegt jetzt knapp vor Frost, Verstärkung und Tierherrschaft geht das Mana aus, die Katze wechselt nicht mehr die Gestalt für Energie); Krieger, Hexenmeister, Priester und Paladin sind unverändert. Die Instanz-Tank- und Heilerzeilen des Paladins wurden ebenfalls neu gebaut."
+L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "Bereit für die Doppelte Spezialisierung: Jede Spezialisierung behält ihr eigenes Wertungsprofil, ihre Einstellung für Ausrüstung für PvP und die gemerkte Ausrüstung, Tooltips zeigen, ob ein Gegenstand für deine andere Spezialisierung eine Verbesserung ist, und das Talents-Plugin merkt sich pro Spezialisierung einen Build."
+L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Talents-Plugin: keine Talentänderungen, aber acht Build-Notizen geben jetzt die Zahlen des aktuellen Simulators wieder. Frost bleibt der Magier-Schlachtzugs-Build, Arkan liegt nur wenige Prozent daneben."

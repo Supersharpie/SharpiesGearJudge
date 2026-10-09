@@ -8,7 +8,7 @@ Rogue.Name = "ROGUE"
 -- Hit and Crit are per 1%; the rest per point. Rogues get 1 Attack Power from
 -- each point of Strength and Agility, and Agility also gives crit. The raid
 -- profiles come from the wowsims Forever sim run from the Research folder
--- (study/rogue2, 2026-10-03; NOTES.md there has the numbers). The sim runs
+-- (study/rogue2, 2026-10-03; re-run 2026-10-08 from SharpiesGearJudge-SimStudio). The sim runs
 -- each build's own talents (Lethality, Hack and Slash, Dual Wield
 -- Specialization...), so ApplyScalers' talent hooks are for the leveling rows.
 -- AP sits at 1.5 in the raid profiles.
@@ -17,18 +17,19 @@ Rogue.Weights = {
 
     -- Combat: Raid (Combat swords with Sinister Strike, level-63 boss, raid buffs). Agility is worth about
     -- twice Attack Power (its crit), and Hit and Crit are close. Off-hand weapon DPS is worth a quarter of the main hand's.
-    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.97, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=35.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=17.0, ["MSC_WEAPON_DPS_OH"]=4.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.97, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=36.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=34.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=17.0, ["MSC_WEAPON_DPS_OH"]=4.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Combat: Raid (Daggers) (Backstab from behind). About 4% behind swords in the sim.
-    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.93, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=34.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.8, ["MSC_WEAPON_DPS_OH"]=4.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.92, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=36.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.8, ["MSC_WEAPON_DPS_OH"]=4.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Assassination: Raid (Mutilate) (Assassination 31 / Combat 20, daggers). Mutilate hits with both hands, so the
-    -- off-hand counts for more; Hit and Crit higher (Seal Fate combo points). About 9% behind Combat swords.
-    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.18, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=41.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=39.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=13.5, ["MSC_WEAPON_DPS_OH"]=6.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- off-hand counts for more; Hit and Crit higher (Seal Fate combo points). About 10% behind Combat swords.
+    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.15, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=39.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=38.7, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=13.5, ["MSC_WEAPON_DPS_OH"]=6.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
-    -- PvP profiles (not modelled).
-    ["PVP_HEMO"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["PVP_CB_DAGGER"] = { ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["PVP_MACE"] = { ["ITEM_MOD_STAMINA_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 }
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+Rogue.Weights["PVP_HEMO"] = MSC.ForeverPvPFrom(Rogue.Weights["COMBAT_RAID"])        -- Hemorrhage with a sword or mace
+Rogue.Weights["PVP_MACE"] = MSC.ForeverPvPFrom(Rogue.Weights["COMBAT_RAID"])        -- Mace Specialization stuns
+Rogue.Weights["PVP_CB_DAGGER"] = MSC.ForeverPvPFrom(Rogue.Weights["COMBAT_DAGGERS"]) -- Cold Blood / Ambush daggers
 -- Old names, kept so a saved profile choice still works.
 Rogue.Weights["RAID_COMBAT_SWORDS"] = Rogue.Weights["COMBAT_RAID"]
 Rogue.Weights["RAID_COMBAT_DAGGERS"] = Rogue.Weights["COMBAT_DAGGERS"]
@@ -58,9 +59,9 @@ Rogue.PrettyNames = {
     ["RAID_COMBAT_SWORDS"]  = L["Combat: Raid (old profile)"],
     ["RAID_COMBAT_DAGGERS"] = L["Combat: Raid (Daggers, old profile)"],
     ["RAID_SEAL_FATE"]      = L["Assassination: Raid (old profile)"],
-    ["PVP_MACE"]            = "PvP: Mace Specialization",
-    ["PVP_HEMO"]            = "PvP: Hemo Control",
-    ["PVP_CB_DAGGER"]       = "PvP: Cold Blood Burst",
+    ["PVP_MACE"]            = L["PvP: Mace Specialization"],
+    ["PVP_HEMO"]            = L["PvP: Hemo Control"],
+    ["PVP_CB_DAGGER"]       = L["PvP: Cold Blood Burst"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }

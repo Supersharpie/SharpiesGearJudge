@@ -19,7 +19,7 @@ Shaman.Weights = {
         ["MSC_WEAPON_DPS"]                  = 0.02,
         ["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.3, 
         ["ITEM_MOD_NATURE_DAMAGE_SHORT"]    = 1.2, 
-        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.0, 
+        ["ITEM_MOD_SPELL_POWER_SHORT"]      = 1.2, 
         ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]= 0.8, 
         ["ITEM_MOD_SPELL_HASTE_RATING_SHORT"]= 0.9, 
         ["ITEM_MOD_INTELLECT_SHORT"]        = 0.4, 
@@ -813,8 +813,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- [[ 4. COVARIANCE (Synergy) ]]
     if currentSpec:find("ENH") or currentSpec:find("Tank") then
         if weights["ITEM_MOD_CRIT_RATING_SHORT"] then
-            local rawB, rawP, rawN = UnitAttackPower("player"); local base = MSC.SanitizeStat(rawB); local pos = MSC.SanitizeStat(rawP); local neg = MSC.SanitizeStat(rawN)
-            local totalAP = base + pos + neg
+            local totalAP = MSC.GetJudgingStats().ap -- unbuffed, plus assumed buffs
             if totalAP > 1000 then 
                  local apScaler = 1 + ((totalAP - 1000) / 20000)
                  if apScaler > 1.15 then apScaler = 1.15 end
@@ -824,7 +823,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("ELE") or currentSpec:find("Caster") then
         if weights["ITEM_MOD_SPELL_HASTE_RATING_SHORT"] then
-            local spellPower = MSC.SanitizeStat(GetSpellBonusDamage(4)) -- 4 = Nature
+            local spellPower = MSC.GetJudgingSpellDamage(4) -- 4 = Nature
             if spellPower > 600 then
                  local spScaler = 1 + ((spellPower - 600) / 10000)
                  if spScaler > 1.2 then spScaler = 1.2 end
@@ -834,7 +833,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
 
     elseif currentSpec:find("RESTO") or currentSpec:find("Healer") then
         if weights["ITEM_MOD_MANA_REGENERATION_SHORT"] then
-            local healPower = MSC.SanitizeStat(GetSpellBonusHealing())
+            local healPower = MSC.GetJudgingStats().heal
             if healPower > 800 then
                 local hScaler = 1 + ((healPower - 800) / 10000)
                 if hScaler > 1.2 then hScaler = 1.2 end
@@ -856,7 +855,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
 
     -- A. DUAL WIELD HIT (Enhancement)
     if currentSpec:find("ENH") and Rank("DUAL_WIELD_SPEC") > 0 then
-         local hitRating = MSC.SanitizeStat(GetCombatRating(6))
+         local hitRating = (MSC.GetGearHitRating and MSC.GetGearHitRating("MELEE")) or MSC.SanitizeStat(GetCombatRating(6)) -- gear, unbuffed
          -- DW wants 9% to cap specials, but continues scaling well up to ~24% for white damage
          local dwSpecPct = Rank("DUAL_WIELD_SPEC") * 2
          local specialCapPct = math.max(0, 9 - dwSpecPct - natureGuidancePct - racialHitPct)

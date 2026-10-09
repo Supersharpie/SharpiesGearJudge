@@ -1210,3 +1210,77 @@ L["Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\"
 L["New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too."] = "새 플러그인: Sharpie's Gear Judge - Roster (부캐 업그레이드). 아이템 툴팁에 그 아이템이 어떤 다른 캐릭터에게 업그레이드인지 표시되고, 표에서 모든 캐릭터의 장비를 볼 수 있습니다. 가방, 은행, 우편도 함께 계산합니다."
 L["The window title now shows the name of the open tab."] = "창 제목에 이제 열려 있는 탭 이름이 표시됩니다."
 L["Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up."] = "착용한 반지, 장신구, 쌍수 무기가 이제 착용 중으로 표시되고, 레벨업 즉시 점수가 갱신됩니다."
+
+-- =============================================================
+-- ADDED IN 3.2.2 (PvP)
+-- =============================================================
+L["Gear for PvP"] = "PvP용 장비"
+L["Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers."] = "60레벨 PvP 프로필을 시뮬레이션한 공격대 프로필을 바탕으로 다시 만들었으며, 전사, 징벌 성기사, 드루이드, 사제와 주술사 치유사용 PvP 프로필을 새로 추가했습니다."
+L["New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp."] = "신규: PvP용 장비. 모든 레벨에서 다른 플레이어와 싸울 때를 기준으로 장비 점수를 매깁니다. 레벨업 중 야외 PvP와 60레벨 전장에 맞춰 체력, 방어도, 순간 피해를 더 높게 쳐주고, 적중은 플레이어 대 플레이어 한도에서 멈춥니다. /sgj 창 위쪽의 체크 상자나 /sgj pvp 명령어로 켤 수 있습니다."
+L["Not Now"] = "나중에"
+L["On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)."] = "PvP 서버에서는 Gear Judge가 PvP용 장비를 켤지 물어봅니다 (서버당 한 번)."
+L["PvP"] = "PvP"
+L["PvP: Balance"] = "PvP: 조화"
+L["PvP: Cold Blood Burst"] = "PvP: 냉혈 폭딜"
+L["PvP: Deep Frost"] = "PvP: 냉기 심화"
+L["PvP: Destruction (Conflag)"] = "PvP: 파괴 (점화)"
+L["PvP: Discipline Healer"] = "PvP: 수양 치유사"
+L["PvP: Elemental (Burst)"] = "PvP: 정기 (폭딜)"
+L["PvP: Elemental (Shatter)"] = "PvP: 정기 (산산조각)"
+L["PvP: Feral (Cat)"] = "PvP: 야성 (표범)"
+L["PvP: Hemo Control"] = "PvP: 과다출혈 제어"
+L["PvP: Mace Specialization"] = "PvP: 둔기류 전문화"
+L["PvP: Marksmanship Utility"] = "PvP: 사격 유틸리티"
+L["PvP: Nightfall / Conflagrate"] = "PvP: 일몰 / 점화"
+L["PvP: PoM Pyro (3-Min Mage)"] = "PvP: 냉정 불덩이 작열 (3분 마법사)"
+L["PvP: Restoration Healer"] = "PvP: 복원 치유사"
+L["PvP: Restoration"] = "PvP: 회복"
+L["PvP: Retribution"] = "PvP: 징벌"
+L["PvP: Shadow (Blackout)"] = "PvP: 암흑 (의식 상실)"
+L["PvP: Soul Link (Tank)"] = "PvP: 영혼의 고리 (탱커)"
+L["PvP: Survival Tank"] = "PvP: 생존 탱커"
+L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."] = "모든 레벨에서 다른 플레이어와 싸울 때를 기준으로 장비 점수를 매깁니다. 체력, 방어도, 순간 피해를 더 높게 쳐주고, 적중은 플레이어 대 플레이어 한도(근접 5%, 주문 3%)에 맞춥니다. PvP 프로필은 항상 이 설정을 사용합니다."
+L["Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character."] = "특성 플러그인: 새 PvP 그룹에 빌드 16개를 추가했으며, 각각 10레벨부터 60레벨까지의 전체 특성 순서를 담고 있습니다. 빌드를 선택하면 해당 캐릭터에 PvP 가중치가 켜집니다."
+L["Turn On"] = "켜기"
+L["|cff00ccffSharpie's Gear Judge|r\n\nThis looks like a PvP realm.\n\nTurn on |cffff5555Gear for PvP|r? Gear is then scored for fighting other players (more Stamina, armor and burst). You can change it any time with the checkbox at the top of the /sgj window."] = "|cff00ccffSharpie's Gear Judge|r\n\nPvP 서버로 보입니다.\n\n|cffff5555PvP용 장비|r를 켜시겠습니까? 켜면 다른 플레이어와 싸울 때를 기준으로 장비 점수를 매깁니다 (체력, 방어도, 순간 피해 가중). /sgj 창 위쪽의 체크 상자에서 언제든지 바꿀 수 있습니다."
+L["|cff00ff00SGJ realm:|r zone type %s, flagged %s, PvP wanted %s, PvP timer %s -> PvP realm: %s"] = "|cff00ff00SGJ 서버:|r 지역 유형 %s, 표시 %s, PvP 요청 %s, PvP 타이머 %s -> PvP 서버: %s"
+L["|cff00ff00SGJ:|r Gear for PvP is now "] = "|cff00ff00SGJ:|r PvP용 장비: 현재 "
+
+L["Not used while Gear for PvP is on: hit and defense stay at the player-vs-player targets."] = "PvP용 장비가 켜져 있는 동안에는 사용되지 않습니다. 적중과 방어 숙련은 PvP 목표치에 머무릅니다."
+
+L["   %s: config %s, %d talents read, profile %s (choice %s), Gear for PvP %s, saved gear %d items"] = "   %s: 설정 %s, 특성 %d개 읽음, 프로필 %s (선택 %s), PvP용 장비 %s, 저장된 장비 %d개"
+L["Primary"] = "주"
+L["Saved for each spec; this sets it for your %s spec."] = "각 전문화마다 저장되며, 이 설정은 다음 전문화에 적용됩니다: %s."
+L["Secondary"] = "보조"
+L["Show Other Spec on Tooltips"] = "다른 전문화를 툴팁에 표시"
+L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "이중 전문화(40레벨)를 사용하면 아이템 툴팁에 해당 아이템이 다른 전문화에 업그레이드가 되는지도 표시됩니다. 그 전문화의 특성, 프로필, PvP용 장비 설정으로 점수를 매기고, 그 전문화에서 마지막으로 착용한 장비와 비교합니다. PvP용 장비와 점수 프로필은 전문화마다 따로 저장됩니다."
+L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ 이중 전문화:|r 전문화 그룹 %d개, 활성 %d"
+
+L["5-Player Group"] = "5인 파티"
+L["Assume group buffs when scoring gear (Kings, Mark of the Wild, Fortitude, Battle Shout, totems, etc.). Blessings are assumed for the Alliance and totems for the Horde. Without this, gear is judged without buffs, whatever you have on right now."] = "장비 점수를 매길 때 파티 강화 효과를 가정합니다(왕의 축복, 야생의 징표, 신의 권능: 인내, 전투의 외침, 토템 등). 축복은 얼라이언스, 토템은 호드에게 가정합니다. 이 옵션이 꺼져 있으면 지금 어떤 강화 효과가 있든 장비를 강화 효과 없이 평가합니다."
+L["Assume world buffs (Rallying Cry of the Dragonslayer, Spirit of Zandalar, Songflower Serenade, Dire Maul Tribute)."] = "월드 강화 효과를 가정합니다(용사냥꾼의 격려의 외침, 잔달라의 영혼, 노래꽃의 세레나데, 혈투의 전장 공물)."
+L["Full Raid"] = "전체 공격대"
+
+L["Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it."] = "강화 효과 가정이 모든 게임 버전에서 작동하며, 전체 공격대, 5인 파티, 월드 강화 효과 설정이 있습니다. 왕의 축복 같은 비율 강화 효과는 이제 장비 능력치의 가치를 낮추는 대신 높입니다."
+L["Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable."] = "이제 장비를 강화 효과 없이 평가합니다. 음식, 비약, 파티 강화 효과가 더 이상 적중 한도, 방어 전담 한도나 점수를 바꾸지 않으며, 활성화된 방패 막기나 신성한 방패가 강타 면역에 두 번 계산되지 않습니다."
+
+L["Natural Instinct"] = "타고난 본능"
+
+L["In the main hand: %s"] = "주장비: %s"
+L["In the off hand: %s"] = "보조장비: %s"
+
+L["Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level."] = "수정: 클래식 에라와 시즌 오브 디스커버리에서 무기의 초당 공격력이 반영되지 않아 무기를 능력치만으로 평가했습니다. 종족 무기 숙련이 더 이상 모든 레벨에서 고정 20~60점을 더하지 않습니다."
+L["One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well."] = "쌍수 사용자의 한손 무기는 가장 이득이 큰 손을 기준으로 평가하며, 툴팁에 다른 손도 표시합니다."
+L["Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells."] = "패치로 바뀐 나머지도 모두 다시 확인했습니다: 전사 60레벨 프로필, 수양 사제(회개), 복원 주술사(물의 보호막), 보호 성기사(심판과 응징의 오라), 시전자 주문의 초반 등급."
+L["Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees."] = "베타 패치 1.60.1.70291 반영: 전사는 정확성, 강인함, 끝없는 분노를 잃고 분노의 정확성을 얻었으며, 포식자의 본능은 이제 타고난 본능입니다. 전사와 드루이드 가중치, 특성 플러그인의 전사 빌드가 새 특성 트리를 따릅니다."
+
+L["|cff00ff00(already on it)|r"] = "|cff00ff00(이미 적용됨)|r"
+
+L[" |cff999999(worn: %.1f)|r"] = " |cff999999(착용 중: %.1f)|r"
+L["Item Score:"] = "아이템 점수:"
+
+L["Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too."] = "툴팁에서 판정 점수(캐릭터 전체 점수) 아래에 아이템 자체 점수를 표시하며, 비교할 때는 착용 중인 아이템 점수도 표시합니다. 마법부여 모드가 최고 예상일 때 착용 중인 아이템에도 예상 마법부여가 표시됩니다."
+
+L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "60레벨 프로필을 현재 wowsims Forever 시뮬레이터로 다시 계산했습니다: 도적, 사냥꾼, 마법사, 주술사, 드루이드의 공격대 가중치가 바뀌었고(비전이 이제 냉기를 근소하게 앞서고, 고양과 야수는 마나가 부족하며, 표범은 더 이상 기력을 위해 변신하지 않음), 전사, 흑마법사, 사제, 성기사는 그대로입니다. 성기사의 던전 탱커와 치유사 행도 다시 만들었습니다."
+L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "이중 특성 준비 완료: 각 특성마다 고유한 점수 프로필, PvP용 장비 설정, 기억된 장비를 유지하고, 툴팁은 아이템이 다른 특성에 업그레이드인지 보여 주며, Talents 플러그인은 특성별로 빌드를 하나씩 기억합니다."
+L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Talents 플러그인: 특성 변경은 없지만 빌드 설명 여덟 개가 이제 현재 시뮬레이터 수치를 인용합니다. 냉기가 마법사 공격대 빌드로 유지되며, 비전과의 차이는 몇 퍼센트입니다."

@@ -1699,3 +1699,77 @@ L["Mana and health per 5 on gear now count, random-suffix items (\"of the Bear\"
 L["New plugin: Sharpie's Gear Judge - Roster (Alt Upgrades). Item tooltips show which of your other characters an item upgrades, and a grid lists every character's gear. Your bags, bank and mail count too."] = "Nuevo plugin: Sharpie's Gear Judge - Roster (mejoras para alters). Las descripciones de objetos muestran a cuáles de tus otros personajes mejora un objeto, y una cuadrícula lista el equipo de todos. Tus bolsas, banco y correo también cuentan."
 L["The window title now shows the name of the open tab."] = "El título de la ventana ahora muestra el nombre de la pestaña abierta."
 L["Worn rings, trinkets and dual-wield weapons now show as Equipped, and scores refresh as soon as you level up."] = "Los anillos, abalorios y armas de doble empuñadura que llevas puestos ahora se muestran como Equipado, y las puntuaciones se actualizan nada más subir de nivel."
+
+-- =============================================================
+-- ADDED IN 3.2.2 (PvP)
+-- =============================================================
+L["Gear for PvP"] = "Equipo para JcJ"
+L["Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers."] = "Los perfiles JcJ de nivel 60 se reconstruyen a partir de los perfiles de banda simulados, con nuevos perfiles JcJ para Guerreros, Paladines de Reprensión, Druidas y sanadores Sacerdote y Chamán."
+L["New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp."] = "Novedad: Equipo para JcJ. Puntúa el equipo para combatir contra otros jugadores en todos los niveles, tanto en JcJ del mundo abierto mientras subes de nivel como en campos de batalla a nivel 60: el Aguante, la armadura y la ráfaga de daño valen más, y el golpe se detiene en los límites de jugador contra jugador. Actívalo con la casilla en la parte superior de la ventana de /sgj o con /sgj pvp."
+L["Not Now"] = "Ahora no"
+L["On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)."] = "En un reino JcJ, Gear Judge te ofrece activar Equipo para JcJ (una vez por reino)."
+L["PvP"] = "JcJ"
+L["PvP: Balance"] = "JcJ: Equilibrio"
+L["PvP: Cold Blood Burst"] = "JcJ: Ráfaga de Sangre fría"
+L["PvP: Deep Frost"] = "JcJ: Escarcha Profunda"
+L["PvP: Destruction (Conflag)"] = "JcJ: Destrucción (Conflagrar)"
+L["PvP: Discipline Healer"] = "JcJ: Sanador de Disciplina"
+L["PvP: Elemental (Burst)"] = "JcJ: Elemental (ráfaga)"
+L["PvP: Elemental (Shatter)"] = "JcJ: Elemental (Trizar)"
+L["PvP: Feral (Cat)"] = "JcJ: Feral (Felino)"
+L["PvP: Hemo Control"] = "JcJ: Control con Hemo"
+L["PvP: Mace Specialization"] = "JcJ: Especialización con mazas"
+L["PvP: Marksmanship Utility"] = "JcJ: Utilidad de Puntería"
+L["PvP: Nightfall / Conflagrate"] = "JcJ: Ocaso / Conflagrar"
+L["PvP: PoM Pyro (3-Min Mage)"] = "JcJ: Presencia mental y Piro (Mago de 3 min)"
+L["PvP: Restoration Healer"] = "JcJ: Sanador de Restauración"
+L["PvP: Restoration"] = "JcJ: Restauración"
+L["PvP: Retribution"] = "JcJ: Reprensión"
+L["PvP: Shadow (Blackout)"] = "JcJ: Sombras (Desmayo)"
+L["PvP: Soul Link (Tank)"] = "JcJ: Enlace de alma (Tanque)"
+L["PvP: Survival Tank"] = "JcJ: Tanque de Supervivencia"
+L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."] = "Puntúa el equipo para combatir contra otros jugadores en todos los niveles: el Aguante, la armadura y la ráfaga de daño valen más, y el golpe se mantiene en los límites de jugador contra jugador (5% cuerpo a cuerpo, 3% hechizos). Los perfiles JcJ siempre usan esto."
+L["Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character."] = "Plugin de talentos: un nuevo grupo JcJ con 16 configuraciones, cada una con el orden completo de talentos del nivel 10 al 60. Al elegir una se activan los valores JcJ para ese personaje."
+L["Turn On"] = "Activar"
+L["|cff00ccffSharpie's Gear Judge|r\n\nThis looks like a PvP realm.\n\nTurn on |cffff5555Gear for PvP|r? Gear is then scored for fighting other players (more Stamina, armor and burst). You can change it any time with the checkbox at the top of the /sgj window."] = "|cff00ccffSharpie's Gear Judge|r\n\nParece que este es un reino JcJ.\n\n¿Activar |cffff5555Equipo para JcJ|r? El equipo se puntuará para combatir contra otros jugadores (más Aguante, armadura y ráfaga de daño). Puedes cambiarlo cuando quieras con la casilla en la parte superior de la ventana de /sgj."
+L["|cff00ff00SGJ realm:|r zone type %s, flagged %s, PvP wanted %s, PvP timer %s -> PvP realm: %s"] = "|cff00ff00Reino SGJ:|r tipo de zona %s, marcado %s, JcJ deseado %s, temporizador JcJ %s -> reino JcJ: %s"
+L["|cff00ff00SGJ:|r Gear for PvP is now "] = "|cff00ff00SGJ:|r Equipo para JcJ ahora está "
+
+L["Not used while Gear for PvP is on: hit and defense stay at the player-vs-player targets."] = "No se usa mientras Equipo para JcJ está activado: el golpe y la defensa se quedan en los objetivos de JcJ."
+
+L["   %s: config %s, %d talents read, profile %s (choice %s), Gear for PvP %s, saved gear %d items"] = "   %s: config %s, %d talentos leídos, perfil %s (elección %s), Equipo para JcJ %s, equipo guardado %d objetos"
+L["Primary"] = "Principal"
+L["Saved for each spec; this sets it for your %s spec."] = "Se guarda para cada especialización; esto se aplica a la especialización: %s."
+L["Secondary"] = "Secundario"
+L["Show Other Spec on Tooltips"] = "Mostrar la otra especialización en las descripciones"
+L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "Con la Doble especialización (nivel 40), las descripciones de los objetos también indican si un objeto es una mejora para tu otra especialización, puntuado con los talentos, el perfil y el ajuste de Equipo para JcJ de esa especialización, comparado con el equipo que llevaste por última vez en ella. Equipo para JcJ y el perfil de puntuación se guardan por separado para cada especialización."
+L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ doble especialización:|r %d grupo(s) de especialización, activo %d"
+
+L["5-Player Group"] = "Grupo de 5"
+L["Assume group buffs when scoring gear (Kings, Mark of the Wild, Fortitude, Battle Shout, totems, etc.). Blessings are assumed for the Alliance and totems for the Horde. Without this, gear is judged without buffs, whatever you have on right now."] = "Supone beneficios de grupo al puntuar el equipo (Reyes, Marca de lo Salvaje, Entereza, Grito de batalla, tótems, etc.). Las bendiciones se suponen para la Alianza y los tótems para la Horda. Sin esto, el equipo se juzga sin beneficios, tengas los que tengas ahora."
+L["Assume world buffs (Rallying Cry of the Dragonslayer, Spirit of Zandalar, Songflower Serenade, Dire Maul Tribute)."] = "Supone beneficios de mundo (Grito de convocación del Rompedragones, Espíritu de Zandalar, Serenata de flor de canción, Tributo de La Masacre)."
+L["Full Raid"] = "Banda completa"
+
+L["Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it."] = "Las suposiciones de beneficios funcionan en todas las versiones del juego, con plantillas de banda completa, grupo de 5 y beneficios de mundo. Los beneficios porcentuales como Bendición de reyes ahora aumentan el valor de las estadísticas del equipo en vez de reducirlo."
+L["Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable."] = "El equipo ahora se juzga sin beneficios: la comida, los elixires y los beneficios de grupo ya no mueven los topes de golpe, los topes de tanque ni las puntuaciones, y un Bloqueo con escudo o Escudo Sagrado activo ya no cuenta dos veces para ser inaplastable."
+
+L["Natural Instinct"] = "Instinto natural"
+
+L["In the main hand: %s"] = "En la mano derecha: %s"
+L["In the off hand: %s"] = "En la mano izquierda: %s"
+
+L["Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level."] = "Corregido: en Classic Era y Season of Discovery el daño por segundo de un arma no contaba, así que las armas se juzgaban solo por sus atributos. La habilidad con armas racial ya no suma una cantidad fija de 20 a 60 puntos en cada nivel."
+L["One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well."] = "Las armas de una mano para quien pelea con dos armas se juzgan en la mano donde más ganan, y la descripción muestra también la otra mano."
+L["Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells."] = "Se revisó todo lo demás que cambió el parche: los perfiles de guerrero de nivel 60, sacerdote de Disciplina (Penitencia), chamán de Restauración (Escudo de agua), paladín de Protección (Ajuste de cuentas y Aura de reprensión) y los primeros rangos de los hechizos de lanzadores."
+L["Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees."] = "Actualizado para el parche beta 1.60.1.70291: los guerreros pierden Precisión, Dureza e Ira ilimitada y ganan Precisión furiosa, e Instintos depredadores ahora se llama Instinto natural. Los pesos de guerrero y druida y las configuraciones de guerrero del complemento Talents siguen los nuevos árboles."
+
+L["|cff00ff00(already on it)|r"] = "|cff00ff00(ya lo tiene)|r"
+
+L[" |cff999999(worn: %.1f)|r"] = " |cff999999(equipado: %.1f)|r"
+L["Item Score:"] = "Puntuación del objeto:"
+
+L["Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too."] = "Las descripciones muestran la puntuación propia del objeto bajo la puntuación del Juez (la de todo tu personaje), con la del objeto equipado al comparar. Con el modo de encantamiento en Proyectar el mejor, el objeto equipado también muestra su encantamiento proyectado."
+
+L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "Los perfiles de nivel 60 se volvieron a calcular en el simulador wowsims de Forever actual: los pesos de banda de pícaro, cazador, mago, chamán y druida cambiaron (Arcano ahora supera por poco a Escarcha, Mejora y Dominio de bestias se quedan cortos de maná, el felino ya no cambia de forma por energía); guerrero, brujo, sacerdote y paladín siguen igual. Las filas de tanque y sanador de calabozos del paladín también se reconstruyeron."
+L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "Listo para la Doble especialización: cada especialización conserva su propio perfil de puntuación, su ajuste de Equipo para JcJ y el equipo recordado, las descripciones muestran si un objeto es una mejora para tu otra especialización, y el complemento Talents guarda una configuración por especialización."
+L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Complemento Talents: sin cambios de talentos, pero ocho notas de configuración ahora citan el simulador actual. Escarcha sigue siendo la configuración de banda del mago, con Arcano a pocos puntos porcentuales."

@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (Era Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.2.1-Era
+## Version: 3.2.2-Era
 ## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua
@@ -28,10 +28,12 @@ ConflictManager.lua
 Database.lua
 Data_Sets_Era.lua
 Enchants_Era.lua
+Buffs_Era.lua
 Parse.lua
 PawnParser.lua
 SixtyUpgradesParser.lua
 Helpers.lua
+RaidBuffs.lua
 Dynamic_Engine.lua
 Evaluator.lua
 

@@ -15,24 +15,34 @@ Priest.Weights = {
     -- The healer profiles come from our healing model (the sim can't heal): a raid fight's healing done with the mana you
     -- have, casting lower ranks where they save mana. Holy: Raid (Spiritual Guidance and Prayer of Mending) leans on Spirit
     -- and Mp5; its crit came out at ~2.5 in the model, which misses Inspiration and Holy's crit talents, so it is set at 7.
-    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.47, ["ITEM_MOD_SPIRIT_SHORT"]=2.25, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
+    -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
+    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=2.47, ["ITEM_MOD_SPIRIT_SHORT"]=2.25, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Discipline: Raid (Penance, Divine Aegis and Power Infusion, 32/19): crits shield through Divine Aegis, so Crit leads.
-    ["DISC_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=3.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.4, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    -- Client 70291 cut Penance (spell power coefficient .285 -> .19, higher mana costs): the mana stats count a little
+    -- more (study/priest2/penance_70291.js).
+    ["DISC_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=3.7, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.7, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Shadow: Multi-DoT Farming (Shadow Word: Pain and Devouring Plague on packs of 4-5, shields and fears; a rough model).
     -- The pack hits you the whole time, so Stamina leads with the mana stats. Talent hooks still apply (Shadowform doubles
     -- the Crit here).
     ["SHADOW_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_ARMOR_SHORT"]=0.03 },
 
-    -- PvP and hybrid profiles (not modelled).
-    ["SHADOW_PVP"] = {  ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
+    -- Hybrid profiles (not modelled).
     ["HYBRID_POWER_WEAVING"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
 }
 -- Old names, kept so a saved profile choice still works.
 Priest.Weights["SHADOW_PVE"] = Priest.Weights["SHADOW_RAID"]
 Priest.Weights["HOLY_DEEP"] = Priest.Weights["HOLY_RAID"]
 Priest.Weights["DISC_PI_SUPPORT"] = Priest.Weights["DISC_RAID"]
+-- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
+-- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
+Priest.Weights["SHADOW_PVP"] = MSC.ForeverPvPFrom(Priest.Weights["SHADOW_RAID"])
+Priest.Weights["DISC_PVP"] = MSC.ForeverPvPFrom(Priest.Weights["DISC_RAID"])
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { SHADOW_RAID = true, HOLY_RAID = true, DISC_RAID = true, SHADOW_PVE = true, HOLY_DEEP = true, DISC_PI_SUPPORT = true }
+local SIM_PROFILES = { SHADOW_RAID = true, HOLY_RAID = true, DISC_RAID = true, SHADOW_PVE = true, HOLY_DEEP = true, DISC_PI_SUPPORT = true, SHADOW_PVP = true, DISC_PVP = true }
+-- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
+-- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
+Priest.PvPCounterpart = { SHADOW_RAID = "SHADOW_PVP", SHADOW_PVE = "SHADOW_PVP", DISC_RAID = "DISC_PVP", DISC_PI_SUPPORT = "DISC_PVP" }
 
 -- =============================================================
 -- LEVELING WEIGHTS
@@ -60,7 +70,8 @@ Priest.PrettyNames = {
     ["SHADOW_PVE"]      = L["Shadow: Raid (old profile)"],
     ["HOLY_DEEP"]       = L["Holy: Raid (old profile)"],
     ["DISC_PI_SUPPORT"] = L["Discipline: Raid (old profile)"],
-    ["SHADOW_PVP"]           = "PvP: Shadow (Blackout)",
+    ["SHADOW_PVP"]           = L["PvP: Shadow (Blackout)"],
+    ["DISC_PVP"]             = L["PvP: Discipline Healer"],
     ["HYBRID_POWER_WEAVING"] = "Support: Power Weaving",
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
@@ -390,7 +401,7 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- [[ 2. Covariance (Mana Regen / Healing Power Synergy) ]]
     if hooks and (currentSpec:find("HOLY") or currentSpec:find("DISC")) then
         -- FIX: Use GetPlayerStat via Shim (This usually returns bonus healing)
-        local healPower = MSC.SanitizeStat(GetSpellBonusHealing()) -- Vanilla API for Healing
+        local healPower = MSC.GetJudgingStats().heal -- unbuffed, plus assumed buffs
         
         if healPower > 600 then
             local hScaler = 1 + ((healPower - 600) / 6000)

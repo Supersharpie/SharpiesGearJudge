@@ -15,7 +15,7 @@ Shaman.Weights = {
     ["ELE_PVP"] = {
         ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.5 
     },
-    ["ENH_STORMSTRIKE"] = {
+    ["ENH_STORMSTRIKE"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_AGILITY_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=10.0 
     },
     ["RESTO_DEEP"] = {
@@ -27,7 +27,7 @@ Shaman.Weights = {
     ["HYBRID_ELE_RESTO"] = {
         ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0 
     },
-    ["HYBRID_ENH_RESTO"] = {
+    ["HYBRID_ENH_RESTO"] = { ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=10,
         ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=0.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0 
     },
 }
@@ -154,7 +154,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     if weights["ITEM_MOD_HIT_RATING_SHORT"] then
         -- FIX: Use Shim
         local gearHit = MSC:GetPlayerStat("HIT")
-        if (gearHit + hitBonus) >= 9 then
+        if gearHit >= 9 then -- Nature's Guidance is already in GetHitModifier
             weights["ITEM_MOD_HIT_RATING_SHORT"] = 2.0 
             table.insert(activeCaps, "Phys Hit (9%)")
         end
@@ -164,7 +164,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     if weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
         -- FIX: Use Shim
         local gearSpellHit = MSC:GetPlayerStat("SPELL_HIT")
-        if (gearSpellHit + hitBonus) >= 16 then
+        if gearSpellHit >= 16 then -- and in GetSpellHitModifier
             weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] = 1.0
             table.insert(activeCaps, "Spell Hit (16%)")
         end
@@ -183,7 +183,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 
-function Shaman:GetWeaponBonus(itemLink)
+function Shaman:GetWeaponBonus(itemLink, weights, slotId, specName)
     if not itemLink then return 0 end
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 then return 0 end 
@@ -193,7 +193,7 @@ function Shaman:GetWeaponBonus(itemLink)
 
     -- Racial: Orc (Axes)
     if race == "Orc" and (subClassID == 0 or subClassID == 1) then 
-        bonus = bonus + 50 
+        bonus = bonus + MSC.EraWeaponSkillBonus(Shaman, weights, specName, 5)
     end
     
     return bonus
