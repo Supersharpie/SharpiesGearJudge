@@ -16,21 +16,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.2: add a line here for each change logged under v3.2.2 in CHANGELOG.md.
-    { forever = true, text = "Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too." },
-    { forever = true, text = "Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent." },
-    { forever = true, text = "Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec." },
-    { forever = true, text = "New: Gear for PvP. Scores gear for fighting other players at every level, for open-world PvP while leveling and battlegrounds at 60: Stamina, armor and burst count for more, and hit stops at the player-vs-player caps. Turn it on with the checkbox at the top of the /sgj window or with /sgj pvp." },
-    { forever = true, text = "On a PvP realm, Gear Judge offers to turn Gear for PvP on (once per realm)." },
-    { forever = true, text = "Level-60 PvP profiles are rebuilt from the simulated raid profiles, with new PvP profiles for Warriors, Retribution Paladins, Druids and Priest and Shaman healers." },
-    { forever = true, text = "Talents plugin: a new PvP group with 16 builds, each a full talent order from 10 to 60. Picking one turns on PvP weights for that character." },
-    { text = "Gear is now judged without buffs: food, elixirs and party buffs no longer move hit caps, tank caps or scores, and an active Shield Block or Holy Shield no longer counts twice toward uncrushable." },
-    { text = "Buff Assumptions work on every game version, with a full-raid, 5-player group and world buff preset. Percent buffs such as Blessing of Kings now raise the value of stats on gear instead of lowering it." },
-    { forever = true, text = "Updated for beta patch 1.60.1.70291: Warriors lost Precision, Toughness and Boundless Rage and gained Furious Precision, and Predatory Instincts is now Natural Instinct. Warrior and Druid weights and the Talents plugin's Warrior builds follow the new trees." },
-    { forever = true, text = "Re-checked everything else the patch changed: Warrior level-60 profiles, Discipline Priest (Penance), Restoration Shaman (Water Shield), Protection Paladin (Reckoning and Retribution Aura) and the early ranks of caster spells." },
-    { classic = true, text = "Fixed: on Classic Era and Season of Discovery a weapon's damage per second counted for nothing, so weapons were judged on their stats alone. Racial weapon skill no longer adds a fixed 20 to 60 points at every level." },
-    { text = "One-handed weapons for dual-wielders are judged in the hand where they gain the most, and the tooltip shows the other hand as well." },
-    { text = "Tooltips show the item's own Item Score under Judge's Score (your whole character's score), with the worn item's score when comparing. With Enchant Mode on Project Best, the worn item shows its projected enchant too." },
+    -- v3.2.3
+    { forever = true, text = "WoW Forever: the Druid healer, Heart of the Wild and Priest Default profiles no longer count Spell Power twice, and the Mage and Warlock Default profiles now use the raid weights." },
+    { forever = true, text = "WoW Forever: the Protection Paladin, Enhancement Shaman and Bear raid profiles are re-simulated, the last two for their new talent builds." },
+    { forever = true, text = "WoW Forever: Affliction Warlocks now level with Drain Life from level 20. The Talents plugin's solo build takes Fel Concentration early, and wand DPS counts for much less." },
+    { forever = true, text = "Talents plugin: new Enhancement Shaman and Bear raid builds. The next talent to learn now glows gold, and every talent in your build shows its step number." },
+    { forever = true, text = "Roadmap 3.1.2: Forever dungeon loot updated to the latest beta build, with 63 new drops and the City of Dalaran as a dungeon." },
+    { text = "Roster 1.0.2: the new BoE Finder lists the tradeable items your characters hold that upgrade another of your characters, biggest upgrade first." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

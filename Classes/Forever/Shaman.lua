@@ -15,11 +15,13 @@ Shaman.Weights = {
     ["Default"] = { ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=0.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     -- The level-60 profiles (study/shaman2, 2026-10-03; Enhancement and Elemental re-run 2026-10-08 from SharpiesGearJudge-SimStudio),
     -- each worked out with its build's own talents, so ApplyScalers' talent hooks skip them. Hit and Crit per 1%.
-    -- Enhancement: Raid (Elemental 19 / Enhancement 32, two-hander, Windfury) from the wowsims Forever simulator, at Attack
-    -- Power 1.5 like the other melee profiles. The rotation casts Fire Nova as well as the shocks, so it runs short of
-    -- mana: Intellect (Mental Dexterity and mana) and Mp5 count for a lot, Spell Power through Flame Shock, Earth Shock,
-    -- Fire Nova and Lightning Shield; Spell Hit / Crit are the spells'.
-    ["ENH_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_AGILITY_SHORT"]=2.21, ["ITEM_MOD_INTELLECT_SHORT"]=3.43, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.19, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.42, ["ITEM_MOD_HIT_RATING_SHORT"]=58.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=37.3, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    -- Enhancement: Raid (Enhancement 33 / Restoration 16 / Elemental 2, two-hander, Windfury; talents re-searched 2026-10-10)
+    -- from the wowsims Forever simulator, at Attack Power 1.5 like the other melee profiles. The rotation casts Fire Nova
+    -- as well as the shocks; Mana Tide Totem and Mindfulness ease the mana, so Mp5 counts less than before, while
+    -- Intellect (Mental Dexterity) still counts a lot. Tidal Focus gives 5% melee hit, so with 5% from gear you sit over
+    -- the 9% raid cap; Hit is the value below the cap (the hit cap logic takes it down past that). Spell Power counts
+    -- through Flame Shock, Earth Shock, Fire Nova and Lightning Shield; Spell Hit / Crit are the spells'.
+    ["ENH_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_INTELLECT_SHORT"]=3.15, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.33, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.44, ["ITEM_MOD_HIT_RATING_SHORT"]=53.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=9.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.3, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Elemental: Raid (Elemental 31 / Enhancement 11 / Restoration 9) from the simulator, Spell Power 2.0. Elemental runs out
     -- of mana in Forever and drops to a lower Lightning Bolt rank, which is why Crit and Hit are worth far less than for the
     -- other casters. Nature and Fire damage split the Spell Power value by how much of the damage each school does.

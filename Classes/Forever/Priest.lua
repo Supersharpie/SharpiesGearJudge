@@ -6,7 +6,9 @@ Priest.Name = "PRIEST"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Priest.Weights = {
-    ["Default"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
+    -- Fallback before a spec is known (healer). Spell Power 0: MSC.GetItemScore already scores an item's
+    -- Spell Power at the Healing weight, so 20 here counted it twice.
+    ["Default"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
     -- The level-60 profiles (study/priest2, 2026-10-03; NOTES.md there has the numbers). Spell Power / Healing sit at
     -- 2.0; Hit and Crit per 1%. Each was worked out with its build's own talents, so ApplyScalers' talent hooks skip them.
     -- Shadow: Raid comes from the wowsims Forever sim (Shadow 508 DPS against Smite's 315-375). Spirit and Mp5 come out at

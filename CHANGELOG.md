@@ -1,5 +1,22 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.3
+
+### ⚖️ Leftover Profiles Fixed (WoW Forever)
+- **Druid Healers**: The old Healer: Moonglow and Healer: Regrowth (Crit) profiles now use the Restoration: Raid healing model. They were never modelled and counted Spell Power twice (an item's Spell Power already heals at the Healing weight).
+- **Hybrid: Heart of the Wild and Priest Default**: Spell Power no longer counts twice; it now scores at the Healing weight like on the other healer profiles.
+- **Mage and Warlock Default**: The fallback profile now uses the Frost: Raid (Mage) and Affliction: Raid (Warlock) weights. The old table valued Hit and Crit at about a tenth of what the simulator gives.
+- **Paladin Protection: Raid**: Re-simulated with Reckoning working as beta testers found it: each proc is an instant free swing that leaves your swing timer alone (the simulator used to pull your next swing forward instead). Block chance is worth about a fifth more and Hit about an eighth more; the rest barely moves.
+- **Shaman Enhancement: Raid**: Re-simulated for the new Enhancement 33 / Restoration 16 / Elemental 2 build (Talents plugin). Mana Tide Totem and Mindfulness ease the mana shortage, so Mp5 is worth less than half what it was and spell hit and crit count for less; melee Crit counts a little more. Tidal Focus already gives 5% hit, so Hit is valued as it is below the raid cap and the hit cap logic takes it down once you reach it.
+- **Druid Bear: Raid**: Re-simulated for the new Bear: Raid talents (Talents plugin), with Heart of the Wild's extra Stamina now counted in the health part of the tank score. Defense and Dodge count a little more; the rest moves by 2% or less.
+
+### 🩸 Warlock Leveling With Drain Life (WoW Forever)
+- **Affliction: Solo Leveling** now assumes Drain Life fills each fight once you have Fel Concentration (level 20 in the Talents plugin's build), instead of the wand. Forever's Drain Life deals its damage and heals you for the same amount, so it is both a damage spell and most of your healing. The old weights treated it as a heal only.
+	- **Wand DPS** counts for a quarter of what it did from level 20 (about 10-14 instead of 38-56). Below 20 nothing changes.
+	- **Crit** counts 10-27% more (Drain Life can crit, the wand couldn't) and **Hit** 25-45% less next to Spell Power, since Drain Life grows with Spell Power. The hit cap logic still applies.
+	- **Stamina, Health and Hp5** count half as much: the drain heals back most of what Life Tap and stray hits cost, so you rarely stop to eat.
+	- Affliction: Dungeon Leveling is unchanged (Shadow Bolt fills there).
+
 ## 🚀 v3.2.2
 
 ### 📊 Level-60 Profiles Re-Simulated (WoW Forever)

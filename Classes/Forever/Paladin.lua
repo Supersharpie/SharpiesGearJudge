@@ -30,11 +30,13 @@ Paladin.Weights = {
     ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.3, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5  },
 
     -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
-    -- 2026-10-04), as the Warrior's and Druid's raid tanks: threat 35% / damage taken 35% / effective health 30%, Stamina 3.0.
-    -- Dodge and Parry lead; Block only takes Block Value off each big boss hit, so it and Block Value count for less.
+    -- 2026-10-04; re-run 2026-10-10 after the Reckoning fix), as the Warrior's and Druid's raid tanks: threat 35% / damage
+    -- taken 35% / effective health 30%, Stamina 3.0. Dodge and Parry lead; Block only takes Block Value off each big boss hit,
+    -- so it and Block Value count for less, though each block can also give Reckoning's free extra swing (beta testing:
+    -- an instant attack that leaves the swing timer alone, can't be stored, and procs seals).
     -- Threat is half Holy (Spell Power) and half melee (Hit, Crit). A 3-minute boss never runs a tank dry, so Intellect and
     -- Mp5 keep only a small floor for longer fights.
-    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=30.5, ["ITEM_MOD_BLOCK_RATING_SHORT"]=13.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.0, ["ITEM_MOD_ARMOR_SHORT"]=0.22, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.79, ["ITEM_MOD_AGILITY_SHORT"]=2.62, ["ITEM_MOD_STRENGTH_SHORT"]=0.78, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.34, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.43, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.43, ["ITEM_MOD_HIT_RATING_SHORT"]=16.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.7, ["ITEM_MOD_PARRY_RATING_SHORT"]=31.4, ["ITEM_MOD_BLOCK_RATING_SHORT"]=16.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.09, ["ITEM_MOD_ARMOR_SHORT"]=0.22, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.81, ["ITEM_MOD_AGILITY_SHORT"]=2.69, ["ITEM_MOD_STRENGTH_SHORT"]=0.78, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.33, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.47, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.47, ["ITEM_MOD_HIT_RATING_SHORT"]=18.9, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
     -- Protection: AoE Farming (about 12 normal mobs at 55-57, some Undead; Consecration, Holy Shield and
     -- Retribution Aura at 20 + 10% of spell power per hit taken). Spell Power drives the damage; Block,

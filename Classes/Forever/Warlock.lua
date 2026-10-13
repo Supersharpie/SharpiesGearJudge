@@ -9,8 +9,6 @@ Warlock.Name = "WARLOCK"
 -- We use standard keys so the Evaluator can match them.
 
 Warlock.Weights = {
-    ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_SPIRIT_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
-
     -- The raid profiles come from the wowsims Forever sim (study/warlock2, 2026-10-03; NOTES.md there has the numbers),
     -- run with each build's own talents and demon, so ApplyScalers' talent hooks skip them. Spell Power sits at 2.0;
     -- Hit and Crit per 1%. Most of the damage is Shadow. Stamina is a small Life Tap / safety term (the sim's three-
@@ -39,9 +37,12 @@ Warlock.Weights["PVP_SOUL_LINK"] = MSC.ForeverPvPFrom(Warlock.Weights["DEMO_PACT
 Warlock.Weights["PVE_MD_RUIN"] = Warlock.Weights["DEMO_PACT_RAID"]
 Warlock.Weights["RAID_SM_RUIN"] = Warlock.Weights["AFF_RAID"]
 Warlock.Weights["RAID_DS_RUIN"] = Warlock.Weights["DESTRO_RAID"]
+-- Fallback before a spec is known: the Affliction raid weights. The old Spell Power 15 table valued 1% hit
+-- at about 1.3 Spell Power, roughly a tenth of what the sim gives.
+Warlock.Weights["Default"] = Warlock.Weights["AFF_RAID"]
 -- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { DEMO_PACT_RAID = true, AFF_RAID = true, DESTRO_RAID = true, PVE_MD_RUIN = true, RAID_SM_RUIN = true, RAID_DS_RUIN = true,
-    PVP_NF_CONFLAG = true, PVP_DEEP_DESTRO = true, PVP_SOUL_LINK = true }
+    PVP_NF_CONFLAG = true, PVP_DEEP_DESTRO = true, PVP_SOUL_LINK = true, Default = true }
 
 -- =============================================================
 -- LEVELING WEIGHTS

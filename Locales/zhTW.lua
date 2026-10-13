@@ -1274,3 +1274,14 @@ L["Tooltips show the item's own Item Score under Judge's Score (your whole chara
 L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "60級設定檔已在目前的 wowsims Forever 模擬器上重新計算：盜賊、獵人、法師、薩滿和德魯伊的團隊權重有變動（秘法現在略勝冰霜，增強和野獸控制會缺法力，獵豹不再為了能量變身）；戰士、術士、牧師和聖騎士維持不變。聖騎士的地城坦克和治療列也已重建。"
 L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "已支援雙天賦：每個天賦保有自己的評分設定檔、PvP 裝備設定和記住的裝備，提示會顯示物品對你另一個天賦是否為升級，Talents 插件也會為每個天賦各記住一個配置。"
 L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Talents 插件：天賦沒有變動，但八則配置說明現在引用目前模擬器的數字。冰霜仍是法師的團隊配置，秘法只差幾個百分點。"
+
+-- =============================================================
+-- ADDED IN 3.2.3 (What's New)
+-- =============================================================
+L["Roadmap 3.1.2: Forever dungeon loot updated to the latest beta build, with 63 new drops and the City of Dalaran as a dungeon."] = "Roadmap 3.1.2：Forever 地城戰利品已更新至最新測試版本，新增63件掉落物，並將達拉然城列為地城。"
+L["Roster 1.0.2: the new BoE Finder lists the tradeable items your characters hold that upgrade another of your characters, biggest upgrade first."] = "Roster 1.0.2：新的裝綁搜尋會列出你的角色持有、可交易且能提升你另一個角色的物品，提升最大的排在最前。"
+L["Talents plugin: new Enhancement Shaman and Bear raid builds. The next talent to learn now glows gold, and every talent in your build shows its step number."] = "天賦插件：增強薩滿和熊的新團隊配置。下一個要學的天賦現在發出金色光芒，配置中的每個天賦都會顯示步驟編號。"
+L["WoW Forever: the Druid healer, Heart of the Wild and Priest Default profiles no longer count Spell Power twice, and the Mage and Warlock Default profiles now use the raid weights."] = "WoW Forever：德魯伊治療、野性之心和牧師預設設定檔不再重複計算法術能量，法師和術士的預設設定檔現在使用團隊權重。"
+L["WoW Forever: the Protection Paladin, Enhancement Shaman and Bear raid profiles are re-simulated, the last two for their new talent builds."] = "WoW Forever：防護聖騎士、增強薩滿和熊的團隊設定檔已重新模擬，後兩者依照新的天賦配置。"
+
+L["WoW Forever: Affliction Warlocks now level with Drain Life from level 20. The Talents plugin's solo build takes Fel Concentration early, and wand DPS counts for much less."] = "WoW Forever：痛苦術士現在從20級起以吸取生命升級。天賦插件的單練配置會提早點惡魔專注，魔杖DPS的價值也大幅降低。"

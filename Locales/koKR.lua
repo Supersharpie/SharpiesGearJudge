@@ -1284,3 +1284,14 @@ L["Tooltips show the item's own Item Score under Judge's Score (your whole chara
 L["Level-60 profiles re-run on the current wowsims Forever simulator: Rogue, Hunter, Mage, Shaman and Druid raid weights moved (Arcane now edges Frost, Enhancement and Beast Mastery run short of mana, the Cat no longer powershifts); Warrior, Warlock, Priest and Paladin stayed the same. The Paladin dungeon tank and healer rows were rebuilt too."] = "60레벨 프로필을 현재 wowsims Forever 시뮬레이터로 다시 계산했습니다: 도적, 사냥꾼, 마법사, 주술사, 드루이드의 공격대 가중치가 바뀌었고(비전이 이제 냉기를 근소하게 앞서고, 고양과 야수는 마나가 부족하며, 표범은 더 이상 기력을 위해 변신하지 않음), 전사, 흑마법사, 사제, 성기사는 그대로입니다. 성기사의 던전 탱커와 치유사 행도 다시 만들었습니다."
 L["Ready for Dual Specialization: each spec keeps its own scoring profile, Gear for PvP setting and remembered gear, tooltips show if an item is an upgrade for your other spec, and the Talents plugin keeps a build per spec."] = "이중 특성 준비 완료: 각 특성마다 고유한 점수 프로필, PvP용 장비 설정, 기억된 장비를 유지하고, 툴팁은 아이템이 다른 특성에 업그레이드인지 보여 주며, Talents 플러그인은 특성별로 빌드를 하나씩 기억합니다."
 L["Talents plugin: no talent changes, but eight build notes now quote the current simulator. Frost stays the Mage raid build, with Arcane within a few percent."] = "Talents 플러그인: 특성 변경은 없지만 빌드 설명 여덟 개가 이제 현재 시뮬레이터 수치를 인용합니다. 냉기가 마법사 공격대 빌드로 유지되며, 비전과의 차이는 몇 퍼센트입니다."
+
+-- =============================================================
+-- ADDED IN 3.2.3 (What's New)
+-- =============================================================
+L["Roadmap 3.1.2: Forever dungeon loot updated to the latest beta build, with 63 new drops and the City of Dalaran as a dungeon."] = "Roadmap 3.1.2: Forever 던전 전리품을 최신 베타 빌드로 갱신했으며, 새 전리품 63개와 던전이 된 달라란이 추가되었습니다."
+L["Roster 1.0.2: the new BoE Finder lists the tradeable items your characters hold that upgrade another of your characters, biggest upgrade first."] = "Roster 1.0.2: 새 착귀 찾기가 다른 캐릭터를 강화하는, 내 캐릭터들이 가진 거래 가능한 아이템을 강화 폭이 큰 순서로 보여 줍니다."
+L["Talents plugin: new Enhancement Shaman and Bear raid builds. The next talent to learn now glows gold, and every talent in your build shows its step number."] = "특성 플러그인: 고양 주술사와 곰의 새 공격대 빌드. 다음에 배울 특성이 이제 금색으로 빛나고, 빌드의 모든 특성에 단계 번호가 표시됩니다."
+L["WoW Forever: the Druid healer, Heart of the Wild and Priest Default profiles no longer count Spell Power twice, and the Mage and Warlock Default profiles now use the raid weights."] = "WoW Forever: 드루이드 치유, 야생의 정수, 사제 기본 프로필이 더 이상 주문력을 두 번 계산하지 않으며, 마법사와 흑마법사 기본 프로필은 이제 공격대 가중치를 사용합니다."
+L["WoW Forever: the Protection Paladin, Enhancement Shaman and Bear raid profiles are re-simulated, the last two for their new talent builds."] = "WoW Forever: 보호 성기사, 고양 주술사, 곰 공격대 프로필을 다시 시뮬레이션했으며, 뒤의 둘은 새 특성 빌드에 맞췄습니다."
+
+L["WoW Forever: Affliction Warlocks now level with Drain Life from level 20. The Talents plugin's solo build takes Fel Concentration early, and wand DPS counts for much less."] = "WoW Forever: 고통 흑마법사는 이제 20레벨부터 생명력 흡수로 레벨업합니다. 특성 플러그인의 솔로 빌드가 마의 정신집중을 일찍 찍으며, 마법봉 DPS의 가치는 크게 낮아집니다."

@@ -6,8 +6,6 @@ Mage.Name = "MAGE"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Mage.Weights = {
-    ["Default"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_SHORT"]=0.02, ["ITEM_MOD_STAMINA_SHORT"]=0.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0  },
-
     -- The raid profiles come from the wowsims Forever sim (study/mage2, 2026-10-03; re-run 2026-10-08 from
     -- SharpiesGearJudge-SimStudio), run with each build's own talents, so ApplyScalers' talent hooks skip them.
     -- Spell Power sits at 2.0; Hit and Crit are per 1%. In a three-minute fight with raid buffs a Frost mage doesn't
@@ -36,9 +34,12 @@ Mage.PvPProfiles = { POM_PYRO = true, ELEMENTAL = true }
 -- Old names, kept so a saved profile choice still works.
 Mage.Weights["FROST_WC"] = Mage.Weights["FROST_RAID"]
 Mage.Weights["FROST_AP"] = Mage.Weights["FROST_RAID"]
+-- Fallback before a spec is known: the Frost raid weights. The old Spell Power 15 table valued 1% hit
+-- at about 1.3 Spell Power, roughly a tenth of what the sim gives.
+Mage.Weights["Default"] = Mage.Weights["FROST_RAID"]
 -- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { FROST_RAID = true, FIRE_RAID = true, ARCANE_RAID = true, FROST_WC = true, FROST_AP = true,
-    POM_PYRO = true, ELEMENTAL = true, FROST_PVP = true }
+    POM_PYRO = true, ELEMENTAL = true, FROST_PVP = true, Default = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
 -- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
 Mage.PvPCounterpart = { FROST_RAID = "FROST_PVP", FROST_WC = "FROST_PVP", FROST_AP = "FROST_PVP" }

@@ -24,25 +24,26 @@ Druid.Weights = {
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
     ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=1.34, ["ITEM_MOD_SPIRIT_SHORT"]=1.86, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.86, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
-    -- Bear: Raid (Balance 9 / Feral 32 / Restoration 10) from the simulator's tank mode, as the Warrior's Protection: Raid:
-    -- threat 35% / damage taken 35% / effective health 30%, Stamina 3.0. Armor is item armor (Dire Bear Form multiplies it
-    -- by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
-    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.36, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.49, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.4, ["ITEM_MOD_AGILITY_SHORT"]=3.55, ["ITEM_MOD_STRENGTH_SHORT"]=1.91, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.87, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.87, ["ITEM_MOD_HIT_RATING_SHORT"]=15.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=34.5 },
+    -- Bear: Raid (Balance 9 / Feral 42 with Heart of the Wild, Rend and Tear and Shredding Attacks; talents re-searched
+    -- 2026-10-10) from the simulator's tank mode, as the Warrior's Protection: Raid: threat 35% / damage taken 35% /
+    -- effective health 30% (health counts Heart of the Wild's Stamina), Stamina 3.0. Armor is item armor (Dire Bear Form
+    -- multiplies it by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
+    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.35, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.69, ["ITEM_MOD_DODGE_RATING_SHORT"]=30.5, ["ITEM_MOD_AGILITY_SHORT"]=3.49, ["ITEM_MOD_STRENGTH_SHORT"]=1.9, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_HIT_RATING_SHORT"]=15.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9 },
 
-    -- Older healer and hybrid profiles (not modelled).
-    -- Healer Spell Crit: 1% crit is worth ~2.4 Healing (a crit heal adds 50%),
-    -- so 48 at Healing 20 (the old 10 made it 0.5 Healing).
-    ["RESTO_MOONGLOW"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPIRIT_SHORT"]=0.8, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
-    ["RESTO_REGROWTH"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0  },
-    -- Hybrid: its healing stats moved to the Healing 20 scale (Healing 0.8 -> 20, x25), so the feral and
+    -- Hybrid (not modelled): its healing stats moved to the Healing 20 scale (Healing 0.8 -> 20, x25), so the feral and
     -- defensive weights get the same x25 to keep the old balance: Strength 2.0 -> 50, Stamina 1.0 -> 25,
     -- Armor 0.2 -> 5, Weapon Skill 5.0 -> 125 (Strength is still 2.5x Healing, as before the rescale).
-    ["HYBRID_HOTW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=50.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ARMOR_SHORT"]=5.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=125.0 },
+    -- Spell Power 0, as on the raid healers: MSC.GetItemScore already scores it at the Healing weight.
+    ["HYBRID_HOTW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=50.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ARMOR_SHORT"]=5.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=125.0 },
 }
 -- Old names, kept so a saved profile choice still works.
 Druid.Weights["BALANCE_BOOMKIN"] = Druid.Weights["BALANCE_RAID"]
 Druid.Weights["FERAL_CAT_DPS"] = Druid.Weights["CAT_RAID"]
 Druid.Weights["RESTO_DEEP"] = Druid.Weights["RESTO_RAID"]
+-- The old Moonglow and Regrowth healer tables (not modelled, and they counted Spell Power twice) now use the
+-- healing model: a Restoration Druid at 60 heals the same way whichever of those talents it took.
+Druid.Weights["RESTO_MOONGLOW"] = Druid.Weights["RESTO_RAID"]
+Druid.Weights["RESTO_REGROWTH"] = Druid.Weights["RESTO_RAID"]
 Druid.Weights["FERAL_BEAR_TANK"] = Druid.Weights["BEAR_RAID"]
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
@@ -52,11 +53,12 @@ Druid.Weights["BALANCE_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["BALANCE_RAID"])
 Druid.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["RESTO_RAID"])
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { CAT_RAID = true, BALANCE_RAID = true, RESTO_RAID = true, BEAR_RAID = true,
-    BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true, FERAL_PVP = true, BALANCE_PVP = true, RESTO_PVP = true }
+    BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true, FERAL_PVP = true, BALANCE_PVP = true, RESTO_PVP = true,
+    RESTO_MOONGLOW = true, RESTO_REGROWTH = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
 -- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
 Druid.PvPCounterpart = { CAT_RAID = "FERAL_PVP", FERAL_CAT_DPS = "FERAL_PVP", BALANCE_RAID = "BALANCE_PVP", BALANCE_BOOMKIN = "BALANCE_PVP",
-    RESTO_RAID = "RESTO_PVP", RESTO_DEEP = "RESTO_PVP" }
+    RESTO_RAID = "RESTO_PVP", RESTO_DEEP = "RESTO_PVP", RESTO_MOONGLOW = "RESTO_PVP", RESTO_REGROWTH = "RESTO_PVP" }
 
 -- =============================================================
 -- LEVELING WEIGHTS
