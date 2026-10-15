@@ -792,19 +792,21 @@ end
 -- avoidance/block is worth less and effective health takes over. From 50
 -- when gearing for raids (dungeon and raid bosses are +2/+3), always at 60.
 -- Calls fn(spellId, auraData) for each of the player's buffs; stops when fn
--- returns true.
+-- returns true. Auras can be secret (e.g. while logging in), and then
+-- GetAuraDataByIndex throws for tainted callers, so read them protected and
+-- treat that as no readable buffs.
 function MSC.ForEachPlayerBuff(fn)
     if C_UnitAuras and C_UnitAuras.GetAuraDataByIndex then
         for i = 1, 40 do
-            local a = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
-            if not a then break end
+            local ok, a = pcall(C_UnitAuras.GetAuraDataByIndex, "player", i, "HELPFUL")
+            if not ok or not a then break end
             if fn(MSC.SanitizeStat(a.spellId), a) then return end
         end
     elseif UnitBuff then
         for i = 1, 40 do
             local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
             if not name then break end
-            if fn(MSC.SanitizeStat(spellId)) then return end
+            if fn(MSC.SanitizeStat(spellId), { name = name, spellId = spellId }) then return end
         end
     end
 end
