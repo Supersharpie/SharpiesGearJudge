@@ -83,20 +83,20 @@ Mage.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Mage.Talents = { 
-    ["ARCANE_POWER"]    = "Arcane Power",
-    ["PRESENCE_OF_MIND"]= "Presence of Mind",
-    ["COMBUSTION"]      = "Combustion",
-    ["BLAST_WAVE"]      = "Blast Wave",
-    ["PYROBLAST"]       = "Pyroblast",
-    ["ICE_BARRIER"]     = "Ice Barrier",
-    ["WINTERS_CHILL"]   = "Winter's Chill",
-    ["IMP_BLIZZARD"]    = "Improved Blizzard",
-    ["PERMAFROST"]      = "Permafrost",
-    ["ARCANE_MIND"]     = "Arcane Mind",
-    ["IGNITE"]          = "Ignite",
-    ["ICE_SHARDS"]      = "Ice Shards",
-    ["ELE_PRECISION"]   = "Elemental Precision",
-    ["ARCANE_FOCUS"]    = "Arcane Focus",
+    ["ARCANE_POWER"]    = MSC.L["Arcane Power"],
+    ["PRESENCE_OF_MIND"]= MSC.L["Presence of Mind"],
+    ["COMBUSTION"]      = MSC.L["Combustion"],
+    ["BLAST_WAVE"]      = MSC.L["Blast Wave"],
+    ["PYROBLAST"]       = MSC.L["Pyroblast"],
+    ["ICE_BARRIER"]     = MSC.L["Ice Barrier"],
+    ["WINTERS_CHILL"]   = MSC.L["Winter's Chill"],
+    ["IMP_BLIZZARD"]    = MSC.L["Improved Blizzard"],
+    ["PERMAFROST"]      = MSC.L["Permafrost"],
+    ["ARCANE_MIND"]     = MSC.L["Arcane Mind"],
+    ["IGNITE"]          = MSC.L["Ignite"],
+    ["ICE_SHARDS"]      = MSC.L["Ice Shards"],
+    ["ELE_PRECISION"]   = MSC.L["Elemental Precision"],
+    ["ARCANE_FOCUS"]    = MSC.L["Arcane Focus"],
 }
 
 -- =============================================================

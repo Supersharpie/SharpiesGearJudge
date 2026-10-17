@@ -332,16 +332,13 @@ end
 -- =============================================================
 -- 5.5 FOREVER WEAPON RACIALS
 -- =============================================================
--- Server-granted crit specializations native to WoW: Forever (confirmed via
--- wowforevertools.com/races). Crit is unified there (affects both melee and
--- spell), unlike Era/TBC's flat weapon-SKILL racials (Classes\ERA|TBC's
--- per-class GetWeaponBonus), so this is shared across every class rather than
--- reimplemented per profile.
-MSC.ForeverWeaponRacials = {
-    Human = { critPct = 2, subclasses = { [7] = true, [8] = true }, name = MSC.L["Sword Specialization"] },
-    Dwarf = { critPct = 1, subclasses = { [4] = true, [5] = true }, name = MSC.L["Mace Specialization"] },
-    Orc   = { critPct = 1, subclasses = { [0] = true, [1] = true }, name = MSC.L["Axe Specialization"] },
-}
+-- WoW: Forever's weapon racials (Human Sword, Dwarf Mace, Orc Axe Specialization: crit
+-- with that weapon type) were removed in the 2026-10-15 beta patch (client 1.60.1.70425).
+-- Their replacements don't depend on the weapon (Human Ruthless +2% crit, Orc Savage
+-- +1% crit, Dwarf Earth Fury +2% crit damage and healing), so no weapon scores higher
+-- for a race and the table is empty; the functions below then add nothing. Kept so a
+-- weapon racial can come back with one line: { critPct, subclasses = { [itemSubClassID] = true }, name }.
+MSC.ForeverWeaponRacials = {}
 
 -- Racial crit change from equipping itemLink in slotId (16 or 17), against the
 -- weapons worn now: returns racial name and +critPct (gained), -critPct (lost),

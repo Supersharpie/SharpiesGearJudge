@@ -88,17 +88,17 @@ Druid.PrettyNames = {
 -- ERA TALENTS (Vanilla 31-Point Tree)
 -- =============================================================
 Druid.Talents = { 
-    ["MOONKIN_FORM"]    = "Moonkin Form",
-    ["MOONGLOW"]        = "Moonglow",
-    ["NATURES_GRACE"]   = "Nature's Grace",
-    ["LEADER_OF_PACK"]  = "Leader of the Pack",
-    ["HEART_WILD"]      = "Heart of the Wild",
-    ["THICK_HIDE"]      = "Thick Hide",
-    ["FUROR"]           = "Furor",
-    ["SWIFTMEND"]       = "Swiftmend",
-    ["NATURES_SWIFT"]   = "Nature's Swiftness",
-    ["IMP_REGROWTH"]    = "Improved Regrowth",
-    ["REFLECTION"]      = "Reflection",
+    ["MOONKIN_FORM"]    = MSC.L["Moonkin Form"],
+    ["MOONGLOW"]        = MSC.L["Moonglow"],
+    ["NATURES_GRACE"]   = MSC.L["Nature's Grace"],
+    ["LEADER_OF_PACK"]  = MSC.L["Leader of the Pack"],
+    ["HEART_WILD"]      = MSC.L["Heart of the Wild"],
+    ["THICK_HIDE"]      = MSC.L["Thick Hide"],
+    ["FUROR"]           = MSC.L["Furor"],
+    ["SWIFTMEND"]       = MSC.L["Swiftmend"],
+    ["NATURES_SWIFT"]   = MSC.L["Nature's Swiftness"],
+    ["IMP_REGROWTH"]    = MSC.L["Improved Regrowth"],
+    ["REFLECTION"]      = MSC.L["Reflection"],
 }
 
 -- =============================================================

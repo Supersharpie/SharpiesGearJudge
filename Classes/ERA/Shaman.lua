@@ -79,20 +79,20 @@ Shaman.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Shaman.Talents = { 
-    ["ELEMENTAL_MASTERY"] = "Elemental Mastery",
-    ["STORMSTRIKE"]       = "Stormstrike",
-    ["MANA_TIDE"]         = "Mana Tide Totem",
-    ["NATURES_SWIFTNESS"] = "Nature's Swiftness",
-    ["LIGHTNING_MASTERY"] = "Lightning Mastery",
-    ["FLURRY"]            = "Flurry",
-    ["ENHANCING_TOTEMS"]  = "Enhancing Totems",
-    ["EYE_OF_STORM"]      = "Eye of the Storm",
-    ["ANCESTRAL_KNOW"]    = "Ancestral Knowledge",
-    ["NATURE_GUIDANCE"]   = "Nature's Guidance",
-    ["ELEMENTAL_FURY"]    = "Elemental Fury",
-    ["SHIELD_SPEC"]       = "Shield Specialization",
-    ["ANTICIPATION"]      = "Anticipation",
-    ["TIDAL_MASTERY"]     = "Tidal Mastery", -- Added missing key
+    ["ELEMENTAL_MASTERY"] = MSC.L["Elemental Mastery"],
+    ["STORMSTRIKE"]       = MSC.L["Stormstrike"],
+    ["MANA_TIDE"]         = MSC.L["Mana Tide Totem"],
+    ["NATURES_SWIFTNESS"] = MSC.L["Nature's Swiftness"],
+    ["LIGHTNING_MASTERY"] = MSC.L["Lightning Mastery"],
+    ["FLURRY"]            = MSC.L["Flurry"],
+    ["ENHANCING_TOTEMS"]  = MSC.L["Enhancing Totems"],
+    ["EYE_OF_STORM"]      = MSC.L["Eye of the Storm"],
+    ["ANCESTRAL_KNOW"]    = MSC.L["Ancestral Knowledge"],
+    ["NATURE_GUIDANCE"]   = MSC.L["Nature's Guidance"],
+    ["ELEMENTAL_FURY"]    = MSC.L["Elemental Fury"],
+    ["SHIELD_SPEC"]       = MSC.L["Shield Specialization"],
+    ["ANTICIPATION"]      = MSC.L["Anticipation"],
+    ["TIDAL_MASTERY"]     = MSC.L["Tidal Mastery"], -- Added missing key
 }
 
 -- =============================================================

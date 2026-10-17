@@ -1298,8 +1298,8 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
-            -- Forever weapon racial (e.g. Human Sword Specialization, +2% crit): the
-            -- score already counts it, so show it too when this swap gains or loses it.
+            -- Forever weapon racial: the score already counts it, so show it too when this
+            -- swap gains or loses it. None since the 2026-10-15 patch (MSC.ForeverWeaponRacials).
             local racialEntry
             if MSC.GetForeverRacialSwapChange then
                 local racialName, critChange = MSC.GetForeverRacialSwapChange(link, slotId)

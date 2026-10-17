@@ -13,9 +13,11 @@ Druid.Weights = {
     -- Cat: Raid (Balance 9 / Feral 35 / Restoration 7, no Furor) from the wowsims Forever simulator, Attack Power 1.5 like the
     -- other melee profiles. Agility (Attack Power and crit) edges Strength. Forever's Furor refunds no extra energy, so the
     -- cat no longer powershifts and Intellect, Spirit and Mp5 are worth almost nothing. Hit was measured below the cap
-    -- (5% gear + Nature's Reach already reach it); the hit cap logic below takes it down past that. Cat attacks ignore
-    -- weapon damage, so Weapon DPS has no weight.
-    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.05, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.06, ["ITEM_MOD_SPIRIT_SHORT"]=0.03, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.14, ["ITEM_MOD_HIT_RATING_SHORT"]=30.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.8 },
+    -- (5% gear + Nature's Reach already reach it); the hit cap logic below takes it down past that. Forms swing the
+    -- equipped weapon's DPS at the form's speed (devs on the Forever bug tracker, #208/#220), so Weapon DPS is worth
+    -- about 9.6 Attack Power per point: everything but Rip, Ferocious Bite and Rake, which scale off Attack Power only
+    -- (Rake +5% of attack power on its hit and each tick, from beta logs; re-run 2026-10-13 on the merged upstream sim).
+    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.98, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.03, ["ITEM_MOD_SPIRIT_SHORT"]=0.02, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.07, ["ITEM_MOD_HIT_RATING_SHORT"]=27.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=41.7, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.4 },
     -- Balance: Raid (Balance 33 / Feral 3 / Restoration 15) from the simulator, Spell Power 2.0. Starfire carries the damage,
     -- so Arcane damage takes most of the Spell Power value.
     ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.61, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.39, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.27, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.62, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.8 },
@@ -28,7 +30,8 @@ Druid.Weights = {
     -- 2026-10-10) from the simulator's tank mode, as the Warrior's Protection: Raid: threat 35% / damage taken 35% /
     -- effective health 30% (health counts Heart of the Wild's Stamina), Stamina 3.0. Armor is item armor (Dire Bear Form
     -- multiplies it by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
-    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.35, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.69, ["ITEM_MOD_DODGE_RATING_SHORT"]=30.5, ["ITEM_MOD_AGILITY_SHORT"]=3.49, ["ITEM_MOD_STRENGTH_SHORT"]=1.9, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_HIT_RATING_SHORT"]=15.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9 },
+    -- Weapon DPS is 14x Attack Power: Dire Bear swings the equipped weapon's DPS every 2.5 s.
+    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.35, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.69, ["ITEM_MOD_DODGE_RATING_SHORT"]=30.5, ["ITEM_MOD_AGILITY_SHORT"]=3.49, ["ITEM_MOD_STRENGTH_SHORT"]=1.9, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_HIT_RATING_SHORT"]=15.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.1 },
 
     -- Hybrid (not modelled): its healing stats moved to the Healing 20 scale (Healing 0.8 -> 20, x25), so the feral and
     -- defensive weights get the same x25 to keep the old balance: Strength 2.0 -> 50, Stamina 1.0 -> 25,
@@ -117,40 +120,40 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Druid.Talents = { 
-    ["MOONKIN_FORM"]    = "Moonkin Form",
-    ["MOONGLOW"]        = "Moonglow",
-    ["NATURES_GRACE"]   = "Nature's Grace",
-    ["LEADER_OF_PACK"]  = "Leader of the Pack",
-    ["HEART_WILD"]      = "Heart of the Wild",
-    ["THICK_HIDE"]      = "Thick Hide",
-    ["FUROR"]           = "Furor",
-    ["SWIFTMEND"]       = "Swiftmend",
-    ["NATURES_SWIFT"]   = "Nature's Swiftness",
-    ["IMP_REGROWTH"]    = "Improved Regrowth",
-    ["REFLECTION"]      = "Reflection",
-    ["WILD_GROWTH"]     = "Wild Growth",
-    ["LIVING_SPIRIT"]   = "Living Spirit",
-    ["NATURES_REACH"]   = "Nature's Reach",
-    ["VENGEANCE"]       = "Vengeance", -- Balance t4, 5 ranks, +20%/rank crit damage bonus on Arcane/Nature spells
-    ["MOONFURY"]        = "Moonfury", -- Balance t6, 5 ranks, +2%/rank Arcane/Nature spell damage
-    ["GENESIS"]         = "Genesis", -- New in Forever, Balance t1, 5 ranks, +1%/rank periodic damage AND healing
-    ["GIFT_OF_NATURE"]  = "Gift of Nature", -- Restoration t3, 5 ranks, +2%/rank universal healing (Same as Classic)
-    ["NATURAL_INSTINCT"] = "Natural Instinct", -- Feral t5, 2 ranks (Predatory Instincts until client 70291): +10%/rank melee crit damage bonus, spell healing +12.5%/rank of Intellect
-    ["SAVAGE_FURY"]     = "Savage Fury", -- Feral t3, 2 ranks, +5%/rank Claw/Rake/Shred/Maul/Swipe damage
-    ["NATURALIST"]      = "Naturalist", -- Restoration t2, 5 ranks, +1%/rank all damage dealt
-    ["NATURES_FOCUS"]   = "Nature's Focus", -- Restoration t1, 5 ranks, pushback protection on Nature/Arcane casts
-    ["SUBTLETY"]        = "Subtlety", -- Restoration t2, 3 ranks, Nature/Arcane threat reduction
-    ["GIFT_OF_EARTHMOTHER"] = "Gift of the Earthmother", -- New in Forever, Restoration t3, 1 rank
-    ["IMP_WRATH"]       = "Improved Wrath", -- Balance t1, 5 ranks
-    ["IMP_MOONFIRE"]    = "Improved Moonfire", -- Balance t2, 2 ranks
-    ["NATURAL_SHAPESHIFTER"] = "Natural Shapeshifter", -- Restoration t2, 3 ranks, -10%/rank shapeshift mana cost
-    ["SHIFTING_POWER"]  = "Shifting Power", -- Feral t4, 1 rank (2 Oct patch): 55% base mana -> 40 Energy, 16 s cd
-    ["IMP_SHIFTING_POWER"] = "Improved Shifting Power", -- Feral t5, 2 ranks: -4 s cooldown per rank
-    ["PREDATORY_STRIKES"] = "Predatory Strikes", -- Feral t4 (minLevel 25), 3 ranks, +0.5 x level AP per rank in Cat/Bear
-    ["SHARPENED_CLAWS"] = "Sharpened Claws", -- Feral t3, 2 ranks, +3% crit per rank in Cat/Bear
-    ["NATURES_MAJESTY"] = "Nature's Majesty", -- Balance t2, 2 ranks, +2% spell AND melee crit per rank
-    ["SHREDDING_ATTACKS"] = "Shredding Attacks", -- Feral t3 (2 Oct patch), 3 ranks, -6 Shred energy per rank
-    ["REND_AND_TEAR"]   = "Rend and Tear", -- Feral t6, 5 ranks, +2%/rank melee ability damage on bleeding targets
+    ["MOONKIN_FORM"]    = MSC.L["Moonkin Form"],
+    ["MOONGLOW"]        = MSC.L["Moonglow"],
+    ["NATURES_GRACE"]   = MSC.L["Nature's Grace"],
+    ["LEADER_OF_PACK"]  = MSC.L["Leader of the Pack"],
+    ["HEART_WILD"]      = MSC.L["Heart of the Wild"],
+    ["THICK_HIDE"]      = MSC.L["Thick Hide"],
+    ["FUROR"]           = MSC.L["Furor"],
+    ["SWIFTMEND"]       = MSC.L["Swiftmend"],
+    ["NATURES_SWIFT"]   = MSC.L["Nature's Swiftness"],
+    ["IMP_REGROWTH"]    = MSC.L["Improved Regrowth"],
+    ["REFLECTION"]      = MSC.L["Reflection"],
+    ["WILD_GROWTH"]     = MSC.L["Wild Growth"],
+    ["LIVING_SPIRIT"]   = MSC.L["Living Spirit"],
+    ["NATURES_REACH"]   = MSC.L["Nature's Reach"],
+    ["VENGEANCE"]       = MSC.L["Vengeance"], -- Balance t4, 5 ranks, +20%/rank crit damage bonus on Arcane/Nature spells
+    ["MOONFURY"]        = MSC.L["Moonfury"], -- Balance t6, 5 ranks, +2%/rank Arcane/Nature spell damage
+    ["GENESIS"]         = MSC.L["Genesis"], -- New in Forever, Balance t1, 5 ranks, +1%/rank periodic damage AND healing
+    ["GIFT_OF_NATURE"]  = MSC.L["Gift of Nature"], -- Restoration t3, 5 ranks, +2%/rank universal healing (Same as Classic)
+    ["NATURAL_INSTINCT"] = MSC.L["Natural Instinct"], -- Feral t5, 2 ranks (Predatory Instincts until client 70291): +10%/rank melee crit damage bonus, spell healing +12.5%/rank of Intellect
+    ["SAVAGE_FURY"]     = MSC.L["Savage Fury"], -- Feral t3, 2 ranks, +5%/rank Claw/Rake/Shred/Maul/Swipe damage
+    ["NATURALIST"]      = MSC.L["Naturalist"], -- Restoration t2, 5 ranks, +1%/rank all damage dealt
+    ["NATURES_FOCUS"]   = MSC.L["Nature's Focus"], -- Restoration t1, 5 ranks, pushback protection on Nature/Arcane casts
+    ["SUBTLETY"]        = MSC.L["Subtlety"], -- Restoration t2, 3 ranks, Nature/Arcane threat reduction
+    ["GIFT_OF_EARTHMOTHER"] = MSC.L["Gift of the Earthmother"], -- New in Forever, Restoration t3, 1 rank
+    ["IMP_WRATH"]       = MSC.L["Improved Wrath"], -- Balance t1, 5 ranks
+    ["IMP_MOONFIRE"]    = MSC.L["Improved Moonfire"], -- Balance t2, 2 ranks
+    ["NATURAL_SHAPESHIFTER"] = MSC.L["Natural Shapeshifter"], -- Restoration t2, 3 ranks, -10%/rank shapeshift mana cost
+    ["SHIFTING_POWER"]  = MSC.L["Shifting Power"], -- Feral t4, 1 rank (2 Oct patch): 55% base mana -> 40 Energy, 16 s cd
+    ["IMP_SHIFTING_POWER"] = MSC.L["Improved Shifting Power"], -- Feral t5, 2 ranks: -4 s cooldown per rank
+    ["PREDATORY_STRIKES"] = MSC.L["Predatory Strikes"], -- Feral t4 (minLevel 25), 3 ranks, +0.5 x level AP per rank in Cat/Bear
+    ["SHARPENED_CLAWS"] = MSC.L["Sharpened Claws"], -- Feral t3, 2 ranks, +3% crit per rank in Cat/Bear
+    ["NATURES_MAJESTY"] = MSC.L["Nature's Majesty"], -- Balance t2, 2 ranks, +2% spell AND melee crit per rank
+    ["SHREDDING_ATTACKS"] = MSC.L["Shredding Attacks"], -- Feral t3 (2 Oct patch), 3 ranks, -6 Shred energy per rank
+    ["REND_AND_TEAR"]   = MSC.L["Rend and Tear"], -- Feral t6, 5 ranks, +2%/rank melee ability damage on bleeding targets
 }
 
 -- Leveling role marker talents (see MSC:GetLowLevelRole). Furor is
@@ -285,9 +288,10 @@ function Druid:ApplyScalers(weights, currentSpec)
     local Keys = MSC.ScaleForeverKeys
     local touched = {}
     local function Touch(list) for _, k in ipairs(list) do touched[k] = true end end
-    -- Melee offense keys a Cat/Bear damage talent scales together.
+    -- Melee offense keys a Cat/Bear damage talent scales together. Forms
+    -- swing the equipped weapon's DPS, so weapon DPS is offense too.
     local FERAL_OFFENSE = { "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT",
-        "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT" }
+        "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT", "MSC_WEAPON_DPS_MELEE" }
     local BEAR_STRIKES_KEYS = { "ITEM_MOD_CRIT_RATING_SHORT", "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_STAMINA_SHORT",
         "ITEM_MOD_HEALTH_SHORT", "ITEM_MOD_ARMOR_SHORT", "ITEM_MOD_DODGE_RATING_SHORT",
         "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" }
@@ -456,9 +460,9 @@ function Druid:ApplyScalers(weights, currentSpec)
             weights["ITEM_MOD_AGILITY_SHORT"] = agi + math.max(agi - critShare, 0) * (m - 1)
         end
         Keys(weights, { "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT",
-            "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_HIT_RATING_SHORT" }, m)
+            "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_HIT_RATING_SHORT", "MSC_WEAPON_DPS_MELEE" }, m)
         Touch({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_FERAL_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT",
-            "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT" })
+            "ITEM_MOD_HIT_RATING_SHORT", "ITEM_MOD_AGILITY_SHORT", "MSC_WEAPON_DPS_MELEE" })
     end
 
     -- Shredding Attacks (Feral t3, 3 ranks, -6 Shred energy per rank: 60 to 42

@@ -1,5 +1,152 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.4
+
+### ⚔️ Weapon Racials Removed (WoW Forever)
+- **The 2026-10-15 beta patch removed Forever's weapon racials**, so Gear Judge no longer scores them. Human Sword Specialization, Orc Axe Specialization and Dwarf Mace Specialization gave extra crit with that weapon type, which made swords, axes and maces score higher for those races. Their replacements don't depend on your weapon: Human Ruthless (+2% crit), Orc Savage (+1% crit) and Dwarf Earth Fury (+2% critical damage and healing). Weapons now score the same for every race, and weapon swaps no longer list a racial under Gains or Losses.
+
+### 🌍 Fixed: Talent-Based Weights in Other Languages (WoW Forever and Classic Era)
+- **Talent adjustments now work on non-English clients.** Gear Judge reads your talents to adjust the weights (for example Ice Shards raising Crit, Natural Instinct, Summon Hawk, Bloodthirst) and to pick your leveling profile. On Forever and Classic Era it compared the English talent names with the names your game reports, so in German, Spanish, French, Portuguese, Russian, Korean and Chinese none of those adjustments applied. Talent names now use the game's own name in every language (Burning Crusade already did).
+- Natural Instinct and Shifting Power are still in English in every language of the current Forever client, so Gear Judge uses the English names for them too.
+
+### 🐾 Feral Druids Value Weapon DPS (WoW Forever)
+- **Weapon DPS now counts in Cat and Bear Form.** The Forever developers confirmed on the bug tracker that forms swing your equipped weapon's DPS at the form's speed (1.0 s Cat, 2.5 s Bear), and Claw, Shred, Maul and Primal Bite use that damage too. The addon still treated the weapon as a stat stick, so a 40 DPS staff and a 20 DPS staff scored the same.
+	- **Leveling (Cat, from 20) and Cat: Dungeon Leveling**: each point of main-hand Weapon DPS is worth about 9 Attack Power from the mid-20s (12 at 20), since Rip, Ferocious Bite and Rake scale off Attack Power only.
+	- **Bear (10-19 and Bear leveling)**: worth 14 Attack Power, since every Bear attack swings the weapon.
+	- **Cat: Raid**: Weapon DPS 14.4 (about 9.6 Attack Power), re-simulated. **Bear: Raid**: 12.1 (14 Attack Power).
+	- Weapon speed still doesn't matter: the form sets the swing speed. Feral damage talents (Savage Fury, Naturalist, the crit chance talents and so on) now scale Weapon DPS along with Attack Power.
+- **Rake now gains from Attack Power** (5% on its hit and each tick, measured from beta combat logs), and the Cat rotation keeps it up. Cat: Raid deals about 7% more damage in the simulator; Crit counts 5% less and Hit 10% less against Attack Power, and Intellect and Mp5 drop to almost nothing. Cat: Dungeon Leveling's Crit and Hit count 4-6% more from the 30s (Rake matters more in group fights).
+
+### 📈 Leveling Weights Checked Against the Current Models (WoW Forever)
+- Every leveling curve built from the early study data was compared with the current models, as updated for the **2026-10-15 beta patch** and on the current Talents builds. Most hold up; these were rebuilt, each from a builder in Gear Judge's model tools so the next patch can redo it (compared with 3.2.3):
+	- **Feral Cat leveling (from 25)**: with Rake now scaling with Attack Power, Crit and Hit count about 11% less at 25 and 25-30% less from 30, and Agility up to 12% less. Cat: Dungeon Leveling follows.
+	- **Frost Mage leveling (from 15)**: Crit was undervalued at every level, and the curve is rebuilt on the 2026-10-15 patch Mage model (Ice Lance x3 on frozen targets, Winter's Chill powering Cone of Cold). Crit counts about 21% more at 15, 1.6 times as much at 20-30, 1.35-1.5 times at 33-35, 16% more at 40 and 1.55-1.95 times from 45. Nothing else changes. Frost: Dungeon Leveling is in Frost Mage Dungeon Weights Checked Against the Logs below.
+	- **Dual-wield Warrior leveling**: main-hand Weapon DPS counts about 10% more at 20-39 (off-hand alike) and Crit 6-16% more. From 40 the rows assume Bloodthirst, which now deals 45% of Attack Power, so Weapon DPS counts about 20% less with it; without Bloodthirst, Weapon DPS keeps its pre-40 value instead of dropping.
+	- **Enhancement Shaman leveling (from 10)**: Crit was undervalued, and Flurry's effect on it was understated. Crit now counts 7-13% more at 10-25 and about 20% more from 30. Agility follows the melee half of that (Agility gives no spell crit): 6-10% less before 25, 10-13% more from 30. Without Flurry the gain is the smaller 10-12%. Enhancement: Dungeon Leveling follows.
+	- **Retribution Paladin leveling (11-19)**: Crit counts 10% more, the same correction levels 20-29 already had.
+	- **Hunter leveling (from 10)**: rebuilt on the corrected Hunter model (see Hunter Shots Checked Against the Logs below). Compared with 3.2.3, Crit and Hit count about the same up to 20; from 25 Crit counts 11-17% less and Hit 5-10% less. With **Summon Hawk**, whose hawks hit for flat damage that ignores your crit and hit, Crit and Hit count about 18% less again from 30 and 23% less from 45 (not at 25, where Arcane Shot still beats the hawk). Beast Mastery: Dungeon Leveling follows.
+	- **Fire Mage leveling (from 20)**: Crit counts about 24% less at 20, 12-15% less at 25-30 and 23-27% more from 40 (frozen Ice Lance crits); Intellect up to 17% less and Mp5 15-49% less (Pyroblast kills are short, so Mp5 has little time to tick). The Mage model's kill time and Fire Blast count no longer jump around.
+	- **Protection Paladin solo leveling**: Spell Power and Holy damage count 2-3 times as much at 15-45 (3.2 at 15, 3.9-4.6 at 20-35, 5.6-6.2 at 40-45, against Attack Power 1) and 9-80% more at 50-59, where the old weights already rose toward the level-60 simulation. Stamina and the survival stats are unchanged.
+	- **Shadow Priest leveling**: the beta combat logs show that **damage over time crits in Forever** (Shadow Word: Pain ticks 5.6%, Mind Flay 6.4%, Starshards 7.2%; Devouring Plague about 2%), and the Priest model now crits them. Solo, Shadow Word: Pain, Starshards and Mind Blast finish most mobs, so the **wand counts far less** (9-15 at 15-25, about 0 from 30, was 51-58). Crit counts 6-33% more (13% less at 20), Hit 14-26% less up to 25 and 10-13% less from 50, **Intellect 75-83% less** (drinks restore a flat amount, so Intellect only adds crit), Shadow damage about 30% more from 40, and Arcane (Starshards) 26-46% more up to 30 and nothing from 40 (Shadowform drops Starshards). Shadow: Dungeon Leveling follows. The Shadow Focus hit adjustment is retuned to match.
+	- **Discipline and Holy Priest solo leveling (Smite weights)**: a Talents plugin build that picks these weights now gets them (Gear Judge used the Shadow weights instead). In the model these builds kill with Shadow Word: Pain, Devouring Plague, Mind Blast, Starshards and the wand, not Smite, so Holy damage now counts 0, Shadow and Arcane damage 2-3.5 times as much, Crit 33-116% more, Hit 14-55% more, Spirit 1.8-3.7 times as much and Mp5 26-84% more, the wand up to 31% less and Intellect 75-87% less.
+	- **Priest healer leveling** (Holy and Discipline raid and PvP builds): Intellect counts 66-92% less (flat drinks), the wand and Hit count less, Crit up to 39% more at 15-40 and 15% less at 59.
+	- **Elemental Shaman leveling**: Intellect counts 19-39% less at 15-30 (unchanged within about 5% from 40), and Fire damage 22-49% more at 20-30 (Nature damage 5-9% less).
+	- **Restoration Shaman healer leveling**: Intellect counts 75-94% less (flat drinks), Crit 17% more at 30 and 45-51% more from 40.
+	- **Balance Druid leveling**: Crit counts 13-17% less at every level (22% at 20).
+	- **Restoration Druid leveling**: Intellect counts about 90% less (flat drinks, as on the Druid dungeon healer weights) and Crit 24-36% less.
+	- **Survival Hunter**: a new **Survival: Melee Dungeon Leveling** profile for Survival: Dungeon Leveling: Crit counts up to 26% and Hit up to 37% more than solo at 15-45 (less from 50), Agility 3-12% less, and Dodge, Stamina and Armor 60% less (the tank takes the hits). Solo melee Crit and Hit count 9-17% less from 40.
+	- **Affliction Warlock leveling**: Shadow Mastery is now 2% a rank (the patch doubled it). Crit counts 5-30% less from 35 (about 9% more at 50) and Hit 4-19% less from 40 (5% more at 35). Affliction: Dungeon Leveling moves by under 1%.
+- Talent adjustments brought up to date with the patch:
+	- **Champion of the Light** adds 10% of Intellect a rank to spell damage (was counted at 20%), so Intellect counts less for Retribution Paladins with it.
+	- **Mental Strength** (Priest) adds 2% Intellect a rank (was counted at 3%). **Shadow Mastery** (Warlock) is 2% a rank (was 1%). **Fire Power** (Mage) is 3 ranks.
+	- **Mutilate**: off-hand Weapon DPS counts 1.2x and main-hand 0.85x of the dagger leveling weights (was 1.5x and 1.05x).
+	- **Mana Tide Totem** ranks 2 and 3 arrive at 38 and 48: Restoration Shaman dungeon healer weights move by under 1%.
+- Fixed: **Shaman tanks at 10-24** had their weights adjusted for a missing Stormstrike that the 10-24 weights never include, which cut Intellect to under half and Spirit by 30%. Below 25 that no longer happens.
+- Not rebuilt, for want of a good enough model: Frost AoE Mage, Shaman tank and Demonology and Destruction Warlock leveling.
+
+### ❄️ Mage and Shaman Raid Profiles Refreshed (WoW Forever)
+- **Frost: Raid**: Fingers of Frost now procs when Frostbolt finishes casting rather than when it lands, worth about 1% more damage; Hit counts 2% more.
+- **Elemental: Raid**: re-run on the updated simulator; Mp5 counts 4% more.
+
+### 🌑 Shadow Priest: Raid Re-Simulated (WoW Forever)
+- **Twin Disciplines now boosts Mind Flay and Shadow Word: Death**, and Shadow Word: Death crits for the Shadowform bonus. The developers fixed both on the bug tracker; the simulator had followed the old spell lists. Shadow deals about 3% more damage in the simulator.
+	- **Crit** is worth about 7% more (20.7 per 1%), **Hit** about 4% more (17.2) and **Intellect** a little more; Mp5 gets a small weight (0.06). Part of the Hit and Intellect change is the simulator's earlier updates, which this re-run picks up.
+	- The talent builds don't change: Shadowform needs all 30 points in Shadow first, so Twin Disciplines still comes right after it at 41.
+
+### 🌊 Restoration Shaman: Healing Stream Totem (WoW Forever)
+- **Restoration: Dungeon Leveling** now counts Healing Stream Totem on the tank from 20 to 25, before Mana Spring Totem is learned (Restorative Totems now boosts its bonus healing too, per the bug tracker). From 26 Mana Spring Totem stays the water totem, which the model rates a little higher. The weight changes are in the Shaman totals under Dungeon Healer Weights Rebuilt.
+- **Restoration: Raid** is unchanged: Mana Spring Totem also restores your party's mana, and using Healing Stream instead would move the weights by less than 4%.
+
+### 😡 Warrior Unbridled Wrath (WoW Forever)
+- **Unbridled Wrath** now gives 1 rage on a landed white hit with any weapon, and never from Heroic Strike, Cleave or other abilities, matching the game. The leveling model had it on every ability hit and at 2 rage with a two-hander, so it was worth more than twice its real value.
+	- **Arms: Dungeon Leveling**: Crit and Hit count 1-3% more from 50 (rage is a little tighter, so each landed hit matters more). Protection: Dungeon Leveling moves by less than 1%.
+	- **Two-handed leveling with Mortal Strike**: weapon speed gets half the boost from Unbridled Wrath it did.
+	- The level-60 profiles already used the correct rule and don't change.
+
+### 🧪 Rogue Poisons Scale With Attack Power (WoW Forever)
+- **Poisons now gain from Attack Power** in the Rogue models: 0.5% of your Attack Power on each Instant Poison hit and 0.45% on each Deadly Poison tick, the ratios the developers gave on the bug tracker. The simulator had them as flat damage.
+	- **Combat: Raid, Combat: Raid (Daggers) and Assassination: Raid** were re-simulated. Attack Power is now worth a little more next to everything else, so Crit, Hit, Agility and weapon DPS sit 2-5% lower against it. Rogue damage is 1-2% higher overall.
+	- Leveling barely changes (under 0.5%): at leveling Attack Power the poisons' scaling part is small.
+
+### 🏰 Dungeon Tanks: Avoidance Counts Far Less (WoW Forever)
+- The dungeon tank weights valued Dodge, Parry, Block, Defense and Armor by the drinking time they save the healer. Combat logs from 63 public beta dungeon runs (Forever Logs, Ragefire Chasm to Scarlet Monastery) show that time is small: healers drink while the group loots and moves on, and each 1,000 healing a pull takes adds only about half a second before the next pull. Trash also hits the tank less than the models had (healers heal about two-thirds as much per second on trash as on bosses). The tank models now use both.
+	- **Protection Warrior: Dungeon Leveling** also gets the logs' ability use and a bug fix. The model counted your white damage and threat 2.5 times over, and spent its rage on Sunder Armor and a Thunder Clap every 6 seconds; logged tanks Thunder Clap about every 13 seconds and put the rest into Cleave on packs and Heroic Strike on bosses. Logged shield tanks also deal about three times the model's ability damage per swing (bigger pulls, party Thorns and Retribution Aura), so that is matched too. Compared with 3.2.3: **Hit counts 2.2-2.4 times as much** up to 30 (3.4-4 times from 40, where the logs can't check it yet), Crit 25-40% more up to 35 and 2.2-3 times as much from 40, Dodge, Parry and Defense 60-85% less up to 35, Block 50-70% less up to 35, and Block Value and Armor almost nothing up to 35. Agility counts 30-40% less up to 35. Stamina is unchanged, so for leveling speed a tank's Hit, Stamina and threat come first.
+	- **Protection Paladin: Dungeon Leveling** also gets four corrections from the logs and the Redoubt tooltip: **Redoubt** is a 10% chance per hit for +20% block that ends after 10 seconds or 5 blocks (the model had it up almost all the time); a shield blocks about **15 damage at 20-26 and 22 at 30** (the model had 22-36); **Retribution Aura** deals about a tenth of a Paladin tank's damage and threat (it wasn't modelled); and tanks use **Consecration on bosses** too. Since the **2026-10-15 beta patch**, Shield Specialization gives 6% of your maximum mana back on blocks, and the model tank sits right at the edge of running out of mana through its 30s and 40s, so whatever adds mana or blocks saves a rest between pulls. Compared with 3.2.3: **Intellect counts 4-15 times as much and Mp5 6-19 times as much** from 15, **Block Rating** almost nothing up to 20, then 3-4 times as much at 25-30, 1.2-2 times at 35-45 and about 20% less from 50, and **Hit** 1.3-2.1 times as much up to 45 (23% less from 50). Spell Power and Holy damage count 21-45% less (the patch cut Consecration's spell power share), Strength up to 30% less from 45, Agility 57-95% less up to 35 and nothing from 40, and Dodge, Parry, Defense, Armor and Block Value almost nothing (each hit you dodge or parry is one block less). The beta logs don't show post-patch Paladin tank mana yet, so this part is the model's view.
+	- These are leveling-speed weights for average groups. When survival matters more than speed (a weak healer, heavy pulls), wear your avoidance gear anyway.
+
+### 🛡️ Dungeon Curves Rebuilt on the Current Warrior Tree (WoW Forever)
+- The models behind the dungeon curves still used Warrior talents the October patch removed (Toughness, Boundless Rage). They now use the Talents plugin's current builds, and off-hand hit comes from Furious Precision instead of Dual Wield Specialization.
+	- **Protection: Dungeon Leveling** is rebuilt on these talents together with the avoidance change above. The healer dungeon curves heal this tank too; see the next section.
+	- **Arms: Dungeon Leveling**: in a group the rest of the party kills most mobs through their last 20%, so you land far fewer Executes than when soloing (the beta logs show about one per 22 swings; the model gave you one per mob, 17% of your damage). The rage goes into Cleave instead, as in the logs. Together with the dungeon gear below, Hit, Crit and Agility count 9-35% more than in 3.2.3.
+
+### 💧 Dungeon Healer Weights Rebuilt (WoW Forever)
+- **Druid, Priest, Shaman and Paladin: Dungeon Leveling** rest on a rebuilt healing model, checked against 63 public beta dungeon runs on Forever Logs (Ragefire Chasm to Scarlet Monastery, about 3,800 pulls).
+	- **Downranking costs bonus healing.** Forever cuts the +Healing bonus on low spell ranks, by 5% for each level you are more than 17 levels above the level the rank is learned at (the rate players measured). The developers' October 1 notes say the same cut applies to damage and procs. The models gave every rank the full bonus, so they downranked for free.
+	- **Drinks restore a flat amount**, so a bigger mana pool doesn't drink back faster. And healers drink while the group loots and moves on: in the logs the time between pulls (12 seconds typically) barely depends on how much healing the last pull took. The models made the group wait for every drink.
+	- **Trash hits the tank less than the models had.** In the logs, healers heal about two-thirds as much per second on trash as on bosses; the models had every mob in a pack on the tank for the whole fight, twice the boss rate. Boss damage already matched the logs to within about 10%.
+	- **Heal-over-time spells don't stack.** One Rejuvenation, one Regrowth and one Renew can be on the tank at a time. The Druid model let them be cast back to back as if each added more healing.
+	- **Druid healers checked spell by spell.** Logged Druids overheal little with Healing Touch (3%, the model had 25%), carry more +Healing than the model's leveling gear (about +30 at 20 and +140 at 29), and use the most mana-efficient rank of Rejuvenation and Regrowth. They keep one Rejuvenation on the tank the whole pull, recasting it as it falls off (16-20 ticks a minute, the most one can tick), while Regrowth is up about 40% of the time. The model now does all of this: Rejuvenation is kept up first, and the rest of your casts and mana go to Regrowth and Healing Touch.
+	- **Priest healers checked spell by spell.** Logged Priests overheal little (Heal 2-6%, Flash Heal under 3%, Renew 5-12%; the model had 25%, 10% and 15%) and carry about a third more +Healing than the model's leveling gear. They also keep one Renew on the tank the whole pull at a high rank, recasting it as it falls off (16-20 ticks a minute), for about a third of their healing. The model only cast Renew when it beat Forever's stronger Lesser Heal on healing per mana, which it never did. Now Renew stays up and the rest of your casts and mana go to the other heals. Renew takes the full +Healing bonus on every tick, so +Healing counts for more next to Crit, Spirit and Mp5.
+	- **Shaman healers** overheal little too: Healing Wave 8% and Lesser Healing Wave 3-7% in the logs (the model had 25% and 10%). Healing Stream Totem already matched (half or more of its ticks land on players at full health).
+	- Since waiting on the healer is rare, the weights now measure **how much healing you can put out per pull** with the mana you have for it: your regeneration and drinking between trash pulls, and your full pool for bosses (groups top up before a boss). Mana and throughput stats are priced on one scale, so whichever limits you counts.
+- Bosses are also shorter and rarer than the models had (see the next section), which lowers Intellect further: your full mana pool only counts on bosses.
+- What that does to the weights (compared with 3.2.3). In short, **Crit counts more** (2-3 times as much from the mid-40s) and **Intellect much less**: with flat drinks and shorter, mostly trash pulls, a big mana pool rarely runs dry. Spirit and Mp5 count less early and more from about 40.
+	- **Priest**: Crit counts about the same up to 20, 20% more at 25 and 1.4-2.3 times as much from 30. Mp5 counts 1.3-1.5 times as much up to 20, 11-31% more at 25-40 and 1.5-1.6 times as much from 45; Spirit within about 15% up to 40 and 12-20% more from 45. Intellect counts 70-91% less, and the damage stats (wand, Shadow damage, Spell Power for damage) count less.
+	- **Shaman**: Crit counts within about 11% up to 20, 19-57% more at 25-35 and 1.8-2.8 times as much from 40. Mp5 counts 1.3-1.5 times as much up to 25, about 1.6 times at 30-40 and 2-2.45 times from 45; Spirit within about 11% up to 25, about 1.25 times as much at 30-40 and 1.5-1.9 times from 45. Intellect counts 80-86% less up to 30, 37-67% less at 35-40 and about the same from 45.
+	- **Paladin**: Crit counts 2.2-3.5 times as much at 10-15, 9-25% more at 20-30 and 1.6-2.4 times as much from 35. Intellect counts almost nothing (under 0.3 per 2 Healing); Spirit 19-62% less (about the same at 30-35). Mp5 counts 30-52% less at 15-25, 12-27% more at 30-40 and 14-35% less from 50.
+	- **Druid**: the biggest change. Crit counts 22-92% more up to 30, about 3 times as much at 35 and many times as much from 40. Intellect counts far less up to 35 and 40-80% less from 40. Spirit counts 52-58% less up to 30 and 1.4-2.3 times as much from 40; Mp5 40-44% less up to 30, about the same at 35 and 1.8-3 times as much from 40.
+
+### ⏱️ Dungeon Bosses: Shorter and Rarer (WoW Forever)
+- The same beta logs time every pull. Trash matches the models (3 enemies at the median, about half a minute), but bosses take 15% of pulls and of fight time, not the 30% the dungeon weights assumed, and they last about 30-35 seconds, not 60.
+	- **Retribution: Dungeon Leveling** changes too; see the next section.
+	- The dungeon damage curves (Cat, Beast Mastery, Daggers, Enhancement, Affliction, Arms, Frost) move by 6% or less from this; their sections give the totals.
+	- The healer and tank dungeon curves above include this.
+
+### ⚔️ Retribution Dungeon Weights Checked Against the Logs (WoW Forever)
+- The beta logs break each Paladin's damage down by ability (25 Retribution Paladins on bosses, 23 on trash). The model behind **Retribution: Dungeon Leveling** got three things wrong:
+	- **Consecration ran nonstop.** The model let you spend your whole mana pool on every pull, so Consecration was a third of your damage on trash. In the logs it's 10%: about one cast per 22 seconds of melee on trash and one per 15 on bosses.
+	- **Seal of Command procs less often**: on about a quarter of your landed swings, about 4.7 times a minute with a two-hander, not the 7 assumed.
+	- **Judgement of the Crusader** was assumed on every target. Now it's used where it pays: on bosses it's worth about a fifth more damage, so the weights assume you keep it up there (the logged players mostly don't, and leave that damage behind). On trash each mob dies in about 10 seconds, and re-applying it to every mob (Seal of the Crusader, judge, back to Seal of Command) roughly cancels out its bonus, so it's left off.
+	- The **2026-10-15 beta patch** also more than halved Consecration's spell power share and made Champion of the Light 10% a rank (see the talent adjustments above).
+	- Compared with 3.2.3 (including the dungeon gear below): **Spell Power** counts 18% less at 19, 40-48% less at 20-45 and 30-39% less from 50; **Hit**, **Crit** and **Agility** 6-16% more below 20 and 8-17% less from 30; **Intellect** up to 62% less and **Mp5** about 42% less at 20-25. White swings carry about half your damage, as in the logs, so Attack Power and weapon damage count for more next to the rest.
+
+### 🎒 Dungeon Gear From the Logs (WoW Forever)
+- Forever Logs also records every player's gear. Across 526 characters in the beta dungeon runs, damage dealers carry better weapons and more Attack Power than the weights assumed for leveling gear: two-handers about 30% more DPS at 20-30, Warriors and Hunters about 30% more Attack Power, Rogues about 25%. Shamans and Paladins are close to the old assumption, and casters' wands, Spell Power and Healing already matched.
+	- Gear is measured at 20, 25 and 30. Around 25 it is no better than at 20 for any class (past the Wailing Caverns and Deadmines blues, before Scarlet Monastery), so the weights don't assume a steady climb from 20 to 30.
+	- The **dungeon** damage weights now use that gear (solo leveling keeps questing gear). Better weapons make each crit and hit worth more next to Attack Power. Compared with 3.2.3: **Daggers** Hit and Crit count 12-22% more and Agility 5-9% more. Arms', Retribution's, Beast Mastery's and Enhancement's figures are in their own sections.
+	- With that gear the model's group kills mobs as fast as the logged groups (about 35 seconds a pull) without any other adjustment, which backs the numbers up. The tank weights barely move.
+	- The logs stop at level 30, so past 30 the level-30 gear gap is carried forward until there are launch logs to check it.
+
+### 🏹 Hunter Shots Checked Against the Logs (WoW Forever)
+- The beta logs break down each Hunter's damage on bosses: Auto Shot about 36-40%, the pet 20-30%, Arcane Shot 10-12%, Aimed Shot and Multi-Shot 6-9% each, Serpent Sting 6-8%. The leveling model behind the Hunter weights had four things wrong:
+	- **Arcane Shot and Serpent Sting scale with ranged Attack Power** (about 11% of it per Arcane Shot and 3.5% per Serpent Sting tick, measured in the logs; the game files list no scaling). The model used their flat damage, so its Arcane Shot hit for half of what players' do.
+	- **Aimed Shot and Multi-Shot share one 6-second cooldown.** The model gave them separate ones.
+	- **The hawks from Summon Hawk** hit for about a third of the dive bomb every 2.5 seconds and almost never crit (logged). The model had them hitting for the full dive bomb.
+	- **Mana in dungeons**: drinks restore a flat amount between pulls, as in the healer models, so a bigger mana pool only pays on bosses. The model refilled 60% of your pool every pull.
+	- **Multi-Shot on trash hits about 1.2 mobs, not 3.** It can chain to 3 targets, but across 2,070 logged casts on dungeon trash it hit 1.19 mobs on average, the same as on bosses: pack mobs rarely stand close enough to your target, and it isn't worth risking a nearby pack. The model fired it at every pack as if it always hit three.
+- With these, the shot mix matches the logs on trash and on bosses. Since Arcane Shot and Serpent Sting now grow with Attack Power, Crit and Hit count less next to it. **Beast Mastery: Dungeon Leveling** compared with 3.2.3 (including the dungeon gear above): Crit 9-17% and Hit 14-19% more up to 25, Crit 17-24% and Hit 27-35% more from 30. Solo leveling is in Leveling Weights Checked Against the Current Models above.
+- Summon Hawk still pays from 30 (about 1.6% faster leveling in the model), so the Talents builds are unchanged.
+
+### ⚡ Enhancement Shaman Dungeon Weights Checked Against the Logs (WoW Forever)
+- In the beta logs Enhancement Shamans' dungeon damage is about 45% white swings, then Stormstrike, Windfury Weapon and Fire Nova (8-14% each), shocks, Flametongue and Searing Totem. The model behind **Enhancement: Dungeon Leveling** got these wrong:
+	- **Windfury Weapon from 30.** The model kept Rockbiter at every level. Windfury (2 extra swings on 20% of hits, plus 13% a rank from Elemental Weapons) does more from 30, and logged level-30 Shamans use it.
+	- **Fire Nova**: Forever's Fire Nova goes off around you and hits the whole pack (3.1 mobs per cast in the logs). Players cast it about once every 40 seconds, holding it rather than pulling loose mobs, so the model does the same.
+	- **Searing Totem** and a **mana budget** were missing: spells cost nothing in the old dungeon model. Mana now comes from flat drinks between pulls and a full bar on bosses, spent on the spells with the most damage per mana.
+	- **Stormstrike costs a flat 125 mana on an 8-second cooldown** in Forever. The model had 6% of base mana every 10 seconds. This also moves the solo curve a little (Crit and Agility 1-3% less from 25).
+- Spells now take a real share of the damage and use the same hit chance as your swings, so **Hit** counts more. The 2026-10-15 patch's cheaper Stormstrike and weaker Fire Nova are in too. Compared with 3.2.3 (including the dungeon gear above): Hit counts 1.2-1.4 times as much, Crit 7-38% more (the most at 10-25), Agility 6-10% less below 25 and 10-13% more from 30.
+
+### 💀 Affliction Warlock Dungeon Weights Checked Against the Logs (WoW Forever)
+- In the beta logs dungeon Warlocks do most of their damage with Corruption and Curse of Agony on every mob. Between DoTs they mostly use the wand: on trash about 90% of that time, on bosses about half (the rest Shadow Bolt). The model behind **Affliction: Dungeon Leveling** filled every gap with Shadow Bolt.
+	- With the logged mix, Shadow Bolt's Spell Power counts for less next to your DoTs' crits. Compared with 3.2.3: **Crit** counts 5-14% more from 25; the rest is unchanged.
+	- Many logged Warlocks also channel Hellfire on packs, mostly Destruction "Hellfire" builds (Hellfire 80-90% of their damage at over 50% crit). That build isn't modelled yet.
+
+### ❄️ Frost Mage Dungeon Weights Checked Against the Logs (WoW Forever)
+- In the beta logs Mages do 40-55% of their dungeon damage with area spells: Arcane Explosion, Flamestrike, Blizzard and Cone of Cold. The model behind **Frost: Dungeon Leveling** had three things wrong:
+	- **Mana**: it gave you half your mana bar every pull, so bigger pools meant more spells everywhere, and you ran short on bosses. Drinks restore a flat amount between pulls (as in the healer and Hunter models), and you start a boss with a full bar.
+	- **Arcane Explosion reaches the whole pack**: 3.2 hits per cast on logged dungeon trash, not the 70% of the pack the model assumed.
+	- **Flamestrike** was missing. It's now an option on packs (every 8 seconds with Arcane Explosion in between), though with the mana you have between pulls Blizzard still does the most damage.
+- Blizzard's ticks gain little from Spell Power, so on packs Crit counts for much more next to it. Compared with 3.2.3 (including the solo Frost rebuild above): **Crit** counts about 1.3 times as much at 15, 1.8-2.3 times at 20-35, 1.4 times at 40 and 1.6-2.4 times from 45. Intellect, Spirit and Mp5 are unchanged (they follow the solo curve).
+
 ## 🚀 v3.2.3
 
 ### ⚖️ Leftover Profiles Fixed (WoW Forever)

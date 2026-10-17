@@ -77,18 +77,18 @@ Paladin.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Paladin.Talents = {
-    ["HOLY_SHOCK"]      = "Holy Shock",
-    ["ILLUMINATION"]    = "Illumination",
-    ["HOLY_SHIELD"]     = "Holy Shield",
-    ["RECKONING"]       = "Reckoning",
-    ["KINGS"]           = "Blessing of Kings",
-    ["REPENTANCE"]      = "Repentance",
-    ["VENGEANCE"]       = "Vengeance",
-    ["IMP_MIGHT"]       = "Improved Blessing of Might",
-    ["DIVINE_STR"]      = "Divine Strength",
-    ["DIVINE_INT"]      = "Divine Intellect",
-    ["PRECISION"]       = "Precision",
-    ["REDOUBT"]         = "Redoubt", 
+    ["HOLY_SHOCK"]      = MSC.L["Holy Shock"],
+    ["ILLUMINATION"]    = MSC.L["Illumination"],
+    ["HOLY_SHIELD"]     = MSC.L["Holy Shield"],
+    ["RECKONING"]       = MSC.L["Reckoning"],
+    ["KINGS"]           = MSC.L["Blessing of Kings"],
+    ["REPENTANCE"]      = MSC.L["Repentance"],
+    ["VENGEANCE"]       = MSC.L["Vengeance"],
+    ["IMP_MIGHT"]       = MSC.L["Improved Blessing of Might"],
+    ["DIVINE_STR"]      = MSC.L["Divine Strength"],
+    ["DIVINE_INT"]      = MSC.L["Divine Intellect"],
+    ["PRECISION"]       = MSC.L["Precision"],
+    ["REDOUBT"]         = MSC.L["Redoubt"], 
 }
 
 -- =============================================================

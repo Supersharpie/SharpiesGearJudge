@@ -78,16 +78,16 @@ Priest.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Priest.Talents = { 
-    ["SHADOWFORM"]      = "Shadowform",
-    ["POWER_INFUSION"]  = "Power Infusion",
-    ["SPIRIT_GUIDANCE"] = "Spiritual Guidance",
-    ["SHADOW_WEAVING"]  = "Shadow Weaving",
-    ["BLACKOUT"]        = "Blackout",
-    ["WAND_SPEC"]       = "Wand Specialization",
-    ["SPIRIT_TAP"]      = "Spirit Tap",
-    ["MENTAL_STRENGTH"] = "Mental Strength",
-    ["DIVINE_FURY"]     = "Divine Fury",
-    ["SHADOW_FOCUS"]    = "Shadow Focus",
+    ["SHADOWFORM"]      = MSC.L["Shadowform"],
+    ["POWER_INFUSION"]  = MSC.L["Power Infusion"],
+    ["SPIRIT_GUIDANCE"] = MSC.L["Spiritual Guidance"],
+    ["SHADOW_WEAVING"]  = MSC.L["Shadow Weaving"],
+    ["BLACKOUT"]        = MSC.L["Blackout"],
+    ["WAND_SPEC"]       = MSC.L["Wand Specialization"],
+    ["SPIRIT_TAP"]      = MSC.L["Spirit Tap"],
+    ["MENTAL_STRENGTH"] = MSC.L["Mental Strength"],
+    ["DIVINE_FURY"]     = MSC.L["Divine Fury"],
+    ["SHADOW_FOCUS"]    = MSC.L["Shadow Focus"],
 }
 
 -- =============================================================

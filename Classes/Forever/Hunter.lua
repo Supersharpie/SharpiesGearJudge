@@ -63,6 +63,7 @@ Hunter.PvPCounterpart = { MM_RAID = "PVP_MM_UTIL", RAID_MM_STANDARD = "PVP_MM_UT
 --   Leveling          Beast Mastery: Solo Leveling (ranged with the pet tanking, the default)
 --   Leveling_Dungeon  Beast Mastery: Dungeon Leveling
 --   Leveling_Melee    Survival: Melee Leveling
+--   Leveling_MeleeDungeon  Survival: Melee Dungeon Leveling
 Hunter.LevelingWeights = {}
 
 -- =============================================================
@@ -89,6 +90,7 @@ local ROLE_NAMES = {
     { "Leveling",         "Beast Mastery: Solo Leveling" },
     { "Leveling_Dungeon", "Beast Mastery: Dungeon Leveling" },
     { "Leveling_Melee",   "Survival: Melee Leveling" },
+    { "Leveling_MeleeDungeon", "Survival: Melee Dungeon Leveling" },
 }
 for _, r in ipairs(ROLE_NAMES) do
     for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
@@ -100,40 +102,41 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Hunter.Talents = { 
-    ["BESTIAL_WRATH"]   = "Bestial Wrath",
-    ["UNLEASHED_FURY"]  = "Unleashed Fury",
-    ["TRUESHOT_AURA"]   = "Trueshot Aura",
-    ["SNIPER_SHOT"]     = "Sniper Shot",
-    ["LACERATING_STRIKES"]= "Lacerating Strikes",
-    ["COUNTERATTACK"]   = "Counterattack",
-    ["DETERRENCE"]      = "Deterrence",
-    ["SUREFOOTED"]      = "Surefooted",
-    ["LIGHTNING_REF"]   = "Lightning Reflexes",
-    ["MORTAL_SHOTS"]    = "Mortal Shots",
-    ["SURVIVALIST"]     = "Survivalist",
-    ["CAREFUL_AIM"]     = "Careful Aim",
-    ["PREDATORS_EDGE"]  = "Predator's Edge", -- New in Forever (Survival t4, 5 ranks, +6%/rank melee crit damage bonus)
-    ["FOCUSED_FIRE"]    = "Focused Fire", -- New in Forever (BM t2, 2 ranks, +1%/rank all damage while pet active)
-    ["RANGED_WPN_SPEC"] = "Ranged Weapon Specialization", -- Same as Classic (MM t6, 5 ranks, +1%/rank ranged weapon damage)
-    ["BARRAGE"]         = "Barrage", -- MM t5, 3 ranks, +3%/rank Multi-Shot/Aimed Shot/Volley damage
-    ["DEADLY_ASPECTS"]  = "Deadly Aspects", -- BM t1, 5 ranks, 2%/rank chance of +30% attack speed
-    ["IMP_TRACKING"]    = "Improved Tracking", -- Survival t1, 5 ranks, +1%/rank damage vs tracked type
-    ["BESTIAL_DISCIPLINE"] = "Bestial Discipline", -- BM t5, 2 ranks, +25%/rank regen while casting
-    ["RAPID_RECUPERATION"] = "Rapid Recuperation", -- MM t5, 2 ranks
-    ["EFFICIENCY"]      = "Efficiency", -- MM t2, 5 ranks, -3%/rank mana cost
-    ["RESOURCEFULNESS"] = "Resourcefulness", -- Survival t5, 2 ranks, -30%/rank trap/melee ability mana cost
-    ["LONE_WOLF"]       = "Lone Wolf", -- MM t3, 1 rank, +20% damage without a pet
-    ["FEROCITY"]        = "Ferocity", -- BM t4, 5 ranks, +2% pet/hawk crit chance per rank
-    ["FRENZY"]          = "Frenzy", -- BM t6, 5 ranks, pet: 20% chance of +30% attack speed for 8 s after a crit
+    ["BESTIAL_WRATH"]   = MSC.L["Bestial Wrath"],
+    ["UNLEASHED_FURY"]  = MSC.L["Unleashed Fury"],
+    ["TRUESHOT_AURA"]   = MSC.L["Trueshot Aura"],
+    ["SNIPER_SHOT"]     = MSC.L["Sniper Shot"],
+    ["LACERATING_STRIKES"]= MSC.L["Lacerating Strikes"],
+    ["COUNTERATTACK"]   = MSC.L["Counterattack"],
+    ["DETERRENCE"]      = MSC.L["Deterrence"],
+    ["SUREFOOTED"]      = MSC.L["Surefooted"],
+    ["LIGHTNING_REF"]   = MSC.L["Lightning Reflexes"],
+    ["MORTAL_SHOTS"]    = MSC.L["Mortal Shots"],
+    ["SURVIVALIST"]     = MSC.L["Survivalist"],
+    ["CAREFUL_AIM"]     = MSC.L["Careful Aim"],
+    ["PREDATORS_EDGE"]  = MSC.L["Predator's Edge"], -- New in Forever (Survival t4, 5 ranks, +6%/rank melee crit damage bonus)
+    ["FOCUSED_FIRE"]    = MSC.L["Focused Fire"], -- New in Forever (BM t2, 2 ranks, +1%/rank all damage while pet active)
+    ["RANGED_WPN_SPEC"] = MSC.L["Ranged Weapon Specialization"], -- Same as Classic (MM t6, 5 ranks, +1%/rank ranged weapon damage)
+    ["BARRAGE"]         = MSC.L["Barrage"], -- MM t5, 3 ranks, +3%/rank Multi-Shot/Aimed Shot/Volley damage
+    ["DEADLY_ASPECTS"]  = MSC.L["Deadly Aspects"], -- BM t1, 5 ranks, 2%/rank chance of +30% attack speed
+    ["IMP_TRACKING"]    = MSC.L["Improved Tracking"], -- Survival t1, 5 ranks, +1%/rank damage vs tracked type
+    ["BESTIAL_DISCIPLINE"] = MSC.L["Bestial Discipline"], -- BM t5, 2 ranks, +25%/rank regen while casting
+    ["RAPID_RECUPERATION"] = MSC.L["Rapid Recuperation"], -- MM t5, 2 ranks
+    ["EFFICIENCY"]      = MSC.L["Efficiency"], -- MM t2, 5 ranks, -3%/rank mana cost
+    ["RESOURCEFULNESS"] = MSC.L["Resourcefulness"], -- Survival t5, 2 ranks, -30%/rank trap/melee ability mana cost
+    ["LONE_WOLF"]       = MSC.L["Lone Wolf"], -- MM t3, 1 rank, +20% damage without a pet
+    ["FEROCITY"]        = MSC.L["Ferocity"], -- BM t4, 5 ranks, +2% pet/hawk crit chance per rank
+    ["SUMMON_HAWK"]     = MSC.L["Summon Hawk"], -- BM talent (level 25), hawks that hit for flat damage
+    ["FRENZY"]          = MSC.L["Frenzy"], -- BM t6, 5 ranks, pet: 20% chance of +30% attack speed for 8 s after a crit
     -- Leveling role markers (tiers 1-3, see Hunter.LowLevelRoles)
-    ["SAVAGE_STRIKES"]  = "Savage Strikes", -- Survival t2, 2 ranks, +2% melee ability crit
-    ["IMP_WING_CLIP"]   = "Improved Wing Clip", -- Survival t2, 3 ranks
-    ["DEFLECTION"]      = "Deflection", -- Survival t1, 5 ranks, +1% Parry per rank (2 Oct patch, was 2%)
-    ["HAWK_EYE"]        = "Hawk Eye", -- MM t1, 3 ranks, +2 yd ranged weapon range
-    ["IMP_CONC_SHOT"]   = "Improved Concussive Shot", -- MM t1, 5 ranks
-    ["IMP_STINGS"]      = "Improved Stings", -- MM t2, 3 ranks
-    ["IMP_ARCANE_SHOT"] = "Improved Arcane Shot", -- MM t3, 5 ranks
-    ["RAPID_KILLING"]   = "Rapid Killing", -- MM t3, 2 ranks
+    ["SAVAGE_STRIKES"]  = MSC.L["Savage Strikes"], -- Survival t2, 2 ranks, +2% melee ability crit
+    ["IMP_WING_CLIP"]   = MSC.L["Improved Wing Clip"], -- Survival t2, 3 ranks
+    ["DEFLECTION"]      = MSC.L["Deflection"], -- Survival t1, 5 ranks, +1% Parry per rank (2 Oct patch, was 2%)
+    ["HAWK_EYE"]        = MSC.L["Hawk Eye"], -- MM t1, 3 ranks, +2 yd ranged weapon range
+    ["IMP_CONC_SHOT"]   = MSC.L["Improved Concussive Shot"], -- MM t1, 5 ranks
+    ["IMP_STINGS"]      = MSC.L["Improved Stings"], -- MM t2, 3 ranks
+    ["IMP_ARCANE_SHOT"] = MSC.L["Improved Arcane Shot"], -- MM t3, 5 ranks
+    ["RAPID_KILLING"]   = MSC.L["Rapid Killing"], -- MM t3, 2 ranks
     -- "Aimed Shot" and "Wyvern Sting" removed: both are confirmed base
     -- abilities in Forever (level-gated, no talent rank), not talents --
     -- GetTalentRank on either always returned 0. Both were already unused
@@ -167,6 +170,7 @@ Hunter.LowLevelRoles = {
     Leveling_Melee = { "DEFLECTION", "SAVAGE_STRIKES", "IMP_WING_CLIP", "COUNTERATTACK", "PREDATORS_EDGE", "LACERATING_STRIKES" },
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
     Leveling_Dungeon = {},
+    Leveling_MeleeDungeon = {},
 }
 
 function Hunter:GetSpec()
@@ -237,6 +241,20 @@ function Hunter:ApplyScalers(weights, currentSpec)
         if petMult > 1 then
             MSC.ScaleForeverKeys(weights, MSC.ForeverMeleeDamageKeys, 1 / (1 + 0.3 * (petMult - 1)))
         end
+    end
+
+    -- Summon Hawk (BM, level 25): the hawks hit for their rank's base damage
+    -- (dive bombs add 5% of ranged attack power) and never use the hunter's
+    -- crit or hit, so with them Crit and Hit are worth less against ranged
+    -- attack power. The leveling rows have no Hawk; SimStudio hmodel gives
+    -- x1.0 at 25 (Arcane Shot, which scales with ranged attack power, still
+    -- wins the shared slot), x0.82 at 30-40 and x0.77 from 45 (2026-10-14,
+    -- hawk swings refit to the beta logs). Crit goes through the helper so
+    -- Agility's crit share follows.
+    if hooks and specU:find("LEVELING") and not isMeleeRow and level >= 25 and Rank("SUMMON_HAWK") > 0 then
+        local hawk = MSC.ForeverLevelLerp({ { 25, 1.0 }, { 30, 0.82 }, { 40, 0.81 }, { 45, 0.77 }, { 59, 0.77 } }, level)
+        MSC.ScaleForeverMeleeCrit(weights, hawk, level)
+        MSC.ScaleForeverKeys(weights, { "ITEM_MOD_HIT_RATING_SHORT" }, hawk)
     end
 
     -- Predator's Edge (New in Forever, Survival t4, 5 ranks): +30% crit

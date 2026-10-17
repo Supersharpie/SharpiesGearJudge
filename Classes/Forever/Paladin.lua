@@ -122,37 +122,37 @@ end
 -- =============================================================
 Paladin.Talents = {
     -- Holy
-    ["DIVINE_STR"]         = "Divine Strength",         -- t1, +2%/rank Strength
-    ["DIVINE_INT"]         = "Divine Intellect",        -- t1, +2%/rank Intellect
-    ["HEALING_LIGHT"]      = "Healing Light",           -- t2, +4%/rank Holy Light / Flash of Light / Holy Shock healing
-    ["SPIRITUAL_FOCUS"]    = "Spiritual Focus",         -- t2, pushback protection
-    ["REVERENCE"]          = "Reverence",               -- t3, 10%/rank mana regeneration while casting
-    ["ILLUMINATION"]       = "Illumination",            -- t4, mana back on heal crits
-    ["DIVINE_FAVOR"]       = "Divine Favor",            -- t4
-    ["INFUSION_LIGHT"]     = "Infusion of Light",       -- t4
-    ["HOLY_SHOCK"]         = "Holy Shock",              -- t5
-    ["LIGHTS_VIGIL"]       = "Light's Vigil",           -- t7 (level 40)
+    ["DIVINE_STR"]         = MSC.L["Divine Strength"],         -- t1, +2%/rank Strength
+    ["DIVINE_INT"]         = MSC.L["Divine Intellect"],        -- t1, +2%/rank Intellect
+    ["HEALING_LIGHT"]      = MSC.L["Healing Light"],           -- t2, +4%/rank Holy Light / Flash of Light / Holy Shock healing
+    ["SPIRITUAL_FOCUS"]    = MSC.L["Spiritual Focus"],         -- t2, pushback protection
+    ["REVERENCE"]          = MSC.L["Reverence"],               -- t3, 10%/rank mana regeneration while casting
+    ["ILLUMINATION"]       = MSC.L["Illumination"],            -- t4, mana back on heal crits
+    ["DIVINE_FAVOR"]       = MSC.L["Divine Favor"],            -- t4
+    ["INFUSION_LIGHT"]     = MSC.L["Infusion of Light"],       -- t4
+    ["HOLY_SHOCK"]         = MSC.L["Holy Shock"],              -- t5
+    ["LIGHTS_VIGIL"]       = MSC.L["Light's Vigil"],           -- t7 (level 40)
     -- Protection
-    ["TOUGHNESS"]          = "Toughness",               -- t1, +2%/rank armor from items
-    ["REDOUBT"]            = "Redoubt",                 -- t1, block chance after being hit
-    ["PRECISION"]          = "Precision",               -- t2, +1%/rank hit
-    ["ANTICIPATION"]       = "Anticipation",            -- t2, +4/rank Defense
-    ["IMP_SEAL_OF_FURY"]   = "Improved Seal of Fury",   -- t3, mana when the Seal of Fury absorb is used up
-    ["IMP_RIGHTEOUS_FURY"] = "Improved Righteous Fury", -- t3, -2%/rank damage taken
-    ["SHIELD_SPEC"]        = "Shield Specialization",   -- t3, Block Value and mana on block
-    ["SACRED_DUTY"]        = "Sacred Duty",             -- t3, +2%/rank Stamina
-    ["ONE_HAND_SPEC"]      = "One-Handed Weapon Specialization", -- t4, +3%/rank one-handed damage
-    ["RECKONING"]          = "Reckoning",               -- t5, extra attacks after blocks
-    ["IRON_CREED"]         = "Iron Creed",              -- t6, -2%/rank damage taken for 6 s after Holy Strike
-    ["HOLY_SHIELD"]        = "Holy Shield",             -- t7 (level 40)
+    ["TOUGHNESS"]          = MSC.L["Toughness"],               -- t1, +2%/rank armor from items
+    ["REDOUBT"]            = MSC.L["Redoubt"],                 -- t1, block chance after being hit
+    ["PRECISION"]          = MSC.L["Precision"],               -- t2, +1%/rank hit
+    ["ANTICIPATION"]       = MSC.L["Anticipation"],            -- t2, +4/rank Defense
+    ["IMP_SEAL_OF_FURY"]   = MSC.L["Improved Seal of Fury"],   -- t3, mana when the Seal of Fury absorb is used up
+    ["IMP_RIGHTEOUS_FURY"] = MSC.L["Improved Righteous Fury"], -- t3, -2%/rank damage taken
+    ["SHIELD_SPEC"]        = MSC.L["Shield Specialization"],   -- t3, Block Value and mana on block
+    ["SACRED_DUTY"]        = MSC.L["Sacred Duty"],             -- t3, +2%/rank Stamina
+    ["ONE_HAND_SPEC"]      = MSC.L["One-Handed Weapon Specialization"], -- t4, +3%/rank one-handed damage
+    ["RECKONING"]          = MSC.L["Reckoning"],               -- t5, extra attacks after blocks
+    ["IRON_CREED"]         = MSC.L["Iron Creed"],              -- t6, -2%/rank damage taken for 6 s after Holy Strike
+    ["HOLY_SHIELD"]        = MSC.L["Holy Shield"],             -- t7 (level 40)
     -- Retribution
-    ["BENEDICTION"]        = "Benediction",             -- t1, -2%/rank mana on instant spells
-    ["HOLY_CONDUIT"]       = "Holy Conduit",            -- t2, -20%/rank Consecration / Holy Wrath / Exorcism / Hammer of Wrath mana
-    ["SEAL_OF_COMMAND"]    = "Seal of Command",         -- t3 (level 20)
-    ["REPENTANCE"]         = "Repentance",              -- t5
-    ["TWOH_SPEC"]          = "Two-Handed Weapon Specialization", -- t5, +2%/rank two-handed damage
-    ["VENGEANCE"]          = "Vengeance",               -- t5
-    ["CHAMPION_LIGHT"]     = "Champion of the Light",   -- t6, spell damage from 20%/rank of Intellect
+    ["BENEDICTION"]        = MSC.L["Benediction"],             -- t1, -2%/rank mana on instant spells
+    ["HOLY_CONDUIT"]       = MSC.L["Holy Conduit"],            -- t2, -20%/rank Consecration / Holy Wrath / Exorcism / Hammer of Wrath mana
+    ["SEAL_OF_COMMAND"]    = MSC.L["Seal of Command"],         -- t3 (level 20)
+    ["REPENTANCE"]         = MSC.L["Repentance"],              -- t5
+    ["TWOH_SPEC"]          = MSC.L["Two-Handed Weapon Specialization"], -- t5, +2%/rank two-handed damage
+    ["VENGEANCE"]          = MSC.L["Vengeance"],               -- t5
+    ["CHAMPION_LIGHT"]     = MSC.L["Champion of the Light"],   -- t6, spell damage from 20%/rank of Intellect
 }
 
 -- =============================================================
@@ -237,12 +237,12 @@ function Paladin:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSacred * 0.02))
     end
 
-    -- Champion of the Light (Ret t6, 3 ranks): spell damage from 20/40/60% of
-    -- Intellect (Forever patch of 2 Oct; was 33/66/100%), damage only.
+    -- Champion of the Light (Ret t6, 3 ranks): spell damage from 10/20/30% of
+    -- Intellect (Forever patch of 15 Oct; 20/40/60% from 2 Oct, 33/66/100% before), damage only.
     local rChamp = Rank("CHAMPION_LIGHT")
     if hooks and rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"]
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.20))
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.10))
     end
 
     -- Healing Light (Holy t2, 3 ranks): +4%/rank healing from Holy Light /

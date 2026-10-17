@@ -73,17 +73,17 @@ Hunter.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Hunter.Talents = { 
-    ["BESTIAL_WRATH"]   = "Bestial Wrath",
-    ["UNLEASHED_FURY"]  = "Unleashed Fury",
-    ["TRUESHOT_AURA"]   = "Trueshot Aura",
-    ["AIMED_SHOT"]      = "Aimed Shot",
-    ["WYVERN_STING"]    = "Wyvern Sting",
-    ["COUNTERATTACK"]   = "Counterattack",
-    ["DETERRENCE"]      = "Deterrence",
-    ["SUREFOOTED"]      = "Surefooted",
-    ["LIGHTNING_REF"]   = "Lightning Reflexes",
-    ["MORTAL_SHOTS"]    = "Mortal Shots",
-    ["SURVIVALIST"]     = "Survivalist",
+    ["BESTIAL_WRATH"]   = MSC.L["Bestial Wrath"],
+    ["UNLEASHED_FURY"]  = MSC.L["Unleashed Fury"],
+    ["TRUESHOT_AURA"]   = MSC.L["Trueshot Aura"],
+    ["AIMED_SHOT"]      = MSC.L["Aimed Shot"],
+    ["WYVERN_STING"]    = MSC.L["Wyvern Sting"],
+    ["COUNTERATTACK"]   = MSC.L["Counterattack"],
+    ["DETERRENCE"]      = MSC.L["Deterrence"],
+    ["SUREFOOTED"]      = MSC.L["Surefooted"],
+    ["LIGHTNING_REF"]   = MSC.L["Lightning Reflexes"],
+    ["MORTAL_SHOTS"]    = MSC.L["Mortal Shots"],
+    ["SURVIVALIST"]     = MSC.L["Survivalist"],
 }
 
 -- =============================================================

@@ -79,16 +79,16 @@ Warrior.PrettyNames = {
 -- ERA TALENTS (Vanilla)
 -- =============================================================
 Warrior.Talents = { 
-    ["MORTAL_STRIKE"]    = "Mortal Strike",
-    ["BLOODTHIRST"]      = "Bloodthirst",
-    ["SHIELD_SLAM"]      = "Shield Slam",
-    ["DEFIANCE"]         = "Defiance",
-    ["IMP_SLAM"]         = "Improved Slam",
-    ["DW_SPEC"]          = "Dual Wield Specialization",
-    ["TACTICAL_MASTERY"] = "Tactical Mastery",
-    ["IMPALE"]           = "Impale",
-    ["CRUELTY"]          = "Cruelty",
-    ["FLURRY"]           = "Flurry",
+    ["MORTAL_STRIKE"]    = MSC.L["Mortal Strike"],
+    ["BLOODTHIRST"]      = MSC.L["Bloodthirst"],
+    ["SHIELD_SLAM"]      = MSC.L["Shield Slam"],
+    ["DEFIANCE"]         = MSC.L["Defiance"],
+    ["IMP_SLAM"]         = MSC.L["Improved Slam"],
+    ["DW_SPEC"]          = MSC.L["Dual Wield Specialization"],
+    ["TACTICAL_MASTERY"] = MSC.L["Tactical Mastery"],
+    ["IMPALE"]           = MSC.L["Impale"],
+    ["CRUELTY"]          = MSC.L["Cruelty"],
+    ["FLURRY"]           = MSC.L["Flurry"],
 }
 
 -- =============================================================

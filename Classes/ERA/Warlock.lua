@@ -81,18 +81,18 @@ Warlock.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Warlock.Talents = { 
-    ["DEMONIC_SACRIFICE"] = "Demonic Sacrifice",
-    ["SHADOW_MASTERY"]    = "Shadow Mastery",
-    ["RUIN"]              = "Ruin",
-    ["SOUL_LINK"]         = "Soul Link",
-    ["CONFLAGRATE"]       = "Conflagrate",
-    ["FEL_CONCENTRATION"] = "Fel Concentration",
-    ["NIGHTFALL"]         = "Nightfall",
-    ["INTENSITY"]         = "Intensity",
-    ["MASTER_DEMON"]      = "Master Demonologist",
-    ["SUPPRESSION"]       = "Suppression",
-    ["DEMONIC_EMBRACE"]   = "Demonic Embrace",
-    ["EMBERSTORM"]        = "Emberstorm",
+    ["DEMONIC_SACRIFICE"] = MSC.L["Demonic Sacrifice"],
+    ["SHADOW_MASTERY"]    = MSC.L["Shadow Mastery"],
+    ["RUIN"]              = MSC.L["Ruin"],
+    ["SOUL_LINK"]         = MSC.L["Soul Link"],
+    ["CONFLAGRATE"]       = MSC.L["Conflagrate"],
+    ["FEL_CONCENTRATION"] = MSC.L["Fel Concentration"],
+    ["NIGHTFALL"]         = MSC.L["Nightfall"],
+    ["INTENSITY"]         = MSC.L["Intensity"],
+    ["MASTER_DEMON"]      = MSC.L["Master Demonologist"],
+    ["SUPPRESSION"]       = MSC.L["Suppression"],
+    ["DEMONIC_EMBRACE"]   = MSC.L["Demonic Embrace"],
+    ["EMBERSTORM"]        = MSC.L["Emberstorm"],
 }
 
 -- =============================================================

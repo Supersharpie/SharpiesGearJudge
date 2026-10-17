@@ -16,13 +16,25 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.3
-    { forever = true, text = "WoW Forever: the Druid healer, Heart of the Wild and Priest Default profiles no longer count Spell Power twice, and the Mage and Warlock Default profiles now use the raid weights." },
-    { forever = true, text = "WoW Forever: the Protection Paladin, Enhancement Shaman and Bear raid profiles are re-simulated, the last two for their new talent builds." },
-    { forever = true, text = "WoW Forever: Affliction Warlocks now level with Drain Life from level 20. The Talents plugin's solo build takes Fel Concentration early, and wand DPS counts for much less." },
-    { forever = true, text = "Talents plugin: new Enhancement Shaman and Bear raid builds. The next talent to learn now glows gold, and every talent in your build shows its step number." },
-    { forever = true, text = "Roadmap 3.1.2: Forever dungeon loot updated to the latest beta build, with 63 new drops and the City of Dalaran as a dungeon." },
-    { text = "Roster 1.0.2: the new BoE Finder lists the tradeable items your characters hold that upgrade another of your characters, biggest upgrade first." },
+    -- v3.2.4
+    { forever = true, text = "WoW Forever: the 2026-10-15 patch removed the Human, Orc and Dwarf weapon racials, so swords, axes and maces no longer score higher for those races. Their new racials (Ruthless, Savage, Earth Fury) work with any weapon." },
+    { text = "Fixed for WoW Forever and Classic Era in other languages: your talents now adjust the weights and pick your leveling profile in every language. Before, this only worked in English." },
+    { forever = true, text = "WoW Forever: Feral Druids now value Weapon DPS. Cat and Bear Form swing your equipped weapon, so a better staff or mace is a real upgrade, from Bear Form at 10 up to the raid profiles." },
+    { forever = true, text = "WoW Forever: Rake now gains from Attack Power, so the Cat raid profile is re-simulated (about 7% more damage). Attack Power counts a little more next to Crit, Hit and Weapon DPS." },
+    { forever = true, text = "WoW Forever: leveling weights checked against the current models. Feral Cat Crit and Hit count less from 25, Frost Mage and Enhancement Shaman Crit count more, and dual-wield Warriors value Weapon DPS more, also after level 40 without Bloodthirst." },
+    { forever = true, text = "WoW Forever: more leveling weights rebuilt on the models for the 2026-10-15 patch: Fire Mage, Protection Paladin (Spell Power counts about twice as much), Priest (damage over time can crit, the wand counts far less, and the Discipline and Holy solo builds now get their own weights), Elemental Shaman, Balance Druid and the healers' solo weights (Intellect counts less, since drinks restore a flat amount). Survival Hunters get their own dungeon weights." },
+    { forever = true, text = "WoW Forever: Hunter weights checked against beta combat logs. Arcane Shot and Serpent Sting grow with Attack Power, so solo leveling Crit and Hit count less from 25; in dungeons they count more, with the better bows players wear. With Summon Hawk they count about a fifth less from 30, since the hawks ignore your crit and hit." },
+    { forever = true, text = "WoW Forever: Frost Mage dungeon weights checked against beta combat logs: Arcane Explosion reaches the whole pack, and you start each boss with a full mana bar. Blizzard gains little from Spell Power, so Crit counts up to about twice as much in dungeons." },
+    { forever = true, text = "WoW Forever: Enhancement Shaman dungeon weights checked against beta combat logs: Windfury Weapon from 30, Fire Nova on packs, Searing Totem and Stormstrike's real mana cost. Hit counts more in dungeons, and Crit a little less from 30." },
+    { forever = true, text = "WoW Forever: Affliction Warlock dungeon weights checked against beta combat logs: between DoTs players mostly use the wand on trash, not Shadow Bolt, so Crit counts a little more from 25." },
+    { forever = true, text = "WoW Forever: the Shadow Priest raid profile is re-simulated now that Twin Disciplines boosts Mind Flay and Shadow Word: Death. Crit counts a little more." },
+    { forever = true, text = "WoW Forever: Rogue poisons now scale with Attack Power in the raid profiles, so Attack Power counts a little more next to Crit, Hit and weapon DPS." },
+    { forever = true, text = "WoW Forever: Warrior leveling weights use the corrected Unbridled Wrath (1 rage, from white hits only), and the dungeon tank weights follow the current talent tree." },
+    { forever = true, text = "WoW Forever: the Warrior and Paladin dungeon tank weights count Dodge, Parry, Block, Defense and Armor far less. Beta combat logs show the healing they save barely slows a run, so Hit, threat and Stamina come first." },
+    { forever = true, text = "WoW Forever: Restoration Shaman dungeon healing counts Healing Stream Totem before Mana Spring arrives." },
+    { forever = true, text = "WoW Forever: the Druid, Priest, Shaman and Paladin dungeon healer weights are rebuilt and checked against beta combat logs: low spell ranks lose bonus healing, trash hits the tank less and healers drink while the group loots. Crit counts more and Intellect less." },
+    { forever = true, text = "WoW Forever: in the beta logs dungeon bosses are half as common and half as long as the dungeon weights assumed, and Retribution Paladins use Consecration far less than the model did. Retribution dungeon Spell Power counts about a third less (Judgement of the Crusader is assumed on bosses only); the other dungeon damage weights barely move." },
+    { forever = true, text = "WoW Forever: the dungeon damage weights now assume the gear players actually wear in dungeons (from beta logs): better weapons and more Attack Power, so Crit and Hit count more for Arms, Daggers, Beast Mastery and Enhancement. Solo leveling keeps questing gear." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

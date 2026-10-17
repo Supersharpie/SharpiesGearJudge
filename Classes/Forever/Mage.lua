@@ -11,7 +11,7 @@ Mage.Weights = {
     -- Spell Power sits at 2.0; Hit and Crit are per 1%. In a three-minute fight with raid buffs a Frost mage doesn't
     -- run out of mana, so Intellect counts mostly for its crit; Arcane stacks Arcane Blast and does run short.
     -- Frost: Raid (Frost with Ice Lance, Fingers of Frost and Winter's Chill; bosses can't be frozen).
-    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=24.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.29 },
+    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.9, ["ITEM_MOD_INTELLECT_SHORT"]=0.29 },
     -- Fire: Raid (Fire 35 / Frost 16). About 12% behind Frost in the sim; Fireball's mana cost makes Intellect, Spirit and Mp5 count.
     ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.3, ["ITEM_MOD_INTELLECT_SHORT"]=1.13, ["ITEM_MOD_SPIRIT_SHORT"]=1.19, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.45 },
     -- Arcane: Raid (Arcane Blast and Arcane Missiles). About 3% ahead of Frost since the missiles keep the Arcane
@@ -91,39 +91,39 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Mage.Talents = { 
-    ["ARCANE_POWER"]    = "Arcane Power",
-    ["PRESENCE_OF_MIND"]= "Presence of Mind",
-    ["COMBUSTION"]      = "Combustion",
-    ["BLAST_WAVE"]      = "Blast Wave",
-    ["PYROBLAST"]       = "Pyroblast",
-    ["ICE_BARRIER"]     = "Ice Barrier",
-    ["WINTERS_CHILL"]   = "Winter's Chill",
-    ["IMP_BLIZZARD"]    = "Improved Blizzard",
-    ["PERMAFROST"]      = "Permafrost",
-    ["ARCANE_MIND"]     = "Arcane Mind",
-    ["IGNITE"]          = "Ignite",
-    ["ICE_SHARDS"]      = "Ice Shards",
-    ["ELE_PRECISION"]   = "Elemental Precision",
-    ["ARCANE_FOCUS"]    = "Arcane Focus",
-    ["ARCANE_RESILIENCE"] = "Arcane Resilience", -- Arcane t2, 2 ranks, Armor += 25%/rank of Intellect -- was already referenced in ApplyScalers but missing here, so Rank() always returned 0
-    ["WAND_SPEC"]       = "Wand Specialization", -- Arcane t1, 2 ranks, +13%/+25% wand damage
-    ["ARCANE_MEDITATION"] = "Arcane Meditation", -- Arcane t4, 3 ranks, 17%/rank regen while casting
-    ["FIRE_POWER"]      = "Fire Power", -- Fire t6, 5 ranks, +2%/rank Fire damage (Same as Classic)
-    ["PIERCING_ICE"]    = "Piercing Ice", -- Frost t3, 3 ranks, +2%/rank Frost damage (Same as Classic)
+    ["ARCANE_POWER"]    = MSC.L["Arcane Power"],
+    ["PRESENCE_OF_MIND"]= MSC.L["Presence of Mind"],
+    ["COMBUSTION"]      = MSC.L["Combustion"],
+    ["BLAST_WAVE"]      = MSC.L["Blast Wave"],
+    ["PYROBLAST"]       = MSC.L["Pyroblast"],
+    ["ICE_BARRIER"]     = MSC.L["Ice Barrier"],
+    ["WINTERS_CHILL"]   = MSC.L["Winter's Chill"],
+    ["IMP_BLIZZARD"]    = MSC.L["Improved Blizzard"],
+    ["PERMAFROST"]      = MSC.L["Permafrost"],
+    ["ARCANE_MIND"]     = MSC.L["Arcane Mind"],
+    ["IGNITE"]          = MSC.L["Ignite"],
+    ["ICE_SHARDS"]      = MSC.L["Ice Shards"],
+    ["ELE_PRECISION"]   = MSC.L["Elemental Precision"],
+    ["ARCANE_FOCUS"]    = MSC.L["Arcane Focus"],
+    ["ARCANE_RESILIENCE"] = MSC.L["Arcane Resilience"], -- Arcane t2, 2 ranks, Armor += 25%/rank of Intellect -- was already referenced in ApplyScalers but missing here, so Rank() always returned 0
+    ["WAND_SPEC"]       = MSC.L["Wand Specialization"], -- Arcane t1, 2 ranks, +13%/+25% wand damage
+    ["ARCANE_MEDITATION"] = MSC.L["Arcane Meditation"], -- Arcane t4, 3 ranks, 17%/rank regen while casting
+    ["FIRE_POWER"]      = MSC.L["Fire Power"], -- Fire t6, 3 ranks, +1%/rank Fire damage per Fire effect on the target (max 12%)
+    ["PIERCING_ICE"]    = MSC.L["Piercing Ice"], -- Frost t3, 3 ranks, +2%/rank Frost damage (Same as Classic)
     -- Leveling role markers (tiers 1-3, see Mage.LowLevelRoles)
-    ["FROST_WARDING"]   = "Frost Warding", -- Frost t1
-    ["IMP_FROSTBOLT"]   = "Improved Frostbolt", -- Frost t1
-    ["IMP_FROST_NOVA"]  = "Improved Frost Nova", -- Frost t2
-    ["FROSTBITE"]       = "Frostbite", -- Frost t2
-    ["FROST_CHANNELING"] = "Frost Channeling", -- Frost t3
-    ["ICE_LANCE"]       = "Ice Lance", -- Frost t3
-    ["WAKE_OF_FIRE"]    = "Wake of Fire", -- Fire t1
-    ["INCINERATION"]    = "Incineration", -- Fire t1
-    ["IMP_FIREBALL"]    = "Improved Fireball", -- Fire t1
-    ["FLAME_THROWING"]  = "Flame Throwing", -- Fire t2
-    ["IMPACT"]          = "Impact", -- Fire t2
-    ["BURNING_SOUL"]    = "Burning Soul", -- Fire t3
-    ["IMP_FLAMESTRIKE"] = "Improved Flamestrike", -- Fire t3
+    ["FROST_WARDING"]   = MSC.L["Frost Warding"], -- Frost t1
+    ["IMP_FROSTBOLT"]   = MSC.L["Improved Frostbolt"], -- Frost t1
+    ["IMP_FROST_NOVA"]  = MSC.L["Improved Frost Nova"], -- Frost t2
+    ["FROSTBITE"]       = MSC.L["Frostbite"], -- Frost t2
+    ["FROST_CHANNELING"] = MSC.L["Frost Channeling"], -- Frost t3
+    ["ICE_LANCE"]       = MSC.L["Ice Lance"], -- Frost t3
+    ["WAKE_OF_FIRE"]    = MSC.L["Wake of Fire"], -- Fire t1
+    ["INCINERATION"]    = MSC.L["Incineration"], -- Fire t1
+    ["IMP_FIREBALL"]    = MSC.L["Improved Fireball"], -- Fire t1
+    ["FLAME_THROWING"]  = MSC.L["Flame Throwing"], -- Fire t2
+    ["IMPACT"]          = MSC.L["Impact"], -- Fire t2
+    ["BURNING_SOUL"]    = MSC.L["Burning Soul"], -- Fire t3
+    ["IMP_FLAMESTRIKE"] = MSC.L["Improved Flamestrike"], -- Fire t3
 }
 
 -- =============================================================
@@ -243,7 +243,8 @@ function Mage:ApplyScalers(weights, currentSpec)
     local rFirePower = Rank("FIRE_POWER")
     local rPiercingIce = Rank("PIERCING_ICE")
     if not isLeveling and hooks then
-        -- Fire Power (Fire t6, 5 ranks, Same as Classic): +2%/rank Fire damage
+        -- Fire Power (Fire t6, 3 ranks): +1%/rank Fire damage per Fire effect on the
+        -- target (Fireball DoT, Ignite, Pyroblast DoT; max 12%): about 2 effects up, so 2%/rank
         if rFirePower > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
             weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rFirePower * 0.02))
         end

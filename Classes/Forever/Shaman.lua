@@ -25,7 +25,7 @@ Shaman.Weights = {
     -- Elemental: Raid (Elemental 31 / Enhancement 11 / Restoration 9) from the simulator, Spell Power 2.0. Elemental runs out
     -- of mana in Forever and drops to a lower Lightning Bolt rank, which is why Crit and Hit are worth far less than for the
     -- other casters. Nature and Fire damage split the Spell Power value by how much of the damage each school does.
-    ["ELE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.32, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.65, ["ITEM_MOD_INTELLECT_SHORT"]=0.64, ["ITEM_MOD_SPIRIT_SHORT"]=0.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.85, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=9.8 },
+    ["ELE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.32, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.65, ["ITEM_MOD_INTELLECT_SHORT"]=0.65, ["ITEM_MOD_SPIRIT_SHORT"]=0.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.88, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=9.7 },
     -- Restoration: Raid (Restoration 40 / Enhancement 11) from our healing model (the simulator can't heal), Healing 2.0.
     -- Water Shield gives 2% of your mana back on heal crits, so Crit is worth more than for other healers. Client 70291
     -- removed the shield's 15 s cooldown (a globe every 3.5 s, recast after 3): each extra globe now also costs recast
@@ -114,38 +114,38 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Shaman.Talents = { 
-    ["LAVA_BURST"]        = "Lava Burst",
-    ["STORMSTRIKE"]       = "Stormstrike",
-    ["RIPTIDE"]           = "Riptide",
-    ["NATURES_SWIFTNESS"] = "Nature's Swiftness",
-    ["ELEMENTAL_ALACRITY"]= "Elemental Alacrity", -- Elemental t3 (swapped with Elemental Fury, beta 2026-09-24)
-    ["FLURRY"]            = "Flurry",
-    ["RESTORATIVE_TOTEMS"]= "Restorative Totems",
-    ["EYE_OF_STORM"]      = "Eye of the Storm",
-    ["ANCESTRAL_KNOW"]    = "Ancestral Knowledge",
-    ["TIDAL_FOCUS"]       = "Tidal Focus",
-    ["ELEMENTAL_FURY"]    = "Elemental Fury", -- Elemental t6 (was t3 before the 2026-09-24 beta build)
-    ["SPIRIT_WEAPONS"]    = "Spirit Weapons",
-    ["ANTICIPATION"]      = "Anticipation",
-    ["TIDAL_MASTERY"]     = "Tidal Mastery",
-    ["TOUGHNESS"]         = "Toughness",
-    ["MENTAL_DEXTERITY"]  = "Mental Dexterity",
-    ["MENTAL_QUICKNESS"]  = "Mental Quickness",
-    ["RAGE_FARSEER"]      = "Rage of the Farseer",
-    ["WATER_SHIELD"]      = "Water Shield",
-    ["CONCUSSION"]        = "Concussion", -- Elemental t1, 5 ranks, +1%/rank Lightning Bolt/Chain Lightning/Earth Shock damage
-    ["PURIFICATION"]      = "Purification", -- Restoration t6, 5 ranks, +2%/rank universal healing (Same as Classic)
-    ["HEALING_WAY"]       = "Healing Way", -- Restoration t5, 3 ranks, +8%/rank Healing Wave healing
-    ["IMP_HEALING_WAVE"]  = "Improved Healing Wave", -- Restoration t1, 5 ranks
-    ["MINDFULNESS"]       = "Mindfulness", -- New in Forever, Restoration t2, 3 ranks, mana regen while casting
-    ["ANCESTRAL_HEALING"] = "Ancestral Healing", -- Restoration t3, 3 ranks
-    ["HEALING_FOCUS"]     = "Healing Focus", -- Restoration t3, 3 ranks
-    ["CONVECTION"]        = "Convection", -- Elemental t1, 5 ranks
-    ["CALL_OF_FLAME"]     = "Call of Flame", -- Elemental t2, 3 ranks
-    ["REVERBERATION"]     = "Reverberation", -- Elemental t2, 5 ranks
-    ["ELEMENTAL_FOCUS"]   = "Elemental Focus", -- Elemental t3, 1 rank
-    ["SHAMANISTIC_FOCUS"] = "Shamanistic Focus", -- Enhancement t3, 1 rank, shock and Lightning Shield mana -45%
-    ["IMPROVED_STORMSTRIKE"] = "Improved Stormstrike", -- Enhancement t5, 2 ranks (minLevel 30), new in Forever
+    ["LAVA_BURST"]        = MSC.L["Lava Burst"],
+    ["STORMSTRIKE"]       = MSC.L["Stormstrike"],
+    ["RIPTIDE"]           = MSC.L["Riptide"],
+    ["NATURES_SWIFTNESS"] = MSC.L["Nature's Swiftness"],
+    ["ELEMENTAL_ALACRITY"]= MSC.L["Elemental Alacrity"], -- Elemental t3 (swapped with Elemental Fury, beta 2026-09-24)
+    ["FLURRY"]            = MSC.L["Flurry"],
+    ["RESTORATIVE_TOTEMS"]= MSC.L["Restorative Totems"],
+    ["EYE_OF_STORM"]      = MSC.L["Eye of the Storm"],
+    ["ANCESTRAL_KNOW"]    = MSC.L["Ancestral Knowledge"],
+    ["TIDAL_FOCUS"]       = MSC.L["Tidal Focus"],
+    ["ELEMENTAL_FURY"]    = MSC.L["Elemental Fury"], -- Elemental t6 (was t3 before the 2026-09-24 beta build)
+    ["SPIRIT_WEAPONS"]    = MSC.L["Spirit Weapons"],
+    ["ANTICIPATION"]      = MSC.L["Anticipation"],
+    ["TIDAL_MASTERY"]     = MSC.L["Tidal Mastery"],
+    ["TOUGHNESS"]         = MSC.L["Toughness"],
+    ["MENTAL_DEXTERITY"]  = MSC.L["Mental Dexterity"],
+    ["MENTAL_QUICKNESS"]  = MSC.L["Mental Quickness"],
+    ["RAGE_FARSEER"]      = MSC.L["Rage of the Farseer"],
+    ["WATER_SHIELD"]      = MSC.L["Water Shield"],
+    ["CONCUSSION"]        = MSC.L["Concussion"], -- Elemental t1, 5 ranks, +1%/rank Lightning Bolt/Chain Lightning/Earth Shock damage
+    ["PURIFICATION"]      = MSC.L["Purification"], -- Restoration t6, 5 ranks, +2%/rank universal healing (Same as Classic)
+    ["HEALING_WAY"]       = MSC.L["Healing Way"], -- Restoration t5, 3 ranks, +8%/rank Healing Wave healing
+    ["IMP_HEALING_WAVE"]  = MSC.L["Improved Healing Wave"], -- Restoration t1, 5 ranks
+    ["MINDFULNESS"]       = MSC.L["Mindfulness"], -- New in Forever, Restoration t2, 3 ranks, mana regen while casting
+    ["ANCESTRAL_HEALING"] = MSC.L["Ancestral Healing"], -- Restoration t3, 3 ranks
+    ["HEALING_FOCUS"]     = MSC.L["Healing Focus"], -- Restoration t3, 3 ranks
+    ["CONVECTION"]        = MSC.L["Convection"], -- Elemental t1, 5 ranks
+    ["CALL_OF_FLAME"]     = MSC.L["Call of Flame"], -- Elemental t2, 3 ranks
+    ["REVERBERATION"]     = MSC.L["Reverberation"], -- Elemental t2, 5 ranks
+    ["ELEMENTAL_FOCUS"]   = MSC.L["Elemental Focus"], -- Elemental t3, 1 rank
+    ["SHAMANISTIC_FOCUS"] = MSC.L["Shamanistic Focus"], -- Enhancement t3, 1 rank, shock and Lightning Shield mana -45%
+    ["IMPROVED_STORMSTRIKE"] = MSC.L["Improved Stormstrike"], -- Enhancement t5, 2 ranks (minLevel 30), new in Forever
 }
 
 -- Leveling role marker talents (see MSC:GetLowLevelRole). Anticipation (Enh
@@ -269,7 +269,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
                 MSC.ScaleForeverMeleeCrit(weights, 1.13, level)
                 Scale(weights, { "ITEM_MOD_HIT_RATING_SHORT" }, 1.07)
                 if weights["MSC_WEAPON_SPEED"] then weights["MSC_WEAPON_SPEED"] = 0 end
-            elseif isTank then
+            elseif isTank and level >= 25 then
                 if weights["MSC_WEAPON_SPEED"] then weights["MSC_WEAPON_SPEED"] = 0 end
                 Scale(weights, { "ITEM_MOD_SPELL_POWER_SHORT" }, 1.18)
                 MSC.ScaleForeverMeleeCrit(weights, 1.06, level)
@@ -291,13 +291,14 @@ function Shaman:ApplyScalers(weights, currentSpec)
             end
         end
 
-        -- Flurry: rows bake 5/5 (generic crit x1.29 at 30 falling to x1.24
-        -- from 45 as geared crit rises; ramped one rank per level 26-30).
+        -- Flurry: rows bake 5/5 (generic crit x1.40 at 30 easing to x1.37
+        -- at 59 as geared crit rises; ramped one rank per level 26-30; from
+        -- SimStudio smodel, 2026-10-13 -- the study had x1.29 to x1.24).
         -- Undo the baked part the player lacks. Scaling melee crit also
         -- moves Agility's crit share, so no separate Agility factor.
         local rFlurry = Rank("FLURRY")
         if isEnh and level >= 26 and rFlurry < 5 then
-            local full = Lerp({ {30, 1.29}, {45, 1.24} }, level)
+            local full = Lerp({ {30, 1.40}, {35, 1.41}, {40, 1.39}, {50, 1.38}, {59, 1.37} }, level)
             local baked = 1 + (full - 1) * math.min(1, math.max(0, (level - 25) / 5))
             MSC.ScaleForeverMeleeCrit(weights, (1 + 0.05 * rFlurry) / baked, level)
             if rFlurry == 0 and weights["MSC_WEAPON_SPEED"] then

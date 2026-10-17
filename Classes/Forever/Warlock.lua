@@ -92,46 +92,46 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Warlock.Talents = { 
-    ["DEMONIC_SACRIFICE"] = "Demonic Sacrifice",
-    ["SHADOW_MASTERY"]    = "Shadow Mastery",
-    ["RUIN"]              = "Ruin",
-    ["SOUL_LINK"]         = "Soul Link",
-    ["CONFLAGRATE"]       = "Conflagrate",
-    ["INCINERATE"]        = "Incinerate",
-    ["DEMONIC_PACT"]      = "Demonic Pact",
-    ["FEL_CONCENTRATION"] = "Fel Concentration",
-    ["NIGHTFALL"]         = "Nightfall",
-    ["INTENSITY"]         = "Intensity",
-    ["MASTER_DEMON"]      = "Master Demonologist",
-    ["SUPPRESSION"]       = "Suppression",
-    ["DEMONIC_EMBRACE"]   = "Demonic Embrace",
-    ["MALEDICTION"]       = "Malediction", -- New in Forever, Affliction t2, 5 ranks, +1%/rank periodic damage
-    ["PANDEMIC"]          = "Pandemic", -- New in Forever, Affliction t3, 3 ranks, +33%/rank crit damage bonus on DoTs (now that DoTs crit)
-    ["AGONIZING_FLAMES"]  = "Agonizing Flames", -- New in Forever, Destruction t4, 3 ranks, +3%/rank Destruction spell damage
+    ["DEMONIC_SACRIFICE"] = MSC.L["Demonic Sacrifice"],
+    ["SHADOW_MASTERY"]    = MSC.L["Shadow Mastery"],
+    ["RUIN"]              = MSC.L["Ruin"],
+    ["SOUL_LINK"]         = MSC.L["Soul Link"],
+    ["CONFLAGRATE"]       = MSC.L["Conflagrate"],
+    ["INCINERATE"]        = MSC.L["Incinerate"],
+    ["DEMONIC_PACT"]      = MSC.L["Demonic Pact"],
+    ["FEL_CONCENTRATION"] = MSC.L["Fel Concentration"],
+    ["NIGHTFALL"]         = MSC.L["Nightfall"],
+    ["INTENSITY"]         = MSC.L["Intensity"],
+    ["MASTER_DEMON"]      = MSC.L["Master Demonologist"],
+    ["SUPPRESSION"]       = MSC.L["Suppression"],
+    ["DEMONIC_EMBRACE"]   = MSC.L["Demonic Embrace"],
+    ["MALEDICTION"]       = MSC.L["Malediction"], -- New in Forever, Affliction t2, 5 ranks, +1%/rank periodic damage
+    ["PANDEMIC"]          = MSC.L["Pandemic"], -- New in Forever, Affliction t3, 3 ranks, +33%/rank crit damage bonus on DoTs (now that DoTs crit)
+    ["AGONIZING_FLAMES"]  = MSC.L["Agonizing Flames"], -- New in Forever, Destruction t4, 3 ranks, +3%/rank Destruction spell damage
     -- Leveling role markers (tiers 1-3, see Warlock.LowLevelRoles)
-    ["IMP_CORRUPTION"]    = "Improved Corruption", -- Affliction t1
-    ["SOUL_HARVESTING"]   = "Soul Harvest", -- Affliction t2 (renamed from Soul Harvesting in the 2 Oct patch)
-    ["IMP_LIFE_TAP"]      = "Improved Life Tap", -- Affliction t1, 2 ranks, +10% mana per Life Tap per rank
-    ["DEMONIC_KNOWLEDGE"] = "Demonic Knowledge", -- Demonology t5, 3 ranks, spell damage from the demon
-    ["IMP_DRAINS"]        = "Improved Drains", -- Affliction t2
-    ["IMP_BANE_AGONY"]    = "Improved Bane of Agony", -- Affliction t3
-    ["AMPLIFY_CURSE"]     = "Amplify Curse", -- Affliction t3
-    ["IMP_HEALTH_FUNNEL"] = "Improved Health Funnel", -- Demonology t1
-    ["IMP_IMP"]           = "Improved Imp", -- Demonology t1
-    ["UNHOLY_POWER"]      = "Unholy Power", -- Demonology t1
-    ["DEMONIC_AEGIS"]     = "Demonic Aegis", -- Demonology t2
-    ["IMP_VOIDWALKER"]    = "Improved Voidwalker", -- Demonology t2
-    ["FEL_VITALITY"]      = "Fel Vitality", -- Demonology t2
-    ["DEMONIC_ENERGIES"]  = "Demonic Energies", -- Demonology t2
-    ["IMP_SAYAAD"]        = "Improved Sayaad", -- Demonology t3
-    ["MASTER_SUMMONER"]   = "Master Summoner", -- Demonology t3
-    ["DESTRUCTIVE_REACH"] = "Destructive Reach", -- Destruction t1
-    ["IMP_SHADOW_BOLT"]   = "Improved Shadow Bolt", -- Destruction t1
-    ["BANE"]              = "Bane", -- Destruction t1
-    ["MOLTEN_SKIN"]       = "Molten Skin", -- Destruction t2
-    ["CATACLYSM"]         = "Cataclysm", -- Destruction t2
-    ["AFTERMATH"]         = "Aftermath", -- Destruction t2
-    ["SHADOWBURN"]        = "Shadowburn", -- Destruction t3
+    ["IMP_CORRUPTION"]    = MSC.L["Improved Corruption"], -- Affliction t1
+    ["SOUL_HARVESTING"]   = MSC.L["Soul Harvest"], -- Affliction t2 (renamed from Soul Harvesting in the 2 Oct patch)
+    ["IMP_LIFE_TAP"]      = MSC.L["Improved Life Tap"], -- Affliction t1, 2 ranks, +10% mana per Life Tap per rank
+    ["DEMONIC_KNOWLEDGE"] = MSC.L["Demonic Knowledge"], -- Demonology t5, 3 ranks, spell damage from the demon
+    ["IMP_DRAINS"]        = MSC.L["Improved Drains"], -- Affliction t2
+    ["IMP_BANE_AGONY"]    = MSC.L["Improved Bane of Agony"], -- Affliction t3
+    ["AMPLIFY_CURSE"]     = MSC.L["Amplify Curse"], -- Affliction t3
+    ["IMP_HEALTH_FUNNEL"] = MSC.L["Improved Health Funnel"], -- Demonology t1
+    ["IMP_IMP"]           = MSC.L["Improved Imp"], -- Demonology t1
+    ["UNHOLY_POWER"]      = MSC.L["Unholy Power"], -- Demonology t1
+    ["DEMONIC_AEGIS"]     = MSC.L["Demonic Aegis"], -- Demonology t2
+    ["IMP_VOIDWALKER"]    = MSC.L["Improved Voidwalker"], -- Demonology t2
+    ["FEL_VITALITY"]      = MSC.L["Fel Vitality"], -- Demonology t2
+    ["DEMONIC_ENERGIES"]  = MSC.L["Demonic Energies"], -- Demonology t2
+    ["IMP_SAYAAD"]        = MSC.L["Improved Sayaad"], -- Demonology t3
+    ["MASTER_SUMMONER"]   = MSC.L["Master Summoner"], -- Demonology t3
+    ["DESTRUCTIVE_REACH"] = MSC.L["Destructive Reach"], -- Destruction t1
+    ["IMP_SHADOW_BOLT"]   = MSC.L["Improved Shadow Bolt"], -- Destruction t1
+    ["BANE"]              = MSC.L["Bane"], -- Destruction t1
+    ["MOLTEN_SKIN"]       = MSC.L["Molten Skin"], -- Destruction t2
+    ["CATACLYSM"]         = MSC.L["Cataclysm"], -- Destruction t2
+    ["AFTERMATH"]         = MSC.L["Aftermath"], -- Destruction t2
+    ["SHADOWBURN"]        = MSC.L["Shadowburn"], -- Destruction t3
 }
 
 -- =============================================================
@@ -243,7 +243,7 @@ function Warlock:ApplyScalers(weights, currentSpec)
         -- Mastery (+1% Shadow) and Agonizing Flames (+3% Destruction, Fire
         -- rows) raise everything expressed in spell damage -- Spell Power,
         -- school damage, hit and crit -- but not wand, Int, Spirit, Mp5 or Stamina.
-        local dmgMult = (1 + 0.008 * rMalediction) * (1 + 0.01 * rShadowMastery)
+        local dmgMult = (1 + 0.008 * rMalediction) * (1 + 0.02 * rShadowMastery)
         local dmgKeys = { "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SHADOW_DAMAGE_SHORT", "ITEM_MOD_HIT_SPELL_RATING_SHORT", "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }
         if currentSpec:find("^Leveling_Fire") and rAgonizing > 0 then
             dmgMult = dmgMult * (1 + 0.03 * rAgonizing)
@@ -321,9 +321,9 @@ function Warlock:ApplyScalers(weights, currentSpec)
             weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rPandemic * 0.33))
         end
 
-        -- Shadow Mastery (Affliction t6, 5 ranks): +1%/rank Shadow spell damage/drain
+        -- Shadow Mastery (Affliction t6, 5 ranks): +2%/rank Shadow spell damage/drain (1%/rank before the 15 Oct patch)
         if rShadowMastery > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rShadowMastery * 0.01))
+            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rShadowMastery * 0.02))
         end
 
         -- Malediction (New in Forever, Affliction t2, 5 ranks): +1%/rank periodic

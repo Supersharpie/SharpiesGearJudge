@@ -11,18 +11,20 @@ Rogue.Name = "ROGUE"
 -- (study/rogue2, 2026-10-03; re-run 2026-10-08 from SharpiesGearJudge-SimStudio). The sim runs
 -- each build's own talents (Lethality, Hack and Slash, Dual Wield
 -- Specialization...), so ApplyScalers' talent hooks are for the leveling rows.
--- AP sits at 1.5 in the raid profiles.
+-- AP sits at 1.5 in the raid profiles. Re-run 2026-10-13 with poisons scaling off attack power (0.5% on
+-- Instant, 0.45% on each Deadly tick per stack, per the devs on forever-bugs #100; the per-tick reading is
+-- unconfirmed in game), which makes Attack Power itself worth a little more than the other stats.
 Rogue.Weights = {
     ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- Combat: Raid (Combat swords with Sinister Strike, level-63 boss, raid buffs). Agility is worth about
     -- twice Attack Power (its crit), and Hit and Crit are close. Off-hand weapon DPS is worth a quarter of the main hand's.
-    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.97, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=36.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=34.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=17.0, ["MSC_WEAPON_DPS_OH"]=4.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.93, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=36.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=16.6, ["MSC_WEAPON_DPS_OH"]=4.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Combat: Raid (Daggers) (Backstab from behind). About 4% behind swords in the sim.
-    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.92, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=36.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.8, ["MSC_WEAPON_DPS_OH"]=4.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.88, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=35.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=31.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.2, ["MSC_WEAPON_DPS_OH"]=4.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Assassination: Raid (Mutilate) (Assassination 31 / Combat 20, daggers). Mutilate hits with both hands, so the
     -- off-hand counts for more; Hit and Crit higher (Seal Fate combo points). About 10% behind Combat swords.
-    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.15, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=39.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=38.7, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=13.5, ["MSC_WEAPON_DPS_OH"]=6.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.08, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=38.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=36.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.8, ["MSC_WEAPON_DPS_OH"]=5.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
@@ -82,39 +84,39 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Rogue.Talents = { 
-    ["SEAL_FATE"]       = "Seal Fate",
-    ["COLD_BLOOD"]      = "Cold Blood",
-    ["ADRENALINE_RUSH"] = "Adrenaline Rush",
-    ["HACK_AND_SLASH"]  = "Hack and Slash",
-    ["PUNCTURING_WOUNDS"]= "Puncturing Wounds",
-    ["RIPOSTE"]         = "Riposte",
-    ["HEMORRHAGE"]      = "Hemorrhage",
-    ["PREPARATION"]     = "Preparation",
-    ["LETHALITY"]       = "Lethality",
-    ["PRECISION"]       = "Precision",
-    ["WEAP_EXPERTISE"]  = "Weapon Expertise",
-    ["MUTILATE"]        = "Mutilate",
-    ["VENOM"]           = "Venom",
-    ["THOUSAND_CUTS"]   = "Thousand Cuts",
+    ["SEAL_FATE"]       = MSC.L["Seal Fate"],
+    ["COLD_BLOOD"]      = MSC.L["Cold Blood"],
+    ["ADRENALINE_RUSH"] = MSC.L["Adrenaline Rush"],
+    ["HACK_AND_SLASH"]  = MSC.L["Hack and Slash"],
+    ["PUNCTURING_WOUNDS"]= MSC.L["Puncturing Wounds"],
+    ["RIPOSTE"]         = MSC.L["Riposte"],
+    ["HEMORRHAGE"]      = MSC.L["Hemorrhage"],
+    ["PREPARATION"]     = MSC.L["Preparation"],
+    ["LETHALITY"]       = MSC.L["Lethality"],
+    ["PRECISION"]       = MSC.L["Precision"],
+    ["WEAP_EXPERTISE"]  = MSC.L["Weapon Expertise"],
+    ["MUTILATE"]        = MSC.L["Mutilate"],
+    ["VENOM"]           = MSC.L["Venom"],
+    ["THOUSAND_CUTS"]   = MSC.L["Thousand Cuts"],
     -- Leveling role markers (tiers 1-3, see Rogue.LowLevelRoles)
-    ["IMP_SINISTER_STRIKE"] = "Improved Sinister Strike", -- Combat t1
-    ["LIGHTNING_REFLEXES"]  = "Lightning Reflexes", -- Combat t1
-    ["DEFLECTION"]          = "Deflection", -- Combat t2
-    ["OPPORTUNITY"]         = "Opportunity", -- Subtlety t1, Backstab damage
-    ["IMP_AMBUSH"]          = "Improved Ambush", -- Subtlety t2
-    ["CAMOUFLAGE"]          = "Camouflage", -- Subtlety t1
-    ["MASTER_OF_DECEPTION"] = "Master of Deception", -- Subtlety t1
-    ["SETUP"]               = "Setup", -- Subtlety t2
-    ["ELUSIVENESS"]         = "Elusiveness", -- Subtlety t2
-    ["DIRTY_TRICKS"]        = "Dirty Tricks", -- Subtlety t2
-    ["INITIATIVE"]          = "Initiative", -- Subtlety t3
-    ["GHOSTLY_STRIKE"]      = "Ghostly Strike", -- Subtlety t3
-    ["DW_SPEC"]             = "Dual Wield Specialization", -- Combat t4
-    ["MALICE"]              = "Malice", -- Assassination t1
-    ["RUTHLESSNESS"]        = "Ruthlessness", -- Assassination t2
-    ["RELENTLESS_STRIKES"]  = "Relentless Strikes", -- Assassination t3
-    ["MURDER"]              = "Murder", -- Assassination t2
-    ["IMP_EVISCERATE"]      = "Improved Eviscerate", -- Combat t1
+    ["IMP_SINISTER_STRIKE"] = MSC.L["Improved Sinister Strike"], -- Combat t1
+    ["LIGHTNING_REFLEXES"]  = MSC.L["Lightning Reflexes"], -- Combat t1
+    ["DEFLECTION"]          = MSC.L["Deflection"], -- Combat t2
+    ["OPPORTUNITY"]         = MSC.L["Opportunity"], -- Subtlety t1, Backstab damage
+    ["IMP_AMBUSH"]          = MSC.L["Improved Ambush"], -- Subtlety t2
+    ["CAMOUFLAGE"]          = MSC.L["Camouflage"], -- Subtlety t1
+    ["MASTER_OF_DECEPTION"] = MSC.L["Master of Deception"], -- Subtlety t1
+    ["SETUP"]               = MSC.L["Setup"], -- Subtlety t2
+    ["ELUSIVENESS"]         = MSC.L["Elusiveness"], -- Subtlety t2
+    ["DIRTY_TRICKS"]        = MSC.L["Dirty Tricks"], -- Subtlety t2
+    ["INITIATIVE"]          = MSC.L["Initiative"], -- Subtlety t3
+    ["GHOSTLY_STRIKE"]      = MSC.L["Ghostly Strike"], -- Subtlety t3
+    ["DW_SPEC"]             = MSC.L["Dual Wield Specialization"], -- Combat t4
+    ["MALICE"]              = MSC.L["Malice"], -- Assassination t1
+    ["RUTHLESSNESS"]        = MSC.L["Ruthlessness"], -- Assassination t2
+    ["RELENTLESS_STRIKES"]  = MSC.L["Relentless Strikes"], -- Assassination t3
+    ["MURDER"]              = MSC.L["Murder"], -- Assassination t2
+    ["IMP_EVISCERATE"]      = MSC.L["Improved Eviscerate"], -- Combat t1
 }
 
 -- =============================================================
@@ -241,10 +243,11 @@ function Rogue:ApplyScalers(weights, currentSpec)
         end
 
         -- Mutilate (Assassination t5): the off-hand lands a 75% yellow hit per
-        -- cast, so off-hand weapon DPS is worth 1.5x and main hand 1.05x
+        -- cast, so off-hand weapon DPS is worth 1.2x and main hand 0.85x of the
+        -- Backstab row (rmodel with Mutilate, 2026-10-16)
         if spec:find("^Leveling_Dagger") and Rank("MUTILATE") > 0 then
-            MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_OH" }, 1.5)
-            MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_MELEE" }, 1.05)
+            MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_OH" }, 1.2)
+            MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_MELEE" }, 0.85)
         end
     end
 

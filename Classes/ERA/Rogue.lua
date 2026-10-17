@@ -79,19 +79,19 @@ Rogue.PrettyNames = {
 -- ERA TALENTS
 -- =============================================================
 Rogue.Talents = { 
-    ["SEAL_FATE"]       = "Seal Fate",
-    ["COLD_BLOOD"]      = "Cold Blood",
-    ["ADRENALINE_RUSH"] = "Adrenaline Rush",
-    ["SWORD_SPEC"]      = "Sword Specialization",
-    ["DAGGER_SPEC"]     = "Dagger Specialization",
-    ["MACE_SPEC"]       = "Mace Specialization",
-    ["RIPOSTE"]         = "Riposte",
-    ["HEMORRHAGE"]      = "Hemorrhage",
-    ["PREPARATION"]     = "Preparation",
-    ["LETHALITY"]       = "Lethality",
-    ["PRECISION"]       = "Precision",
-    ["WEAP_EXPERTISE"]  = "Weapon Expertise",
-    ["BACKSTAB_IMP"]    = "Improved Backstab", 
+    ["SEAL_FATE"]       = MSC.L["Seal Fate"],
+    ["COLD_BLOOD"]      = MSC.L["Cold Blood"],
+    ["ADRENALINE_RUSH"] = MSC.L["Adrenaline Rush"],
+    ["SWORD_SPEC"]      = MSC.L["Sword Specialization"],
+    ["DAGGER_SPEC"]     = MSC.L["Dagger Specialization"],
+    ["MACE_SPEC"]       = MSC.L["Mace Specialization"],
+    ["RIPOSTE"]         = MSC.L["Riposte"],
+    ["HEMORRHAGE"]      = MSC.L["Hemorrhage"],
+    ["PREPARATION"]     = MSC.L["Preparation"],
+    ["LETHALITY"]       = MSC.L["Lethality"],
+    ["PRECISION"]       = MSC.L["Precision"],
+    ["WEAP_EXPERTISE"]  = MSC.L["Weapon Expertise"],
+    ["BACKSTAB_IMP"]    = MSC.L["Improved Backstab"], 
 }
 
 -- =============================================================

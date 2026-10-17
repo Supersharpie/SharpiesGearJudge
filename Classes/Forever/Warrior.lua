@@ -101,34 +101,34 @@ end
 -- =============================================================
 Warrior.Talents = {
     -- Arms
-    ["DEFLECTION"]       = "Deflection",               -- t1, +1%/rank parry
-    ["DEEP_WOUNDS"]      = "Deep Wounds",              -- t3, bleed of 20%/rank of average weapon damage on crits
-    ["SPEARING_STRIKE"]  = "Spearing Strike",          -- t4, 40% weapon damage every 20 s
-    ["TWOH_SPEC"]        = "Two-Handed Weapon Specialization", -- t4, +1%/rank two-handed damage
-    ["IMPALE"]           = "Impale",                   -- t4, +10%/rank ability crit bonus
-    ["BLOODTHRILL"]      = "Bloodthrill",              -- t5, 4%/rank Overpower on main-hand hits while Rend is up
-    ["WEAPONMASTER"]     = "Weaponmaster",             -- t5, per-weapon-type bonus (see GetWeaponmasterBonus)
-    ["IMP_SLAM"]         = "Improved Slam",            -- t6
-    ["MORTAL_STRIKE"]    = "Mortal Strike",            -- t7 (level 40)
-    ["ANGER_MANAGEMENT"] = "Anger Management",         -- t3, +1 rage per 3 s in combat
+    ["DEFLECTION"]       = MSC.L["Deflection"],               -- t1, +1%/rank parry
+    ["DEEP_WOUNDS"]      = MSC.L["Deep Wounds"],              -- t3, bleed of 20%/rank of average weapon damage on crits
+    ["SPEARING_STRIKE"]  = MSC.L["Spearing Strike"],          -- t4, 40% weapon damage every 20 s
+    ["TWOH_SPEC"]        = MSC.L["Two-Handed Weapon Specialization"], -- t4, +1%/rank two-handed damage
+    ["IMPALE"]           = MSC.L["Impale"],                   -- t4, +10%/rank ability crit bonus
+    ["BLOODTHRILL"]      = MSC.L["Bloodthrill"],              -- t5, 4%/rank Overpower on main-hand hits while Rend is up
+    ["WEAPONMASTER"]     = MSC.L["Weaponmaster"],             -- t5, per-weapon-type bonus (see GetWeaponmasterBonus)
+    ["IMP_SLAM"]         = MSC.L["Improved Slam"],            -- t6
+    ["MORTAL_STRIKE"]    = MSC.L["Mortal Strike"],            -- t7 (level 40)
+    ["ANGER_MANAGEMENT"] = MSC.L["Anger Management"],         -- t3, +1 rage per 3 s in combat
     -- Fury
-    ["CRUELTY"]          = "Cruelty",                  -- t1, +1%/rank crit
-    ["UNBRIDLED_WRATH"]  = "Unbridled Wrath",          -- t2, 12%/rank +1 rage (2 with a two-hander) on hit
-    ["BLOOD_CRAZE"]      = "Blood Craze",              -- t3, health back after a crit taken
-    ["DW_SPEC"]          = "Dual Wield Specialization", -- t4, +5%/rank off-hand damage (no hit since 70291)
-    ["RAGING_BLOWS"]     = "Raging Blows",             -- t4, Whirlwind strikes with the off-hand too
-    ["ENRAGE"]           = "Enrage",                   -- t4, +2%/rank Physical damage after being hit
-    ["FLURRY"]           = "Flurry",                   -- t6, +5%/rank attack speed after a crit
-    ["BLOODTHIRST"]      = "Bloodthirst",              -- t7 (level 40)
+    ["CRUELTY"]          = MSC.L["Cruelty"],                  -- t1, +1%/rank crit
+    ["UNBRIDLED_WRATH"]  = MSC.L["Unbridled Wrath"],          -- t2, 12%/rank +1 rage on a landed white hit (any weapon)
+    ["BLOOD_CRAZE"]      = MSC.L["Blood Craze"],              -- t3, health back after a crit taken
+    ["DW_SPEC"]          = MSC.L["Dual Wield Specialization"], -- t4, +5%/rank off-hand damage (no hit since 70291)
+    ["RAGING_BLOWS"]     = MSC.L["Raging Blows"],             -- t4, Whirlwind strikes with the off-hand too
+    ["ENRAGE"]           = MSC.L["Enrage"],                   -- t4, +2%/rank Physical damage after being hit
+    ["FLURRY"]           = MSC.L["Flurry"],                   -- t6, +5%/rank attack speed after a crit
+    ["BLOODTHIRST"]      = MSC.L["Bloodthirst"],              -- t7 (level 40)
     -- Protection
-    ["SHIELD_SPEC"]      = "Shield Specialization",    -- t1, +1%/rank block, rage on block
-    ["ANTICIPATION"]     = "Anticipation",             -- t2, +4/rank Defense
-    ["LAST_STAND"]       = "Last Stand",               -- t3
-    ["MASTER_OF_DEFENSE"] = "Master of Defense",       -- t3, rage on dodge/parry with a shield
-    ["IMP_REVENGE"]      = "Improved Revenge",         -- t3
-    ["DEFIANCE"]         = "Defiance",                 -- t3, +5%/rank threat in Defensive Stance with a shield
-    ["BASTION"]          = "Bastion",                  -- t6, +2%/rank damage with a shield
-    ["SHIELD_SLAM"]      = "Shield Slam",              -- t7 (level 40)
+    ["SHIELD_SPEC"]      = MSC.L["Shield Specialization"],    -- t1, +1%/rank block, rage on block
+    ["ANTICIPATION"]     = MSC.L["Anticipation"],             -- t2, +4/rank Defense
+    ["LAST_STAND"]       = MSC.L["Last Stand"],               -- t3
+    ["MASTER_OF_DEFENSE"] = MSC.L["Master of Defense"],       -- t3, rage on dodge/parry with a shield
+    ["IMP_REVENGE"]      = MSC.L["Improved Revenge"],         -- t3
+    ["DEFIANCE"]         = MSC.L["Defiance"],                 -- t3, +5%/rank threat in Defensive Stance with a shield
+    ["BASTION"]          = MSC.L["Bastion"],                  -- t6, +2%/rank damage with a shield
+    ["SHIELD_SLAM"]      = MSC.L["Shield Slam"],              -- t7 (level 40)
 }
 
 -- =============================================================
@@ -287,11 +287,12 @@ function Warrior:ApplyScalers(weights, currentSpec)
     -- Total rage income ~6.9/s, so each +1 rage/s adds 14% rage and 0.7 x that
     -- to the speed weight.
     --   Anger Management (Arms t3, 1 rank): +1 rage per 3 s = +0.33/s.
-    --   Unbridled Wrath (Fury t2, 5 ranks): 12%/rank, +2 rage per 2H hit
-    --   (2 x 0.6 / 3.5 s = 0.34/s at 5/5).
+    --   Unbridled Wrath (Fury t2, 5 ranks): 12%/rank on landed white hits,
+    --   1 rage for every weapon (the 2H bonus was dropped; forever-bugs #105)
+    --   (0.6 / 3.5 s = 0.17/s at 5/5).
     -- Below 40 abilities are cooldown-limited, so no change there.
     if isLevelingTwoH and level >= 40 and Rank("MORTAL_STRIKE") > 0 and weights["MSC_WEAPON_SPEED"] then
-        local extra = 0.33 * Rank("ANGER_MANAGEMENT") + 0.34 * math.min(1, 0.2 * Rank("UNBRIDLED_WRATH"))
+        local extra = 0.33 * Rank("ANGER_MANAGEMENT") + 0.17 * math.min(1, 0.2 * Rank("UNBRIDLED_WRATH"))
         if extra > 0 then Mul("MSC_WEAPON_SPEED", 1 + 0.7 * extra / 6.9) end
     end
 
@@ -324,6 +325,17 @@ function Warrior:ApplyScalers(weights, currentSpec)
         -- +0.05 x D per rank.
         local rIS = Rank("IMP_SLAM")
         if rIS > 0 then Add("MSC_WEAPON_SPEED", 0.05 * D * rIS) end
+    end
+
+    -- Bloodthirst (Fury t7, level 40): the dual-wield rows from 40 assume it,
+    -- and its damage (45% of attack power, nothing from the weapon) lowers
+    -- what weapon DPS is worth. A dual-wielder without it keeps the pre-40
+    -- value: the model's 10.6 AP per main-hand DPS against the rows' 6.2 at
+    -- 40 and 5.5 from 45 (SimStudio wmodel, 2026-10-13).
+    if isLeveling and isDW and level >= 40 and Rank("BLOODTHIRST") == 0 then
+        local noBT = MSC.ForeverLevelLerp({ { 40, 1.71 }, { 45, 1.93 }, { 59, 1.93 } }, level)
+        Mul("MSC_WEAPON_DPS_MELEE", noBT)
+        Mul("MSC_WEAPON_DPS_OH", noBT)
     end
 
     -- Dual Wield Specialization (Fury t4, minLevel 25, 5 ranks): +5%/rank

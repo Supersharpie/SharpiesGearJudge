@@ -11,9 +11,11 @@ Priest.Weights = {
     ["Default"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
     -- The level-60 profiles (study/priest2, 2026-10-03; NOTES.md there has the numbers). Spell Power / Healing sit at
     -- 2.0; Hit and Crit per 1%. Each was worked out with its build's own talents, so ApplyScalers' talent hooks skip them.
-    -- Shadow: Raid comes from the wowsims Forever sim (Shadow 508 DPS against Smite's 315-375). Spirit and Mp5 come out at
-    -- nothing there (the fight never runs a Shadow priest dry); Intellect is its crit and a little mana.
-    ["SHADOW_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=16.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.4, ["ITEM_MOD_INTELLECT_SHORT"]=0.4, ["ITEM_MOD_STAMINA_SHORT"]=0.1 },
+    -- Shadow: Raid comes from the wowsims Forever sim (Shadow 538 DPS against Smite's 315-375; re-run 2026-10-13 with
+    -- Twin Disciplines on Mind Flay and Shadow Word: Death and Shadowform's crit bonus on Shadow Word: Death, the
+    -- forever-bugs #322/#328 fixes). Spirit and Mp5 come out at almost nothing there (the fight never runs a Shadow
+    -- priest dry); Intellect is its crit and a little mana.
+    ["SHADOW_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=17.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.43, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.06 },
     -- The healer profiles come from our healing model (the sim can't heal): a raid fight's healing done with the mana you
     -- have, casting lower ranks where they save mana. Holy: Raid (Spiritual Guidance and Prayer of Mending) leans on Spirit
     -- and Mp5; its crit came out at ~2.5 in the model, which misses Inspiration and Holy's crit talents, so it is set at 7.
@@ -96,32 +98,32 @@ end
 -- WOW FOREVER TALENTS
 -- =============================================================
 Priest.Talents = { 
-    ["SHADOWFORM"]      = "Shadowform",
-    ["POWER_INFUSION"]  = "Power Infusion",
-    ["SPIRIT_GUIDANCE"] = "Spiritual Guidance",
-    ["SHADOW_WEAVING"]  = "Shadow Weaving",
-    ["BLACKOUT"]        = "Blackout",
-    ["WAND_SPEC"]       = "Wand Specialization",
-    ["SPIRIT_TAP"]      = "Spirit Tap",
-    ["MENTAL_STRENGTH"] = "Mental Strength",
-    ["DIVINE_FURY"]     = "Divine Fury",
-    ["SHADOW_FOCUS"]    = "Shadow Focus",
-    ["HOLY_PRECISION"]  = "Holy Precision", -- Discipline t2, 3 ranks, +6%/rank hit with Holy spells (client: 18 at 3/3)
-    ["SPIRITUAL_HEALING"] = "Spiritual Healing", -- Holy t6, 3 ranks, +3%/rank universal healing done
-    ["DARKNESS"]        = "Darkness", -- Shadow t6, 5 ranks, +2%/rank Shadow damage (Same as Classic)
-    ["IMP_RENEW"]       = "Improved Renew", -- Holy t1, 3 ranks
-    ["IMP_PWS"]         = "Improved Power Word: Shield", -- Discipline t2, 3 ranks
-    ["MARTYRDOM"]       = "Martyrdom", -- Discipline t2, 2 ranks
-    ["SILENT_RESOLVE"]  = "Silent Resolve", -- Discipline t2, 3 ranks, Holy threat reduction
-    ["MEDITATION"]      = "Meditation", -- Discipline t3, 3 ranks, mana regen while casting
-    ["INSPIRATION"]     = "Inspiration", -- Holy t3, 3 ranks
-    ["MIND_FLAY"]       = "Mind Flay", -- Shadow t3 (L20), 1 rank
-    ["DIVINE_AEGIS"]    = "Divine Aegis", -- Discipline t6, 3 ranks, crit heals shield
-    ["PENANCE"]         = "Penance", -- Discipline t5 (L30), 1 rank
-    ["PRAYER_OF_MENDING"] = "Prayer of Mending", -- Holy t7 (L40), 1 rank
-    ["IMP_MIND_BLAST"]  = "Improved Mind Blast", -- Shadow t3, 5 ranks, -0.5 s Mind Blast cooldown each
-    ["IMP_SWP"]         = "Improved Shadow Word: Pain", -- Shadow t2, 2 ranks, +3 s duration each
-    ["DEVOURING_CONTAGION"] = "Devouring Contagion", -- Shadow; the farming build's signature (Devouring Plague spreads on a kill)
+    ["SHADOWFORM"]      = MSC.L["Shadowform"],
+    ["POWER_INFUSION"]  = MSC.L["Power Infusion"],
+    ["SPIRIT_GUIDANCE"] = MSC.L["Spiritual Guidance"],
+    ["SHADOW_WEAVING"]  = MSC.L["Shadow Weaving"],
+    ["BLACKOUT"]        = MSC.L["Blackout"],
+    ["WAND_SPEC"]       = MSC.L["Wand Specialization"],
+    ["SPIRIT_TAP"]      = MSC.L["Spirit Tap"],
+    ["MENTAL_STRENGTH"] = MSC.L["Mental Strength"],
+    ["DIVINE_FURY"]     = MSC.L["Divine Fury"],
+    ["SHADOW_FOCUS"]    = MSC.L["Shadow Focus"],
+    ["HOLY_PRECISION"]  = MSC.L["Holy Precision"], -- Discipline t2, 3 ranks, +6%/rank hit with Holy spells (client: 18 at 3/3)
+    ["SPIRITUAL_HEALING"] = MSC.L["Spiritual Healing"], -- Holy t6, 3 ranks, +3%/rank universal healing done
+    ["DARKNESS"]        = MSC.L["Darkness"], -- Shadow t6, 5 ranks, +2%/rank Shadow damage (Same as Classic)
+    ["IMP_RENEW"]       = MSC.L["Improved Renew"], -- Holy t1, 3 ranks
+    ["IMP_PWS"]         = MSC.L["Improved Power Word: Shield"], -- Discipline t2, 3 ranks
+    ["MARTYRDOM"]       = MSC.L["Martyrdom"], -- Discipline t2, 2 ranks
+    ["SILENT_RESOLVE"]  = MSC.L["Silent Resolve"], -- Discipline t2, 3 ranks, Holy threat reduction
+    ["MEDITATION"]      = MSC.L["Meditation"], -- Discipline t3, 3 ranks, mana regen while casting
+    ["INSPIRATION"]     = MSC.L["Inspiration"], -- Holy t3, 3 ranks
+    ["MIND_FLAY"]       = MSC.L["Mind Flay"], -- Shadow t3 (L20), 1 rank
+    ["DIVINE_AEGIS"]    = MSC.L["Divine Aegis"], -- Discipline t6, 3 ranks, crit heals shield
+    ["PENANCE"]         = MSC.L["Penance"], -- Discipline t5 (L30), 1 rank
+    ["PRAYER_OF_MENDING"] = MSC.L["Prayer of Mending"], -- Holy t7 (L40), 1 rank
+    ["IMP_MIND_BLAST"]  = MSC.L["Improved Mind Blast"], -- Shadow t3, 5 ranks, -0.5 s Mind Blast cooldown each
+    ["IMP_SWP"]         = MSC.L["Improved Shadow Word: Pain"], -- Shadow t2, 2 ranks, +3 s duration each
+    ["DEVOURING_CONTAGION"] = MSC.L["Devouring Contagion"], -- Shadow; the farming build's signature (Devouring Plague spreads on a kill)
 }
 
 -- Leveling role marker talents (see MSC:GetLowLevelRole). Wand Specialization
@@ -132,6 +134,7 @@ Priest.Talents = {
 Priest.LowLevelRoles = {
     Leveling_Healer = { "IMP_RENEW", "INSPIRATION", "DIVINE_AEGIS", "PRAYER_OF_MENDING" }, -- the last two only heal
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
+    Leveling_Smite = {},
     Leveling_ShadowDungeon = {},
     Leveling_HealerDungeon = {},
 }
@@ -347,7 +350,7 @@ function Priest:ApplyScalers(weights, currentSpec)
 
     local rMent = Rank("MENTAL_STRENGTH")
     if hooks and rMent > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] then
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMent * 0.03))
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] * (1 + (rMent * 0.02))
     end
 
     -- Shadowform (Shadow t7, 1 rank): doubles the crit damage bonus of Shadow
@@ -415,19 +418,25 @@ function Priest:ApplyScalers(weights, currentSpec)
     -- Every damage profile (Shadow and Smite leveling included, not only the
     -- endgame SHADOW ones). Target is the level's cap, sliding to the raid
     -- cap from 50. Shadow Focus (1%/rank, Shadow only) is added for Shadow
-    -- profiles and Holy Precision (6%/rank, Holy only; 18% at 3/3 covers any
-    -- leveling cap on its own) for Smite, since the
-    -- game's general spell-hit number includes neither.
+    -- profiles, since the game's general spell-hit number doesn't include it.
+    -- Holy Precision is not counted on the Smite rows any more: the 2026-10-16
+    -- leveling model (SimStudio pmodel.js) has those builds casting no Holy
+    -- spell (Shadow Word: Pain, Starshards, Shadow Word: Death and the wand).
     local isShadow = currentSpec:find("SHADOW") or isDefaultRow
-    local talentHit = (isShadow and Rank("SHADOW_FOCUS")) or (currentSpec:find("Smite") and Rank("HOLY_PRECISION") * 6) or 0
+    local talentHit = (isShadow and Rank("SHADOW_FOCUS")) or 0
     local rSFocus = Rank("SHADOW_FOCUS")
-    if isDefaultRow and rSFocus > 0 and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
+    if (isDefaultRow or isSmiteRow) and rSFocus > 0 and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
         -- Shadow Focus only covers Shadow spells; Starshards (Arcane) and the wand
         -- still miss at the level's cap. Hit is worth full below (cap - Shadow
         -- Focus) of gear hit, then only the non-Shadow share (1 - s) until the cap,
-        -- then the usual 0.1 (a flat cap with Shadow Focus added left a 5/5 player
-        -- at 0.1 from level 19 although 60-70% of the hit value was still live)
-        local s = MSC.ForeverLevelLerp({ {10, 0.25}, {15, 0.30}, {20, 0.30}, {25, 0.32}, {30, 0.35}, {35, 0.38}, {40, 0.40} }, level)
+        -- then the usual 0.1. s = the Shadow share of the hit value in the
+        -- leveling model (SimStudio models/priest/priest_solo_curves_build.js,
+        -- 2026-10-16): Shadow solo from the shipped Shadow build, all Shadow from
+        -- 40 (Shadowform: no Starshards, no wand); Smite rows from the Disc and Holy
+        -- solo builds (Starshards and the wand stay)
+        local s = isSmiteRow
+            and MSC.ForeverLevelLerp({ {10, 0.16}, {15, 0.18}, {20, 0.25}, {25, 0.32}, {30, 0.29}, {35, 0.31}, {40, 0.35}, {45, 0.33}, {50, 0.32}, {59, 0.31} }, level)
+            or MSC.ForeverLevelLerp({ {10, 0.22}, {15, 0.30}, {20, 0.44}, {25, 0.63}, {30, 0.54}, {35, 0.44}, {40, 1.0} }, level)
         local cap = MSC.GetForeverCapTarget("SPELL")
         MSC.ApplyForeverHitKnees(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", {
             { cap = math.max(0, cap - rSFocus), mult = (1 - s) + s * 0.1 },
