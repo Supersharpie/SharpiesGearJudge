@@ -1790,9 +1790,6 @@ L["WoW Forever: Affliction Warlocks now level with Drain Life from level 20. The
 -- ADDED IN 3.2.4 (What's New)
 -- =============================================================
 
-
-
-
 -- =============================================================
 -- ADDED IN 3.2.4 (Forever talent names)
 -- =============================================================
@@ -2036,3 +2033,59 @@ L["Assassination: Solo Leveling"] = "Asesinato: Subida de nivel en solitario"
 L["Assassination: Dungeon Leveling"] = "Asesinato: Subida de nivel en mazmorras"
 L["Subtlety: Dungeon Leveling"] = "Sutileza: Subida de nivel en mazmorras"
 
+-- =============================================================
+-- ADDED IN 3.2.4 (item effects)
+-- =============================================================
+L["(%d+) [^%d]- and (%d+) [^%d]-damage"] = "(%d+) [^%d]- y (%d+) [^%d]-daño"
+L["(%d+) [^%d]-damage every (%d+) sec for (%d+) sec"] = "(%d+) [^%d]-daño[^%d]- cada (%d+) s%.? durante (%d+) s"
+L["(%d+) [^%d]-damage"] = "(%d+) [^%d]-daño"
+L["(%d+) to (%d+) [^%d]-damage"] = "(%d+) [ay] (%d+) [^%d]-daño"
+L["(%d+)%% chance"] = "(%d+)%% de probabilidad"
+L["Damage procs (\"Chance on hit: ...\") and bonuses against one creature type (\"+9 Attack Power Vs Humanoids\") now count toward an item's score, as an estimate."] = "Los efectos de daño (\"Probabilidad al acertar: ...\") y las bonificaciones contra un tipo de criatura (\"+9 de poder de ataque contra humanoides\") ahora cuentan para la puntuación de un objeto, como estimación."
+L["Proc damage estimated as about %d Attack Power"] = "Daño del efecto estimado en unos %d p. de poder de ataque"
+L["^%+(%d+) attack power vs (.+)$"] = "^%+(%d+) p%. de poder de ataque contra (.+)$"
+L["^%+(%d+) attack power when fighting (.+)$"] = "^%+(%d+) p%. de poder de ataque en la lucha contra (.+)$"
+L["^%+(%d+) spell damage vs (.+)$"] = "^%+(%d+) p%. de daño con hechizos contra (.+)$"
+L["absorb"] = "absorb"
+L["additional (%d+) damage"] = "(%d+) p%. de daño extra"
+L["against"] = "contra"
+L["attacks deal"] = "infligen"
+L["axes skill"] = "habilidad con hachas"
+L["beast"] = "bestia"
+L["beasts"] = "bestias"
+L["both you and"] = "a ti y a tu"
+L["bows skill"] = "habilidad con arcos"
+L["crossbows skill"] = "habilidad con ballestas"
+L["daggers skill"] = "habilidad con dagas"
+L["damage done to (.-) by magical spells and effects by up to (%d+)"] = "hasta (%d+) p%. el daño de los hechizos y efectos mágicos %a+ l?o?s? ?([^%.]+)"
+L["demon"] = "demonio"
+L["demons"] = "demonios"
+L["dragonkin"] = "dragonantes"
+L["elemental"] = "elemental"
+L["elementals"] = "elementales"
+L["fist weapons skill"] = "habilidad con armas de puño"
+L["giant"] = "gigante"
+L["giants"] = "gigantes"
+L["guns skill"] = "habilidad con armas de fuego"
+L["heal"] = "sana"
+L["humanoid"] = "humanoide"
+L["humanoids"] = "humanoides"
+L["invulnerab"] = "invulnerab"
+L["life"] = "vida"
+L["maces skill"] = "habilidad con mazas"
+L["mechanical"] = "unidades mecánicas"
+L["polearms skill"] = "habilidad con armas de asta"
+L["rating"] = "índice"
+L["restor"] = "restaur"
+L["shield"] = "escudo"
+L["skill with fist weapons"] = "habilidad con armas de puño"
+L["sleep"] = "dorm"
+L["staves skill"] = "habilidad con bastones"
+L["swords skill"] = "habilidad con espadas"
+L["two-handed axes skill"] = "habilidad con hachas de dos manos"
+L["two-handed maces skill"] = "habilidad con mazas de dos manos"
+L["two-handed swords skill"] = "habilidad con espadas de dos manos"
+L["undead"] = "no-muertos"
+L["when struck"] = "al recibir un golpe"
+
+L["dot captures: damage every duration"] = "dot captures: damage every duration"

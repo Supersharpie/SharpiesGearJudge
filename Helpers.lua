@@ -1452,6 +1452,32 @@ function MSC.GetRawItemStats(itemLink)
         end
     end
 
+    -- 4b. DAMAGE PROCS WITH NO CURATED ENTRY: an estimate. Average damage per
+    -- trigger x triggers per minute (Parse.lua ProcRate) = extra DPS, worth
+    -- AP_PER_DPS Attack Power each (Ranged Attack Power on a ranged weapon).
+    -- Casters' Attack Power weight is 0, so melee procs stay worthless to them.
+    local unmodeled = scanData.Procs
+    if not hasProcEntry and scanData.Procs and #scanData.Procs > 0 and MSC.Scanner then
+        local apKey = "ITEM_MOD_ATTACK_POWER_SHORT"
+        local getInstant = GetItemInfoInstant or (C_Item and C_Item.GetItemInfoInstant)
+        local equipLoc = getInstant and select(4, getInstant(itemLink))
+        if equipLoc == "INVTYPE_RANGED" or equipLoc == "INVTYPE_RANGEDRIGHT" or equipLoc == "INVTYPE_THROWN" then
+            apKey = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT"
+        end
+        unmodeled = {}
+        for _, p in ipairs(scanData.Procs) do
+            if p.type == "Damage" and p.perMin and (p.val or 0) > 0 then
+                local ap = p.val * p.perMin / 60 * (MSC.Scanner.AP_PER_DPS or 14)
+                finalStats[apKey] = (finalStats[apKey] or 0) + ap
+                -- A table, so stat loops (type == "number") skip it.
+                finalStats._PROC_ESTIMATE = finalStats._PROC_ESTIMATE or { ap = 0 }
+                finalStats._PROC_ESTIMATE.ap = finalStats._PROC_ESTIMATE.ap + ap
+            else
+                unmodeled[#unmodeled + 1] = p
+            end
+        end
+    end
+
     -- 5. SOCKET BONUSES
     if scanData.Meta and scanData.Meta.BonusStats then bonusStats = scanData.Meta.BonusStats end
     local normalized = {}
@@ -1470,7 +1496,7 @@ function MSC.GetRawItemStats(itemLink)
     -- Rides along through SafeGetItemStats/EvaluateUpgrade so the tooltip can
     -- warn that the item's score is stats-only when this is non-empty and no
     -- curated entry was found.
-    if scanData.Procs and #scanData.Procs > 0 then finalStats._RAW_PROCS = scanData.Procs end
+    if unmodeled and #unmodeled > 0 then finalStats._RAW_PROCS = unmodeled end
 
     -- Don't cache a scan of an item whose data hasn't loaded (it would be
     -- incomplete); the next call after GET_ITEM_INFO_RECEIVED rescans it.

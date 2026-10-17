@@ -1041,12 +1041,20 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         tooltip:AddLine(" ")
                         local hexColor = string.format("ff%02x%02x%02x", cR.r*255, cR.g*255, cR.b*255)
                         tooltip:AddLine(MSC.L["Judge's Note: "] .. "|c" .. hexColor .. entry.note .. "|r", cL.r, cL.g, cL.b, true)
-                    elseif not entry and itemNewStats and itemNewStats._RAW_PROCS then
+                    elseif not entry and itemNewStats and (itemNewStats._RAW_PROCS or itemNewStats._PROC_ESTIMATE) then
+                        tooltip:AddLine(" ")
+                        -- Damage procs with no curated entry are scored as an estimate
+                        -- (Helpers GetRawItemStats 4b); say how much.
+                        local est = itemNewStats._PROC_ESTIMATE
+                        if est and est.ap and est.ap >= 0.5 then
+                            tooltip:AddLine(string_format(MSC.L["Proc damage estimated as about %d Attack Power"], math.floor(est.ap + 0.5)), 0.53, 0.53, 0.53, true)
+                        end
                         -- Scanner found "chance on hit" / temporary Equip: proc text but
                         -- no curated ProcDB/WeaponDB/TrinketDB/PvPDB entry exists for it --
                         -- let the player know the score below is stats-only.
-                        tooltip:AddLine(" ")
-                        tooltip:AddLine(MSC.L["Proc not yet modeled (score reflects stats only)"], 0.53, 0.53, 0.53, true)
+                        if itemNewStats._RAW_PROCS then
+                            tooltip:AddLine(MSC.L["Proc not yet modeled (score reflects stats only)"], 0.53, 0.53, 0.53, true)
+                        end
                     end
                 end
             end

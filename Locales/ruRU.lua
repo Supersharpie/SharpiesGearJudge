@@ -1908,9 +1908,6 @@ L["WoW Forever: Affliction Warlocks now level with Drain Life from level 20. The
 -- ADDED IN 3.2.4 (What's New)
 -- =============================================================
 
-
-
-
 -- =============================================================
 -- ADDED IN 3.2.4 (Forever talent names)
 -- =============================================================
@@ -2154,3 +2151,59 @@ L["Assassination: Solo Leveling"] = "Ликвидация: Соло-прокач
 L["Assassination: Dungeon Leveling"] = "Ликвидация: Прокачка в подземельях"
 L["Subtlety: Dungeon Leveling"] = "Скрытность: Прокачка в подземельях"
 
+-- =============================================================
+-- ADDED IN 3.2.4 (item effects)
+-- =============================================================
+L["(%d+) [^%d]- and (%d+) [^%d]-damage"] = "(%d+) ед%. урона[^%d]- и (%d+) ед%.[^%d]-урона"
+L["(%d+) [^%d]-damage every (%d+) sec for (%d+) sec"] = "(%d+) ед%.[^%d]-урона[^%d]-раз в (%d+) сек[^%d]-в течение (%d+) сек"
+L["(%d+) [^%d]-damage"] = "(%d+) ед%.[^%d]-урона"
+L["(%d+) to (%d+) [^%d]-damage"] = "от (%d+) до (%d+) ед%.[^%d]-урона"
+L["(%d+)%% chance"] = "(%d+)%%"
+L["Damage procs (\"Chance on hit: ...\") and bonuses against one creature type (\"+9 Attack Power Vs Humanoids\") now count toward an item's score, as an estimate."] = "Срабатывающие эффекты урона (\"Возможный эффект при попадании: ...\") и бонусы против одного типа существ (\"+9 к силе атаки против гуманоидов\") теперь учитываются в оценке предмета приблизительно."
+L["Proc damage estimated as about %d Attack Power"] = "Урон от эффекта оценивается примерно в %d ед. силы атаки"
+L["^%+(%d+) attack power vs (.+)$"] = "^%+(%d+) [^%s]+ атаки в бою с (.+)$"
+L["^%+(%d+) attack power when fighting (.+)$"] = "^%+(%d+) к силе атаки против (.+)$"
+L["^%+(%d+) spell damage vs (.+)$"] = "^%+(%d+) [^%s]+ от заклинаний в бою с (.+)$"
+L["absorb"] = "оглощ"
+L["additional (%d+) damage"] = "дополнительно (%d+) ед%. урона"
+L["against"] = "целям"
+L["attacks deal"] = "наносят"
+L["axes skill"] = "Владение топорами"
+L["beast"] = "животных"
+L["beasts"] = "животными"
+L["both you and"] = "вам и вашей"
+L["bows skill"] = "Владение луками"
+L["crossbows skill"] = "Владение арбалетами"
+L["daggers skill"] = "Владение кинжалами"
+L["damage done to (.-) by magical spells and effects by up to (%d+)"] = "урон от заклинаний и магических эффектов против (.-) максимум на (%d+)"
+L["demon"] = "демонов"
+L["demons"] = "демонами"
+L["dragonkin"] = "драконами"
+L["elemental"] = "элементалей"
+L["elementals"] = "элементалями"
+L["fist weapons skill"] = "Владение кистевым оружием"
+L["giant"] = "великанов"
+L["giants"] = "великанами"
+L["guns skill"] = "Владение огнестрельным оружием"
+L["heal"] = "сцел"
+L["humanoid"] = "гуманоидов"
+L["humanoids"] = "гуманоидами"
+L["invulnerab"] = "еуязвим"
+L["life"] = "здоров"
+L["maces skill"] = "Владение дробящим оружием"
+L["mechanical"] = "механизмами"
+L["polearms skill"] = "Владение древковым оружием"
+L["rating"] = "рейтинг"
+L["restor"] = "осстан"
+L["shield"] = "щит"
+L["skill with fist weapons"] = "навык владения кистевым оружием"
+L["sleep"] = "усып"
+L["staves skill"] = "Владение посохами"
+L["swords skill"] = "Владение мечами"
+L["two-handed axes skill"] = "Владение двуручными топорами"
+L["two-handed maces skill"] = "Владение двуручным дробящим оружием"
+L["two-handed swords skill"] = "Владение двуручными мечами"
+L["undead"] = "нежитью"
+L["when struck"] = "получении"
+
+L["dot captures: damage every duration"] = "dot captures: damage every duration"

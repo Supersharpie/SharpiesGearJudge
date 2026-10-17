@@ -245,7 +245,22 @@ MSC.Scanner.TermMap = {
     [MSC.L["skill with crossbows"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     [MSC.L["skill with staves"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     [MSC.L["skill with polearms"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
-    
+    [MSC.L["skill with fist weapons"]] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    -- Forever's short form: "Equip: +3 Daggers Skill".
+    [MSC.L["swords skill"]]            = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["axes skill"]]              = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["maces skill"]]             = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["daggers skill"]]           = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["fist weapons skill"]]      = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["polearms skill"]]          = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["staves skill"]]            = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["bows skill"]]              = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["guns skill"]]              = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["crossbows skill"]]         = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["two-handed swords skill"]] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["two-handed axes skill"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["two-handed maces skill"]]  = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+
     -- [[ TBC: THE "RANGED" & "SHIELD" VARIANTS ]]
     [MSC.L["ranged critical strike rating"]] = "ITEM_MOD_CRIT_RATING_SHORT",
     [MSC.L["ranged hit rating"]]              = "ITEM_MOD_HIT_RATING_SHORT",
@@ -310,7 +325,65 @@ MSC.Scanner.StatPatterns = {
     { p = MSC.L["(%d+) hit rating and .*snare"], valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT" },
 }
 
+-- [[ BONUSES AGAINST ONE CREATURE TYPE ]]
+-- "+9 Attack Power Vs Humanoids", "+81 Attack Power when fighting Undead",
+-- "+3 Spell Damage Vs Undead". Counted at the share of the mobs you fight
+-- while leveling that are of that type (a rough mix of questing zones).
+MSC.Scanner.CreatureShare = {
+    humanoids = 0.35, humanoid = 0.35, beasts = 0.30, beast = 0.30, undead = 0.15,
+    demons = 0.05, demon = 0.05, elementals = 0.05, elemental = 0.05,
+    mechanical = 0.03, dragonkin = 0.03, giants = 0.03, giant = 0.03,
+}
+local creatureLookup
+local function CreatureShare(name)
+    if not creatureLookup then
+        creatureLookup = {}
+        for k, v in pairs(MSC.Scanner.CreatureShare) do creatureLookup[#creatureLookup + 1] = { string_lower(MSC.L[k]), v } end
+        -- Longest names first, so "demons" is found before "demon".
+        table.sort(creatureLookup, function(a, b) return #a[1] > #b[1] end)
+    end
+    name = string_gsub(string_lower(name or ""), "[%s%.]+$", "")
+    for _, c in ipairs(creatureLookup) do
+        if name == c[1] then return c[2] end
+    end
+    -- "Undead and Demons": add up every type named, each once.
+    local share = 0
+    for _, c in ipairs(creatureLookup) do
+        local a, b = string_find(name, c[1], 1, true)
+        if a then
+            share = share + c[2]
+            name = string.sub(name, 1, a - 1) .. "|" .. string.sub(name, b + 1)
+        end
+    end
+    return share > 0 and share or nil
+end
+local function AddVsCreature(stat)
+    return function(val, creature, _, outputStats)
+        -- Some languages put the creature first ("언데드에 대한 전투력 +9").
+        if not ScanNum(val) and ScanNum(creature) then val, creature = creature, val end
+        if not outputStats then return false end
+        -- A creature type we don't know: the line is still this kind of bonus,
+        -- so it's used up here (scoring 0) instead of reaching other patterns.
+        local share = CreatureShare(creature)
+        if not share then return end
+        outputStats[stat] = (outputStats[stat] or 0) + (ScanNum(val) or 0) * share
+    end
+end
+local function AddSpellVsCreature(creature, val, _, outputStats)
+    if ScanNum(creature) and not ScanNum(val) then creature, val = val, creature end
+    -- "Increases damage done to Undead by magical spells and effects by up to 48."
+    return AddVsCreature(MSC.IsForever and "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT" or "ITEM_MOD_SPELL_POWER_SHORT")(val, creature, nil, outputStats)
+end
+
 MSC.Scanner.EquipPatterns = {
+    -- ========================================================================
+    -- [[ 0. BONUSES AGAINST ONE CREATURE TYPE (see CreatureShare above) ]]
+    -- ========================================================================
+    { p = MSC.L["^%+(%d+) attack power vs (.+)$"], func = AddVsCreature("ITEM_MOD_ATTACK_POWER_SHORT") },
+    { p = MSC.L["^%+(%d+) attack power when fighting (.+)$"], func = AddVsCreature("ITEM_MOD_ATTACK_POWER_SHORT") },
+    { p = MSC.L["^%+(%d+) spell damage vs (.+)$"], func = function(v, c, _, o) return AddVsCreature(MSC.IsForever and "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT" or "ITEM_MOD_SPELL_POWER_SHORT")(v, c, nil, o) end },
+    { p = MSC.L["damage done to (.-) by magical spells and effects by up to (%d+)"], func = AddSpellVsCreature },
+
     -- ========================================================================
     -- [[ 1. SPECIALIZED OVERRIDES (Higher Priority / Lazy Matching) ]]
     -- ========================================================================
@@ -476,6 +549,67 @@ local function CreateItemObject()
     }
 end
 
+-- [[ DAMAGE PROCS WITHOUT A CURATED ENTRY ]]
+-- Average damage of one trigger, or nil when the effect isn't plain damage
+-- (heals, shields, mana, debuffs). The first damage number in the line wins,
+-- so later conditions ("Deals 2 times as much damage to Naga.") are ignored.
+-- Helpers turns it into Attack Power with ProcRate and AP_PER_DPS.
+MSC.Scanner.ProcRate = {
+    onHit = 1.0,     -- "Chance on hit:": the classic 1 proc per minute
+    struck = 20,     -- "When struck": hits taken per minute (about one every 3 sec)
+    swing = 24,      -- "Your melee attacks deal X": one per swing at 2.5 speed
+}
+MSC.Scanner.AP_PER_DPS = 14
+
+-- Which capture of the damage-over-time pattern is which. Languages that word
+-- it in another order ("fügt 12 sek. lang alle 3 sek. 7 punkt(e) schaden zu")
+-- translate this key to list the captures in their own order.
+local dotOrder
+local function DotOrder()
+    if not dotOrder then
+        dotOrder = {}
+        local v = string_match(MSC.L["dot captures: damage every duration"], ":%s*(.*)$") or ""
+        local i = 0
+        for w in string.gmatch(v, "%a+") do i = i + 1; dotOrder[w] = i end
+        if not (dotOrder.damage and dotOrder.every and dotOrder.duration) then
+            dotOrder = { damage = 1, every = 2, duration = 3 }
+        end
+    end
+    return dotOrder
+end
+
+function MSC.Scanner.ProcDamage(cleanText)
+    local s = cleanText
+    for _, w in ipairs({ "heal", "absorb", "shield", "restor", "mana", "life", "sleep", "invulnerab" }) do
+        if string_find(s, string_lower(MSC.L[w]), 1, true) then return nil end
+    end
+    -- Damage over time ("7 Nature damage every 3 sec for 12 sec"); any direct
+    -- damage is looked for only before it ("Inflict 42 Fire and 14 Frost
+    -- damage, ..., and inflict 7 Nature damage every 3 sec for 12 sec").
+    local dmg
+    local at, _, c1, c2, c3 = string_find(s, MSC.L["(%d+) [^%d]-damage every (%d+) sec for (%d+) sec"])
+    if at then
+        local c, o = { ScanNum(c1), ScanNum(c2), ScanNum(c3) }, DotOrder()
+        local n, every, dur = c[o.damage], c[o.every], c[o.duration]
+        if n and every and dur then
+            dmg = n * math_floor(dur / math.max(1, every))
+            s = string.sub(s, 1, at - 1)
+        end
+    end
+    local direct
+    local lo, hi = string_match(s, MSC.L["(%d+) to (%d+) [^%d]-damage"])
+    if lo then direct = (ScanNum(lo) + ScanNum(hi)) / 2
+    else
+        local a, b = string_match(s, MSC.L["(%d+) [^%d]- and (%d+) [^%d]-damage"])
+        if a then direct = ScanNum(a) + ScanNum(b)
+        else direct = ScanNum(string_match(s, MSC.L["(%d+) [^%d]-damage"])) end
+    end
+    if direct then dmg = (dmg or 0) + direct end
+    if not dmg then return nil end
+    local extra = ScanNum(string_match(s, MSC.L["additional (%d+) damage"]))
+    return dmg + (extra or 0)
+end
+
 local function ParseCooldown(text)
     local lowerText = string_lower(text)
     local min = string_match(lowerText, MSC.L["%((%d+)%s*min[s%a]*%s*cooldown%)"] or "%((%d+)%s*min[s%a]*%s*cooldown%)")
@@ -542,10 +676,12 @@ function MSC.Scanner.ClassifyLine(text)
     if IsUniqueEquippedLine(text) then return "FLUFF" end
 
     -- [[ OPTIMIZATION: SIMPLE CHECKS FIRST ]]
+    -- Set bonuses first: "(4) Set: Chance on damaging spell..." is a set bonus
+    -- (scored from the set tables), not a proc of this item.
+    if string_find(lower, MSC.L["set:"]) then return "SET" end
 	if string_find(lower, MSC.L["chance on"]) then return "PROC" end
     if string_find(lower, MSC.L["equip"]) then return "EQUIP" end
     if string_find(lower, MSC.L["use:"]) then return "USE" end
-    if string_find(lower, MSC.L["set:"]) then return "SET" end
     local cleanForSet = string_gsub(string_gsub(lower, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
     if string_match(cleanForSet, "%((%d+)/(%d+)%)") then return "SET" end
     if string_find(lower, MSC.L["socket"]) then 
@@ -577,7 +713,7 @@ end
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), MSC.L["^equip: "], "")
     cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), MSC.L["^%s*equip:%s*"], "")
-    
+
     -- [[ PROCS & BUFFS ESCAPE HATCH ]]
     -- Prevents temporary buffs from being read as permanent passive stats.
     local isTemporary = false
@@ -604,11 +740,34 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
         return
     end
 
+    -- [[ DAMAGE WHEN STRUCK / ON EVERY SWING ]]
+    -- "When struck in combat, inflicts 2 Nature damage to the attacker",
+    -- "...has a 5% chance of inflicting 35 to 65 Nature damage...", "Your melee
+    -- weapon attacks deal 2 Nature damage to both you and your target".
+    if outputProcs then
+        local perMin
+        if string_find(cleanText, string_lower(MSC.L["when struck"]), 1, true) then
+            local chance = ScanNum(string_match(cleanText, MSC.L["(%d+)%% chance"]))
+            perMin = MSC.Scanner.ProcRate.struck * (chance or 100) / 100
+        elseif string_find(cleanText, string_lower(MSC.L["attacks deal"]), 1, true) and not string_find(cleanText, string_lower(MSC.L["against"]), 1, true)
+            and not string_match(cleanText, MSC.L["(%d+)%% chance"]) then
+            perMin = MSC.Scanner.ProcRate.swing
+            -- It hurts you as much as the target: count half.
+            if string_find(cleanText, string_lower(MSC.L["both you and"]), 1, true) then perMin = perMin / 2 end
+        end
+        local dmg = perMin and MSC.Scanner.ProcDamage(cleanText)
+        if dmg then
+            table_insert(outputProcs, { type = "Damage", val = dmg, perMin = perMin, description = text })
+            return
+        end
+    end
+
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
         local match1, match2, match3 = string_match(cleanText, pat.p)
-        if match1 then
-            if pat.func then pat.func(match1, match2, match3, outputStats); return end
-
+        -- A func returning false didn't recognize the line; try the next pattern.
+        if match1 and pat.func then
+            if pat.func(match1, match2, match3, outputStats) ~= false then return end
+        elseif match1 then
             local val, name = MSC.Scanner.OrderCaptures(pat, match1, match2)
             if not pat.nameIdx then name = nil end
             if pat.upTo then
@@ -635,6 +794,14 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
                 return
             elseif val and name then
                 local key = MSC.Scanner.LookupTerm(name, true)
+                -- Forever prints weapon skill as points ("+3 Daggers Skill"), but its
+                -- stat is Weapon Skill Rating (2.5 per point, CombatRatingScalars[1]),
+                -- which the scorer converts back to points.
+                if key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" and MSC.IsForever
+                    and not string_find(name, string_lower(MSC.L["rating"]), 1, true) then
+                    local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+                    val = val * ((s and s[1]) or 2.5)
+                end
                 if key then outputStats[key] = (outputStats[key] or 0) + val; return end
             end
         end
@@ -766,6 +933,12 @@ end
 function MSC.Scanner.ParseProcLine(text, outputProcs)
     local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), "%s+", " ")
     cleanText = string_gsub(string_gsub(cleanText, MSC.L["^chance on hit: "], ""), MSC.L["^equip: chance on hit: "], "")
+
+    local dmg = MSC.Scanner.ProcDamage(cleanText)
+    if dmg then
+        table_insert(outputProcs, { type = "Damage", val = dmg, perMin = MSC.Scanner.ProcRate.onHit, description = text })
+        return
+    end
 
     for _, pat in ipairs(MSC.Scanner.ProcPatterns) do
         local m1, m2, m3 = string_match(cleanText, pat.p)

@@ -3,7 +3,7 @@ local _, MSC = ...
 -- ============================================================================
 -- WoW FOREVER ITEM SETS, SET BONUSES AND PROCS
 -- ============================================================================
--- Generated from the client's own tables (wago.tools, build 1.60.1.70205:
+-- Generated from the client's own tables (wago.tools, build 1.60.1.70425:
 -- ItemSet, ItemSetSpell, SpellEffect, Spell) by
 -- SharpiesGearJudge-Research/sets/gen_sets.py. Rerun it after a client
 -- update instead of editing the set tables by hand.
@@ -552,11 +552,11 @@ MSC.SetDefinitions = {
     [2113] = { {280986,280987,280988,280991,280989,280990} }, -- Grovekeeper Rage (ilvl ?)
     [2114] = { {280998,280999,281000,281003,281001,281002} }, -- Grovekeeper Eclipse (ilvl ?)
     [2115] = { {280992,280993,280994,280997,280995,280996} }, -- Grovekeeper Ferocity (ilvl ?)
-    [2130] = { {284102,284101,284100} }, -- Rider of the Plaguelands (ilvl ?)
+    [2130] = { {284102,284101,284100} }, -- Rider of the Plaguelands (ilvl 62)
     [2131] = { {284715,284716} }, -- Partners in Crime (ilvl 46)
     [2132] = { {285331,285330,285329} }, -- Blessing of Kalimdor (ilvl 23)
     [2133] = { {286978,286980,271207,271214,286979} }, -- Rotmender's Raiment (ilvl 23)
-    [2134] = { {273051,286988,286987,286989,273044} }, -- Violet Sorcerer's Vestments (ilvl ?)
+    [2134] = { {273051,286988,286987,286989,273044} }, -- Violet Sorcerer's Vestments (ilvl 33)
     [2135] = { {275006,287014,275005,287013,287012} }, -- Krol'dok Battlegear (ilvl ?)
     [2136] = { {287019,276741,287020,276746,287021} }, -- Defias Enforcer's Garb (ilvl ?)
 }
@@ -3045,6 +3045,24 @@ MSC.SetBonusScores = {
         -- (4) When your Mana falls below 15%, restore X Mana over X. Restores twice as much Mana in Haunted and Wasteland areas. May only occur once every X min.
         -- (5) Grants your healing spells a chance to heal for an additional X Health every X sec for X.
     [2133] = { [3]={stats={ITEM_MOD_INTELLECT_SHORT=10}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}} },
+    -- Violet Sorcerer's Vestments
+        -- (2) +5 Arcane Resistance.
+        -- (3) +10 Spirit.
+        -- (4) Chance on damaging spell to allow X% of your Mana regeneration to continue while casting for X. This Mana Regeneration is doubled in Strongholds and Cities.
+        -- (5) Chance on damaging spell to summon an Arcane elemental to aid you in combat.
+    [2134] = { [3]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    -- Krol'dok Battlegear
+        -- (2) +100 Armor.
+        -- (3) Increased Defense +5.
+        -- (4) Chance on block to heal for X. Healing is doubled in Strongholds and Cities.
+        -- (5) Taking damage has a high chance to increase your Stamina by X for X, stacking up to 20 times.
+    [2135] = { [2]={stats={ITEM_MOD_ARMOR_SHORT=100}}, [3]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
+    -- Defias Enforcer's Garb
+        -- (2) +10 Fire Resistance.
+        -- (3) +15 Stamina.
+        -- (4) Increased Swords +1.
+        -- (5) Melee attacks have a chance to increase your Critical Strike chance by X% for X. This effect is doubled in swamps.
+    [2136] = { [3]={stats={ITEM_MOD_STAMINA_SHORT=15}}, [4]={stats={ITEM_MOD_WEAPON_SKILL_RATING_SHORT=2.5}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
 }
 
 -- =============================================================
