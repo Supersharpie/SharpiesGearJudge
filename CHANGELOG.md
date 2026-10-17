@@ -2,6 +2,9 @@
 
 ## 🚀 v3.2.4
 
+### 🐞 Fixed: Lua Error on Login (Secret Auras)
+- Logging in could show "GetAuraDataByIndex(): Auras cannot be accessed when secret while tainted by 'SharpiesGearJudge'". While your buffs are still locked by the game, Gear Judge now skips them for that update instead of erroring, and the Totem of Wrath check uses the same safe read. Thanks to **dasper** for the fix (pull request #21).
+
 ### ⚔️ Weapon Racials Removed (WoW Forever)
 - **The 2026-10-15 beta patch removed Forever's weapon racials**, so Gear Judge no longer scores them. Human Sword Specialization, Orc Axe Specialization and Dwarf Mace Specialization gave extra crit with that weapon type, which made swords, axes and maces score higher for those races. Their replacements don't depend on your weapon: Human Ruthless (+2% crit), Orc Savage (+1% crit) and Dwarf Earth Fury (+2% critical damage and healing). Weapons now score the same for every race, and weapon swaps no longer list a racial under Gains or Losses.
 
