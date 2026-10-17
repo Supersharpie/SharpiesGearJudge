@@ -107,6 +107,7 @@ Core `/sgj` tab — compare **2H vs. dual wield** weapon layouts (6 weapon slots
 - Talent build guide from level 10 to 60: the next talent glows in the talent window, a side panel shows your progress, and off-build points are flagged.
 - Builds for every class, sorted by **Max Level**, **Leveling** (Solo / Dungeon) or **Farming** and by role.
 - Gear Judge's weights follow the chosen build: its leveling profile while you level, its level-60 profile at 60.
+- **Browse every build online:** [Forever Class Builds](https://sharpiesgearjudge.web.app) lists each class's builds with their talent order by level and the leveling stat weights Gear Judge uses. It's updated as builds change, so it can be a little ahead of the latest release.
 
 ### 📈 The XP Plugin
 
