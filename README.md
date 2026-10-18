@@ -10,6 +10,11 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ## 🔥 What's New
 
+### 3.2.5
+
+- **Leveling weights from the game's own ability data (WoW Forever):** the leveling models now take every ability's cooldown, duration, cast time and cost from the Forever client. Fire and Arcane Mages value Intellect and mana regeneration less (up to about 20%), Feral Druids value Hit and Crit about 8% less, and Hunter and Shaman weights move by 1% or less.
+- **PvP Leveling builds (Talents plugin):** every talent tree now has an Experimental build for open-world PvP while leveling; choosing one switches Gear Judge to its PvP weights at every level.
+
 ### 3.2.4
 
 - **Weapon racials removed (WoW Forever):** the 2026-10-15 beta patch removed Human Sword, Orc Axe and Dwarf Mace Specialization, so weapons now score the same for every race.
