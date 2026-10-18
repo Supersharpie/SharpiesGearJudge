@@ -2231,3 +2231,9 @@ L["Retribution: PvP Leveling"] = "Воздаяние: PvP-прокачка"
 L["Shadow: PvP Leveling"] = "Тьма: PvP-прокачка"
 L["Subtlety: PvP Leveling"] = "Скрытность: PvP-прокачка"
 L["Survival: PvP Leveling"] = "Выживание: PvP-прокачка"
+
+-- =============================================================
+-- ADDED IN 3.2.5 (What's New)
+-- =============================================================
+L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Плагин Talents: новые билды PvP-прокачки для каждого дерева талантов, для PvP в открытом мире во время прокачки (экспериментальные). Выбор билда переключает Gear Judge на его веса PvP."
+L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: веса для прокачки теперь используют настоящие перезарядки, длительности, время применения и стоимость умений из игры. Маги «Огня» и «Тайной магии» ценят интеллект и восполнение маны ниже, а друиды «Силы зверя» ценят меткость и крит немного ниже."

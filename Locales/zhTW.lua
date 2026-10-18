@@ -1577,3 +1577,9 @@ L["two-handed maces skill"] = "雙手錘技能"
 L["two-handed swords skill"] = "雙手劍技能"
 L["undead"] = "不死生物"
 L["when struck"] = "被擊中"
+
+-- =============================================================
+-- ADDED IN 3.2.5 (What's New)
+-- =============================================================
+L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Talents 插件：為每個天賦樹新增PvP練功配置，供你練功時在開放世界PvP使用（實驗性）。選擇其中一套會將 Gear Judge 切換為其PvP權重。"
+L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever：升級權重現在採用遊戲內實際的技能冷卻時間、持續時間、施法時間和消耗。火焰與秘法法師對智力和法力恢復的重視程度降低，野性德魯伊對命中和致命的重視程度略為降低。"

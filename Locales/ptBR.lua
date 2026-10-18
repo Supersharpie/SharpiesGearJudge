@@ -2236,3 +2236,9 @@ L["Retribution: PvP Leveling"] = "Retribuição: Evolução JxJ"
 L["Shadow: PvP Leveling"] = "Sombra: Evolução JxJ"
 L["Subtlety: PvP Leveling"] = "Subterfúgio: Evolução JxJ"
 L["Survival: PvP Leveling"] = "Sobrevivência: Evolução JxJ"
+
+-- =============================================================
+-- ADDED IN 3.2.5 (What's New)
+-- =============================================================
+L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Plugin Talents: novas builds de evolução JxJ para cada árvore de talentos, para JxJ no mundo aberto enquanto você sobe de nível (Experimental). Escolher uma faz o Gear Judge passar para seus pesos de JxJ."
+L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: os pesos de evolução agora usam os tempos de recarga, durações, tempos de lançamento e custos reais das habilidades do jogo. Magos de Fogo e Arcano valorizam menos Intelecto e regeneração de mana, e druidas ferais valorizam um pouco menos Acerto e Crítico."

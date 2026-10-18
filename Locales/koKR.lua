@@ -1587,3 +1587,9 @@ L["two-handed maces skill"] = "양손 둔기류 숙련도"
 L["two-handed swords skill"] = "양손 도검류 숙련도"
 L["undead"] = "언데드"
 L["when struck"] = "당했을 때"
+
+-- =============================================================
+-- ADDED IN 3.2.5 (What's New)
+-- =============================================================
+L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Talents 플러그인: 모든 특성 트리에 레벨업 중 야외 PvP를 위한 새 PvP 레벨업 빌드를 추가했습니다(실험적). 빌드를 선택하면 Gear Judge가 해당 PvP 가중치로 전환됩니다."
+L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: 레벨업 가중치가 이제 게임의 실제 기술 재사용 대기시간, 지속시간, 시전 시간, 소모량을 사용합니다. 화염 및 비전 마법사는 지능과 마나 재생의 가치를 낮게, 야성 드루이드는 적중과 치명의 가치를 조금 낮게 봅니다."

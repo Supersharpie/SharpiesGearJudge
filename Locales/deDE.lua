@@ -2241,3 +2241,9 @@ L["Retribution: PvP Leveling"] = "Vergeltung: PvP-Leveln"
 L["Shadow: PvP Leveling"] = "Schatten: PvP-Leveln"
 L["Subtlety: PvP Leveling"] = "Täuschung: PvP-Leveln"
 L["Survival: PvP Leveling"] = "Überleben: PvP-Leveln"
+
+-- =============================================================
+-- ADDED IN 3.2.5 (What's New)
+-- =============================================================
+L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Talents-Plugin: neue PvP-Leveln-Builds für jeden Talentbaum, für Open-World-PvP beim Leveln (Experimentell). Die Wahl eines Builds schaltet Gear Judge auf seine PvP-Gewichtungen um."
+L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: Die Stufungsgewichtungen nutzen jetzt die echten Abklingzeiten, Dauern, Zauberzeiten und Kosten der Fähigkeiten im Spiel. Feuer- und Arkanmagier werten Intelligenz und Manaregeneration niedriger, und Wildheit-Druiden werten Trefferwertung und Krit etwas niedriger."

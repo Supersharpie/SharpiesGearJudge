@@ -2113,3 +2113,9 @@ L["Retribution: PvP Leveling"] = "Reprensión: Subida de nivel en JcJ"
 L["Shadow: PvP Leveling"] = "Sombra: Subida de nivel en JcJ"
 L["Subtlety: PvP Leveling"] = "Sutileza: Subida de nivel en JcJ"
 L["Survival: PvP Leveling"] = "Supervivencia: Subida de nivel en JcJ"
+
+-- =============================================================
+-- ADDED IN 3.2.5 (What's New)
+-- =============================================================
+L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Plugin de talentos: nuevas configuraciones de subida de nivel en JcJ para cada árbol de talentos, para JcJ en el mundo abierto mientras subes de nivel (Experimental). Al elegir una, Gear Judge cambia a sus valores JcJ."
+L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: los valores de subida de nivel ahora usan los tiempos de reutilización, duraciones, tiempos de lanzamiento y costos reales de las habilidades del juego. Los magos de Fuego y Arcano valoran menos el Intelecto y la regeneración de maná, y los druidas feral valoran un poco menos el Golpe y el Crítico."
