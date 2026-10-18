@@ -16,14 +16,7 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.4
-    { text = "Fixed for WoW Forever and Classic Era in other languages: your talents now adjust the weights and pick your leveling profile in every language. Before, this only worked in English." },
-    { text = "Damage procs (\"Chance on hit: ...\") and bonuses against one creature type (\"+9 Attack Power Vs Humanoids\") now count toward an item's score, as an estimate." },
-    { forever = true, text = "WoW Forever: weapon racials are gone since the 2026-10-15 patch, so weapons score the same for every race." },
-    { forever = true, text = "WoW Forever: leveling weights rebuilt for every class on models updated for the 2026-10-15 patch. Healers' Intellect counts less, since drinks restore a flat amount." },
-    { forever = true, text = "WoW Forever: dungeon weights checked against beta combat logs: Crit and Hit count more for damage dealers, avoidance much less for tanks (Protection Paladins value Block and mana instead), and Crit more and Intellect less for healers." },
-    { forever = true, text = "WoW Forever: Feral Druids now value Weapon DPS, and the Cat, Shadow Priest, Rogue, Frost Mage and Elemental Shaman raid profiles are re-simulated." },
-    { forever = true, text = "Talents plugin: every build now follows the talent prerequisites, so each one can be learned in game. Several leveling builds are faster, and builds not yet tried in game are marked Experimental." },
+    -- v3.2.5: add this version's lines here (mirror the changelog groups).
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

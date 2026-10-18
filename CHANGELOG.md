@@ -1,5 +1,13 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.5
+
+### 📏 Leveling Weights From the Game's Own Ability Data (WoW Forever)
+- The leveling models behind the stat weights now take every ability's cooldown, duration, cast time and cost from the Forever client. Druid, Hunter, Mage and Shaman leveling weights are rebuilt where something didn't match:
+	- **Mage**: a frozen Frostbolt was charged the mana of your main spell, so Fire and Arcane valued Intellect and mana regeneration up to about 20% too high; those come down.
+	- **Druid**: Cat and Bear Form cost 55% of base mana (we had 30-35%); Feral Hit and Crit come down about 8%.
+	- **Hunter** (Sniper Shot's 4-second cast, Aimed Shot's 2 seconds, no Aspect of the Cheetah before 20) and **Shaman** (Rage of the Farseer on a 3-minute cooldown) move by 1% or less.
+
 ## 🚀 v3.2.4
 
 ### 🐞 Fixed: Lua Error on Login (Secret Auras)
