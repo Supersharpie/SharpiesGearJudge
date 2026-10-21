@@ -863,7 +863,7 @@ L["Shadow: Solo Leveling"] = "Shadow: Solo Leveling"
 L["Shadow: Dungeon Leveling"] = "Shadow: Dungeon Leveling"
 L["Healer: Leveling"] = "Healer: Leveling"
 L["Healer: Dungeon Leveling"] = "Healer: Dungeon Leveling"
-L["Smite: Solo Leveling"] = "Smite: Solo Leveling"
+L["Discipline / Holy: Solo Leveling"] = "Discipline / Holy: Solo Leveling"
 -- Shaman (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Enhancement: Raid"] = "Enhancement: Raid"
 L["Elemental: Raid"] = "Elemental: Raid"

@@ -1872,6 +1872,80 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
             C_Timer.After(0.5, MSC.RefreshGudaBagsOverlays)
         end)
     end
+
+    -- [[ 6. DAYLIGHTUI SUPPORT ]]
+    -- DaylightUI_Bags (WoW Forever) draws bags and bank in one window from the
+    -- game's own ContainerFrameItemButtonTemplate buttons: the slot is the
+    -- button's ID, the bag its parent holder's ID. Every repaint (bag, bank,
+    -- search, layout) goes through the module's Items.Fill(btn), reachable
+    -- through DaylightUI:GetModule("Bags").ns. Its corners are taken (bind type
+    -- top-left, equipment set top-right, count bottom-right): the arrow sits
+    -- bottom-left.
+    local duiMod = CheckAddOnLoaded("DaylightUI_Bags") and DaylightUI and type(DaylightUI.GetModule) == "function"
+        and DaylightUI:GetModule("Bags")
+    local duiItems = duiMod and duiMod.ns and duiMod.ns.Items
+    if duiItems and type(duiItems.Fill) == "function" then
+        local PLACE = { point = "BOTTOMLEFT", x = 1, y = 1, size = 15 }
+        local known = setmetatable({}, { __mode = "k" })
+
+        local function GetDuiLink(button)
+            local holder = button:GetParent()
+            local bag, slot = holder and holder:GetID(), button:GetID()
+            if not bag or not slot or slot < 1 then return nil end
+            return GetContainerItemLink(bag, slot)
+        end
+
+        -- Fill runs for every slot on each refresh; judge once, on the next frame.
+        local pending, flushQueued = {}, false
+        local function Flush()
+            flushQueued = false
+            for button in pairs(pending) do
+                pending[button] = nil
+                local verdict
+                if button:IsShown() and not (SGJ_Settings and SGJ_Settings.ShowBagArrows == false) then
+                    local link = GetDuiLink(button)
+                    if link then
+                        local weights, specName = MSC.GetCurrentWeights()
+                        verdict = MSC.GetBagArrowVerdict(link, weights, specName)
+                    end
+                end
+                MSC.SetBagArrow(button, verdict, PLACE)
+            end
+        end
+        local function Queue(button)
+            pending[button] = true
+            if not flushQueued then
+                flushQueued = true
+                C_Timer.After(0, Flush)
+            end
+        end
+
+        hooksecurefunc(duiItems, "Fill", function(button)
+            if not button then return end
+            if not known[button] then
+                known[button] = true
+                button:HookScript("OnHide", function() MSC.SetBagArrow(button, nil) end)
+            end
+            Queue(button)
+        end)
+
+        -- Re-judge every visible DaylightUI button (gear, level, talents or the
+        -- SGJ arrow settings changed; DaylightUI won't repaint for those).
+        function MSC.RefreshDaylightUIOverlays()
+            for button in pairs(known) do
+                if button:IsShown() then Queue(button) end
+            end
+        end
+
+        local duiEvents = CreateFrame("Frame")
+        duiEvents:RegisterEvent("PLAYER_LEVEL_UP")
+        duiEvents:RegisterEvent("PLAYER_TALENT_UPDATE")
+        duiEvents:RegisterEvent("CHARACTER_POINTS_CHANGED")
+        duiEvents:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+        duiEvents:SetScript("OnEvent", function()
+            C_Timer.After(0.5, MSC.RefreshDaylightUIOverlays)
+        end)
+    end
 end)
 
 local function GetStatReason(stat, class, profileName)
@@ -2242,7 +2316,7 @@ local function GetClassRings(class, stats, weights, profileKey)
         local spec = (tostring(profileKey or "") .. " " .. pretty):upper()
         if class == "MAGE" then
             local arcane = spec:find("ARCANE") ~= nil
-            foreverSchoolHit = arcane and FRank("ARCANE_FOCUS") or FRank("ELE_PRECISION")
+            foreverSchoolHit = arcane and FRank("ARCANE_FOCUS") or FRank("ELE_PRECISION") * 2   -- 2% a rank since the 20 Oct hotfix
             AddMod("Spell Hit", arcane and "Arcane Focus" or "Elemental Precision", foreverSchoolHit, true)
         elseif class == "PRIEST" then
             if spec:find("SHADOW") then
@@ -3561,6 +3635,7 @@ function MSC.RefreshAllBagOverlays()
     end)
     if MSC.RefreshBagnonOverlays then MSC.RefreshBagnonOverlays() end
     if MSC.RefreshGudaBagsOverlays then MSC.RefreshGudaBagsOverlays() end
+    if MSC.RefreshDaylightUIOverlays then MSC.RefreshDaylightUIOverlays() end
     if MSC.RefreshElvUIBagOverlays then MSC.RefreshElvUIBagOverlays() end
 end
 

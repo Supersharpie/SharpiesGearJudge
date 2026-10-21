@@ -1593,3 +1593,14 @@ L["when struck"] = "당했을 때"
 -- =============================================================
 L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Talents 플러그인: 모든 특성 트리에 레벨업 중 야외 PvP를 위한 새 PvP 레벨업 빌드를 추가했습니다(실험적). 빌드를 선택하면 Gear Judge가 해당 PvP 가중치로 전환됩니다."
 L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: 레벨업 가중치가 이제 게임의 실제 기술 재사용 대기시간, 지속시간, 시전 시간, 소모량을 사용합니다. 화염 및 비전 마법사는 지능과 마나 재생의 가치를 낮게, 야성 드루이드는 적중과 치명의 가치를 조금 낮게 봅니다."
+L["Discipline / Holy: Solo Leveling"] = "수양 / 신성: 솔로 레벨업"
+
+-- =============================================================
+-- ADDED IN 3.2.6 (What's New)
+-- =============================================================
+L["Bonuses against one creature type, such as Attack Power against Undead, now count by how often you fight that type while leveling."] = "언데드 대상 전투력처럼 한 종류의 생물에 대한 보너스는 이제 레벨업 중 그 종류와 얼마나 자주 싸우는지에 따라 계산됩니다."
+L["Dungeon, raid healer and farming weights use the same food and drink: raid healers value Spirit much more."] = "던전, 공격대 치유사, 사냥 가중치도 같은 음식과 음료를 사용합니다: 공격대 치유사는 정신력을 훨씬 높게 평가합니다."
+L["Every leveling spell was checked against the game files, and the October 16-20 hotfixes are in. Starshards now only counts for Night Elf Priests."] = "모든 레벨업 주문을 게임 파일과 대조했고, 10월 16~20일 핫픽스를 반영했습니다. 별조각은 이제 나이트 엘프 사제에게만 계산됩니다."
+L["Leveling weights now rest the way WoW Forever does: food and drink restore a fixed amount, Spirit regeneration is measured in game, and Stamina counts for the fights that go wrong."] = "레벨업 가중치가 이제 WoW Forever 방식대로 휴식을 계산합니다: 음식과 음료는 고정된 양을 회복하고, 정신력 재생은 게임에서 측정한 값이며, 체력은 잘못 풀리는 전투에 반영됩니다."
+L["Plugins: the Roadmap adds the newest dungeon drops and 94 more quest rewards; Talents updates every Mage build for the October 20 hotfix."] = "플러그인: Roadmap에 최신 던전 획득 아이템과 퀘스트 보상 94개가 추가되었고, Talents는 10월 20일 핫픽스에 맞춰 모든 마법사 빌드를 업데이트했습니다."
+L["Upgrade and downgrade arrows now show in DaylightUI's bags."] = "이제 DaylightUI 가방에도 업그레이드/다운그레이드 화살표가 표시됩니다."

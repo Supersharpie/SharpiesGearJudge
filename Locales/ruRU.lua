@@ -814,7 +814,7 @@ L["Shadow: Solo Leveling"] = "Тьма: Соло-прокачка"
 L["Shadow: Dungeon Leveling"] = "Тьма: Прокачка в подземельях"
 L["Healer: Leveling"] = "Лекарь: Прокачка"
 L["Healer: Dungeon Leveling"] = "Лекарь: Прокачка в подземельях"
-L["Smite: Solo Leveling"] = "Кара: Соло-прокачка"
+L["Discipline / Holy: Solo Leveling"] = "Послушание / Свет: Соло-прокачка"
 -- Shaman (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Enhancement: Raid"] = "Совершенствование: Рейд"
 L["Elemental: Raid"] = "Стихии: Рейд"
@@ -2237,3 +2237,13 @@ L["Survival: PvP Leveling"] = "Выживание: PvP-прокачка"
 -- =============================================================
 L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Плагин Talents: новые билды PvP-прокачки для каждого дерева талантов, для PvP в открытом мире во время прокачки (экспериментальные). Выбор билда переключает Gear Judge на его веса PvP."
 L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: веса для прокачки теперь используют настоящие перезарядки, длительности, время применения и стоимость умений из игры. Маги «Огня» и «Тайной магии» ценят интеллект и восполнение маны ниже, а друиды «Силы зверя» ценят меткость и крит немного ниже."
+
+-- =============================================================
+-- ADDED IN 3.2.6 (What's New)
+-- =============================================================
+L["Bonuses against one creature type, such as Attack Power against Undead, now count by how often you fight that type while leveling."] = "Бонусы против одного типа существ, например сила атаки против нежити, теперь учитываются по тому, как часто вы сражаетесь с этим типом во время прокачки."
+L["Dungeon, raid healer and farming weights use the same food and drink: raid healers value Spirit much more."] = "Веса для подземелий, лекарей рейда и фарма используют те же еду и питье: лекари рейда ценят дух гораздо выше."
+L["Every leveling spell was checked against the game files, and the October 16-20 hotfixes are in. Starshards now only counts for Night Elf Priests."] = "Каждое заклинание прокачки сверено с файлами игры, и хотфиксы с 16 по 20 октября учтены. Звездные осколки теперь учитываются только для жрецов-ночных эльфов."
+L["Leveling weights now rest the way WoW Forever does: food and drink restore a fixed amount, Spirit regeneration is measured in game, and Stamina counts for the fights that go wrong."] = "Веса прокачки теперь учитывают отдых так, как в WoW Forever: еда и питье восстанавливают фиксированное количество, восполнение от духа измерено в игре, а выносливость учитывается для боев, которые пошли не так."
+L["Plugins: the Roadmap adds the newest dungeon drops and 94 more quest rewards; Talents updates every Mage build for the October 20 hotfix."] = "Плагины: Roadmap добавляет новейшую добычу из подземелий и еще 94 награды за задания; Talents обновляет все билды мага под хотфикс от 20 октября."
+L["Upgrade and downgrade arrows now show in DaylightUI's bags."] = "Стрелки улучшения и ухудшения теперь показываются в сумках DaylightUI."

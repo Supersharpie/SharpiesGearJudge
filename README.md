@@ -92,7 +92,7 @@ Hover any item: world drops, vendor goods, quest rewards, dungeon loot or AH lis
 
 Turn the bag and loot arrows on in **Protocol → Interface Options**.
 
-- **Bag upgrade arrows** (**off** by default): green and red arrows on bag items. Works with Blizzard bags, **Bagnon**, **ElvUI**, **GudaBags** and **XLoot**. Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab, and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
+- **Bag upgrade arrows** (**off** by default): green and red arrows on bag items. Works with Blizzard bags, **Bagnon**, **ElvUI**, **GudaBags**, **DaylightUI** (bags and bank, WoW Forever) and **XLoot**. Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab, and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
 - **Fast bag arrows** (on when bag arrows are enabled): quick single-slot scoring, with a full check for set pieces and weapons.
 - **Loot roll arrows** (**off** by default): highlights the best upgrade on group loot popups.
 - **Quest reward overlays:** marks the best choice among quest rewards.
@@ -272,7 +272,7 @@ Install with the CurseForge app, or extract the `SharpiesGearJudge` folder into 
 
 ### Supported bag addons
 
-Blizzard default bags, **Bagnon**, **ElvUI Bags**, **Baganator**, **GudaBags**, **XLoot** (loot rolls).
+Blizzard default bags, **Bagnon**, **ElvUI Bags**, **Baganator**, **GudaBags**, **DaylightUI Bags**, **XLoot** (loot rolls).
 
 ### Localization
 

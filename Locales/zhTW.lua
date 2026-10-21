@@ -1583,3 +1583,14 @@ L["when struck"] = "被擊中"
 -- =============================================================
 L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Talents 插件：為每個天賦樹新增PvP練功配置，供你練功時在開放世界PvP使用（實驗性）。選擇其中一套會將 Gear Judge 切換為其PvP權重。"
 L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever：升級權重現在採用遊戲內實際的技能冷卻時間、持續時間、施法時間和消耗。火焰與秘法法師對智力和法力恢復的重視程度降低，野性德魯伊對命中和致命的重視程度略為降低。"
+L["Discipline / Holy: Solo Leveling"] = "戒律 / 神聖：單人升級"
+
+-- =============================================================
+-- ADDED IN 3.2.6 (What's New)
+-- =============================================================
+L["Bonuses against one creature type, such as Attack Power against Undead, now count by how often you fight that type while leveling."] = "對單一生物類型的加成（例如對不死族的攻擊強度）現在依你練功時對上該類型的頻率計算。"
+L["Dungeon, raid healer and farming weights use the same food and drink: raid healers value Spirit much more."] = "地城、團隊治療和刷怪權重也使用相同的食物和飲料：團隊治療會更加重視精神。"
+L["Every leveling spell was checked against the game files, and the October 16-20 hotfixes are in. Starshards now only counts for Night Elf Priests."] = "所有練功法術都已對照遊戲檔案檢查，並納入 10 月 16 日至 20 日的熱修正。星辰碎片現在只計入夜精靈牧師。"
+L["Leveling weights now rest the way WoW Forever does: food and drink restore a fixed amount, Spirit regeneration is measured in game, and Stamina counts for the fights that go wrong."] = "練功權重現在依 WoW Forever 的方式計算休息：食物和飲料恢復固定數值，精神回復採用遊戲內實測，耐力則計入出狀況的戰鬥。"
+L["Plugins: the Roadmap adds the newest dungeon drops and 94 more quest rewards; Talents updates every Mage build for the October 20 hotfix."] = "插件：Roadmap 新增最新的地城掉落與 94 個任務獎勵；Talents 依 10 月 20 日熱修正更新所有法師配置。"
+L["Upgrade and downgrade arrows now show in DaylightUI's bags."] = "DaylightUI 的背包現在也會顯示升級和降級箭頭。"

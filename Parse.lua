@@ -328,14 +328,31 @@ MSC.Scanner.StatPatterns = {
 -- [[ BONUSES AGAINST ONE CREATURE TYPE ]]
 -- "+9 Attack Power Vs Humanoids", "+81 Attack Power when fighting Undead",
 -- "+3 Spell Damage Vs Undead". Counted at the share of the mobs you fight
--- while leveling that are of that type (a rough mix of questing zones).
-MSC.Scanner.CreatureShare = {
-    humanoids = 0.35, humanoid = 0.35, beasts = 0.30, beast = 0.30, undead = 0.15,
-    demons = 0.05, demon = 0.05, elementals = 0.05, elemental = 0.05,
-    mechanical = 0.03, dragonkin = 0.03, giants = 0.03, giant = 0.03,
+-- while leveling that are of that type: the hostile open-world mobs of the
+-- Classic world database weighted by spawns (2026-10-21; was a rough guess of
+-- Humanoids 35%, Beasts 30%, Undead 15%). Below 50 Beasts and Humanoids are
+-- about 45% / 42% each with little else; from 50 (Plaguelands, Burning
+-- Steppes, Felwood) Undead rise to 17% and Demons / Elementals to 6%.
+local CREATURE_SHARE = {
+    low = {
+        humanoids = 0.42, humanoid = 0.42, beasts = 0.45, beast = 0.45, undead = 0.03,
+        demons = 0.02, demon = 0.02, elementals = 0.04, elemental = 0.04,
+        mechanical = 0.01, dragonkin = 0.02, giants = 0.01, giant = 0.01,
+    },
+    high = {
+        humanoids = 0.28, humanoid = 0.28, beasts = 0.33, beast = 0.33, undead = 0.17,
+        demons = 0.06, demon = 0.06, elementals = 0.06, elemental = 0.06,
+        mechanical = 0.01, dragonkin = 0.01, giants = 0.01, giant = 0.01,
+    },
 }
-local creatureLookup
+MSC.Scanner.CreatureShare = CREATURE_SHARE.low
+local creatureLookup, creatureBand
 local function CreatureShare(name)
+    local band = ((UnitLevel and UnitLevel("player")) or 1) >= 50 and "high" or "low"
+    if band ~= creatureBand then
+        creatureBand = band; creatureLookup = nil
+        MSC.Scanner.CreatureShare = CREATURE_SHARE[band]
+    end
     if not creatureLookup then
         creatureLookup = {}
         for k, v in pairs(MSC.Scanner.CreatureShare) do creatureLookup[#creatureLookup + 1] = { string_lower(MSC.L[k]), v } end

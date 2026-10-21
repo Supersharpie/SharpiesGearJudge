@@ -16,7 +16,7 @@ local SPEC_LABEL = {
     Leveling_DW = "Dual Wield", Leveling_Tank = "Tank", Leveling_Dagger = "Daggers", Leveling_Hemo = "Hemo",
     Leveling_Fire = "Fire", Leveling_AoE = "AoE Grinding", Leveling_Demo = "Demonology", Leveling_Healer = "Healer",
     Leveling_HealerDungeon = "Dungeon Healer", Leveling_TankDungeon = "Dungeon Tank", Leveling_RetDungeon = "Dungeon DPS", Leveling_ArmsDungeon = "Dungeon DPS",
-    Leveling_Melee = "Melee/Survival", Leveling_Smite = "Smite/Holy", Leveling_Caster = "Caster", Leveling_Bear = "Bear",
+    Leveling_Melee = "Melee/Survival", Leveling_Smite = "Discipline/Holy", Leveling_Caster = "Caster", Leveling_Bear = "Bear",
 }
 
 for className, curves in pairs(MSC.ForeverLevelingCurves or {}) do

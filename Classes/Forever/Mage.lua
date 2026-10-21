@@ -330,7 +330,8 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- Precision (Fire/Frost only) and Arcane Focus (Arcane only) aren't in the
     -- game's general spell-hit number, so they're added here; every leveling
     -- profile is Frost/Fire based.
-    local talentHit = currentSpec:find("ARCANE") and Rank("ARCANE_FOCUS") or Rank("ELE_PRECISION")
+    -- Elemental Precision is 2% hit a rank (3 ranks) since the 20 Oct hotfix (was 1% x 5)
+    local talentHit = currentSpec:find("ARCANE") and Rank("ARCANE_FOCUS") or Rank("ELE_PRECISION") * 2
     -- AoE grinding: about a quarter of the damage is Arcane Explosion, which
     -- Elemental Precision doesn't cover.
     if currentSpec:find("AoE") or currentSpec:find("AOE") then talentHit = talentHit * 0.75 end

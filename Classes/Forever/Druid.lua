@@ -25,7 +25,7 @@ Druid.Weights = {
     -- Most Druid healing is over time and HoTs can't crit, so Crit is worth little; Spirit and Mp5 lead the mana stats.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=1.34, ["ITEM_MOD_SPIRIT_SHORT"]=1.86, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.86, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.91, ["ITEM_MOD_SPIRIT_SHORT"]=3.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.67, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=3.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Bear: Raid (Balance 9 / Feral 42 with Heart of the Wild, Rend and Tear and Shredding Attacks; talents re-searched
     -- 2026-10-10) from the simulator's tank mode, as the Warrior's Protection: Raid: threat 35% / damage taken 35% /
     -- effective health 30% (health counts Heart of the Wild's Stamina), Stamina 3.0. Armor is item armor (Dire Bear Form

@@ -21,11 +21,11 @@ Priest.Weights = {
     -- and Mp5; its crit came out at ~2.5 in the model, which misses Inspiration and Holy's crit talents, so it is set at 7.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=2.47, ["ITEM_MOD_SPIRIT_SHORT"]=2.25, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.88, ["ITEM_MOD_SPIRIT_SHORT"]=2.45, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.76, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Discipline: Raid (Penance, Divine Aegis and Power Infusion, 32/19): crits shield through Divine Aegis, so Crit leads.
     -- Client 70291 cut Penance (spell power coefficient .285 -> .19, higher mana costs): the mana stats count a little
     -- more (study/priest2/penance_70291.js).
-    ["DISC_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=3.7, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.7, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["DISC_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=3.5, ["ITEM_MOD_SPIRIT_SHORT"]=3.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=4.37, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.7, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Shadow: Multi-DoT Farming (Shadow Word: Pain and Devouring Plague on packs of 4-5, shields and fears; a rough model).
     -- The pack hits you the whole time, so Stamina leads with the mana stats. Talent hooks still apply (Shadowform doubles
     -- the Crit here).
@@ -58,7 +58,7 @@ Priest.PvPCounterpart = { SHADOW_RAID = "SHADOW_PVP", SHADOW_PVE = "SHADOW_PVP",
 --   Leveling_ShadowDungeon  Shadow: Dungeon Leveling
 --   Leveling_Healer         Healer: Leveling (the Holy and Discipline raid builds)
 --   Leveling_HealerDungeon  Healer: Dungeon Leveling
---   Leveling_Smite          Smite: Solo Leveling
+--   Leveling_Smite          Discipline / Holy: Solo Leveling (Shadow Word: Pain, Mind Blast and the wand: Smite never wins)
 Priest.LevelingWeights = {}
 
 -- =============================================================
@@ -86,7 +86,7 @@ local ROLE_NAMES = {
     { "Leveling_ShadowDungeon", "Shadow: Dungeon Leveling" },
     { "Leveling_Healer",        "Healer: Leveling" },
     { "Leveling_HealerDungeon", "Healer: Dungeon Leveling" },
-    { "Leveling_Smite",         "Smite: Solo Leveling" },
+    { "Leveling_Smite",         "Discipline / Holy: Solo Leveling" },
 }
 for _, r in ipairs(ROLE_NAMES) do
     for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do

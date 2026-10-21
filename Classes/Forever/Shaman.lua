@@ -32,7 +32,7 @@ Shaman.Weights = {
     -- time, so Crit comes down a little and the mana stats go up (study/shaman2/sheal.js, WS_MODE).
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_SPIRIT_SHORT"]=0.84, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.02, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.65, ["ITEM_MOD_SPIRIT_SHORT"]=2.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.06, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
 
     -- Tank: AoE Farming (one-hander + shield, Rockbiter with Spirit Weapons; pulls of about 4 mobs killed with Fire Nova,
     -- Magma Totem, Lightning Shield and shocks; a rough model, judgment-set like the other farming profiles). The pack

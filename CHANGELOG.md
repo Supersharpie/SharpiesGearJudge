@@ -1,5 +1,80 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.6
+
+### 🎒 Bag Arrows in DaylightUI (WoW Forever)
+- The upgrade and downgrade arrows now show on items in **DaylightUI**'s bag and bank window (bottom-left corner, since DaylightUI uses the other three). They follow the **Show Bag Arrows** setting and update when you change gear, level up or change talents.
+
+### 🥤 Dungeons, Raid Healers and Farming: Forever's Food and Drink (WoW Forever)
+- Food and drink restore a fixed amount per second by level in Forever. The solo leveling weights already used that; now the **dungeon weights, the raid healer weights and the farming weights** do too (they still drank 3.75% of your mana a second, which is 30-45% too fast at levels 20-50).
+- **Raid healers: Spirit counts much more** (Holy Paladin about 1.3, was 0.5; Restoration Shaman 2.1, was 0.84; Discipline Priest 3.0, was 1.5; Restoration Druid 3.2, was 1.9). Holy Priest mana per 5 seconds about 2.8 (was 4.9), Restoration Druid Intellect about 0.9 (was 1.3).
+- **Dungeon healers** (all four): Spirit, Intellect and mana per 5 seconds re-balanced the same way; Discipline / Holy Priest Intellect counts more, Holy Paladin Intellect less.
+- **Protection Paladin AoE farming:** survival stats count 15-20% less and damage stats 15-25% more against Spell Power.
+- **Dungeon trash** has 3 times an ordinary mob's health (measured in Forever; was 2.5), so trash fights last about 34 seconds, as logged. Dungeon tank and healer weights move a little.
+- **Protection Paladin dungeon tank:** Intellect counts more at 35-45 (up to about 2.4, was 0.6): Holy Shield from 40 costs mana every 10 seconds.
+
+### 🗡️ Weapons and Trinkets Against One Creature Type (all versions)
+- Bonuses like "+81 Attack Power when fighting Undead" or "+9 Attack Power Vs Humanoids" now count at the share of the mobs you actually fight while leveling, from the Classic world's hostile mobs weighted by spawns (was a rough guess of Humanoids 35%, Beasts 30%, Undead 15%). Below level 50, Beasts and Humanoids are about 45% and 42% and Undead only 3%; from 50 (Plaguelands, Burning Steppes, Felwood) Undead rise to 17% and Demons and Elementals to 6% each. Undead-slaying gear counts much less while leveling below 50.
+
+### 🩹 Hotfixes of October 16-20 (WoW Forever)
+- **Mage:** Elemental Precision now counts 2% spell hit a rank (3 ranks, was 1% x 5) toward your hit cap; Piercing Ice, removed from the game, no longer adds Frost damage in the leveling weights (Frost levels about 4% slower in our model).
+- **Paladin:** Champion of the Light is back to 20/40/60% of Intellect as spell damage, so Intellect counts twice as much again for Retribution Paladins with it.
+- **Priest:** Holy Fire rank 1 deals a little less damage (53-65); the effect on the weights is negligible.
+- **Mage:** Ice Barrier absorbs 10% more (Frost Warding adds 10% a rank) and gives 3% Frost damage for a minute, 6% while the shield holds. Solo it about pays for its mana, so leveling barely moves; Stamina counts a little less for Frost from 40, since the barrier soaks more.
+- **Warlock (PvP):** Amplify Curse makes your next Curse of Exhaustion 20% stronger (was 50%).
+
+### 📚 Spell Values Checked Against the Game Files (WoW Forever)
+- Every spell table in our leveling models was checked rank by rank against the current game files. What changed:
+	- **Mage:** Frostbolt, Fireball, Ice Lance, Cone of Cold, Fire Blast, Arcane Explosion and Flamestrike ranks now grow for a few levels after you learn them, as in the game, and are no longer counted 10% above their real damage (a few ranks also had older values). Mages level about 5% slower than we had; Spirit and mana per 5 seconds count about 10-15% less, Fire's Stamina more from 45.
+	- **Enhancement Shaman:** Lightning Bolt now has WoW Forever's values (well below Classic's from rank 4), and Windfury Weapon's attack power grows for the eight levels after each rank (about +46 at 30 to +104 at 38), as in the game. The Shaman tank's Earth Shock, Flame Shock, Lightning Shield and Magma Totem values were corrected too.
+	- **Rogue:** Deadly Poison's ticks (6 / 9 / 14 / 18 / 23, were 9 / 12 / 16 / 20 / 23), two Instant Poison ranks and Backstab rank 7 corrected; small effect.
+	- **Priest:** Lesser Heal, Heal and Penance ranks corrected, and two calculation faults fixed that made the Shadow and Discipline / Holy leveling weights jump around (Hit and Crit counted 0 at some levels and many times too much at others): damage over time now only counts the ticks that land before the mob dies.
+	- **Druid:** the Bear's Lacerate now uses the Druid's own Lacerate (10 / 12 / 15 a tick per stack plus weapon damage; a different spell's values were in); Shred rank 1 corrected.
+	- **Paladin:** Seal of Fury rank 3 is learned at 26, not 25.
+	- **Hunter:** Hunter's Mark rank 4 counts +143 ranged attack power (ranks 1-3 are Classic's values x1.3 in WoW Forever; the game files list 71 for rank 4, less than rank 3, which looks like a data error). Affects levels 58-59 only.
+
+### 🔥 Warlock: Shadow Bolt and Immolate As the Game Has Them (WoW Forever)
+- Shadow Bolt and Immolate ranks now grow for a few levels after you learn them, as the game files have it, and Shadow Bolt is no longer counted 10% above its real damage (two ranks also had values from an older beta build). The Affliction solo leveling weights change little: from level 40, Hit counts 8-24% more and Crit rises steadily with level (about 16 at 40 to 30 at 59, against Spell Power 15) instead of peaking at 50-55.
+
+### 🌟 Priest: No Starshards Unless You're a Night Elf (WoW Forever)
+- Starshards is a Night Elf Priest spell in WoW Forever too (the game files lock it to Night Elves), but our leveling weights had given it to every Priest. Discipline and Holy got most of their solo damage from it, so **Arcane damage was weighted almost as high as Spell Power**. It now counts nothing, and **Shadow damage counts nearly as much as Spell Power** on every Priest leveling row: by the model, Discipline and Holy Priests level fastest with Shadow Word: Pain, Mind Blast and the wand, as Shadow Priests do (Holy damage starts to count only near 59, with Holy Fire).
+- The **"Smite: Solo Leveling"** weights are renamed **"Discipline / Holy: Solo Leveling"**: Smite never comes out ahead of Shadow Word: Pain and Mind Blast for them.
+
+### 🍞 Leveling: Resting, Spirit and Stamina Re-measured (WoW Forever: all classes)
+- The leveling weights now use how resting actually works in Forever, measured in game:
+	- **Food and drink restore a fixed amount per second by level**, not a share of your health or mana, so a bigger pool no longer eats or drinks faster.
+	- **Mana regeneration is 0.25 mana a second per point of Spirit** when you're not casting, with no base amount; Intellect plays no part. That's two to three times what the old Classic formulas gave per point.
+	- **Health regeneration out of combat is Spirit times a class ratio**, with no base amount (about 0.17 a second per Spirit for a Warrior, 0.13 for a Rogue).
+- **Stamina now counts what extra health buys while leveling:** fewer stops to eat, and surviving fights that go wrong. About 2 pulls in 10 get an add (two adds about half as often as one), and that's where most leveling deaths come from, so Stamina matters most for classes that can't handle two mobs at once.
+- **Warrior:** Spirit about 1.4-2.2 Attack Power per point (was 0.6-0.7), health per 5 seconds about 2.1-4.1 (was about 1.0), Stamina about 1.0-1.6 at 10-30 (was 0.4-0.65) and 0.5-0.8 at 40-59. Protection keeps its high Stamina.
+- **Rogue:** Spirit about 0.9-1.8 (was 0.3-0.6), health per 5 seconds about 2-6 (was 0.4-0.8), Stamina about 0.2-0.55, about as before. Rogues dodge a lot (measured: about 6.5 Agility per 1% dodge at level 30, no base dodge) and kill quickly.
+- **Hunter:** a shooting Hunter spends roughly 2-3 times the mana between kills that Spirit gives back and drinks the rest, so **Spirit rises to about 4-5 Ranged Attack Power per point** (was 0.3) and **mana per 5 seconds to about 5-6.5** (was 1.5-2.8), above Agility while leveling. Intellect about 1-1.8, Stamina about 0.4-0.55. The pet holds the mob (Growl's real threat was checked: a Hunter rarely pulls aggro before the kill); adds come straight at the Hunter. Survival (melee): Spirit about 3.5-4.2, health per 5 seconds about 2-5, Stamina about 0.5-0.8.
+- **Mage (Frost and Fire):** Spirit about 2-3 times higher (Frost about 5-24 against a Spell Power weight of 15, rising with level), mana per 5 seconds a little higher, and **Intellect less than half of before** (it was inflated by the "bigger pool drinks faster" assumption). Stamina rises: Mages die most to adds, since two mobs can't be kited.
+- **Warlock (Affliction):** Life Tap's health is now eaten back with flat food, at Forever's measured Spirit regeneration. **Stamina rises several times** (about 4.5-6.7 against a Spell Power weight of 15 from level 30, was about 1.1-1.5; higher at low levels): Warlocks pay their mana in health and are cloth, so adds hit them hard. Health per 5 seconds and mana per 5 seconds rise at low levels and come down from 40, where Siphon Life and Drain Life cover most of it; Spirit comes down from 40 (about 0.5-1, was 4-5).
+- **Priest (Shadow, Discipline and Holy solo leveling):** Spirit, mana per 5 seconds, Intellect and Stamina now come from the model with the real resting rules. A Priest heals itself and drinks the mana back, so **Intellect rises several times** (about 3-13 against a Spell Power weight of 15, was 1-2: a bigger pool means fewer stops) and **Spirit about 1.5-2.5 times**. **Stamina rises** (Shadow about 6-8 to level 30 and 1-2 from 40, Smite about 3.5-8.5; was 1.3-1.8): Priests are cloth, the mob reaches them, and adds hit hard. Healing yourself takes the heal's cast time, and a Priest in trouble casts one emergency heal, which the death model allows for. Health per 5 seconds comes down to nothing (a Priest heals instead of eating).
+- **Paladin:** Paladins dodge from 0.7% base plus Agility at the crit rate (was a flat 7%). Healing yourself with Holy Light takes its 2.5-second cast, and a Paladin in trouble casts one emergency Holy Light, which the death model allows for. Seal of Righteousness on a two-hander now hits as measured (1.2 times the listed amount, plus 12% of spell power; was 1 times and about 5%), and Sanctified Judgement refunds a share of the seal's full cost (Benediction makes it larger, not smaller). Against Attack Power 1:
+	- **Protection solo leveling** (the fastest Paladin leveling build): **Stamina now follows the risk**: about 0.4-1.4 at 10-25 (one mob at a time, little danger) and 2.4-6 at 30-55 (two and three mob pulls), was 3 everywhere. Spirit about 1.5-2.6 (was 0.35-0.55), Intellect about 0.5-1.7 to 30 and 2.4-7.5 from 35 (was 0.1-1.8: a bigger pool means fewer stops to drink after big pulls), mana per 5 seconds about as before, health per 5 seconds about 0.5-2.5.
+	- **Retribution solo leveling:** mana per 5 seconds about 4-7.8 (was 0.9-2.4; it hadn't been counted), Spirit about 1.7-3.7 (was 0.3-0.9), health per 5 seconds about 3-4 at 25-55 (was 1-1.7), Stamina about 0.55-0.9 at 10-30 (was 0.45) and less from 40, Intellect a little higher.
+	- **Holy solo leveling:** Intellect about 0.25-0.5 (was 1.3-2.6, inflated by the "bigger pool drinks faster" assumption), mana per 5 seconds about 1-3.4 (was 3.5-6), Spirit about 1-2.9 (was 1-1.7), health per 5 seconds about 2-2.8, Stamina about 0.35-0.6 to 25 and little from 30 (Holy heals itself out of trouble).
+	- **Protection dungeon tanking:** flat drinks refill a tank's mana quickly, so it mostly runs short on bosses: **Intellect about 0.3-2** (was 1.25-14.5), **mana per 5 seconds about 0.5-2.8** (was 3-13), Block chance much lower at 25-35 (its mana return mattered less), Spell Power 10-35% higher at 15-35.
+	- **Retribution dungeon leveling:** Spell Power about 15-20% higher below 20 (Seal of Righteousness).
+- **Druid:** Druids dodge from 0.9% base plus Agility at the crit rate (was a flat 5%), and their base Spirit follows the game's numbers. Food, drink and Healing Touch all mean leaving your form, so every stop also costs the shift back in (mana and a global cooldown). Healing yourself now takes the cast time too.
+	- **Feral (Cat) solo leveling** (the fastest Druid leveling build): **Stamina about 1.2-1.5 Attack Power per point from 20** (was 0.45): Cats fight long fights in leather and adds hurt. Health per 5 seconds about 0.7-2.2, Spirit about 0.1-0.5 to 30 and 2.2-2.6 from 40, mana per 5 seconds and Intellect almost nothing below 30 (Spirit covers a Cat's mana there) and about 2.7-3.8 / 0.2-0.4 from 40.
+	- **Balance solo leveling** (against Spell Power 15): **Intellect about 1-2 to 30 and 5-7.7 from 40** (was 11-18, inflated by the "bigger pool drinks faster" assumption), Spirit about 2.5-10.4 (was 1.2-3.4), Stamina about 4.2-4.9 to 30 and 1.2-2.3 from 40 (was 1.3-2.2). A Balance Druid in trouble casts Healing Touch, which the death model now allows for.
+	- **Restoration solo leveling:** mana per 5 seconds about 8-15 (was 44-109) and Spirit about 5.6-18 (was 11-53), both on the row's own scale; Stamina about 2-3 times the old value and health per 5 seconds much higher.
+	- **Restoration dungeon healing:** **Spirit about 2.3-2.5 times higher** (the measured regeneration); Intellect and mana per 5 seconds about as before.
+- **Shaman:** Shamans dodge from 1.7% base plus Agility at the crit rate (was a flat 5%), the caster models use the game's base Spirit, and healing yourself with Healing Wave now takes its cast time. A Shaman in trouble casts Healing Wave, which the death model now allows for.
+	- **Enhancement solo leveling** (the fastest Shaman leveling build, against Attack Power 1): **Spirit about 1.8-2.4** (was 0.45-0.65), **health per 5 seconds about 2-7 from 20** (was 0.3-0.5), mana per 5 seconds about 2-5, Intellect about 0.8-2.7, Stamina about 0.7-1.2 to 25 and 0.5-0.7 to 50 (was about 0.4).
+	- **Elemental solo leveling** (against Spell Power 15): **Intellect about 3.3-6.4** (was 9.4-15.3, inflated by the "bigger pool drinks faster" assumption), **Spirit about 5.5-11** (was 1.7-2.4), mana per 5 seconds a little higher, Stamina about 2-2.5, about as before.
+	- **Restoration solo leveling:** mana per 5 seconds about 1.7-2.4 (was 4.5-7.9) and Spirit about 1-1.6 (was 1.1-2.7) on the row's scale; Intellect a little higher.
+	- **Restoration dungeon healing:** **Spirit about 2.4-2.6 times higher** (the measured regeneration); Intellect and mana per 5 seconds about as before.
+- **Holy Priest and Holy Paladin dungeon healing:** Spirit about 1.9 times higher for Priests and 2.5 times for Paladins (the measured regeneration, as for Druid and Shaman healers); Intellect and mana per 5 seconds about as before.
+- The leveling weights assume the gear real players were logged wearing at levels 20-30 (Forever Logs), not our earlier estimate, which had melee weapons well under it. This moves dual-wield Fury Crit and Agility up about 20% and shooting Hunter Crit and Hit up 10-30%.
+- Monster health at levels 50-60 updated to the current client (up to 10% more at 59-60).
+
+### 🪶 Lighter Upgrade and Downgrade Arrows
+- The green upgrade and red downgrade arrow images are now 64x64 (they were 2048x2048, 2.7 MB and 1.9 MB, for icons drawn at about 24-40 pixels): they look the same and take far less memory.
+
 ## 🚀 v3.2.5
 
 ### 📏 Leveling Weights From the Game's Own Ability Data (WoW Forever)

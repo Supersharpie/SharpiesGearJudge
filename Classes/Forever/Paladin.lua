@@ -27,7 +27,7 @@ Paladin.Weights = {
     -- Paladin healer runs short of mana before casting time, so Intellect and Mp5 rank above +healing.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["HOLY_RAID"] = {  ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.3, ["ITEM_MOD_SPIRIT_SHORT"]=0.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5  },
+    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.6, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.3, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
 
     -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
     -- 2026-10-04; re-run 2026-10-10 after the Reckoning fix), as the Warrior's and Druid's raid tanks: threat 35% / damage
@@ -43,7 +43,7 @@ Paladin.Weights = {
     -- Dodge, Parry, Defense and Stamina set the pack size; Block Value and mana barely matter. Scaled to
     -- Spell Power = 3.0. Client 70291 cut Retribution Aura (30 -> 20 per hit) and limited Reckoning to once
     -- per 1.5 s: getting hit pays less, so the survival stats come down (study/ret_build/farm_weights.js).
-    ["PROT_AOE"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=0.95, ["ITEM_MOD_BLOCK_RATING_SHORT"]=30.6, ["ITEM_MOD_DODGE_RATING_SHORT"]=21.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=21.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.0, ["ITEM_MOD_HIT_RATING_SHORT"]=16.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=1.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.4, ["ITEM_MOD_STRENGTH_SHORT"]=0.35, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.17, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5  },
+    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=0.78, ["ITEM_MOD_BLOCK_RATING_SHORT"]=24.1, ["ITEM_MOD_DODGE_RATING_SHORT"]=17.8, ["ITEM_MOD_PARRY_RATING_SHORT"]=17.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=4.3, ["ITEM_MOD_HIT_RATING_SHORT"]=18.6, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.9, ["ITEM_MOD_STRENGTH_SHORT"]=0.42, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.21, ["ITEM_MOD_ARMOR_SHORT"]=0.13, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
@@ -237,12 +237,12 @@ function Paladin:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSacred * 0.02))
     end
 
-    -- Champion of the Light (Ret t6, 3 ranks): spell damage from 10/20/30% of
-    -- Intellect (Forever patch of 15 Oct; 20/40/60% from 2 Oct, 33/66/100% before), damage only.
+    -- Champion of the Light (Ret t6, 3 ranks): spell damage from 20/40/60% of
+    -- Intellect (Forever hotfix of 16 Oct undid the 15 Oct patch's 10/20/30%; 33/66/100% before 2 Oct), damage only.
     local rChamp = Rank("CHAMPION_LIGHT")
     if hooks and rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"]
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.10))
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.20))
     end
 
     -- Healing Light (Holy t2, 3 ranks): +4%/rank healing from Holy Light /

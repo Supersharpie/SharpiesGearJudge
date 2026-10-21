@@ -1066,7 +1066,7 @@ L["Smite DPS (21-40)"] = "Punición DPS (21-40)"
 L["Smite DPS (41-51)"] = "Punición DPS (41-51)"
 L["Smite DPS (52-59)"] = "Punición DPS (52-59)"
 L["Smite DPS (Outland)"] = "Punición DPS (Terrallende)"
-L["Smite: Solo Leveling"] = "Castigo: Subida de nivel en solitario"
+L["Discipline / Holy: Solo Leveling"] = "Disciplina / Sagrado: Subida de nivel en solitario"
 L["Smooth Amber"] = "Ámbar liso"
 L["Smooth Dawnstone"] = "Piedra del alba lisa"
 L["Smooth Golden Draenite"] = "Draenita dorada lisa"
@@ -2119,3 +2119,13 @@ L["Survival: PvP Leveling"] = "Supervivencia: Subida de nivel en JcJ"
 -- =============================================================
 L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Plugin de talentos: nuevas configuraciones de subida de nivel en JcJ para cada árbol de talentos, para JcJ en el mundo abierto mientras subes de nivel (Experimental). Al elegir una, Gear Judge cambia a sus valores JcJ."
 L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: los valores de subida de nivel ahora usan los tiempos de reutilización, duraciones, tiempos de lanzamiento y costos reales de las habilidades del juego. Los magos de Fuego y Arcano valoran menos el Intelecto y la regeneración de maná, y los druidas feral valoran un poco menos el Golpe y el Crítico."
+
+-- =============================================================
+-- ADDED IN 3.2.6 (What's New)
+-- =============================================================
+L["Bonuses against one creature type, such as Attack Power against Undead, now count by how often you fight that type while leveling."] = "Las bonificaciones contra un tipo de criatura, como el Poder de ataque contra no-muertos, ahora cuentan según qué tan seguido peleas contra ese tipo al subir de nivel."
+L["Dungeon, raid healer and farming weights use the same food and drink: raid healers value Spirit much more."] = "Los pesos de calabozo, sanador de banda y farmeo usan la misma comida y bebida: los sanadores de banda valoran mucho más el Espíritu."
+L["Every leveling spell was checked against the game files, and the October 16-20 hotfixes are in. Starshards now only counts for Night Elf Priests."] = "Se revisó cada hechizo de subida de nivel contra los archivos del juego y se incluyeron las correcciones del 16 al 20 de octubre. Fragmentos estelares ahora solo cuenta para los sacerdotes elfos de la noche."
+L["Leveling weights now rest the way WoW Forever does: food and drink restore a fixed amount, Spirit regeneration is measured in game, and Stamina counts for the fights that go wrong."] = "Los pesos de subida de nivel ahora descansan como en WoW Forever: la comida y la bebida restauran una cantidad fija, la regeneración por Espíritu está medida en el juego y el Aguante cuenta para los combates que salen mal."
+L["Plugins: the Roadmap adds the newest dungeon drops and 94 more quest rewards; Talents updates every Mage build for the October 20 hotfix."] = "Plugins: la Roadmap agrega los botines de calabozo más recientes y 94 recompensas de misión más; Talents actualiza todas las configuraciones de mago para la corrección del 20 de octubre."
+L["Upgrade and downgrade arrows now show in DaylightUI's bags."] = "Las flechas de mejora y empeoramiento ahora aparecen en las bolsas de DaylightUI."

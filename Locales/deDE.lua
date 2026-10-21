@@ -817,7 +817,7 @@ L["Shadow: Solo Leveling"] = "Schatten: Solo-Leveln"
 L["Shadow: Dungeon Leveling"] = "Schatten: Instanz-Leveln"
 L["Healer: Leveling"] = "Heiler: Leveln"
 L["Healer: Dungeon Leveling"] = "Heiler: Instanz-Leveln"
-L["Smite: Solo Leveling"] = "Göttliche Pein: Solo-Leveln"
+L["Discipline / Holy: Solo Leveling"] = "Disziplin / Heilig: Solo-Leveln"
 -- Shaman (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Enhancement: Raid"] = "Verstärkung: Schlachtzug"
 L["Elemental: Raid"] = "Elementar: Schlachtzug"
@@ -2247,3 +2247,13 @@ L["Survival: PvP Leveling"] = "Überleben: PvP-Leveln"
 -- =============================================================
 L["Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights."] = "Talents-Plugin: neue PvP-Leveln-Builds für jeden Talentbaum, für Open-World-PvP beim Leveln (Experimentell). Die Wahl eines Builds schaltet Gear Judge auf seine PvP-Gewichtungen um."
 L["WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less."] = "WoW Forever: Die Stufungsgewichtungen nutzen jetzt die echten Abklingzeiten, Dauern, Zauberzeiten und Kosten der Fähigkeiten im Spiel. Feuer- und Arkanmagier werten Intelligenz und Manaregeneration niedriger, und Wildheit-Druiden werten Trefferwertung und Krit etwas niedriger."
+
+-- =============================================================
+-- ADDED IN 3.2.6 (What's New)
+-- =============================================================
+L["Bonuses against one creature type, such as Attack Power against Undead, now count by how often you fight that type while leveling."] = "Boni gegen einen Kreaturentyp, etwa Angriffskraft gegen Untote, zählen jetzt danach, wie oft du beim Leveln gegen diesen Typ kämpfst."
+L["Dungeon, raid healer and farming weights use the same food and drink: raid healers value Spirit much more."] = "Die Gewichtungen für Dungeons, Schlachtzugsheiler und Farmen nutzen dasselbe Essen und Trinken: Schlachtzugsheiler bewerten Willenskraft deutlich höher."
+L["Every leveling spell was checked against the game files, and the October 16-20 hotfixes are in. Starshards now only counts for Night Elf Priests."] = "Jeder Leveln-Zauber wurde mit den Spieldateien abgeglichen, und die Hotfixes vom 16. bis 20. Oktober sind drin. Sternensplitter zählt jetzt nur noch für Nachtelfen-Priester."
+L["Leveling weights now rest the way WoW Forever does: food and drink restore a fixed amount, Spirit regeneration is measured in game, and Stamina counts for the fights that go wrong."] = "Die Leveln-Gewichtungen rasten jetzt so wie WoW Forever: Essen und Trinken stellen einen festen Wert wieder her, die Regeneration durch Willenskraft ist im Spiel gemessen, und Ausdauer zählt für die Kämpfe, die schiefgehen."
+L["Plugins: the Roadmap adds the newest dungeon drops and 94 more quest rewards; Talents updates every Mage build for the October 20 hotfix."] = "Plugins: Die Roadmap ergänzt die neuesten Dungeon-Beuten und 94 weitere Questbelohnungen; Talents passt jeden Magier-Build an den Hotfix vom 20. Oktober an."
+L["Upgrade and downgrade arrows now show in DaylightUI's bags."] = "Die Auf- und Abwertungspfeile erscheinen jetzt auch in den Taschen von DaylightUI."

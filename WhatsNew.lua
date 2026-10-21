@@ -16,9 +16,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.5
-    { forever = true, text = "WoW Forever: leveling weights now use the game's own ability cooldowns, durations, cast times and costs. Fire and Arcane Mages value Intellect and mana regeneration less, and Feral Druids value Hit and Crit a little less." },
-    { forever = true, text = "Talents plugin: new PvP Leveling builds for every talent tree, for open-world PvP while you level (Experimental). Choosing one switches Gear Judge to its PvP weights." },
+    -- v3.2.6
+    { text = "Leveling weights now rest the way WoW Forever does: food and drink restore a fixed amount, Spirit regeneration is measured in game, and Stamina counts for the fights that go wrong.", forever = true },
+    { text = "Dungeon, raid healer and farming weights use the same food and drink: raid healers value Spirit much more.", forever = true },
+    { text = "Every leveling spell was checked against the game files, and the October 16-20 hotfixes are in. Starshards now only counts for Night Elf Priests.", forever = true },
+    { text = "Bonuses against one creature type, such as Attack Power against Undead, now count by how often you fight that type while leveling." },
+    { text = "Upgrade and downgrade arrows now show in DaylightUI's bags.", forever = true },
+    { text = "Plugins: the Roadmap adds the newest dungeon drops and 94 more quest rewards; Talents updates every Mage build for the October 20 hotfix.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
