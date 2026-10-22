@@ -10,6 +10,13 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ## 🔥 What's New
 
+### 3.2.6
+
+- **Resting as WoW Forever does it:** food and drink restore a fixed amount, Spirit regeneration is the 0.25 mana a second per point measured in game, and Stamina counts for the fights that go wrong (adds). Leveling, dungeon, raid healer and farming weights all use it; raid healers now value Spirit much more.
+- **Every leveling spell checked against the game files (WoW Forever),** plus the October 16-20 hotfixes (Elemental Precision, Ice Barrier, Champion of the Light, Holy Fire, Amplify Curse). Starshards now only counts for Night Elf Priests.
+- **Bonuses against one creature type** (such as Attack Power against Undead) count by how often you meet that type while leveling.
+- **Bag arrows in DaylightUI's bags (WoW Forever).**
+
 ### 3.2.5
 
 - **Leveling weights from the game's own ability data (WoW Forever):** the leveling models now take every ability's cooldown, duration, cast time and cost from the Forever client. Fire and Arcane Mages value Intellect and mana regeneration less (up to about 20%), Feral Druids value Hit and Crit about 8% less, and Hunter and Shaman weights move by 1% or less.

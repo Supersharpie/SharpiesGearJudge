@@ -1,5 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.7
+
+### 🔌 API for Other Addons
+- Other addons, such as loot council and loot distribution addons, can now ask Sharpie's Gear Judge how much an item would upgrade you, through a small stable API (see API.md in the addon folder).
+- A loot council addon can ask the whole raid at once: everyone running Sharpie's Gear Judge answers with their own upgrade % for the item.
+- New setting **Share Scores With Group Addons** (on by default) turns answering off. Only your upgrade % and scores are sent.
+
+### 🛡️ Paladin Leveling Weights Rebuilt, Levels 1-60 (WoW Forever)
+- All six Paladin leveling curves come from our updated models, checked against level-1 tests and a combat log: starting gear at level 1, pulls of more than one mob when you can survive them, Forever's extra mob health from level 46, and seals and Judgements that crit.
+- Retribution: Hit, Crit and Agility count for more, and Spell Power a little more from 30.
+- From level 50 every Paladin curve now blends smoothly into its level-60 profile, so the weights no longer jump when you hit 60.
+- Protection: Dungeon Leveling now values Dodge, Parry, Block, Block Value, armor and Defense for the effective health they give (they scored 0 before), and counts the risk of the tank dying, measured from Forever dungeon logs.
+- Protection: AoE Farming weights updated: Crit counts more, Hit and the avoidance stats a little more.
+- Tanks: when you're only uncrushable with Holy Shield (or Shield Block) up, the tooltip now reminds you to keep it up on bosses.
+
 ## 🚀 v3.2.6
 
 ### 🎒 Bag Arrows in DaylightUI (WoW Forever)

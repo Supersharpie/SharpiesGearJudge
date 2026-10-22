@@ -167,6 +167,8 @@ L["Show Bag Upgrade Arrows"] = "Show Bag Upgrade Arrows"
 L["Shows green upgrade arrows on items in your bags."] = "Shows green upgrade arrows on items in your bags."
 L["Show Loot Roll Arrows"] = "Show Loot Roll Arrows"
 L["Shows green upgrade arrows on group loot popups."] = "Shows green upgrade arrows on group loot popups."
+L["Share Scores With Group Addons"] = "Share Scores With Group Addons"
+L["Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."] = "Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."
 
 -- Long Popups
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."
@@ -313,6 +315,7 @@ L["Y-Hit (Soft)"] = "Y-Hit (Soft)"
 L["Y-Hit (Rage)"] = "Y-Hit (Rage)"
 L["Hit (Capped)"] = "Hit (Capped)"
 L["Uncrushable"] = "Uncrushable"
+L["Uncrushable only while %s is up: keep it up on bosses."] = "Uncrushable only while %s is up: keep it up on bosses."
 -- Hit cap modifier sources (TBC raid buff assumptions)
 L["Heroic Presence (Racial)"] = "Heroic Presence (Racial)"
 L["Improved Faerie Fire"] = "Improved Faerie Fire"

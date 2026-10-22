@@ -136,6 +136,8 @@ L["Show Bag Upgrade Arrows"] = "Afficher les flèches d'amélioration (Sacs)"
 L["Shows green upgrade arrows on items in your bags."] = "Affiche des flèches vertes d'amélioration sur les objets dans vos sacs."
 L["Show Loot Roll Arrows"] = "Afficher les flèches d'amélioration (Butin)"
 L["Shows green upgrade arrows on group loot popups."] = "Affiche des flèches vertes d'amélioration sur les fenêtres de dés du groupe."
+L["Share Scores With Group Addons"] = "Partager les scores avec les addons de groupe"
+L["Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."] = "Permet aux addons de conseil de butin et de distribution du butin de votre groupe de demander à Sharpie's Gear Judge à quel point un objet vous améliorerait. Seuls votre pourcentage d'amélioration et vos scores sont envoyés."
 
 -- Long Popups
 L["|cff00ccffSharpie's Gear Judge|r\n\nProfile imported successfully!\n\nYou must reload your UI for the changes to take effect."] = "|cff00ccffSharpie's Gear Judge|r\n\nProfil importé avec succès !\n\nVous devez recharger votre interface pour appliquer les changements."
@@ -1803,6 +1805,7 @@ L["Save addon data to disk?\n\nThis will trigger a UI Reload to forcefully write
 L["Spell"] = "Sort"
 L["Sword Spec (Human)"] = "Spécialisation Epée (Humain)"
 L["Uncrushable"] = "Inécrasable"
+L["Uncrushable only while %s is up: keep it up on bosses."] = "Inécrasable seulement tant que %s est actif : gardez-le actif sur les boss."
 L["none below 50"] = "aucun sous 50"
 L["points per tree: %d / %d / %d"] = "points par arbre : %d / %d / %d"
 L["profile: %s"] = "profil : %s"

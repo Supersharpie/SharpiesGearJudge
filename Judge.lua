@@ -968,6 +968,10 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         local _, _, capInfo = MSC.GetCurrentWeights()
         if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " " .. MSC.L["Capped"] .. ")|r" end
         tooltip:AddDoubleLine(MSC.L["Verdict Profile:"], "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
+        -- Uncrushable only counts with Holy Shield / Shield Block up (Helpers ApplyForeverUncrushable)
+        if type(MSC.UncrushableNeedsActive) == "string" then
+            tooltip:AddLine(string_format(MSC.L["Uncrushable only while %s is up: keep it up on bosses."], MSC.UncrushableNeedsActive), 0.6, 0.6, 0.6, true)
+        end
 
         -- [[ THE EQUIPPED SPLIT ]]
         if isEquipped then

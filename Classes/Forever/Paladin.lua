@@ -32,18 +32,19 @@ Paladin.Weights = {
     -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
     -- 2026-10-04; re-run 2026-10-10 after the Reckoning fix), as the Warrior's and Druid's raid tanks: threat 35% / damage
     -- taken 35% / effective health 30%, Stamina 3.0. Dodge and Parry lead; Block only takes Block Value off each big boss hit,
-    -- so it and Block Value count for less, though each block can also give Reckoning's free extra swing (beta testing:
-    -- an instant attack that leaves the swing timer alone, can't be stored, and procs seals).
+    -- so it and Block Value count for less, though each block can also give Reckoning's free extra swing (an instant attack
+    -- that leaves the swing timer alone and procs seals; since the 15 Oct patch up to 4 are stored and released on the next
+    -- melee hit, at most one trigger every 1.5 s).
     -- Threat is half Holy (Spell Power) and half melee (Hit, Crit). A 3-minute boss never runs a tank dry, so Intellect and
     -- Mp5 keep only a small floor for longer fights.
     ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.7, ["ITEM_MOD_PARRY_RATING_SHORT"]=31.4, ["ITEM_MOD_BLOCK_RATING_SHORT"]=16.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.09, ["ITEM_MOD_ARMOR_SHORT"]=0.22, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.81, ["ITEM_MOD_AGILITY_SHORT"]=2.69, ["ITEM_MOD_STRENGTH_SHORT"]=0.78, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.33, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.47, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.47, ["ITEM_MOD_HIT_RATING_SHORT"]=18.9, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
-    -- Protection: AoE Farming (about 12 normal mobs at 55-57, some Undead; Consecration, Holy Shield and
-    -- Retribution Aura at 20 + 10% of spell power per hit taken). Spell Power drives the damage; Block,
+    -- Protection: AoE Farming (about 10 normal mobs at 57, 15 at 52, some Undead; Consecration, Holy Shield and
+    -- Retribution Aura at 20 + 6% of spell power per hit taken). Spell Power drives the damage; Block,
     -- Dodge, Parry, Defense and Stamina set the pack size; Block Value and mana barely matter. Scaled to
-    -- Spell Power = 3.0. Client 70291 cut Retribution Aura (30 -> 20 per hit) and limited Reckoning to once
-    -- per 1.5 s: getting hit pays less, so the survival stats come down (study/ret_build/farm_weights.js).
-    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=0.78, ["ITEM_MOD_BLOCK_RATING_SHORT"]=24.1, ["ITEM_MOD_DODGE_RATING_SHORT"]=17.8, ["ITEM_MOD_PARRY_RATING_SHORT"]=17.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=4.3, ["ITEM_MOD_HIT_RATING_SHORT"]=18.6, ["ITEM_MOD_CRIT_RATING_SHORT"]=2.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.9, ["ITEM_MOD_STRENGTH_SHORT"]=0.42, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.21, ["ITEM_MOD_ARMOR_SHORT"]=0.13, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
+    -- Spell Power = 3.0. Rebuilt 2026-10-21 (SimStudio models/paladin/farm_weights.js): world mobs' extra health
+    -- at 46+, seals and Judgement of Fury crit (melee table), Reckoning stores up to 4 charges, aura 6% of SP.
+    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=0.79, ["ITEM_MOD_BLOCK_RATING_SHORT"]=25.7, ["ITEM_MOD_DODGE_RATING_SHORT"]=19.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=19.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=4.59, ["ITEM_MOD_HIT_RATING_SHORT"]=23.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=7.94, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.64, ["ITEM_MOD_STRENGTH_SHORT"]=0.52, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.26, ["ITEM_MOD_ARMOR_SHORT"]=0.13, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.51, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.51, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds

@@ -2953,7 +2953,9 @@ function MSC.InitSettingsView(parent)
     local cbBagArrows = CreateCheck(MSC.L["Show Bag Upgrade Arrows"], "ShowBagArrows", MSC.L["Shows green upgrade arrows on items in your bags."], cb4, 0, -5)
     cbBagArrows:HookScript("OnClick", function() MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end end)
     local cbFastBag = CreateCheck(MSC.L["Fast Bag Arrows"], "FastBagArrows", MSC.L["Single-slot scoring for bag arrows (full eval for sets/weapons)."], cbBagArrows, 20, -5)
-    CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbFastBag, -20, -5)
+    local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbFastBag, -20, -5)
+    -- API.lua: answer loot council / loot distribution addons' score requests (addon prefix "SGJ")
+    CreateCheck(MSC.L["Share Scores With Group Addons"], "ShareScores", MSC.L["Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."], cbLootArrows, 0, -5)
 
     -- ==========================================
     -- SECTION 2: TOOLTIP VISUALS (left column)
@@ -3811,6 +3813,7 @@ function MSC.ApplySettingsDefaults()
         ShowBagArrows = false,
         FastBagArrows = true,
         ShowLootArrows = false,
+        ShareScores = true,    -- API.lua: answer group addons' score requests
         AssumeRaidBuffs = false,
         AssumeWorldBuffs = false,
         AssumeCampingBuffs = false,

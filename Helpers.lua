@@ -825,12 +825,23 @@ function MSC.GetPassiveBlockChance()
     return math_max(0, block)
 end
 
+-- Spell ids of the active block abilities by the % a class passes in, for the tooltip reminder
+local ACTIVE_BLOCK_SPELL = { [30] = 20925, [75] = 2565 }   -- Holy Shield, Shield Block
+
 function MSC.ApplyForeverUncrushable(weights, activeBlockPct, activeCaps)
+    MSC.UncrushableNeedsActive = nil
     if MSC.GetRaidBlend() <= 0 then return end
     local dodge = GetDodgeChance and MSC.SanitizeStat(GetDodgeChance()) or 0
     local parry = GetParryChance and MSC.SanitizeStat(GetParryChance()) or 0
     local block = MSC.GetPassiveBlockChance()
     local total = 5 + dodge + parry + block + (activeBlockPct or 0)
+    -- uncrushable only with the active block ability (Holy Shield / Shield Block) up: the tooltip reminds the player
+    -- (Judge.lua); the value is that ability's name. The gear is judged as if it is up on bosses (correct play).
+    if (activeBlockPct or 0) > 0 and total >= MSC.ForeverCaps.UNCRUSHABLE and total - activeBlockPct < MSC.ForeverCaps.UNCRUSHABLE then
+        local id = ACTIVE_BLOCK_SPELL[activeBlockPct]
+        local name = id and ((C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(id)) or (GetSpellInfo and GetSpellInfo(id)))
+        MSC.UncrushableNeedsActive = name or true
+    end
     if total >= MSC.ForeverCaps.UNCRUSHABLE then
         for _, k in ipairs({ "ITEM_MOD_BLOCK_RATING_SHORT", "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT" }) do
             if weights[k] then weights[k] = weights[k] * 0.8 end
