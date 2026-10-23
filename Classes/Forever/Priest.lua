@@ -207,7 +207,9 @@ function Priest:ApplyScalers(weights, currentSpec)
 
     local level = UnitLevel("player")
     local isLeveling = currentSpec:match("^Leveling") ~= nil
-    local isHealerRow = currentSpec:match("^Leveling_Healer") ~= nil
+    -- the solo healer row only: Leveling_HealerDungeon is built by the healer model with every talent in (2026-10-23; its hooks
+    -- applied twice before)
+    local isHealerRow = currentSpec:match("^Leveling_Healer_%d") ~= nil
     local isSmiteRow = currentSpec:match("^Leveling_Smite") ~= nil
     local isDefaultRow = (currentSpec:match("^Leveling_%d") or currentSpec:match("^Leveling_ShadowDungeon")) ~= nil -- Shadow/Wand (solo and dungeon)
     local function Scale(key, mult)
@@ -229,20 +231,18 @@ function Priest:ApplyScalers(weights, currentSpec)
             -- to the filler rotation by the Mind Flay ramp below, so the wand and
             -- Spirit factors are left out for them (restoring them as well would
             -- put the wand weight at ~60 at 39 where the study path gives ~25)
+            -- factors from the leveling model, the Shadow build's talents with and without Shadowform at 42-59 (SimStudio
+            -- models/priest/pmodel.js, 2026-10-23; the old ones pointed the wrong way): crit loses Shadowform's x2.0 crit
+            -- damage, Mp5 the half-cost spells, Stamina gains (more is healed back without Vampiric Embrace's form)
             if not mfRamp then
                 Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", F(3.3))
-                Scale("ITEM_MOD_SPIRIT_SHORT", F(2.0))
             end
-            Scale("ITEM_MOD_INTELLECT_SHORT", F(1.47))
-            Scale("ITEM_MOD_MANA_SHORT", F(1.6))
-            Scale("ITEM_MOD_MANA_REGENERATION_SHORT", F(1.1))
-            Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", F(1.14))
-            Scale("ITEM_MOD_STAMINA_SHORT", F(1.14))
-            Scale("ITEM_MOD_HEALTH_SHORT", F(1.14))
-            Scale("ITEM_MOD_HEALTH_REGENERATION_SHORT", F(1.14))
-            Scale("ITEM_MOD_DODGE_RATING_SHORT", F(1.14))
-            Scale("ITEM_MOD_ARMOR_SHORT", F(1.18))
-            MSC.ScaleForeverSpellCrit(weights, F(0.72), level)
+            Scale("ITEM_MOD_INTELLECT_SHORT", F(1.1))
+            Scale("ITEM_MOD_MANA_SHORT", F(1.1))
+            Scale("ITEM_MOD_MANA_REGENERATION_SHORT", F(0.68))
+            Scale("ITEM_MOD_STAMINA_SHORT", F(1.5))
+            Scale("ITEM_MOD_HEALTH_SHORT", F(1.5))
+            MSC.ScaleForeverSpellCrit(weights, F(0.5), level)
         end
 
         -- Mind Flay ramp (28-39): the wand gives way to Mind Flay. Applied once,
@@ -250,7 +250,8 @@ function Priest:ApplyScalers(weights, currentSpec)
         local mindFlayFired = false
         if mfRamp then
             mindFlayFired = true
-            Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", MSC.ForeverLevelLerp({ {35, 0.6}, {40, 1.0} }, level))
+            -- the model casts Mind Flay over the wand once it's trained (2026-10-23: wand ~0; was x0.6 at 35)
+            Scale("ITEM_MOD_DAMAGE_PER_SECOND_SHORT", MSC.ForeverLevelLerp({ {39, 0.1}, {40, 1.0} }, level))
             Scale("ITEM_MOD_SPIRIT_SHORT", MSC.ForeverLevelLerp({ {35, 0.75}, {40, 1.0} }, level))
         end
 
@@ -426,17 +427,14 @@ function Priest:ApplyScalers(weights, currentSpec)
     local talentHit = (isShadow and Rank("SHADOW_FOCUS")) or 0
     local rSFocus = Rank("SHADOW_FOCUS")
     if (isDefaultRow or isSmiteRow) and rSFocus > 0 and weights["ITEM_MOD_HIT_SPELL_RATING_SHORT"] then
-        -- Shadow Focus only covers Shadow spells; Starshards (Arcane) and the wand
-        -- still miss at the level's cap. Hit is worth full below (cap - Shadow
-        -- Focus) of gear hit, then only the non-Shadow share (1 - s) until the cap,
-        -- then the usual 0.1. s = the Shadow share of the hit value in the
-        -- leveling model (SimStudio models/priest/priest_solo_curves_build.js,
-        -- 2026-10-16): Shadow solo from the shipped Shadow build, all Shadow from
-        -- 40 (Shadowform: no Starshards, no wand); Smite rows from the Disc and Holy
-        -- solo builds (Starshards and the wand stay)
-        local s = isSmiteRow
-            and MSC.ForeverLevelLerp({ {10, 0.16}, {15, 0.18}, {20, 0.25}, {25, 0.32}, {30, 0.29}, {35, 0.31}, {40, 0.35}, {45, 0.33}, {50, 0.32}, {59, 0.31} }, level)
-            or MSC.ForeverLevelLerp({ {10, 0.22}, {15, 0.30}, {20, 0.44}, {25, 0.63}, {30, 0.54}, {35, 0.44}, {40, 1.0} }, level)
+        -- Shadow Focus only covers Shadow spells; the wand and Smite still miss at
+        -- the level's cap. Hit is worth full below (cap - Shadow Focus) of gear hit,
+        -- then only the non-Shadow share (1 - s) until the cap, then the usual 0.1.
+        -- s = the Shadow share of the hit value in the leveling model (SimStudio
+        -- models/priest/priest_solo_curves_build.js, 2026-10-23; Starshards is a
+        -- Night Elf racial, so the race-neutral Priest doesn't cast it): the wand
+        -- carries the rest early, Shadow spells everything from 25
+        local s = MSC.ForeverLevelLerp({ {10, 0.61}, {15, 0.65}, {20, 0.87}, {25, 1.0} }, level)
         local cap = MSC.GetForeverCapTarget("SPELL")
         MSC.ApplyForeverHitKnees(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", {
             { cap = math.max(0, cap - rSFocus), mult = (1 - s) + s * 0.1 },

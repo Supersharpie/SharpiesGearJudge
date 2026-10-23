@@ -219,6 +219,8 @@ eventFrame:RegisterEvent("TRADE_SKILL_SHOW")
 -- Classic Enchanting window only; Forever has no Craft frame or CRAFT_SHOW,
 -- and registering an unknown event raises an error there.
 pcall(eventFrame.RegisterEvent, eventFrame, "CRAFT_SHOW")
+-- An item's Equip:/Use: text loads with its spell, after the item itself.
+pcall(eventFrame.RegisterEvent, eventFrame, "SPELL_DATA_LOAD_RESULT")
 eventFrame:RegisterEvent("ADDON_LOADED")
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1) 
@@ -229,6 +231,11 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
 
     elseif event == "QUEST_COMPLETE" or event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_ITEM_UPDATE" then
         QueueQuestRefresh()
+
+    elseif event == "SPELL_DATA_LOAD_RESULT" then
+        -- Rescan items scanned just before their Equip: text arrived (quest
+        -- rewards read as soon as the quest frame opens), then redraw.
+        if MSC.DropRecentScans and MSC.DropRecentScans() then QueueItemInfoRefresh() end
 
 	elseif event == "START_LOOT_ROLL" then
         -- A tiny 0.1s delay ensures the Blizzard UI has finished creating the frame and assigning the rollID

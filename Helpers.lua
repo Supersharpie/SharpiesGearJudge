@@ -275,6 +275,66 @@ end
 -- 4. CACHE & CONSTANTS
 -- =============================================================
 MSC.StatCache = {}
+-- When each StatCache entry was scanned. An item's Equip:/Use: text comes from
+-- its spells, which load separately from the item: a quest reward scanned the
+-- moment the quest frame opens can be missing "Equip: +8 Spell Power" even
+-- though GetItemInfo already answers. MSC.DropRecentScans (called on
+-- SPELL_DATA_LOAD_RESULT) forgets the scans from just before the spell arrived.
+local statCacheTime = {}
+local RECENT_SCAN_WINDOW = 5
+-- Scores already built from dropped scans go too.
+local function WipeScoresFromScans()
+    if MSC.ProcessedStatCache then wipe(MSC.ProcessedStatCache) end
+    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
+    if MSC.EquippedSlotScoreCache then wipe(MSC.EquippedSlotScoreCache) end
+    MSC.EquippedScoreCache = nil
+end
+function MSC.DropRecentScans()
+    local cutoff = GetTime() - RECENT_SCAN_WINDOW
+    local dropped = false
+    for link, t in pairs(statCacheTime) do
+        if t >= cutoff then
+            MSC.StatCache[link] = nil
+            dropped = true
+        end
+        statCacheTime[link] = nil
+    end
+    if dropped then WipeScoresFromScans() end
+    return dropped
+end
+
+local function SameScan(a, b)
+    for k, v in pairs(a) do
+        if type(v) == "number" and b[k] ~= v then return false end
+    end
+    for k, v in pairs(b) do
+        if type(v) == "number" and a[k] ~= v then return false end
+    end
+    return true
+end
+
+-- Hovering a quest reward reads it again (at most once a second per link), in
+-- case the cached read came before its Equip: text loaded. True when the stats
+-- changed: the caller redraws the tooltip.
+local lastRecheck = {}
+function MSC.RecheckItemScan(link)
+    local old = link and MSC.StatCache[link]
+    if not old then return false end
+    local now = GetTime()
+    if lastRecheck[link] and now - lastRecheck[link] < 1 then return false end
+    lastRecheck[link] = now
+
+    MSC.StatCache[link] = nil
+    local fresh = MSC.GetRawItemStats(link)
+    if not MSC.StatCache[link] then
+        -- The new read was incomplete: keep the old one.
+        MSC.StatCache[link] = old
+        return false
+    end
+    if SameScan(old, fresh) then return false end
+    WipeScoresFromScans()
+    return true
+end
 local Scratch_MatchGems = {}
 local Scratch_PureGems = {}
 local Scratch_GemTextParts = {}
@@ -1511,7 +1571,10 @@ function MSC.GetRawItemStats(itemLink)
 
     -- Don't cache a scan of an item whose data hasn't loaded (it would be
     -- incomplete); the next call after GET_ITEM_INFO_RECEIVED rescans it.
-    if GetItemInfo(itemLink) and not scanIncomplete then MSC.StatCache[itemLink] = finalStats end
+    if GetItemInfo(itemLink) and not scanIncomplete then
+        MSC.StatCache[itemLink] = finalStats
+        statCacheTime[itemLink] = GetTime()
+    end
     return finalStats
 end
 

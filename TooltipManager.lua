@@ -84,15 +84,32 @@ TooltipManager:SetScript("OnEvent", function(self, event)
         tooltip:Show()
     end
 
+    -- Hovering a reward reads it again: the cached read may predate its Equip:
+    -- text (quest frames scan rewards the moment they open). When the stats
+    -- changed, the tooltip is set again so it's drawn from the new read (the
+    -- duplicate guard in Judge.lua skips a second score on the same tooltip).
+    local redrawing = false
+    local function RecheckQuestTooltip(tooltip, method, link, itemType, index)
+        if redrawing or not MSC.RecheckItemScan or not MSC.RecheckItemScan(link) then return end
+        redrawing = true
+        pcall(tooltip[method], tooltip, itemType, index)
+        redrawing = false
+        if MSC.UpdateAllQuestOverlays then MSC.UpdateAllQuestOverlays() end
+    end
+
     if GameTooltip.SetQuestItem then
         hooksecurefunc(GameTooltip, "SetQuestItem", function(self, itemType, index)
-            TriggerQuestTooltip(self, GetQuestItemLink(itemType, index))
+            local link = GetQuestItemLink(itemType, index)
+            TriggerQuestTooltip(self, link)
+            RecheckQuestTooltip(self, "SetQuestItem", link, itemType, index)
         end)
     end
 
     if GameTooltip.SetQuestLogItem then
         hooksecurefunc(GameTooltip, "SetQuestLogItem", function(self, itemType, index)
-            TriggerQuestTooltip(self, GetQuestLogItemLink(itemType, index))
+            local link = GetQuestLogItemLink(itemType, index)
+            TriggerQuestTooltip(self, link)
+            RecheckQuestTooltip(self, "SetQuestLogItem", link, itemType, index)
         end)
     end
 

@@ -25,6 +25,14 @@
 - Hack and Slash: swords and maces count about 40% less than before, and one-handed axes now count too.
 - Leveling names now match the Talents builds: "Assassination: Solo Leveling" and "Daggers: Dungeon Leveling".
 
+### ✨ Priest Fixes (WoW Forever)
+- Dungeon healing weights no longer count Meditation, Divine Aegis, Penance and similar talents twice.
+- Shadow leveling: spell hit is valued correctly next to Shadow Focus (it was too low).
+- Leveling without Shadowform after 40: crit and Mana per 5 count less, Intellect and Stamina a little more.
+
+### 🐛 Bug Fixes (all versions)
+- Quest rewards no longer lose their Equip: stats (such as Spell Power) when the quest window opens before the game has loaded that text; the item is read again once it arrives, and again each time you hover it.
+
 ## 🚀 v3.2.6
 
 ### 🎒 Bag Arrows in DaylightUI (WoW Forever)
