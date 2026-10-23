@@ -44,8 +44,8 @@ Rogue.Weights["RAID_SEAL_FATE"] = Rogue.Weights["ASSN_MUTILATE"]
 -- the study; don't edit it by hand) by Curves_Attach.lua: one row per role and level band,
 -- blended by level in MSC:GetLevelingRow. Roles:
 --   Leveling                Combat: Solo Leveling (swords/maces, the default)
---   Leveling_Dagger         Combat Daggers: Solo Leveling (Puncturing Wounds or Mutilate)
---   Leveling_DaggerDungeon  Combat: Dungeon Leveling (daggers, Backstab from behind)
+--   Leveling_Dagger         Assassination: Solo Leveling (daggers, Mutilate)
+--   Leveling_DaggerDungeon  Daggers: Dungeon Leveling (Backstab from behind; the Combat, Assassination and Subtlety dungeon builds)
 --   Leveling_Hemo           Subtlety: Solo Leveling (Hemorrhage / Ghostly Strike)
 Rogue.LevelingWeights = {}
 
@@ -70,8 +70,8 @@ Rogue.PrettyNames = {
 -- One name per leveling role; each level band gets "(lo-hi)" added.
 local ROLE_NAMES = {
     { "Leveling",               "Combat: Solo Leveling" },
-    { "Leveling_Dagger",        "Combat Daggers: Solo Leveling" },
-    { "Leveling_DaggerDungeon", "Combat: Dungeon Leveling" },
+    { "Leveling_Dagger",        "Assassination: Solo Leveling" },
+    { "Leveling_DaggerDungeon", "Daggers: Dungeon Leveling" },
     { "Leveling_Hemo",          "Subtlety: Solo Leveling" },
 }
 for _, r in ipairs(ROLE_NAMES) do
@@ -137,7 +137,9 @@ Rogue.LowLevelRoles = {
     Leveling        = { "IMP_SINISTER_STRIKE", "LIGHTNING_REFLEXES", "DEFLECTION", "RIPOSTE" },
     -- (Opportunity and Improved Ambush aren't markers: every Subtlety rogue
     -- takes them, which tied pure-Subtlety builds 3-3 and sent them to Combat.)
-    Leveling_Dagger = { "PUNCTURING_WOUNDS", "MUTILATE" },
+    -- Malice (2026-10-22): the Assassination solo build opens with it, and before Mutilate its Improved Sinister Strike
+    -- read as Combat; the Combat build out-marks its 5 ranks with Improved Sinister Strike, Deflection and Riposte.
+    Leveling_Dagger = { "PUNCTURING_WOUNDS", "MUTILATE", "MALICE" },
     Leveling_Hemo   = { "CAMOUFLAGE", "MASTER_OF_DECEPTION", "SETUP", "ELUSIVENESS", "DIRTY_TRICKS", "INITIATIVE", "GHOSTLY_STRIKE" },
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
     Leveling_DaggerDungeon = {},
@@ -194,13 +196,17 @@ function Rogue:ApplyScalers(weights, currentSpec)
     -- Sinister Strike/Gouge/Backstab/Mutilate/Ghostly Strike/Hemorrhage only.
     -- Melee crits already deal 2.0x, so 5/5 lifts that bonus from 1.00 to 1.20
     -- on those yellow hits alone (not white hits, Ambush, Eviscerate or
-    -- poison). Leveling rows scale by how much of the damage those hits carry;
-    -- the level-60 profiles come from the sim with Lethality in.
+    -- poison). The leveling rows are built without it (rogue_curves_build.js);
+    -- per rank, rmodel's crit weight with 5/5 against none (2026-10-22). The
+    -- level-60 profiles come from the sim with Lethality in.
+    local isDaggerSolo = spec:find("^Leveling_Dagger_") ~= nil
+    local isDungeon = spec:find("^Leveling_DaggerDungeon") ~= nil
     local rLethal = Rank("LETHALITY")
     if rLethal > 0 and isLeveling then
-        local perRank = 0.016
-        if spec:find("^Leveling_Dagger") then perRank = 0.010
-        elseif spec:find("^Leveling_Hemo") then perRank = 0.008 end
+        local perRank = 0.012
+        if isDaggerSolo then perRank = 0.008
+        elseif isDungeon then perRank = 0.0067
+        elseif spec:find("^Leveling_Hemo") then perRank = 0.0065 end
         MSC.ScaleForeverMeleeCrit(weights, 1 + (rLethal * perRank), level)
     end
 
@@ -212,8 +218,8 @@ function Rogue:ApplyScalers(weights, currentSpec)
             MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_OH" }, 1 + (rDW * 0.045))
         end
 
-        -- Damage talents the Combat curve does not carry (or carries only
-        -- as Improved Eviscerate). Each is a share-weighted damage gain; the
+        -- Damage talents the Combat curve is built without (rogue_curves_build.js,
+        -- 2026-10-22). Each is a share-weighted damage gain; the
         -- net factor lowers the survival keys the same way a flat damage
         -- talent does (fights end sooner), and a player without the talents
         -- gets 1.0. Skipped for the Dagger/Hemo rows. Dual Wield
@@ -224,13 +230,10 @@ function Rogue:ApplyScalers(weights, currentSpec)
         -- is ~10% shorter cycle at 3/3 on the ~55% yellow share, scaled for
         -- short solo fights = 0.010/rank. Relentless Strikes: 25 energy per
         -- finisher (~90% at 4.5 CP), same scaling = 0.025. Murder: 2%/rank on
-        -- ~35% Humanoid/Giant mobs = 0.007/rank. Improved Eviscerate (7%/rank
-        -- on ~18% of damage = 0.0125/rank) is baked at 2.14 ranks (the
-        -- study's 15%) from level 15, so it is un-baked:
-        -- (1+k*rank)/(1+k*bakedRank(level)).
+        -- ~35% Humanoid mobs = 0.007/rank. Improved Eviscerate: 7%/rank on ~18%
+        -- of damage = 0.0125/rank.
         if not spec:find("^Leveling_Dagger") and not spec:find("^Leveling_Hemo") then
-            local bakedIE = MSC.ForeverLevelLerp({ { 10, 0 }, { 15, 2.14 } }, level)
-            local dmg = (1 + 0.0125 * Rank("IMP_EVISCERATE")) / (1 + 0.0125 * bakedIE)
+            local dmg = 1 + 0.0125 * Rank("IMP_EVISCERATE")
             dmg = dmg * (1 + 0.009 * Rank("DW_SPEC") + 0.0085 * Rank("MALICE")
                 + 0.010 * Rank("RUTHLESSNESS") + 0.025 * Rank("RELENTLESS_STRIKES")
                 + 0.007 * Rank("MURDER"))
@@ -242,13 +245,7 @@ function Rogue:ApplyScalers(weights, currentSpec)
             end
         end
 
-        -- Mutilate (Assassination t5): the off-hand lands a 75% yellow hit per
-        -- cast, so off-hand weapon DPS is worth 1.2x and main hand 0.85x of the
-        -- Backstab row (rmodel with Mutilate, 2026-10-16)
-        if spec:find("^Leveling_Dagger") and Rank("MUTILATE") > 0 then
-            MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_OH" }, 1.2)
-            MSC.ScaleForeverKeys(weights, { "MSC_WEAPON_DPS_MELEE" }, 0.85)
-        end
+        -- (Mutilate's weapon weights are in the Assassination row itself since 2026-10-22: no hook.)
     end
 
     -- [[ 1. Yellow Hit Cap, tapered to the DW white cap ]]
@@ -265,10 +262,9 @@ function Rogue:ApplyScalers(weights, currentSpec)
 end
 
 -- Hack and Slash (New in Forever, Combat t5, 5 ranks): per-weapon-type bonus.
--- Only the Dagger/Fist branch (+1%/rank Crit) converts cleanly into a score
--- value -- same math as the racial weapon-crit bonuses. The Axe/Sword
--- (extra-attack proc chance) and Mace (armor ignore) branches aren't scored
--- for the same reason Warrior's Weaponmaster's non-crit branches aren't.
+-- The Dagger/Fist branch (+1%/rank Crit) is scored here, the same math as the
+-- racial weapon-crit bonuses; the Axe/Sword (extra attacks) and Mace (armor
+-- ignore) branches are GetHackAndSlashProcBonus below.
 -- The +1%/rank crit only helps that hand's swings: the main hand carries all
 -- yellow hits plus its white swings (~75% of damage), the off hand only its
 -- own white swings (~20%); 0.5 when the hand isn't known.
@@ -285,13 +281,17 @@ local function GetHackAndSlashCritBonus(itemLink, weights, slotId)
     return rHS * (weights["ITEM_MOD_CRIT_RATING_SHORT"] or 0) * slotFactor -- +1%/rank Crit
 end
 
--- Backstab and Ambush need a dagger in the main hand, and Ghostly Strike
--- (180%) and Hemorrhage (145%) hit much harder with one, but the weights
--- have no weapon-type term: without this a slightly faster sword outscores
--- the dagger. Flat AP-equivalent bonus for a main-hand dagger, by level.
+-- Backstab, Ambush and Mutilate need a dagger in the main hand, and Ghostly
+-- Strike (180%) and Hemorrhage (145%) hit much harder with one, but the
+-- weights have no weapon-type term: without this a slightly faster sword
+-- outscores the dagger. Flat AP-equivalent bonus for a main-hand dagger, by
+-- level: rmodel's score with the dagger against the same weapon as a sword
+-- (the rows' shipped builds, 2026-10-22; was 26-48 AP). Below 30 solo a
+-- Garrote opener does as well as Ambush, so a dagger adds nothing there.
 local DAGGER_MAIN_HAND = {
-    Leveling_Dagger = { { 15, 15 }, { 20, 20 }, { 25, 23 }, { 30, 26 }, { 35, 29 }, { 40, 32 }, { 45, 37 }, { 50, 42 }, { 55, 45 }, { 59, 48 } },
-    Leveling_Hemo   = { { 17, 0 }, { 18, 27 }, { 20, 29 }, { 25, 28 }, { 30, 26 }, { 35, 28 }, { 40, 29 }, { 45, 33 }, { 50, 39 }, { 55, 42 }, { 59, 45 } },
+    ["Leveling_Dagger_"]       = { { 25, 0 }, { 30, 47 }, { 35, 53 }, { 40, 105 }, { 45, 157 }, { 50, 230 }, { 59, 260 } },
+    ["Leveling_Hemo"]          = { { 25, 0 }, { 30, 122 }, { 35, 170 }, { 45, 168 }, { 50, 190 }, { 55, 196 }, { 59, 215 } },
+    ["Leveling_DaggerDungeon"] = { { 25, 60 }, { 30, 183 }, { 35, 212 }, { 40, 251 }, { 45, 315 }, { 50, 315 }, { 55, 362 }, { 59, 384 } },
 }
 local function GetDaggerMainHandBonus(itemLink, weights, slotId, specName)
     if slotId ~= 16 or not itemLink or not weights then return 0 end
@@ -315,13 +315,12 @@ local function GetDaggerMainHandBonus(itemLink, weights, slotId, specName)
     return ap * (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1)
 end
 
--- Hack and Slash sword (extra-attack chance) and mace (armor ignore)
--- branches, Leveling rows only. D is total damage in AP units by level.
--- Sword: 1%/rank extra attack, worth 0.0105 x rank x D AP on the main hand.
--- Mace: 3%/rank armor ignore = gain(level) x 0.85 (non-poison share) x D x
--- rank/5. The off hand gets half of either.
-local HS_TOTAL_DAMAGE = { { 30, 610 }, { 40, 930 }, { 59, 1590 } }
-local HS_MACE_GAIN = { { 35, 0.046 }, { 40, 0.056 }, { 45, 0.063 } }
+-- Hack and Slash sword/axe (extra-attack chance) and mace (armor ignore)
+-- branches, Leveling rows only: rmodel's AP worth of 5/5 on the Combat row
+-- (built without the talent; 2026-10-22, was ~1.7x this), x rank/5. The off
+-- hand gets half of either.
+local HS_SWORD = { { 30, 34.5 }, { 35, 41 }, { 40, 49 }, { 45, 57 }, { 50, 63 }, { 55, 69 }, { 59, 75 } }
+local HS_MACE = { { 30, 30 }, { 35, 36 }, { 40, 51 }, { 45, 65 }, { 50, 77 }, { 55, 85 }, { 59, 94.5 } }
 local function GetHackAndSlashProcBonus(itemLink, weights, slotId, specName)
     local rHS = MSC:GetTalentRank("HACK_AND_SLASH")
     if rHS <= 0 or not itemLink or not weights then return 0 end
@@ -330,17 +329,11 @@ local function GetHackAndSlashProcBonus(itemLink, weights, slotId, specName)
     if slotId ~= 16 and slotId ~= 17 then return 0 end
 
     local _, _, _, _, _, classID, subClassID = GetItemInfoInstant(itemLink)
-    if classID ~= 2 or (subClassID ~= 7 and subClassID ~= 4) then return 0 end
+    if classID ~= 2 or (subClassID ~= 7 and subClassID ~= 4 and subClassID ~= 0) then return 0 end -- 1H Sword, Mace, Axe
 
     local level = MSC.CtxLevel()
     if level < 30 then return 0 end
-    local D = MSC.ForeverLevelLerp(HS_TOTAL_DAMAGE, level)
-    local ap
-    if subClassID == 7 then
-        ap = 0.0105 * rHS * D
-    else
-        ap = MSC.ForeverLevelLerp(HS_MACE_GAIN, level) * 0.85 * D * rHS / 5
-    end
+    local ap = MSC.ForeverLevelLerp(subClassID == 4 and HS_MACE or HS_SWORD, level) * rHS / 5
     if slotId == 17 then ap = ap * 0.5 end
     return ap * (weights["ITEM_MOD_ATTACK_POWER_SHORT"] or 1)
 end

@@ -821,6 +821,7 @@ L["Assassination: Raid (old profile)"] = "Assassination: Raid (old profile)"
 L["Combat: Solo Leveling"] = "Combat: Solo Leveling"
 L["Combat Daggers: Solo Leveling"] = "Combat Daggers: Solo Leveling"
 L["Combat: Dungeon Leveling"] = "Combat: Dungeon Leveling"
+L["Daggers: Dungeon Leveling"] = "Daggers: Dungeon Leveling"
 L["Subtlety: Solo Leveling"] = "Subtlety: Solo Leveling"
 -- Hunter (Forever profile names, matching the Talents plugin's builds; level bands are added after)
 L["Beast Mastery: Raid"] = "Beast Mastery: Raid"

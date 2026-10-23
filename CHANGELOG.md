@@ -20,6 +20,11 @@
 - Protection: Dungeon Leveling no longer cuts armor for Toughness, a talent Forever removed.
 - Protection solo leveling no longer chases being uncrushable: questing mobs can't crush you. Dungeon and raid tanks still do.
 
+### 🗡️ Rogue Fixes (WoW Forever)
+- Leveling with daggers: a main-hand dagger now counts for what Mutilate, Ambush, Backstab, Hemorrhage and Ghostly Strike get from it (it was worth far too little, so a slightly faster sword often won).
+- Hack and Slash: swords and maces count about 40% less than before, and one-handed axes now count too.
+- Leveling names now match the Talents builds: "Assassination: Solo Leveling" and "Daggers: Dungeon Leveling".
+
 ## 🚀 v3.2.6
 
 ### 🎒 Bag Arrows in DaylightUI (WoW Forever)
