@@ -34,7 +34,7 @@ Warrior.Weights = {
 
     -- Protection: Raid (Shield Slam build with Improved Thunder Clap, level-63 boss; threat 35%, damage
     -- taken 35%, effective health 30%). Boss hits are large, so dodge, parry, Defense and armor lead; Hit
-    -- and Crit carry the threat. Same scale as the leveling tank rows (Stamina 3.0).
+    -- and Crit carry the threat. Stamina 3.0 here; the leveling tank rows use 2.5.
     ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=42.1, ["ITEM_MOD_PARRY_RATING_SHORT"]=42.1, ["ITEM_MOD_BLOCK_RATING_SHORT"]=9.7, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=6.45, ["ITEM_MOD_ARMOR_SHORT"]=0.26, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.95, ["ITEM_MOD_HIT_RATING_SHORT"]=28.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=18.0, ["ITEM_MOD_AGILITY_SHORT"]=3.7, ["ITEM_MOD_STRENGTH_SHORT"]=1.48, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.65, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
     -- Protection: AoE Farming (5 level-60 mobs on you, Thunder Clap, Revenge, Shield Slam; mobs per hour
@@ -207,13 +207,6 @@ function Warrior:ApplyScalers(weights, currentSpec)
     local function Touch(k) if weights[k] then touched[k] = true end end
     local function Mul(k, m) if weights[k] then weights[k] = weights[k] * m; touched[k] = true end end
     local function Add(k, v) if weights[k] then weights[k] = weights[k] + v; touched[k] = true end end
-
-    -- Toughness (+2%/rank armor from items) was removed in client 70291. The
-    -- dungeon tank rows were modelled with 5/5 (+10% item armor), so their
-    -- armor weight comes down by that much.
-    if tankModel and weights["ITEM_MOD_ARMOR_SHORT"] then
-        weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] / 1.10
-    end
 
     -- Deep Wounds (Arms t3, minLevel 20, 3 ranks): the bleed is 0.2 x rank of
     -- average WEAPON damage (no AP), so crit gets x(1 + 0.12 x rank) at all
@@ -403,8 +396,11 @@ function Warrior:ApplyScalers(weights, currentSpec)
     -- Not for AoE farming: normal mobs can't crush, and the pack sets its own needs.
     if isTank and currentSpec ~= "PROT_AOE" then
         MSC.ApplyForeverDefenseTarget(weights, activeCaps)
-        -- Shield Block (learned at 16): +75% block chance for 2 attacks
-        MSC.ApplyForeverUncrushable(weights, 75, activeCaps)
+        -- Shield Block (learned at 16): +75% block chance for 2 attacks. Crushing blows come from mobs
+        -- 3+ levels above you (dungeon bosses, raids), not from questing, so solo tank rows skip it.
+        if currentSpec == "PROT_RAID" or currentSpec:find("^Leveling_TankDungeon") then
+            MSC.ApplyForeverUncrushable(weights, 75, activeCaps)
+        end
     end
     -- Tanks hold a shield, so an off-hand weapon's DPS is worth nothing
     -- (without this it counted at half the main-hand weight).

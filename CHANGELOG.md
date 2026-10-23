@@ -15,6 +15,11 @@
 - Protection: AoE Farming weights updated: Crit counts more, Hit and the avoidance stats a little more.
 - Tanks: when you're only uncrushable with Holy Shield (or Shield Block) up, the tooltip now reminds you to keep it up on bosses.
 
+### ⚔️ Warrior Fixes (WoW Forever)
+- Bows, guns and thrown weapons are no longer scored like a melee weapon at level 60 (a ranged weapon's DPS counted far too much for Warriors and Rogues).
+- Protection: Dungeon Leveling no longer cuts armor for Toughness, a talent Forever removed.
+- Protection solo leveling no longer chases being uncrushable: questing mobs can't crush you. Dungeon and raid tanks still do.
+
 ## 🚀 v3.2.6
 
 ### 🎒 Bag Arrows in DaylightUI (WoW Forever)

@@ -2224,6 +2224,13 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
         elseif type(val) == "number" then
             local weightKey = stat
             local isWeaponDps = (stat == "MSC_WEAPON_DPS" or stat == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT")
+            -- Warrior / Rogue ranged slot (bow, gun, thrown): their profiles' weapon DPS weight is the melee one, so with no
+            -- melee/ranged split (the level-60 profiles) a ranged weapon got the melee value, ~33x too much (2026-10-22).
+            -- Use MSC_RANGED_WEAPON_DPS when a profile sets it, else the leveling rows' ranged value (0.5).
+            if isWeaponDps and slotId == 18 and not weights["MSC_WEAPON_DPS_MELEE"] and MSC.CurrentClass
+                and (MSC.CurrentClass.Name == "WARRIOR" or MSC.CurrentClass.Name == "ROGUE") then
+                weightKey = "MSC_RANGED_WEAPON_DPS"
+            end
             if isWeaponDps and (slotId == 16 or slotId == 17) then
                 -- MSC_WEAPON_DPS_MELEE: a class module can set this in ApplyScalers
                 -- when its Weapon DPS weight is anchored to the ranged slot (e.g. a
@@ -2240,7 +2247,8 @@ function MSC.GetItemScore(stats, weights, specName, slotId)
             if MSC.IsForever and slotId == 18 and stat == "MSC_WEAPON_SPEED" then weightKey = "MSC_RANGED_WEAPON_SPEED" end
             
             local w = weights[weightKey] or 0
-            
+            if weightKey == "MSC_RANGED_WEAPON_DPS" and not weights[weightKey] then w = 0.5 end   -- melee class ranged slot (above)
+
             -- [[ WoW Forever Stat Unifications ]]
             if MSC.IsForever then
                 if stat == "ITEM_MOD_HIT_RATING_SHORT" or stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or stat == "ITEM_MOD_HIT_MELEE_RATING_SHORT" or stat == "ITEM_MOD_HIT_RANGED_RATING_SHORT" then
