@@ -501,7 +501,7 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- caps, sliding to the raid caps from 50; past a cap Hit keeps 10% of
     -- its value (the same for every class).
     MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_RATING_SHORT", "MELEE", 0.1, "Hit", activeCaps)
-    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps)
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, nil, MSC.ForeverSpellCapKind(currentSpec))
     -- Bear: defense toward 440 from 50 (bears can't block, so no uncrushable)
     if currentSpec:upper():find("BEAR") then MSC.ApplyForeverDefenseTarget(weights, activeCaps) end
 

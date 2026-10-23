@@ -430,7 +430,7 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- read by MSC:GetForeverHitPercent, so it isn't added again. Targets are
     -- the level's caps, sliding to the raid caps from 50.
     MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_RATING_SHORT", "MELEE", 0.1, "Phys Hit", activeCaps)
-    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps)
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, nil, MSC.ForeverSpellCapKind(currentSpec))
 
     -- [[ 1a. Healer: spell hit (rows carry no Hit weight) ]]
     -- Full value while 1% or more short of the spell cap, fractional inside

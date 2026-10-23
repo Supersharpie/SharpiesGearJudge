@@ -30,6 +30,14 @@
 - Shadow leveling: spell hit is valued correctly next to Shadow Focus (it was too low).
 - Leveling without Shadowform after 40: crit and Mana per 5 count less, Intellect and Stamina a little more.
 
+### 🔮 Warlock Fixes (WoW Forever)
+- Affliction leveling no longer counts Improved Life Tap twice.
+- Grim Reach (the talent that replaced Malediction) now counts toward Affliction leveling.
+- Agonizing Flames uses its real values (3/7/10%) and also raises Fire damage for the AoE farming build.
+
+### 🎯 Dungeon Spell Hit (WoW Forever)
+- Caster dungeon leveling weights now value spell hit up to about 4.5%, not 3%, since dungeon mobs are one or two levels above you.
+
 ### 🐛 Bug Fixes (all versions)
 - Quest rewards no longer lose their Equip: stats (such as Spell Power) when the quest window opens before the game has loaded that text; the item is read again once it arrives, and again each time you hover it.
 

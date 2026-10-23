@@ -441,7 +441,7 @@ function Priest:ApplyScalers(weights, currentSpec)
             { cap = cap, mult = 0.1 },
         }, "Spell Hit", activeCaps, 0)
     else
-        MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit)
+        MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit, MSC.ForeverSpellCapKind(currentSpec))
     end
 
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)

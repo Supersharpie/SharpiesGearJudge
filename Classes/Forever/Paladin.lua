@@ -444,7 +444,7 @@ function Paladin:ApplyScalers(weights, currentSpec)
     -- the level's cap, sliding to the raid cap from 50. Past it Hit keeps 10%
     -- of its value, the same as every other class.
     MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_RATING_SHORT", "MELEE", 0.1, "Hit", activeCaps)
-    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps)
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, nil, MSC.ForeverSpellCapKind(currentSpec))
 
     -- [[ 2b. Block for leveling tanks: Shield Specialization ]]
     -- Client data: only rank 3 of Shield Specialization makes blocks restore

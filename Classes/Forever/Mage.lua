@@ -335,7 +335,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- AoE grinding: about a quarter of the damage is Arcane Explosion, which
     -- Elemental Precision doesn't cover.
     if currentSpec:find("AoE") or currentSpec:find("AOE") then talentHit = talentHit * 0.75 end
-    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit)
+    MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit, MSC.ForeverSpellCapKind(currentSpec))
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end
 

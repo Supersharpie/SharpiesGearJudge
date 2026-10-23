@@ -487,6 +487,8 @@ MSC.ForeverCaps = {
     RAID_BLEND_START = 50,
     MELEE = { leveling = 5, raid = 9 },   -- yellow/2H miss vs same level / vs +3 boss
     SPELL = { leveling = 3, raid = 16 },  -- 4% miss (1% can't be removed) / 17% vs +3
+    -- Dungeon rows (2026-10-23, Warlock deep dive D6): dungeon mobs are +1/+2 (5-6% miss), so 4.5% while leveling
+    SPELL_DUNGEON = { leveling = 4.5, raid = 16 },
     DW_WHITE = { leveling = 24, raid = 28 }, -- dual-wield white swings
     DEFENSE_RAID = 440,                   -- crit immunity vs level-63 bosses
     UNCRUSHABLE = 102.4,                  -- miss + dodge + parry + block vs +3
@@ -763,9 +765,16 @@ end
 -- full value below the target, overcapMult of it above. extraHit is for
 -- school-only talents (Shadow Focus, Elemental Precision, Suppression) that
 -- the game's general spell-hit number doesn't include.
-function MSC.ApplyForeverHitCap(weights, key, kind, overcapMult, label, activeCaps, extraHit)
-    local cap = MSC.GetForeverCapTarget(kind == "RANGED" and "MELEE" or kind)
+-- capKind: a different cap target than kind's (SPELL_DUNGEON); the player's hit is still read as kind
+function MSC.ApplyForeverHitCap(weights, key, kind, overcapMult, label, activeCaps, extraHit, capKind)
+    local cap = MSC.GetForeverCapTarget(capKind or (kind == "RANGED" and "MELEE" or kind))
     MSC.ApplyForeverHitKnees(weights, key, kind, { { cap = cap, mult = overcapMult or 0.1 } }, label, activeCaps, extraHit)
+end
+
+-- The spell-hit cap target for a weights row: dungeon leveling rows ("...Dungeon...") use SPELL_DUNGEON.
+function MSC.ForeverSpellCapKind(spec)
+    if type(spec) == "string" and spec:find("Dungeon") then return "SPELL_DUNGEON" end
+    return nil
 end
 
 -- General form: knees = { { cap = pct, mult = m }, ... } in rising order.
