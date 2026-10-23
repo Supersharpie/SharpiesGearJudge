@@ -35,8 +35,9 @@
 - Grim Reach (the talent that replaced Malediction) now counts toward Affliction leveling.
 - Agonizing Flames uses its real values (3/7/10%) and also raises Fire damage for the AoE farming build.
 
-### 🎯 Dungeon Spell Hit (WoW Forever)
-- Caster dungeon leveling weights now value spell hit up to about 4.5%, not 3%, since dungeon mobs are one or two levels above you.
+### 🎯 Spell Hit Caps (WoW Forever)
+- Forever appears to drop the old rule that 1% of spells always miss, so every spell hit cap is 1% higher: 4% while leveling (was 3%) and 17% for raids (was 16%). Blizzard hasn't confirmed this yet.
+- Caster dungeon leveling weights now value spell hit up to 5.5%, since dungeon mobs are one or two levels above you.
 
 ### 🐛 Bug Fixes (all versions)
 - Quest rewards no longer lose their Equip: stats (such as Spell Power) when the quest window opens before the game has loaded that text; the item is read again once it arrives, and again each time you hover it.

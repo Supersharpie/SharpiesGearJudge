@@ -486,9 +486,11 @@ end
 MSC.ForeverCaps = {
     RAID_BLEND_START = 50,
     MELEE = { leveling = 5, raid = 9 },   -- yellow/2H miss vs same level / vs +3 boss
-    SPELL = { leveling = 3, raid = 16 },  -- 4% miss (1% can't be removed) / 17% vs +3
-    -- Dungeon rows (2026-10-23, Warlock deep dive D6): dungeon mobs are +1/+2 (5-6% miss), so 4.5% while leveling
-    SPELL_DUNGEON = { leveling = 4.5, raid = 16 },
+    -- Spells: 4% miss vs your level / 17% vs +3. No 1% that can't be removed (2026-10-23, user: the client's hit panel and
+    -- players read it that way, and the client sim has no floor; Blizzard hasn't confirmed it -- check at 60)
+    SPELL = { leveling = 4, raid = 17 },
+    -- Dungeon rows (2026-10-23, Warlock deep dive D6): dungeon mobs are +1/+2 (5-6% miss)
+    SPELL_DUNGEON = { leveling = 5.5, raid = 17 },
     DW_WHITE = { leveling = 24, raid = 28 }, -- dual-wield white swings
     DEFENSE_RAID = 440,                   -- crit immunity vs level-63 bosses
     UNCRUSHABLE = 102.4,                  -- miss + dodge + parry + block vs +3
