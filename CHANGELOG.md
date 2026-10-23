@@ -35,6 +35,15 @@
 - Grim Reach (the talent that replaced Malediction) now counts toward Affliction leveling.
 - Agonizing Flames uses its real values (3/7/10%) and also raises Fire damage for the AoE farming build.
 
+### ❄️ Mage Fixes (WoW Forever)
+- Frost leveling no longer counts Frost Channeling twice on Intellect, Spirit and Mana per 5.
+- Fire leveling is detected again (it looked for Wake of Fire, which the October 15 patch renamed Improved Fire Blast).
+- AoE leveling builds keep their AoE weights at levels 22-24.
+- Arcane leveling: hit counts Arcane Focus, not Elemental Precision; Ice Shards, Frost Channeling and Improved Frostbolt no longer touch it.
+
+### 📈 Leveling Weights Near 60 (WoW Forever)
+- From level 50, talent adjustments on leveling weights fade out as the weights blend into your level-60 profile, so nothing jumps or counts twice at 59.
+
 ### 🎯 Spell Hit Caps (WoW Forever)
 - Forever appears to drop the old rule that 1% of spells always miss, so every spell hit cap is 1% higher: 4% while leveling (was 3%) and 17% for raids (was 16%). Blizzard hasn't confirmed this yet.
 - Caster dungeon leveling weights now value spell hit up to 5.5%, since dungeon mobs are one or two levels above you.

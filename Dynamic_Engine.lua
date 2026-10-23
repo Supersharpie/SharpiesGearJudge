@@ -64,6 +64,23 @@ local function NormalizeCustomWeights(raw)
     return result
 end
 
+-- WoW Forever leveling rows blend toward the level-60 profile from 50 (90% profile at 59), and the 60 profiles carry
+-- their talents already, so the class modules' leveling talent hooks fade out with the blend (2026-10-23, Mage deep dive
+-- D5): from 50 each weight keeps only the leveling share of what the hooks changed, 1 at 50 down to 0 at 60. The cap
+-- keys (hit, defense, expertise) keep the hooked value: the caps belong to the player's stats, not to the talents.
+function MSC.FadeLevelingHooks(hooked, raw, specKey)
+    if not (MSC.IsForever and raw and type(specKey) == "string" and specKey:find("^Leveling")) then return end
+    local level = UnitLevel("player") or 1
+    if level <= 50 then return end
+    local share = math.max(0, (60 - level) / 10)
+    for k, v in pairs(hooked) do
+        local r = raw[k]
+        if type(v) == "number" and type(r) == "number" and not (k:find("HIT") or k:find("DEFENSE") or k:find("EXPERTISE")) then
+            hooked[k] = r + share * (v - r)
+        end
+    end
+end
+
 function MSC:ApplyWeightPipeline(rawWeights, specKey)
     local finalWeights = {}
     if rawWeights then
@@ -78,6 +95,7 @@ function MSC:ApplyWeightPipeline(rawWeights, specKey)
         local ok, w, t = pcall(MSC.CurrentClass.ApplyScalers, MSC.CurrentClass, finalWeights, specKey)
         if not ok then MSC.PvPPipelineSpec = nil; error(w, 0) end
         finalWeights, capText = w, t
+        MSC.FadeLevelingHooks(finalWeights, rawWeights, specKey)
     end
     if pvp then
         MSC.PvPPipelineSpec = nil
