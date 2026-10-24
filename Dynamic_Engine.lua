@@ -68,11 +68,17 @@ end
 -- their talents already, so the class modules' leveling talent hooks fade out with the blend (2026-10-23, Mage deep dive
 -- D5): from 50 each weight keeps only the leveling share of what the hooks changed, 1 at 50 down to 0 at 60. The cap
 -- keys (hit, defense, expertise) keep the hooked value: the caps belong to the player's stats, not to the talents.
+-- A class hook that scales hit as a talent multiplier (not a cap) fades it itself with MSC.LevelingHookShare.
+function MSC.LevelingHookShare(level)
+    level = level or UnitLevel("player") or 1
+    if level <= 50 then return 1 end
+    return math.max(0, (60 - level) / 10)
+end
+
 function MSC.FadeLevelingHooks(hooked, raw, specKey)
     if not (MSC.IsForever and raw and type(specKey) == "string" and specKey:find("^Leveling")) then return end
-    local level = UnitLevel("player") or 1
-    if level <= 50 then return end
-    local share = math.max(0, (60 - level) / 10)
+    local share = MSC.LevelingHookShare()
+    if share >= 1 then return end
     for k, v in pairs(hooked) do
         local r = raw[k]
         if type(v) == "number" and type(r) == "number" and not (k:find("HIT") or k:find("DEFENSE") or k:find("EXPERTISE")) then

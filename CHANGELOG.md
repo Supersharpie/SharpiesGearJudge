@@ -52,6 +52,12 @@
 - Leveling names now match the Talents builds: "Balance: Solo Leveling" and "Restoration: Solo Leveling".
 - New "Balance: Dungeon Leveling" weights (appear with the next curve update).
 
+### 🏹 Hunter Fixes (WoW Forever)
+- Survival builds with Counterattack get the Survival weights at 60 (they got an untested melee placeholder).
+- Leveling names now match the Talents builds: "Survival: Solo Leveling" and "Survival: Dungeon Leveling".
+- Lethal Attacks now counts on the ranged leveling weights.
+- The Summon Hawk and pet talent changes to Hit fade out from 50 like the other talent adjustments.
+
 ### 🧝 Racials (WoW Forever)
 - The character stats panel no longer shows the old weapon specializations; it shows Human Ruthless (+2% crit) and Orc Savage (+1% crit) with any weapon.
 
