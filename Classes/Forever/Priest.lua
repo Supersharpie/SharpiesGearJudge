@@ -435,7 +435,7 @@ function Priest:ApplyScalers(weights, currentSpec)
         -- Night Elf racial, so the race-neutral Priest doesn't cast it): the wand
         -- carries the rest early, Shadow spells everything from 25
         local s = MSC.ForeverLevelLerp({ {10, 0.61}, {15, 0.65}, {20, 0.87}, {25, 1.0} }, level)
-        local cap = MSC.GetForeverCapTarget("SPELL")
+        local cap = MSC.GetForeverCapTarget(MSC.ForeverSpellCapKind(currentSpec) or "SPELL")   -- dungeon rows: 5.5%
         MSC.ApplyForeverHitKnees(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", {
             { cap = math.max(0, cap - rSFocus), mult = (1 - s) + s * 0.1 },
             { cap = cap, mult = 0.1 },

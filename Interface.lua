@@ -2232,21 +2232,18 @@ local function GetClassRings(class, stats, weights, profileKey)
     if mhLink then
         local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(mhLink)
         if MSC.IsForever then
-            if playerRace == "Human" and (subClassID == 7 or subClassID == 8) then
+            -- the 2026-10-15 patch replaced the weapon specs: Human Ruthless +2% crit and Orc Savage +1% crit with any
+            -- weapon; Dwarf Earth Fury is +2% crit damage and healing, not crit, so it adds nothing here
+            if playerRace == "Human" then
                 critBonus = critBonus + 2
                 spellCritBonus = spellCritBonus + 2
-                AddMod("Crit", "Sword Spec (Human)", 2, true)
-                AddMod("Spell Crit", "Sword Spec (Human)", 2, true)
-            elseif playerRace == "Orc" and (subClassID == 0 or subClassID == 1) then
+                AddMod("Crit", "Ruthless (Human)", 2, true)
+                AddMod("Spell Crit", "Ruthless (Human)", 2, true)
+            elseif playerRace == "Orc" then
                 critBonus = critBonus + 1
                 spellCritBonus = spellCritBonus + 1
-                AddMod("Crit", "Axe Spec (Orc)", 1, true)
-                AddMod("Spell Crit", "Axe Spec (Orc)", 1, true)
-            elseif playerRace == "Dwarf" and (subClassID == 4 or subClassID == 5) then
-                critBonus = critBonus + 1
-                spellCritBonus = spellCritBonus + 1
-                AddMod("Crit", "Mace Spec (Dwarf)", 1, true)
-                AddMod("Spell Crit", "Mace Spec (Dwarf)", 1, true)
+                AddMod("Crit", "Savage (Orc)", 1, true)
+                AddMod("Spell Crit", "Savage (Orc)", 1, true)
             end
         else
             if playerRace == "Human" then

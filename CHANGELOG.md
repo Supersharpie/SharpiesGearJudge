@@ -41,6 +41,16 @@
 - AoE leveling builds keep their AoE weights at levels 22-24.
 - Arcane leveling: hit counts Arcane Focus, not Elemental Precision; Ice Shards, Frost Channeling and Improved Frostbolt no longer touch it.
 
+### ⚡ Shaman Fixes (WoW Forever)
+- Enhancement solo leveling no longer reads as a healer at levels 11-26 (Tidal Focus no longer marks a healer).
+- Elemental leveling is detected by its new talents after the October 15 tree changes (Lava Burst, Trial by Fire, Lightning Overload, Elemental Mastery).
+- Tank Shamans at 60 get the tank weights again (they got Enhancement's).
+- Mental Dexterity uses its real values (33/67/100% of Intellect as attack power).
+- New "Elemental: Dungeon Leveling" weights (appear with the next curve update).
+
+### 🧝 Racials (WoW Forever)
+- The character stats panel no longer shows the old weapon specializations; it shows Human Ruthless (+2% crit) and Orc Savage (+1% crit) with any weapon.
+
 ### 📈 Leveling Weights Near 60 (WoW Forever)
 - From level 50, talent adjustments on leveling weights fade out as the weights blend into your level-60 profile, so nothing jumps or counts twice at 59.
 
