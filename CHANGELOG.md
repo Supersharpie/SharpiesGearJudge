@@ -48,6 +48,10 @@
 - Mental Dexterity uses its real values (33/67/100% of Intellect as attack power).
 - New "Elemental: Dungeon Leveling" weights (appear with the next curve update).
 
+### 🐾 Druid Fixes (WoW Forever)
+- Leveling names now match the Talents builds: "Balance: Solo Leveling" and "Restoration: Solo Leveling".
+- New "Balance: Dungeon Leveling" weights (appear with the next curve update).
+
 ### 🧝 Racials (WoW Forever)
 - The character stats panel no longer shows the old weapon specializations; it shows Human Ruthless (+2% crit) and Orc Savage (+1% crit) with any weapon.
 
