@@ -1258,6 +1258,12 @@ L["Saved for each spec; this sets it for your %s spec."] = "각 전문화마다 
 L["Secondary"] = "보조"
 L["Show Other Spec on Tooltips"] = "다른 전문화를 툴팁에 표시"
 L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "이중 전문화(40레벨)를 사용하면 아이템 툴팁에 해당 아이템이 다른 전문화에 업그레이드가 되는지도 표시됩니다. 그 전문화의 특성, 프로필, PvP용 장비 설정으로 점수를 매기고, 그 전문화에서 마지막으로 착용한 장비와 비교합니다. PvP용 장비와 점수 프로필은 전문화마다 따로 저장됩니다."
+L["Off-Specs"] = "보조 전문화"
+L["Tick the profiles this character also plays, such as a healing or tank set for dungeons. Item tooltips then show when an item is an upgrade for them, compared against the best gear you own for that profile: what you wear, your bags, and your bank as seen on your last visit. Leveling profiles follow your level. Saved for each character; the Roster plugin shows them for your alts too (log in on the alt once after ticking)."] = "이 캐릭터가 함께 플레이하는 프로필을 선택하세요. 예를 들어 던전용 치유 세트나 방어 세트입니다. 그러면 아이템 툴팁에 해당 아이템이 그 프로필에 업그레이드가 될 때 표시되며, 그 프로필용으로 가진 가장 좋은 장비와 비교합니다: 착용 중인 장비, 가방, 그리고 마지막으로 방문했을 때의 은행. 레벨업 프로필은 레벨에 따라 바뀝니다. 캐릭터마다 저장되며, Roster 플러그인은 부캐릭터에서도 이를 보여 줍니다(선택한 뒤 부캐릭터로 한 번 접속하세요)."
+L["Off-spec upgrades are judged against the best gear you own for them (worn, bags and bank)."] = "보조 전문화 업그레이드는 그 전문화용으로 가진 가장 좋은 장비(착용, 가방, 은행)와 비교합니다."
+L["off-spec"] = "보조 전문화"
+L["With Dual Specialization, item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents and profile against the best gear you own for it (worn, bags and bank). The scoring profile is saved separately for each spec."] = "이중 전문화를 사용하면 아이템 툴팁에 해당 아이템이 다른 전문화에 업그레이드가 되는지도 표시됩니다. 그 전문화의 특성과 프로필로 점수를 매기고, 그 전문화용으로 가진 가장 좋은 장비(착용, 가방, 은행)와 비교합니다. 점수 프로필은 전문화마다 따로 저장됩니다."
+L["Gear for PvP is saved separately for each spec too."] = "PvP용 장비도 전문화마다 따로 저장됩니다."
 L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ 이중 전문화:|r 전문화 그룹 %d개, 활성 %d"
 
 L["5-Player Group"] = "5인 파티"

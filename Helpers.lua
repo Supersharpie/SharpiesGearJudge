@@ -1437,6 +1437,105 @@ function MSC.SpecGroupName(group)
 end
 
 -- =============================================================
+-- 5.12 OFF-SPECS (tracked profiles)
+-- =============================================================
+-- Profiles a character also plays (a healing or tank set for dungeons...),
+-- ticked in Settings > Off-Specs and shown as extra tooltip lines. Saved per
+-- character: profile keys repeat across classes (RESTO_RAID, Leveling_21_40),
+-- so account-wide ticks leaked onto other classes. The old account-wide ticks
+-- seed a character's own list the first time, keeping only its class's profiles.
+MSC.OffSpecListeners = MSC.OffSpecListeners or {}
+
+local function IsClassProfile(key)
+    local cls = MSC.CurrentClass
+    local custom = SharpiesGearJudgeDB and SharpiesGearJudgeDB.customWeights
+    return ((custom and custom[key]) or (cls.Weights and cls.Weights[key]) or (cls.LevelingWeights and cls.LevelingWeights[key])
+        or (cls.Profiles and cls.Profiles[key]) or (cls.LevelingBrackets and cls.LevelingBrackets[key])) and true or false
+end
+
+-- This character's ticked profiles ({ [key] = true }).
+function MSC.GetTrackedSpecs()
+    if not SGJ_Settings or not MSC.GetPlayerKey then return {} end
+    local pk = MSC:GetPlayerKey()
+    local all = SGJ_Settings.CharTrackedSpecs
+    if all and all[pk] then return all[pk] end
+    if not MSC.CurrentClass then return {} end -- class not known yet: seed later
+    local mine = {}
+    for k, on in pairs(SGJ_Settings.TrackedSpecs or {}) do
+        if on and IsClassProfile(k) then mine[k] = true end
+    end
+    SGJ_Settings.CharTrackedSpecs = all or {}
+    SGJ_Settings.CharTrackedSpecs[pk] = mine
+    return mine
+end
+
+function MSC.SetTrackedSpec(key, on)
+    if not SGJ_Settings or not MSC.GetPlayerKey then return end
+    local mine = MSC.GetTrackedSpecs()
+    SGJ_Settings.CharTrackedSpecs = SGJ_Settings.CharTrackedSpecs or {}
+    SGJ_Settings.CharTrackedSpecs[MSC:GetPlayerKey()] = mine
+    mine[key] = on and true or nil
+    for _, fn in ipairs(MSC.OffSpecListeners) do pcall(fn) end
+end
+
+-- "Leveling_Healer_21_40" -> "Leveling_Healer", 21, 40 (nil for other profiles).
+local function LevelingBand(key)
+    local role, lo, hi = string.match(key or "", "^(Leveling.-)_(%d+)_(%d+)$")
+    return role, tonumber(lo), tonumber(hi)
+end
+
+-- A ticked leveling profile follows the character's level: Leveling_Healer_21_40
+-- ticked at 30 reads Leveling_Healer_41_51 from 41 (or the class's LevelingNext
+-- row where the chain changes name). A band above your level stays as ticked.
+function MSC.ResolveTrackedProfile(key, level)
+    local cls = MSC.CurrentClass
+    local role, lo, hi = LevelingBand(key)
+    if not (role and cls) then return key end
+    level = level or UnitLevel("player") or 0
+    local rows = {}
+    for _, t in ipairs({ cls.LevelingWeights or {}, cls.LevelingBrackets or {} }) do
+        for k in pairs(t) do rows[k] = true end
+    end
+    local cur = key
+    for _ = 1, 10 do
+        if level <= hi then break end
+        local nextKey = cls.LevelingNext and cls.LevelingNext[cur]
+        if not (nextKey and rows[nextKey]) then
+            nextKey = nil
+            local nextLo
+            for k in pairs(rows) do
+                local r, l = LevelingBand(k)
+                if r == role and l > lo and (not nextLo or l < nextLo) then nextKey, nextLo = k, l end
+            end
+        end
+        if not nextKey then break end
+        local r, l, h = LevelingBand(nextKey)
+        if level < l then break end
+        cur, role, lo, hi = nextKey, r, l, h
+    end
+    return cur
+end
+
+-- Talents saved for a profile (MSC.SaveSpecTalents, whenever you play in it):
+-- the band you're at, else the one ticked, else that role's highest saved band.
+-- nil = never played in it (scored with your current talents).
+function MSC.GetSavedTalents(pick, resolved)
+    local all = SGJ_Settings and SGJ_Settings.TalentProfiles
+    local mine = all and MSC.GetPlayerKey and all[MSC:GetPlayerKey()]
+    if not mine then return nil end
+    if mine[resolved] then return mine[resolved] end
+    if mine[pick] then return mine[pick] end
+    local role = LevelingBand(resolved)
+    if not role then return nil end
+    local best, bestLo
+    for k, t in pairs(mine) do
+        local r, lo = LevelingBand(k)
+        if r == role and (not bestLo or lo > bestLo) then best, bestLo = t, lo end
+    end
+    return best
+end
+
+-- =============================================================
 -- 6. SCANNING
 -- =============================================================
 function MSC.GetRawItemStats(itemLink)

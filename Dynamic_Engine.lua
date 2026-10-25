@@ -351,13 +351,27 @@ end
 -- =========================================================================
 -- A spec group's talents without touching the live cache: returns
 -- talentCache, traitData (like MSC.TalentCache / MSC.TraitTalentData) or nil
--- when the group has no talent config (never set up, or not Forever).
+-- when the group has no talents (never set up). Forever reads the group's
+-- trait config; SoD and TBC Anniversary pass the group to GetTalentInfo.
+local function ForEachClassicGroupTalent(fn, group)
+    if MSC.IsForever or not (GetNumTalentTabs and GetNumTalents and GetTalentInfo) then return false end
+    local spent = 0
+    for tab = 1, GetNumTalentTabs() or 0 do
+        for i = 1, GetNumTalents(tab) or 0 do
+            local ok, name, _, _, _, rank = pcall(GetTalentInfo, tab, i, false, false, group)
+            rank = ok and tonumber(rank) or 0
+            if ok and name then fn(name, rank, tab); spent = spent + rank end
+        end
+    end
+    return spent > 0
+end
+
 function MSC.ReadTalentsForGroup(group)
     local cache, data = {}, {}
-    if not MSC.ForEachTraitTalent(function(name, rank, tab)
-        table.insert(data, { name = name, rank = rank, tab = tab })
-    end, group) or #data == 0 then
-        return nil
+    local function Add(name, rank, tab) table.insert(data, { name = name, rank = rank, tab = tab }) end
+    if not MSC.ForEachTraitTalent(Add, group) or #data == 0 then
+        wipe(data)
+        if not ForEachClassicGroupTalent(Add, group) then return nil end
     end
     for _, t in ipairs(data) do
         local k = TalentKey(t.name)
@@ -852,35 +866,19 @@ do
     end)
 end
 
--- Saves the currently equipped gear AND talents to the specific spec
--- silent: automatic save (AutoUpdateBaseline), no chat line.
-function MSC:SaveBaselineProfile(specName, silent)
-    if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
-    if not SGJ_Settings.TalentProfiles then SGJ_Settings.TalentProfiles = {} end
-    
-    local playerKey = MSC:GetPlayerKey()
-    
-    if not SGJ_Settings.GearProfiles[playerKey] then SGJ_Settings.GearProfiles[playerKey] = {} end
-    if not SGJ_Settings.TalentProfiles[playerKey] then SGJ_Settings.TalentProfiles[playerKey] = {} end
-    
-    -- 1. Save Gear
-    SGJ_Settings.GearProfiles[playerKey][specName] = MSC:GetEquippedGear()
-    
-    -- 2. Save Talents (Force a rebuild just to be safe, then copy it)
-    MSC:BuildTalentCache()
-    SGJ_Settings.TalentProfiles[playerKey][specName] = MSC:SafeCopy(MSC.TalentCache)
-    
-    -- 3. Flush the cache (raw item stats don't depend on gear/talents)
-    if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-    if MSC.SlotCache then wipe(MSC.SlotCache) end
-
-    if silent then return end
-    local prettyName = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName]) or specName
-    print(string.format(MSC.L["|cff00ff00SGJ:|r Locked in current gear and talents as the baseline for %s!"], prettyName))
+-- The talents you play a profile with, so an off-spec line for it is scored
+-- with them later (MSC.GetSavedTalents). Saved on gear, talent and level changes.
+function MSC.SaveSpecTalents(specName)
+    if not (SGJ_Settings and specName) then return end
+    local pk = MSC:GetPlayerKey()
+    SGJ_Settings.TalentProfiles = SGJ_Settings.TalentProfiles or {}
+    SGJ_Settings.TalentProfiles[pk] = SGJ_Settings.TalentProfiles[pk] or {}
+    if not MSC.TalentCacheLoaded then MSC:BuildTalentCache() end
+    SGJ_Settings.TalentProfiles[pk][specName] = MSC:SafeCopy(MSC.TalentCache)
 end
 
 -- Called per PLAYER_EQUIPMENT_CHANGED (once per slot, so up to ~17 times on a
--- gear-set swap): runs once 0.5 s after the last call, and after combat ends
+-- gear-set swap), and on talent and level changes: runs once 0.5 s after the last call, and after combat ends
 -- when called in combat.
 local baselinePending, baselineCallId = false, 0
 local baselineRegenFrame = CreateFrame("Frame")
@@ -910,8 +908,8 @@ function MSC:AutoUpdateBaseline()
     C_Timer.After(0.5, function() Fire(id) end)
 end
 
--- The gear a spec group was last used with (the other spec's tooltip line
--- compares against it). Saved on every gear change while the group is active,
+-- The gear a spec group was last used with (Roster's fallback when the core
+-- can't list your owned gear). Saved on every gear change while the group is active,
 -- except just after a spec switch, while the old spec's gear may still be on.
 function MSC.SaveSpecGear(group)
     if not SGJ_Settings or not MSC.GetPlayerKey then return end
@@ -934,26 +932,8 @@ function MSC:RunAutoUpdateBaseline()
     if not (MSC.LastSpecSwitch and GetTime() - MSC.LastSpecSwitch < SPEC_SWITCH_SETTLE) then
         MSC.SaveSpecGear(MSC.GetActiveSpecGroup())
     end
-    local weights, specName = self.GetCurrentWeights()
-    if not weights or not specName then return end
-
-    local playerKey = self:GetPlayerKey()
-    if not SGJ_Settings.GearProfiles then SGJ_Settings.GearProfiles = {} end
-    if not SGJ_Settings.GearProfiles[playerKey] then SGJ_Settings.GearProfiles[playerKey] = {} end
-
-    local savedGear = SGJ_Settings.GearProfiles[playerKey][specName]
-    local liveGear = {}
-    self:GetEquippedGear(liveGear)
-    
-    local liveScore = self:GetCachedCharacterScore(liveGear, weights, specName, nil)
-    local savedScore = 0
-    if savedGear then
-        savedScore = self:GetCachedCharacterScore(savedGear, weights, specName, savedGear)
-    end
-    
-    if liveScore >= savedScore then
-        self:SaveBaselineProfile(specName, true)
-    end
+    local _, specName = self.GetCurrentWeights()
+    MSC.SaveSpecTalents(specName)
 end
 
 -- Spec switches: load the new spec's profile choice and Gear for PvP, redraw

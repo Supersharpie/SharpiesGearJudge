@@ -7,6 +7,12 @@
 - A loot council addon can ask the whole raid at once: everyone running Sharpie's Gear Judge answers with their own upgrade % for the item.
 - New setting **Share Scores With Group Addons** (on by default) turns answering off. Only your upgrade % and scores are sent.
 
+### 🔀 Off-Specs (All Versions)
+- **Secondary Specs & Baselines** is now **Off-Specs**: tick the profiles a character also plays (a healing or tank set for dungeons) and tooltips show an *(off-spec)* upgrade line for each. Ticks are saved per character.
+- Off-spec upgrades are judged against the best gear you own for that profile (worn, bags, and bank from your last visit), not your main-spec gear. The Save Profile and Clear buttons are gone.
+- Leveling off-specs follow your level, and each off-spec is scored with the talents you last played it with.
+- Dual Specialization now works on Season of Discovery and TBC Anniversary too, and the other-spec line also uses the best gear you own.
+
 ### 🛡️ Paladin Leveling Weights Rebuilt, Levels 1-60 (WoW Forever)
 - All six Paladin leveling curves come from our updated models, checked against level-1 tests and a combat log: starting gear at level 1, pulls of more than one mob when you can survive them, Forever's extra mob health from level 46, and seals and Judgements that crit.
 - Retribution: Hit, Crit and Agility count for more, and Spell Power a little more from 30.

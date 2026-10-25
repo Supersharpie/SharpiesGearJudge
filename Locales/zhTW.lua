@@ -1248,6 +1248,12 @@ L["Saved for each spec; this sets it for your %s spec."] = "每個專精分別�
 L["Secondary"] = "次要"
 L["Show Other Spec on Tooltips"] = "在提示中顯示另一個專精"
 L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."] = "擁有雙天賦專精（40級）時，物品提示也會顯示該物品對你另一個專精是否為升級，並以該專精的天賦、設定檔及為PvP配裝設定評分，與你上次在該專精穿戴的裝備比較。為PvP配裝與評分設定檔會為每個專精分別儲存。"
+L["Off-Specs"] = "副專精"
+L["Tick the profiles this character also plays, such as a healing or tank set for dungeons. Item tooltips then show when an item is an upgrade for them, compared against the best gear you own for that profile: what you wear, your bags, and your bank as seen on your last visit. Leveling profiles follow your level. Saved for each character; the Roster plugin shows them for your alts too (log in on the alt once after ticking)."] = "勾選這個角色也會玩的設定檔，例如副本用的治療或坦克裝備。之後物品提示會在物品對它們是升級時顯示，並與你擁有的該設定檔最佳裝備比較：身上穿的、背包，以及你上次造訪時的銀行。練等設定檔會隨你的等級變化。每個角色分別儲存；Roster 插件也會為你的分身顯示它們（勾選後登入該分身一次）。"
+L["Off-spec upgrades are judged against the best gear you own for them (worn, bags and bank)."] = "副專精的升級會與你擁有的最佳對應裝備比較（身上、背包及銀行）。"
+L["off-spec"] = "副專精"
+L["With Dual Specialization, item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents and profile against the best gear you own for it (worn, bags and bank). The scoring profile is saved separately for each spec."] = "擁有雙天賦專精時，物品提示也會顯示該物品對你另一個專精是否為升級，並以該專精的天賦與設定檔評分，與你擁有的該專精最佳裝備比較（身上、背包及銀行）。評分設定檔會為每個專精分別儲存。"
+L["Gear for PvP is saved separately for each spec too."] = "為PvP配裝也會為每個專精分別儲存。"
 L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ 雙天賦專精：|r %d 個專精組，使用中 %d"
 
 L["5-Player Group"] = "5人隊伍"

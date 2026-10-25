@@ -3052,6 +3052,7 @@ function MSC.InitSettingsView(parent)
 
     -- Forever: from 50, hit and defense targets slide toward raid caps
     -- (MSC.ForeverCaps); turn off to keep leveling targets until 60.
+    local otherSpecAnchor = cbCamping
     if MSC.IsForever then
         local cbRaidPrep = CreateCheck(MSC.L["Gear for Raiding"], "GearForRaiding", MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 16% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."], cbCamping, 0, -5)
         cbRaidPrep:HookScript("OnClick", function()
@@ -3098,9 +3099,13 @@ function MSC.InitSettingsView(parent)
         cbRaidPrep:HookScript("OnShow", function() PaintRaidPrep(MSC.IsGearingForPvP()) end)
         PaintRaidPrep(MSC.IsGearingForPvP())
         table_insert(MSC.PvPToggleListeners, function(on) cbPvP:SetChecked(on); PaintRaidPrep(on) end)
-        -- Dual Specialization: a line on item tooltips for the spec you're not in.
-        CreateCheck(MSC.L["Show Other Spec on Tooltips"], "ShowOtherSpec", MSC.L["With Dual Specialization (level 40), item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents, profile and Gear for PvP setting against the gear you last wore in it. Gear for PvP and the scoring profile are saved separately for each spec."], cbPvP, 0, -5)
+        otherSpecAnchor = cbPvP
     end
+    -- Dual Specialization (Forever, SoD, TBC Anniversary): a line on item
+    -- tooltips for the spec you're not in.
+    local otherSpecTip = MSC.L["With Dual Specialization, item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents and profile against the best gear you own for it (worn, bags and bank). The scoring profile is saved separately for each spec."]
+    if MSC.IsForever then otherSpecTip = otherSpecTip .. " " .. MSC.L["Gear for PvP is saved separately for each spec too."] end
+    CreateCheck(MSC.L["Show Other Spec on Tooltips"], "ShowOtherSpec", otherSpecTip, otherSpecAnchor, 0, -5)
 
     -- ==========================================
     -- SECTION 5: CHARACTER PROFILE (right column)
@@ -3145,118 +3150,38 @@ function MSC.InitSettingsView(parent)
     cProfile.Last = bDeleteProfile
 
     -- ==========================================
-    -- SECTION 6: MULTI-SPEC TRACKING & BASELINES (full width, below both columns)
+    -- SECTION 6: OFF-SPECS (full width, below both columns)
     -- ==========================================
+    -- Ticks are saved for this character (MSC.SetTrackedSpec). Items are judged
+    -- for them against the best gear you own (worn, bags, bank).
     local cSpecs = CreateCard(SETTINGS_CONTENT_W)
-    local specTip = MSC.L["Select additional profiles to track in tooltips.\n\nYou can also lock in your current gear and talents as the 'Baseline' for that spec. This ensures the addon compares new drops against your actual off-spec setup, rather than your live paper doll."]
-    local hSpec = CreateHeader(MSC.L["Secondary Specs & Baselines"], specTip)
+    local specTip = MSC.L["Tick the profiles this character also plays, such as a healing or tank set for dungeons. Item tooltips then show when an item is an upgrade for them, compared against the best gear you own for that profile: what you wear, your bags, and your bank as seen on your last visit. Leveling profiles follow your level. Saved for each character; the Roster plugin shows them for your alts too (log in on the alt once after ticking)."]
+    local hSpec = CreateHeader(MSC.L["Off-Specs"], specTip)
+    local specNote = cSpecs:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    specNote:SetPoint("TOPLEFT", hSpec, "BOTTOMLEFT", 0, -6)
+    specNote:SetWidth(SETTINGS_CONTENT_W - 2 * SETTINGS_PAD); specNote:SetJustifyH("LEFT")
+    specNote:SetText("|cff888888" .. MSC.L["Off-spec upgrades are judged against the best gear you own for them (worn, bags and bank)."] .. "|r")
 
-    -- Row layout, in pixels from the checkbox's left edge (the card's inner padding).
-    local SPEC_NAME_W = 270                                   -- profile name text
-    local SPEC_BTN_X = 310                                    -- Save button
-    local SPEC_ROW_RIGHT = SETTINGS_CONTENT_W - 2 * SETTINGS_PAD -- inner right edge of the card
-    local function FitButtonWidth(btn, minW)
-        local fs = btn.GetFontString and btn:GetFontString()
-        local w = fs and fs:GetStringWidth() or 0
-        return math.max(minW, math.ceil(w) + 24)
-    end
-
-    local lastAnchor = hSpec
-    local nextRowGap = -5
-    for _, p in ipairs(profileList) do
-        -- 1. The Tracking Checkbox
+    -- Two columns of checkboxes.
+    local SPEC_COL_W = math.floor((SETTINGS_CONTENT_W - 2 * SETTINGS_PAD) / 2)
+    local perCol = math.ceil(#profileList / 2)
+    local prev = {}
+    cSpecs.Last = specNote
+    for i, p in ipairs(profileList) do
+        local col = (i <= perCol) and 1 or 2
         local cb = CreateFrame("CheckButton", nil, cSpecs, "UICheckButtonTemplate")
-        if lastAnchor == hSpec then cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, -10) else cb:SetPoint("TOPLEFT", lastAnchor, "BOTTOMLEFT", 0, nextRowGap) end
-        cb.Text:SetText(p.text); cb.Text:SetTextColor(0.8, 0.8, 0.8)
-        cb.Text:SetWidth(SPEC_NAME_W); cb.Text:SetJustifyH("LEFT"); cb.Text:SetWordWrap(false)
-        cb:HookScript("OnShow", function(self) self:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val]) end); cb:SetChecked(SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[p.val])
-        cb:HookScript("OnClick", function(self)
-            if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
-            SGJ_Settings.TrackedSpecs[p.val] = self:GetChecked()
-        end)
-
-        -- 2. The "Save Profile" Button
-        -- Buttons are sized from their (translated) text so longer languages fit.
-        local btnSave = CreateFrame("Button", nil, cSpecs, "UIPanelButtonTemplate")
-        btnSave:SetText(MSC.L["Save Profile"])
-        btnSave:SetSize(FitButtonWidth(btnSave, 90), 22)
-        btnSave:SetPoint("LEFT", cb, "LEFT", SPEC_BTN_X, 0)
-        btnSave:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(MSC.L["Lock Baseline Profile"], 1, 1, 1)
-            GameTooltip:AddLine(MSC.L["Saves your currently equipped gear AND active talents as the baseline for this spec.\n\nMake sure you are actively in this spec and wearing its gear before clicking this!"], nil, nil, nil, true)
-            GameTooltip:Show()
-        end)
-        btnSave:SetScript("OnLeave", GameTooltip_Hide)
-
-        -- 3. The "Clear Baseline" Button
-        local btnClear = CreateFrame("Button", nil, cSpecs, "UIPanelButtonTemplate")
-        btnClear:SetText(MSC.L["Clear"])
-        btnClear:SetSize(FitButtonWidth(btnClear, 60), 22)
-        btnClear:SetPoint("LEFT", btnSave, "RIGHT", 5, 0)
-
-        -- 4. The Status Label: beside the buttons when it fits in the card,
-        -- otherwise on its own line under them.
-        local statusLbl = cSpecs:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-        statusLbl:SetJustifyH("LEFT"); statusLbl:SetWordWrap(false)
-        local inlineW = SPEC_ROW_RIGHT - (SPEC_BTN_X + btnSave:GetWidth() + 5 + btnClear:GetWidth() + 10)
-        statusLbl:SetText("|cff00ff00" .. MSC.L["Saved:"] .. "|r 9999.9")
-        local needW = statusLbl:GetStringWidth() or 0
-        statusLbl:SetText("|cff888888" .. MSC.L["Not Set"] .. "|r")
-        needW = math.max(needW, statusLbl:GetStringWidth() or 0) + 4
-        local statusOwnLine = needW > inlineW
-        if statusOwnLine then
-            statusLbl:SetPoint("TOPLEFT", btnSave, "BOTTOMLEFT", 2, -3)
-            statusLbl:SetWidth(SPEC_ROW_RIGHT - SPEC_BTN_X)
+        if not prev[col] then
+            cb:SetPoint("TOPLEFT", specNote, "BOTTOMLEFT", (col - 1) * SPEC_COL_W, -6)
         else
-            statusLbl:SetPoint("LEFT", btnClear, "RIGHT", 10, 0)
-            statusLbl:SetWidth(inlineW)
+            cb:SetPoint("TOPLEFT", prev[col], "BOTTOMLEFT", 0, 2)
         end
-
-        local function UpdateStatusLabel()
-            local pk = MSC:GetPlayerKey()
-            if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[pk] and SGJ_Settings.GearProfiles[pk][p.val] then
-                local savedGear = SGJ_Settings.GearProfiles[pk][p.val]
-                local weights = MSC.GetWeightsByName(p.val)
-                if weights then
-                    local score = MSC:GetTotalCharacterScore(savedGear, weights, p.val)
-                    statusLbl:SetText(string.format("|cff00ff00" .. MSC.L["Saved:"] .. "|r %.1f", score))
-                else
-                    statusLbl:SetText("|cff00ff00" .. MSC.L["Saved"] .. "|r")
-                end
-                btnClear:Enable()
-            else
-                statusLbl:SetText("|cff888888" .. MSC.L["Not Set"] .. "|r")
-                btnClear:Disable()
-            end
-        end
-
-        -- Link the clear button
-        btnClear:SetScript("OnClick", function()
-            local pk = MSC:GetPlayerKey()
-            if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[pk] then
-                SGJ_Settings.GearProfiles[pk][p.val] = nil
-            end
-            if SGJ_Settings.TalentProfiles and SGJ_Settings.TalentProfiles[pk] then
-                SGJ_Settings.TalentProfiles[pk][p.val] = nil
-            end
-            if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-            UpdateStatusLabel()
-        end)
-
-        UpdateStatusLabel() -- Initialize the text when the menu opens
-
-        -- Link the button click to the save function and refresh the label
-        btnSave:SetScript("OnClick", function()
-            MSC:SaveBaselineProfile(p.val)
-            if MSC.EvaluationCache then wipe(MSC.EvaluationCache) end
-            UpdateStatusLabel()
-        end)
-
-        lastAnchor = cb
-        -- A status line under the buttons needs room before the next row
-        nextRowGap = statusOwnLine and -18 or -5
-        cSpecs.Last = statusOwnLine and statusLbl or cb
+        prev[col] = cb
+        cb.Text:SetText(p.text); cb.Text:SetTextColor(0.8, 0.8, 0.8)
+        cb.Text:SetWidth(SPEC_COL_W - 34); cb.Text:SetJustifyH("LEFT"); cb.Text:SetWordWrap(false)
+        local function Sync(self) self:SetChecked(MSC.GetTrackedSpecs()[p.val] and true or false) end
+        cb:HookScript("OnShow", Sync); Sync(cb)
+        cb:HookScript("OnClick", function(self) MSC.SetTrackedSpec(p.val, self:GetChecked()) end)
+        if col == 1 then cSpecs.Last = cb end
     end
 
     -- ==========================================

@@ -35,7 +35,7 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 - **Roster plugin support:** weapon and relic bonuses can be worked out for your alts, so the new Roster plugin can score gear for them.
 - **Gear for PvP (WoW Forever):** a new option that scores gear for fighting other players, at every level. Toggle it at the top of the `/sgj` window, in Protocol, or with `/sgj pvp`.
 - **Gear is judged without buffs:** food, elixirs and party buffs no longer move your hit caps or scores. **Buff Assumptions** (Assume Raid Buffed / Assume World Buffed) now work on every version, not only TBC.
-- **Dual Specialization ready (WoW Forever):** each spec keeps its own profile, Gear for PvP setting and gear, and tooltips can show upgrades for your other spec.
+- **Off-specs and Dual Specialization:** tick the profiles a character also plays (a healing or tank set for dungeons), and with Dual Specialization (WoW Forever, Season of Discovery, TBC Anniversary) each spec keeps its own profile; tooltips show upgrades for them against the best gear you own.
 - **Item Score on tooltips:** shows the item's own score in its slot next to the one you wear.
 - **Item sets and enchants rebuilt** from each game's own client data, and every language WoW Forever ships in is supported.
 
@@ -91,7 +91,7 @@ Hover any item: world drops, vendor goods, quest rewards, dungeon loot or AH lis
 - **Judge's Score** for your active spec (and any tracked off-specs).
 - **Item Score:** the item's own score in its slot, and the score of what you wear there.
 - **Upgrade / Downgrade verdict** with the score difference. One-handers for dual wielders are judged in the hand where they gain the most.
-- **Other spec (WoW Forever, Dual Specialization):** an extra line when an item upgrades the spec you're not in.
+- **Other spec (Dual Specialization):** an extra line when an item upgrades the spec you're not in.
 - **Context warnings:** cap breaks, set bonus loss, meta deactivation, missing enchants, off-hand requirements and more.
 - **Shift-only mode:** show verdicts only while holding **Shift**.
 
@@ -157,12 +157,12 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 
 - Experience bar with rested XP and quest turn-in projection, upgrades waiting in your bags, a level-up gear alert and a warning before your leveling weights change.
 
-### 👥 Multi-Spec & Saved Baselines
+### 👥 Off-Specs & Dual Specialization
 
-- **Tracked specs:** turn on secondary specs in **Protocol → Secondary Specs & Baselines**, and tooltips show an upgrade line for each.
-- **Save Profile:** snapshot your **equipped gear** as the baseline for a spec, so off-spec comparisons use *(Saved)* gear instead of what you're wearing. Essential for healers judging DPS drops while in healing gear.
-- **Clear:** remove a spec's saved baseline.
-- **Dual Specialization (WoW Forever):** each spec keeps its own scoring profile, Gear for PvP setting and last-worn gear.
+- **Off-specs:** tick the profiles a character also plays in **Protocol → Off-Specs** (saved per character), and tooltips show an *(off-spec)* upgrade line for each.
+- Off-spec upgrades are judged against the **best gear you own** for that profile: what you wear, your bags, and your bank as seen on your last visit. A Feral Druid sees whether a healing drop beats the healing set in the bank, not the cat gear it's wearing.
+- Leveling profiles follow your level, and each profile is scored with the talents you last played it with.
+- **Dual Specialization (WoW Forever, Season of Discovery, TBC Anniversary):** each spec keeps its own scoring profile (and Gear for PvP on Forever).
 
 ---
 
@@ -224,7 +224,7 @@ Gear is always judged without the buffs you happen to have on. These add the one
 - **Assume Consumables** — Assume temporary weapon buffs like Sharpening Stones or Weightstones.
 - **Gear for Raiding** (WoW Forever, on by default) — From level 50, value hit and tank defense toward raid caps. Turn off if you won't raid. Greyed out while Gear for PvP is on.
 - **Gear for PvP** (WoW Forever, off by default) — Score gear for fighting other players. Saved for each spec.
-- **Show Other Spec on Tooltips** (WoW Forever) — With Dual Specialization, also show upgrades for your other spec.
+- **Show Other Spec on Tooltips** — With Dual Specialization, also show upgrades for your other spec.
 
 Your own racials are always applied.
 
@@ -233,11 +233,9 @@ Your own racials are always applied.
 - **Active Scoring Profile** — **Auto-Detect** picks a profile from your talents. It does not pick imported Pawn profiles. Hybrid builds may show an "uncertain" note in Stat Logic, so pick one by hand if needed.
 - **Delete Custom Profile** — Remove a profile you imported.
 
-### Secondary Specs & Baselines
+### Off-Specs
 
-- Check specs to **track** in tooltips.
-- **Save Profile** — Store your equipped gear as that spec's comparison baseline.
-- **Clear** — Remove a spec's saved baseline.
+- Tick the profiles this character also plays. Tooltips show an upgrade line for each, judged against the best gear you own for it (worn, bags, bank).
 
 ---
 

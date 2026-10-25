@@ -85,7 +85,7 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
             MSC.UpdateLabCalc() 
         end
         
-        if event == "PLAYER_EQUIPMENT_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
+        if event == "PLAYER_EQUIPMENT_CHANGED" or event == "ACTIVE_TALENT_GROUP_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LEVEL_UP" then
             if MSC.AutoUpdateBaseline then MSC:AutoUpdateBaseline() end
         end
     end
@@ -1120,23 +1120,26 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
-            if SGJ_Settings.TrackedSpecs and next(SGJ_Settings.TrackedSpecs) then
-                for tSpec, isActive in pairs(SGJ_Settings.TrackedSpecs) do
-                    if isActive and tSpec ~= specName then
-                        local playerKey = MSC:GetPlayerKey()
+            -- [[ 5a. OFF-SPECS (this character's ticked profiles) ]]
+            -- Scored with the talents last played in that profile, against the
+            -- best gear you own for it (worn, bags, bank), so main-spec gear
+            -- doesn't make every item look like an upgrade. Leveling profiles
+            -- follow your level (MSC.ResolveTrackedProfile).
+            local trackedNow = {}
+            for pick in pairs(MSC.GetTrackedSpecs()) do
+                local tSpec = MSC.ResolveTrackedProfile(pick)
+                if tSpec ~= specName and not trackedNow[tSpec] then
+                    trackedNow[tSpec] = true
+                    do
                         local originalTalentCache = MSC.TalentCache
                         local function evalTrackedSpec()
-                            if SGJ_Settings.TalentProfiles and SGJ_Settings.TalentProfiles[playerKey] and SGJ_Settings.TalentProfiles[playerKey][tSpec] then
-                                MSC.TalentCache = SGJ_Settings.TalentProfiles[playerKey][tSpec]
-                            end
+                            local saved = MSC.GetSavedTalents(pick, tSpec)
+                            if saved then MSC.TalentCache = saved end
 
                             local tWeights = MSC.GetWeightsByName(tSpec)
                             if not tWeights then return end
 
-                            local baselineGear = nil
-                            if SGJ_Settings.GearProfiles and SGJ_Settings.GearProfiles[playerKey] then
-                                baselineGear = SGJ_Settings.GearProfiles[playerKey][tSpec]
-                            end
+                            local baselineGear = MSC.GetBestOwnedGear(tWeights, tSpec, link)
 
                             local tSlotId = MSC.GetComparisonSlot(link, equipLoc, tWeights, tSpec, baselineGear)
                             if not tSlotId then return end
@@ -1146,8 +1149,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
 
                             if tDelta > 0.01 then
                                 local prettySpec = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
-                                local label = "|cff00ccff" .. prettySpec .. ":|r"
-                                if baselineGear then label = "|cff00ccff" .. prettySpec .. " |cff888888(" .. MSC.L["Saved"] .. "):|r" end
+                                local label = "|cff00ccff" .. prettySpec .. " |cff888888(" .. MSC.L["off-spec"] .. "):|r"
                                 tooltip:AddDoubleLine(label, string_format(MSC.L["|cff00ff00+%d (Upgrade)|r"], math_floor(tDelta)), 1, 1, 1, 1, 1, 1)
 
                                 if oSC and nSC and MSC.SetBonusScores then
@@ -1176,16 +1178,16 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
 
             -- [[ 5b. THE OTHER SPEC (Dual Specialization) ]]
             -- Scored with that spec's own talents, profile choice, Talents build
-            -- and Gear for PvP (MSC.WithSpecGroup), against the gear last worn in
-            -- it. Skipped when its profile is already a Tracked Spec line.
+            -- and Gear for PvP (MSC.WithSpecGroup), against the best gear you own
+            -- for it. Skipped when its profile is already an off-spec line.
             if MSC.HasDualSpec() and SGJ_Settings.ShowOtherSpec ~= false then
                 local other = (MSC.GetActiveSpecGroup() == 1) and 2 or 1
                 MSC.WithSpecGroup(other, function()
                     local oWeights, oSpec = MSC:GetWeightsForGroup(other)
                     if not oWeights or not oSpec then return end
-                    if SGJ_Settings.TrackedSpecs and SGJ_Settings.TrackedSpecs[oSpec] then return end
+                    if trackedNow[oSpec] then return end
                     MSC.EvalSpecKey = oSpec
-                    local baselineGear = MSC.GetSpecGear(other)
+                    local baselineGear = MSC.GetBestOwnedGear(oWeights, oSpec, link)
                     local oSlot = MSC.GetComparisonSlot(link, equipLoc, oWeights, oSpec, baselineGear)
                     if not oSlot then return end
                     local oNew, oOld, _, _, _, _, _, oSC, nSC = MSC:EvaluateUpgrade(link, oSlot, oWeights, oSpec, baselineGear)

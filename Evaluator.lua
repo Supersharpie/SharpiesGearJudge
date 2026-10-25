@@ -773,3 +773,197 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     -- Explicit length: contextMsg can be nil, which leaves a hole in the table.
     return unpack(result, 1, 11)
 end
+
+-- =============================================================
+-- 6. BEST OWNED GEAR (off-spec baselines)
+-- =============================================================
+-- An off-spec (a ticked profile, or the other Dual Specialization spec) is
+-- compared against the best set you own for it, not what you wear, which is
+-- usually main-spec gear: worn items, bags, and the bank as seen on your last
+-- visit (links saved per character in SGJ_Settings.BankGear). Rings and
+-- trinkets take the best two, weapons the better of the best two-hander and the
+-- best main hand + off hand pair. Set bonuses aren't counted when picking.
+local OWNED_SLOTS = { 1, 2, 3, 15, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18 }
+local OWNED_2H = { INVTYPE_2HWEAPON = true, INVTYPE_STAFF = true, INVTYPE_POLEARM = true }
+local OWNED_MH = { INVTYPE_WEAPON = true, INVTYPE_WEAPONMAINHAND = true }
+local OWNED_OH = { INVTYPE_WEAPONOFFHAND = true, INVTYPE_SHIELD = true, INVTYPE_HOLDABLE = true }
+MSC.OwnedRevision = 0
+local ownedCache = {}
+local bankOpen = false
+
+-- Bank containers: Forever's character bank tabs, else the Classic bank and
+-- its bags after the backpack bags (as the Roster plugin reads them).
+local function BankIds()
+    local function Classic(skip)
+        local ids = { BANK_CONTAINER or -1 }
+        local first = (NUM_BAG_SLOTS or 4) + 1
+        for b = first, first + (NUM_BANKBAGSLOTS or 6) - 1 do
+            if b ~= skip then ids[#ids + 1] = b end
+        end
+        return ids
+    end
+    local E = Enum and Enum.BagIndex
+    if E and E.CharacterBankTab_1 then
+        local ids, slots = {}, 0
+        for i = 1, 12 do
+            local id = E["CharacterBankTab_" .. i]
+            if not id then break end
+            ids[#ids + 1] = id
+            local ok, n = pcall(GetBagSlots, id)
+            slots = slots + ((ok and tonumber(n)) or 0)
+        end
+        if slots > 0 then return ids end
+        return Classic(E.ReagentBag)
+    end
+    return Classic()
+end
+
+local function ContainerLinks(ids, out)
+    for _, bag in ipairs(ids) do
+        local ok, n = pcall(GetBagSlots, bag)
+        for slot = 1, ((ok and tonumber(n)) or 0) do
+            local link = GetBagLink(bag, slot)
+            if link and IsEquippableItem(link) then out[#out + 1] = link end
+        end
+    end
+    return out
+end
+
+local function SaveBank()
+    if not (bankOpen and SGJ_Settings and MSC.GetPlayerKey) then return end
+    SGJ_Settings.BankGear = SGJ_Settings.BankGear or {}
+    SGJ_Settings.BankGear[MSC:GetPlayerKey()] = ContainerLinks(BankIds(), {})
+end
+
+do
+    local f = CreateFrame("Frame")
+    for _, e in ipairs({ "BAG_UPDATE_DELAYED", "PLAYER_EQUIPMENT_CHANGED", "PLAYER_LEVEL_UP", "BANKFRAME_OPENED", "BANKFRAME_CLOSED", "PLAYERBANKSLOTS_CHANGED" }) do
+        pcall(f.RegisterEvent, f, e)
+    end
+    f:SetScript("OnEvent", function(_, event)
+        if event == "BANKFRAME_OPENED" then
+            bankOpen = true
+            C_Timer.After(0.5, function() SaveBank(); MSC.OwnedRevision = MSC.OwnedRevision + 1 end)
+        elseif event == "BANKFRAME_CLOSED" then
+            bankOpen = false
+        elseif event ~= "PLAYER_EQUIPMENT_CHANGED" and event ~= "PLAYER_LEVEL_UP" then
+            SaveBank()
+        end
+        MSC.OwnedRevision = MSC.OwnedRevision + 1
+        if MSC.SlotCache then wipe(MSC.SlotCache) end -- the worse ring / weapon hand can change
+    end)
+end
+
+local function OwnedLinks()
+    local out = {}
+    for _, s in ipairs(OWNED_SLOTS) do
+        local link = GetInventoryItemLink("player", s)
+        if link then out[#out + 1] = link end
+    end
+    local bags = {}
+    for b = 0, (NUM_BAG_SLOTS or 4) do bags[#bags + 1] = b end
+    ContainerLinks(bags, out)
+    local bank = SGJ_Settings and SGJ_Settings.BankGear and SGJ_Settings.BankGear[MSC:GetPlayerKey()]
+    for _, link in ipairs(bank or {}) do out[#out + 1] = link end
+    return out
+end
+
+local function OwnedScore(link, slotId, weights, specName)
+    local ok, s = pcall(function()
+        local v = MSC.GetItemScore(MSC.SafeGetItemStats(link, slotId, weights, specName), weights, specName, slotId) or 0
+        if slotId == 16 or slotId == 17 then
+            v = v + ((MSC.GetWeaponSpecBonus and MSC:GetWeaponSpecBonus(link, MSC.CurrentClass, specName, weights, slotId)) or 0)
+        end
+        return v
+    end)
+    return ok and s or 0
+end
+
+-- Every owned item this character can wear now, scored per slot for the profile.
+local function ScoredOwned(weights, specName)
+    local key = (MSC.ScoringRevision or 0) .. "|" .. MSC.OwnedRevision .. "|" .. (UnitLevel("player") or 0)
+    local hit = ownedCache[specName]
+    if hit and hit.key == key and hit.weights == weights then return hit.list end
+    local level, canDW = UnitLevel("player") or 0, MSC.CanDualWield()
+    local list, complete = {}, true
+    for _, link in ipairs(OwnedLinks()) do
+        local _, _, _, _, reqLevel, _, _, _, loc = GetItemInfo(link)
+        if not loc then
+            complete = false
+        elseif (reqLevel or 0) <= level and MSC.IsItemUsable(link) then
+            local e = { link = link }
+            if loc == "INVTYPE_FINGER" then e.ring = OwnedScore(link, 11, weights, specName)
+            elseif loc == "INVTYPE_TRINKET" then e.trinket = OwnedScore(link, 13, weights, specName)
+            elseif OWNED_2H[loc] then e.twoHand = OwnedScore(link, 16, weights, specName)
+            elseif OWNED_MH[loc] or OWNED_OH[loc] then
+                if OWNED_MH[loc] then e.mh = OwnedScore(link, 16, weights, specName) end
+                -- a one-hander only goes in the off hand for a dual-wielder
+                local offHand = (loc == "INVTYPE_SHIELD" or loc == "INVTYPE_HOLDABLE")
+                    or ((loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONOFFHAND") and canDW)
+                if offHand then e.oh = OwnedScore(link, 17, weights, specName) end
+            else
+                local slotId = MSC.SlotMap and MSC.SlotMap[loc]
+                if slotId and slotId ~= 4 then e.slot, e.score = slotId, OwnedScore(link, slotId, weights, specName) end
+            end
+            list[#list + 1] = e
+        end
+    end
+    if complete then ownedCache[specName] = { key = key, weights = weights, list = list } end
+    return list
+end
+
+-- Shield tanks keep a shield (same rule as EvaluateUpgrade).
+local function NoTwoHanders(specName)
+    if SGJ_Settings and SGJ_Settings.ShieldTankNo2H == false then return false end
+    local _, cls = UnitClass("player")
+    local up = string.upper(specName or "")
+    return (cls == "WARRIOR" or cls == "PALADIN" or cls == "SHAMAN") and (string_find(up, "TANK") or string_find(up, "PROT")) and true or false
+end
+
+-- The best owned gear for a profile as { [slotId] = link }, for EvaluateUpgrade's
+-- baselineGear. exclude: the item being judged (one copy is left out, so an item
+-- in your bags shows what it adds over the next best thing you own).
+function MSC.GetBestOwnedGear(weights, specName, exclude)
+    if not (weights and specName) then return nil end
+    local gear, best, skipped = {}, {}, false
+    local rings, trinkets, mhs, ohs, twoHand = {}, {}, {}, {}, nil
+    for _, e in ipairs(ScoredOwned(weights, specName)) do
+        if not skipped and exclude and e.link == exclude then
+            skipped = true
+        elseif e.ring then rings[#rings + 1] = e
+        elseif e.trinket then trinkets[#trinkets + 1] = e
+        elseif e.twoHand then
+            if not twoHand or e.twoHand > twoHand.twoHand then twoHand = e end
+        elseif e.mh or e.oh then
+            if e.mh then mhs[#mhs + 1] = e end
+            if e.oh then ohs[#ohs + 1] = e end
+        elseif e.slot and (not best[e.slot] or e.score > best[e.slot].score) then
+            best[e.slot] = e
+        end
+    end
+    for slotId, e in pairs(best) do gear[slotId] = e.link end
+    -- Best first, so the weaker of a pair is always in the second slot
+    -- (GetComparisonSlot caches which slot is the worse one).
+    table.sort(rings, function(a, b) return a.ring > b.ring end)
+    table.sort(trinkets, function(a, b) return a.trinket > b.trinket end)
+    gear[11], gear[12] = rings[1] and rings[1].link, rings[2] and rings[2].link
+    gear[13], gear[14] = trinkets[1] and trinkets[1].link, trinkets[2] and trinkets[2].link
+    -- Weapons: best main hand + off hand (two different items) vs best two-hander.
+    local pair, pairMH, pairOH = 0, nil, nil
+    for i = 0, #mhs do
+        local mh = mhs[i]
+        for j = 0, #ohs do
+            local oh = ohs[j]
+            if not (mh and oh and mh == oh) then
+                local s = (mh and mh.mh or 0) + (oh and oh.oh or 0)
+                if s > pair then pair, pairMH, pairOH = s, mh, oh end
+            end
+        end
+    end
+    if twoHand and twoHand.twoHand > pair and not NoTwoHanders(specName) then
+        gear[16] = twoHand.link
+    else
+        gear[16], gear[17] = pairMH and pairMH.link, pairOH and pairOH.link
+    end
+    return gear
+end
