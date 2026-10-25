@@ -1264,6 +1264,12 @@ L["Off-spec upgrades are judged against the best gear you own for them (worn, ba
 L["off-spec"] = "보조 전문화"
 L["With Dual Specialization, item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents and profile against the best gear you own for it (worn, bags and bank). The scoring profile is saved separately for each spec."] = "이중 전문화를 사용하면 아이템 툴팁에 해당 아이템이 다른 전문화에 업그레이드가 되는지도 표시됩니다. 그 전문화의 특성과 프로필로 점수를 매기고, 그 전문화용으로 가진 가장 좋은 장비(착용, 가방, 은행)와 비교합니다. 점수 프로필은 전문화마다 따로 저장됩니다."
 L["Gear for PvP is saved separately for each spec too."] = "PvP용 장비도 전문화마다 따로 저장됩니다."
+L["New Off-Specs setting: tick the profiles a character also plays, such as a healing set for dungeons, and tooltips show when an item upgrades them, judged against the best gear you own (bags and bank included). The Roster plugin shows your alts' off-specs too."] = "새 설정 보조 전문화: 캐릭터가 함께 플레이하는 프로필(예: 던전용 치유 세트)을 선택하면, 아이템이 그 프로필에 업그레이드일 때 툴팁에 표시되며 가지고 있는 가장 좋은 장비(가방과 은행 포함)와 비교합니다. Roster 플러그인은 부캐릭터의 보조 전문화도 보여 줍니다."
+L["Dual Specialization now works on Season of Discovery and TBC Anniversary: tooltips also show upgrades for the spec you're not in."] = "이중 전문화가 이제 발견의 시즌과 TBC Anniversary에서도 작동합니다: 툴팁에 현재 사용하지 않는 전문화의 업그레이드도 표시됩니다."
+L["Loot council addons can now ask Gear Judge how much an item upgrades each player (turn it off with Share Scores With Group Addons)."] = "전리품 위원회 애드온이 이제 Gear Judge에게 아이템이 각 플레이어를 얼마나 업그레이드하는지 물어볼 수 있습니다(그룹 애드온과 점수 공유로 끌 수 있음)."
+L["Every class's leveling weights were reviewed one by one: Paladin rebuilt for levels 1-60, plus fixes for Warrior, Rogue, Priest, Warlock, Mage, Shaman, Druid and Hunter."] = "모든 직업의 레벨업 가중치를 하나씩 검토했습니다: 성기사는 1-60레벨 전체를 다시 만들었고, 전사, 도적, 사제, 흑마법사, 마법사, 주술사, 드루이드, 사냥꾼도 수정했습니다."
+L["From level 50 leveling weights blend smoothly into your level-60 profile, and spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss)."] = "50레벨부터 레벨업 가중치가 60레벨 프로필로 부드럽게 넘어가며, 주문 적중 상한이 1% 높아졌습니다(Forever는 최소 1% 빗나감 규칙을 없앤 것으로 보입니다)."
+L["Talents plugin: every Paladin leveling build re-searched, plus Retribution to Protection, the fastest Paladin leveling build."] = "Talents 플러그인: 성기사 레벨업 빌드를 모두 다시 찾았고, 가장 빠른 성기사 레벨업 빌드인 징벌 후 방어를 추가했습니다."
 L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ 이중 전문화:|r 전문화 그룹 %d개, 활성 %d"
 
 L["5-Player Group"] = "5인 파티"

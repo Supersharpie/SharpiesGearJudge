@@ -16,7 +16,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.7: add this version's lines here (mirror the changelog groups).
+    -- v3.2.7
+    { text = "New Off-Specs setting: tick the profiles a character also plays, such as a healing set for dungeons, and tooltips show when an item upgrades them, judged against the best gear you own (bags and bank included). The Roster plugin shows your alts' off-specs too." },
+    { text = "Dual Specialization now works on Season of Discovery and TBC Anniversary: tooltips also show upgrades for the spec you're not in." },
+    { text = "Loot council addons can now ask Gear Judge how much an item upgrades each player (turn it off with Share Scores With Group Addons)." },
+    { text = "Every class's leveling weights were reviewed one by one: Paladin rebuilt for levels 1-60, plus fixes for Warrior, Rogue, Priest, Warlock, Mage, Shaman, Druid and Hunter.", forever = true },
+    { text = "From level 50 leveling weights blend smoothly into your level-60 profile, and spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss).", forever = true },
+    { text = "Talents plugin: every Paladin leveling build re-searched, plus Retribution to Protection, the fastest Paladin leveling build.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

@@ -1254,6 +1254,12 @@ L["Off-spec upgrades are judged against the best gear you own for them (worn, ba
 L["off-spec"] = "副專精"
 L["With Dual Specialization, item tooltips also show if an item is an upgrade for your other spec, scored with that spec's talents and profile against the best gear you own for it (worn, bags and bank). The scoring profile is saved separately for each spec."] = "擁有雙天賦專精時，物品提示也會顯示該物品對你另一個專精是否為升級，並以該專精的天賦與設定檔評分，與你擁有的該專精最佳裝備比較（身上、背包及銀行）。評分設定檔會為每個專精分別儲存。"
 L["Gear for PvP is saved separately for each spec too."] = "為PvP配裝也會為每個專精分別儲存。"
+L["New Off-Specs setting: tick the profiles a character also plays, such as a healing set for dungeons, and tooltips show when an item upgrades them, judged against the best gear you own (bags and bank included). The Roster plugin shows your alts' off-specs too."] = "新設定「副專精」：勾選角色也會玩的設定檔（例如副本用的治療裝），物品對它們是升級時提示就會顯示，並與你擁有的最佳裝備比較（包含背包和銀行）。Roster 插件也會顯示你分身的副專精。"
+L["Dual Specialization now works on Season of Discovery and TBC Anniversary: tooltips also show upgrades for the spec you're not in."] = "雙天賦專精現在也支援探索賽季和 TBC Anniversary：提示也會顯示你目前未使用專精的升級。"
+L["Loot council addons can now ask Gear Judge how much an item upgrades each player (turn it off with Share Scores With Group Addons)."] = "拾取分配插件現在可以詢問 Gear Judge 某件物品能讓每位玩家提升多少（可用「與隊伍插件分享分數」關閉）。"
+L["Every class's leveling weights were reviewed one by one: Paladin rebuilt for levels 1-60, plus fixes for Warrior, Rogue, Priest, Warlock, Mage, Shaman, Druid and Hunter."] = "逐一檢查了每個職業的練功權重：聖騎士 1-60 級全部重建，並修正了戰士、盜賊、牧師、術士、法師、薩滿、德魯伊和獵人。"
+L["From level 50 leveling weights blend smoothly into your level-60 profile, and spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss)."] = "從 50 級起練功權重會平順過渡到你的 60 級設定檔，法術命中上限提高 1%（Forever 似乎取消了最低 1% 未命中）。"
+L["Talents plugin: every Paladin leveling build re-searched, plus Retribution to Protection, the fastest Paladin leveling build."] = "Talents 插件：重新搜尋了所有聖騎士練功配置，並新增懲戒轉防護，最快的聖騎士練功配置。"
 L["|cff00ff00SGJ dual spec:|r %d spec group(s), active %d"] = "|cff00ff00SGJ 雙天賦專精：|r %d 個專精組，使用中 %d"
 
 L["5-Player Group"] = "5人隊伍"
