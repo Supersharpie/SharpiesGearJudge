@@ -10,46 +10,13 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ## 🔥 What's New
 
-### 3.2.6
+### 3.2.7
 
-- **Resting as WoW Forever does it:** food and drink restore a fixed amount, Spirit regeneration is the 0.25 mana a second per point measured in game, and Stamina counts for the fights that go wrong (adds). Leveling, dungeon, raid healer and farming weights all use it; raid healers now value Spirit much more.
-- **Every leveling spell checked against the game files (WoW Forever),** plus the October 16-20 hotfixes (Elemental Precision, Ice Barrier, Champion of the Light, Holy Fire, Amplify Curse). Starshards now only counts for Night Elf Priests.
-- **Bonuses against one creature type** (such as Attack Power against Undead) count by how often you meet that type while leveling.
-- **Bag arrows in DaylightUI's bags (WoW Forever).**
-
-### 3.2.5
-
-- **Leveling weights from the game's own ability data (WoW Forever):** the leveling models now take every ability's cooldown, duration, cast time and cost from the Forever client. Fire and Arcane Mages value Intellect and mana regeneration less (up to about 20%), Feral Druids value Hit and Crit about 8% less, and Hunter and Shaman weights move by 1% or less.
-- **PvP Leveling builds (Talents plugin):** every talent tree now has an Experimental build for open-world PvP while leveling; choosing one switches Gear Judge to its PvP weights at every level.
-
-### 3.2.4
-
-- **Weapon racials removed (WoW Forever):** the 2026-10-15 beta patch removed Human Sword, Orc Axe and Dwarf Mace Specialization, so weapons now score the same for every race.
-- **Feral Druids value weapon DPS (WoW Forever):** Cat and Bear Form swing your weapon's DPS, so a stronger weapon now scores higher. Rake now scales with Attack Power.
-- **Leveling weights checked against the current models (WoW Forever):** curves rebuilt for the 2026-10-15 patch, and dungeon weights for tanks, healers and several damage specs checked against public beta dungeon logs.
-- **Talent-based weights on non-English clients:** talent adjustments and leveling profile choice now work in every language on Forever and Classic Era.
-- **Fixed:** a Lua error on login about secret auras.
-
-### 3.2.1 – 3.2.3
-
-- **Roster plugin support:** weapon and relic bonuses can be worked out for your alts, so the new Roster plugin can score gear for them.
-- **Gear for PvP (WoW Forever):** a new option that scores gear for fighting other players, at every level. Toggle it at the top of the `/sgj` window, in Protocol, or with `/sgj pvp`.
-- **Gear is judged without buffs:** food, elixirs and party buffs no longer move your hit caps or scores. **Buff Assumptions** (Assume Raid Buffed / Assume World Buffed) now work on every version, not only TBC.
-- **Off-specs and Dual Specialization:** tick the profiles a character also plays (a healing or tank set for dungeons), and with Dual Specialization (WoW Forever, Season of Discovery, TBC Anniversary) each spec keeps its own profile; tooltips show upgrades for them against the best gear you own.
-- **Item Score on tooltips:** shows the item's own score in its slot next to the one you wear.
-- **Item sets and enchants rebuilt** from each game's own client data, and every language WoW Forever ships in is supported.
-
-### 3.2.0
-
-- **A fresh look:** the window is now 900×700, and every tab is laid out in three columns.
-- **Receipt, Protocol, Stat Logic and Weapon Thunderdome redesigned.**
-- **Stat Logic rings follow your role:** tanks, healers, casters and melee each get their own cap rings, using the same hit and defense targets your gear is scored against.
-
-### Earlier (3.1.x)
-
-- **Gear for Raiding (WoW Forever):** hit and defense targets slide toward raid caps from level 50.
-- **Relics are rated:** all 25 new Forever librams, idols and totems, plus the 19 Classic relics Forever kept.
-- **Profession window arrows**, including Forever's new professions window.
+- **Off-Specs:** tick the profiles a character also plays and tooltips show when an item upgrades them, against the best gear you own (bags and bank included).
+- **Dual Specialization** on Season of Discovery and TBC Anniversary.
+- **Leveling and farming weights rebuilt (WoW Forever)** class by class, blending into your level-60 profile from 50.
+- **Raid weights rebuilt (WoW Forever)** in the simulator for every spec on pre-raid best-in-slot gear (Experimental until tried at 60).
+- **Loot council addons** can ask Gear Judge how much an item upgrades each player.
 
 ---
 
@@ -302,7 +269,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.4 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.7 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

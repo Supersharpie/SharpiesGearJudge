@@ -20,14 +20,14 @@ Paladin.Weights = {
     -- each swing, then Seal of Command, so every swing carries both seals (Twist of Light's Echo). That makes white hits count
     -- double, so Hit and Crit lead. Built with the build's talents (Divine Strength, Divine Intellect, Champion of the Light):
     -- ApplyScalers' talent hooks skip this profile.
-    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=67.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=51.6, ["ITEM_MOD_STRENGTH_SHORT"]=3.58, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.78, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=21.2, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.45, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.45, ["ITEM_MOD_INTELLECT_SHORT"]=3.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.09, ["ITEM_MOD_SPIRIT_SHORT"]=0.35, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=5.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=55.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=47.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.51, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.62, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.3, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.28, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.28, ["ITEM_MOD_INTELLECT_SHORT"]=4.99, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.08, ["ITEM_MOD_SPIRIT_SHORT"]=1.09, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=6.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- Holy: Raid (pre-raid healer, raid buffs, long / potion / burst fights). Downranking allowed: Forever
     -- gives every rank the full coefficient (a mild cut is assumed for ranks 10+ levels below you). A
     -- Paladin healer runs short of mana before casting time, so Intellect and Mp5 rank above +healing.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.6, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.2, ["ITEM_MOD_SPIRIT_SHORT"]=1.3, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=21.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
 
     -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
     -- 2026-10-04; re-run 2026-10-10 after the Reckoning fix), as the Warrior's and Druid's raid tanks: threat 35% / damage
@@ -37,15 +37,16 @@ Paladin.Weights = {
     -- melee hit, at most one trigger every 1.5 s).
     -- Threat is half Holy (Spell Power) and half melee (Hit, Crit). A 3-minute boss never runs a tank dry, so Intellect and
     -- Mp5 keep only a small floor for longer fights.
-    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=29.7, ["ITEM_MOD_PARRY_RATING_SHORT"]=31.4, ["ITEM_MOD_BLOCK_RATING_SHORT"]=16.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=5.09, ["ITEM_MOD_ARMOR_SHORT"]=0.22, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.81, ["ITEM_MOD_AGILITY_SHORT"]=2.69, ["ITEM_MOD_STRENGTH_SHORT"]=0.78, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.33, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.47, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.47, ["ITEM_MOD_HIT_RATING_SHORT"]=18.9, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.3, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=20.9, ["ITEM_MOD_PARRY_RATING_SHORT"]=22.3, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.6, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.72, ["ITEM_MOD_ARMOR_SHORT"]=0.19, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, ["ITEM_MOD_AGILITY_SHORT"]=1.99, ["ITEM_MOD_STRENGTH_SHORT"]=0.55, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.23, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.25, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.25, ["ITEM_MOD_HIT_RATING_SHORT"]=13.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=7.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.58, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
-    -- Protection: AoE Farming (about 10 normal mobs at 57, 15 at 52, some Undead; Consecration, Holy Shield and
-    -- Retribution Aura at 20 + 6% of spell power per hit taken). Spell Power drives the damage; Block,
-    -- Dodge, Parry, Defense and Stamina set the pack size; Block Value and mana barely matter. Scaled to
-    -- Spell Power = 3.0. Rebuilt 2026-10-21 (SimStudio models/paladin/farm_weights.js): world mobs' extra health
-    -- at 46+, seals and Judgement of Fury crit (melee table), Reckoning stores up to 4 charges, aura 6% of SP.
-    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STAMINA_SHORT"]=0.79, ["ITEM_MOD_BLOCK_RATING_SHORT"]=25.7, ["ITEM_MOD_DODGE_RATING_SHORT"]=19.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=19.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=4.59, ["ITEM_MOD_HIT_RATING_SHORT"]=23.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=7.94, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.64, ["ITEM_MOD_STRENGTH_SHORT"]=0.52, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.26, ["ITEM_MOD_ARMOR_SHORT"]=0.13, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.51, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.51, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
+    -- PROT_AOE: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the PALADIN_PROT_CONSECRATOR build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.22, ["ITEM_MOD_AGILITY_SHORT"]=1.19, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.8, ["ITEM_MOD_STAMINA_SHORT"]=1.57, ["ITEM_MOD_INTELLECT_SHORT"]=0.26, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=9.35, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.12, ["ITEM_MOD_DODGE_RATING_SHORT"]=11.2, ["ITEM_MOD_PARRY_RATING_SHORT"]=11.2, ["ITEM_MOD_BLOCK_RATING_SHORT"]=4.0, ["ITEM_MOD_HIT_RATING_SHORT"]=19.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=9.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
 
+
+    -- RET_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the PALADIN_RET_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    ["RET_FARM"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=6.06, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=6.06, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_AGILITY_SHORT"]=3.06, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=18.9, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=4.61, ["ITEM_MOD_SPIRIT_SHORT"]=6.84, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.15, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.84, ["ITEM_MOD_HIT_RATING_SHORT"]=37.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.4 },
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
@@ -62,7 +63,7 @@ Paladin.PvPProfiles = { SHOCKADIN = true, RECK_BOMB = true }
 -- Old name for Holy: Raid, kept so a saved profile choice still works.
 Paladin.Weights["HOLY_DEEP"] = Paladin.Weights["HOLY_RAID"]
 -- The simulator-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { RET_STANDARD = true, PROT_DEEP = true, SHOCKADIN = true, RECK_BOMB = true, RET_PVP = true }
+local SIM_PROFILES = { RET_FARM = true, PROT_AOE = true, RET_STANDARD = true, PROT_DEEP = true, SHOCKADIN = true, RECK_BOMB = true, RET_PVP = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
 -- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
 Paladin.PvPCounterpart = { RET_STANDARD = "RET_PVP" }
@@ -98,6 +99,7 @@ Paladin.PrettyNames = {
     ["SHOCKADIN"]    = L["PvP: Shockadin (Burst)"],
     ["RECK_BOMB"]    = L["PvP: Reck-Bomb (One-Shot)"],
     ["RET_PVP"]      = L["PvP: Retribution"],
+    ["RET_FARM"] = L["Retribution: AoE Farming"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }

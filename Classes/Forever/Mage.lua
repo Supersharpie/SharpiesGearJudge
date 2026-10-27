@@ -11,16 +11,16 @@ Mage.Weights = {
     -- Spell Power sits at 2.0; Hit and Crit are per 1%. In a three-minute fight with raid buffs a Frost mage doesn't
     -- run out of mana, so Intellect counts mostly for its crit; Arcane stacks Arcane Blast and does run short.
     -- Frost: Raid (Frost with Ice Lance, Fingers of Frost and Winter's Chill; bosses can't be frozen).
-    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.9, ["ITEM_MOD_INTELLECT_SHORT"]=0.29 },
+    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.71, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=29.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.4, ["ITEM_MOD_INTELLECT_SHORT"]=0.66, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.29, ["ITEM_MOD_SPIRIT_SHORT"]=0.41, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.81 },
     -- Fire: Raid (Fire 35 / Frost 16). About 12% behind Frost in the sim; Fireball's mana cost makes Intellect, Spirit and Mp5 count.
-    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.3, ["ITEM_MOD_INTELLECT_SHORT"]=1.13, ["ITEM_MOD_SPIRIT_SHORT"]=1.19, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.45 },
+    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.36, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.08 },
     -- Arcane: Raid (Arcane Blast and Arcane Missiles). About 3% ahead of Frost since the missiles keep the Arcane
     -- Blast stacks; mana-bound, so Hit, Intellect, Spirit and Mp5 count for more than on Frost.
-    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.69, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=0.07, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=29.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=16.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.68, ["ITEM_MOD_SPIRIT_SHORT"]=0.53, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.86, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.24 },
-    -- Frost: AoE Farming (Blizzard kiting packs at 60; study/mage2/farm.js, a rough model, tempered). Blizzard's spell
-    -- power share is small next to its base damage and drinking is a big part of each pull, so Crit, Intellect and Mp5
-    -- count for a lot against Spell Power; Stamina keeps you alive when a pull goes wrong.
-    ["FROST_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=3.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=1.5 },
+    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=27.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.52, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.43, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0 },
+    -- FROST_AOE: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the MAGE_AOE_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    -- Tempered (user): Intellect / Spirit / Mp5 / Stamina at most 3x Spell Power, Stamina at least 1x, Hit / Crit at most 25.
+    ["FROST_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=6.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.31, ["ITEM_MOD_SPIRIT_SHORT"]=1.31, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=6.0, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.6, ["ITEM_MOD_ARMOR_SHORT"]=0.51, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
@@ -38,7 +38,7 @@ Mage.Weights["FROST_AP"] = Mage.Weights["FROST_RAID"]
 -- at about 1.3 Spell Power, roughly a tenth of what the sim gives.
 Mage.Weights["Default"] = Mage.Weights["FROST_RAID"]
 -- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { FROST_RAID = true, FIRE_RAID = true, ARCANE_RAID = true, FROST_WC = true, FROST_AP = true,
+local SIM_PROFILES = { FROST_AOE = true, FROST_RAID = true, FIRE_RAID = true, ARCANE_RAID = true, FROST_WC = true, FROST_AP = true,
     POM_PYRO = true, ELEMENTAL = true, FROST_PVP = true, Default = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
 -- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).

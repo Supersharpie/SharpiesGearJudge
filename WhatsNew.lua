@@ -20,9 +20,10 @@ local WHATS_NEW = {
     { text = "New Off-Specs setting: tick the profiles a character also plays, such as a healing set for dungeons, and tooltips show when an item upgrades them, judged against the best gear you own (bags and bank included). The Roster plugin shows your alts' off-specs too." },
     { text = "Dual Specialization now works on Season of Discovery and TBC Anniversary: tooltips also show upgrades for the spec you're not in." },
     { text = "Loot council addons can now ask Gear Judge how much an item upgrades each player (turn it off with Share Scores With Group Addons)." },
-    { text = "Every class's leveling weights were reviewed one by one: Paladin rebuilt for levels 1-60, plus fixes for Warrior, Rogue, Priest, Warlock, Mage, Shaman, Druid and Hunter.", forever = true },
+    { text = "Every class's leveling weights were reviewed one by one and rebuilt on our updated models, and so were the level-60 farming weights, with new ones for Arms, Retribution, Elemental and Balance farming.", forever = true },
     { text = "From level 50 leveling weights blend smoothly into your level-60 profile, and spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss).", forever = true },
-    { text = "Talents plugin: every Paladin leveling build re-searched, plus Retribution to Protection, the fastest Paladin leveling build.", forever = true },
+    { text = "Raid weights rebuilt in the simulator for every spec on pre-raid best-in-slot gear, with a Talents raid build for each (Experimental until tried at 60).", forever = true },
+    { text = "Talents plugin: every leveling build re-searched (most are faster), new Warlock Demonology and Destruction builds, single-target Mage solo builds with Frost: AoE Leveling back, and new farm builds including dungeon runs.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

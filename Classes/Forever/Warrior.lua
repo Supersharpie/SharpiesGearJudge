@@ -21,26 +21,29 @@ Warrior.Weights = {
     -- Arms: Raid (Arms 34 / Fury 17, two-hander, level-63 boss, raid buffs, pre-raid gear). AP sits at 1.5.
     -- Hit is worth more than Crit: a miss costs rage as well as the swing, and Overpower procs need hits.
     -- Weapon DPS is above 14x AP because Mortal Strike and Overpower add weapon damage on top of the swing.
-    ["ARMS_RAID"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=24.5, ["ITEM_MOD_AGILITY_SHORT"]=2.33, ["ITEM_MOD_HIT_RATING_SHORT"]=59.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=41.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["ARMS_RAID"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=23.3, ["ITEM_MOD_AGILITY_SHORT"]=2.82, ["ITEM_MOD_HIT_RATING_SHORT"]=64.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=50.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- Fury profiles (no Talents plugin build: Arms out-damages them in Forever, 493 / 438 DPS against 553).
     -- Dual wield: the off-hand's weapon DPS is worth about a third of the main hand's (MSC_WEAPON_DPS_OH).
     -- Hit is worth much more than before 70291: Dual Wield Specialization lost its off-hand hit, so more
     -- white swings miss (Furious Precision gives some back, off-hand only).
-    ["FURY_DW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.2, ["MSC_WEAPON_DPS_OH"]=4.5, ["ITEM_MOD_AGILITY_SHORT"]=2.43, ["ITEM_MOD_HIT_RATING_SHORT"]=44.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=45.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["FURY_DW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=16.7, ["MSC_WEAPON_DPS_OH"]=4.8, ["ITEM_MOD_AGILITY_SHORT"]=3.06, ["ITEM_MOD_HIT_RATING_SHORT"]=30.6, ["ITEM_MOD_CRIT_RATING_SHORT"]=54.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Two-hander: the sim's own Hit below the cap (it used to copy Arms, when the sim's gear was
     -- capped with Precision).
-    ["FURY_2H"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.9, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_HIT_RATING_SHORT"]=47.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["FURY_2H"] = { ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=18.5, ["ITEM_MOD_AGILITY_SHORT"]=2.88, ["ITEM_MOD_HIT_RATING_SHORT"]=55.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=50.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- Protection: Raid (Shield Slam build with Improved Thunder Clap, level-63 boss; threat 35%, damage
     -- taken 35%, effective health 30%). Boss hits are large, so dodge, parry, Defense and armor lead; Hit
     -- and Crit carry the threat. Stamina 3.0 here; the leveling tank rows use 2.5.
-    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=42.1, ["ITEM_MOD_PARRY_RATING_SHORT"]=42.1, ["ITEM_MOD_BLOCK_RATING_SHORT"]=9.7, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=6.45, ["ITEM_MOD_ARMOR_SHORT"]=0.26, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.95, ["ITEM_MOD_HIT_RATING_SHORT"]=28.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=18.0, ["ITEM_MOD_AGILITY_SHORT"]=3.7, ["ITEM_MOD_STRENGTH_SHORT"]=1.48, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.65, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=23.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=23.5, ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.2, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.76, ["ITEM_MOD_ARMOR_SHORT"]=0.18, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.54, ["ITEM_MOD_HIT_RATING_SHORT"]=18.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=11.8, ["ITEM_MOD_AGILITY_SHORT"]=2.16, ["ITEM_MOD_STRENGTH_SHORT"]=1.32, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.56, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
-    -- Protection: AoE Farming (5 level-60 mobs on you, Thunder Clap, Revenge, Shield Slam; mobs per hour
-    -- with eating). Avoidance and Block cut the eating, Crit and Strength drive the damage. Stamina is
-    -- the pack-size margin the sim doesn't price. Hit below the cap valued as Crit plus its rage. AP = 1.
-    ["PROT_AOE"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.05, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.91, ["ITEM_MOD_CRIT_RATING_SHORT"]=16.9, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=23.7, ["ITEM_MOD_PARRY_RATING_SHORT"]=23.7, ["ITEM_MOD_BLOCK_RATING_SHORT"]=18.9, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.76, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=7.1, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    -- PROT_AOE: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the WARRIOR_PROT_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    ["PROT_AOE"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.89, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.7, ["ITEM_MOD_STAMINA_SHORT"]=0.94, ["ITEM_MOD_SPIRIT_SHORT"]=1.55, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=4.29, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=12.87, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.46, ["ITEM_MOD_DODGE_RATING_SHORT"]=18.8, ["ITEM_MOD_PARRY_RATING_SHORT"]=18.8, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.3, ["ITEM_MOD_HIT_RATING_SHORT"]=14.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=13.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+
+    -- ARMS_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the WARRIOR_2H_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    ["ARMS_FARM"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_AGILITY_SHORT"]=2.21, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.1, ["ITEM_MOD_STAMINA_SHORT"]=2.63, ["ITEM_MOD_SPIRIT_SHORT"]=1.4, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.82, ["ITEM_MOD_ARMOR_SHORT"]=0.16, ["ITEM_MOD_HIT_RATING_SHORT"]=23.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=37.0 },
 }
 -- PvP profile: a copy of Arms: Raid; the PvP model (Helpers 5.10) adds Stamina, armor and burst on top
 -- and keeps hit at the player-vs-player caps. Picked by the Talents plugin's PvP build or by hand.
@@ -79,6 +82,7 @@ Warrior.PrettyNames = {
     ["DEEP_PROT"] = L["Protection: Raid (old profile)"],
     ["PROT_AOE"]  = L["Protection: AoE Farming"],
     ["ARMS_PVP"]  = L["PvP: Arms (Mortal Strike)"],
+    ["ARMS_FARM"] = L["Arms: Two-Hander AoE Farming"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }

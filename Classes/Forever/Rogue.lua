@@ -19,12 +19,12 @@ Rogue.Weights = {
 
     -- Combat: Raid (Combat swords with Sinister Strike, level-63 boss, raid buffs). Agility is worth about
     -- twice Attack Power (its crit), and Hit and Crit are close. Off-hand weapon DPS is worth a quarter of the main hand's.
-    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.93, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=36.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=16.6, ["MSC_WEAPON_DPS_OH"]=4.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["COMBAT_RAID"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.83, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=30.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.4, ["MSC_WEAPON_DPS_OH"]=4.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Combat: Raid (Daggers) (Backstab from behind). About 4% behind swords in the sim.
-    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.88, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=35.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=31.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.2, ["MSC_WEAPON_DPS_OH"]=4.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["COMBAT_DAGGERS"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.78, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=23.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=29.3, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.4, ["MSC_WEAPON_DPS_OH"]=4.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Assassination: Raid (Mutilate) (Assassination 31 / Combat 20, daggers). Mutilate hits with both hands, so the
     -- off-hand counts for more; Hit and Crit higher (Seal Fate combo points). About 10% behind Combat swords.
-    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.08, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=38.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=36.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.8, ["MSC_WEAPON_DPS_OH"]=5.8, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["ASSN_MUTILATE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.05, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=25.6, ["ITEM_MOD_CRIT_RATING_SHORT"]=36.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.2, ["MSC_WEAPON_DPS_OH"]=6.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds

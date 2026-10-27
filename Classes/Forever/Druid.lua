@@ -17,27 +17,31 @@ Druid.Weights = {
     -- equipped weapon's DPS at the form's speed (devs on the Forever bug tracker, #208/#220), so Weapon DPS is worth
     -- about 9.6 Attack Power per point: everything but Rip, Ferocious Bite and Rake, which scale off Attack Power only
     -- (Rake +5% of attack power on its hit and each tick, from beta logs; re-run 2026-10-13 on the merged upstream sim).
-    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.98, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.03, ["ITEM_MOD_SPIRIT_SHORT"]=0.02, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.07, ["ITEM_MOD_HIT_RATING_SHORT"]=27.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=41.7, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.4 },
+    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.87, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.58, ["ITEM_MOD_SPIRIT_SHORT"]=0.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.89, ["ITEM_MOD_HIT_RATING_SHORT"]=30.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.2 },
     -- Balance: Raid (Balance 33 / Feral 3 / Restoration 15) from the simulator, Spell Power 2.0. Starfire carries the damage,
     -- so Arcane damage takes most of the Spell Power value.
-    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.61, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.39, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_SPIRIT_SHORT"]=0.27, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.62, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=11.8 },
+    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.62, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.38, ["ITEM_MOD_INTELLECT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.2 },
     -- Restoration: Raid (Balance 11 / Feral 5 / Restoration 35) from our healing model (the simulator can't heal), Healing 2.0.
     -- Most Druid healing is over time and HoTs can't crit, so Crit is worth little; Spirit and Mp5 lead the mana stats.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.91, ["ITEM_MOD_SPIRIT_SHORT"]=3.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.67, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=3.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.08, ["ITEM_MOD_SPIRIT_SHORT"]=3.06, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.51, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Bear: Raid (Balance 9 / Feral 42 with Heart of the Wild, Rend and Tear and Shredding Attacks; talents re-searched
     -- 2026-10-10) from the simulator's tank mode, as the Warrior's Protection: Raid: threat 35% / damage taken 35% /
     -- effective health 30% (health counts Heart of the Wild's Stamina), Stamina 3.0. Armor is item armor (Dire Bear Form
     -- multiplies it by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
     -- Weapon DPS is 14x Attack Power: Dire Bear swings the equipped weapon's DPS every 2.5 s.
-    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.35, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.69, ["ITEM_MOD_DODGE_RATING_SHORT"]=30.5, ["ITEM_MOD_AGILITY_SHORT"]=3.49, ["ITEM_MOD_STRENGTH_SHORT"]=1.9, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.86, ["ITEM_MOD_HIT_RATING_SHORT"]=15.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.1 },
+    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.55, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.61, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.1, ["ITEM_MOD_AGILITY_SHORT"]=1.6, ["ITEM_MOD_STRENGTH_SHORT"]=1.01, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.46, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.46, ["ITEM_MOD_HIT_RATING_SHORT"]=16.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.4 },
 
     -- Hybrid (not modelled): its healing stats moved to the Healing 20 scale (Healing 0.8 -> 20, x25), so the feral and
     -- defensive weights get the same x25 to keep the old balance: Strength 2.0 -> 50, Stamina 1.0 -> 25,
     -- Armor 0.2 -> 5, Weapon Skill 5.0 -> 125 (Strength is still 2.5x Healing, as before the rescale).
     -- Spell Power 0, as on the raid healers: MSC.GetItemScore already scores it at the Healing weight.
     ["HYBRID_HOTW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=50.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ARMOR_SHORT"]=5.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=125.0 },
+
+    -- BALANCE_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the DRUID_HURRICANE_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    ["BALANCE_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.99, ["ITEM_MOD_STAMINA_SHORT"]=0.16, ["ITEM_MOD_INTELLECT_SHORT"]=2.11, ["ITEM_MOD_SPIRIT_SHORT"]=1.66, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.65, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.66, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.2 },
 }
 -- Old names, kept so a saved profile choice still works.
 Druid.Weights["BALANCE_BOOMKIN"] = Druid.Weights["BALANCE_RAID"]
@@ -55,7 +59,7 @@ Druid.Weights["FERAL_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["CAT_RAID"])
 Druid.Weights["BALANCE_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["BALANCE_RAID"])
 Druid.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["RESTO_RAID"])
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { CAT_RAID = true, BALANCE_RAID = true, RESTO_RAID = true, BEAR_RAID = true,
+local SIM_PROFILES = { BALANCE_FARM = true, CAT_RAID = true, BALANCE_RAID = true, RESTO_RAID = true, BEAR_RAID = true,
     BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true, FERAL_PVP = true, BALANCE_PVP = true, RESTO_PVP = true,
     RESTO_MOONGLOW = true, RESTO_REGROWTH = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
@@ -99,6 +103,7 @@ Druid.PrettyNames = {
     ["FERAL_PVP"]          = L["PvP: Feral (Cat)"],
     ["BALANCE_PVP"]        = L["PvP: Balance"],
     ["RESTO_PVP"]          = L["PvP: Restoration"],
+    ["BALANCE_FARM"] = L["Balance: Hurricane Farming"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }

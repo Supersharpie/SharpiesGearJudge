@@ -1480,6 +1480,27 @@ function MSC.UpdateBagOverlays(frame)
     end
 end
 
+-- The default bank's main slots (BankFrameItem1..N, bag BANK_CONTAINER). Bank
+-- bags open as container frames, which MSC.UpdateBagOverlays already covers.
+function MSC.UpdateBankOverlays()
+    if not (BankFrame and BankFrame:IsShown() and _G["BankFrameItem1"]) then return end
+    local weights, specName
+    if not (SGJ_Settings and SGJ_Settings.ShowBagArrows == false) then
+        weights, specName = MSC.GetCurrentWeights()
+    end
+    local bankID = BANK_CONTAINER or -1
+    for i = 1, (NUM_BANKGENERIC_SLOTS or 24) do
+        local button = _G["BankFrameItem" .. i]
+        if button then
+            local verdict
+            if weights and button:IsShown() then
+                verdict = MSC.GetBagArrowVerdict(GetContainerItemLink(bankID, button:GetID()), weights, specName)
+            end
+            MSC.SetBagArrow(button, verdict)
+        end
+    end
+end
+
 -- =============================================================
 -- THIRD-PARTY BAG INTEGRATION (ElvUI, Bagnon, Baganator)
 -- =============================================================
@@ -1510,25 +1531,24 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
         elvScanner:RegisterEvent("BAG_UPDATE_DELAYED")
         elvScanner:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
         elvScanner:RegisterEvent("EQUIPMENT_SWAP_FINISHED")
+        -- The bank window (main slots and bank bags), 2026-10-25
+        pcall(elvScanner.RegisterEvent, elvScanner, "BANKFRAME_OPENED")
+        pcall(elvScanner.RegisterEvent, elvScanner, "PLAYERBANKSLOTS_CHANGED")
+
+        -- Bag IDs each ElvUI window holds: the bags, and the bank's main slots
+        -- (BANK_CONTAINER, -1) plus its bank bags (5 and up).
+        local BAG_IDS = { 0, 1, 2, 3, 4 }
+        local BANK_IDS = { BANK_CONTAINER or -1 }
+        for i = 1, (NUM_BANKBAGSLOTS or 6) do BANK_IDS[#BANK_IDS + 1] = 4 + i end
 
         local scanPending = false
         local hookedShow = {}
         local arrowsCleared = false -- arrows already hidden while Show Bag Arrows is off
         local ScanElvUIBags
-        function ScanElvUIBags()
-            scanPending = false
-            -- With Show Bag Arrows off the scan still runs once to hide the
-            -- arrows already drawn (EvaluateAndDraw draws nothing then).
-            local arrowsOff = SGJ_Settings and SGJ_Settings.ShowBagArrows == false
-            if arrowsOff and arrowsCleared then return end
-
-            local E = ElvUI and unpack(ElvUI)
-            if not E then return end
-            local B = E:GetModule('Bags')
-            local f = B and B.BagFrame
+        -- One ElvUI window. Slots report IsShown() while the window is closed, so
+        -- a closed window is skipped and opening it triggers a scan.
+        local function ScanElvUIFrame(f, ids)
             if not f or not f.Bags then return end
-            -- Slots report IsShown() while the bag frame is closed; skip the scan
-            -- and make sure opening the frame triggers one.
             if f.IsVisible and not f:IsVisible() then
                 if not hookedShow[f] and f.HookScript then
                     hookedShow[f] = true
@@ -1536,8 +1556,7 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                 end
                 return
             end
-
-            for bagID = 0, 4 do
+            for _, bagID in ipairs(ids) do
                 local bag = f.Bags[bagID]
                 if bag then
                     local numSlots = GetContainerNumSlots(bagID)
@@ -1550,6 +1569,20 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                     end
                 end
             end
+        end
+        function ScanElvUIBags()
+            scanPending = false
+            -- With Show Bag Arrows off the scan still runs once to hide the
+            -- arrows already drawn (EvaluateAndDraw draws nothing then).
+            local arrowsOff = SGJ_Settings and SGJ_Settings.ShowBagArrows == false
+            if arrowsOff and arrowsCleared then return end
+
+            local E = ElvUI and unpack(ElvUI)
+            if not E then return end
+            local B = E:GetModule('Bags')
+            if not B then return end
+            ScanElvUIFrame(B.BagFrame, BAG_IDS)
+            ScanElvUIFrame(B.BankFrame, BANK_IDS)
             arrowsCleared = arrowsOff
         end
 
@@ -3564,6 +3597,7 @@ function MSC.RefreshAllBagOverlays()
     MSC.ForEachBlizzardBagFrame(function(frame)
         if frame:IsShown() then MSC.UpdateBagOverlays(frame) end
     end)
+    MSC.UpdateBankOverlays()
     if MSC.RefreshBagnonOverlays then MSC.RefreshBagnonOverlays() end
     if MSC.RefreshGudaBagsOverlays then MSC.RefreshGudaBagsOverlays() end
     if MSC.RefreshDaylightUIOverlays then MSC.RefreshDaylightUIOverlays() end
@@ -3586,6 +3620,10 @@ local function HookBlizzardBagFrames()
             hooksecurefunc(frame, "UpdateItems", MSC.QueueBagOverlayRefresh)
         end
     end)
+    if BankFrame and not hookedBagFrames[BankFrame] then
+        hookedBagFrames[BankFrame] = true
+        BankFrame:HookScript("OnShow", MSC.QueueBagOverlayRefresh)
+    end
 end
 HookBlizzardBagFrames()
 
@@ -3593,6 +3631,9 @@ local bagRefreshFrame = CreateFrame("Frame")
 bagRefreshFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 bagRefreshFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 bagRefreshFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+-- The bank: opening it and its main slots changing don't fire BAG_UPDATE_DELAYED
+pcall(bagRefreshFrame.RegisterEvent, bagRefreshFrame, "BANKFRAME_OPENED")
+pcall(bagRefreshFrame.RegisterEvent, bagRefreshFrame, "PLAYERBANKSLOTS_CHANGED")
 bagRefreshFrame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_ENTERING_WORLD" then HookBlizzardBagFrames() end
     MSC.QueueBagOverlayRefresh()

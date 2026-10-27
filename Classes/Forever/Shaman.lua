@@ -21,30 +21,33 @@ Shaman.Weights = {
     -- Intellect (Mental Dexterity) still counts a lot. Tidal Focus gives 5% melee hit, so with 5% from gear you sit over
     -- the 9% raid cap; Hit is the value below the cap (the hit cap logic takes it down past that). Spell Power counts
     -- through Flame Shock, Earth Shock, Fire Nova and Lightning Shield; Spell Hit / Crit are the spells'.
-    ["ENH_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_AGILITY_SHORT"]=2.3, ["ITEM_MOD_INTELLECT_SHORT"]=3.15, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.33, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.44, ["ITEM_MOD_HIT_RATING_SHORT"]=53.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=9.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.3, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["ENH_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_AGILITY_SHORT"]=1.86, ["ITEM_MOD_INTELLECT_SHORT"]=2.58, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.22, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.55, ["ITEM_MOD_HIT_RATING_SHORT"]=42.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=33.9, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=5.7, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Elemental: Raid (Elemental 31 / Enhancement 11 / Restoration 9) from the simulator, Spell Power 2.0. Elemental runs out
     -- of mana in Forever and drops to a lower Lightning Bolt rank, which is why Crit and Hit are worth far less than for the
     -- other casters. Nature and Fire damage split the Spell Power value by how much of the damage each school does.
-    ["ELE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.32, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.65, ["ITEM_MOD_INTELLECT_SHORT"]=0.65, ["ITEM_MOD_SPIRIT_SHORT"]=0.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.88, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=9.7 },
+    ["ELE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.37, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.61, ["ITEM_MOD_INTELLECT_SHORT"]=1.12, ["ITEM_MOD_SPIRIT_SHORT"]=0.56, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.58, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=17.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.4 },
     -- Restoration: Raid (Restoration 40 / Enhancement 11) from our healing model (the simulator can't heal), Healing 2.0.
     -- Water Shield gives 2% of your mana back on heal crits, so Crit is worth more than for other healers. Client 70291
     -- removed the shield's 15 s cooldown (a globe every 3.5 s, recast after 3): each extra globe now also costs recast
     -- time, so Crit comes down a little and the mana stats go up (study/shaman2/sheal.js, WS_MODE).
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.65, ["ITEM_MOD_SPIRIT_SHORT"]=2.1, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.06, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.1, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.95, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.83, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.6, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
 
-    -- Tank: AoE Farming (one-hander + shield, Rockbiter with Spirit Weapons; pulls of about 4 mobs killed with Fire Nova,
-    -- Magma Totem, Lightning Shield and shocks; a rough model, judgment-set like the other farming profiles). The pack
-    -- hits you the whole time, so Stamina, avoidance and the mana stats lead; Spell Power is the damage. Also the level-60
-    -- weights for the Tank: Dungeon Leveling build (there is no raid tank profile).
-    ["TANK_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.5, ["ITEM_MOD_INTELLECT_SHORT"]=1.5, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ARMOR_SHORT"]=0.08, ["ITEM_MOD_DODGE_RATING_SHORT"]=8.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=6.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=6.0, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=1.5, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=8.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=6.0, ["ITEM_MOD_HIT_RATING_SHORT"]=4.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.6, ["ITEM_MOD_STRENGTH_SHORT"]=0.6, ["ITEM_MOD_AGILITY_SHORT"]=0.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0 },
+    -- TANK_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the SHAMAN_TANK_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25. Also the level-60 weights
+    -- for the Tank: Dungeon Leveling build (there is no raid tank profile).
+    ["TANK_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.27, ["ITEM_MOD_AGILITY_SHORT"]=2.31, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.14, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.9, ["ITEM_MOD_STAMINA_SHORT"]=2.09, ["ITEM_MOD_INTELLECT_SHORT"]=2.67, ["ITEM_MOD_SPIRIT_SHORT"]=3.35, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.18, ["ITEM_MOD_ARMOR_SHORT"]=0.46, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.36, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.92, ["ITEM_MOD_DODGE_RATING_SHORT"]=12.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=12.4, ["ITEM_MOD_BLOCK_RATING_SHORT"]=23.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.3, ["ITEM_MOD_HIT_RATING_SHORT"]=4.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=4.3 },
 
     -- Totem-support and hybrid profiles (not modelled).
     -- Healer Spell Crit 48 at Healing 20: 1% crit is worth ~2.4 Healing.
     ["RESTO_TOTEM_SUPPORT"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0  },
     ["HYBRID_ELE_RESTO"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
     ["HYBRID_ENH_RESTO"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
+
+    -- ELE_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the SHAMAN_ELE_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    ["ELE_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=2.52, ["ITEM_MOD_INTELLECT_SHORT"]=2.39, ["ITEM_MOD_SPIRIT_SHORT"]=1.28, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.19, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.69, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.7 },
 }
 -- Old names, kept so a saved profile choice still works.
 Shaman.Weights["ELE_PVE"] = Shaman.Weights["ELE_RAID"]
@@ -55,7 +58,7 @@ Shaman.Weights["RESTO_DEEP"] = Shaman.Weights["RESTO_RAID"]
 Shaman.Weights["ELE_PVP"] = MSC.ForeverPvPFrom(Shaman.Weights["ELE_RAID"])
 Shaman.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom(Shaman.Weights["RESTO_RAID"])
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { ENH_RAID = true, ELE_RAID = true, RESTO_RAID = true, ELE_PVE = true, ENH_STORMSTRIKE = true, RESTO_DEEP = true, ELE_PVP = true, RESTO_PVP = true }
+local SIM_PROFILES = { ELE_FARM = true, TANK_FARM = true, ENH_RAID = true, ELE_RAID = true, RESTO_RAID = true, ELE_PVE = true, ENH_STORMSTRIKE = true, RESTO_DEEP = true, ELE_PVP = true, RESTO_PVP = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
 -- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
 Shaman.PvPCounterpart = { ELE_RAID = "ELE_PVP", ELE_PVE = "ELE_PVP", RESTO_RAID = "RESTO_PVP", RESTO_DEEP = "RESTO_PVP" }
@@ -93,6 +96,7 @@ Shaman.PrettyNames = {
     ["RESTO_TOTEM_SUPPORT"] = "Healer: Totem Twisting",
     ["HYBRID_ELE_RESTO"]    = "Hybrid: Ele / Resto (NS)",
     ["HYBRID_ENH_RESTO"]    = "Hybrid: Enh / Resto (PvP)",
+    ["ELE_FARM"] = L["Elemental: AoE Farming"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }

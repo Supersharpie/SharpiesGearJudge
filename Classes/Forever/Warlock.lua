@@ -14,15 +14,15 @@ Warlock.Weights = {
     -- Hit and Crit per 1%. Most of the damage is Shadow. Stamina is a small Life Tap / safety term (the sim's three-
     -- minute fight never runs a warlock dry).
     -- Demonology: Raid (Demonic Pact 5/31/15: Succubus out with a sacrificed Imp's buff kept). About 19% ahead of Affliction.
-    ["DEMO_PACT_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.78, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.22, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=14.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.52, ["ITEM_MOD_SPIRIT_SHORT"]=0.32, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.44, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    ["DEMO_PACT_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.45, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.55, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=30.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.68, ["ITEM_MOD_SPIRIT_SHORT"]=0.31, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.58, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
     -- Affliction: Raid (Affliction 35 / Destruction 16, Succubus).
-    ["AFF_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.72, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.28, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.52, ["ITEM_MOD_SPIRIT_SHORT"]=0.24, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.48, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    ["AFF_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.76, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.24, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=23.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.68, ["ITEM_MOD_SPIRIT_SHORT"]=0.33, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.53, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
     -- Destruction: Raid (DS/Ruin with Pandemic: the Imp sacrificed). About 28% behind Demonology.
-    ["DESTRO_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.78, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.22, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=15.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.48, ["ITEM_MOD_SPIRIT_SHORT"]=0.28, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.38, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
-    -- Demonology: AoE Farming (Soul Link with Rain of Fire / Hellfire on 4-5 mob packs; a rough model). Hellfire burns you
-    -- for as much as each enemy and Life Tap pays for the mana in health, so Stamina leads; Fire damage and mana stats next,
-    -- Spell Power counts little (Hellfire and Rain of Fire take a small share of it).
-    ["DEMO_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=10.0, ["ITEM_MOD_ARMOR_SHORT"]=0.05 },
+    ["DESTRO_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.78, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.22, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.59, ["ITEM_MOD_SPIRIT_SHORT"]=0.31, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.47, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    -- DEMO_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the WARLOCK_DEMO_FARM build's
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    -- Tempered (user): Intellect / Spirit / Mp5 / Stamina at most 3x Spell Power, Stamina at least 1x, Hit / Crit at most 25.
+    ["DEMO_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=4.48, ["ITEM_MOD_INTELLECT_SHORT"]=3.48, ["ITEM_MOD_SPIRIT_SHORT"]=4.45, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.53, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.03, ["ITEM_MOD_ARMOR_SHORT"]=0.42, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
@@ -41,7 +41,7 @@ Warlock.Weights["RAID_DS_RUIN"] = Warlock.Weights["DESTRO_RAID"]
 -- at about 1.3 Spell Power, roughly a tenth of what the sim gives.
 Warlock.Weights["Default"] = Warlock.Weights["AFF_RAID"]
 -- The sim-built raid profiles (talents already in): ApplyScalers' talent hooks skip these.
-local SIM_PROFILES = { DEMO_PACT_RAID = true, AFF_RAID = true, DESTRO_RAID = true, PVE_MD_RUIN = true, RAID_SM_RUIN = true, RAID_DS_RUIN = true,
+local SIM_PROFILES = { DEMO_FARM = true, DEMO_PACT_RAID = true, AFF_RAID = true, DESTRO_RAID = true, PVE_MD_RUIN = true, RAID_SM_RUIN = true, RAID_DS_RUIN = true,
     PVP_NF_CONFLAG = true, PVP_DEEP_DESTRO = true, PVP_SOUL_LINK = true, Default = true }
 
 -- =============================================================

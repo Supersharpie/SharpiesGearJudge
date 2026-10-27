@@ -2,80 +2,30 @@
 
 ## 🚀 v3.2.7
 
-### 🔌 API for Other Addons
-- Other addons, such as loot council and loot distribution addons, can now ask Sharpie's Gear Judge how much an item would upgrade you, through a small stable API (see API.md in the addon folder).
-- A loot council addon can ask the whole raid at once: everyone running Sharpie's Gear Judge answers with their own upgrade % for the item.
-- New setting **Share Scores With Group Addons** (on by default) turns answering off. Only your upgrade % and scores are sent.
-
 ### 🔀 Off-Specs (All Versions)
-- **Secondary Specs & Baselines** is now **Off-Specs**: tick the profiles a character also plays (a healing or tank set for dungeons) and tooltips show an *(off-spec)* upgrade line for each. Ticks are saved per character.
-- Off-spec upgrades are judged against the best gear you own for that profile (worn, bags, and bank from your last visit), not your main-spec gear. The Save Profile and Clear buttons are gone.
-- Leveling off-specs follow your level, and each off-spec is scored with the talents you last played it with.
-- Dual Specialization now works on Season of Discovery and TBC Anniversary too, and the other-spec line also uses the best gear you own.
+- **Off-Specs** (was Secondary Specs & Baselines): tick the profiles a character also plays and tooltips show an *(off-spec)* upgrade line for each, judged against the best gear you own for it (worn, bags and bank). Saved per character.
+- Dual Specialization now works on Season of Discovery and TBC Anniversary too.
 
-### 🛡️ Paladin Leveling Weights Rebuilt, Levels 1-60 (WoW Forever)
-- All six Paladin leveling curves come from our updated models, checked against level-1 tests and a combat log: starting gear at level 1, pulls of more than one mob when you can survive them, Forever's extra mob health from level 46, and seals and Judgements that crit.
-- Retribution: Hit, Crit and Agility count for more, and Spell Power a little more from 30.
-- From level 50 every Paladin curve now blends smoothly into its level-60 profile, so the weights no longer jump when you hit 60.
-- Protection: Dungeon Leveling now values Dodge, Parry, Block, Block Value, armor and Defense for the effective health they give (they scored 0 before), and counts the risk of the tank dying, measured from Forever dungeon logs.
-- Protection: AoE Farming weights updated: Crit counts more, Hit and the avoidance stats a little more.
-- Tanks: when you're only uncrushable with Holy Shield (or Shield Block) up, the tooltip now reminds you to keep it up on bosses.
+### 🔌 API for Other Addons
+- Loot council and loot distribution addons can ask Gear Judge how much an item upgrades each player (see API.md). Turn it off with **Share Scores With Group Addons**.
 
-### ⚔️ Warrior Fixes (WoW Forever)
-- Bows, guns and thrown weapons are no longer scored like a melee weapon at level 60 (a ranged weapon's DPS counted far too much for Warriors and Rogues).
-- Protection: Dungeon Leveling no longer cuts armor for Toughness, a talent Forever removed.
-- Protection solo leveling no longer chases being uncrushable: questing mobs can't crush you. Dungeon and raid tanks still do.
+### 📊 Leveling and Farming Weights Rebuilt (WoW Forever)
+- Every class reviewed one by one: leveling weights rebuilt from our updated models and the new Talents builds, with many class fixes (talents counted twice, missing or renamed talents, leveling names matching the Talents builds).
+- Mage solo weights assume single-target play; AoE leveling has its own, with Intellect and Stamina first.
+- New leveling weights: Arcane solo, Elemental dungeon and Balance dungeon.
+- Level-60 farming weights rebuilt, with new ones for Arms, Retribution, Elemental and Balance farming.
+- From level 50 leveling weights blend smoothly into your level-60 profile.
+- Spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss).
+- Ranged weapons no longer score like melee weapons for Warriors and Rogues at 60, and the stats panel shows the new Human and Orc racials.
 
-### 🗡️ Rogue Fixes (WoW Forever)
-- Leveling with daggers: a main-hand dagger now counts for what Mutilate, Ambush, Backstab, Hemorrhage and Ghostly Strike get from it (it was worth far too little, so a slightly faster sword often won).
-- Hack and Slash: swords and maces count about 40% less than before, and one-handed axes now count too.
-- Leveling names now match the Talents builds: "Assassination: Solo Leveling" and "Daggers: Dungeon Leveling".
-
-### ✨ Priest Fixes (WoW Forever)
-- Dungeon healing weights no longer count Meditation, Divine Aegis, Penance and similar talents twice.
-- Shadow leveling: spell hit is valued correctly next to Shadow Focus (it was too low).
-- Leveling without Shadowform after 40: crit and Mana per 5 count less, Intellect and Stamina a little more.
-
-### 🔮 Warlock Fixes (WoW Forever)
-- Affliction leveling no longer counts Improved Life Tap twice.
-- Grim Reach (the talent that replaced Malediction) now counts toward Affliction leveling.
-- Agonizing Flames uses its real values (3/7/10%) and also raises Fire damage for the AoE farming build.
-
-### ❄️ Mage Fixes (WoW Forever)
-- Frost leveling no longer counts Frost Channeling twice on Intellect, Spirit and Mana per 5.
-- Fire leveling is detected again (it looked for Wake of Fire, which the October 15 patch renamed Improved Fire Blast).
-- AoE leveling builds keep their AoE weights at levels 22-24.
-- Arcane leveling: hit counts Arcane Focus, not Elemental Precision; Ice Shards, Frost Channeling and Improved Frostbolt no longer touch it.
-
-### ⚡ Shaman Fixes (WoW Forever)
-- Enhancement solo leveling no longer reads as a healer at levels 11-26 (Tidal Focus no longer marks a healer).
-- Elemental leveling is detected by its new talents after the October 15 tree changes (Lava Burst, Trial by Fire, Lightning Overload, Elemental Mastery).
-- Tank Shamans at 60 get the tank weights again (they got Enhancement's).
-- Mental Dexterity uses its real values (33/67/100% of Intellect as attack power).
-- New "Elemental: Dungeon Leveling" weights (appear with the next curve update).
-
-### 🐾 Druid Fixes (WoW Forever)
-- Leveling names now match the Talents builds: "Balance: Solo Leveling" and "Restoration: Solo Leveling".
-- New "Balance: Dungeon Leveling" weights (appear with the next curve update).
-
-### 🏹 Hunter Fixes (WoW Forever)
-- Survival builds with Counterattack get the Survival weights at 60 (they got an untested melee placeholder).
-- Leveling names now match the Talents builds: "Survival: Solo Leveling" and "Survival: Dungeon Leveling".
-- Lethal Attacks now counts on the ranged leveling weights.
-- The Summon Hawk and pet talent changes to Hit fade out from 50 like the other talent adjustments.
-
-### 🧝 Racials (WoW Forever)
-- The character stats panel no longer shows the old weapon specializations; it shows Human Ruthless (+2% crit) and Orc Savage (+1% crit) with any weapon.
-
-### 📈 Leveling Weights Near 60 (WoW Forever)
-- From level 50, talent adjustments on leveling weights fade out as the weights blend into your level-60 profile, so nothing jumps or counts twice at 59.
-
-### 🎯 Spell Hit Caps (WoW Forever)
-- Forever appears to drop the old rule that 1% of spells always miss, so every spell hit cap is 1% higher: 4% while leveling (was 3%) and 17% for raids (was 16%). Blizzard hasn't confirmed this yet.
-- Caster dungeon leveling weights now value spell hit up to 5.5%, since dungeon mobs are one or two levels above you.
+### ⚔️ Raid Weights Rebuilt (WoW Forever)
+- Every level-60 raid profile rebuilt in the simulator on pre-raid best-in-slot gear with the new Talents raid builds: damage dealers, healers and tanks.
+- Hit is worth its full value up to the cap and little past it.
+- Hunter profiles follow a better ranged rotation, and Bear armor now counts at its real value.
 
 ### 🐛 Bug Fixes (all versions)
-- Quest rewards no longer lose their Equip: stats (such as Spell Power) when the quest window opens before the game has loaded that text; the item is read again once it arrives, and again each time you hover it.
+- Quest rewards no longer lose their Equip: stats when the quest window opens before the game has loaded that text.
+- Upgrade arrows now show in the bank too: the default bank and ElvUI's bank.
 
 ## 🚀 v3.2.6
 
