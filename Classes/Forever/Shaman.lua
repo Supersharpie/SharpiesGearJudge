@@ -12,7 +12,6 @@ Shaman.Name = "SHAMAN"
 -- value, with Agility carrying an added Crit/Dodge premium. Weapon DPS =
 -- 14x AP's weight.
 Shaman.Weights = {
-    ["Default"] = { ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=0.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     -- The level-60 profiles (study/shaman2, 2026-10-03; Enhancement and Elemental re-run 2026-10-08 from SharpiesGearJudge-SimStudio),
     -- each worked out with its build's own talents, so ApplyScalers' talent hooks skip them. Hit and Crit per 1%.
     -- Enhancement: Raid (Enhancement 33 / Restoration 16 / Elemental 2, two-hander, Windfury; talents re-searched 2026-10-10)
@@ -41,9 +40,6 @@ Shaman.Weights = {
 
     -- Totem-support and hybrid profiles (not modelled).
     -- Healer Spell Crit 48 at Healing 20: 1% crit is worth ~2.4 Healing.
-    ["RESTO_TOTEM_SUPPORT"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0  },
-    ["HYBRID_ELE_RESTO"] = {  ["ITEM_MOD_SPELL_POWER_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.8, ["ITEM_MOD_INTELLECT_SHORT"]=0.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=20.0  },
-    ["HYBRID_ENH_RESTO"] = { ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=5.0 },
 
     -- ELE_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the SHAMAN_ELE_FARM build's
     -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
@@ -93,9 +89,6 @@ Shaman.PrettyNames = {
     ["RESTO_DEEP"]      = L["Restoration: Raid (old profile)"],
     ["ELE_PVP"]             = L["PvP: Elemental (Burst)"],
     ["RESTO_PVP"]           = L["PvP: Restoration Healer"],
-    ["RESTO_TOTEM_SUPPORT"] = "Healer: Totem Twisting",
-    ["HYBRID_ELE_RESTO"]    = "Hybrid: Ele / Resto (NS)",
-    ["HYBRID_ENH_RESTO"]    = "Hybrid: Enh / Resto (PvP)",
     ["ELE_FARM"] = L["Elemental: AoE Farming"],
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
@@ -246,8 +239,6 @@ function Shaman:GetSpec()
     -- which the tank build takes too (2026-10-23: it returned ENH_RAID)
     if Rank("ANTICIPATION") >= 2 and Rank("SPIRIT_WEAPONS") > 0 then return "TANK_FARM" end
     if Rank("RAGE_FARSEER") > 0 then return "ENH_RAID" end
-    if Rank("NATURES_SWIFTNESS") > 0 and Rank("ELEMENTAL_ALACRITY") > 0 then return "HYBRID_ELE_RESTO" end
-    if Rank("NATURES_SWIFTNESS") > 0 and Rank("FLURRY") > 0 then return "HYBRID_ENH_RESTO" end
     if Rank("STORMSTRIKE") > 0 then return "ENH_RAID" end
     local ele, enh, resto = MSC.GetTabPointsSpent(1), MSC.GetTabPointsSpent(2), MSC.GetTabPointsSpent(3)
     if ele > enh and ele >= resto then return "ELE_RAID" end
@@ -569,6 +560,14 @@ Shaman.Relics = {
     -- Totem of Sustaining: Lesser Healing Wave heals up to 53 more
     [23200] = function(role) return (role == "healer") and { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 26 } or {} end,
 }
+
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Shaman.Weights["Default"] = Shaman.Weights["ENH_RAID"]
+Shaman.Weights["RESTO_TOTEM_SUPPORT"] = Shaman.Weights["RESTO_RAID"]
+Shaman.Weights["HYBRID_ELE_RESTO"] = Shaman.Weights["ELE_RAID"]
+Shaman.Weights["HYBRID_ENH_RESTO"] = Shaman.Weights["ENH_RAID"]
+Shaman.RetiredProfiles = { Default = true, RESTO_TOTEM_SUPPORT = true, HYBRID_ELE_RESTO = true, HYBRID_ENH_RESTO = true }
 
 MSC.RegisterModule("SHAMAN", Shaman)
 

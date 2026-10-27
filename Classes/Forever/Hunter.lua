@@ -20,7 +20,6 @@ Hunter.Name = "HUNTER"
 -- Strength doesn't get: ranged profiles = 2 (RAP) + premium, melee profiles
 -- (Survival/Nightfall/Leveling_Melee) = 1 (melee AP) + premium.
 Hunter.Weights = {
-    ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- The raid profiles come from the wowsims Forever sim (study/hunter2, 2026-10-03; re-run 2026-10-08 from
     -- SharpiesGearJudge-SimStudio after upstream reworked Summon Hawk and the Marksmanship rotation), run with each
@@ -36,9 +35,6 @@ Hunter.Weights = {
     ["SV_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=5.17, ["ITEM_MOD_INTELLECT_SHORT"]=2.56, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=59.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=63.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- PvP, melee support and farming profiles (not modelled).
-    ["PVP_SURV_TANK"] = { ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["MELEE_NIGHTFALL"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
-    ["SOLO_DME_TRIBUTE"] = { ["ITEM_MOD_AGILITY_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=1.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 }
 -- Old names, kept so a saved profile choice still works.
 Hunter.Weights["RAID_MM_STANDARD"] = Hunter.Weights["MM_RAID"]
@@ -79,9 +75,6 @@ Hunter.PrettyNames = {
     ["RAID_MM_STARTER"]  = L["Marksmanship: Raid (old Surefooted profile)"],
     ["RAID_SURV_DEEP"]   = L["Survival: Raid (old profile)"],
     ["PVP_MM_UTIL"]      = L["PvP: Marksmanship Utility"],
-    ["PVP_SURV_TANK"]    = L["PvP: Survival Tank"],
-    ["MELEE_NIGHTFALL"]  = "Support: Nightfall (Melee)",
-    ["SOLO_DME_TRIBUTE"] = "Farming: DM North Solo",
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
@@ -202,7 +195,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     local activeCaps = {}
 
     local specU = (currentSpec or ""):upper()
-    local isMeleeRow = specU:find("MELEE") ~= nil
+    local isMeleeRow = specU:find("MELEE") ~= nil and not Hunter.RetiredProfiles[specU]
     local level = UnitLevel("player")
     -- The sim-built raid profiles already carry their talents: skip the talent hooks (sections up to the
     -- caps) for them; the RAP-crit covariance, hit cap and melee-weapon rules below still apply.
@@ -393,7 +386,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- leveling curves set their own melee-slot DPS, so only fill it in when
     -- a profile leaves it out.
     local spec = (currentSpec or ""):upper()
-    local isMeleeSpec = spec:find("MELEE") or spec == "PVP_SURV_TANK"
+    local isMeleeSpec = spec:find("MELEE") and not Hunter.RetiredProfiles[spec]
     if not isMeleeSpec and weights["MSC_WEAPON_DPS_MELEE"] == nil and (weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] or 0) > 0 then
         weights["MSC_WEAPON_DPS_MELEE"] = weights["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"] * (loneWolf and 0.30 or 0.15)
     end
@@ -404,6 +397,14 @@ end
 function Hunter:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink)
     return MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
 end
+
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Hunter.Weights["Default"] = Hunter.Weights["BM_RAID"]
+Hunter.Weights["MELEE_NIGHTFALL"] = Hunter.Weights["SV_RAID"]
+Hunter.Weights["PVP_SURV_TANK"] = Hunter.Weights["PVP_MM_UTIL"]
+Hunter.Weights["SOLO_DME_TRIBUTE"] = Hunter.Weights["MM_RAID"]
+Hunter.RetiredProfiles = { Default = true, MELEE_NIGHTFALL = true, PVP_SURV_TANK = true, SOLO_DME_TRIBUTE = true }
 
 MSC.RegisterModule("HUNTER", Hunter)
 

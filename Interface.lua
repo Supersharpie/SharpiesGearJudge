@@ -3150,8 +3150,9 @@ function MSC.InitSettingsView(parent)
         local function AddList(listSource)
             if not listSource then return end
             local sorted = {}; for k in pairs(listSource) do table_insert(sorted, k) end; table_sort(sorted)
+            local retired = MSC.CurrentClass.RetiredProfiles or {}   -- old names kept only as aliases
             for _, k in ipairs(sorted) do
-                if not seen[k] then
+                if not seen[k] and not retired[k] then
                     local name = (MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[k]) or k;
                     table_insert(specOptions, { text = name, val = k })
                     table_insert(profileList, { text = name, val = k })

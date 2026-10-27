@@ -17,11 +17,13 @@
 - From level 50 leveling weights blend smoothly into your level-60 profile.
 - Spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss).
 - Ranged weapons no longer score like melee weapons for Warriors and Rogues at 60, and the stats panel shows the new Human and Orc racials.
+- Rogue leveling weights value Agility fully again (it was missing the Attack Power it gives).
 
 ### ⚔️ Raid Weights Rebuilt (WoW Forever)
 - Every level-60 raid profile rebuilt in the simulator on pre-raid best-in-slot gear with the new Talents raid builds: damage dealers, healers and tanks.
 - Hit is worth its full value up to the cap and little past it.
 - Hunter profiles follow a better ranged rotation, and Bear armor now counts at its real value.
+- Old hand-made profiles retired (Default, the hybrids and placeholder profiles): a saved choice now uses the matching simulator profile, and they're gone from the profile lists.
 
 ### 🐛 Bug Fixes (all versions)
 - Quest rewards no longer lose their Equip: stats when the quest window opens before the game has loaded that text.

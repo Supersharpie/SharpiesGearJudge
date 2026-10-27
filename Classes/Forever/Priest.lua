@@ -8,7 +8,6 @@ Priest.Name = "PRIEST"
 Priest.Weights = {
     -- Fallback before a spec is known (healer). Spell Power 0: MSC.GetItemScore already scores an item's
     -- Spell Power at the Healing weight, so 20 here counted it twice.
-    ["Default"] = {  ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
     -- The level-60 profiles (study/priest2, 2026-10-03; NOTES.md there has the numbers). Spell Power / Healing sit at
     -- 2.0; Hit and Crit per 1%. Each was worked out with its build's own talents, so ApplyScalers' talent hooks skip them.
     -- Shadow: Raid comes from the wowsims Forever sim (Shadow 538 DPS against Smite's 315-375; re-run 2026-10-13 with
@@ -32,7 +31,6 @@ Priest.Weights = {
     ["SHADOW_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=6.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0 },
 
     -- Hybrid profiles (not modelled).
-    ["HYBRID_POWER_WEAVING"] = {  ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=20.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=1.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0  },
 }
 -- Old names, kept so a saved profile choice still works.
 Priest.Weights["SHADOW_PVE"] = Priest.Weights["SHADOW_RAID"]
@@ -76,7 +74,6 @@ Priest.PrettyNames = {
     ["DISC_PI_SUPPORT"] = L["Discipline: Raid (old profile)"],
     ["SHADOW_PVP"]           = L["PvP: Shadow (Blackout)"],
     ["DISC_PVP"]             = L["PvP: Discipline Healer"],
-    ["HYBRID_POWER_WEAVING"] = "Support: Power Weaving",
 
     ["Leveling_1_10"] = Band("Leveling", 1, 10),
 }
@@ -454,6 +451,12 @@ end
 -- =============================================================
 -- REGISTER
 -- =============================================================
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Priest.Weights["Default"] = Priest.Weights["HOLY_RAID"]
+Priest.Weights["HYBRID_POWER_WEAVING"] = Priest.Weights["DISC_RAID"]
+Priest.RetiredProfiles = { Default = true, HYBRID_POWER_WEAVING = true }
+
 Priest.Profiles = {}
 for k, v in pairs(Priest.Weights) do Priest.Profiles[k] = v end
 for k, v in pairs(Priest.LevelingWeights) do Priest.Profiles[k] = v end

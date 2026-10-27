@@ -13,7 +13,6 @@ Paladin.Name = "PALADIN"
 Paladin.Weights = {
     -- Fallback before a spec is known. Stamina, Hit, Crit and Weapon Skill on the same scale as the
     -- other Forever Defaults (Stamina 0.5, Hit 20 / Crit 12 per 1%, Weapon Skill 13).
-    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.2, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_AGILITY_SHORT"]=0.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- Retribution: Raid (Ret 33 / Holy 18 with Twist of Light, pre-raid gear) from the wowsims Forever simulator (study/paladin3,
     -- 2026-10-03), 70% raid boss / 30% dungeon boss, Attack Power 1.5. The rotation seal-twists: Seal of Righteousness up before
@@ -546,6 +545,11 @@ Paladin.Relics = {
 }
 
 -- Profiles for the UI (leveling rows are listed from LevelingWeights once the curves load)
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Paladin.Weights["Default"] = Paladin.Weights["RET_STANDARD"]
+Paladin.RetiredProfiles = { Default = true }
+
 Paladin.Profiles = {}
 for k, v in pairs(Paladin.Weights) do Paladin.Profiles[k] = v end
 

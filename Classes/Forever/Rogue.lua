@@ -15,7 +15,6 @@ Rogue.Name = "ROGUE"
 -- Instant, 0.45% on each Deadly tick per stack, per the devs on forever-bugs #100; the per-tick reading is
 -- unconfirmed in game), which makes Attack Power itself worth a little more than the other stats.
 Rogue.Weights = {
-    ["Default"] = { ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.0, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- Combat: Raid (Combat swords with Sinister Strike, level-63 boss, raid buffs). Agility is worth about
     -- twice Attack Power (its crit), and Hit and Crit are close. Off-hand weapon DPS is worth a quarter of the main hand's.
@@ -344,6 +343,11 @@ function Rogue:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink
         + GetHackAndSlashProcBonus(itemLink, weights, slotId, specName)
         + GetDaggerMainHandBonus(itemLink, weights, slotId, specName)
 end
+
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Rogue.Weights["Default"] = Rogue.Weights["COMBAT_RAID"]
+Rogue.RetiredProfiles = { Default = true }
 
 MSC.RegisterModule("ROGUE", Rogue)
 

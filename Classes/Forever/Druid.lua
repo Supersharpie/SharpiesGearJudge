@@ -6,7 +6,6 @@ Druid.Name = "DRUID"
 -- WOW FOREVER STAT WEIGHTS (Beta Baseline)
 -- =============================================================
 Druid.Weights = {
-    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.0, ["ITEM_MOD_MANA_SHORT"]=0.05, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
     -- The level-60 profiles (study/druid2, 2026-10-03; Cat, Balance and Bear re-run 2026-10-08 from
     -- SharpiesGearJudge-SimStudio), each worked out with its build's own talents, so ApplyScalers' talent hooks skip them.
     -- Hit and Crit per 1%.
@@ -37,7 +36,6 @@ Druid.Weights = {
     -- defensive weights get the same x25 to keep the old balance: Strength 2.0 -> 50, Stamina 1.0 -> 25,
     -- Armor 0.2 -> 5, Weapon Skill 5.0 -> 125 (Strength is still 2.5x Healing, as before the rescale).
     -- Spell Power 0, as on the raid healers: MSC.GetItemScore already scores it at the Healing weight.
-    ["HYBRID_HOTW"] = { ["ITEM_MOD_STRENGTH_SHORT"]=50.0, ["ITEM_MOD_INTELLECT_SHORT"]=15.0, ["ITEM_MOD_STAMINA_SHORT"]=25.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=20.0, ["ITEM_MOD_ARMOR_SHORT"]=5.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=48.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.0, ["ITEM_MOD_SPIRIT_SHORT"]=5.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=125.0 },
 
     -- BALANCE_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the DRUID_HURRICANE_FARM build's
     -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
@@ -99,7 +97,6 @@ Druid.PrettyNames = {
     ["FERAL_BEAR_TANK"] = L["Bear: Raid (old profile)"],
     ["RESTO_MOONGLOW"]     = "Healer: Moonglow",
     ["RESTO_REGROWTH"]     = "Healer: Regrowth (Crit)",
-    ["HYBRID_HOTW"]        = "Hybrid: Heart of the Wild",
     ["FERAL_PVP"]          = L["PvP: Feral (Cat)"],
     ["BALANCE_PVP"]        = L["PvP: Balance"],
     ["RESTO_PVP"]          = L["PvP: Restoration"],
@@ -239,7 +236,6 @@ function Druid:GetSpec()
     if Rank("SWIFTMEND") > 0 and Rank("LEADER_OF_PACK") == 0 then return "RESTO_RAID" end
     if Rank("MOONGLOW") > 0 and Rank("NATURES_SWIFT") > 0 then return "RESTO_MOONGLOW" end
     if Rank("IMP_REGROWTH") >= 3 then return "RESTO_REGROWTH" end
-    if Rank("LEADER_OF_PACK") > 0 and Rank("NATURES_SWIFT") > 0 then return "HYBRID_HOTW" end
 
     -- Feral Split: Bear vs Cat
     if Rank("THICK_HIDE") >= 3 then return "BEAR_RAID" end
@@ -580,6 +576,12 @@ Druid.Relics = {
 }
 
 -- Register Profiles
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Druid.Weights["Default"] = Druid.Weights["CAT_RAID"]
+Druid.Weights["HYBRID_HOTW"] = Druid.Weights["CAT_RAID"]
+Druid.RetiredProfiles = { Default = true, HYBRID_HOTW = true }
+
 Druid.Profiles = {}
 for k, v in pairs(Druid.Weights) do Druid.Profiles[k] = v end
 for k, v in pairs(Druid.LevelingWeights) do Druid.Profiles[k] = v end

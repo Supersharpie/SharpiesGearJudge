@@ -16,7 +16,6 @@ Warrior.Name = "WARRIOR"
 -- rows only.
 Warrior.Weights = {
     -- Fallback before a spec is known.
-    ["Default"] = { ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0, ["ITEM_MOD_AGILITY_SHORT"]=1.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HIT_RATING_SHORT"]=20.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=12.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=13.0 },
 
     -- Arms: Raid (Arms 34 / Fury 17, two-hander, level-63 boss, raid buffs, pre-raid gear). AP sits at 1.5.
     -- Hit is worth more than Crit: a miss costs rage as well as the swing, and Overpower procs need hits.
@@ -456,6 +455,11 @@ end
 -- =============================================================
 -- REGISTER
 -- =============================================================
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Warrior.Weights["Default"] = Warrior.Weights["ARMS_RAID"]
+Warrior.RetiredProfiles = { Default = true }
+
 Warrior.Profiles = {}
 for k, v in pairs(Warrior.Weights) do Warrior.Profiles[k] = v end
 for k, v in pairs(Warrior.LevelingWeights) do Warrior.Profiles[k] = v end

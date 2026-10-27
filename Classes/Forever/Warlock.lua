@@ -349,6 +349,10 @@ function Warlock:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLi
     return MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
 end
 
+-- Retired hand-made profiles (2026-10-27 weight check): the old names point at sim profiles so a saved choice or an
+-- alt's profile still works; MSC lists skip them (RetiredProfiles).
+Warlock.RetiredProfiles = { Default = true }
+
 MSC.RegisterModule("WARLOCK", Warlock)
 
 
