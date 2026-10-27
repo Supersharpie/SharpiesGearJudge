@@ -12,6 +12,7 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ### 3.2.7
 
+- **New look:** a cleaner window in your class color, with tabs along the top, colored section titles, slimmer stat bars, and your profile and total score at the bottom. The plugins match it.
 - **Off-Specs:** tick the profiles a character also plays and tooltips show when an item upgrades them, against the best gear you own (bags and bank included).
 - **Dual Specialization** on Season of Discovery and TBC Anniversary.
 - **Leveling and farming weights rebuilt (WoW Forever)** class by class, blending into your level-60 profile from 50.
