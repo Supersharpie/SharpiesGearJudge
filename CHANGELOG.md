@@ -2,6 +2,9 @@
 
 ## 🚀 v3.2.7
 
+### 🎨 New Look (All Versions)
+- A cleaner window in your class color: text tabs along the top, colored section titles, slimmer stat bars, and your profile and total score at the bottom.
+
 ### 🔀 Off-Specs (All Versions)
 - **Off-Specs** (was Secondary Specs & Baselines): tick the profiles a character also plays and tooltips show an *(off-spec)* upgrade line for each, judged against the best gear you own for it (worn, bags and bank). Saved per character.
 - Dual Specialization now works on Season of Discovery and TBC Anniversary too.
@@ -28,6 +31,7 @@
 ### 🐛 Bug Fixes (all versions)
 - Quest rewards no longer lose their Equip: stats when the quest window opens before the game has loaded that text.
 - Upgrade arrows now show in the bank too: the default bank and ElvUI's bank.
+- Stat Logic and tooltips name off-hand weapon DPS properly ("Off-Hand Weapon DPS" instead of "Msc weapon dps oh").
 
 ## 🚀 v3.2.6
 

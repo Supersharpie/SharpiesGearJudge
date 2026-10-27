@@ -346,7 +346,7 @@ local Scratch_GemColors = {}
 local Scratch_ProjectedColors = { RED=0, YELLOW=0, BLUE=0 }
 
 MSC.StatShortNames = {
-    ["MSC_WAND_DPS"] = MSC.L["Wand DPS"], ["MSC_WEAPON_DPS"] = MSC.L["Weapon DPS"], ["MSC_WEAPON_DPS_MELEE"] = MSC.L["Melee Weapon DPS"], ["MSC_WEAPON_SPEED"] = MSC.L["Speed"], ["MSC_OH_WEAPON_SPEED"] = MSC.L["OH Speed"],
+    ["MSC_WAND_DPS"] = MSC.L["Wand DPS"], ["MSC_WEAPON_DPS"] = MSC.L["Weapon DPS"], ["MSC_WEAPON_DPS_MELEE"] = MSC.L["Melee Weapon DPS"], ["MSC_WEAPON_DPS_OH"] = MSC.L["Off-Hand Weapon DPS"], ["MSC_WEAPON_SPEED"] = MSC.L["Speed"], ["MSC_OH_WEAPON_SPEED"] = MSC.L["OH Speed"],
     ["ITEM_MOD_STAMINA_SHORT"] = MSC.L["Stam"], ["ITEM_MOD_INTELLECT_SHORT"] = MSC.L["Int"],
     ["ITEM_MOD_AGILITY_SHORT"] = MSC.L["Agi"], ["ITEM_MOD_STRENGTH_SHORT"] = MSC.L["Str"],
     ["ITEM_MOD_SPIRIT_SHORT"] = MSC.L["Spt"], ["ITEM_MOD_SPELL_POWER_SHORT"] = MSC.L["SP"],

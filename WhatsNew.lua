@@ -24,6 +24,7 @@ local WHATS_NEW = {
     { text = "From level 50 leveling weights blend smoothly into your level-60 profile, and spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss).", forever = true },
     { text = "Raid weights rebuilt in the simulator for every spec on pre-raid best-in-slot gear, with a Talents raid build for each (Experimental until tried at 60).", forever = true },
     { text = "Talents plugin: every leveling build re-searched (most are faster), new Warlock Demonology and Destruction builds, single-target Mage solo builds with Frost: AoE Leveling back, and new farm builds including dungeon runs.", forever = true },
+    { text = "A cleaner window in your class color: tabs along the top, colored section titles, slimmer stat bars, and your profile and total score at the bottom. The plugins match it." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

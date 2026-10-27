@@ -45,8 +45,54 @@ MSC.Version = version
 MSC.Colors = { 
     BgSidebar = {0.05, 0.05, 0.05, 1.00}, 
     BgPanel   = {0.00, 0.00, 0.00, 0.50},
-    BarHigh   = {0.0, 0.8, 1.0, 1.0} 
+    BarHigh   = {0.0, 0.8, 1.0, 1.0}
 }
+
+-- [[ THEME ]]
+-- One accent colour, section titles in their own colour with a thin line under
+-- them, plain labels on the left and accent values on the right, flat dark panels.
+MSC.Theme = {
+    Accent = {0.93, 0.45, 0.68},
+    Value  = {0.96, 0.64, 0.80},
+    Text   = {0.92, 0.92, 0.92},
+    Muted  = {0.55, 0.55, 0.58},
+    Window = {0.06, 0.06, 0.08, 0.93},
+    Panel  = {0.10, 0.10, 0.12, 0.80},
+    Edge   = {1, 1, 1, 0.08},
+    Section = {
+        Gold   = {1.00, 0.80, 0.30},
+        Red    = {1.00, 0.45, 0.42},
+        Green  = {0.45, 0.88, 0.45},
+        Purple = {0.72, 0.56, 1.00},
+        Blue   = {0.42, 0.68, 1.00},
+        Teal   = {0.35, 0.88, 0.82},
+    },
+}
+-- The accent is the player's class colour; values are a lighter mix of it.
+do
+    local _, class = UnitClass("player")
+    local c = class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[class]
+    if c then
+        MSC.Theme.Accent = { c.r, c.g, c.b }
+        MSC.Theme.Value = { c.r + (1 - c.r) * 0.4, c.g + (1 - c.g) * 0.4, c.b + (1 - c.b) * 0.4 }
+    end
+end
+
+-- Section title: upper case in its section colour, with an accent line under it
+-- `width` wide (no line when width is nil).
+function MSC.StyleHeading(fs, color, width)
+    local c = MSC.Theme.Section[color or "Gold"] or MSC.Theme.Section.Gold
+    fs:SetText((fs:GetText() or ""):upper())
+    fs:SetTextColor(c[1], c[2], c[3])
+    if width and width > 0 then
+        local a = MSC.Theme.Accent
+        local line = fs:GetParent():CreateTexture(nil, "ARTWORK")
+        line:SetColorTexture(a[1], a[2], a[3], 0.5); line:SetHeight(1); line:SetWidth(width)
+        line:SetPoint("TOPLEFT", fs, "BOTTOMLEFT", 0, -4)
+        fs.Underline = line
+    end
+    return fs
+end
 
 -- [[ STAT COLORS ]]
 MSC.StatColors = {
@@ -102,6 +148,7 @@ local function TriggerFullUpdate()
     if MSC.FlushEvaluationCacheWipe then MSC.FlushEvaluationCacheWipe() end
     if MSC.UpdateReceipt then MSC.UpdateReceipt() end
     if MSC.UpdateLogic then MSC.UpdateLogic() end
+    if MSC.UpdateMainFooter then MSC.UpdateMainFooter() end
 end
 
 local function RequestUpdate()
@@ -302,24 +349,16 @@ function MSC.CreateModernBorder(f, thickness)
 end
 
 -- [[ CLIENT-SAFE PANEL SKIN ]]
--- NineSliceUtil ("TooltipDefaultDarkLayout") only exists on the modern retail/Forever
--- engine. Era and TBC Anniversary don't have it, and calling it unguarded throws and
--- aborts whatever init function called it (blanking the whole /sgj window). Try the
--- modern skin first, fall back to a plain Classic-safe tooltip backdrop otherwise.
+-- Flat theme panel on any BackdropTemplate frame. Without SetBackdrop, fall back
+-- to the modern NineSlice skin (retail/Forever only: Era and TBC Anniversary lack
+-- NineSliceUtil, and an unguarded call blanks the whole /sgj window).
 function MSC.ApplyPanelSkin(frame)
-    if NineSliceUtil and NineSliceUtil.ApplyLayoutByName then
-        local ok = pcall(NineSliceUtil.ApplyLayoutByName, frame, "TooltipDefaultDarkLayout")
-        if ok then return end
-    end
     if frame.SetBackdrop then
-        frame:SetBackdrop({
-            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-            tile = true, tileSize = 16, edgeSize = 16,
-            insets = { left = 4, right = 4, top = 4, bottom = 4 }
-        })
-        frame:SetBackdropColor(0, 0, 0, 0.85)
-        frame:SetBackdropBorderColor(1, 1, 1, 0.6)
+        frame:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
+        frame:SetBackdropColor(unpack(MSC.Theme.Panel))
+        frame:SetBackdropBorderColor(unpack(MSC.Theme.Edge))
+    elseif NineSliceUtil and NineSliceUtil.ApplyLayoutByName then
+        pcall(NineSliceUtil.ApplyLayoutByName, frame, "TooltipDefaultDarkLayout")
     end
 end
 
@@ -356,7 +395,7 @@ function MSC.InitLabView(parent)
     -- ==========================================
     local innerW = LAB_LEFT_W - 28
     local title = L:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    title:SetPoint("TOPLEFT", 14, -12); title:SetText(MSC.L["Weapon Thunderdome"])
+    title:SetPoint("TOPLEFT", 14, -12); title:SetText(MSC.L["Weapon Thunderdome"]); MSC.StyleHeading(title, "Gold", innerW)
 
     local profLbl = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     profLbl:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -14); profLbl:SetText(MSC.L["Scoring Profile"]); profLbl:SetTextColor(0.6, 0.6, 0.6)
@@ -364,9 +403,9 @@ function MSC.InitLabView(parent)
     f.Profile:SetPoint("TOPLEFT", profLbl, "BOTTOMLEFT", 0, -3); f.Profile:SetWidth(innerW); f.Profile:SetJustifyH("LEFT")
 
     local howLbl = L:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    howLbl:SetPoint("TOPLEFT", f.Profile, "BOTTOMLEFT", 0, -20); howLbl:SetText(MSC.L["How to Use"])
+    howLbl:SetPoint("TOPLEFT", f.Profile, "BOTTOMLEFT", 0, -20); howLbl:SetText(MSC.L["How to Use"]); MSC.StyleHeading(howLbl, "Teal", innerW)
     local help = L:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    help:SetPoint("TOPLEFT", howLbl, "BOTTOMLEFT", 0, -6); help:SetWidth(innerW); help:SetJustifyH("LEFT")
+    help:SetPoint("TOPLEFT", howLbl, "BOTTOMLEFT", 0, -11); help:SetWidth(innerW); help:SetJustifyH("LEFT")
     help:SetText(MSC.L["Drag (Shift/Ctrl+Click) items to compare. 6 Sets Enter, 1 Set Wins!"]); help:SetTextColor(0.75, 0.75, 0.75)
     local help2 = L:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     help2:SetPoint("TOPLEFT", help, "BOTTOMLEFT", 0, -8); help2:SetWidth(innerW); help2:SetJustifyH("LEFT")
@@ -395,7 +434,7 @@ function MSC.InitLabView(parent)
 
     for i, setName in ipairs({ MSC.L["Set 1"], MSC.L["Set 2"] }) do
         local h = C:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        h:SetPoint("TOPLEFT", GAP + (i - 1) * (blockW + GAP), -12); h:SetText(setName)
+        h:SetPoint("TOPLEFT", GAP + (i - 1) * (blockW + GAP), -12); h:SetText(setName); MSC.StyleHeading(h, "Gold", blockW)
     end
 
     local function CreateBlock(id, title, numSlots, col, row)
@@ -406,7 +445,7 @@ function MSC.InitLabView(parent)
 
         -- Title on its own line; the score sits beside the slots so the two never overlap
         frame.Title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal"); frame.Title:SetPoint("TOPLEFT", 10, -9)
-        frame.Title:SetPoint("RIGHT", -10, 0); frame.Title:SetJustifyH("LEFT"); frame.Title:SetWordWrap(false); frame.Title:SetText(title)
+        frame.Title:SetPoint("RIGHT", -10, 0); frame.Title:SetJustifyH("LEFT"); frame.Title:SetWordWrap(false); frame.Title:SetText(title); frame.Title:SetTextColor(unpack(MSC.Theme.Text))
         frame.Score = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); frame.Score:SetPoint("BOTTOMRIGHT", -12, 14); frame.Score:SetText("")
 
         frame.Slots = {}
@@ -454,9 +493,9 @@ function MSC.InitLabView(parent)
     -- RIGHT: RESULT AND RANKING
     -- ==========================================
     local resLbl = R:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    resLbl:SetPoint("TOPLEFT", 14, -12); resLbl:SetText(MSC.L["Result"])
+    resLbl:SetPoint("TOPLEFT", 14, -12); resLbl:SetText(MSC.L["Result"]); MSC.StyleHeading(resLbl, "Green", LAB_RIGHT_W - 28)
 
-    f.ResultText = R:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("TOPLEFT", resLbl, "BOTTOMLEFT", 0, -10)
+    f.ResultText = R:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.ResultText:SetPoint("TOPLEFT", resLbl, "BOTTOMLEFT", 0, -14)
     f.ResultText:SetWidth(LAB_RIGHT_W - 28); f.ResultText:SetJustifyH("LEFT"); f.ResultText:SetText(MSC.L["Waiting for Items..."])
     f.ResultTextAnim = f.ResultText:CreateAnimationGroup()
     local scale = f.ResultTextAnim:CreateAnimation("Scale")
@@ -467,15 +506,15 @@ function MSC.InitLabView(parent)
     alpha:SetFromAlpha(0); alpha:SetToAlpha(1); alpha:SetDuration(0.2); alpha:SetOrder(1)
 
     local rankLbl = R:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    rankLbl:SetPoint("TOPLEFT", 14, -110); rankLbl:SetText(MSC.L["Ranking"])
+    rankLbl:SetPoint("TOPLEFT", 14, -110); rankLbl:SetText(MSC.L["Ranking"]); MSC.StyleHeading(rankLbl, "Blue", LAB_RIGHT_W - 28)
     f.NoRank = R:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.NoRank:SetPoint("TOPLEFT", rankLbl, "BOTTOMLEFT", 0, -8); f.NoRank:SetText(MSC.L["Add weapons to a setup to rank it."]); f.NoRank:SetTextColor(0.6, 0.6, 0.6)
+    f.NoRank:SetPoint("TOPLEFT", rankLbl, "BOTTOMLEFT", 0, -12); f.NoRank:SetText(MSC.L["Add weapons to a setup to rank it."]); f.NoRank:SetTextColor(0.6, 0.6, 0.6)
     f.NoRank:SetWidth(LAB_RIGHT_W - 28); f.NoRank:SetJustifyH("LEFT")
 
     f.RankRows = {}
     for i = 1, 6 do
         local row = CreateFrame("Frame", nil, R); row:SetSize(LAB_RIGHT_W - 28, 20)
-        row:SetPoint("TOPLEFT", rankLbl, "BOTTOMLEFT", 0, -8 - (i - 1) * 22)
+        row:SetPoint("TOPLEFT", rankLbl, "BOTTOMLEFT", 0, -12 - (i - 1) * 22)
         local line = row:CreateTexture(nil, "BACKGROUND"); line:SetColorTexture(1, 1, 1, 0.05); line:SetHeight(1)
         line:SetPoint("BOTTOMLEFT"); line:SetPoint("BOTTOMRIGHT")
         row.Score = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); row.Score:SetPoint("RIGHT")
@@ -654,7 +693,7 @@ function MSC.InitReceiptView(parent)
     local innerW = RECEIPT_LEFT_W - 28
 
     local header = L:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    header:SetPoint("TOPLEFT", 14, -12); header:SetText(MSC.L["Your Gear"])
+    header:SetPoint("TOPLEFT", 14, -12); header:SetText(MSC.L["Your Gear"]); MSC.StyleHeading(header, "Gold", innerW)
 
     local profLbl = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     profLbl:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -14); profLbl:SetText(MSC.L["Profile"]); profLbl:SetTextColor(0.6, 0.6, 0.6)
@@ -668,11 +707,11 @@ function MSC.InitReceiptView(parent)
     f.Score:SetFont("Fonts\\FRIZQT__.TTF", 26, "OUTLINE"); f.Score:SetTextColor(0, 1, 0)
 
     local alertHdr = L:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    alertHdr:SetPoint("TOPLEFT", f.Score, "BOTTOMLEFT", 0, -22); alertHdr:SetText(MSC.L["Alerts"])
+    alertHdr:SetPoint("TOPLEFT", f.Score, "BOTTOMLEFT", 0, -22); alertHdr:SetText(MSC.L["Alerts"]); MSC.StyleHeading(alertHdr, "Red", innerW)
 
     local function AlertLine(anchor, icon, kind)
         local b = CreateFrame("Button", nil, L)
-        b:SetSize(innerW, 18); b:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -6)
+        b:SetSize(innerW, 18); b:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, anchor == alertHdr and -11 or -6)
         b.Icon = b:CreateTexture(nil, "ARTWORK"); b.Icon:SetSize(16, 16); b.Icon:SetPoint("LEFT"); b.Icon:SetTexture(icon)
         b.Text = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); b.Text:SetPoint("LEFT", b.Icon, "RIGHT", 4, 0); b.Text:SetTextColor(1, 0.65, 0.2)
         b:SetScript("OnClick", function() FlashReceiptSlots(kind) end)
@@ -684,7 +723,7 @@ function MSC.InitReceiptView(parent)
     f.UpgradeAlert = AlertLine(f.EnchantAlert, "Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew", "Upgrade")
 
     f.NoAlerts = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.NoAlerts:SetPoint("TOPLEFT", alertHdr, "BOTTOMLEFT", 0, -8); f.NoAlerts:SetText(MSC.L["No alerts"]); f.NoAlerts:SetTextColor(0.6, 0.6, 0.6)
+    f.NoAlerts:SetPoint("TOPLEFT", alertHdr, "BOTTOMLEFT", 0, -11); f.NoAlerts:SetText(MSC.L["No alerts"]); f.NoAlerts:SetTextColor(0.6, 0.6, 0.6)
 
     f.AlertHint = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     f.AlertHint:SetPoint("TOPLEFT", f.UpgradeAlert, "BOTTOMLEFT", 0, -8); f.AlertHint:SetWidth(innerW); f.AlertHint:SetJustifyH("LEFT")
@@ -712,7 +751,7 @@ function MSC.InitReceiptView(parent)
     end)
 
     local title = C:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    title:SetPoint("TOP", 0, -12); title:SetText(MSC.L["Equipped"])
+    title:SetPoint("TOP", 0, -12); title:SetText(MSC.L["Equipped"]); MSC.StyleHeading(title, "Gold")
 
     local hint = C:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     hint:SetPoint("BOTTOM", 0, 10); hint:SetText(MSC.L["Click a slot for its score breakdown"]); hint:SetTextColor(0.5, 0.5, 0.5)
@@ -774,9 +813,9 @@ function MSC.InitReceiptView(parent)
     -- ==========================================
     local R = f.RightCol
     local statHdr = R:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    statHdr:SetPoint("TOPLEFT", 14, -12); statHdr:SetText(MSC.L["Stat Totals"])
+    statHdr:SetPoint("TOPLEFT", 14, -12); statHdr:SetText(MSC.L["Stat Totals"]); MSC.StyleHeading(statHdr, "Blue", RECEIPT_RIGHT_W - 28)
     local statSub = R:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    statSub:SetPoint("TOPLEFT", statHdr, "BOTTOMLEFT", 0, -3); statSub:SetText(MSC.L["Weighted stats from all your gear"]); statSub:SetTextColor(0.6, 0.6, 0.6)
+    statSub:SetPoint("TOPLEFT", statHdr, "BOTTOMLEFT", 0, -9); statSub:SetText(MSC.L["Weighted stats from all your gear"]); statSub:SetTextColor(0.6, 0.6, 0.6)
 
     MSC.SummaryRows = {}
     local rowW = RECEIPT_RIGHT_W - 28
@@ -785,9 +824,9 @@ function MSC.InitReceiptView(parent)
         row:SetPoint("TOPLEFT", statSub, "BOTTOMLEFT", 0, -10 - (i - 1) * 20)
         local line = row:CreateTexture(nil, "BACKGROUND"); line:SetColorTexture(1, 1, 1, 0.05); line:SetHeight(1)
         line:SetPoint("BOTTOMLEFT"); line:SetPoint("BOTTOMRIGHT")
-        row.Value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); row.Value:SetPoint("RIGHT", 0, 0); row.Value:SetJustifyH("RIGHT")
+        row.Value = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); row.Value:SetPoint("RIGHT", 0, 0); row.Value:SetJustifyH("RIGHT"); row.Value:SetTextColor(unpack(MSC.Theme.Value))
         row.Label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); row.Label:SetPoint("LEFT", 0, 0)
-        row.Label:SetPoint("RIGHT", row.Value, "LEFT", -6, 0); row.Label:SetJustifyH("LEFT"); row.Label:SetWordWrap(false)
+        row.Label:SetPoint("RIGHT", row.Value, "LEFT", -6, 0); row.Label:SetJustifyH("LEFT"); row.Label:SetWordWrap(false); row.Label:SetTextColor(unpack(MSC.Theme.Text))
         table_insert(MSC.SummaryRows, row)
     end
 
@@ -2590,19 +2629,19 @@ function MSC.InitLogicView(parent)
     f.LeftCol = L
 
     local profLbl = L:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    profLbl:SetPoint("TOPLEFT", 14, -12); profLbl:SetText(MSC.L["Scoring Profile"])
+    profLbl:SetPoint("TOPLEFT", 14, -12); profLbl:SetText(MSC.L["Scoring Profile"]); MSC.StyleHeading(profLbl, "Gold", LOGIC_LEFT_W - 28)
     f.ProfileName = L:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
-    f.ProfileName:SetPoint("TOPLEFT", profLbl, "BOTTOMLEFT", 0, -6); f.ProfileName:SetWidth(LOGIC_LEFT_W - 28); f.ProfileName:SetJustifyH("LEFT")
+    f.ProfileName:SetPoint("TOPLEFT", profLbl, "BOTTOMLEFT", 0, -11); f.ProfileName:SetWidth(LOGIC_LEFT_W - 28); f.ProfileName:SetJustifyH("LEFT")
     f.ProfileNote = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     f.ProfileNote:SetPoint("TOPLEFT", f.ProfileName, "BOTTOMLEFT", 0, -4); f.ProfileNote:SetWidth(LOGIC_LEFT_W - 28); f.ProfileNote:SetJustifyH("LEFT")
     f.ProfileNote:SetTextColor(1, 0.6, 0.2)
 
     local capLbl = L:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    capLbl:SetPoint("TOPLEFT", 14, -110); capLbl:SetText(MSC.L["Caps and Key Stats"])
+    capLbl:SetPoint("TOPLEFT", 14, -110); capLbl:SetText(MSC.L["Caps and Key Stats"]); MSC.StyleHeading(capLbl, "Teal", LOGIC_LEFT_W - 28)
     f.RingArea = CreateFrame("Frame", nil, L)
-    f.RingArea:SetPoint("TOPLEFT", capLbl, "BOTTOMLEFT", -14, -10); f.RingArea:SetSize(LOGIC_LEFT_W, 260)
+    f.RingArea:SetPoint("TOPLEFT", capLbl, "BOTTOMLEFT", -14, -14); f.RingArea:SetSize(LOGIC_LEFT_W, 260)
     f.NoRings = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.NoRings:SetPoint("TOPLEFT", capLbl, "BOTTOMLEFT", 0, -8); f.NoRings:SetWidth(LOGIC_LEFT_W - 28); f.NoRings:SetJustifyH("LEFT")
+    f.NoRings:SetPoint("TOPLEFT", capLbl, "BOTTOMLEFT", 0, -12); f.NoRings:SetWidth(LOGIC_LEFT_W - 28); f.NoRings:SetJustifyH("LEFT")
     f.NoRings:SetText(MSC.L["No caps to track for this profile."]); f.NoRings:SetTextColor(0.6, 0.6, 0.6); f.NoRings:Hide()
 
     local hint = L:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
@@ -2613,7 +2652,7 @@ function MSC.InitLogicView(parent)
     -- RIGHT: STAT WEIGHTS
     -- ==========================================
     local wLbl = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    wLbl:SetPoint("TOPLEFT", L, "TOPRIGHT", 16, -12); wLbl:SetText(MSC.L["Stat Weights"])
+    wLbl:SetPoint("TOPLEFT", L, "TOPRIGHT", 16, -12); wLbl:SetText(MSC.L["Stat Weights"]); MSC.StyleHeading(wLbl, "Purple", 830 - LOGIC_LEFT_W - 46)
     local wSub = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     wSub:SetPoint("LEFT", wLbl, "RIGHT", 10, 0); wSub:SetText(MSC.L["Score per point of each stat, highest first"]); wSub:SetTextColor(0.6, 0.6, 0.6)
 
@@ -2745,13 +2784,15 @@ function MSC.UpdateLogic()
     table_sort(sorted, function(a,b) return a.v > b.v end)
 
     for _, s in ipairs(sorted) do
-        local bar = MSC.GetFromPool("Bars", content, function(p)
-             local b = CreateFrame("StatusBar", nil, p, "BackdropTemplate")
-             b:SetSize(450, 32)
-             b:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8X8"})
-             b:SetBackdropColor(0, 0, 0, 0.5)
-             b:SetStatusBarTexture("Interface\\RaidFrame\\Raid-Bar-Hp-Fill")
+        local bar = MSC.GetFromPool("WeightRows", content, function(p)
+             -- Stat name left, weight right, the reason under the name, a thin bar along the bottom
+             local b = CreateFrame("Frame", nil, p)
              b:EnableMouse(true)
+             b.Hover = b:CreateTexture(nil, "BACKGROUND"); b.Hover:SetAllPoints(); b.Hover:SetColorTexture(1, 1, 1, 0.04); b.Hover:Hide()
+             b.Track = b:CreateTexture(nil, "BORDER"); b.Track:SetColorTexture(1, 1, 1, 0.06); b.Track:SetHeight(3)
+             b.Track:SetPoint("BOTTOMLEFT", 4, 2); b.Track:SetPoint("BOTTOMRIGHT", -4, 2)
+             b.Fill = CreateFrame("StatusBar", nil, b); b.Fill:SetAllPoints(b.Track)
+             b.Fill:SetStatusBarTexture("Interface\\Buttons\\WHITE8X8")
              b:SetScript("OnEnter", function(self)
                  GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                  GameTooltip:SetText(self.StatName, 1, 1, 1)
@@ -2777,12 +2818,12 @@ function MSC.UpdateLogic()
                     GameTooltip:AddLine(self.Reason, 0.6, 0.6, 0.6, true) 
                  end
                  GameTooltip:Show()
-                 self:SetAlpha(1)
+                 self.Hover:Show()
              end)
-             b:SetScript("OnLeave", function(self) GameTooltip:Hide(); self:SetAlpha(0.8) end)
-             b.leftT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.leftT:SetPoint("TOPLEFT", 10, -4)
-             b.rightT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.rightT:SetPoint("TOPRIGHT", -10, -4)
-             b.sub = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); b.sub:SetPoint("BOTTOMLEFT", 10, 3)
+             b:SetScript("OnLeave", function(self) GameTooltip:Hide(); self.Hover:Hide() end)
+             b.leftT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.leftT:SetPoint("TOPLEFT", 4, -3)
+             b.rightT = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); b.rightT:SetPoint("TOPRIGHT", -4, -3)
+             b.sub = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); b.sub:SetPoint("TOPLEFT", b.leftT, "BOTTOMLEFT", 0, -2)
              return b
         end)
         
@@ -2793,9 +2834,9 @@ function MSC.UpdateLogic()
 
         bar.StatName = name; bar.Weight = s.v; bar.Reason = reason; bar.CurrentVal = currentVal
 
-        bar:ClearAllPoints(); bar:SetPoint("TOPLEFT", 0, yOff); bar:SetSize(barW, 34)
-        bar.sub:SetWidth(barW - 20); bar.sub:SetJustifyH("LEFT"); bar.sub:SetWordWrap(false)
-        bar:SetMinMaxValues(0, maxW); bar:SetValue(s.v); bar:SetAlpha(0.9)
+        bar:ClearAllPoints(); bar:SetPoint("TOPLEFT", 0, yOff); bar:SetSize(barW, 36)
+        bar.sub:SetWidth(barW - 8); bar.sub:SetJustifyH("LEFT"); bar.sub:SetWordWrap(false)
+        bar.Fill:SetMinMaxValues(0, maxW); bar.Fill:SetValue(s.v)
         
         local statKey = s.k:upper()
         local r, g, b = 0.5, 0.5, 0.5 
@@ -2810,10 +2851,11 @@ function MSC.UpdateLogic()
                 end
             end
         end
-        bar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(r*0.4, g*0.4, b*0.4, 1), CreateColor(r, g, b, 1))
+        bar.Fill:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColor(r*0.4, g*0.4, b*0.4, 1), CreateColor(r, g, b, 1))
         bar.leftT:SetText(name:gsub("Rating", "")); bar.rightT:SetText(string_format("%.2f", s.v))
-        if reason then bar.sub:SetText(reason); bar.sub:SetTextColor(r+0.2, g+0.2, b+0.2, 0.8); bar.sub:Show() else bar.sub:Hide() end
-        yOff = yOff - 38
+        bar.rightT:SetTextColor(math_min(1, r + 0.3), math_min(1, g + 0.3), math_min(1, b + 0.3))
+        if reason then bar.sub:SetText(reason); bar.sub:SetTextColor(unpack(MSC.Theme.Muted)); bar.sub:Show() else bar.sub:Hide() end
+        yOff = yOff - 40
         table_insert(content.children, bar)
     end
     content:SetHeight(math_abs(yOff) + 50)
@@ -2842,9 +2884,9 @@ function MSC.InitSettingsView(parent)
     navLine:SetPoint("TOPRIGHT"); navLine:SetPoint("BOTTOMRIGHT")
 
     local navTitle = nav:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    navTitle:SetPoint("TOPLEFT", 14, -12); navTitle:SetText(MSC.L["Protocol"])
+    navTitle:SetPoint("TOPLEFT", 14, -12); navTitle:SetText(MSC.L["Protocol"]); MSC.StyleHeading(navTitle, "Gold", SETTINGS_NAV_W - 28)
     local navSub = nav:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    navSub:SetPoint("TOPLEFT", navTitle, "BOTTOMLEFT", 0, -3); navSub:SetText(MSC.L["Jump to a section"]); navSub:SetTextColor(0.6, 0.6, 0.6)
+    navSub:SetPoint("TOPLEFT", navTitle, "BOTTOMLEFT", 0, -9); navSub:SetText(MSC.L["Jump to a section"]); navSub:SetTextColor(0.6, 0.6, 0.6)
 
     -- [[ ACTION BUTTONS (pinned to the bottom of the list) ]]
     local bExport = CreateFrame("Button", nil, nav, "UIPanelButtonTemplate")
@@ -2873,15 +2915,19 @@ function MSC.InitSettingsView(parent)
         local c = CreateFrame("Frame", nil, sChild)
         c:SetWidth(width or SETTINGS_COL_W); c:SetHeight(60)
         local edge = c:CreateTexture(nil, "BACKGROUND", nil, -1); edge:SetAllPoints(); edge:SetColorTexture(1, 1, 1, 0.08)
-        local fill = c:CreateTexture(nil, "BACKGROUND"); fill:SetPoint("TOPLEFT", 1, -1); fill:SetPoint("BOTTOMRIGHT", -1, 1); fill:SetColorTexture(0.04, 0.04, 0.06, 0.9)
+        local fill = c:CreateTexture(nil, "BACKGROUND"); fill:SetPoint("TOPLEFT", 1, -1); fill:SetPoint("BOTTOMRIGHT", -1, 1); fill:SetColorTexture(unpack(MSC.Theme.Panel))
         table_insert(cards, c); curCard = c
         return c
     end
 
     -- [[ UI HELPERS (parented to the current card) ]]
+    -- Each card's title gets its own colour (in card order); the section list uses it too.
+    local SECTION_COLORS = { "Gold", "Purple", "Blue", "Green", "Red", "Teal" }
     local function CreateHeader(text, tooltip)
-        local h = curCard:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); h:SetText(text); h:SetTextColor(1, 0.82, 0)
+        local h = curCard:CreateFontString(nil, "OVERLAY", "GameFontNormal"); h:SetText(text)
         h:SetPoint("TOPLEFT", SETTINGS_PAD, -SETTINGS_PAD)
+        curCard.Color = SECTION_COLORS[(#cards - 1) % #SECTION_COLORS + 1]
+        MSC.StyleHeading(h, curCard.Color, curCard:GetWidth() - SETTINGS_PAD * 2)
         if tooltip then
             local hitRect = CreateFrame("Frame", nil, curCard)
             hitRect:SetPoint("TOPLEFT", h, "TOPLEFT", -10, 10); hitRect:SetPoint("BOTTOMRIGHT", h, "BOTTOMRIGHT", 50, -10)
@@ -3260,14 +3306,18 @@ function MSC.InitSettingsView(parent)
     local function HighlightNav(active)
         for _, b in ipairs(navButtons) do
             local on = (b.Card == active)
-            b.Sel:SetShown(on); b.Text:SetTextColor(on and 1 or 0.8, on and 0.82 or 0.8, on and 0 or 0.8)
+            local c = MSC.Theme.Section[b.Card.Color or "Gold"] or MSC.Theme.Section.Gold
+            local k = on and 1 or 0.7
+            b.Sel:SetShown(on); b.Bar:SetShown(on); b.Text:SetTextColor(c[1] * k, c[2] * k, c[3] * k)
         end
     end
     local prev = navSub
     for i, c in ipairs(navOrder) do
         local b = CreateFrame("Button", nil, nav)
         b:SetSize(SETTINGS_NAV_W - 20, 24); b:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", (i == 1) and -4 or 0, (i == 1) and -12 or -2)
-        b.Sel = b:CreateTexture(nil, "BACKGROUND"); b.Sel:SetAllPoints(); b.Sel:SetColorTexture(1, 0.82, 0, 0.12); b.Sel:Hide()
+        b.Sel = b:CreateTexture(nil, "BACKGROUND"); b.Sel:SetAllPoints(); b.Sel:SetColorTexture(1, 1, 1, 0.06); b.Sel:Hide()
+        b.Bar = b:CreateTexture(nil, "ARTWORK"); b.Bar:SetColorTexture(unpack(MSC.Theme.Accent)); b.Bar:SetWidth(2)
+        b.Bar:SetPoint("TOPLEFT"); b.Bar:SetPoint("BOTTOMLEFT"); b.Bar:Hide()
         b.Hover = b:CreateTexture(nil, "HIGHLIGHT"); b.Hover:SetAllPoints(); b.Hover:SetColorTexture(1, 1, 1, 0.05)
         b.Text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); b.Text:SetPoint("LEFT", 8, 0); b.Text:SetPoint("RIGHT", -4, 0); b.Text:SetJustifyH("LEFT"); b.Text:SetWordWrap(false)
         b.Text:SetText(c.Title)
@@ -3304,71 +3354,124 @@ function MSC.RegisterPluginTab(name, icon, initFunc, viewKey, updateFuncKey)
     return newID
 end
 
-function MSC.RenderSidebarButtons()
-    if not MSC.MainFrame then return end
-    if MSC.NavButtons then for _, btn in ipairs(MSC.NavButtons) do btn:Hide() end end
-    MSC.NavButtons = {}
+-- Main window: title row, a flat text tab row with an accent underline on the
+-- open tab, the 830x640 content area (every view is laid out for that size) and
+-- a footer with the profile and total score.
+local MAIN_PAD, MAIN_TITLE_H, MAIN_TABS_H, MAIN_FOOTER_H = 12, 46, 26, 28
+local MAIN_CONTENT_W, MAIN_CONTENT_H = 830, 640
 
-    for idx, tab in ipairs(MSC.RegisteredTabs) do
-        local btn = CreateFrame("Button", nil, MSC.MainFrame.Sidebar)
-        btn:SetSize(50, 50); btn:SetPoint("TOP", 0, -20 - ((idx-1)*65))
-        btn.Bg = btn:CreateTexture(nil, "BACKGROUND"); btn.Bg:SetAllPoints(); btn.Bg:SetColorTexture(1, 1, 1, 0.05); btn.Bg:SetAlpha(0)
-        btn.Icon = btn:CreateTexture(nil, "ARTWORK"); btn.Icon:SetSize(32, 32); btn.Icon:SetPoint("CENTER"); btn.Icon:SetTexture(tab.icon); btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6)
-        btn.SelectBar = btn:CreateTexture(nil, "OVERLAY"); btn.SelectBar:SetColorTexture(0, 0.8, 1, 1); btn.SelectBar:SetSize(4, 50); btn.SelectBar:SetPoint("LEFT", 0, 0); btn.SelectBar:Hide()
-        btn:SetScript("OnEnter", function(self) self.Icon:SetVertexColor(1,1,1); self.Bg:SetAlpha(0.1); GameTooltip:SetOwner(self, "ANCHOR_RIGHT"); GameTooltip:SetText(tab.name); GameTooltip:Show() end)
-        btn:SetScript("OnLeave", function(self) self.Bg:SetAlpha(0); if self.ID ~= MSC.ActiveTab then self.Icon:SetVertexColor(0.6, 0.6, 0.6) end GameTooltip:Hide() end)
-        btn:SetScript("OnClick", function(self) MSC.SwitchTab(self.ID) end)
-        btn.ID = idx; table_insert(MSC.NavButtons, btn)
+-- Tab buttons are reused when a plugin registers its tab after the window exists.
+function MSC.RenderSidebarButtons()
+    local f = MSC.MainFrame
+    if not f then return end
+    MSC.NavButtons = MSC.NavButtons or {}
+    local T = MSC.Theme
+
+    -- Smaller text and padding when every tab name won't fit on one row
+    local function Measure(font, pad)
+        local total = 0
+        for idx, tab in ipairs(MSC.RegisteredTabs) do
+            local btn = MSC.NavButtons[idx]
+            if not btn then
+                btn = CreateFrame("Button", nil, f.TabBar)
+                btn.Text = btn:CreateFontString(nil, "OVERLAY")
+                btn.Text:SetPoint("CENTER", 0, 1)
+                btn.Line = btn:CreateTexture(nil, "OVERLAY"); btn.Line:SetColorTexture(unpack(T.Accent)); btn.Line:SetHeight(2)
+                btn.Line:SetPoint("BOTTOMLEFT", 6, 0); btn.Line:SetPoint("BOTTOMRIGHT", -6, 0); btn.Line:Hide()
+                btn:SetScript("OnEnter", function(self) if self.ID ~= MSC.ActiveTab then self.Text:SetTextColor(1, 1, 1) end end)
+                btn:SetScript("OnLeave", function(self) if self.ID ~= MSC.ActiveTab then self.Text:SetTextColor(0.65, 0.65, 0.68) end end)
+                btn:SetScript("OnClick", function(self) MSC.SwitchTab(self.ID) end)
+                MSC.NavButtons[idx] = btn
+            end
+            btn.ID = idx
+            btn.Text:SetFontObject(font); btn.Text:SetText(tab.name or "")
+            btn:SetSize(btn.Text:GetStringWidth() + pad, MAIN_TABS_H)
+            total = total + btn:GetWidth()
+        end
+        return total
+    end
+    if Measure("GameFontHighlight", 24) > MAIN_CONTENT_W then Measure("GameFontHighlightSmall", 14) end
+
+    local prev
+    for idx = 1, #MSC.NavButtons do
+        local btn = MSC.NavButtons[idx]
+        if MSC.RegisteredTabs[idx] then
+            btn:ClearAllPoints()
+            if prev then btn:SetPoint("BOTTOMLEFT", prev, "BOTTOMRIGHT", 0, 0) else btn:SetPoint("BOTTOMLEFT", f.TabBar, "BOTTOMLEFT", 0, 0) end
+            btn:Show(); prev = btn
+        else
+            btn:Hide()
+        end
     end
     if MSC.ActiveTab then MSC.SwitchTab(MSC.ActiveTab) end
 end
 
+-- Footer: the profile in use and the total score of what you're wearing.
+function MSC.UpdateMainFooter()
+    local f = MSC.MainFrame
+    if not (f and f.FooterProfile and f:IsShown() and MSC.GetCurrentWeights) then return end
+    local ok, weights, key = pcall(MSC.GetCurrentWeights)
+    if not (ok and weights) then f.FooterProfile:SetText(""); f.FooterScore:SetText(""); return end
+    local name = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[key]) or key or ""
+    f.FooterProfile:SetText(name)
+    local gear = {}
+    for i = 1, 18 do gear[i] = GetInventoryItemLink("player", i) end
+    local okScore, score = pcall(MSC.GetTotalCharacterScore, MSC, gear, weights, key)
+    f.FooterScore:SetText((okScore and type(score) == "number") and string.format("%.1f", score) or "")
+end
+
 function MSC.ToggleMainMenu()
-    if MSC.MainFrame then 
-        if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end 
-        return 
+    if MSC.MainFrame then
+        if MSC.MainFrame:IsShown() then MSC.MainFrame:Hide() else MSC.MainFrame:Show() end
+        return
     end
+    local T = MSC.Theme
 
     local f = CreateFrame("Frame", "SGJ_MainFrame", UIParent, "BackdropTemplate")
-    f:SetSize(900, 700); f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
-    
-    f:SetScript("OnHide", function() 
-        if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end 
+    f:SetSize(MAIN_CONTENT_W + MAIN_PAD * 2, MAIN_TITLE_H + MAIN_TABS_H + MAIN_CONTENT_H + MAIN_FOOTER_H + 4)
+    f:SetPoint("CENTER"); f:SetMovable(true); f:EnableMouse(true); f:RegisterForDrag("LeftButton")
+
+    f:SetScript("OnHide", function()
+        if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end
     end)
-    
+    f:SetScript("OnShow", function() MSC.UpdateMainFooter() end)
+
     f:SetScript("OnDragStart", f.StartMoving); f:SetScript("OnDragStop", f.StopMovingOrSizing); f:SetFrameStrata("HIGH")
     MSC.CreateModernBorder(f, 1)
-    
-    f.Header = CreateFrame("Frame", nil, f); f.Header:SetPoint("TOPLEFT", 70, 0); f.Header:SetPoint("TOPRIGHT", 0, 0); f.Header:SetHeight(60); f.Header:EnableMouse(true)
-    f.Header:SetScript("OnMouseWheel", function(self, delta) 
-        local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end
-        if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur) 
-    end)
+    f.border:SetBackdropBorderColor(unpack(T.Edge))
 
+    -- Class art faintly behind a dark see-through fill, an accent stripe along the top
     f.Bg = f:CreateTexture(nil, "BACKGROUND", nil, -8)
     local _, class = UnitClass("player")
     local fixedClass = class:sub(1,1):upper() .. class:sub(2):lower()
-    local texPath = "Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga"
-    f.Bg:SetTexture(texPath)
-    f.Bg:SetPoint("CENTER", f, "CENTER", 0, 0)
-    f.Bg:SetSize(640, 640)
-    f.Bg:SetAlpha(0.7)
-    f.Bg:SetTexCoord(0, 1, 0, 1) 
-    
+    f.Bg:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. fixedClass .. ".tga")
+    f.Bg:SetPoint("CENTER", f, "CENTER", 0, 0); f.Bg:SetSize(640, 640); f.Bg:SetAlpha(0.7)
     f.Overlay = f:CreateTexture(nil, "BACKGROUND", nil, -7)
-    f.Overlay:SetAllPoints()
-    f.Overlay:SetColorTexture(0.05, 0.05, 0.07, 0.98)
+    f.Overlay:SetAllPoints(); f.Overlay:SetColorTexture(unpack(T.Window))
+    f.Stripe = f:CreateTexture(nil, "ARTWORK")
+    f.Stripe:SetColorTexture(unpack(T.Accent)); f.Stripe:SetHeight(2)
+    f.Stripe:SetPoint("TOPLEFT"); f.Stripe:SetPoint("TOPRIGHT")
 
-    f.Header.Grad = f.Header:CreateTexture(nil, "BACKGROUND")
-    f.Header.Grad:SetAllPoints()
-    f.Header.Grad:SetColorTexture(0, 0, 0, 0.5)
-    f.Header.Grad:SetGradient("VERTICAL", CreateColor(0,0,0,0), CreateColor(0,0,0,0.8))
+    -- Title row: name in the accent colour, version and open tab under it, PvP toggle and close on the right
+    f.Header = CreateFrame("Frame", nil, f); f.Header:SetPoint("TOPLEFT", 0, 0); f.Header:SetPoint("TOPRIGHT", 0, 0)
+    f.Header:SetHeight(MAIN_TITLE_H + MAIN_TABS_H); f.Header:EnableMouse(true); f.Header:RegisterForDrag("LeftButton")
+    f.Header:SetScript("OnDragStart", function() f:StartMoving() end); f.Header:SetScript("OnDragStop", function() f:StopMovingOrSizing() end)
+    f.Header:SetScript("OnMouseWheel", function(self, delta)
+        local cur = f:GetScale(); if delta > 0 then cur = cur + 0.05 else cur = cur - 0.05 end
+        if cur < 0.6 then cur = 0.6 end; if cur > 1.4 then cur = 1.4 end; f:SetScale(cur)
+    end)
 
-    f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge"); f.Title:SetPoint("LEFT", 20, -5); f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(1, 1, 1); f.Title:SetShadowOffset(1, -1)
-    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.SubTitle:SetPoint("BOTTOMLEFT", f.Title, "BOTTOMRIGHT", 10, 2); f.SubTitle:SetText(string.format("v%s %s", MSC.Version, MSC.L["Laboratory"])); f.SubTitle:SetTextColor(MSC.GetClassColor())
-    f.Close = CreateFrame("Button", nil, f.Header, "UIPanelCloseButton"); f.Close:SetPoint("TOPRIGHT", -5, -5); f.Close:SetScript("OnClick", function() f:Hide() end)
-    f.ScaleHint = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.ScaleHint:SetPoint("RIGHT", f.Close, "LEFT", -5, 0); f.ScaleHint:SetText(MSC.L["Scroll to Scale"]); f.ScaleHint:SetTextColor(0.5, 0.5, 0.5)
+    f.Title = f.Header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge"); f.Title:SetPoint("TOPLEFT", MAIN_PAD + 4, -10)
+    f.Title:SetText("Sharpie's Gear Judge"); f.Title:SetTextColor(unpack(T.Accent))
+    f.SubTitle = f.Header:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); f.SubTitle:SetPoint("TOPLEFT", f.Title, "BOTTOMLEFT", 0, -3)
+    f.SubTitle:SetTextColor(unpack(T.Muted))
+
+    f.Close = CreateFrame("Button", nil, f.Header); f.Close:SetSize(24, 24); f.Close:SetPoint("TOPRIGHT", -MAIN_PAD + 2, -8)
+    f.Close.Text = f.Close:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge"); f.Close.Text:SetPoint("CENTER"); f.Close.Text:SetText("×")
+    f.Close.Text:SetTextColor(0.65, 0.65, 0.68)
+    f.Close:SetScript("OnEnter", function(self) self.Text:SetTextColor(unpack(T.Accent)) end)
+    f.Close:SetScript("OnLeave", function(self) self.Text:SetTextColor(0.65, 0.65, 0.68) end)
+    f.Close:SetScript("OnClick", function() f:Hide() end)
     -- Forever: Gear for PvP in the header, so open-world PvP players see it
     -- without opening the options (same setting as the options checkbox).
     if MSC.IsForever then
@@ -3376,7 +3479,7 @@ function MSC.ToggleMainMenu()
         pvp:SetSize(24, 24)
         local lbl = pvp:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         lbl:SetPoint("RIGHT", pvp, "LEFT", -2, 0); lbl:SetText(MSC.L["Gear for PvP"])
-        pvp:SetPoint("RIGHT", f.ScaleHint, "LEFT", -20, 0)
+        pvp:SetPoint("RIGHT", f.Close, "LEFT", -16, 0)
         local function Paint(on)
             pvp:SetChecked(on)
             if on then lbl:SetTextColor(1, 0.3, 0.3) else lbl:SetTextColor(0.7, 0.7, 0.7) end
@@ -3396,15 +3499,32 @@ function MSC.ToggleMainMenu()
         f.PvPToggle = pvp
     end
 
-    f.Sidebar = CreateFrame("Frame", nil, f); f.Sidebar:SetPoint("TOPLEFT", 0, 0); f.Sidebar:SetPoint("BOTTOMLEFT", 0, 0); f.Sidebar:SetWidth(70)
-    f.Sidebar.Bg = f.Sidebar:CreateTexture(nil, "BACKGROUND"); f.Sidebar.Bg:SetAllPoints(); f.Sidebar.Bg:SetColorTexture(unpack(MSC.Colors.BgSidebar))
-    f.Sidebar.Line = f.Sidebar:CreateTexture(nil, "OVERLAY"); f.Sidebar.Line:SetColorTexture(0, 0, 0, 1); f.Sidebar.Line:SetWidth(1); f.Sidebar.Line:SetPoint("TOPRIGHT", 0, 0); f.Sidebar.Line:SetPoint("BOTTOMRIGHT", 0, 0)
-    f.MoveHint = f.Sidebar:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    f.MoveHint:SetPoint("BOTTOM", 0, 15); f.MoveHint:SetText(MSC.L["Hold\nto Move"]); f.MoveHint:SetTextColor(0.3, 0.3, 0.3)
-    
-    f.Content = CreateFrame("Frame", nil, f); f.Content:SetPoint("TOPLEFT", f.Sidebar, "TOPRIGHT", 0, -60); f.Content:SetPoint("BOTTOMRIGHT", 0, 0)
+    -- Tab row with a hairline under it
+    f.TabBar = CreateFrame("Frame", nil, f.Header)
+    f.TabBar:SetPoint("BOTTOMLEFT", MAIN_PAD, 0); f.TabBar:SetPoint("BOTTOMRIGHT", -MAIN_PAD, 0); f.TabBar:SetHeight(MAIN_TABS_H)
+    f.TabBar.Line = f.TabBar:CreateTexture(nil, "BORDER"); f.TabBar.Line:SetColorTexture(unpack(T.Edge)); f.TabBar.Line:SetHeight(1)
+    f.TabBar.Line:SetPoint("BOTTOMLEFT"); f.TabBar.Line:SetPoint("BOTTOMRIGHT")
+
+    f.Content = CreateFrame("Frame", nil, f); f.Content:SetSize(MAIN_CONTENT_W, MAIN_CONTENT_H)
+    f.Content:SetPoint("TOPLEFT", f.Header, "BOTTOMLEFT", MAIN_PAD, -2)
+
+    -- Footer: move/scale hint on the left, profile and total score on the right
+    f.Footer = CreateFrame("Frame", nil, f)
+    f.Footer:SetPoint("BOTTOMLEFT", MAIN_PAD, 0); f.Footer:SetPoint("BOTTOMRIGHT", -MAIN_PAD, 0); f.Footer:SetHeight(MAIN_FOOTER_H)
+    f.Footer.Line = f.Footer:CreateTexture(nil, "BORDER"); f.Footer.Line:SetColorTexture(unpack(T.Edge)); f.Footer.Line:SetHeight(1)
+    f.Footer.Line:SetPoint("TOPLEFT"); f.Footer.Line:SetPoint("TOPRIGHT")
+    f.MoveHint = f.Footer:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"); f.MoveHint:SetPoint("LEFT", 4, 0)
+    f.MoveHint:SetText((MSC.L["Hold\nto Move"]:gsub("\n", " ")) .. "  ·  " .. MSC.L["Scroll to Scale"]); f.MoveHint:SetTextColor(0.4, 0.4, 0.42)
+    f.FooterScore = f.Footer:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.FooterScore:SetPoint("RIGHT", -4, 0)
+    f.FooterScore:SetTextColor(unpack(T.Value))
+    local scoreLbl = f.Footer:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); scoreLbl:SetPoint("RIGHT", f.FooterScore, "LEFT", -8, 0)
+    scoreLbl:SetText(MSC.L["Total Score"]); scoreLbl:SetTextColor(unpack(T.Text))
+    f.FooterProfile = f.Footer:CreateFontString(nil, "OVERLAY", "GameFontHighlight"); f.FooterProfile:SetPoint("RIGHT", scoreLbl, "LEFT", -24, 0)
+    f.FooterProfile:SetTextColor(unpack(T.Value))
+    local profLbl = f.Footer:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); profLbl:SetPoint("RIGHT", f.FooterProfile, "LEFT", -8, 0)
+    profLbl:SetText(MSC.L["Profile"]); profLbl:SetTextColor(unpack(T.Text))
     MSC.MainFrame = f
-    
+
     MSC.InitLabView(f.Content)
     MSC.InitReceiptView(f.Content)
     MSC.InitLogicView(f.Content)
@@ -3419,24 +3539,25 @@ function MSC.SwitchTab(id)
     if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end
     if MSC.NavButtons then
         for i, btn in ipairs(MSC.NavButtons) do
-            if i == id then btn.Icon:SetDesaturated(false); btn.Icon:SetVertexColor(1, 1, 1); btn.SelectBar:Show(); btn.Bg:SetAlpha(0.05)
-            else btn.Icon:SetDesaturated(true); btn.Icon:SetVertexColor(0.6, 0.6, 0.6); btn.SelectBar:Hide(); btn.Bg:SetAlpha(0.05) end
+            if i == id then btn.Text:SetTextColor(unpack(MSC.Theme.Accent)); btn.Line:Show()
+            else btn.Text:SetTextColor(0.65, 0.65, 0.68); btn.Line:Hide() end
         end
     end
     for _, tab in ipairs(MSC.RegisteredTabs) do if MSC[tab.view] then MSC[tab.view]:Hide() end end
     local tab = MSC.RegisteredTabs[id]
     -- The header shows the open tab's name next to the version.
     if tab and MSC.MainFrame and MSC.MainFrame.SubTitle then
-        MSC.MainFrame.SubTitle:SetText(string.format("v%s %s", MSC.Version or "", tab.name or ""))
+        MSC.MainFrame.SubTitle:SetText(string.format("v%s  ·  %s", MSC.Version or "", tab.name or ""))
     end
     if tab then
         local init = tab.directFunc or (tab.funcName and MSC[tab.funcName])
         if not MSC[tab.view] and init then init(MSC.MainFrame.Content) end
-        if MSC[tab.view] then 
+        if MSC[tab.view] then
             MSC[tab.view]:Show()
             if tab.update and MSC[tab.update] then MSC[tab.update]() end
         end
     end
+    MSC.UpdateMainFooter()
 end
 
 -- =============================================================
