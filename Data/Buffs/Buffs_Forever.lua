@@ -2,6 +2,7 @@ local _, MSC = ...
 
 -- Stat buffs for this game version, generated from the client's spell tables
 -- (WoW Forever 1.60.1.70291) by Research/buffs/scripts/gen_lua.py. Don't edit by hand.
+-- Aspect of the Hawk and Trueshot Aura carry the 2026-11-03 server hotfix (DBCache push 113534) by hand: re-apply after a regen.
 -- BuffAuras: aura spell id -> what it adds (MSC.GetUnbuffedStats takes it off the
 -- live stats). P = the field whose live value is read from the aura's points
 -- (one aura shared by foods of different strength). BuffList: the class, aura,
@@ -115,7 +116,7 @@ MSC.BuffAuras = {
     [14319] = { RAP = 50 }, -- Aspect of the Hawk (Rank 3)
     [14320] = { RAP = 70 }, -- Aspect of the Hawk (Rank 4)
     [14321] = { RAP = 90 }, -- Aspect of the Hawk (Rank 5)
-    [14322] = { RAP = 55 }, -- Aspect of the Hawk (Rank 6)
+    [14322] = { RAP = 110 }, -- Aspect of the Hawk (Rank 6)
     [14752] = { SPI = 17 }, -- Divine Spirit (Rank 1)
     [14818] = { SPI = 23 }, -- Divine Spirit (Rank 2)
     [14819] = { SPI = 33 }, -- Divine Spirit (Rank 3)
@@ -147,7 +148,7 @@ MSC.BuffAuras = {
     [20217] = { ALL_PCT = 10 }, -- Blessing of Kings
     [20875] = { STA = 10 }, -- Rumsey Rum
     [20905] = { RAP = 75 }, -- Trueshot Aura (Rank 4)
-    [20906] = { RAP = 50 }, -- Trueshot Aura (Rank 5)
+    [20906] = { RAP = 100 }, -- Trueshot Aura (Rank 5)
     [21562] = { STA = 56 }, -- Prayer of Fortitude (Rank 1)
     [21564] = { STA = 70 }, -- Prayer of Fortitude (Rank 2)
     [21849] = { ALL = 14, ARMOR = 324 }, -- Gift of the Wild (Rank 1)
@@ -233,8 +234,8 @@ MSC.BuffAuras = {
     [1293742] = { STA = 60 }, -- Flask of Natural Precision
     [1293743] = { STA = 60 }, -- Flask of Natural Swiftness
     [1296202] = { INT = 2 }, -- Scroll of Rat Familiar (Rank 1)
-    [1299346] = { RAP = 30 }, -- Trueshot Aura (Rank 1)
-    [1299348] = { RAP = 40 }, -- Trueshot Aura (Rank 2)
+    [1299346] = { RAP = 20 }, -- Trueshot Aura (Rank 1)
+    [1299348] = { RAP = 35 }, -- Trueshot Aura (Rank 2)
     [1302285] = { INT = 6 }, -- Scroll of Frog Familiar (Rank 1)
     [1302303] = { INT = 12 }, -- Scroll of Cat Familiar (Rank 1)
     [1304452] = { AP = 140, RAP = 140, SP = 80, HEAL = 80 }, -- Rallying Cry of the Dragonslayer

@@ -26,9 +26,9 @@ Priest.Weights = {
     -- more (study/priest2/penance_70291.js).
     ["DISC_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.79, ["ITEM_MOD_SPIRIT_SHORT"]=2.4, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.49, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.7, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- SHADOW_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the PRIEST_SHADOW_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
     -- Tempered (user): Intellect / Spirit / Mp5 / Stamina at most 3x Spell Power, Stamina at least 1x, Hit / Crit at most 25.
-    ["SHADOW_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_SPIRIT_SHORT"]=6.0, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=6.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0 },
+    ["SHADOW_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=2.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.67, ["ITEM_MOD_SPIRIT_SHORT"]=2.91, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.46, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.05, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=5.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=16.7 },
 
     -- Hybrid profiles (not modelled).
 }
@@ -200,7 +200,8 @@ function Priest:ApplyScalers(weights, currentSpec)
     local function Rank(k) return MSC:GetTalentRank(k) end
     local activeCaps = {}
     -- The study-built level-60 profiles already carry their talents: the talent hooks skip them (the hit cap still applies).
-    local hooks = not SIM_PROFILES[currentSpec or ""]
+    -- Leveling_HealerDungeon too: the healer model builds it with every talent in, so its hooks would count twice.
+    local hooks = not SIM_PROFILES[currentSpec or ""] and not (currentSpec or ""):find("^Leveling_HealerDungeon")
 
     local level = UnitLevel("player")
     local isLeveling = currentSpec:match("^Leveling") ~= nil
@@ -288,7 +289,7 @@ function Priest:ApplyScalers(weights, currentSpec)
             Scale("ITEM_MOD_SHADOW_DAMAGE_SHORT", dmSW)
             local cmSW = 1 + 0.07 * 0.35
             Scale("ITEM_MOD_SPELL_CRIT_RATING_SHORT", cmSW)
-            Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", cmSW)
+            Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", 1 + (cmSW - 1) * MSC.LevelingHookShare())   -- hit: fades 50-59 here, not in the core
         end
     end
 
@@ -388,7 +389,7 @@ function Priest:ApplyScalers(weights, currentSpec)
             Scale("ITEM_MOD_SHADOW_DAMAGE_SHORT", dm)
             local cm = 1 + (rDark * 0.02 * 0.35)
             Scale("ITEM_MOD_SPELL_CRIT_RATING_SHORT", cm)
-            Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", cm)
+            Scale("ITEM_MOD_HIT_SPELL_RATING_SHORT", 1 + (cm - 1) * MSC.LevelingHookShare())   -- hit: fades 50-59 here, not in the core
         elseif currentSpec:find("SHADOW") and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
             weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rDark * 0.02))
         end
@@ -401,16 +402,8 @@ function Priest:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- [[ 2. Covariance (Mana Regen / Healing Power Synergy) ]]
-    if hooks and (currentSpec:find("HOLY") or currentSpec:find("DISC")) then
-        -- FIX: Use GetPlayerStat via Shim (This usually returns bonus healing)
-        local healPower = MSC.GetJudgingStats().heal -- unbuffed, plus assumed buffs
-        
-        if healPower > 600 then
-            local hScaler = 1 + ((healPower - 600) / 6000)
-            weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler
-        end
-    end
+    -- (The old "Spirit grows with healing power" scaler is gone, 2026-10-28: it never ran on a
+    -- level-60 profile, and the healer weights move with gear through the profile's gear points.)
 
     -- [[ 3. Spell Hit Cap ]]
     -- Every damage profile (Shadow and Smite leveling included, not only the
@@ -456,6 +449,8 @@ end
 Priest.Weights["Default"] = Priest.Weights["HOLY_RAID"]
 Priest.Weights["HYBRID_POWER_WEAVING"] = Priest.Weights["DISC_RAID"]
 Priest.RetiredProfiles = { Default = true, HYBRID_POWER_WEAVING = true }
+-- A saved retired name scores as the sim profile it points at, so the talent hooks skip it too.
+for k in pairs(Priest.RetiredProfiles) do SIM_PROFILES[k] = true end
 
 Priest.Profiles = {}
 for k, v in pairs(Priest.Weights) do Priest.Profiles[k] = v end

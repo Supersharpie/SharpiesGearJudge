@@ -88,6 +88,9 @@ function MSC.FadeLevelingHooks(hooked, raw, specKey)
 end
 
 function MSC:ApplyWeightPipeline(rawWeights, specKey)
+    -- Level-60 raid profiles slide toward their Tier 1 weights as the character's gear
+    -- grows (WoW Forever, MSC.GearPointBlend); everything below runs on the result.
+    if rawWeights and MSC.GearPointBlend then rawWeights = MSC.GearPointBlend(rawWeights) end
     local finalWeights = {}
     if rawWeights then
         for k, v in pairs(rawWeights) do finalWeights[k] = v end
@@ -228,7 +231,7 @@ local function GetTraitNodeName(configID, node)
         elseif GetSpellInfo then name = GetSpellInfo(def.spellID) end
     end
     if name == "" then return nil end
-    return name
+    return name, def.spellID
 end
 
 -- Calls fn(name, rank, tab, node) for every named talent node in the trait
@@ -252,13 +255,13 @@ function MSC.ForEachTraitTalent(fn, group)
     for _, nodeID in ipairs(nodes) do
         local okI, node = pcall(C_Traits.GetNodeInfo, configID, nodeID)
         if okI and type(node) == "table" and node.ID and node.ID ~= 0 then
-            local name = GetTraitNodeName(configID, node)
+            local name, spellID = GetTraitNodeName(configID, node)
             if name then
                 local tab
                 for _, groupID in ipairs(node.groupIDs or {}) do
                     if tabOfGroup[groupID] then tab = tabOfGroup[groupID]; break end
                 end
-                fn(name, tonumber(node.activeRank) or tonumber(node.ranksPurchased) or 0, tab, node)
+                fn(name, tonumber(node.activeRank) or tonumber(node.ranksPurchased) or 0, tab, node, spellID)
             end
         end
     end
@@ -318,8 +321,8 @@ function MSC:BuildTalentCache()
     -- Forever: read the trait tree (see GetTraitTalentConfig). Only used when
     -- it actually yields talents; otherwise fall through to the Classic path.
     local traitData = {}
-    if MSC.ForEachTraitTalent(function(name, rank, tab)
-        table.insert(traitData, { name = name, rank = rank, tab = tab })
+    if MSC.ForEachTraitTalent(function(name, rank, tab, _, spellID)
+        table.insert(traitData, { name = name, rank = rank, tab = tab, spellID = spellID })
     end) and #traitData > 0 then
         for _, t in ipairs(traitData) do
             local k = TalentKey(t.name)
@@ -368,7 +371,7 @@ end
 
 function MSC.ReadTalentsForGroup(group)
     local cache, data = {}, {}
-    local function Add(name, rank, tab) table.insert(data, { name = name, rank = rank, tab = tab }) end
+    local function Add(name, rank, tab, _, spellID) table.insert(data, { name = name, rank = rank, tab = tab, spellID = spellID }) end
     if not MSC.ForEachTraitTalent(Add, group) or #data == 0 then
         wipe(data)
         if not ForEachClassicGroupTalent(Add, group) then return nil end
@@ -425,6 +428,9 @@ function MSC:GetWeightsForGroup(group)
     return w, key
 end
 
+-- Ranks by trait spell ID, rebuilt when the talent data changes (a spec group's data swaps in too).
+local spellRanks, spellRanksFor = {}, nil
+
 function MSC:GetTalentRank(talentKey)
     -- Scoring for another character (MSC.BonusContext): its saved ranks by key.
     local ctx = MSC.BonusContext
@@ -434,6 +440,23 @@ function MSC:GetTalentRank(talentKey)
     if not MSC.TalentCacheLoaded then 
         self:BuildTalentCache() 
         if not MSC.TalentCacheLoaded then return 0 end
+    end
+
+    -- Forever: by the talent's spell ID first (Data/TalentSpellIDs_Forever.lua), so a talent Blizzard renames
+    -- (Elemental Precision -> Precision at launch) or a client translates differently still reads.
+    local ids = MSC.TalentSpellIDs and MSC.TalentSpellIDs[MSC.CurrentClass.Name]
+    local sid = ids and ids[talentKey]
+    local data = MSC.TraitTalentData
+    if sid and data then
+        if spellRanksFor ~= data then
+            spellRanksFor = data
+            wipe(spellRanks)
+            for _, t in ipairs(data) do
+                if t.spellID then spellRanks[t.spellID] = math.max(spellRanks[t.spellID] or 0, t.rank or 0) end
+            end
+        end
+        local r = spellRanks[sid]
+        if r then return r end
     end
 
     local localizedName = MSC.CurrentClass.Talents[talentKey]
@@ -496,9 +519,103 @@ function MSC.SetTalentBuildRole(leveling, endgame, pvp)
     if (cur and cur.pvp) ~= pvp and MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
 end
 
+-- =========================================================================
+-- 1c. NEAREST SHIPPED BUILD (WoW Forever)
+-- =========================================================================
+-- Single "marker" talents misread real builds (a Ret Paladin takes Healing
+-- Light, a Cat Druid Thick Hide, a ranged Survival Hunter Deflection), so the
+-- character's talents are matched to the shipped Talents builds instead
+-- (Data/BuildMatch_Forever.lua, by spell ID): each build's first N points,
+-- N = the points the character has spent, against the character's ranks.
+-- The closest build names the leveling role and the level-60 profile, the
+-- same way a build picked in the Talents plugin does. Below MATCH_MIN, or
+-- when equally close builds disagree, nothing is forced and the class's own
+-- detection decides. Talents can't tell solo from group play, so a dungeon
+-- build's role counts as its solo role (dungeon rows are chosen by hand).
+local MATCH_MIN = 0.6
+local matchMemo, matchMemoKey = nil, nil
+
+local function SoloRole(module, role)
+    if role == "" or not role:find("Dungeon") then return role end
+    local solo = role:gsub("Dungeon", ""):gsub("_$", "")
+    -- only a role the class detects (Paladin's Leveling_Ret is the 52-59 tail of Leveling)
+    if module.LowLevelRoles and module.LowLevelRoles[solo] then return solo end
+    return "Leveling"
+end
+
+function MSC.MatchTalentBuild(level)
+    local module, data = MSC.CurrentClass, MSC.TraitTalentData
+    local list = module and MSC.BuildMatch and MSC.BuildMatch[module.Name]
+    if not list or not data then return nil end
+    local have, spent, sig = {}, 0, {}
+    for _, t in ipairs(data) do
+        if t.spellID and (t.rank or 0) > 0 then
+            have[t.spellID] = (have[t.spellID] or 0) + t.rank
+            spent = spent + t.rank
+            sig[#sig + 1] = t.spellID .. ":" .. t.rank
+        end
+    end
+    if spent == 0 then return nil end
+    local endgame = level >= 60
+    table.sort(sig)
+    local memoKey = (endgame and "E" or "L") .. table.concat(sig, ",")
+    if memoKey == matchMemoKey then return matchMemo end
+
+    local bestSim, best = 0, {}
+    for _, b in ipairs(list) do
+        if endgame or b[1] == 1 then
+            -- the build's first `spent` points (all of them at 60)
+            local ranks, left, order = {}, endgame and math.huge or spent, b[5]
+            for i = 1, #order, 2 do
+                if left <= 0 then break end
+                local n = math.min(order[i + 1], left)
+                ranks[order[i]] = (ranks[order[i]] or 0) + n
+                left = left - n
+            end
+            local overlap, total = 0, 0
+            for id, r in pairs(ranks) do
+                total = total + r
+                overlap = overlap + math.min(r, have[id] or 0)
+            end
+            local sim = overlap / math.max(spent, total)
+            if sim > bestSim + 1e-6 then bestSim, best = sim, { b }
+            elseif sim > bestSim - 1e-6 then best[#best + 1] = b end
+        end
+    end
+    local result
+    if bestSim >= MATCH_MIN then
+        -- a variant build (tie priority 100+, another weapon or play style of a tree) tied with a main build: the main
+        -- build's role wins (they share their first points)
+        local main = {}
+        for _, b in ipairs(best) do
+            if b[4] < 100 then main[#main + 1] = b end
+        end
+        if #main > 0 then best = main end
+        local value
+        for _, b in ipairs(best) do
+            local v = endgame and b[3] or SoloRole(module, b[2])
+            if value and v ~= value then value = nil; break end
+            value = v
+        end
+        if value and value ~= "" then
+            result = endgame and { endgame = value } or { leveling = value }
+        end
+    end
+    matchMemo, matchMemoKey = result, memoKey
+    return result
+end
+
+-- The build roles in force: a build picked in the Talents plugin, else the
+-- nearest shipped build (WoW Forever).
+function MSC.GetBuildRole()
+    if MSC.TalentBuildRole then return MSC.TalentBuildRole end
+    if not MSC.IsForever then return nil end
+    return MSC.MatchTalentBuild(UnitLevel("player") or 0)
+end
+
 function MSC:GetLowLevelRole(roleMarkers)
     if not roleMarkers then return nil end
-    local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+    local forced = (MSC.GetBuildRole() or {}).leveling
     if forced then
         if roleMarkers[forced] then return forced end
         if forced == "Leveling" then return nil end
@@ -570,11 +687,14 @@ function MSC:GetLevelingRow(module, key)
     -- Per-spec curve: weights at the player's level, held inside the chosen
     -- band so previewing another band's profile shows that band's weights.
     local curves = module.LevelingCurves
-    local curve = curves and (curves[role] or (MSC.LevelingCurveAlias and curves[MSC.LevelingCurveAlias[role] or ""]))
+    local curveRole = (curves and curves[role]) and role or (MSC.LevelingCurveAlias and MSC.LevelingCurveAlias[role])
+    local curve = curves and curveRole and curves[curveRole]
     if curve then
         local level = UnitLevel("player")
         if level < lo then level = lo elseif level > hi then level = hi end
-        return MSC.EvaluateLevelingCurve(curve, level)
+        -- then slid toward the role's quest-gear row by the worn gear (MSC.LevelingGearBlend)
+        local gear = module.LevelingGear and module.LevelingGear[curveRole]
+        return (MSC.LevelingGearBlend(gear, level, MSC.EvaluateLevelingCurve(curve, level)))
     end
 
     local nextKey = module.LevelingNext and module.LevelingNext[key]
@@ -653,7 +773,7 @@ function MSC:ApplyDynamicAdjustments()
         -- 2. AUTO-DETECT MODE
         -- 2a. A Talents-plugin build names its level-60 profile (see
         -- MSC.SetTalentBuildRole); leveling roles are handled in GetLowLevelRole.
-        local forcedEnd = MSC.TalentBuildRole and MSC.TalentBuildRole.endgame
+        local forcedEnd = (MSC.GetBuildRole() or {}).endgame
         local cls = MSC.CurrentClass
         if forcedEnd and (UnitLevel("player") or 0) >= 60 and cls and cls.Weights and cls.Weights[forcedEnd] then
             specKey = forcedEnd

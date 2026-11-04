@@ -11,16 +11,16 @@ Mage.Weights = {
     -- Spell Power sits at 2.0; Hit and Crit are per 1%. In a three-minute fight with raid buffs a Frost mage doesn't
     -- run out of mana, so Intellect counts mostly for its crit; Arcane stacks Arcane Blast and does run short.
     -- Frost: Raid (Frost with Ice Lance, Fingers of Frost and Winter's Chill; bosses can't be frozen).
-    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.71, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=29.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.4, ["ITEM_MOD_INTELLECT_SHORT"]=0.66, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.29, ["ITEM_MOD_SPIRIT_SHORT"]=0.41, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.81 },
+    ["FROST_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.74, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=30.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.71, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.26, ["ITEM_MOD_SPIRIT_SHORT"]=0.42, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.85 },
     -- Fire: Raid (Fire 35 / Frost 16). About 12% behind Frost in the sim; Fireball's mana cost makes Intellect, Spirit and Mp5 count.
-    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.5, ["ITEM_MOD_INTELLECT_SHORT"]=0.36, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.08 },
+    ["FIRE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=24.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.9, ["ITEM_MOD_INTELLECT_SHORT"]=0.38, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.12 },
     -- Arcane: Raid (Arcane Blast and Arcane Missiles). About 3% ahead of Frost since the missiles keep the Arcane
     -- Blast stacks; mana-bound, so Hit, Intellect, Spirit and Mp5 count for more than on Frost.
-    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=27.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.52, ["ITEM_MOD_SPIRIT_SHORT"]=0.2, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.43, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0 },
+    ["ARCANE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=28.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.1, ["ITEM_MOD_INTELLECT_SHORT"]=1.74, ["ITEM_MOD_SPIRIT_SHORT"]=0.56, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.75, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.56, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.44 },
     -- FROST_AOE: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the MAGE_AOE_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
     -- Tempered (user): Intellect / Spirit / Mp5 / Stamina at most 3x Spell Power, Stamina at least 1x, Hit / Crit at most 25.
-    ["FROST_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=6.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.31, ["ITEM_MOD_SPIRIT_SHORT"]=1.31, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=6.0, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.6, ["ITEM_MOD_ARMOR_SHORT"]=0.51, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
+    ["FROST_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=6.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.57, ["ITEM_MOD_SPIRIT_SHORT"]=2.57, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.6, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=16.13, ["ITEM_MOD_ARMOR_SHORT"]=0.92, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
@@ -105,7 +105,7 @@ Mage.Talents = {
     ["ARCANE_MIND"]     = MSC.L["Arcane Mind"],
     ["IGNITE"]          = MSC.L["Ignite"],
     ["ICE_SHARDS"]      = MSC.L["Ice Shards"],
-    ["ELE_PRECISION"]   = MSC.L["Elemental Precision"],
+    ["ELE_PRECISION"]   = MSC.L["Precision"], -- Elemental Precision until the launch client (renamed in 70707)
     ["ARCANE_FOCUS"]    = MSC.L["Arcane Focus"],
     ["ARCANE_RESILIENCE"] = MSC.L["Arcane Resilience"], -- Arcane t2, 2 ranks, Armor += 25%/rank of Intellect -- was already referenced in ApplyScalers but missing here, so Rank() always returned 0
     ["WAND_SPEC"]       = MSC.L["Wand Specialization"], -- Arcane t1, 2 ranks, +13%/+25% wand damage
@@ -125,7 +125,7 @@ Mage.Talents = {
     ["ARCANE_WRATH"]    = MSC.L["Arcane Wrath"], -- Arcane (16 points)
     ["ARCANE_BLAST"]    = MSC.L["Arcane Blast"], -- Arcane
     ["INCINERATION"]    = MSC.L["Incineration"], -- Fire t1
-    ["IMP_FIREBALL"]    = MSC.L["Improved Fireball"], -- Fire t1
+    ["IMP_FIREBALL"]    = MSC.L["Accelerant"], -- Fire t1, Improved Fireball until the launch client (renamed in 70707)
     ["FLAME_THROWING"]  = MSC.L["Flame Throwing"], -- Fire t2
     ["IMPACT"]          = MSC.L["Impact"], -- Fire t2
     ["BURNING_SOUL"]    = MSC.L["Burning Soul"], -- Fire t3
@@ -166,7 +166,7 @@ function Mage:GetSpec()
         local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
 
         -- A Talents plugin build names its role; it wins over the talent checks below.
-        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        local forced = (MSC.GetBuildRole() or {}).leveling
         if forced and (forced == "Leveling" or Mage.LowLevelRoles[forced]) and Mage.LevelingWeights[forced .. suffix] then
             return forced .. suffix
         end
@@ -193,6 +193,26 @@ function Mage:GetSpec()
     if fire > frost and fire >= arcane then return "FIRE_RAID" end
     if arcane > frost then return "ARCANE_RAID" end
     return "FROST_RAID"
+end
+
+-- Talent spell hit the game's own spell-hit number doesn't hold, for a profile (also the Stat Logic ring).
+-- Arcane Focus for the Arcane Missiles leveling rows; ARCANE_RAID nukes with Fireball (its weights carry Fire
+-- damage), so Elemental Precision; the one dungeon row serves all three dungeon builds: whichever was taken;
+-- AoE grinding is about a quarter Arcane Explosion. Launch (2026-10-29, Wowhead): Arcane Focus removed and
+-- Elemental Precision became "Precision", +2% hit a rank with all spells, a general aura the game's
+-- spell-hit modifier already holds; client 70685 still has the school-only versions. So only what the game's
+-- number doesn't show is added (assumed raid buffs aside): nothing if Precision is general, all if Fire/Frost only.
+function Mage:SchoolHit(spec)
+    local function Rank(k) return MSC:GetTalentRank(k) end
+    local s = string.upper(spec or "")
+    local ep, af = Rank("ELE_PRECISION") * 2, Rank("ARCANE_FOCUS")
+    local hit = ep
+    if s:find("AOE") then hit = 0.75 * ep + 0.25 * af
+    elseif s:find("ARCANE") and s:find("^LEVELING") then hit = af
+    elseif s:find("DUNGEON") then hit = math.max(ep, af) end
+    local _, _, gameMod = MSC:GetForeverHitPercent("SPELL")
+    local inGame = math.max(0, (gameMod or 0) - (MSC.GetJudgingStats().assumedSpellHitPct or 0))
+    return math.max(0, hit - inGame)
 end
 
 function Mage:ApplyScalers(weights, currentSpec)
@@ -277,8 +297,11 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- Arcane Meditation (Arcane t4, 3 ranks, 17% regen while casting per rank):
     -- from 34 Mage Armor and Meditation stack to a 100% cap (half of players
     -- assumed on Mage Armor, baseline 1.425); below 34 it is additive.
+    -- The AoE row is measured with the AoE build's Arcane Meditation and Frost
+    -- Channeling (they decide whether the Blizzard pull fits the mana pool),
+    -- so neither multiplier applies to it.
     local rArcMed = Rank("ARCANE_MEDITATION")
-    if isLeveling and rArcMed > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
+    if isLeveling and not isAoERow and rArcMed > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
         local spiritMult
         if level >= 34 then
             spiritMult = (1 + 1.7 * (0.5 * math.min(1, 0.5 + 0.17 * rArcMed) + 0.5 * 0.17 * rArcMed)) / 1.425
@@ -294,7 +317,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- (mage_curves_build.js takes it out of the builds before the model runs);
     -- worth about x1.15 on mana stats at 3/3. Fire and Arcane rows skip it.
     local rFrostChan = Rank("FROST_CHANNELING")
-    local frostManaShare = isAoERow and 0.7 or ((isFireRow or isArcaneRow) and 0 or 0.85)
+    local frostManaShare = isAoERow and 0 or ((isFireRow or isArcaneRow) and 0 or 0.85)
     if isLeveling and frostManaShare > 0 and rFrostChan > 0 then
         local fc = 1 / (1 - 0.05 * rFrostChan * frostManaShare)
         MSC.ScaleForeverKeys(weights, { "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_MANA_SHORT", "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_MANA_REGENERATION_SHORT" }, fc)
@@ -323,9 +346,7 @@ function Mage:ApplyScalers(weights, currentSpec)
     -- game's general spell-hit number, so they're added here (the leveling rows'
     -- model has neither: mage_curves_build.js takes them out).
     -- Elemental Precision is 2% hit a rank (3 ranks) since the 20 Oct hotfix (was 1% x 5)
-    local talentHit = isArcaneRow and Rank("ARCANE_FOCUS") or Rank("ELE_PRECISION") * 2
-    -- AoE grinding: about a quarter of the damage is Arcane Explosion (Arcane Focus), the rest Frost
-    if isAoERow then talentHit = 0.75 * Rank("ELE_PRECISION") * 2 + 0.25 * Rank("ARCANE_FOCUS") end
+    local talentHit = Mage:SchoolHit(currentSpec)
     MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, talentHit, MSC.ForeverSpellCapKind(currentSpec))
     return weights, (#activeCaps > 0 and table.concat(activeCaps, ", ") or nil)
 end

@@ -68,6 +68,10 @@ TooltipManager:SetScript("OnEvent", function(self, event)
             end
         end
         
+        -- Reread the item and the worn item(s) it's compared against when their
+        -- cached reads may predate their Equip: text (Helpers.lua RecheckForTooltip).
+        if link and MSC.RecheckForTooltip then MSC.RecheckForTooltip(link) end
+
         original_Evaluate(tooltip)
     end
 

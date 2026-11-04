@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (TBC Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.2.7-TBC
+## Version: 3.2.8-TBC
 ## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua
@@ -25,13 +25,13 @@ Init.lua
 CacheManager.lua
 TooltipManager.lua
 ConflictManager.lua
-Database.lua
-Data_Sets_TBC.lua
-Enchants_TBC.lua
-Buffs_TBC.lua
-Parse.lua
-PawnParser.lua
-SixtyUpgradesParser.lua
+Data\Database.lua
+Data\Sets\Data_Sets_TBC.lua
+Data\Enchants\Enchants_TBC.lua
+Data\Buffs\Buffs_TBC.lua
+Parsers\Parse.lua
+Parsers\PawnParser.lua
+Parsers\SixtyUpgradesParser.lua
 Helpers.lua
 RaidBuffs.lua
 Dynamic_Engine.lua
@@ -51,5 +51,5 @@ Interface.lua
 WhatsNew.lua
 AddonPanel.lua
 Judge.lua
-API.lua
+SGJ_API.lua
 

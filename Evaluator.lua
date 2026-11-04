@@ -54,6 +54,8 @@ else
         ROGUE = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="PRECISION", tVal=1, penalty=100 } },
         HUNTER = { { stat="ITEM_MOD_HIT_RATING_SHORT", base=9, talent="SUREFOOTED", tVal=1, penalty=100 } },
         MAGE = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="ELEMENTAL_PRECISION", tVal=2, penalty=100 } },
+        -- Forever Shamans can shield-tank: the same defense floor as the other tanks
+        SHAMAN = MSC.IsForever and { { stat="DEFENSE_FLOOR", base=0, dynamic=true, penalty=1000 } } or nil,
         WARLOCK = { { stat="ITEM_MOD_HIT_SPELL_RATING_SHORT", base=16, talent="SUPPRESSION", tVal=2, penalty=100 } },
     }
 end
@@ -62,6 +64,7 @@ end
 -- 1. UTILITIES & RECYCLING BIN
 -- =============================================================
 local Scratch_Gear = {}
+local Scratch_FastGear = {}
 local Scratch_Stats = {}
 local Scratch_Accumulator = {}
 local Scratch_SetCounts = {}
@@ -143,9 +146,13 @@ end
 
 function MSC:ShouldUseFastEval(itemLink, compSlot)
     if compSlot == 16 or compSlot == 17 then return false end
-    if MSC.ItemSetMap and itemLink then
-        local itemID = GetItemInfoInstant(itemLink)
+    if MSC.ItemSetMap then
+        -- A set piece on either side can gain or break a set bonus, which only the full check scores.
+        local itemID = itemLink and GetItemInfoInstant(itemLink)
         if itemID and MSC.ItemSetMap[itemID] then return false end
+        local worn = compSlot and GetInventoryItemLink("player", compSlot)
+        local wornID = worn and GetItemInfoInstant(worn)
+        if wornID and MSC.ItemSetMap[wornID] then return false end
     end
     return true
 end
@@ -168,24 +175,55 @@ function MSC:EvaluateUpgradeFast(newItemLink, targetSlotID, weights, specName)
     local eqKey = compSlot .. "|" .. (specName or "") .. "|" .. rev
     local equipped = GetInventoryItemLink("player", compSlot)
 
-    local oldScore = MSC.EquippedSlotScoreCache[eqKey]
-    if oldScore == nil then
+    -- { score, hit rating, defense rating } of the worn item in the slot
+    local old = MSC.EquippedSlotScoreCache[eqKey]
+    if old == nil then
         if equipped then
             local stats = MSC.SafeGetItemStats(equipped, compSlot, weights, specName)
-            oldScore = MSC.GetItemScore(stats, weights, specName, compSlot)
+            local score = MSC.GetItemScore(stats, weights, specName, compSlot)
             if compSlot == 16 or compSlot == 17 then
-                oldScore = oldScore + (MSC:GetWeaponSpecBonus(equipped, MSC.CurrentClass, specName, weights, compSlot, GetInventoryItemLink("player", compSlot == 16 and 17 or 16)) or 0)
+                score = score + (MSC:GetWeaponSpecBonus(equipped, MSC.CurrentClass, specName, weights, compSlot, GetInventoryItemLink("player", compSlot == 16 and 17 or 16)) or 0)
             end
+            old = { score, MSC.HitRatingOf(stats), stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0 }
         else
-            oldScore = 0
+            old = { 0, 0, 0 }
         end
-        MSC.EquippedSlotScoreCache[eqKey] = oldScore
+        MSC.EquippedSlotScoreCache[eqKey] = old
     end
+    local oldScore = old[1]
 
     local newStats = MSC.SafeGetItemStats(newItemLink, compSlot, weights, specName)
+    local newHit = MSC.HitRatingOf(newStats)
+
+    -- Swaps the full check prices with a cap rule (Evaluator section 7) go
+    -- there: a tank swap that changes Defense (the defense floor), and on
+    -- Era / TBC a swap that changes hit (the hit cap penalty).
+    local newDef = newStats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
+    local defMoves = newDef ~= old[3] and (weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0) > 0
+    local hitMoves = not MSC.IsForever and newHit ~= old[2]
+    if defMoves or hitMoves then
+        local _, playerClass = UnitClass("player")
+        for _, rule in ipairs(MSC.SAFETY_CAPS[playerClass] or {}) do
+            if (defMoves and rule.stat == "DEFENSE_FLOOR") or (hitMoves and rule.stat ~= "DEFENSE_FLOOR") then
+                return MSC:EvaluateUpgrade(newItemLink, compSlot, weights, specName)
+            end
+        end
+    end
+
     local newScore = MSC.GetItemScore(newStats, weights, specName, compSlot)
     if compSlot == 16 or compSlot == 17 then
         newScore = newScore + (MSC:GetWeaponSpecBonus(newItemLink, MSC.CurrentClass, specName, weights, compSlot, GetInventoryItemLink("player", compSlot == 16 and 17 or 16)) or 0)
+    end
+
+    -- Forever: hit on its true curve from the character's own hit, as the
+    -- tooltip prices it (hit past a cap discounted, hit lost below one charged).
+    if MSC.IsForever and MSC.ForeverHitCapCorrection and newHit ~= old[2] then
+        local cur = MSC.GetGearHitRating and MSC.GetGearHitRating("MELEE")
+        if not cur then -- worn gear not scanned yet: the scorer's own total
+            local _, totals = MSC:GetCachedCharacterScore(MSC:GetEquippedGear(Scratch_FastGear), weights, specName)
+            cur = MSC.HitRatingOf(totals)
+        end
+        newScore = newScore + MSC.ForeverHitCapCorrection(weights, cur, cur - old[2] + newHit)
     end
 
     return newScore, oldScore
@@ -478,6 +516,11 @@ MSC.FlushEvaluationCacheWipe = WipeEvaluationCache
 
 CacheCleaner:SetScript("OnEvent", function(self, event)
     if event == "GET_ITEM_INFO_RECEIVED" then
+        -- Weights built before a worn item could be read used the pre-raid gear point: rebuild them.
+        if MSC.GearPointPending then
+            MSC.GearPointPending = nil
+            if MSC.BumpScoringRevision then MSC:BumpScoringRevision() end -- weights and every score built on them
+        end
         if not wipePending then
             wipePending = true
             C_Timer.After(0.5, WipeEvaluationCache)
@@ -671,11 +714,7 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
     -- (Hit Rating, 10 = 1%), so hit past a cap is discounted and hit that
     -- drops back below one is charged in full (MSC.ForeverHitCapCorrection).
     if MSC.IsForever and MSC.ForeverHitCapCorrection then
-        local function HitRating(t)
-            return (t["ITEM_MOD_HIT_RATING_SHORT"] or 0) + (t["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0)
-                + (t["ITEM_MOD_HIT_MELEE_RATING_SHORT"] or 0) + (t["ITEM_MOD_HIT_RANGED_RATING_SHORT"] or 0)
-        end
-        local correction, droppedBy = MSC.ForeverHitCapCorrection(weights, HitRating(currentStatsTotal), HitRating(newStatsTotal))
+        local correction, droppedBy = MSC.ForeverHitCapCorrection(weights, MSC.HitRatingOf(currentStatsTotal), MSC.HitRatingOf(newStatsTotal), baselineGear ~= nil)
         newScore = newScore + correction
         if droppedBy then
             contextMsg = (contextMsg or "") .. string_format(MSC.L[" |cffff0000(Cap %.1f %s)|r"], droppedBy, MSC.L["Hit"])
@@ -690,9 +729,13 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
                 local trueCap = rule.base
                 -- (Era: the game's melee hit % already includes hit talents; school
                 -- talents such as Elemental Precision aren't in its spell hit %)
-                if rule.talent and not (MSC.IsEra and rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0)) end
+                if rule.talent and not (MSC.IsEra and rule.stat == "ITEM_MOD_HIT_RATING_SHORT")
+                    and not (rule.talent == "SUPPRESSION" and not MSC.SuppressionCounts(specName)) then
+                    trueCap = trueCap - (Rank(rule.talent) * (rule.tVal or 0))
+                end
                 if MSC.IsTBC and MSC.BuffEngine and (rule.stat == "ITEM_MOD_HIT_SPELL_RATING_SHORT" or rule.stat == "ITEM_MOD_HIT_RATING_SHORT") then
-                    trueCap = MSC.BuffEngine:GetEffectiveHitRatingBase(rule.stat, rule.talent, rule.tVal, specName)
+                    local talent = not (rule.talent == "SUPPRESSION" and not MSC.SuppressionCounts(specName)) and rule.talent or nil
+                    trueCap = MSC.BuffEngine:GetEffectiveHitRatingBase(rule.stat, talent, rule.tVal, specName)
                 end
                 
                 local currentVal = 0
@@ -720,6 +763,9 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
             
             elseif rule.stat == "DEFENSE_FLOOR" then
                 local defWeight = weights["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0
+                -- AoE farming tanks have no defense target (normal mobs can't crush): no floor either
+                local spec = tostring(specName or ""):upper()
+                if MSC.IsForever and (spec:find("_AOE") or spec:find("FARM")) then defWeight = 0 end
                 if defWeight > 0 then
                     local floor = MSC.GetDefenseFloor and MSC:GetDefenseFloor(rule) or rule.base
                     local currentDef = 0

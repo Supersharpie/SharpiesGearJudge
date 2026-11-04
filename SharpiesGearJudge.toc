@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.2.7
+## Version: 3.2.8
 ## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua
@@ -25,13 +25,15 @@ Init.lua
 CacheManager.lua
 TooltipManager.lua
 ConflictManager.lua
-Database_Forever.lua
-Data_Sets_Forever.lua
-Enchants_Forever.lua
-Buffs_Forever.lua
-Parse.lua
-PawnParser.lua
-SixtyUpgradesParser.lua
+Data\Database_Forever.lua
+Data\BuildMatch_Forever.lua
+Data\TalentSpellIDs_Forever.lua
+Data\Sets\Data_Sets_Forever.lua
+Data\Enchants\Enchants_Forever.lua
+Data\Buffs\Buffs_Forever.lua
+Parsers\Parse.lua
+Parsers\PawnParser.lua
+Parsers\SixtyUpgradesParser.lua
 Helpers.lua
 RaidBuffs.lua
 Dynamic_Engine.lua
@@ -55,9 +57,10 @@ Classes\Forever\Curves\Shaman_Curves.lua
 Classes\Forever\Curves\Hunter_Curves.lua
 Classes\Forever\Curves\Druid_Curves.lua
 Classes\Forever\Curves\Curves_Attach.lua
+Classes\Forever\GearPoints.lua
 Interface.lua
 WhatsNew.lua
 AddonPanel.lua
 Judge.lua
-API.lua
+SGJ_API.lua
 

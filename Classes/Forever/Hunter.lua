@@ -28,11 +28,11 @@ Hunter.Weights = {
     -- Beast Mastery: Raid (BM 35 / MM 16 with Summon Hawk, level-63 boss, raid buffs). Hawks on cooldown cost
     -- mana and Careful Aim turns all of your Intellect into Attack Power, so Intellect ranks above Agility; the
     -- reworked hawks leave more mana than before, so Mp5 counts less and Hit more.
-    ["BM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.59, ["ITEM_MOD_INTELLECT_SHORT"]=2.16, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.3, ["ITEM_MOD_HIT_RATING_SHORT"]=60.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=60.9, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["BM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.61, ["ITEM_MOD_INTELLECT_SHORT"]=2.17, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.4, ["ITEM_MOD_HIT_RATING_SHORT"]=63.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=62.8, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=11.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Marksmanship: Raid (Lethal Attacks, Mortal Shots, Sniper Shot). About 10% behind Beast Mastery in the sim.
-    ["MM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.45, ["ITEM_MOD_INTELLECT_SHORT"]=2.06, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.1, ["ITEM_MOD_HIT_RATING_SHORT"]=54.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=54.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["MM_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.46, ["ITEM_MOD_INTELLECT_SHORT"]=1.98, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_HIT_RATING_SHORT"]=54.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=54.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
     -- Survival: Raid (MM 15 / Survival 36, shooting; Lightning Reflexes makes Agility the best stat). About 20% behind Beast Mastery.
-    ["SV_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=5.17, ["ITEM_MOD_INTELLECT_SHORT"]=2.56, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=59.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=63.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["SV_RAID"] = { ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=5.15, ["ITEM_MOD_INTELLECT_SHORT"]=2.55, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.4, ["ITEM_MOD_HIT_RATING_SHORT"]=58.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=62.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.2, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- PvP, melee support and farming profiles (not modelled).
 }
@@ -110,7 +110,7 @@ Hunter.Talents = {
     ["PREDATORS_EDGE"]  = MSC.L["Predator's Edge"], -- New in Forever (Survival t4, 5 ranks, +6%/rank melee crit damage bonus)
     ["FOCUSED_FIRE"]    = MSC.L["Focused Fire"], -- New in Forever (BM t2, 2 ranks, +1%/rank all damage while pet active)
     ["RANGED_WPN_SPEC"] = MSC.L["Ranged Weapon Specialization"], -- Same as Classic (MM t6, 5 ranks, +1%/rank ranged weapon damage)
-    ["BARRAGE"]         = MSC.L["Barrage"], -- MM t5, 3 ranks, +3%/rank Multi-Shot/Aimed Shot/Volley damage
+    ["BARRAGE"]         = MSC.L["Barrage"], -- MM t5, 3 ranks, +5%/rank Multi-Shot/Aimed Shot/Volley damage (2026-11-03 hotfix)
     ["DEADLY_ASPECTS"]  = MSC.L["Deadly Aspects"], -- BM t1, 5 ranks, 2%/rank chance of +30% attack speed
     ["IMP_TRACKING"]    = MSC.L["Improved Tracking"], -- Survival t1, 5 ranks, +1%/rank damage vs tracked type
     ["BESTIAL_DISCIPLINE"] = MSC.L["Bestial Discipline"], -- BM t5, 2 ranks, +25%/rank regen while casting
@@ -202,10 +202,10 @@ function Hunter:ApplyScalers(weights, currentSpec)
     local hooks = not SIM_PROFILES[currentSpec or ""]
 
     -- [[ 1. Lightning Reflexes (Agi Scaling) ]]
-    -- Forever text: +2%/rank Agility (Classic was 3%)
+    -- Forever text: +3%/rank Agility since the 2026-11-03 hotfix (was 2%), as in Classic
     local rLR = Rank("LIGHTNING_REF")
     if hooks and rLR > 0 and weights["ITEM_MOD_AGILITY_SHORT"] then
-        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.02))
+        weights["ITEM_MOD_AGILITY_SHORT"] = weights["ITEM_MOD_AGILITY_SHORT"] * (1 + (rLR * 0.03))
     end
 
     local rSurv = Rank("SURVIVALIST")
@@ -274,7 +274,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- Armor/Dodge/etc. plus the mana keys).
     --   Ranged Weapon Specialization (MM t6, 1%/rank, ranged)
     --   Focused Fire (BM t2, 1%/rank, pet out)
-    --   Barrage (MM t5, 3 ranks of 3% on Multi/Aimed/Volley, ~1%/rank of total, ranged)
+    --   Barrage (MM t5, 3 ranks of 5% on Multi/Aimed/Volley since the 2026-11-03 hotfix, ~1.5%/rank of total, ranged)
     --   Deadly Aspects (BM t1, ~1.4%/rank ranged, ~1.2%/rank melee)
     --   Improved Tracking (Survival t1, 1%/rank vs the tracked type)
     --   Lethal Attacks (MM t1, +1% crit/rank, ~1% damage/rank on the untalented ranged rows; smelee.js builds it into
@@ -286,7 +286,7 @@ function Hunter:ApplyScalers(weights, currentSpec)
         dmgMult = dmgMult * (1 + Rank("DEADLY_ASPECTS") * 0.012)
     else
         dmgMult = dmgMult * (1 + Rank("RANGED_WPN_SPEC") * 0.01)
-        dmgMult = dmgMult * (1 + Rank("BARRAGE") * 0.01)
+        dmgMult = dmgMult * (1 + Rank("BARRAGE") * 0.015)
         dmgMult = dmgMult * (1 + Rank("DEADLY_ASPECTS") * 0.014)
         dmgMult = dmgMult * (1 + Rank("LETHAL_ATTACKS") * 0.01)
     end
@@ -355,7 +355,8 @@ function Hunter:ApplyScalers(weights, currentSpec)
     -- Ranged hit for ranged profiles, melee hit for melee ones (Surefooted
     -- is included once by MSC:GetForeverHitPercent). Target is the level's
     -- cap, sliding to the raid cap from 50; past it Hit keeps 10% of its value.
-    local hitKind = (currentSpec or ""):upper():find("MELEE") and "MELEE" or "RANGED"
+    -- (a retired name such as MELEE_NIGHTFALL scores as the ranged SV_RAID it points at)
+    local hitKind = ((currentSpec or ""):upper():find("MELEE") and not Hunter.RetiredProfiles[currentSpec or ""]) and "MELEE" or "RANGED"
     -- Hunters learn Dual Wield at 20; a melee Hunter with a weapon in the
     -- off-hand uses the dual-wield curve (60% past the yellow cap up to the
     -- white cap), like Rogues and DW Warriors.
@@ -405,6 +406,8 @@ Hunter.Weights["MELEE_NIGHTFALL"] = Hunter.Weights["SV_RAID"]
 Hunter.Weights["PVP_SURV_TANK"] = Hunter.Weights["PVP_MM_UTIL"]
 Hunter.Weights["SOLO_DME_TRIBUTE"] = Hunter.Weights["MM_RAID"]
 Hunter.RetiredProfiles = { Default = true, MELEE_NIGHTFALL = true, PVP_SURV_TANK = true, SOLO_DME_TRIBUTE = true }
+-- A saved retired name scores as the sim profile it points at, so the talent hooks skip it too.
+for k in pairs(Hunter.RetiredProfiles) do SIM_PROFILES[k] = true end
 
 MSC.RegisterModule("HUNTER", Hunter)
 

@@ -153,7 +153,7 @@ function Rogue:GetSpec()
         local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
 
         -- A Talents plugin build names its role; it wins over the talent markers below.
-        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        local forced = (MSC.GetBuildRole() or {}).leveling
         if forced and (forced == "Leveling" or Rogue.LowLevelRoles[forced]) and Rogue.LevelingWeights[forced .. suffix] then
             return forced .. suffix
         end
@@ -267,9 +267,13 @@ end
 -- The +1%/rank crit only helps that hand's swings: the main hand carries all
 -- yellow hits plus its white swings (~75% of damage), the off hand only its
 -- own white swings (~20%); 0.5 when the hand isn't known.
-local function GetHackAndSlashCritBonus(itemLink, weights, slotId)
+local function GetHackAndSlashCritBonus(itemLink, weights, slotId, specName)
     local rHS = MSC:GetTalentRank("HACK_AND_SLASH")
     if rHS <= 0 or not itemLink or not weights then return 0 end
+    -- Leveling rows only, like the proc branch: each level-60 profile is simmed for one
+    -- weapon type with the talent in (a sword raid Rogue saw every fist weapon get it)
+    local spec = specName or MSC.CachedSpecKey or ""
+    if not spec:find("^Leveling") then return 0 end
 
     local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(itemLink)
     if classID ~= 2 or not subClassID then return 0 end
@@ -339,7 +343,7 @@ end
 
 function Rogue:GetWeaponBonus(itemLink, weights, slotId, specName, otherHandLink)
     return MSC.GetForeverWeaponRacialBonus(itemLink, weights, otherHandLink)
-        + GetHackAndSlashCritBonus(itemLink, weights, slotId)
+        + GetHackAndSlashCritBonus(itemLink, weights, slotId, specName)
         + GetHackAndSlashProcBonus(itemLink, weights, slotId, specName)
         + GetDaggerMainHandBonus(itemLink, weights, slotId, specName)
 end

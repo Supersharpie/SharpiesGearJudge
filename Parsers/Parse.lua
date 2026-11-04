@@ -412,6 +412,9 @@ MSC.Scanner.EquipPatterns = {
     -- "+5 Mana Regeneration" is read by the short form at the bottom.
     { p = MSC.L["restores (%d+) mana per 5"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
     { p = MSC.L["restores (%d+) health per 5"], valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+    -- Some items word it "Restores 10 health every 5 sec." (Lifestone)
+    { p = MSC.L["restores (%d+) mana every 5"], valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+    { p = MSC.L["restores (%d+) health every 5"], valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
 
     -- [[ FERAL ATTACK POWER (TBC) ]]
     -- "Increases attack power by 140 in Cat, Bear, Dire Bear, and Moonkin forms
@@ -544,6 +547,9 @@ MSC.Scanner.UsePatterns = {
     { p = MSC.L["increases (.*) by (%d+) for (%d+) sec"], valIdx=2, nameIdx=1, durIdx=3, type="BUFF" },
 
     -- Resources
+    -- "Restores 30 mana every 1 sec for 10 sec." is 300 mana, not 30 (Second Wind)
+    { p = MSC.L["restores (%d+) mana every (%d+) sec for (%d+) sec"], type="MANA_TICK" },
+    { p = MSC.L["restores (%d+) health every (%d+) sec for (%d+) sec"], type="HEALTH_TICK" },
     { p = MSC.L["restores (%d+) to (%d+) mana"], type="MANA_RANGE" },
     { p = MSC.L["restores (%d+) to (%d+) health"], type="HEALTH_RANGE" },
     { p = MSC.L["restores (%d+) mana"], valIdx=1, type="MANA" },
@@ -762,10 +768,13 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     -- "...has a 5% chance of inflicting 35 to 65 Nature damage...", "Your melee
     -- weapon attacks deal 2 Nature damage to both you and your target".
     if outputProcs then
-        local perMin
+        local perMin, struck
         if string_find(cleanText, string_lower(MSC.L["when struck"]), 1, true) then
+            struck = true -- thorns: only worth something to whoever gets hit (Helpers MSC_THORNS_AP)
             local chance = ScanNum(string_match(cleanText, MSC.L["(%d+)%% chance"]))
             perMin = MSC.Scanner.ProcRate.struck * (chance or 100) / 100
+        elseif string_find(cleanText, MSC.L["^chance to "]) and not string_match(cleanText, MSC.L["(%d+)%% chance"]) then
+            perMin = MSC.Scanner.ProcRate.onHit -- worded without "Chance on hit:" (Heart of Wyrmthalak)
         elseif string_find(cleanText, string_lower(MSC.L["attacks deal"]), 1, true) and not string_find(cleanText, string_lower(MSC.L["against"]), 1, true)
             and not string_match(cleanText, MSC.L["(%d+)%% chance"]) then
             perMin = MSC.Scanner.ProcRate.swing
@@ -774,7 +783,7 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
         end
         local dmg = perMin and MSC.Scanner.ProcDamage(cleanText)
         if dmg then
-            table_insert(outputProcs, { type = "Damage", val = dmg, perMin = perMin, description = text })
+            table_insert(outputProcs, { type = "Damage", val = dmg, perMin = perMin, struck = struck, description = text })
             return
         end
     end
@@ -1011,9 +1020,12 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
                     effect.statKey = MSC.Scanner.LookupTerm(name)
                 end
                 effect.type = "Stat"
-            elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE" then
+            elseif pat.type == "MANA" or pat.type == "HEALTH" or pat.type == "MANA_RANGE" or pat.type == "HEALTH_RANGE"
+                or pat.type == "MANA_TICK" or pat.type == "HEALTH_TICK" then
                 local val = ScanNum(m1)
-                if m2 then val = (val + ScanNum(m2)) / 2 end
+                if string_find(pat.type, "TICK") then
+                    val = val * (ScanNum(m3) or 0) / math.max(1, ScanNum(m2) or 1) -- per tick x ticks
+                elseif m2 then val = (val + ScanNum(m2)) / 2 end
                 effect.statKey = string_find(pat.type, "MANA") and "ITEM_MOD_MANA_REGENERATION_SHORT" or "ITEM_MOD_HEALTH_REGENERATION_SHORT"
                 effect.averageVal = (val / cooldown) * 5
                 effect.type = "Resource"
@@ -1021,6 +1033,13 @@ function MSC.Scanner.ParseUseLine(text, outputUseTable)
             table_insert(outputUseTable, effect)
             return
         end
+    end
+    -- "Use: Inflicts 393 to 531 Fire damage..." (Goblin Mortar): average damage per
+    -- cooldown as Attack Power, the same estimate as damage procs (AP_PER_DPS).
+    local dmg = MSC.Scanner.ProcDamage(cleanText)
+    if dmg then
+        table_insert(outputUseTable, { raw = text, cooldown = cooldown, type = "Damage",
+            statKey = "ITEM_MOD_ATTACK_POWER_SHORT", averageVal = dmg / cooldown * (MSC.Scanner.AP_PER_DPS or 14) })
     end
 end
 

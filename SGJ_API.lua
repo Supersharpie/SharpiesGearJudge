@@ -5,7 +5,7 @@ local addonName, MSC = ...
 -- =============================================================
 -- A small, stable interface for other addons (loot council, loot distribution, bag and UI addons). Everything else in MSC
 -- is internal and may change between releases; this table keeps its names and return values within an API version.
--- Documentation: API.md in this folder.
+-- Documentation: SGJ_API_Info.md in this folder.
 --
 --   local SGJ = _G.SharpiesGearJudgeAPI            -- or _G.MSC.API; nil when the addon isn't loaded
 --   if SGJ and SGJ.IsReady() then

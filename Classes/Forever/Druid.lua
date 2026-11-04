@@ -16,21 +16,21 @@ Druid.Weights = {
     -- equipped weapon's DPS at the form's speed (devs on the Forever bug tracker, #208/#220), so Weapon DPS is worth
     -- about 9.6 Attack Power per point: everything but Rip, Ferocious Bite and Rake, which scale off Attack Power only
     -- (Rake +5% of attack power on its hit and each tick, from beta logs; re-run 2026-10-13 on the merged upstream sim).
-    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=3.87, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.58, ["ITEM_MOD_SPIRIT_SHORT"]=0.23, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.89, ["ITEM_MOD_HIT_RATING_SHORT"]=30.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=40.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.2 },
+    ["CAT_RAID"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.03, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.17, ["ITEM_MOD_SPIRIT_SHORT"]=0.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=29.6, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0 },
     -- Balance: Raid (Balance 33 / Feral 3 / Restoration 15) from the simulator, Spell Power 2.0. Starfire carries the damage,
     -- so Arcane damage takes most of the Spell Power value.
-    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.62, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.38, ["ITEM_MOD_INTELLECT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.2 },
+    ["BALANCE_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.61, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.39, ["ITEM_MOD_INTELLECT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.1 },
     -- Restoration: Raid (Balance 11 / Feral 5 / Restoration 35) from our healing model (the simulator can't heal), Healing 2.0.
     -- Most Druid healing is over time and HoTs can't crit, so Crit is worth little; Spirit and Mp5 lead the mana stats.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.08, ["ITEM_MOD_SPIRIT_SHORT"]=3.06, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.51, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.2, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.03, ["ITEM_MOD_SPIRIT_SHORT"]=4.72, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.14, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.3, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
     -- Bear: Raid (Balance 9 / Feral 42 with Heart of the Wild, Rend and Tear and Shredding Attacks; talents re-searched
     -- 2026-10-10) from the simulator's tank mode, as the Warrior's Protection: Raid: threat 35% / damage taken 35% /
     -- effective health 30% (health counts Heart of the Wild's Stamina), Stamina 3.0. Armor is item armor (Dire Bear Form
     -- multiplies it by 4.6); the simulator stops counting more armor past about 5,000 in form, which a geared Bear reaches.
     -- Weapon DPS is 14x Attack Power: Dire Bear swings the equipped weapon's DPS every 2.5 s.
-    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.55, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.61, ["ITEM_MOD_DODGE_RATING_SHORT"]=15.1, ["ITEM_MOD_AGILITY_SHORT"]=1.6, ["ITEM_MOD_STRENGTH_SHORT"]=1.01, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.46, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.46, ["ITEM_MOD_HIT_RATING_SHORT"]=16.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.2, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.4 },
+    ["BEAR_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_ARMOR_SHORT"]=0.55, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.55, ["ITEM_MOD_DODGE_RATING_SHORT"]=13.8, ["ITEM_MOD_AGILITY_SHORT"]=1.55, ["ITEM_MOD_STRENGTH_SHORT"]=1.03, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.47, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=0.47, ["ITEM_MOD_HIT_RATING_SHORT"]=16.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=6.5 },
 
     -- Hybrid (not modelled): its healing stats moved to the Healing 20 scale (Healing 0.8 -> 20, x25), so the feral and
     -- defensive weights get the same x25 to keep the old balance: Strength 2.0 -> 50, Stamina 1.0 -> 25,
@@ -38,8 +38,8 @@ Druid.Weights = {
     -- Spell Power 0, as on the raid healers: MSC.GetItemScore already scores it at the Healing weight.
 
     -- BALANCE_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the DRUID_HURRICANE_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
-    ["BALANCE_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.99, ["ITEM_MOD_STAMINA_SHORT"]=0.16, ["ITEM_MOD_INTELLECT_SHORT"]=2.11, ["ITEM_MOD_SPIRIT_SHORT"]=1.66, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.65, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.66, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=1.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=7.2 },
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
+    ["BALANCE_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.92, ["ITEM_MOD_STAMINA_SHORT"]=0.08, ["ITEM_MOD_INTELLECT_SHORT"]=0.54, ["ITEM_MOD_SPIRIT_SHORT"]=2.08, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.33, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=0.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=6.4 },
 }
 -- Old names, kept so a saved profile choice still works.
 Druid.Weights["BALANCE_BOOMKIN"] = Druid.Weights["BALANCE_RAID"]
@@ -140,19 +140,19 @@ Druid.Talents = {
     ["NATURES_REACH"]   = MSC.L["Nature's Reach"],
     ["VENGEANCE"]       = MSC.L["Vengeance"], -- Balance t4, 5 ranks, +20%/rank crit damage bonus on Arcane/Nature spells
     ["MOONFURY"]        = MSC.L["Moonfury"], -- Balance t6, 5 ranks, +2%/rank Arcane/Nature spell damage
-    ["GENESIS"]         = MSC.L["Genesis"], -- New in Forever, Balance t1, 5 ranks, +1%/rank periodic damage AND healing
+    ["GENESIS"]         = MSC.L["Genesis"], -- New in Forever, Balance t1, 5 ranks, +2%/rank periodic damage AND healing (2026-10-30 hotfix; was 1%)
     ["GIFT_OF_NATURE"]  = MSC.L["Gift of Nature"], -- Restoration t3, 5 ranks, +2%/rank universal healing (Same as Classic)
     ["NATURAL_INSTINCT"] = MSC.L["Natural Instinct"], -- Feral t5, 2 ranks (Predatory Instincts until client 70291): +10%/rank melee crit damage bonus, spell healing +12.5%/rank of Intellect
     ["SAVAGE_FURY"]     = MSC.L["Savage Fury"], -- Feral t3, 2 ranks, +5%/rank Claw/Rake/Shred/Maul/Swipe damage
-    ["NATURALIST"]      = MSC.L["Naturalist"], -- Restoration t2, 5 ranks, +1%/rank all damage dealt
+    ["NATURALIST"]      = MSC.L["Naturalist"], -- Restoration t2, 5 ranks, +2%/rank all damage dealt (2026-10-30 hotfix; was 1%)
     ["NATURES_FOCUS"]   = MSC.L["Nature's Focus"], -- Restoration t1, 5 ranks, pushback protection on Nature/Arcane casts
     ["SUBTLETY"]        = MSC.L["Subtlety"], -- Restoration t2, 3 ranks, Nature/Arcane threat reduction
-    ["GIFT_OF_EARTHMOTHER"] = MSC.L["Gift of the Earthmother"], -- New in Forever, Restoration t3, 1 rank
+    ["BLOOM"]           = MSC.L["Bloom"], -- Restoration t3, 1 rank (2026-10-30 hotfix, where Gift of the Earthmother was)
     ["IMP_WRATH"]       = MSC.L["Improved Wrath"], -- Balance t1, 5 ranks
     ["IMP_MOONFIRE"]    = MSC.L["Improved Moonfire"], -- Balance t2, 2 ranks
     ["NATURAL_SHAPESHIFTER"] = MSC.L["Natural Shapeshifter"], -- Restoration t2, 3 ranks, -10%/rank shapeshift mana cost
-    ["SHIFTING_POWER"]  = MSC.L["Shifting Power"], -- Feral t4, 1 rank (2 Oct patch): 55% base mana -> 40 Energy, 16 s cd
-    ["IMP_SHIFTING_POWER"] = MSC.L["Improved Shifting Power"], -- Feral t5, 2 ranks: -4 s cooldown per rank
+    ["SHIFTING_POWER"]  = MSC.L["Shifting Power"], -- Feral t7, 1 rank: 55% base mana -> 40 Energy, 8 s cd (2026-10-30 hotfix; was t4, 16 s)
+    ["LACERATE"]        = MSC.L["Lacerate"], -- Feral t4, 1 rank (2026-10-30 hotfix: a Bear-only talent, was trained at 42)
     ["PREDATORY_STRIKES"] = MSC.L["Predatory Strikes"], -- Feral t4 (minLevel 25), 3 ranks, +0.5 x level AP per rank in Cat/Bear
     ["SHARPENED_CLAWS"] = MSC.L["Sharpened Claws"], -- Feral t3, 2 ranks, +3% crit per rank in Cat/Bear
     ["NATURES_MAJESTY"] = MSC.L["Nature's Majesty"], -- Balance t2, 2 ranks, +2% spell AND melee crit per rank
@@ -166,8 +166,8 @@ Druid.Talents = {
 -- help Restoration and Feral too. Balance was otherwise only detected by
 -- Moonkin Form (40+).
 Druid.LowLevelRoles = {
-    Leveling_Bear   = { "THICK_HIDE" },
-    Leveling_Healer = { "NATURES_FOCUS", "SUBTLETY", "REFLECTION", "GIFT_OF_NATURE", "GIFT_OF_EARTHMOTHER" },
+    Leveling_Bear   = { "THICK_HIDE", "LACERATE" },
+    Leveling_Healer = { "NATURES_FOCUS", "SUBTLETY", "REFLECTION", "GIFT_OF_NATURE", "BLOOM" },
     -- (Nature's Reach is hit for every form, so Feral builds take it too: not a Balance marker)
     Leveling_Caster = { "IMP_WRATH", "MOONGLOW", "IMP_MOONFIRE", "VENGEANCE", "MOONFURY" },
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
@@ -201,7 +201,7 @@ function Druid:GetSpec()
         else suffix = "_52_59" end
 
         -- A Talents plugin build names its role; it wins over the talent checks below.
-        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        local forced = (MSC.GetBuildRole() or {}).leveling
         if forced and (forced == "Leveling" or Druid.LowLevelRoles[forced]) and level >= 10 then
             local fs = (level == 10 and forced ~= "Leveling") and "_11_20" or suffix
             if Druid.LevelingWeights[forced .. fs] then return forced .. fs end
@@ -280,7 +280,8 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- bonus of your Arcane and Nature spells by 20%" -- same phrasing/math as
     -- Mage's Arcane Mind/Ice Shards -- 1+rank*0.20, reaching 2.0x at 5/5
     local rVengeance = Rank("VENGEANCE")
-    if hooks and rVengeance > 0 and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
+    -- (damage spells only: not on the healer rows, where spell crit is heal crit)
+    if hooks and rVengeance > 0 and not currentSpec:find("^Leveling_Healer") and weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] then
         weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] = weights["ITEM_MOD_SPELL_CRIT_RATING_SHORT"] * (1 + (rVengeance * 0.20))
     end
 
@@ -310,7 +311,7 @@ function Druid:ApplyScalers(weights, currentSpec)
         Touch(MSC.ForeverManaKeys)
     end
 
-    -- Shifting Power (Feral t4, minLevel 25; new in the 2 Oct patch, 16 s
+    -- Shifting Power (Feral t7, minLevel 40 since the 2026-10-30 hotfix, 8 s
     -- cooldown): turns 55% of base mana into 40 Energy, so a Cat's spare mana
     -- becomes damage. Using it is mana-limited, not cooldown-limited, so each
     -- mana point is worth 40 / cost Energy: about 1.2 AP per Intellect at 30
@@ -347,8 +348,9 @@ function Druid:ApplyScalers(weights, currentSpec)
     end
 
     -- Moonfury (Balance t6, 5 ranks): +2%/rank Arcane/Nature spell damage.
-    -- Genesis (New in Forever, Balance t1, 5 ranks): +1%/rank periodic damage
-    -- AND healing. Naturalist (Restoration t2, 5 ranks): +1%/rank all damage.
+    -- Genesis (New in Forever, Balance t1, 5 ranks): +2%/rank periodic damage
+    -- AND healing. Naturalist (Restoration t2, 5 ranks): +2%/rank all damage
+    -- (both doubled by the 2026-10-30 hotfix).
     -- Gift of Nature (Restoration t3, 5 ranks): +2%/rank universal healing.
     -- A flat damage/healing multiplier lifts every damage-derived stat
     -- equally, so the caster/healer leveling rows take it by dividing the
@@ -360,13 +362,13 @@ function Druid:ApplyScalers(weights, currentSpec)
     local rNaturalist = Rank("NATURALIST")
     if isCasterRow then
         -- Genesis at 0.3 of nominal: DoTs are ~25-35% of modelled damage.
-        local m = (1 + 0.02 * rMoonfury) * (1 + 0.01 * rNaturalist) * (1 + 0.003 * rGenesis)
+        local m = (1 + 0.02 * rMoonfury) * (1 + 0.02 * rNaturalist) * (1 + 0.006 * rGenesis)
         MSC.ApplyForeverDamageMult(weights, m, { "ITEM_MOD_AGILITY_SHORT" })
         Touch(MSC.ForeverSafetyKeys)
         Touch({ "ITEM_MOD_AGILITY_SHORT" })
     elseif isHealerRow then
         -- Genesis at 0.4 of nominal: HoTs and Wild Growth are ~40% of healing.
-        local m = (1 + 0.02 * rGoN) * (1 + 0.004 * rGenesis) * (1 + 0.01 * rNaturalist)
+        local m = (1 + 0.02 * rGoN) * (1 + 0.008 * rGenesis) * (1 + 0.02 * rNaturalist)
         MSC.ApplyForeverDamageMult(weights, m, { "ITEM_MOD_AGILITY_SHORT" })
         Touch(MSC.ForeverSafetyKeys)
         Touch({ "ITEM_MOD_AGILITY_SHORT" })
@@ -376,10 +378,10 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
         if rGenesis > 0 then
             if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-                weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rGenesis * 0.01))
+                weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rGenesis * 0.02))
             end
             if weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
-                weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rGenesis * 0.01))
+                weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] = weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] * (1 + (rGenesis * 0.02))
             end
         end
         if rGoN > 0 and weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] then
@@ -388,16 +390,16 @@ function Druid:ApplyScalers(weights, currentSpec)
         if rNaturalist > 0 then
             if (isCat or isBear) and isLevelingRow then
                 -- Feral rows: the melee offense keys plus Spell Power.
-                local f = 1 + 0.01 * rNaturalist
+                local f = 1 + 0.02 * rNaturalist
                 Keys(weights, FERAL_OFFENSE, f)
                 Keys(weights, { "ITEM_MOD_SPELL_POWER_SHORT" }, f)
                 Touch(FERAL_OFFENSE)
             else
                 if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-                    weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rNaturalist * 0.01))
+                    weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rNaturalist * 0.02))
                 end
                 if weights["ITEM_MOD_ATTACK_POWER_SHORT"] then
-                    weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rNaturalist * 0.01))
+                    weights["ITEM_MOD_ATTACK_POWER_SHORT"] = weights["ITEM_MOD_ATTACK_POWER_SHORT"] * (1 + (rNaturalist * 0.02))
                 end
             end
         end
@@ -492,14 +494,8 @@ function Druid:ApplyScalers(weights, currentSpec)
         if v and v > 0 and v < 0.02 then weights[k] = 0 end
     end
 
-    -- 2. Covariance (Mana Regen / Healing Synergy)
-    if hooks and (currentSpec:find("RESTO") or currentSpec:find("Healer")) then
-        local healPower = MSC.GetJudgingStats().heal -- unbuffed, plus assumed buffs
-        if healPower > 500 then
-             local hScaler = 1 + ((healPower - 500) / 5000)
-             weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * hScaler
-        end
-    end
+    -- (The old "Spirit grows with healing power" scaler is gone, 2026-10-28: it never ran on a
+    -- level-60 profile, and the healer weights move with gear through the profile's gear points.)
 
     -- 3. Caps
     -- Nature's Reach (+2% hit per rank, all attacks) is already in the game's
@@ -581,6 +577,8 @@ Druid.Relics = {
 Druid.Weights["Default"] = Druid.Weights["CAT_RAID"]
 Druid.Weights["HYBRID_HOTW"] = Druid.Weights["CAT_RAID"]
 Druid.RetiredProfiles = { Default = true, HYBRID_HOTW = true }
+-- A saved retired name scores as the sim profile it points at, so the talent hooks skip it too.
+for k in pairs(Druid.RetiredProfiles) do SIM_PROFILES[k] = true end
 
 Druid.Profiles = {}
 for k, v in pairs(Druid.Weights) do Druid.Profiles[k] = v end

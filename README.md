@@ -17,7 +17,6 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 - **Dual Specialization** on Season of Discovery and TBC Anniversary.
 - **Leveling and farming weights rebuilt (WoW Forever)** class by class, blending into your level-60 profile from 50.
 - **Raid weights rebuilt (WoW Forever)** in the simulator for every spec on pre-raid best-in-slot gear (Experimental until tried at 60).
-- **Loot council addons** can ask Gear Judge how much an item upgrades each player.
 
 ---
 
@@ -28,7 +27,7 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 - **Level-60 weights for every class**, worked out with each build's own talents: damage and tank profiles from the wowsims Forever simulator, healer profiles from a healing model in which healers downrank as they do in game.
 - **Profiles that match how you play:** Raid, Solo Leveling, Dungeon Leveling, AoE Farming and PvP, named after the builds in the Talents plugin (for example "Arms: Raid", "Holy: Dungeon Leveling").
 - **Leveling weights level by level** for every Forever spec, from 10 to 59, built from the talents, spells and gear stats each spec actually has at that level. Your actual talents adjust them.
-- **Hit and defense targets follow your level.** While leveling that's 5% hit (3% spell hit) against same-level mobs. With **Gear for Raiding** on, the targets slide toward the raid caps (9% hit, 16% spell hit, 440 Defense, uncrushable) from level 50.
+- **Hit and defense targets follow your level.** While leveling that's 5% hit (4% spell hit) against same-level mobs. With **Gear for Raiding** on, the targets slide toward the raid caps (9% hit, 17% spell hit, 440 Defense, uncrushable) from level 50.
 - **Gear for PvP:** Stamina, armor and burst count for more, and hit stays at the player-vs-player caps. The first time a realm looks like a PvP realm, Gear Judge offers to turn it on.
 - **Relics are rated**, and new race/class combinations are supported.
 
@@ -147,6 +146,7 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 | `/sgj pvp`              | Toggle **Gear for PvP** (WoW Forever)                               |
 | `/sgj jc`               | Toggle Jewelcrafter gem evaluation (TBC)                            |
 | `/sgj hitcheck`         | Show your hit, where it comes from, and your targets (WoW Forever)  |
+| `/sgj gearpoint`        | Show where your gear sits between pre-raid and Tier 1 (WoW Forever) |
 | `/sgj talents`          | Show the talents Gear Judge reads and the profile it picks          |
 | `/sgj dualspec`         | Show what Gear Judge reads for each spec                            |
 | `/sgj realm`            | Show what the PvP realm check reads                                 |
@@ -257,7 +257,7 @@ English, plus German (**deDE**), Spanish (**esES**, **esMX**), French (**frFR**)
 
 ```
 Item tooltip / bag link
-    → Parse.lua (scan stats, procs, sockets, set headers)
+    → Parsers/Parse.lua (scan stats, procs, sockets, set headers)
     → Helpers.lua (raw stats, ProcDB, gem/enchant projection)
     → Evaluator.lua (character score, upgrade delta, cap guardian)
     → Judge.lua / Interface.lua (draw tooltip verdict or bag arrow)

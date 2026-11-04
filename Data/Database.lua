@@ -755,7 +755,7 @@ AddOverrides({
     -- Pet/Minor damage effects assigned proxy Spell Power or Attack Power equivalents.
     [18354] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=10 }, note = MSC.L["Equip: Imp Firebolt Dmg +8.1 (10 SP Proxy)"] }, 
     [18355] = { _AUTO_PROC = { stat="ITEM_MOD_ATTACK_POWER_SHORT", val=20 }, note = MSC.L["Equip: Pet Dmg +4% (20 AP Proxy)"] },
-    [18815] = { _AUTO_PROC = { stat="ITEM_MOD_SPELL_POWER_SHORT", val=15 }, note = MSC.L["Equip: 13 Fire Thorns (15 SP Proxy)"] }, 
+    [18815] = { note = MSC.L["Equip: 13 Fire Thorns (not scored)"] }, -- Essence of the Pure Flame: thorns neither heal nor scale with Spell Power 
     [18951] = { _AUTO_PROC = { stat="ITEM_MOD_AGILITY_SHORT", val=1 }, note = MSC.L["Equip: Reduced Fall Dmg (1 Agi Proxy)"] }, 
 
     -- Direct Damage: (Avg Dmg / Cooldown Seconds) = DPS. DPS * 14 = AP Equivalent.

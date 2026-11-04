@@ -23,6 +23,7 @@ for className, curves in pairs(MSC.ForeverLevelingCurves or {}) do
     local module = MSC.PendingModules and MSC.PendingModules[className]
     if module then
         module.LevelingCurves = curves
+        module.LevelingGear = MSC.ForeverLevelingGear and MSC.ForeverLevelingGear[className] -- quest-gear rows (MSC.LevelingGearBlend)
         module.LevelingWeights = module.LevelingWeights or {}
         module.PrettyNames = module.PrettyNames or {}
         for role, curve in pairs(curves) do

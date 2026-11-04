@@ -269,8 +269,9 @@ pcall(eventFrame.RegisterEvent, eventFrame, "CRAFT_SHOW")
 -- An item's Equip:/Use: text loads with its spell, after the item itself.
 pcall(eventFrame.RegisterEvent, eventFrame, "SPELL_DATA_LOAD_RESULT")
 eventFrame:RegisterEvent("ADDON_LOADED")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-eventFrame:SetScript("OnEvent", function(self, event, arg1) 
+eventFrame:SetScript("OnEvent", function(self, event, arg1, arg2) 
     if event == "BAG_UPDATE" then 
         -- The Receipt reads MSC.BagCacheDirty (BagCache.Dirty was never read).
         MSC.BagCacheDirty = true
@@ -278,6 +279,20 @@ eventFrame:SetScript("OnEvent", function(self, event, arg1)
 
     elseif event == "QUEST_COMPLETE" or event == "QUEST_DETAIL" or event == "QUEST_PROGRESS" or event == "QUEST_ITEM_UPDATE" then
         QueueQuestRefresh()
+
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        -- Login and /reload read every worn and bag item at once, mostly before
+        -- their Equip: text has loaded. Read them all again once it has.
+        -- arg1 = initial login, arg2 = /reload; zoning needs no reread.
+        if arg1 or arg2 then
+            for _, delay in ipairs({ 8, 25 }) do
+                C_Timer.After(delay, function()
+                    if MSC.DropAllScans then MSC.DropAllScans() end
+                    MSC.BagCacheDirty = true
+                    QueueItemInfoRefresh()
+                end)
+            end
+        end
 
     elseif event == "SPELL_DATA_LOAD_RESULT" then
         -- Rescan items scanned just before their Equip: text arrived (quest
@@ -2235,7 +2250,8 @@ local function GetClassRings(class, stats, weights, profileKey)
         if arcane >= frost and arcane > 0 then AddMod("Spell Hit", "Arcane Focus", arcane, true)
         elseif frost > arcane then AddMod("Spell Hit", "Elemental Precision", frost, true) end
     elseif class == "WARLOCK" then
-        spellHitBonus = GetTalentRank(1, "Suppression") * 2
+        -- Affliction spells only: not counted for the Shadow Bolt raid builds
+        spellHitBonus = MSC.SuppressionCounts(profileKey) and GetTalentRank(1, "Suppression") * 2 or 0
         AddMod("Spell Hit", "Suppression", spellHitBonus, true)
     elseif class == "PRIEST" then
         spellHitBonus = GetTalentRank(3, "Shadow Focus") * 2
@@ -2304,18 +2320,13 @@ local function GetClassRings(class, stats, weights, profileKey)
     if mhLink then
         local _, _, _, _, _, _, _, _, _, _, _, classID, subClassID = GetItemInfo(mhLink)
         if MSC.IsForever then
-            -- the 2026-10-15 patch replaced the weapon specs: Human Ruthless +2% crit and Orc Savage +1% crit with any
-            -- weapon; Dwarf Earth Fury is +2% crit damage and healing, not crit, so it adds nothing here
+            -- no weapon racials on Forever; Human Ruthless is +1% crit with any weapon (launch racial pass, dev notes
+            -- of October 26; Orc Savage and Dwarf Earth Fury are gone)
             if playerRace == "Human" then
-                critBonus = critBonus + 2
-                spellCritBonus = spellCritBonus + 2
-                AddMod("Crit", "Ruthless (Human)", 2, true)
-                AddMod("Spell Crit", "Ruthless (Human)", 2, true)
-            elseif playerRace == "Orc" then
                 critBonus = critBonus + 1
                 spellCritBonus = spellCritBonus + 1
-                AddMod("Crit", "Savage (Orc)", 1, true)
-                AddMod("Spell Crit", "Savage (Orc)", 1, true)
+                AddMod("Crit", "Ruthless (Human)", 1, true)
+                AddMod("Spell Crit", "Ruthless (Human)", 1, true)
             end
         else
             if playerRace == "Human" then
@@ -2348,11 +2359,12 @@ local function GetClassRings(class, stats, weights, profileKey)
         end
     end
     
-    if MSC.IsForever and playerRace == "Tauren" then
+    -- Forever: Dwarf Artisan's Precision, +1% hit with spells and attacks (Tauren Endurance lost its hit at launch)
+    if MSC.IsForever and playerRace == "Dwarf" then
         meleeHitBonus = meleeHitBonus + 1
         spellHitBonus = spellHitBonus + 1
-        AddMod("Hit Cap", "Endurance (Tauren)", 1, true)
-        AddMod("Spell Hit", "Endurance (Tauren)", 1, true)
+        AddMod("Hit Cap", "Artisan's Precision (Dwarf)", 1, true)
+        AddMod("Spell Hit", "Artisan's Precision (Dwarf)", 1, true)
     end
 
     if isTBC and playerRace == "Draenei" then
@@ -2391,9 +2403,10 @@ local function GetClassRings(class, stats, weights, profileKey)
         local pretty = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[profileKey or ""]) or ""
         local spec = (tostring(profileKey or "") .. " " .. pretty):upper()
         if class == "MAGE" then
-            local arcane = spec:find("ARCANE") ~= nil
-            foreverSchoolHit = arcane and FRank("ARCANE_FOCUS") or FRank("ELE_PRECISION") * 2   -- 2% a rank since the 20 Oct hotfix
-            AddMod("Spell Hit", arcane and "Arcane Focus" or "Elemental Precision", foreverSchoolHit, true)
+            -- the same talent hit the weights use (Mage:SchoolHit: only what the game's number doesn't hold)
+            local cc = MSC.CurrentClass
+            foreverSchoolHit = (cc and cc.SchoolHit and cc:SchoolHit(profileKey)) or 0
+            AddMod("Spell Hit", "Elemental Precision", foreverSchoolHit, true)
         elseif class == "PRIEST" then
             if spec:find("SHADOW") then
                 foreverSchoolHit = FRank("SHADOW_FOCUS"); AddMod("Spell Hit", "Shadow Focus", foreverSchoolHit, true)
@@ -3037,7 +3050,7 @@ function MSC.InitSettingsView(parent)
     cbBagArrows:HookScript("OnClick", function() MSC.BagCacheDirty = true; if RequestUpdate then RequestUpdate() end end)
     local cbFastBag = CreateCheck(MSC.L["Fast Bag Arrows"], "FastBagArrows", MSC.L["Single-slot scoring for bag arrows (full eval for sets/weapons)."], cbBagArrows, 20, -5)
     local cbLootArrows = CreateCheck(MSC.L["Show Loot Roll Arrows"], "ShowLootArrows", MSC.L["Shows green upgrade arrows on group loot popups."], cbFastBag, -20, -5)
-    -- API.lua: answer loot council / loot distribution addons' score requests (addon prefix "SGJ")
+    -- SGJ_API.lua: answer loot council / loot distribution addons' score requests (addon prefix "SGJ")
     CreateCheck(MSC.L["Share Scores With Group Addons"], "ShareScores", MSC.L["Lets loot council and loot distribution addons in your group ask Sharpie's Gear Judge how much an item would upgrade you. Only your upgrade % and scores are sent."], cbLootArrows, 0, -5)
 
     -- ==========================================
@@ -3133,7 +3146,7 @@ function MSC.InitSettingsView(parent)
     -- (MSC.ForeverCaps); turn off to keep leveling targets until 60.
     local otherSpecAnchor = cbCamping
     if MSC.IsForever then
-        local cbRaidPrep = CreateCheck(MSC.L["Gear for Raiding"], "GearForRaiding", MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 16% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."], cbCamping, 0, -5)
+        local cbRaidPrep = CreateCheck(MSC.L["Gear for Raiding"], "GearForRaiding", MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."], cbCamping, 0, -5)
         cbRaidPrep:HookScript("OnClick", function()
             MSC.CachedWeights = nil
             if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
@@ -3159,7 +3172,7 @@ function MSC.InitSettingsView(parent)
         -- Gear for PvP keeps hit and defense at the player-vs-player targets, so
         -- Gear for Raiding does nothing while it's on: grey it out (its saved
         -- choice is kept for when PvP is turned off).
-        local raidTip = MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 16% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."]
+        local raidTip = MSC.L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."]
         local function PaintRaidPrep(pvpOn)
             if pvpOn then
                 cbRaidPrep:Disable(); cbRaidPrep.Text:SetTextColor(0.5, 0.5, 0.5)
@@ -3905,7 +3918,7 @@ function MSC.ApplySettingsDefaults()
         ShowBagArrows = false,
         FastBagArrows = true,
         ShowLootArrows = false,
-        ShareScores = true,    -- API.lua: answer group addons' score requests
+        ShareScores = true,    -- SGJ_API.lua: answer group addons' score requests
         AssumeRaidBuffs = false,
         AssumeWorldBuffs = false,
         AssumeCampingBuffs = false,

@@ -34,15 +34,15 @@ Warrior.Weights = {
     -- Protection: Raid (Shield Slam build with Improved Thunder Clap, level-63 boss; threat 35%, damage
     -- taken 35%, effective health 30%). Boss hits are large, so dodge, parry, Defense and armor lead; Hit
     -- and Crit carry the threat. Stamina 3.0 here; the leveling tank rows use 2.5.
-    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=23.5, ["ITEM_MOD_PARRY_RATING_SHORT"]=23.5, ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.2, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.76, ["ITEM_MOD_ARMOR_SHORT"]=0.18, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.54, ["ITEM_MOD_HIT_RATING_SHORT"]=18.1, ["ITEM_MOD_CRIT_RATING_SHORT"]=11.8, ["ITEM_MOD_AGILITY_SHORT"]=2.16, ["ITEM_MOD_STRENGTH_SHORT"]=1.32, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.56, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_RAID"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=23.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=23.4, ["ITEM_MOD_BLOCK_RATING_SHORT"]=0.2, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.74, ["ITEM_MOD_ARMOR_SHORT"]=0.18, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.56, ["ITEM_MOD_HIT_RATING_SHORT"]=18.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=11.8, ["ITEM_MOD_AGILITY_SHORT"]=2.15, ["ITEM_MOD_STRENGTH_SHORT"]=1.23, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.52, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=2.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
     -- PROT_AOE: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the WARRIOR_PROT_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
-    ["PROT_AOE"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=1.89, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.7, ["ITEM_MOD_STAMINA_SHORT"]=0.94, ["ITEM_MOD_SPIRIT_SHORT"]=1.55, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=4.29, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=12.87, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.46, ["ITEM_MOD_DODGE_RATING_SHORT"]=18.8, ["ITEM_MOD_PARRY_RATING_SHORT"]=18.8, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.3, ["ITEM_MOD_HIT_RATING_SHORT"]=14.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=13.5, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
+    ["PROT_AOE"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.0, ["ITEM_MOD_STRENGTH_SHORT"]=2.0, ["ITEM_MOD_AGILITY_SHORT"]=2.08, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=5.6, ["ITEM_MOD_STAMINA_SHORT"]=0.84, ["ITEM_MOD_SPIRIT_SHORT"]=1.68, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=4.85, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=13.15, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.47, ["ITEM_MOD_DODGE_RATING_SHORT"]=18.9, ["ITEM_MOD_PARRY_RATING_SHORT"]=18.9, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.5, ["ITEM_MOD_HIT_RATING_SHORT"]=14.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=17.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
     -- ARMS_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the WARRIOR_2H_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
-    ["ARMS_FARM"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_AGILITY_SHORT"]=2.21, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.1, ["ITEM_MOD_STAMINA_SHORT"]=2.63, ["ITEM_MOD_SPIRIT_SHORT"]=1.4, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.82, ["ITEM_MOD_ARMOR_SHORT"]=0.16, ["ITEM_MOD_HIT_RATING_SHORT"]=23.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=37.0 },
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
+    ["ARMS_FARM"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_AGILITY_SHORT"]=2.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.5, ["ITEM_MOD_STAMINA_SHORT"]=2.15, ["ITEM_MOD_SPIRIT_SHORT"]=1.46, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=5.22, ["ITEM_MOD_ARMOR_SHORT"]=0.14, ["ITEM_MOD_HIT_RATING_SHORT"]=23.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=35.4 },
 }
 -- PvP profile: a copy of Arms: Raid; the PvP model (Helpers 5.10) adds Stamina, armor and burst on top
 -- and keeps hit at the player-vs-player caps. Picked by the Talents plugin's PvP build or by hand.
@@ -176,8 +176,11 @@ function Warrior:GetSpec()
         if level == 10 then return "Leveling_1_10" end
         -- Fury's dual-wield talents, or no other role and a weapon in the off-hand
         -- (no low-tier talent marks dual wield; a Talents plugin Arms build keeps Arms)
-        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
-        if forced ~= "Leveling" and (Rank("DW_SPEC") > 0 or Rank("RAGING_BLOWS") > 0 or DualWielding()) then
+        local forced = (MSC.GetBuildRole() or {}).leveling
+        -- A build naming plain "Leveling" (the Fury DW raid build's leveling phase) still dual-wields
+        -- when it has Dual Wield Specialization and an off-hand weapon.
+        if (forced ~= "Leveling" and (Rank("DW_SPEC") > 0 or Rank("RAGING_BLOWS") > 0 or DualWielding()))
+            or (Rank("DW_SPEC") > 0 and DualWielding()) then
             return "Leveling_DW" .. suffix
         end
         return "Leveling" .. suffix
@@ -267,8 +270,10 @@ function Warrior:ApplyScalers(weights, currentSpec)
     if survive < 1 then
         MSC.ScaleForeverKeys(weights, {
             "ITEM_MOD_SPIRIT_SHORT", "ITEM_MOD_HEALTH_REGENERATION_SHORT", "ITEM_MOD_ARMOR_SHORT",
-            "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
+            "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT",
         }, survive)
+        -- Defense is a cap key the core fade (50-59) leaves alone, so this talent effect fades here
+        MSC.ScaleForeverKeys(weights, { "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" }, 1 - (1 - survive) * MSC.LevelingHookShare(level))
     end
 
     -- Armor is kept just above the 0.02 "useless" band by the curve; the
@@ -367,7 +372,8 @@ function Warrior:ApplyScalers(weights, currentSpec)
         Add("ITEM_MOD_STRENGTH_SHORT", 0.11)
         Touch("ITEM_MOD_CRIT_RATING_SHORT")
         MSC.ScaleForeverMeleeCrit(weights, 1.6, level)
-        Mul("ITEM_MOD_HIT_RATING_SHORT", 1.6)
+        -- a talent multiplier on hit, not a cap: fades 50-59 like the other hooks (MSC.LevelingHookShare)
+        Mul("ITEM_MOD_HIT_RATING_SHORT", 1 + 0.6 * MSC.LevelingHookShare(level))
     end
 
     -- Keep talent-touched weights out of the (0, 0.02) "useless" band.
@@ -401,7 +407,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
         MSC.ApplyForeverDefenseTarget(weights, activeCaps)
         -- Shield Block (learned at 16): +75% block chance for 2 attacks. Crushing blows come from mobs
         -- 3+ levels above you (dungeon bosses, raids), not from questing, so solo tank rows skip it.
-        if currentSpec == "PROT_RAID" or currentSpec:find("^Leveling_TankDungeon") then
+        if currentSpec == "PROT_RAID" or currentSpec == "DEEP_PROT" or currentSpec:find("^Leveling_TankDungeon") then
             MSC.ApplyForeverUncrushable(weights, 75, activeCaps)
         end
     end

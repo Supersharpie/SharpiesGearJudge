@@ -17,6 +17,12 @@ local GetInventoryItemLink = GetInventoryItemLink
 local IsEquippableItem = IsEquippableItem
 local UnitClass = UnitClass
 local UnitLevel = UnitLevel
+-- Stats that Era items print as a flat percent ("+1% chance to hit"), shown with % on Era.
+local ERA_PERCENT_STATS = {
+    ITEM_MOD_HIT_RATING_SHORT = true, ITEM_MOD_HIT_SPELL_RATING_SHORT = true,
+    ITEM_MOD_CRIT_RATING_SHORT = true, ITEM_MOD_SPELL_CRIT_RATING_SHORT = true,
+    ITEM_MOD_DODGE_RATING_SHORT = true, ITEM_MOD_PARRY_RATING_SHORT = true, ITEM_MOD_BLOCK_RATING_SHORT = true,
+}
 local IsAddOnLoaded = IsAddOnLoaded
 local C_AddOns = C_AddOns
 
@@ -132,6 +138,51 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         end
         local def = MSC.GetForeverDefenseTarget and MSC.GetForeverDefenseTarget()
         print(string.format(MSC.L["|cff00ff00SGJ:|r raid blend %.0f%%, defense %d, defense target %s"], (MSC.GetRaidBlend() or 0) * 100, MSC:GetPlayerStat("DEFENSE"), def and string.format("%d", def) or MSC.L["none below 50"]))
+    elseif cmd == "gearpoint" and MSC.GearPointBlend then
+        -- Where the profile's weights sit between its pre-raid and Tier 1 gear points (WoW Forever).
+        local _, spec = MSC.GetCurrentWeights()
+        local cls = MSC.CurrentClass
+        local raw = cls and cls.Weights and spec and cls.Weights[spec]
+        local gp = raw and MSC.GetGearPoint(raw)
+        -- a leveling row: between its quest-gear and best-gear rows (MSC.LevelingGearBlend)
+        local role, bandLo, bandHi = string.match(tostring(spec), "^(Leveling.-)_(%d+)_(%d+)$")
+        local curves = role and cls and cls.LevelingCurves
+        local curveRole = curves and (curves[role] and role or (MSC.LevelingCurveAlias and MSC.LevelingCurveAlias[role]))
+        local gear = curveRole and cls.LevelingGear and cls.LevelingGear[curveRole]
+        if not gp and gear and curves[curveRole] then
+            local level = math.min(math.max(UnitLevel("player"), tonumber(bandLo)), tonumber(bandHi))
+            local _, f, power, lo, hi = MSC.LevelingGearBlend(gear, level, MSC.EvaluateLevelingCurve(curves[curveRole], level))
+            if f == nil then -- the two kits too close at this level: the one row
+                print(string.format(MSC.L["|cff00ff00SGJ gear point:|r %s has one gear point"], tostring(spec)))
+            elseif not power then
+                print(MSC.L["|cff00ff00SGJ gear point:|r your gear isn't read yet, try again in a moment"])
+            else
+                print(string.format(MSC.L["|cff00ff00SGJ gear point:|r %s, gear power %.0f (quest rewards %.0f, best gear %.0f): %.0f%% toward the best-gear weights"],
+                    spec, power, lo or 0, hi or 0, (f or 1) * 100))
+            end
+        elseif not gp then
+            print(string.format(MSC.L["|cff00ff00SGJ gear point:|r %s has one gear point"], tostring(spec)))
+        else
+            local _, f, power, a, b = MSC.GearPointBlend(raw)
+            if not power then
+                print(MSC.L["|cff00ff00SGJ gear point:|r your gear isn't read yet, try again in a moment"])
+            elseif MSC.IsEra then
+                -- Era: the raid tiers the gear sits between (labels from GearPoints_Era.lua)
+                local TIER = { pre = MSC.L["pre-raid"], P2 = MSC.L["Phase 2"] }
+                if a == b then
+                    -- outside the measured sets: the weights hold at the nearest one
+                    local msg = power < a.power and "|cff00ff00SGJ gear point:|r %s, gear power %.0f, below the %s set (%.0f): using that set's weights"
+                        or "|cff00ff00SGJ gear point:|r %s, gear power %.0f, above the %s set (%.0f): using that set's weights"
+                    print(string.format(MSC.L[msg], spec, power, TIER[a.tier] or a.tier, a.power))
+                else
+                    print(string.format(MSC.L["|cff00ff00SGJ gear point:|r %s, gear power %.0f, between the %s set (%.0f) and the %s set (%.0f)"],
+                        spec, power, TIER[a.tier] or a.tier, a.power, TIER[b.tier] or b.tier, b.power))
+                end
+            else
+                print(string.format(MSC.L["|cff00ff00SGJ gear point:|r %s, gear power %.0f (pre-raid set %.0f, Tier 1 set %.0f): %.0f%% toward Tier 1"],
+                    spec, power, gp.lo, gp.hi, (f or 0) * 100))
+            end
+        end
     elseif cmd == "talents" then
         -- What SGJ reads from the talent tree, the points per tree, and the
         -- profile that picks (for checking talent detection in game).
@@ -1053,6 +1104,14 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         if est and est.ap and est.ap >= 0.5 then
                             tooltip:AddLine(string_format(MSC.L["Proc damage estimated as about %d Attack Power"], math.floor(est.ap + 0.5)), 0.53, 0.53, 0.53, true)
                         end
+                        -- thorns count only for tanks and solo leveling (MSC.ThornsCount)
+                        if est and est.thorns and est.thorns >= 0.5 then
+                            if MSC.ThornsCount(specName) then
+                                tooltip:AddLine(string_format(MSC.L["Thorns damage estimated as about %d Attack Power"], math.floor(est.thorns + 0.5)), 0.53, 0.53, 0.53, true)
+                            else
+                                tooltip:AddLine(MSC.L["Thorns damage not scored: this profile is rarely the one hit"], 0.53, 0.53, 0.53, true)
+                            end
+                        end
                         -- Scanner found "chance on hit" / temporary Equip: proc text but
                         -- no curated ProcDB/WeaponDB/TrinketDB/PvPDB entry exists for it --
                         -- let the player know the score below is stats-only.
@@ -1296,7 +1355,11 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         if not hp then tooltip:AddLine(label, cR, cG, cB); hp = true end
                         local name = d.label or (MSC.GetCleanStatName(d.key) or d.key)
                         local level = UnitLevel("player")
-                        if MSC.GetRatingPercent and not d.label then
+                        -- Era items give hit/crit/dodge/parry/block as a flat %, not a rating:
+                        -- the value already is the percent, so show it with "%" and skip the
+                        -- rating conversion (it printed "(0.01%)" for Intellect's 0.15% crit).
+                        local eraPct = MSC.IsEra and not d.label and ERA_PERCENT_STATS[d.key]
+                        if MSC.GetRatingPercent and not d.label and not MSC.IsEra then
                              local percentVal = MSC:GetRatingPercent(d.key, math_abs(d.val), level)
                              if percentVal and percentVal > 0.01 then
                                  name = name .. string_format(" |cff888888(%.2f%%)|r", percentVal)
@@ -1304,6 +1367,8 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                         end
                         name = name .. (d.nameSuffix or "")
                         local valStr = (d.val%1==0) and string_format("%d", math_abs(d.val)) or string_format("%.1f", math_abs(d.val))
+                        if eraPct and math_abs(d.val) < 1 then valStr = string_format("%.2f", math_abs(d.val)) end
+                        if eraPct and not d.valSuffix then valStr = valStr .. "%" end
                         if d.valSuffix then valStr = valStr .. d.valSuffix end
                         if cR==0 then valStr="+"..valStr else valStr="-"..valStr end
                         tooltip:AddDoubleLine("  " .. name, valStr, 1, 1, 1, cR, cG, cB)

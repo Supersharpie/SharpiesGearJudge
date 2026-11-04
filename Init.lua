@@ -68,6 +68,9 @@ local GetMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata
 local addonTitle = GetMetadata(addonName, "Title") or ""
 local version = GetBuildInfo(); MSC.IsForever = (string.find(addonTitle, "Forever Edition") ~= nil) or (interfaceVersion == 16001) or (version and string.find(version, "1.60.1") ~= nil)
 MSC.IsEra   = (interfaceVersion < 20000) and not MSC.IsForever
+-- Season of Discovery runs on the Era client; its gear doesn't follow the Era raid tiers
+MSC.IsSoD   = MSC.IsEra and C_Seasons ~= nil and C_Seasons.GetActiveSeason ~= nil
+    and C_Seasons.GetActiveSeason() == ((Enum and Enum.SeasonID and Enum.SeasonID.SeasonOfDiscovery) or 2)
 MSC.IsVanillaRules = MSC.IsEra or MSC.IsForever
 MSC.IsTBC   = (interfaceVersion >= 20000 and interfaceVersion < 30000)
 MSC.IsWrath = (interfaceVersion >= 30000)

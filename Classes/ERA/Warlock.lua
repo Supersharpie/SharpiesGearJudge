@@ -158,12 +158,9 @@ function Warlock:ApplyScalers(weights, currentSpec)
         -- FIX: Use Shim
         local currentHit = MSC:GetPlayerStat("SPELL_HIT")
         
-        -- Suppression Logic (Affliction Only)
-        local suppressionBonus = Rank("SUPPRESSION") * 2 
-        local isDestro = (Rank("CONFLAGRATE") > 0)
-        
-        -- If we are Deep Destro, Suppression doesn't help main nuke
-        local totalHit = currentHit + (isDestro and 0 or suppressionBonus)
+        -- Suppression helps Affliction spells only: not the Shadow Bolt raid builds
+        local suppressionBonus = MSC.SuppressionCounts(currentSpec) and Rank("SUPPRESSION") * 2 or 0
+        local totalHit = currentHit + suppressionBonus
         
         local HIT_CAP = 16
         

@@ -34,16 +34,16 @@ Shaman.Weights = {
     ["RESTO_RAID"] = { ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.95, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.83, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.6, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
 
     -- TANK_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the SHAMAN_TANK_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25. Also the level-60 weights
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01. Also the level-60 weights
     -- for the Tank: Dungeon Leveling build (there is no raid tank profile).
-    ["TANK_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.27, ["ITEM_MOD_AGILITY_SHORT"]=2.31, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.14, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.9, ["ITEM_MOD_STAMINA_SHORT"]=2.09, ["ITEM_MOD_INTELLECT_SHORT"]=2.67, ["ITEM_MOD_SPIRIT_SHORT"]=3.35, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.18, ["ITEM_MOD_ARMOR_SHORT"]=0.46, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.36, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.92, ["ITEM_MOD_DODGE_RATING_SHORT"]=12.4, ["ITEM_MOD_PARRY_RATING_SHORT"]=12.4, ["ITEM_MOD_BLOCK_RATING_SHORT"]=23.8, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.3, ["ITEM_MOD_HIT_RATING_SHORT"]=4.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=4.3 },
+    ["TANK_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.23, ["ITEM_MOD_AGILITY_SHORT"]=2.91, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.12, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=1.6, ["ITEM_MOD_STAMINA_SHORT"]=2.58, ["ITEM_MOD_INTELLECT_SHORT"]=3.38, ["ITEM_MOD_SPIRIT_SHORT"]=3.55, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.45, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=2.14, ["ITEM_MOD_ARMOR_SHORT"]=0.51, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=2.8, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=6.4, ["ITEM_MOD_DODGE_RATING_SHORT"]=32.6, ["ITEM_MOD_PARRY_RATING_SHORT"]=32.6, ["ITEM_MOD_BLOCK_RATING_SHORT"]=31.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=4.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=4.0 },
 
     -- Totem-support and hybrid profiles (not modelled).
     -- Healer Spell Crit 48 at Healing 20: 1% crit is worth ~2.4 Healing.
 
     -- ELE_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the SHAMAN_ELE_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
-    ["ELE_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.2, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.8, ["ITEM_MOD_STAMINA_SHORT"]=2.52, ["ITEM_MOD_INTELLECT_SHORT"]=2.39, ["ITEM_MOD_SPIRIT_SHORT"]=1.28, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.19, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.69, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.7 },
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
+    ["ELE_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.51, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.49, ["ITEM_MOD_STAMINA_SHORT"]=1.76, ["ITEM_MOD_INTELLECT_SHORT"]=1.69, ["ITEM_MOD_SPIRIT_SHORT"]=2.33, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.75, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=1.65, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=8.2 },
 }
 -- Old names, kept so a saved profile choice still works.
 Shaman.Weights["ELE_PVE"] = Shaman.Weights["ELE_RAID"]
@@ -196,7 +196,7 @@ function Shaman:GetSpec()
         else suffix = "_52_59" end
         
         -- A Talents plugin build names its role; it wins over the talent checks below.
-        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        local forced = (MSC.GetBuildRole() or {}).leveling
         if forced and (forced == "Leveling" or Shaman.LowLevelRoles[forced]) and level >= 10 then
             local fs = (level == 10 and forced ~= "Leveling") and "_11_20" or suffix
             if Shaman.LevelingWeights[forced .. fs] then return forced .. fs end
@@ -441,7 +441,8 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- Full value while 1% or more short of the spell cap, fractional inside
     -- the last 1%. Total hit already counts Tidal Focus through the game's
     -- spell hit modifier; the rank is only added if the modifier reads 0.
-    if isHealer then
+    -- Solo healers only: they nuke while questing; a dungeon healer row is healing-only (pheal model).
+    if isHealer and not currentSpec:find("Dungeon") then
         local total, _, mod = MSC:GetForeverHitPercent("SPELL")
         if (mod or 0) == 0 then total = total + Rank("TIDAL_FOCUS") end
         local cap = MSC.GetForeverCapTarget(MSC.ForeverSpellCapKind(currentSpec) or "SPELL", level) or 4   -- dungeon rows: 5.5%
@@ -454,9 +455,14 @@ function Shaman:ApplyScalers(weights, currentSpec)
     -- [[ 1b. Tank: defense toward 440, uncrushable (from 50) ]]
     -- Shield tanks like Warriors and Paladins, but with no active block
     -- ability, so only passive block counts toward uncrushable.
-    if currentSpec:find("Tank") then
-        MSC.ApplyForeverDefenseTarget(weights, activeCaps)
-        MSC.ApplyForeverUncrushable(weights, 0, activeCaps)
+    -- (upper-cased: the level-60 farm profile is TANK_FARM, the leveling rows Leveling_Tank)
+    local specU = currentSpec:upper()
+    if specU:find("TANK") then
+        -- AoE farming has no defense target (normal mobs can't crush), as for Warriors and Paladins
+        if not specU:find("FARM") then
+            MSC.ApplyForeverDefenseTarget(weights, activeCaps)
+            MSC.ApplyForeverUncrushable(weights, 0, activeCaps)
+        end
 
         -- Spirit Weapons (Enhancement t5): without it a Shaman cannot parry.
         if Rank("SPIRIT_WEAPONS") == 0 and weights["ITEM_MOD_PARRY_RATING_SHORT"] then
@@ -568,6 +574,8 @@ Shaman.Weights["RESTO_TOTEM_SUPPORT"] = Shaman.Weights["RESTO_RAID"]
 Shaman.Weights["HYBRID_ELE_RESTO"] = Shaman.Weights["ELE_RAID"]
 Shaman.Weights["HYBRID_ENH_RESTO"] = Shaman.Weights["ENH_RAID"]
 Shaman.RetiredProfiles = { Default = true, RESTO_TOTEM_SUPPORT = true, HYBRID_ELE_RESTO = true, HYBRID_ENH_RESTO = true }
+-- A saved retired name scores as the sim profile it points at, so the talent hooks skip it too.
+for k in pairs(Shaman.RetiredProfiles) do SIM_PROFILES[k] = true end
 
 MSC.RegisterModule("SHAMAN", Shaman)
 

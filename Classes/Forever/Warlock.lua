@@ -14,15 +14,15 @@ Warlock.Weights = {
     -- Hit and Crit per 1%. Most of the damage is Shadow. Stamina is a small Life Tap / safety term (the sim's three-
     -- minute fight never runs a warlock dry).
     -- Demonology: Raid (Demonic Pact 5/31/15: Succubus out with a sacrificed Imp's buff kept). About 19% ahead of Affliction.
-    ["DEMO_PACT_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.45, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.55, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=30.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.68, ["ITEM_MOD_SPIRIT_SHORT"]=0.31, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.58, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    ["DEMO_PACT_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.46, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.54, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=28.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.58, ["ITEM_MOD_SPIRIT_SHORT"]=0.14, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.34, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
     -- Affliction: Raid (Affliction 35 / Destruction 16, Succubus).
-    ["AFF_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.76, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.24, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=23.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.68, ["ITEM_MOD_SPIRIT_SHORT"]=0.33, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.53, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    ["AFF_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.77, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.23, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=23.1, ["ITEM_MOD_INTELLECT_SHORT"]=0.56, ["ITEM_MOD_SPIRIT_SHORT"]=0.12, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
     -- Destruction: Raid (DS/Ruin with Pandemic: the Imp sacrificed). About 28% behind Demonology.
-    ["DESTRO_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.78, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.22, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.8, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.59, ["ITEM_MOD_SPIRIT_SHORT"]=0.31, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.47, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
+    ["DESTRO_RAID"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.79, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.21, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.49, ["ITEM_MOD_SPIRIT_SHORT"]=0.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.15, ["ITEM_MOD_STAMINA_SHORT"]=0.3 },
     -- DEMO_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the WARLOCK_DEMO_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
     -- Tempered (user): Intellect / Spirit / Mp5 / Stamina at most 3x Spell Power, Stamina at least 1x, Hit / Crit at most 25.
-    ["DEMO_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=4.48, ["ITEM_MOD_INTELLECT_SHORT"]=3.48, ["ITEM_MOD_SPIRIT_SHORT"]=4.45, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.53, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=0.03, ["ITEM_MOD_ARMOR_SHORT"]=0.42, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
+    ["DEMO_FARM"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_STAMINA_SHORT"]=4.48, ["ITEM_MOD_INTELLECT_SHORT"]=3.48, ["ITEM_MOD_SPIRIT_SHORT"]=4.45, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.53, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=1.73, ["ITEM_MOD_ARMOR_SHORT"]=0.42, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=25.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.0 },
 
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
@@ -165,7 +165,7 @@ function Warlock:GetSpec()
         local suffix = (level <= 20 and "_11_20") or (level <= 40 and "_21_40") or (level <= 51 and "_41_51") or "_52_59"
 
         -- A Talents plugin build names its role; it wins over the talent checks below.
-        local forced = MSC.TalentBuildRole and MSC.TalentBuildRole.leveling
+        local forced = (MSC.GetBuildRole() or {}).leveling
         if forced and (forced == "Leveling" or Warlock.LowLevelRoles[forced]) and Warlock.LevelingWeights[forced .. suffix] then
             return forced .. suffix
         end
@@ -245,12 +245,16 @@ function Warlock:ApplyScalers(weights, currentSpec)
         -- Fire rows) raise everything expressed in spell damage -- Spell Power,
         -- school damage, hit and crit -- but not wand, Int, Spirit, Mp5 or Stamina.
         local dmgMult = 1 + 0.02 * rShadowMastery
-        local dmgKeys = { "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SHADOW_DAMAGE_SHORT", "ITEM_MOD_HIT_SPELL_RATING_SHORT", "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }
+        -- Hit isn't in the list: it's a cap key the core fade (50-59) leaves alone, so it gets
+        -- the same multipliers faded by MSC.LevelingHookShare (FadeHit).
+        local dmgKeys = { "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SHADOW_DAMAGE_SHORT", "ITEM_MOD_SPELL_CRIT_RATING_SHORT" }
+        local function FadeHit(m) MSC.ScaleForeverKeys(weights, { "ITEM_MOD_HIT_SPELL_RATING_SHORT" }, 1 + (m - 1) * MSC.LevelingHookShare(level)) end
         if currentSpec:find("^Leveling_Fire") and rAgonizing > 0 then
             dmgMult = dmgMult * (1 + ({ 0.03, 0.07, 0.10 })[math.min(3, rAgonizing)])   -- client 3/7/10%
             dmgKeys[#dmgKeys + 1] = "ITEM_MOD_FIRE_DAMAGE_SHORT"
         end
         MSC.ScaleForeverKeys(weights, dmgKeys, dmgMult)
+        FadeHit(dmgMult)
 
         -- Soul Harvest (Affliction t2, 2 ranks): the regen buff is
         -- conditional on a Drain Soul kill (level 10+), so about +6%/rank.
@@ -299,12 +303,13 @@ function Warlock:ApplyScalers(weights, currentSpec)
         end
         if rSoulLink > 0 then
             MSC.ScaleForeverKeys(weights, dmgKeys, 1.03)
+            FadeHit(1.03)
         end
         local rDK = Rank("DEMONIC_KNOWLEDGE")
         if demoBake > 0 or rDK > 0 then
             -- 3 ranks give the baked x1.05 (+1.67% per rank)
             local dkFix = (1 + (0.05 / 3) * rDK) / (1 + 0.05 * demoBake)
-            MSC.ScaleForeverKeys(weights, { "ITEM_MOD_HIT_SPELL_RATING_SHORT" }, dkFix)
+            FadeHit(dkFix)
             MSC.ScaleForeverSpellCrit(weights, dkFix, level)
         end
 

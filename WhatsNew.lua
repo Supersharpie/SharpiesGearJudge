@@ -10,21 +10,24 @@ local L = MSC.L
 -- Reopen any time with /sgj whatsnew.
 --
 -- Update WHATS_NEW for each release. forever = true lines only show on the
--- Forever client; classic = true lines only show on Era and TBC. Keep it
+-- Forever client; classic = true lines only show on Era and TBC; era = true
+-- lines only on Era (not Season of Discovery). Keep it
 -- short: the full list lives in CHANGELOG.md.
 
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.7
-    { text = "New Off-Specs setting: tick the profiles a character also plays, such as a healing set for dungeons, and tooltips show when an item upgrades them, judged against the best gear you own (bags and bank included). The Roster plugin shows your alts' off-specs too." },
-    { text = "Dual Specialization now works on Season of Discovery and TBC Anniversary: tooltips also show upgrades for the spec you're not in." },
-    { text = "Loot council addons can now ask Gear Judge how much an item upgrades each player (turn it off with Share Scores With Group Addons)." },
-    { text = "Every class's leveling weights were reviewed one by one and rebuilt on our updated models, and so were the level-60 farming weights, with new ones for Arms, Retribution, Elemental and Balance farming.", forever = true },
-    { text = "From level 50 leveling weights blend smoothly into your level-60 profile, and spell hit caps are 1% higher (Forever seems to drop the 1% minimum miss).", forever = true },
-    { text = "Raid weights rebuilt in the simulator for every spec on pre-raid best-in-slot gear, with a Talents raid build for each (Experimental until tried at 60).", forever = true },
-    { text = "Talents plugin: every leveling build re-searched (most are faster), new Warlock Demonology and Destruction builds, single-target Mage solo builds with Frost: AoE Leveling back, and new farm builds including dungeon runs.", forever = true },
-    { text = "A cleaner window in your class color: tabs along the top, colored section titles, slimmer stat bars, and your profile and total score at the bottom. The plugins match it." },
+    -- v3.2.8
+    { text = "Leveling weights for every class follow Blizzard's launch notes, and the Talents plugin's solo and dungeon leveling builds are re-searched on them.", forever = true },
+    { text = "Level-60 weights now also account for your gear tier: from pre-raid best in slot toward Tier 1, each stat shifts toward its Tier 1 value (/sgj gearpoint shows where you are).", forever = true },
+    { text = "Leveling weights now also account for your gear: in quest rewards Stamina counts for more, and in the best gear for your level they stay as before (/sgj gearpoint shows where you are).", forever = true },
+    { text = "Bag arrows and the Roster plugin now value hit around your hit cap the same way tooltips do, so they agree.", forever = true },
+    { text = "Your profile is now picked from the shipped build closest to your talents, so off-tree talents no longer send you to the wrong weights.", forever = true },
+    { text = "Hunter and Mage weights follow the launch changes: Aspect of the Hawk, Trueshot Aura and the reworked Mage talents.", forever = true },
+    { text = "Warlock and Paladin weights follow the launch Life Tap and Vindication.", forever = true },
+    { text = "Stat Logic follows the launch racial changes: Human crit, Dwarf hit, and no more Orc and Tauren bonuses.", forever = true },
+    { text = "Raid weights for most DPS specs now also account for your gear tier, measured with the wowsims classic simulator (/sgj gearpoint shows where you are).", era = true },
+    { text = "Healing, spell power and Mp5 on your gear are no longer missed right after login, so healers see the right upgrades." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
@@ -117,7 +120,8 @@ function MSC.ShowWhatsNew()
     if not frame then frame = BuildFrame() end
     local lines = {}
     for _, entry in ipairs(WHATS_NEW) do
-        if (not entry.forever or MSC.IsForever) and (not entry.classic or not MSC.IsForever) then
+        if (not entry.forever or MSC.IsForever) and (not entry.classic or not MSC.IsForever)
+            and (not entry.era or (MSC.IsEra and not MSC.IsSoD)) then
             lines[#lines + 1] = "|cffffd100-|r " .. L[entry.text]
         end
     end

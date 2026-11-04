@@ -1,5 +1,75 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.8
+
+### 🚀 Launch Notes (WoW Forever)
+- Leveling weights for every class rebuilt on Blizzard's launch notes: the new Rogue talents, Shaman shocks and Lightning Bolt, Warrior Two-Handed Weapon Specialization and Flurry, Feral and Starfire, and the Warlock, Hunter, Mage and Retribution changes.
+- Dungeon leveling weights follow the new models too, built on the re-searched dungeon builds (Rogue dagger dungeon weights included).
+- Dungeon mana is paced like a real group now: a short drink after each pull, your mana carried from pull to pull, and a full drink only when you run dry. Casters and healers were given 15 seconds of drinking after every pull, so Spirit and Mp5 jumped between nothing and huge (Balance Druid most of all) and Intellect counted for almost nothing.
+
+### ⚖️ Gear-Aware Raid Weights (WoW Forever)
+- Weights already adjust to your level, talents and hit cap; at level 60 they now also account for your gear tier. From pre-raid best in slot toward Tier 1, each stat moves toward the value the simulator measured on Tier 1 gear. Mana stats for hybrids and Hunters fall as you gear up, and Warrior crit and hit rise.
+- `/sgj gearpoint` shows where your gear sits between the two.
+
+### ⚖️ Gear-Aware Raid Weights (Classic Era)
+- Raid weights for most DPS specs now also account for your gear tier, measured through the raid tiers with the wowsims classic simulator. How many tiers depends on the spec: Fury Warrior and Feral Cat up to Naxxramas, Elemental, Enhancement and Balance up to AQ, Rogue, Hunter, Frost Mage and Warlock pre-raid and Tier 1. Not on Season of Discovery.
+- `/sgj gearpoint` shows which two tiers your gear sits between, or that it's below the first or above the last (weights then hold at that tier).
+
+### 📈 Gear-Aware Leveling Weights (WoW Forever)
+- Leveling weights now also account for your gear: in quest rewards Stamina counts for more, and in the best gear for your level they stay as before. `/sgj gearpoint` shows where you are.
+- Every leveling role now has both gear points: Warlock Demonology and Fire, Shaman tank and melee Hunter use the quest-gear shift of the closest measured role.
+- Your armor and stats set where you sit between the two, not your weapon: one dungeon-blue weapon used to move every weight. Gear sets used for this never get worse from one level to the next.
+
+### 📊 Leveling Weights Rebuilt (WoW Forever)
+- Health regeneration (Hp5) now helps you survive a fight, not just eat less, so it's worth more for solo tanks and long fights.
+- Shadow Priest Stamina is valued again: heals late in a pull no longer cancel out damage taken early.
+- Frost AoE leveling counts its mana talents, so Intellect, Spirit and Stamina keep their value from level 40.
+- Smoother weights for every class, with fewer sudden jumps between levels.
+
+### 🎯 Hit Cap Everywhere
+- Bag upgrade arrows now value hit the way the tooltip does (WoW Forever): hit past your cap counts for little and hit lost below it costs full value, so the arrow and the tooltip agree.
+- Hit is measured from your real hit, enchants included, so a hit scope or helm enchant no longer makes a capped character look uncapped (WoW Forever).
+- Bag arrows on tank gear that would drop your Defense below the target, on items that gain or break a set bonus, and on Era and TBC hit gear now agree with the tooltip too.
+- The red cap warning also shows when a dual-wielder drops below the white-swing hit cap (WoW Forever).
+- Gear for Raiding's tooltip and the README show the 17% spell hit cap the addon uses.
+
+### 🎯 Profile Detection (WoW Forever)
+- Your leveling and level-60 profile now come from the shipped build closest to your talents (no Talents plugin needed). Single talents no longer misread a build: Ret Paladins with Healing Light, Survival Hunters with Deflection, Cat Druids with Thick Hide, Shadow Priests, Arcane Mages and Destruction Warlocks at 60 all get their own weights. A build picked in the Talents plugin still decides.
+- Talents are read by their spell, so talents renamed for launch (Elemental Precision is now Precision, Improved Fireball is now Accelerant) still count, on every client language.
+
+### 🚀 Launch Changes (WoW Forever)
+- Hunter: Aspect of the Hawk, Trueshot Aura and Hunter's Mark give their launch ranged attack power, in the leveling and level-60 weights and when your live buffs are taken out of your stats. Level 60 uses Aspect of the Hawk rank 6: rank 7 kept its old value and isn't trainable.
+- Mage: weights follow the launch talents: Precision gives hit with all spells, Arcane Focus is gone, Critical Mass has 3 ranks, Incineration 5, and Ice Lance an 8 sec cooldown.
+- Paladin: Vindication's cut to the attack power of the mob you're hitting counts at its real size in the Retribution leveling weights (it was a flat 3%), so Stamina is worth a little less.
+- Warlock: Life Tap converts twice as much at launch. Level-60 weights value Spirit, Mp5 and Intellect less: fewer taps leave more time to cast.
+
+### 🐛 Bug Fixes (All Versions)
+- Healing, spell power and Mp5 on your gear are no longer missed after login. Items read before their Equip: text had loaded are read again a few seconds after login and when hovered; healers' worn gear had scored on its base stats only, mostly on Classic Era and TBC.
+- Thorns gear ("When struck in combat...") now counts only for tanks and solo leveling, the ones who get hit: group DPS saw thorns trinkets as an Attack Power trinket (about 60 AP for Essence of the Pure Flame). The tooltip says how it was counted.
+- Essence of the Pure Flame no longer counts as spell power or healing on Classic Era and TBC; it shows its note but isn't scored.
+- More item effects are read: "Restores 10 health every 5 sec." (Lifestone), mana or health restored every few seconds over a duration (Second Wind, Mar'li's Eye), damage procs worded "Chance to strike your target..." (Heart of Wyrmthalak, Darkmoon Card: Maelstrom, ranged weapons), and on-use damage (Goblin Mortar), estimated as Attack Power like other damage procs.
+- Warlock Suppression no longer counts toward the spell hit cap or the Stat Logic hit ring for the Shadow Bolt raid builds (DS/Ruin, SM/Ruin); it only helps Affliction spells (Classic Era and TBC).
+- Tooltip gains and losses show hit, crit, dodge, parry and block as a percent on Classic Era (Intellect's crit showed as "(0.01%)").
+
+### 🐛 Bug Fixes (WoW Forever)
+- A saved old profile name (Default and the other retired ones) no longer adds leveling talent bonuses on top of its level-60 weights.
+- Removed an old Spirit adjustment for Priest and Restoration Druid healers that never applied at level 60.
+- Talent effects on hit (Shield Slam, Shadow Mastery, Soul Link, Demonic Knowledge, Shadow Weaving, Darkness) and on Defense (Deflection, Blood Craze) now fade from 50 to 59 like the others.
+- Level-60 Rogues: Hack and Slash no longer adds dagger and fist crit (the raid profiles include it).
+- AoE farming tanks no longer get the raid "below the defense cap" penalty; Shaman tanks now get it, and a Shaman farming tank without Spirit Weapons no longer values parry.
+- Dungeon healers: Shamans no longer value spell hit, and Priests no longer count three talents twice. Druid Vengeance no longer raises healer crit.
+- Mage hit cap: launch made Precision (was Elemental Precision) a hit bonus for all spells and removed Arcane Focus, so talent hit now counts only what the game's own spell hit doesn't already include. The Arcane raid build (a Fireball nuker) uses Precision.
+- Shockadin Librams are valued as a healer's, and a Fury Warrior leveling with the dual-wield raid build gets the dual-wield weights.
+
+### 🧬 Racials (WoW Forever)
+- Stat Logic follows the launch racial changes: Human Ruthless is 1% crit, Dwarves get 1% hit from Artisan's Precision, and Orc Savage and the Tauren hit bonus are gone.
+
+### 🔌 API for Other Addons
+- The API files are renamed to SGJ_API.lua and SGJ_API_Info.md. The API itself is unchanged.
+
+### 📁 File Layout
+- Data tables (buffs, enchants, item sets, gems) moved into a Data folder and the tooltip parsers into a Parsers folder. Restart the game after updating; a /reload won't find the moved files.
+
 ## 🚀 v3.2.7
 
 ### 🎨 New Look (All Versions)

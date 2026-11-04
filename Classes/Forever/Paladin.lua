@@ -19,14 +19,14 @@ Paladin.Weights = {
     -- each swing, then Seal of Command, so every swing carries both seals (Twist of Light's Echo). That makes white hits count
     -- double, so Hit and Crit lead. Built with the build's talents (Divine Strength, Divine Intellect, Champion of the Light):
     -- ApplyScalers' talent hooks skip this profile.
-    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=55.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=47.5, ["ITEM_MOD_STRENGTH_SHORT"]=3.51, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.62, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.3, ["ITEM_MOD_SPELL_POWER_SHORT"]=3.28, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.28, ["ITEM_MOD_INTELLECT_SHORT"]=4.99, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=5.08, ["ITEM_MOD_SPIRIT_SHORT"]=1.09, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=6.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=1.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
+    ["RET_STANDARD"] = { ["ITEM_MOD_HIT_RATING_SHORT"]=52.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_STRENGTH_SHORT"]=3.51, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.42, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.7, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.93, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=2.93, ["ITEM_MOD_INTELLECT_SHORT"]=2.13, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.1, ["ITEM_MOD_SPIRIT_SHORT"]=0.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 },
 
     -- Holy: Raid (pre-raid healer, raid buffs, long / potion / burst fights). Downranking allowed: Forever
     -- gives every rank the full coefficient (a mild cut is assumed for ranks 10+ levels below you). A
     -- Paladin healer runs short of mana before casting time, so Intellect and Mp5 rank above +healing.
     -- Spell Power is the damage value only: an item's Spell Power also heals, and MSC.GetItemScore adds that at the
     -- Healing weight, so a raid healer's Spell Power weight is 0 (it was 2.0, which counted Spell Power twice).
-    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=21.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.6, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.4, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
+    ["HOLY_RAID"] = { ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=25.6, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.7, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5 },
 
     -- Protection: Raid (Vanguard talents, level-63 boss) from the wowsims Forever simulator's tank mode (study/paladin3,
     -- 2026-10-04; re-run 2026-10-10 after the Reckoning fix), as the Warrior's and Druid's raid tanks: threat 35% / damage
@@ -36,16 +36,16 @@ Paladin.Weights = {
     -- melee hit, at most one trigger every 1.5 s).
     -- Threat is half Holy (Spell Power) and half melee (Hit, Crit). A 3-minute boss never runs a tank dry, so Intellect and
     -- Mp5 keep only a small floor for longer fights.
-    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=20.9, ["ITEM_MOD_PARRY_RATING_SHORT"]=22.3, ["ITEM_MOD_BLOCK_RATING_SHORT"]=12.6, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.72, ["ITEM_MOD_ARMOR_SHORT"]=0.19, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=0.8, ["ITEM_MOD_AGILITY_SHORT"]=1.99, ["ITEM_MOD_STRENGTH_SHORT"]=0.55, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.23, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.25, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.25, ["ITEM_MOD_HIT_RATING_SHORT"]=13.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=7.2, ["ITEM_MOD_CRIT_RATING_SHORT"]=10.0, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.3, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.58, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
+    ["PROT_DEEP"] = { ["ITEM_MOD_STAMINA_SHORT"]=3.0, ["ITEM_MOD_DODGE_RATING_SHORT"]=18.1, ["ITEM_MOD_PARRY_RATING_SHORT"]=19.1, ["ITEM_MOD_BLOCK_RATING_SHORT"]=7.4, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=3.03, ["ITEM_MOD_ARMOR_SHORT"]=0.19, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=1.0, ["ITEM_MOD_AGILITY_SHORT"]=1.76, ["ITEM_MOD_STRENGTH_SHORT"]=0.55, ["ITEM_MOD_ATTACK_POWER_SHORT"]=0.23, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.19, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.19, ["ITEM_MOD_HIT_RATING_SHORT"]=16.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=5.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=9.3, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=3.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.33, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.15, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=1.0 },
 
     -- PROT_AOE: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the PALADIN_PROT_CONSECRATOR build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
-    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STRENGTH_SHORT"]=1.22, ["ITEM_MOD_AGILITY_SHORT"]=1.19, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.8, ["ITEM_MOD_STAMINA_SHORT"]=1.57, ["ITEM_MOD_INTELLECT_SHORT"]=0.26, ["ITEM_MOD_ARMOR_SHORT"]=0.11, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=9.35, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=2.12, ["ITEM_MOD_DODGE_RATING_SHORT"]=11.2, ["ITEM_MOD_PARRY_RATING_SHORT"]=11.2, ["ITEM_MOD_BLOCK_RATING_SHORT"]=4.0, ["ITEM_MOD_HIT_RATING_SHORT"]=19.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=9.1, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
+    ["PROT_AOE"] = { ["ITEM_MOD_SPELL_POWER_SHORT"]=3.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=3.0, ["ITEM_MOD_STRENGTH_SHORT"]=0.93, ["ITEM_MOD_AGILITY_SHORT"]=0.59, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=4.4, ["ITEM_MOD_STAMINA_SHORT"]=0.47, ["ITEM_MOD_INTELLECT_SHORT"]=3.94, ["ITEM_MOD_SPIRIT_SHORT"]=2.51, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.37, ["ITEM_MOD_ARMOR_SHORT"]=0.05, ["ITEM_MOD_BLOCK_VALUE_SHORT"]=8.5, ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"]=0.71, ["ITEM_MOD_DODGE_RATING_SHORT"]=3.0, ["ITEM_MOD_PARRY_RATING_SHORT"]=3.0, ["ITEM_MOD_BLOCK_RATING_SHORT"]=2.0, ["ITEM_MOD_HIT_RATING_SHORT"]=9.3, ["ITEM_MOD_CRIT_RATING_SHORT"]=8.0, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=0.5 },
 
 
     -- RET_FARM: from the farm model (SimStudio models/shared/farm_profiles.py, data/farm_weights.json: the PALADIN_RET_FARM build's
-    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25.
-    ["RET_FARM"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=6.06, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=6.06, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_AGILITY_SHORT"]=3.06, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=18.9, ["ITEM_MOD_STAMINA_SHORT"]=3.5, ["ITEM_MOD_INTELLECT_SHORT"]=4.61, ["ITEM_MOD_SPIRIT_SHORT"]=6.84, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=8.15, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=3.84, ["ITEM_MOD_HIT_RATING_SHORT"]=37.9, ["ITEM_MOD_CRIT_RATING_SHORT"]=32.4 },
+    -- talents at the main farm spot, mobs 3 levels below you, the farm gear set), 2026-10-25, re-run 2026-11-01.
+    ["RET_FARM"] = { ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_SPELL_POWER_SHORT"]=6.71, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=6.71, ["ITEM_MOD_STRENGTH_SHORT"]=3.0, ["ITEM_MOD_AGILITY_SHORT"]=3.31, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=19.1, ["ITEM_MOD_STAMINA_SHORT"]=2.76, ["ITEM_MOD_INTELLECT_SHORT"]=5.81, ["ITEM_MOD_SPIRIT_SHORT"]=8.32, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=9.1, ["ITEM_MOD_HEALTH_REGENERATION_SHORT"]=6.01, ["ITEM_MOD_HIT_RATING_SHORT"]=44.5, ["ITEM_MOD_CRIT_RATING_SHORT"]=37.4 },
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
@@ -128,7 +128,7 @@ Paladin.Talents = {
     ["DIVINE_INT"]         = MSC.L["Divine Intellect"],        -- t1, +2%/rank Intellect
     ["HEALING_LIGHT"]      = MSC.L["Healing Light"],           -- t2, +4%/rank Holy Light / Flash of Light / Holy Shock healing
     ["SPIRITUAL_FOCUS"]    = MSC.L["Spiritual Focus"],         -- t2, pushback protection
-    ["REVERENCE"]          = MSC.L["Reverence"],               -- t3, 10%/rank mana regeneration while casting
+    ["REVERENCE"]          = MSC.L["Reverence"],               -- t2, 15%/rank mana regeneration while casting (2 ranks since the 2026-10-30 hotfix)
     ["ILLUMINATION"]       = MSC.L["Illumination"],            -- t4, mana back on heal crits
     ["DIVINE_FAVOR"]       = MSC.L["Divine Favor"],            -- t4
     ["INFUSION_LIGHT"]     = MSC.L["Infusion of Light"],       -- t4
@@ -139,14 +139,12 @@ Paladin.Talents = {
     ["REDOUBT"]            = MSC.L["Redoubt"],                 -- t1, block chance after being hit
     ["PRECISION"]          = MSC.L["Precision"],               -- t2, +1%/rank hit
     ["ANTICIPATION"]       = MSC.L["Anticipation"],            -- t2, +4/rank Defense
-    ["IMP_SEAL_OF_FURY"]   = MSC.L["Improved Seal of Fury"],   -- t3, mana when the Seal of Fury absorb is used up
-    ["IMP_RIGHTEOUS_FURY"] = MSC.L["Improved Righteous Fury"], -- t3, -2%/rank damage taken
-    ["SHIELD_SPEC"]        = MSC.L["Shield Specialization"],   -- t3, Block Value and mana on block
-    ["SACRED_DUTY"]        = MSC.L["Sacred Duty"],             -- t3, +2%/rank Stamina
-    ["ONE_HAND_SPEC"]      = MSC.L["One-Handed Weapon Specialization"], -- t4, +3%/rank one-handed damage
+    ["IMP_RIGHTEOUS_FURY"] = MSC.L["Improved Righteous Fury"], -- t4, -3%/rank damage taken (2026-10-30 hotfix; was 2%)
+    ["SHIELD_SPEC"]        = MSC.L["Shield Specialization"],   -- t3, 2 ranks: Block Value +15%/rank and mana on block (50%/rank)
+    ["SACRED_DUTY"]        = MSC.L["Sacred Duty"],             -- t2, cooldowns only (its Stamina went in the 2026-10-30 hotfix)
     ["RECKONING"]          = MSC.L["Reckoning"],               -- t5, extra attacks after blocks
-    ["IRON_CREED"]         = MSC.L["Iron Creed"],              -- t6, -2%/rank damage taken for 6 s after Holy Strike
-    ["HOLY_SHIELD"]        = MSC.L["Holy Shield"],             -- t7 (level 40)
+    ["IRON_CREED"]         = MSC.L["Iron Creed"],              -- t6, 3 ranks: -2%/rank damage taken for 6 s after Holy Strike
+    ["HOLY_SHIELD"]        = MSC.L["Holy Shield"],             -- t5 (level 30 since the 2026-10-30 hotfix; was t7, 40)
     -- Retribution
     ["BENEDICTION"]        = MSC.L["Benediction"],             -- t1, -2%/rank mana on instant spells
     ["HOLY_CONDUIT"]       = MSC.L["Holy Conduit"],            -- t2, -20%/rank Consecration / Holy Wrath / Exorcism / Hammer of Wrath mana
@@ -154,7 +152,7 @@ Paladin.Talents = {
     ["REPENTANCE"]         = MSC.L["Repentance"],              -- t5
     ["TWOH_SPEC"]          = MSC.L["Two-Handed Weapon Specialization"], -- t5, +2%/rank two-handed damage
     ["VENGEANCE"]          = MSC.L["Vengeance"],               -- t5
-    ["CHAMPION_LIGHT"]     = MSC.L["Champion of the Light"],   -- t6, spell damage from 20%/rank of Intellect
+    ["CHAMPION_LIGHT"]     = MSC.L["Champion of the Light"],   -- t6, 5 ranks: spell damage from 12%/rank of Intellect
 }
 
 -- =============================================================
@@ -234,17 +232,12 @@ function Paladin:ApplyScalers(weights, currentSpec)
         weights["ITEM_MOD_ARMOR_SHORT"] = weights["ITEM_MOD_ARMOR_SHORT"] * (1 + (rTough * 0.02))
     end
 
-    local rSacred = Rank("SACRED_DUTY")
-    if hooks and rSacred > 0 and weights["ITEM_MOD_STAMINA_SHORT"] then
-        weights["ITEM_MOD_STAMINA_SHORT"] = weights["ITEM_MOD_STAMINA_SHORT"] * (1 + (rSacred * 0.02))
-    end
-
-    -- Champion of the Light (Ret t6, 3 ranks): spell damage from 20/40/60% of
-    -- Intellect (Forever hotfix of 16 Oct undid the 15 Oct patch's 10/20/30%; 33/66/100% before 2 Oct), damage only.
+    -- Champion of the Light (Ret t6, 5 ranks since the 2026-10-30 hotfix): spell damage from 12% of Intellect a rank,
+    -- 60% at the top as before (was 3 ranks of 20%), damage only.
     local rChamp = Rank("CHAMPION_LIGHT")
     if hooks and rChamp > 0 and weights["ITEM_MOD_INTELLECT_SHORT"] and (weights["ITEM_MOD_SPELL_POWER_SHORT"] or 0) > 0 then
         local spWeight = weights["ITEM_MOD_SPELL_POWER_SHORT"]
-        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.20))
+        weights["ITEM_MOD_INTELLECT_SHORT"] = weights["ITEM_MOD_INTELLECT_SHORT"] + (spWeight * (rChamp * 0.12))
     end
 
     -- Healing Light (Holy t2, 3 ranks): +4%/rank healing from Holy Light /
@@ -332,75 +325,50 @@ function Paladin:ApplyScalers(weights, currentSpec)
         Mul("ITEM_MOD_SPELL_CRIT_RATING_SHORT", (0.61 + 0.39 * rIll / 5) / (0.61 + 0.39 * bIll / 5))
         Mul("ITEM_MOD_INTELLECT_SHORT", (0.91 + 0.09 * rIll / 5) / (0.91 + 0.09 * bIll / 5))
 
-        -- Reverence (Holy t3, 3 ranks): Spirit regenerates in combat only through
-        -- it. Baked ranks: 0 at 15, 1 at 20, 3 from 25. Intellect's mana part is
-        -- worth about 4% more per missing rank from 40.
-        local bRev = MSC.ForeverLevelLerp({ {15, 0}, {20, 1}, {25, 3} }, level)
-        local rRev = Rank("REVERENCE")
-        Mul("ITEM_MOD_SPIRIT_SHORT", (0.30 + 0.07 * rRev) / (0.30 + 0.07 * bRev))
-        if level >= 40 then Mul("ITEM_MOD_INTELLECT_SHORT", 1 + 0.04 * (bRev - rRev)) end
+        -- Reverence (Holy t2): Spirit regenerates in combat only through it. In
+        -- shares of regen kept while casting: baked 0 at 15, 10% at 20, 30% from
+        -- 25; the player's 15% a rank (2 ranks since the 2026-10-30 hotfix, was 3
+        -- of 10%). Intellect's mana part is worth about 4% more per missing 10% from 40.
+        local bRev = MSC.ForeverLevelLerp({ {15, 0}, {20, 0.10}, {25, 0.30} }, level)
+        local rRev = 0.15 * Rank("REVERENCE")
+        Mul("ITEM_MOD_SPIRIT_SHORT", (0.30 + 0.7 * rRev) / (0.30 + 0.7 * bRev))
+        if level >= 40 then Mul("ITEM_MOD_INTELLECT_SHORT", 1 + 0.4 * (bRev - rRev)) end
     end
 
     if isTankRow then
-        -- Shield Specialization (Prot t3, 3 ranks): anchors bake rank 1 at 20 and
-        -- rank 3 from 25; scale by the real rank. Block Value is the absorb part,
-        -- Intellect and Mp5 the mana-proc part. The block-rating part is handled
-        -- in section 2b.
+        -- Shield Specialization (Prot t3): anchors bake the full talent from 25
+        -- (+30% Block Value, every block restoring mana); scale by the real rank,
+        -- 2 ranks of 15% and a 50% chance since the 2026-10-30 hotfix (was 3 of
+        -- 10% and 33%), so one rank now does what 1.5 old ranks did. Block Value is
+        -- the absorb part, Intellect and Mp5 the mana-proc part. The block-rating
+        -- part is handled in section 2b.
         local rSS = Rank("SHIELD_SPEC")
         if level >= 20 then
-            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", (1 + 0.10 * rSS) / 1.3)
-            local intLow, intHigh = 0.74 + 0.086 * rSS, 0.66 + 0.113 * rSS
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", (1 + 0.15 * rSS) / 1.3)
+            local intLow, intHigh = 0.74 + 0.129 * rSS, 0.66 + 0.17 * rSS
             Mul("ITEM_MOD_INTELLECT_SHORT", MSC.ForeverLevelLerp({ {35, intLow}, {40, intHigh} }, level))
             if level >= 25 and level <= 35 then
-                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", 1.2 - 0.067 * rSS)
+                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", 1.2 - 0.1 * rSS)
             end
         end
 
-        -- Holy Shield (Prot t7, level 40): without it Block Value is worth far
-        -- less and mana use is lower. The rows bake its +30% block (2 Oct
-        -- patch; average block 0.05 -> 0.14), so without it BV x0.05/0.14
-        -- (with a little BV kept for Redoubt/gear block) and Int x0.55.
-        if level >= 40 and Rank("HOLY_SHIELD") == 0 then
+        -- Holy Shield (Prot t5, level 30 since the 2026-10-30 hotfix; was 40):
+        -- without it Block Value is worth far less and mana use is lower. The rows
+        -- bake its +30% block (average block 0.05 -> 0.14), so without it BV
+        -- x0.05/0.14 (with a little BV kept for Redoubt/gear block) and Int x0.55.
+        if level >= 30 and Rank("HOLY_SHIELD") == 0 then
             Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 0.33)
             Mul("ITEM_MOD_INTELLECT_SHORT", 0.55)
             MulAll({ "ITEM_MOD_DODGE_RATING_SHORT", "ITEM_MOD_PARRY_RATING_SHORT", "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
                      "ITEM_MOD_BLOCK_RATING_SHORT" }, 0.94)
         end
 
-        -- Redoubt (Prot t1, 5 ranks): +1.56% block chance per rank on average
-        -- (its proc gives 4%/rank since the 2 Oct patch, was 6%), against a
-        -- baked average block of 0.05 below 40 and 0.14 from 40 (Holy Shield).
+        -- Redoubt (Prot t1, 5 ranks): +2.34% block chance per rank on average
+        -- (its proc gives 6%/rank since the 2026-10-30 hotfix, was 4%), against a
+        -- baked average block of 0.05 below 30 and 0.14 from 30 (Holy Shield).
         local rRed = Rank("REDOUBT")
         if rRed > 0 and not modelRow then
-            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 1 + ((level >= 40) and 0.11 or 0.31) * rRed)
-        end
-
-        -- One-Handed Weapon Specialization (Prot t4, level 25): +3%/rank 1H
-        -- damage on the physical share of tank damage.
-        local rOneH = Rank("ONE_HAND_SPEC")
-        if rOneH > 0 and not modelRow then
-            local per = MSC.ForeverLevelLerp({ {40, 0.017}, {45, 0.012} }, level)
-            MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
-                     "MSC_WEAPON_DPS_MELEE" }, 1 + per * rOneH)
-        end
-
-        -- Improved Seal of Fury (Prot t3, 1 rank; not baked): about 78 mana each
-        -- time the Seal of Fury absorb is used up (assumed ~1 per 17 s of
-        -- fighting, i.e. ~4.5 mana/s), which covers much of a pull's mana.
-        -- From the study model re-run with that income: Intellect x0.48 at 25-35
-        -- (x0.70 at 20), x0.88-0.91 from 40 where Shield Specialization's
-        -- proc already carries most of it; Mp5 x0.8 -> 0.67 at 25-35, back to
-        -- x1 from 40. Without Holy Shield the 25-35 values stay (mana use is
-        -- the same shape as before 40).
-        if Rank("IMP_SEAL_OF_FURY") > 0 and level >= 20 and not modelRow then
-            local noHS = Rank("HOLY_SHIELD") == 0
-            if noHS and level >= 35 then
-                Mul("ITEM_MOD_INTELLECT_SHORT", 0.50)
-                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", 0.70)
-            else
-                Mul("ITEM_MOD_INTELLECT_SHORT", MSC.ForeverLevelLerp({ {20, 0.70}, {25, 0.48}, {35, 0.50}, {40, 0.88}, {45, 0.89}, {59, 0.91} }, level))
-                Mul("ITEM_MOD_MANA_REGENERATION_SHORT", MSC.ForeverLevelLerp({ {20, 0.90}, {25, 0.79}, {35, 0.67}, {40, 1.0} }, level))
-            end
+            Mul("ITEM_MOD_BLOCK_VALUE_SHORT", 1 + ((level >= 30) and 0.165 or 0.465) * rRed)
         end
 
         -- Benediction (Ret t1, 5 ranks, -2%/rank mana on instant spells) and
@@ -419,24 +387,24 @@ function Paladin:ApplyScalers(weights, currentSpec)
         -- Extra swings per swing = rank x 0.08 x blocks per mob hit x 1.5; at
         -- ~0.6 of damage from swings and Seal of Fury procs, the physical
         -- family gains about 0.07 x rank x block chance. Average block chance:
-        -- 5% base, +9% Holy Shield uptime (from 40, 30% patch value), +1.56%
+        -- 5% base, +9% Holy Shield uptime (from 30, 30% patch value), +2.34%
         -- per Redoubt rank (matching that hook).
         local rRk = Rank("RECKONING")
         if rRk > 0 and not modelRow then
-            local avgBlock = 0.05 + ((level >= 40 and Rank("HOLY_SHIELD") > 0) and 0.09 or 0) + 0.0156 * Rank("REDOUBT")
+            local avgBlock = 0.05 + ((level >= 30 and Rank("HOLY_SHIELD") > 0) and 0.09 or 0) + 0.0234 * Rank("REDOUBT")
             local rk = 1 + 0.07 * rRk * avgBlock
             MulAll({ "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_DAMAGE_PER_SECOND_SHORT",
                      "MSC_WEAPON_DPS_MELEE", "ITEM_MOD_HIT_RATING_SHORT" }, rk)
             MSC.ScaleForeverMeleeCrit(weights, rk, level)
         end
 
-        -- Improved Righteous Fury (Prot t3, 3 ranks): -2%/rank damage taken
-        -- while Righteous Fury is up; Iron Creed (Prot t6, 5 ranks): -2%/rank
+        -- Improved Righteous Fury (Prot t4, 3 ranks): -3%/rank damage taken
+        -- while Righteous Fury is up (2026-10-30 hotfix; was 2%); Iron Creed (Prot t6, 3 ranks): -2%/rank
         -- for 6 s after Holy Strike (10 s cooldown, 60% uptime = 1.2%/rank).
         -- The rows price no damage reduction, so the safety stats (Stamina,
         -- armor, avoidance, Block Value, Defense) rise by 1/(1 - reduction),
         -- done through the shared damage-multiplier helper.
-        local dmgTaken = (1 - 0.02 * Rank("IMP_RIGHTEOUS_FURY")) * (1 - 0.012 * Rank("IRON_CREED"))
+        local dmgTaken = (1 - 0.03 * Rank("IMP_RIGHTEOUS_FURY")) * (1 - 0.012 * Rank("IRON_CREED"))
         if dmgTaken < 1 and not modelRow then MSC.ApplyForeverDamageMult(weights, dmgTaken) end
     end
 
@@ -448,19 +416,20 @@ function Paladin:ApplyScalers(weights, currentSpec)
     MSC.ApplyForeverHitCap(weights, "ITEM_MOD_HIT_SPELL_RATING_SHORT", "SPELL", 0.1, "Spell Hit", activeCaps, nil, MSC.ForeverSpellCapKind(currentSpec))
 
     -- [[ 2b. Block for leveling tanks: Shield Specialization ]]
-    -- Client data: only rank 3 of Shield Specialization makes blocks restore
-    -- 6% of max mana, at a 100% chance (once per 3 sec). The talent text's
-    -- "33%" is a third per rank. The leveling tank rows priced block as its
-    -- survival value (about 0.6 x Dodge, like other tanks) plus a mana part
-    -- hedged to two-thirds for that "33%". So with 3/3 the mana part counts in
-    -- full (x1.5), and without rank 3 block is worth its survival value only.
+    -- Shield Specialization makes blocks restore 4% of max mana (once per 3 sec)
+    -- at 50% a rank since the 2026-10-30 hotfix (2 ranks; was 33% of 3). The
+    -- leveling tank rows priced block as its survival value (about 0.6 x Dodge,
+    -- like other tanks) plus a mana part hedged to two-thirds. So with 2/2 the
+    -- mana part counts in full (x1.5), with 1/2 at half that, and without the
+    -- talent block is worth its survival value only.
     if currentSpec:find("^Leveling_Tank") and not currentSpec:find("^Leveling_TankDungeon") then
         local block = weights["ITEM_MOD_BLOCK_RATING_SHORT"]
         local dodge = weights["ITEM_MOD_DODGE_RATING_SHORT"] or 0
         if block and block > 0 and dodge > 0 then
             local survival = math.min(block, 0.6 * dodge)
-            if Rank("SHIELD_SPEC") >= 3 then
-                weights["ITEM_MOD_BLOCK_RATING_SHORT"] = survival + (block - survival) * 1.5
+            local rSS2 = Rank("SHIELD_SPEC")
+            if rSS2 > 0 then
+                weights["ITEM_MOD_BLOCK_RATING_SHORT"] = survival + (block - survival) * 0.75 * math.min(2, rSS2)
             else
                 weights["ITEM_MOD_BLOCK_RATING_SHORT"] = survival
             end
@@ -549,6 +518,8 @@ Paladin.Relics = {
 -- alt's profile still works; MSC lists skip them (RetiredProfiles).
 Paladin.Weights["Default"] = Paladin.Weights["RET_STANDARD"]
 Paladin.RetiredProfiles = { Default = true }
+-- A saved retired name scores as the sim profile it points at, so the talent hooks skip it too.
+for k in pairs(Paladin.RetiredProfiles) do SIM_PROFILES[k] = true end
 
 Paladin.Profiles = {}
 for k, v in pairs(Paladin.Weights) do Paladin.Profiles[k] = v end
