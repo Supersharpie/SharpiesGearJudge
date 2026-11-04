@@ -1,5 +1,10 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.9
+
+### 🔧 November 4 Hotfix (WoW Forever)
+- Elemental and Restoration Shaman leveling weights rebuilt for the 2-second Chain Lightning (small changes from level 25).
+
 ## 🚀 v3.2.8
 
 ### 🚀 Launch Notes (WoW Forever)
