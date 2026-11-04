@@ -18,6 +18,8 @@ local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
     -- v3.2.9
+    { forever = true, text = "Elemental and Restoration Shaman leveling weights follow the November 4 hotfix (2-second Chain Lightning), and the Talents plugin's Shaman builds were re-searched." },
+    { forever = true, text = "Leveling PvP builds and weights are being worked on." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
