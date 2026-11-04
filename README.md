@@ -2,7 +2,7 @@
 
 **The Final Verdict on your gear.**
 
-**Sharpie's Gear Judge (SGJ)** is a real-time **theorycrafting engine** and UI enhancement for **World of Warcraft: Classic Era**, the **TBC Anniversary Edition**, and the **WoW: Forever** beta.
+**Sharpie's Gear Judge (SGJ)** is a real-time **theorycrafting engine** and UI enhancement for **World of Warcraft: Classic Era**, the **TBC Anniversary Edition**, and **WoW: Forever**.
 
 Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understands **context**. It knows if you are hit-capped, if a helm swap will break your Meta Gem, whether a quest reward beats what you're wearing, and in TBC it can **project** the best gems and enchants for an item before you equip it.
 
@@ -10,13 +10,14 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ## 🔥 What's New
 
-### 3.2.7
+### 3.2.8
 
-- **New look:** a cleaner window in your class color, with tabs along the top, colored section titles, slimmer stat bars, and your profile and total score at the bottom. The plugins match it.
-- **Off-Specs:** tick the profiles a character also plays and tooltips show when an item upgrades them, against the best gear you own (bags and bank included).
-- **Dual Specialization** on Season of Discovery and TBC Anniversary.
-- **Leveling and farming weights rebuilt (WoW Forever)** class by class, blending into your level-60 profile from 50.
-- **Raid weights rebuilt (WoW Forever)** in the simulator for every spec on pre-raid best-in-slot gear (Experimental until tried at 60).
+- **Launch weights (WoW Forever):** leveling and dungeon weights for every class follow Blizzard's launch notes, and dungeon mana is paced like a real group (short drinks between pulls, a full drink only when you run dry).
+- **Weights that follow your gear:** on WoW Forever, leveling weights shift with quest-reward vs. best-for-your-level gear, and level-60 weights with pre-raid vs. Tier 1; on Classic Era, raid weights for most DPS specs follow your raid tier. `/sgj gearpoint` shows where you are.
+- **Hit cap everywhere:** bag arrows and the Roster plugin value hit around your cap the same way tooltips do.
+- **Profile from your talents (WoW Forever):** your profile comes from the shipped build closest to your talents, read by spell so renamed talents still count.
+- **Launch class and racial changes (WoW Forever):** Hunter, Mage, Warlock and Paladin changes, and Stat Logic follows the new racials.
+- **Healer gear fix:** healing, spell power and Mp5 on your gear are no longer missed right after login.
 
 ---
 
@@ -26,7 +27,7 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 - **Level-60 weights for every class**, worked out with each build's own talents: damage and tank profiles from the wowsims Forever simulator, healer profiles from a healing model in which healers downrank as they do in game.
 - **Profiles that match how you play:** Raid, Solo Leveling, Dungeon Leveling, AoE Farming and PvP, named after the builds in the Talents plugin (for example "Arms: Raid", "Holy: Dungeon Leveling").
-- **Leveling weights level by level** for every Forever spec, from 10 to 59, built from the talents, spells and gear stats each spec actually has at that level. Your actual talents adjust them.
+- **Leveling weights level by level** for every Forever spec, from 10 to 59, built from the talents, spells and gear stats each spec actually has at that level. Your actual talents adjust them, and so does your gear (`/sgj gearpoint`).
 - **Hit and defense targets follow your level.** While leveling that's 5% hit (4% spell hit) against same-level mobs. With **Gear for Raiding** on, the targets slide toward the raid caps (9% hit, 17% spell hit, 440 Defense, uncrushable) from level 50.
 - **Gear for PvP:** Stamina, armor and burst count for more, and hit stays at the player-vs-player caps. The first time a realm looks like a PvP realm, Gear Judge offers to turn it on.
 - **Relics are rated**, and new race/class combinations are supported.
@@ -225,15 +226,15 @@ One download for every client. SGJ detects which game you're running:
 | --------------------------- | -------------------------------------------------------------------------------------------- |
 | **Classic Era (1.15.x)**    | Hit %, Defense skill, T0–T3 sets, vanilla proc logic                                         |
 | **TBC Anniversary (2.5.x)** | Combat ratings, gems, meta gems, TBC sets, progression gem phases                            |
-| **WoW: Forever (beta)**     | Sim-built weights, level-by-level leveling weights, PvP weights, relics and class combinations |
+| **WoW: Forever**            | Sim-built weights, level-by-level leveling weights, PvP weights, relics and class combinations |
 
 ### Install
 
 Install with the CurseForge app, or extract the `SharpiesGearJudge` folder into your game's `Interface/AddOns` folder:
 
 - `_classic_era_/Interface/AddOns` — Classic Era
-- `_classic_/Interface/AddOns` — TBC Anniversary
-- `_classic_beta_/Interface/AddOns` — WoW: Forever beta
+- `_anniversary_/Interface/AddOns` — TBC Anniversary
+- `_forever_/Interface/AddOns` — WoW: Forever
 
 ### Optional plugins
 
@@ -270,7 +271,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.7 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.8 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
