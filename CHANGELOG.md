@@ -1,5 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.10
+
+### 🔔 Loot Upgrade Alerts
+- An item you loot, get as a quest reward or receive otherwise that's an upgrade now pops up a small alert near the top of the screen, with the item and how much it adds. Click it to equip the item (out of combat), right-click to close it. Items you can't wear yet are skipped.
+- On by default: **Show Loot Upgrade Alerts** in the options.
+
+### 🎒 Bag Arrows
+- Bag arrows are on by default, and turned on once for everyone who had them off. Untick **Show Bag Upgrade Arrows** to hide them again.
+
+### 🧭 Quest Rewards in DaylightUI (WoW Forever)
+- Quest rewards in **DaylightUI**'s NPC window now get the green and red upgrade arrows, as in the game's own quest window.
+
+### 🐛 Fixes
+- Bag arrows now show on small upgrades and downgrades too, the same items Gear Judge's tooltip calls an upgrade (the arrows needed a change of more than +0.1).
+
 ## 🚀 v3.2.9
 
 ### 🔧 November 4 Hotfix (WoW Forever)
