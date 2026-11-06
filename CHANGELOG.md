@@ -1,5 +1,25 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.11
+
+### 🧭 Profession Arrows in DaylightUI (WoW Forever)
+- Recipes that craft an upgrade for you now get the green arrow in **DaylightUI**'s profession window, as in the game's own.
+
+### ⚖️ Enhancement Shaman Weights (WoW Forever)
+- Enhancement's leveling weights rebuilt: Strength of Earth Totem is now only used when it saves time, and the opening Lightning Bolt counts on pulls of any size. At levels 15-24 Spirit counts for a bit less, Intellect and Stamina for more.
+- Levels 1-9 now use the same mana and survival math as level 10 up, so Intellect, Spirit and Stamina no longer jump about 6x at level 10.
+
+### ⚖️ Paladin Weights (WoW Forever)
+- Paladin's solo leveling weights rebuilt with Hammer of Wrath in the rotation from level 44. On Retribution, Intellect counts for less in the 20s, Health per 5 for more, and Hit and Crit for a bit more from 50.
+- Retribution levels 1-9 now use the same mana and survival math as level 10 up, so Stamina and Spirit no longer jump about 4x at level 10.
+- Mana now varies from pull to pull in the solo model, as damage taken already did. Retribution's Mp5 no longer drops to 0 around level 44 (now about 2), and Spirit counts for about twice as much at levels 40-47.
+
+### 🏷️ Shockadin (WoW Forever)
+- The Paladin profile Holy: Solo Leveling is now named **Shockadin: Solo Leveling**. Its weights haven't changed.
+
+### 🐛 Fixes
+- The What's New window no longer opens by itself for a version with nothing written yet, and no longer says "nothing changed for your game version" on WoW Forever when its list is empty.
+
 ## 🚀 v3.2.10
 
 ### 🔔 Loot Upgrade Alerts
