@@ -17,16 +17,14 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.11
-    { forever = true, text = "Recipes in DaylightUI's profession window now get the green upgrade arrow too." },
-    { forever = true, text = "Enhancement Shaman leveling weights rebuilt: at levels 15-24 Spirit counts for a bit less, Intellect and Stamina for more." },
-    { forever = true, text = "Enhancement Shaman levels 1-9: Intellect, Spirit and Stamina no longer jump about 6x at level 10." },
-    { forever = true, text = "Talents plugin: the build glow, step numbers and panel now work in DaylightUI's talent window." },
-    { forever = true, text = "Paladin solo leveling weights rebuilt with Hammer of Wrath from level 44. Retribution levels 1-9 no longer jump about 4x in Stamina and Spirit at level 10." },
-    { forever = true, text = "Retribution levels 40-47: Mp5 no longer drops to 0, and Spirit counts for about twice as much." },
-    { forever = true, text = "Paladin profile Holy: Solo Leveling is now named Shockadin: Solo Leveling. It's a melee and Holy Shock build, not a healing one." },
-    { forever = true, text = "Talents plugin: Retribution and Retribution to Protection solo orders updated, and the Paladin % slower tags corrected." },
-    { forever = true, text = "Talents plugin: Holy Paladin dungeon order adjusted slightly at levels 15-17." },
+    -- v3.2.12
+    { forever = true, text = "Feral Druid solo weights rebuilt: Hit, Crit and Stamina count for more at levels 20-40." },
+    { forever = true, text = "Talents plugin: Feral and Balance solo orders updated, and the Druid % slower tags corrected." },
+    { forever = true, text = "Frost Mage solo weights rebuilt: Crit, Hit, Intellect and Spirit count for less at levels 45-50." },
+    { forever = true, text = "Talents plugin: Mage solo and dungeon orders updated." },
+    { forever = true, text = "Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35." },
+    { forever = true, text = "Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected." },
+    { forever = true, text = "Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

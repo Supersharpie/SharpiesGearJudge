@@ -1,8 +1,7 @@
 local _, MSC = ...
 
 -- Stat buffs for this game version, generated from the client's spell tables
--- (WoW Forever 1.60.1.70291) by Research/buffs/scripts/gen_lua.py. Don't edit by hand.
--- Aspect of the Hawk and Trueshot Aura carry the 2026-11-03 server hotfix (DBCache push 113534) by hand: re-apply after a regen.
+-- (WoW Forever 1.60.1.70862) by Research/buffs/scripts/gen_lua.py. Don't edit by hand.
 -- BuffAuras: aura spell id -> what it adds (MSC.GetUnbuffedStats takes it off the
 -- live stats). P = the field whose live value is read from the aura's points
 -- (one aura shared by foods of different strength). BuffList: the class, aura,
@@ -29,7 +28,7 @@ MSC.BuffAuras = {
     [2791] = { STA = 42 }, -- Power Word: Fortitude (Rank 4)
     [3160] = { AGI = 8 }, -- Elixir of Lesser Agility
     [3164] = { STR = 8 }, -- Elixir of Ogre Strength
-    [3166] = { INT = 6 }, -- Elixir of Wisdom
+    [3166] = { INT = 3 }, -- Elixir of Wisdom
     [3220] = { ARMOR = 150 }, -- Elixir of Lesser Defense
     [4318] = { AGI = 12 }, -- Call of the Raptor
     [5020] = { STR = 4, INT = -5 }, -- Stormstout
@@ -205,7 +204,6 @@ MSC.BuffAuras = {
     [1248422] = { STR = 20, P = "STR" }, -- Well Fed (6 foods)
     [1249519] = { AP = 40, RAP = 40 }, -- Well Fed: Slitherskin Mackerel
     [1249520] = { SP = 28, P = "SP" }, -- Well Fed (6 foods)
-    [1249521] = { INT = 18, P = "INT" }, -- Well Fed (5 foods)
     [1249926] = { SPI = 20, P = "SPI" }, -- Well Fed (6 foods)
     [1249927] = { HEAL = 44, P = "HEAL" }, -- Well Fed (6 foods)
     [1250918] = { AGI = 25, INT = 25 }, -- Elixir of Cunning
@@ -229,10 +227,10 @@ MSC.BuffAuras = {
     [1250988] = { INT = 6 }, -- Elixir of Lesser Intellect
     [1250989] = { INT = 10 }, -- Elixir of Intellect
     [1287768] = { AP = 30, RAP = 30 }, -- Unholy Icon
-    [1293740] = { STA = 60 }, -- Flask of Natural Accuracy
-    [1293741] = { STA = 60 }, -- Flask of Natural Aggression
-    [1293742] = { STA = 60 }, -- Flask of Natural Precision
-    [1293743] = { STA = 60 }, -- Flask of Natural Swiftness
+    [1293740] = { STA = 30 }, -- Flask of Natural Accuracy
+    [1293741] = { STA = 30 }, -- Flask of Natural Aggression
+    [1293742] = { STA = 30 }, -- Flask of Natural Precision
+    [1293743] = { STA = 30 }, -- Flask of Natural Swiftness
     [1296202] = { INT = 2 }, -- Scroll of Rat Familiar (Rank 1)
     [1299346] = { RAP = 20 }, -- Trueshot Aura (Rank 1)
     [1299348] = { RAP = 35 }, -- Trueshot Aura (Rank 2)
@@ -248,6 +246,8 @@ MSC.BuffAuras = {
     [1304780] = { AGI_PCT = 10 }, -- Sayge's Dark Fortune of Agility
     [1304782] = { STR_PCT = 10 }, -- Sayge's Dark Fortune of Strength
     [1310077] = { SP_HOLY = 40 }, -- Elixir of Holy Power
+    [1327736] = { INT = 2 }, -- Elixir of Endless Intellect
+    [1327754] = { STA_PCT = 10 }, -- Scroll of Endless Fortitude (Rank 1)
 }
 
 MSC.BuffList = {

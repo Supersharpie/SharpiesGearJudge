@@ -1,5 +1,23 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.12
+
+### ⚖️ Druid Weights (WoW Forever)
+- Feral's solo leveling weights rebuilt. Rip now counts only the ticks that land before the mob dies, and the model picks the best of 3 to 5 combo points with Rip or Ferocious Bite. Hit, Crit and Stamina count for more at levels 20-40.
+- Mana now varies from pull to pull in the Druid solo models, as on Paladin. On Balance, Mp5 and Spirit count for less at 55-59.
+
+### ⚖️ Mage Weights (WoW Forever)
+- The Mage solo models now pick their optional spells by what kills fastest, and mana varies from pull to pull as on Paladin and Druid. Presence of Mind, dungeon Blast Wave and Mana Shield recasts now cost their global cooldown.
+- Frost's solo weights rebuilt: Crit, Hit, Intellect and Spirit count for less at levels 45-50.
+
+### ⚖️ Priest Weights (WoW Forever)
+- Mana now varies from pull to pull in the Priest solo model, as on Paladin, Druid and Mage. Mp5 and Spirit count for a little less at levels 10-35.
+
+### 🧪 Buffs (WoW Forever)
+- Buff table rebuilt from the November 7 client (1.60.1.70862). The Hyjal flasks count as 30 Stamina (was 60), and Elixir of Wisdom as 3 Intellect (was 6).
+- Rockscale Cod, Spinefin Halibut and the other fish that now give Fishing skill instead of Intellect are no longer taken off your Intellect.
+- Added Elixir of Endless Intellect and Scroll of Endless Fortitude.
+
 ## 🚀 v3.2.11
 
 ### 🧭 Profession Arrows in DaylightUI (WoW Forever)

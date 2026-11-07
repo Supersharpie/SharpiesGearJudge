@@ -12,6 +12,16 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.2.12
+
+- **Feral Druid weights:** solo leveling rebuilt. Hit, Crit and Stamina count for more at levels 20-40.
+- **Druid Talents:** Feral and Balance solo orders updated, and the % slower tags corrected.
+- **Frost Mage weights:** solo leveling rebuilt. Crit, Hit, Intellect and Spirit count for less at levels 45-50.
+- **Mage Talents:** solo and dungeon orders updated.
+- **Priest weights:** solo leveling rebuilt. Mp5 and Spirit count for a little less at levels 10-35.
+- **Priest Talents:** Shadow and Discipline solo orders updated, and the no-Shadowform % slower tag corrected.
+- **Buffs:** rebuilt from the November 7 client. The Hyjal flasks count as 30 Stamina, not 60.
+
 ### 3.2.11
 
 - **Profession arrows in DaylightUI:** recipes that craft an upgrade get the green arrow in DaylightUI's profession window.
@@ -294,7 +304,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.11 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.12 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
