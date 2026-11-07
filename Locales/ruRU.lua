@@ -1685,6 +1685,7 @@ L["Talents plugin: Mage solo and dungeon orders updated."] = "Плагин Talen
 L["Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35."] = "Жрец: веса соло-прокачки пересчитаны. Mp5 и дух на уровнях 10-35 ценятся немного ниже."
 L["Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected."] = "Плагин Talents: обновлены соло-порядки жреца Тьмы и Послушания, исправлена метка «на % медленнее» билда без Облика Тьмы."
 L["Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)."] = "Оценка без баффов: настойки Хиджала теперь считаются как 30 выносливости, как в клиенте от 7 ноября (было 60)."
+L["Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards."] = "Плагин Roadmap: 4 новых предмета с Обсидианового часового в Ульдамане и 7 новых метательных оружий в наградах за задания."
 L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."] = "С 50-го уровня меткость и защита танка оцениваются по рейдовым капам (9% меткости, 17% меткости заклинаний, 440 защиты, иммунитет к сокрушающим ударам), а не по нуждам прокачки. Отключите, если не собираетесь в рейды."
 L["Frost"] = "Лед"
 L["Full World Buffed"] = "Все мировые баффы"

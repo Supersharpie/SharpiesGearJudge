@@ -371,6 +371,7 @@ L["Talents plugin: Mage solo and dungeon orders updated."] = "Talents 플러그�
 L["Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35."] = "사제 솔로 가중치를 다시 계산했습니다. 10-35레벨에서 Mp5와 정신력의 가치가 조금 더 낮습니다."
 L["Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected."] = "Talents 플러그인: 암흑과 수양 사제 솔로 순서를 갱신하고 어둠의 형상 없는 빌드의 % 느림 표시를 수정했습니다."
 L["Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)."] = "버프 제외 평가: 하이잘 영약이 11월 7일 클라이언트대로 체력 30으로 계산됩니다 (이전 60)."
+L["Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards."] = "Roadmap 플러그인: 울다만 흑요석 파수꾼의 새 전리품 4개와 퀘스트 보상 투척 무기 7개가 추가되었습니다."
 L["Force of Nature"] = "자연의 군대"
 L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."] = "50레벨부터 적중과 탱커 방어 숙련을 레벨업 기준 대신 공격대 한도(적중 9%, 주문 적중 17%, 방어 숙련 440, 강타 면역)에 맞춰 평가합니다. 공격대에 가지 않는다면 끄세요."
 L["Frost"] = "냉기"

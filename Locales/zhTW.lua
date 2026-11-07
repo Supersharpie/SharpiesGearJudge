@@ -371,6 +371,7 @@ L["Talents plugin: Mage solo and dungeon orders updated."] = "Talents 外掛：�
 L["Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35."] = "牧師單人權重已重算。10-35級的Mp5和精神價值略低。"
 L["Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected."] = "Talents 外掛：更新暗影和戒律牧師的單人順序，並修正無暗影形態配置的「慢 %」標籤。"
 L["Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)."] = "無增益評分：海加爾精煉藥劑現在依11月7日客戶端計為30耐力（原為60）。"
+L["Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards."] = "Roadmap 外掛：新增奧達曼黑曜石哨兵的4件掉落物，以及7件投擲武器任務獎勵。"
 L["Force of Nature"] = "自然之力"
 L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."] = "從50級起，命中與坦克防禦以團隊上限為目標（9%命中、17%法術命中、440防禦、免疫碾壓），而非升級所需。若你不打團隊副本請關閉。"
 L["Frost"] = "冰霜"

@@ -1691,6 +1691,7 @@ L["Talents plugin: Mage solo and dungeon orders updated."] = "Extension Talents 
 L["Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35."] = "Prêtre : pondérations solo recalculées. Mp5 et esprit comptent un peu moins aux niveaux 10-35."
 L["Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected."] = "Extension Talents : ordres solo du Prêtre Ombre et Discipline mis à jour, et étiquette « % plus lent » du build sans Forme d'Ombre corrigée."
 L["Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)."] = "Évaluation sans buffs : les flacons d'Hyjal comptent désormais pour 30 d'endurance, comme l'indique le client du 7 novembre (60 avant)."
+L["Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards."] = "Extension Roadmap : 4 nouveaux butins de la Sentinelle d'obsidienne à Uldaman et 7 nouvelles armes de jet en récompense de quête."
 L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."] = "À partir du niveau 50, valorise le toucher et la défense des tanks selon les caps de raid (toucher 9%, toucher des sorts 17%, défense 440, inécrasable) plutôt que selon les besoins de la montée en niveau. Désactivez si vous ne comptez pas faire de raids."
 L["Frost"] = "Givre"
 L["Full World Buffed"] = "Tous les buffs mondiaux"

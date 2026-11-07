@@ -25,6 +25,7 @@ local WHATS_NEW = {
     { forever = true, text = "Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35." },
     { forever = true, text = "Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected." },
     { forever = true, text = "Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)." },
+    { forever = true, text = "Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

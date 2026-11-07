@@ -491,6 +491,7 @@ L["Talents plugin: Mage solo and dungeon orders updated."] = "Complemento Talent
 L["Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35."] = "Sacerdote: pesos en solitario recalculados. Mp5 y espíritu cuentan algo menos en los niveles 10-35."
 L["Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected."] = "Complemento Talents: órdenes en solitario de sacerdote de Sombra y Disciplina actualizados, y etiqueta de % más lento sin Forma de las Sombras corregida."
 L["Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)."] = "Evaluación sin beneficios: los frascos de Hyjal ahora cuentan como 30 de aguante, como indica el cliente del 7 de noviembre (antes 60)."
+L["Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards."] = "Complemento Roadmap: 4 botines nuevos del Centinela de obsidiana en Uldaman y 7 armas arrojadizas nuevas como recompensa de misión."
 L["Flashing Living Ruby"] = "Rubí vivo destellante"
 L["Fluorescent Tanzanite"] = "Tanzanita fluorescente"
 L["Force of Nature"] = "Fuerza de la Naturaleza"
