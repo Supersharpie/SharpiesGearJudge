@@ -1,5 +1,16 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.13
+
+### ⚖️ Protection Paladin Weights (WoW Forever)
+- Hammer of the Righteous is now in the Paladin models. It replaces Holy Strike from 40 when two or more mobs are on you.
+- Solo leveling: Spell Power and Intellect count for less from level 35, Stamina for more.
+- Dungeon tanking: Dodge, Parry, Block and Defense count for more from level 40, Intellect for less.
+
+### ⚖️ Warrior Weights (WoW Forever)
+- Unbridled Wrath now gives rage on Heroic Strike, on each Cleave target and on weapon specials such as Mortal Strike, Bloodthirst and Whirlwind, not only on white hits.
+- Small changes from level 50: Spirit counts for a little less on Protection.
+
 ## 🚀 v3.2.12
 
 ### ⚖️ Druid Weights (WoW Forever)

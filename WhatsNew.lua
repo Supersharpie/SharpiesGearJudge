@@ -17,15 +17,11 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.12
-    { forever = true, text = "Feral Druid solo weights rebuilt: Hit, Crit and Stamina count for more at levels 20-40." },
-    { forever = true, text = "Talents plugin: Feral and Balance solo orders updated, and the Druid % slower tags corrected." },
-    { forever = true, text = "Frost Mage solo weights rebuilt: Crit, Hit, Intellect and Spirit count for less at levels 45-50." },
-    { forever = true, text = "Talents plugin: Mage solo and dungeon orders updated." },
-    { forever = true, text = "Priest solo weights rebuilt: Mp5 and Spirit count for a little less at levels 10-35." },
-    { forever = true, text = "Talents plugin: Shadow and Discipline Priest solo orders updated, and the no-Shadowform % slower tag corrected." },
-    { forever = true, text = "Unbuffed judging: the Hyjal flasks now count as 30 Stamina, as the November 7 client says (was 60)." },
-    { forever = true, text = "Roadmap plugin: 4 new Uldaman drops from the Obsidian Sentinel and 7 new thrown-weapon quest rewards." },
+    -- v3.2.13
+    { text = "Roadmap and Roster plugins: small upgrades count now, as on Gear Judge's tooltip." },
+    { forever = true, text = "Talents plugin: PvP leveling orders updated for Paladin, Warrior, Mage, Druid, Priest and Rogue." },
+    { forever = true, text = "Protection Paladin: Hammer of the Righteous now counts. New leveling and dungeon tank talent orders and weights." },
+    { forever = true, text = "Warrior: Unbridled Wrath now gives rage on Heroic Strike, each Cleave target and weapon specials. The Arms and Fury PvP leveling builds are back." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

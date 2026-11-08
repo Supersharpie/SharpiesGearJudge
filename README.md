@@ -12,6 +12,13 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.2.13
+
+- **Roadmap and Roster:** small upgrades count now, the same as on the tooltip.
+- **Talents:** PvP leveling orders updated for Paladin, Warrior, Mage, Druid, Priest and Rogue.
+- **Protection Paladin:** Hammer of the Righteous now counts. New leveling and dungeon tank orders and weights.
+- **Warrior:** Unbridled Wrath now gives rage on Heroic Strike, each Cleave target and weapon specials. The Arms and Fury PvP leveling builds are back.
+
 ### 3.2.12
 
 - **Feral Druid weights:** solo leveling rebuilt. Hit, Crit and Stamina count for more at levels 20-40.
@@ -304,7 +311,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.12 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.13 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
