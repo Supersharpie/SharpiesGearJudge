@@ -242,19 +242,11 @@ function Hunter:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- Summon Hawk (BM, level 25): the hawks hit for their rank's base damage
-    -- (dive bombs add 5% of ranged attack power) and never use the hunter's
-    -- crit or hit, so with them Crit and Hit are worth less against ranged
-    -- attack power. The leveling rows have no Hawk; SimStudio hmodel gives
-    -- x1.0 at 25 (Arcane Shot, which scales with ranged attack power, still
-    -- wins the shared slot), x0.82 at 30-40 and x0.77 from 45 (2026-10-14,
-    -- hawk swings refit to the beta logs). Crit goes through the helper so
-    -- Agility's crit share follows.
-    if hooks and specU:find("LEVELING") and not isMeleeRow and level >= 25 and Rank("SUMMON_HAWK") > 0 then
-        local hawk = MSC.ForeverLevelLerp({ { 25, 1.0 }, { 30, 0.82 }, { 40, 0.81 }, { 45, 0.77 }, { 59, 0.77 } }, level)
-        MSC.ScaleForeverMeleeCrit(weights, hawk, level)
-        MSC.ScaleForeverKeys(weights, { "ITEM_MOD_HIT_RATING_SHORT" }, hawk)
-    end
+    -- Summon Hawk (BM, level 25) on the ranged rows: no hook. Summon Hawk shares
+    -- Arcane Shot's cooldown, and SimStudio hmodel (2026-11-08, hawk swings from
+    -- launch logs) keeps Arcane Shot in that slot at every level, also with the
+    -- hawks mixed in, so a shooting Hunter's Crit and Hit are the same with or
+    -- without the talent (was x0.82 at 30-40 and x0.77 from 45, 2026-10-14).
     if hit0 and weights["ITEM_MOD_HIT_RATING_SHORT"] and specU:find("^LEVELING") then
         local h = weights["ITEM_MOD_HIT_RATING_SHORT"]
         weights["ITEM_MOD_HIT_RATING_SHORT"] = hit0 + MSC.LevelingHookShare(level) * (h - hit0)
@@ -293,11 +285,13 @@ function Hunter:ApplyScalers(weights, currentSpec)
     if hooks then MSC.ApplyForeverDamageMult(weights, dmgMult, MSC.ForeverManaKeys) end
 
     -- Bestial Discipline (BM t5, 2 ranks) and Rapid Recuperation (MM t5, 2
-    -- ranks): regen while casting, worth +80% / +45% Spirit per rank (regen
-    -- is only active ~23% of a kill cycle). Additive, total capped at the
-    -- 2-rank Bestial Discipline equivalent (100% regen while casting).
-    local regen = 0.8 * Rank("BESTIAL_DISCIPLINE") + 0.45 * Rank("RAPID_RECUPERATION")
-    if regen > 1.6 then regen = 1.6 end
+    -- ranks): regen while casting. SimStudio hmodel (2026-11-08) prices
+    -- Bestial Discipline at about +23% Spirit a rank to 40 and +42% from 45
+    -- (was a flat +80%), Rapid Recuperation +45% a rank. Additive, capped at
+    -- x2.8 (both talents maxed, as the model).
+    local bdRank = MSC.ForeverLevelLerp({ { 10, 0.23 }, { 40, 0.23 }, { 45, 0.42 }, { 60, 0.42 } }, level)
+    local regen = bdRank * Rank("BESTIAL_DISCIPLINE") + 0.45 * Rank("RAPID_RECUPERATION")
+    if regen > 1.8 then regen = 1.8 end
     if hooks and regen > 0 and weights["ITEM_MOD_SPIRIT_SHORT"] then
         weights["ITEM_MOD_SPIRIT_SHORT"] = weights["ITEM_MOD_SPIRIT_SHORT"] * (1 + regen)
     end

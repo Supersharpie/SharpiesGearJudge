@@ -750,17 +750,32 @@ function MSC.InitReceiptView(parent)
     local C = f.Center
     local SIDE_W = RECEIPT_SLOT + 2 + 40 + 2 + 16 -- slot, score badge, alert icon
 
+    -- Mouse-wheel zoom: some clients' DressUpModel has no Get/SetPortraitZoom (a wheel turn
+    -- errored in the Roadmap's copy of this); then the camera distance is scaled instead.
+    local function ZoomModel(m, delta)
+        if m.GetPortraitZoom and m.SetPortraitZoom then
+            local z = (m:GetPortraitZoom() or 0) + (delta > 0 and 0.1 or -0.1)
+            m:SetPortraitZoom(math.max(m.minZoom or 0, math.min(m.maxZoom or 1, z)))
+        elseif m.SetCamDistanceScale then
+            m.sgjZoom = math.max(0.4, math.min(1.6, (m.sgjZoom or 1) - delta * 0.1))
+            m:SetCamDistanceScale(m.sgjZoom)
+        end
+    end
+    local function ResetZoom(m)
+        if m.SetPortraitZoom then m:SetPortraitZoom(0) end
+        if m.SetCamDistanceScale then m.sgjZoom = 1; m:SetCamDistanceScale(1) end
+    end
     pcall(function()
         f.Model = CreateFrame("DressUpModel", nil, C, "ModelWithControlsTemplate")
         f.Model:SetPoint("TOPLEFT", C, "TOPLEFT", SIDE_W + 8, -30)
         f.Model:SetPoint("BOTTOMRIGHT", C, "BOTTOMRIGHT", -(SIDE_W + 8), 90)
         f.Model:SetUnit("player")
-        f.Model:SetScript("OnMouseWheel", function(self, delta) local z = self:GetPortraitZoom(); self:SetPortraitZoom(z + (delta > 0 and 0.1 or -0.1)) end)
+        f.Model:SetScript("OnMouseWheel", ZoomModel)
         f.Model:SetScript("OnMouseDown", function(self, button)
             if button == "LeftButton" then
                 self.prevX = GetCursorPosition()
                 self:SetScript("OnUpdate", function(m) local cx = GetCursorPosition(); m:SetFacing(m:GetFacing() + (cx - m.prevX) * 0.01); m.prevX = cx end)
-            elseif button == "RightButton" then self:SetUnit("player"); self:SetPortraitZoom(0) end
+            elseif button == "RightButton" then self:SetUnit("player"); ResetZoom(self) end
         end)
         f.Model:SetScript("OnMouseUp", function(self) self:SetScript("OnUpdate", nil) end)
     end)

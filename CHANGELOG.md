@@ -1,5 +1,31 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.2.14
+
+### 🐛 Fixes
+- The mouse wheel over the character model in the Gear Judge window can no longer cause an error: it zooms by camera distance where the game has no portrait zoom.
+
+### ⚖️ Hunter Weights (WoW Forever)
+- Your Hit now also counts for your pet's attacks, as confirmed on the Forever bug tracker. Hit counts for about 30-50% more on ranged Hunters at most levels, and for more on melee Hunters from 40.
+- Mana now varies from pull to pull in the Hunter models, as on Paladin, Druid, Mage and Priest. Spirit and Mp5 count for a little less at levels 10-15; on melee Hunters, Mp5 and Intellect count for more at 15-25.
+- Bestial Discipline now adds less to Spirit, matching the model. Beast Mastery's Spirit was about 40% too high from level 45, and more before that.
+- Your pet now uses Bite and Claw in the Hunter models, and Summon Hawk's hawks hit about 30% harder, as Warcraft Logs show.
+- Ranged Hunters: Crit and Hit count for 10-20% more at levels 10-35, Spirit and Mp5 for 10-29% more at 10-25, Stamina for 12-29% less at 10-40 and Intellect for 18-25% less at 40-45. Melee Hunters: Intellect and Mp5 count for about 30% less at 40-45.
+- Summon Hawk no longer lowers Crit and Hit for ranged Hunters: shooting Hunters do best keeping Arcane Shot on the cooldown it shares with Summon Hawk.
+
+### ⚖️ Rogue Weights (WoW Forever)
+- Deadly Poison now grows with your Attack Power on every tick, as Warcraft Logs show. Before, the models counted it once per application.
+- Dagger leveling and dagger dungeon weights: Stamina counts for up to 40% more at levels 30-40, because the dagger builds now take Deflection and Endurance later. Crit, Hit, weapon damage, Spirit and health regeneration move by up to 10% at 35-59.
+- Other Rogue weights move by less than 5%.
+
+### ⚖️ Shaman Weights (WoW Forever)
+- Mana now varies from pull to pull in the Shaman models, as on Paladin, Druid, Mage, Priest and Hunter. On Enhancement dungeon leveling, Spirit and Mp5 count for 30-66% less at levels 19-24 (Shamanistic Focus now comes at 20). Other Shaman mana weights move by up to 12%.
+- Elemental dungeon leveling: spell Hit counts for up to twice as much at levels 25-35, because the new order takes Concussion and Trial by Fire earlier.
+
+### ⚖️ Warlock Weights (WoW Forever)
+- Mana now varies from pull to pull in the Warlock models, and the Voidwalker has 40 more base health, as in Blizzard's November 6 notes.
+- Warlock weights move by 12% or less: Mp5 counts for a little less at levels 10-15, and spell Hit for a little less at 50-55.
+
 ## 🚀 v3.2.13
 
 ### ⚖️ Protection Paladin Weights (WoW Forever)

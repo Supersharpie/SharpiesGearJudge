@@ -12,6 +12,15 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.2.14
+
+- **Hunter:** your Hit now also counts for your pet, your pet uses Bite and Claw, and hawks hit as hard as combat logs show. Bestial Discipline no longer overrates Spirit. New solo, Beast Mastery and PvP leveling talent orders.
+- **Rogue:** Deadly Poison now grows with Attack Power on every tick, as combat logs show. New Assassination talent orders and small changes for Combat and Subtlety.
+- **Shaman:** mana now varies from pull to pull in the models. Faster dungeon and PvP leveling talent orders, and Elemental PvP leveling is back.
+- **Warlock:** mana now varies from pull to pull in the models, and the Voidwalker has more health. Faster talent orders for Demonology Drain Life solo and Affliction and Destruction PvP leveling.
+- **Talents:** the build picker beside the talent window now matches the Builds page, with stage tabs, Solo, Dungeon and PvP tags, how much slower each build is, and your active build marked. The panel is on again for everyone.
+- **Fixed:** scrolling the mouse wheel over the character model in the Gear Judge and Roadmap windows no longer causes an error.
+
 ### 3.2.13
 
 - **Roadmap and Roster:** small upgrades count now, the same as on the tooltip.
@@ -311,7 +320,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.2.13 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.2.14 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

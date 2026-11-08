@@ -17,11 +17,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.2.13
-    { text = "Roadmap and Roster plugins: small upgrades count now, as on Gear Judge's tooltip." },
-    { forever = true, text = "Talents plugin: PvP leveling orders updated for Paladin, Warrior, Mage, Druid, Priest and Rogue." },
-    { forever = true, text = "Protection Paladin: Hammer of the Righteous now counts. New leveling and dungeon tank talent orders and weights." },
-    { forever = true, text = "Warrior: Unbridled Wrath now gives rage on Heroic Strike, each Cleave target and weapon specials. The Arms and Fury PvP leveling builds are back." },
+    -- v3.2.14
+    { forever = true, text = "Hunter: your Hit now also counts for your pet, your pet uses Bite and Claw, and hawks hit as hard as combat logs show. Bestial Discipline no longer overrates Spirit. New solo, Beast Mastery and PvP leveling talent orders." },
+    { forever = true, text = "Rogue: Deadly Poison now grows with Attack Power on every tick, as combat logs show. New Assassination talent orders and small changes for Combat and Subtlety." },
+    { forever = true, text = "Shaman: mana now varies from pull to pull in the models. Faster dungeon and PvP leveling talent orders, and Elemental PvP leveling is back." },
+    { forever = true, text = "Warlock: mana now varies from pull to pull in the models, and the Voidwalker has more health. Faster talent orders for Demonology Drain Life solo and Affliction and Destruction PvP leveling." },
+    { forever = true, text = "Talents: the build picker beside the talent window now matches the Builds page, with Max Level, Leveling, Farming and PvP tabs, Solo, Dungeon and PvP tags, how much slower each build is, and your active build marked. The panel is on again for everyone." },
+    { text = "Fixed: scrolling the mouse wheel over the character model in the Gear Judge and Roadmap windows no longer causes an error." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
