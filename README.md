@@ -12,6 +12,21 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.3.0
+
+- **Talents:** every leveling build in the build list shows its model number at your level (kills per hour, dungeon DPS, healing covered, tank pulls per hour or duel score).
+- **Minimap button:** reopens the window on the page you used last; right-click it to jump straight to any page.
+- **Warrior:** Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s.
+- **Warrior:** Builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster.
+- **Hunter:** Melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered.
+- **Shaman:** Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling.
+- **Mage:** Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arcane solo takes Incineration and Ignite in place of its late Frost talents.
+- **Warlock:** Builds no longer take talents for a pet they don't use, and Demonology PvP leveling is about 1% stronger in duels.
+- **Priest:** Discipline dungeon takes Holy Specialization earlier for about 0.6% more healing, and Discipline PvP leveling is about 0.8% stronger in duels.
+- **Druid:** Bear builds no longer take caster-only talents, and Restoration dungeon takes Improved Rejuvenation and Improved Regrowth earlier.
+- **Paladin:** Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling.
+- **Paladin:** Retribution solo leveling takes Champion of the Light and Unsealed Wrath earlier, for a slightly faster climb to 60.
+
 ### 3.2.14
 
 - **Hunter:** your Hit now also counts for your pet, your pet uses Bite and Claw, and hawks hit as hard as combat logs show. Bestial Discipline no longer overrates Spirit. New solo, Beast Mastery and PvP leveling talent orders.

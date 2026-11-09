@@ -1,5 +1,27 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.3.0
+
+### ✨ Quicker Page Access
+- The window reopens on the page you used last, also after logging out.
+- Right-click the minimap button for a list of every page (Roster, Talents and the rest) and jump straight to one.
+
+### ⚖️ Retribution Paladin Weights (WoW Forever)
+- Retribution leveling follows the new talent order (Champion of the Light and Unsealed Wrath earlier): Mp5 counts for up to 80% more at levels 40-45, Intellect for up to 30% more at 35-50, and Stamina and Spirit for about 20% more in the mid 40s.
+
+### ⚖️ Protection Paladin Weights (WoW Forever)
+- Protection solo leveling follows the new talent order: Stamina, Spirit and the avoidance stats count for more at levels 50-59, where they used to drop off sharply.
+
+### ⚖️ Enhancement Shaman Weights (WoW Forever)
+- Enhancement dungeon leveling follows the new talent order: Crit counts for up to 22% more at levels 45-50, and Spirit and Mp5 for up to 17% more at 40-45 but about 25% less at 59.
+
+### ⚖️ Discipline Priest Weights (WoW Forever)
+- Dungeon healing follows the new Discipline order (Holy Specialization at 31-34): spell crit counts for up to 60% more and Intellect for up to 35% more at levels 20-35.
+
+### ⚖️ Druid Weights (WoW Forever)
+- Restoration dungeon healing follows the new order: Spirit, Mp5 and Intellect count for up to about 55% less at levels 35-40 and up to twice as much at 50-55.
+- Balance leveling: Spirit and Mp5 count for up to about a third more at 55-59.
+
 ## 🚀 v3.2.14
 
 ### 🐛 Fixes

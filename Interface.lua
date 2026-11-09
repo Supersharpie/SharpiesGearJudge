@@ -3715,12 +3715,21 @@ function MSC.ToggleMainMenu()
     MSC.InitLogicView(f.Content)
     MSC.InitSettingsView(f.Content)
     MSC.RenderSidebarButtons()
-    MSC.SwitchTab(1)
+    MSC.SwitchTab(MSC.SavedTabIndex())
     f:Show()
+end
+
+-- The window reopens on the tab used last, kept between logins (SGJ_Settings.LastTab holds the tab's view key,
+-- which stays the same whatever order the plugins register their tabs in).
+function MSC.SavedTabIndex()
+    local key = SGJ_Settings and SGJ_Settings.LastTab
+    for i, tab in ipairs(MSC.RegisteredTabs) do if key and tab.view == key then return i end end
+    return 1
 end
 
 function MSC.SwitchTab(id)
     MSC.ActiveTab = id
+    if SGJ_Settings and MSC.RegisteredTabs[id] then SGJ_Settings.LastTab = MSC.RegisteredTabs[id].view end
     if MSC.BreakdownFrame then MSC.BreakdownFrame:Hide() end
     if MSC.NavButtons then
         for i, btn in ipairs(MSC.NavButtons) do
@@ -3760,14 +3769,37 @@ local ldbObject = ldb and ldb:NewDataObject(MINIMAP_ICON_NAME, {
     type = "launcher",
     text = "Gear Judge",
     icon = "Interface\\Icons\\INV_Misc_Spyglass_02",
+    -- Left-click opens or closes the window (on the last used tab); right-click lists the pages to jump straight to one.
     OnClick = function(self, button)
-        MSC.ToggleMainMenu()
+        if button == "RightButton" then MSC.ShowPageMenu(self) else MSC.ToggleMainMenu() end
     end,
     OnTooltipShow = function(tooltip)
         tooltip:AddLine("|cffffd100Sharpie's Gear Judge|r")
         tooltip:AddLine(MSC.L["Click to open the interface."], 1, 1, 1)
+        tooltip:AddLine(MSC.L["Right-click to choose a page."], 1, 1, 1)
     end,
 })
+
+local pageMenu
+function MSC.ShowPageMenu(anchor)
+    if not pageMenu then
+        pageMenu = CreateFrame("Frame", "SGJ_PageMenu", UIParent, "UIDropDownMenuTemplate")
+        UIDropDownMenu_Initialize(pageMenu, function(_, level)
+            local title = UIDropDownMenu_CreateInfo()
+            title.text = "Sharpie's Gear Judge"; title.isTitle = true; title.notCheckable = true
+            UIDropDownMenu_AddButton(title, level)
+            local open = MSC.MainFrame and MSC.MainFrame:IsShown()
+            for i, tab in ipairs(MSC.RegisteredTabs) do
+                local info = UIDropDownMenu_CreateInfo()
+                info.text = tab.name or ""; info.icon = tab.icon
+                info.checked = open and MSC.ActiveTab == i or nil
+                info.func = function() MSC.OpenMainWindow(i); CloseDropDownMenus() end
+                UIDropDownMenu_AddButton(info, level)
+            end
+        end, "MENU")
+    end
+    ToggleDropDownMenu(1, nil, pageMenu, anchor or "cursor", 0, 0)
+end
 
 function MSC.UpdateMinimapPosition()
     if not (dbIcon and dbIcon:IsRegistered(MINIMAP_ICON_NAME)) then return end
