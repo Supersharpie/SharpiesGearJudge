@@ -17,19 +17,9 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.3.0
-    { forever = true, text = "Talents: every leveling build in the build list shows its model number at your level: kills per hour, dungeon DPS, healing covered, tank pulls per hour or duel score." },
-    { text = "The minimap button reopens the window on the page you used last, and right-clicking it lists every page (Roster, Talents and the rest) to jump straight to one." },
-    { forever = true, text = "Warrior: Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s." },
-    { forever = true, text = "Shaman: Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling." },
-    { forever = true, text = "Mage: Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arcane solo takes Incineration and Ignite in place of its late Frost talents." },
-    { forever = true, text = "Warlock: builds no longer take talents for a pet they don't use, and Demonology PvP leveling is about 1% stronger in duels." },
-    { forever = true, text = "Priest: Discipline dungeon takes Holy Specialization earlier for about 0.6% more healing, and Discipline PvP leveling is about 0.8% stronger in duels." },
-    { forever = true, text = "Druid: Bear builds no longer take caster-only talents, and Restoration dungeon takes Improved Rejuvenation and Improved Regrowth earlier." },
-    { forever = true, text = "Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling." },
-    { forever = true, text = "Warrior: builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster." },
-    { forever = true, text = "Hunter: melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered." },
-    { forever = true, text = "Paladin: Retribution solo leveling takes Champion of the Light and Unsealed Wrath earlier, for a slightly faster climb to 60." },
+    -- v3.3.1
+    { forever = true, text = "Fixed: spell power shown as an Equip: line (for example on Heavy Woolen Gloves) could count as nothing if Gear Judge read the item before that line loaded." },
+    { text = "Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

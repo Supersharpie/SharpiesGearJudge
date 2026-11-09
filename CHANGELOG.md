@@ -1,5 +1,10 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.3.1
+
+### 🐛 Fixes
+- WoW Forever: spell power shown as an Equip: line (for example on Heavy Woolen Gloves) could count as nothing when the item was read before that line loaded. Gear Judge now also checks the item's own stats, and keeps rereading an item you hover until its Equip: text has had time to load.
+
 ## 🚀 v3.3.0
 
 ### ✨ Quicker Page Access

@@ -384,6 +384,7 @@ L["Warlock: mana now varies from pull to pull in the models, and the Voidwalker 
 L["Talents: the build picker beside the talent window now matches the Builds page, with Max Level, Leveling, Farming and PvP tabs, Solo, Dungeon and PvP tags, how much slower each build is, and your active build marked. The panel is on again for everyone."] = "특성: 특성 창 옆의 빌드 선택이 이제 빌드 페이지와 같습니다. 최고 레벨, 레벨업, 파밍, PvP 탭과 솔로, 던전, PvP 표시, 각 빌드가 얼마나 느린지, 그리고 현재 빌드 표시가 있습니다. 이제 모든 사용자에게 창이 다시 켜집니다."
 L["Fixed: scrolling the mouse wheel over the character model in the Gear Judge and Roadmap windows no longer causes an error."] = "수정: Gear Judge와 Roadmap 창의 캐릭터 모델 위에서 마우스 휠을 굴려도 더 이상 오류가 나지 않습니다."
 L["Paladin: Retribution solo leveling takes Champion of the Light and Unsealed Wrath earlier, for a slightly faster climb to 60."] = "성기사: 징벌 솔로 레벨업이 빛의 용사와 Unsealed Wrath를 더 일찍 찍어 60까지 조금 더 빨리 오릅니다."
+L["Fixed: spell power shown as an Equip: line (for example on Heavy Woolen Gloves) could count as nothing if Gear Judge read the item before that line loaded."] = "수정: 착용 효과 줄로 표시되는 주문력이 그 줄이 불러와지기 전에 Gear Judge가 아이템을 읽으면 0으로 계산될 수 있던 문제."
 L["Talents: every leveling build in the build list shows its model number at your level: kills per hour, dungeon DPS, healing covered, tank pulls per hour or duel score."] = "특성: 빌드 목록의 모든 레벨업 빌드가 현재 레벨에서의 모델 수치를 보여 줍니다: 시간당 처치 수, 던전 DPS, 치유 충족도, 탱커 시간당 풀 수 또는 결투 점수."
 L["Druid: Bear builds no longer take caster-only talents, and Restoration dungeon takes Improved Rejuvenation and Improved Regrowth earlier."] = "드루이드: 곰 빌드가 더 이상 시전자 전용 특성을 찍지 않으며, 회복 던전 빌드가 회복 연마와 재생 연마를 더 일찍 찍습니다."
 L["Priest: Discipline dungeon takes Holy Specialization earlier for about 0.6% more healing, and Discipline PvP leveling is about 0.8% stronger in duels."] = "사제: 수양 던전 빌드가 신성 마법 전문화를 더 일찍 찍어 치유량이 약 0.6% 늘고, 수양 PvP 레벨업 빌드는 결투에서 약 0.8% 더 강해집니다."
@@ -1720,3 +1721,5 @@ L["Bloom"] = "피워내기"
 L["Lacerate"] = "가르기"
 L["Accelerant"] = "Accelerant"
 L["Shockadin: Solo Leveling"] = "신성 충격 성기사: 솔로 레벨업"
+-- 3.3.1: What's New
+L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0: Roster 표에 캐릭터별 골드와 모든 캐릭터의 골드 합계가 표시됩니다."

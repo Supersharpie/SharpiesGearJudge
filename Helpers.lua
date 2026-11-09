@@ -282,6 +282,11 @@ MSC.StatCache = {}
 -- SPELL_DATA_LOAD_RESULT) forgets the scans from just before the spell arrived.
 local statCacheTime = {}
 local RECENT_SCAN_WINDOW = 5
+-- When each link was first read this session (kept by DropRecentScans, cleared by DropAllScans). A hover reread that
+-- matches the cached read only proves the read complete once LOCK_AFTER seconds have passed since then: two reads
+-- taken before an item's Equip: text loaded agree with each other too (2026-11-09: Heavy Woolen Gloves' spell power).
+local firstReadTime = {}
+local LOCK_AFTER = 10
 -- Scores already built from dropped scans go too.
 local function WipeScoresFromScans()
     if MSC.ProcessedStatCache then wipe(MSC.ProcessedStatCache) end
@@ -333,7 +338,11 @@ function MSC.RecheckItemScan(link)
         MSC.StatCache[link] = old
         return false
     end
-    if SameScan(old, fresh) then lastRecheck[link] = true; return false end
+    if SameScan(old, fresh) then
+        -- only a match well after the first read proves the text was all there; earlier, keep rereading (once a second)
+        if now - (firstReadTime[link] or now) >= LOCK_AFTER then lastRecheck[link] = true end
+        return false
+    end
     WipeScoresFromScans()
     return true
 end
@@ -369,6 +378,7 @@ function MSC.DropAllScans()
     wipe(MSC.StatCache)
     wipe(statCacheTime)
     wipe(lastRecheck)
+    wipe(firstReadTime)
     WipeScoresFromScans()
 end
 local Scratch_MatchGems = {}
@@ -1851,6 +1861,14 @@ end
 -- =============================================================
 -- 6. SCANNING
 -- =============================================================
+-- Plain stats whose GetItemStats value is in the same units the tooltip scan uses (no ratings or percents: Forever's
+-- rating lines are read as percents and converted elsewhere). See step 2b below.
+MSC.FOREVER_API_STATS = {
+    "ITEM_MOD_STRENGTH_SHORT", "ITEM_MOD_AGILITY_SHORT", "ITEM_MOD_STAMINA_SHORT", "ITEM_MOD_INTELLECT_SHORT", "ITEM_MOD_SPIRIT_SHORT",
+    "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_HEALING_DONE_SHORT", "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
+    "ITEM_MOD_MANA_REGENERATION_SHORT",
+}
+
 function MSC.GetRawItemStats(itemLink)
     if not itemLink then return {} end
     if MSC.StatCache[itemLink] then return MSC.StatCache[itemLink] end
@@ -1868,6 +1886,22 @@ function MSC.GetRawItemStats(itemLink)
     -- 2. FLATTEN STATS
     local finalStats = scanData.Stats or {}
     local bonusStats = {}
+
+    -- 2b. WoW Forever: the item's own stat data as a floor (2026-11-09, player report: Heavy Woolen Gloves' "+2 spell power"
+    -- scored nothing). Forever shows some plain item stats (spell power, stat 45) as an Equip: line whose text loads with
+    -- its spell, after the item: a tooltip read taken before that misses the line, and a hover reread that misses it too
+    -- keeps the miss. GetItemStats reads the item record itself (what the game's own "If you replace this item" lines
+    -- use), so for these plain stats the higher of the two reads counts. A max, never a sum: nothing is counted twice.
+    if MSC.IsForever then
+        local getStats = (C_Item and C_Item.GetItemStats) or GetItemStats
+        local ok, api = pcall(getStats, itemLink)
+        if ok and type(api) == "table" then
+            for _, key in ipairs(MSC.FOREVER_API_STATS) do
+                local v = api[key]
+                if type(v) == "number" and not MSC_IsSecret(v) and v > (finalStats[key] or 0) then finalStats[key] = v end
+            end
+        end
+    end
 
     -- 3. INTEGRATE USE EFFECTS (skip when ProcDB/trinket entry owns the item)
     local itemID = tonumber(string_match(itemLink, "item:(%d+)"))
@@ -2001,6 +2035,7 @@ function MSC.GetRawItemStats(itemLink)
     if GetItemInfo(itemLink) and not scanIncomplete then
         MSC.StatCache[itemLink] = finalStats
         statCacheTime[itemLink] = GetTime()
+        firstReadTime[itemLink] = firstReadTime[itemLink] or GetTime()
     end
     return finalStats
 end
