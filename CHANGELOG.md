@@ -1,5 +1,11 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.3.2
+
+### 🐛 Fixes
+- Auction house: Gear Judge's lines on item tooltips blinked on and off, because the auction house rebuilds its tooltip several times a second. They now stay put.
+- Negative stats on items (for example -3 Stamina on some cursed gear) were ignored, so those items scored too high. Checked against every changed and new WoW Forever item: no stat is missed now.
+
 ## 🚀 v3.3.1
 
 ### 🐛 Fixes

@@ -17,7 +17,10 @@ TooltipManager:SetScript("OnEvent", function(self, event)
     -- 2. Wrap the evaluation function with Cache Protection
     MSC.EvaluateAndDrawTooltip = function(tooltip)
         if not tooltip then return end
-        
+        -- Comparison tooltips are never scored (Judge.lua skips them): don't reread items or
+        -- add "Fetching" lines there, the client redraws them with every main tooltip refresh.
+        if tooltip == ShoppingTooltip1 or tooltip == ShoppingTooltip2 then return end
+
         local name, link = MSC_GetTooltipItem(tooltip)
         
         -- Handle quest rewards where MSC_GetTooltipItem(tooltip) might initially return nil

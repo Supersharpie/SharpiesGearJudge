@@ -17,9 +17,9 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.3.1
-    { forever = true, text = "Fixed: spell power shown as an Equip: line (for example on Heavy Woolen Gloves) could count as nothing if Gear Judge read the item before that line loaded." },
-    { text = "Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters." },
+    -- v3.3.2
+    { text = "Fixed: in the auction house, Gear Judge's lines on item tooltips blinked on and off." },
+    { text = "Fixed: negative stats on items (for example -3 Stamina) were ignored, so those items scored too high." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

@@ -733,9 +733,24 @@ function MSC.Scanner.ParseSetHeader(text, metaTable)
     end
 end
 
+-- Negative stat lines (2026-11-09, checked over every Forever item: cursed gear like Cursed Eye of Paleth "-3 Stamina" or
+-- Fletcher's Gloves "Equip: -15 Parry Rating" read as nothing): parse the line with its minus turned into a plus into a
+-- scratch table, then take those stats off. Returns true when the line was one.
+local function ParseNegated(cleanText, parse, outputTable)
+    local rest = string_match(cleanText, "^%-%s*(%d.*)$")
+    if not rest then return false end
+    local tmp = {}
+    parse("+" .. rest, tmp)
+    for k, v in pairs(tmp) do
+        if type(v) == "number" then outputTable[k] = (outputTable[k] or 0) - v end
+    end
+    return true
+end
+
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), MSC.L["^equip: "], "")
     cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), MSC.L["^%s*equip:%s*"], "")
+    if ParseNegated(cleanText, function(t, o) MSC.Scanner.ParseEquipLine(t, o, nil) end, outputStats) then return end
 
     -- [[ PROCS & BUFFS ESCAPE HATCH ]]
     -- Prevents temporary buffs from being read as permanent passive stats.
@@ -845,7 +860,10 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
     -- [[ STRIP SOCKET BONUS PREFIX ]]
     -- This allows the scanner to read "+4 Strength" instead of "Socket Bonus: +4 Strength"
     cleanText = string_gsub(cleanText, MSC.L["^socket bonus:%s*"] or "^socket bonus:%s*", "")
-    
+
+    -- [[ NEGATIVE STATS ]] "-3 Stamina" (cursed items): see ParseNegated above
+    if ParseNegated(cleanText, MSC.Scanner.ParseStatLine, outputTable) then return end
+
     -- [[ 1. INTERCEPT NAMED, PROC & HYBRID ENCHANTS ]]
     if string_find(cleanText, "^enchant: ") then
         

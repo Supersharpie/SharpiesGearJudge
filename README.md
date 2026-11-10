@@ -12,6 +12,11 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 > **WoW Forever players:** leveling PvP builds and weights are being worked on.
 
+### 3.3.2
+
+- **Fix:** Gear Judge's lines on auction house tooltips no longer blink on and off.
+- **Fix:** negative stats on items (for example -3 Stamina) are no longer ignored.
+
 ### 3.3.1
 
 - **Fix (WoW Forever):** spell power shown as an Equip: line (for example on Heavy Woolen Gloves) no longer counts as nothing when the item is read before that line loads.
@@ -340,7 +345,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.3.1 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.3.2 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

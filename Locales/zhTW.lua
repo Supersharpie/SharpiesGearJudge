@@ -384,6 +384,8 @@ L["Warlock: mana now varies from pull to pull in the models, and the Voidwalker 
 L["Talents: the build picker beside the talent window now matches the Builds page, with Max Level, Leveling, Farming and PvP tabs, Solo, Dungeon and PvP tags, how much slower each build is, and your active build marked. The panel is on again for everyone."] = "天賦：天賦視窗旁的配置選擇現在與配置頁面一致，有滿級、練功、刷怪和PvP分頁，單人、地城和PvP標籤，每個配置慢多少，並標示你目前的配置。 此面板現在對所有人重新開啟。"
 L["Fixed: scrolling the mouse wheel over the character model in the Gear Judge and Roadmap windows no longer causes an error."] = "修正：在 Gear Judge 和 Roadmap 視窗的角色模型上滾動滑鼠滾輪不再出錯。"
 L["Paladin: Retribution solo leveling takes Champion of the Light and Unsealed Wrath earlier, for a slightly faster climb to 60."] = "聖騎士：懲戒單人練功更早點光之勇士和Unsealed Wrath，升到60級稍微更快。"
+L["Fixed: negative stats on items (for example -3 Stamina) were ignored, so those items scored too high."] = "修正：物品上的負屬性（例如耐力-3）被忽略，導致這些物品評分過高。"
+L["Fixed: in the auction house, Gear Judge's lines on item tooltips blinked on and off."] = "修正：在拍賣場中，物品提示上的 Gear Judge 文字會不停閃爍。"
 L["Fixed: spell power shown as an Equip: line (for example on Heavy Woolen Gloves) could count as nothing if Gear Judge read the item before that line loaded."] = "修正：以裝備效果行顯示的法術能量在該行載入前被Gear Judge讀取時，可能完全不計分。"
 L["Talents: every leveling build in the build list shows its model number at your level: kills per hour, dungeon DPS, healing covered, tank pulls per hour or duel score."] = "天賦：清單中每個練功配置會顯示你目前等級的模型數值：每小時擊殺數、地城DPS、治療滿足倍數、坦克每小時拉怪波數或決鬥分數。"
 L["Druid: Bear builds no longer take caster-only talents, and Restoration dungeon takes Improved Rejuvenation and Improved Regrowth earlier."] = "德魯伊：熊形態配置不再點只對施法者有用的天賦，恢復地城配置更早點強化回春術和強化癒合。"

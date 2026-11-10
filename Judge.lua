@@ -936,8 +936,12 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
     -- Defer when EITHER the item data isn't cached yet (GetItemInfo nil) OR the tooltip
     -- isn't visible yet (chat links / ItemRefTooltip still being constructed).
     -- Bag/inventory items satisfy both synchronously -> no deferral, no flicker.
+    -- An owned GameTooltip counts as ready while hidden: hooks run before the client shows
+    -- the tooltip, and the auction house hides and rebuilds it 5 times a second (every frame
+    -- on Era/TBC), so a one-frame deferral made the score block blink there.
     local itemName = GetItemInfo(link)
-    if not itemName or (not tooltip:IsVisible() and not MSC.IsQuestHook) then
+    local ready = tooltip:IsVisible() or MSC.IsQuestHook or (tooltip == GameTooltip and tooltip:GetOwner() ~= nil)
+    if not itemName or not ready then
         C_Timer.After(0, function()
             if tooltip:IsVisible() or MSC.IsQuestHook then
                 MSC.EvaluateAndDrawTooltip(tooltip)
