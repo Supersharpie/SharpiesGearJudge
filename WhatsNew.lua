@@ -17,9 +17,16 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.3.2
-    { text = "Fixed: in the auction house, Gear Judge's lines on item tooltips blinked on and off." },
-    { text = "Fixed: negative stats on items (for example -3 Stamina) were ignored, so those items scored too high." },
+    -- v3.3.3
+    { text = "Roadmap: with the free QuestieDB addon installed, the quest list shows which rewards need earlier quests or reputation first.", forever = true },
+    { text = "Hunter: talent orders and weights updated for the November 10 hotfixes: Arcane Shot and Summon Hawk mana costs, a stronger Hawk and pet health.", forever = true },
+    { text = "Rogue: some talent builds are recognized correctly again after the latest WoW Forever update.", forever = true },
+    { text = "Mage: Arcane weights and talent orders follow the November 9 Arcane Concentration change: Intellect counts for up to 50% more at levels 25-33.", forever = true },
+    { text = "Druid: Gear Judge now counts critical hits on bleeds, so Cat Crit is worth up to 50% more. New Cat and Restoration dungeon talent orders.", forever = true },
+    { text = "Warlock: weights and solo talent orders updated for the November 10 hotfixes to Wrack, Soul Siphon, the Imp's Firebolt and demon health.", forever = true },
+    { text = "Shaman: Enhancement weights and talent orders updated for the November 10 hotfixes to Stormstrike, Mental Dexterity and Maelstrom Weapon. Windfury Totem now counts beside Windfury Weapon.", forever = true },
+    { text = "Hunter: Spirit is worth about 20% less while leveling. Spirit's mana regen now starts 5 seconds after each fight, as in the game.", forever = true },
+    { text = "Talents: build steps now show every talent name in your game's language.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

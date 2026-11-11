@@ -1,5 +1,37 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.3.3
+
+### 🗺️ Roadmap 3.3.0
+- Optional QuestieDB companion: the quest list shows which rewards need earlier quests or reputation first (see the Roadmap changelog).
+
+### 📜 License
+- The stat weights (weight tables, leveling curves, gear points) are now under CC BY 4.0: free to use in other addons with credit. The code stays MIT. Earlier versions stay MIT.
+
+### ⚖️ Hunter Weights (WoW Forever)
+- Leveling weights follow the November 10 hotfix (Arcane Shot and Summon Hawk cost 11% of base mana) and the new talent orders. Crit, Hit, Intellect and Mp5 move by under 10%, Stamina by up to 13%.
+- The later November 10 hotfix (the Hawk's melee damage about 80% higher, pets at 115% health) is in too. Beast Mastery dungeon now takes Summon Hawk, so Hit counts for up to 42% more and Crit for up to 30% more at levels 40-50.
+- Spirit's mana regen now starts 5 seconds after each fight (the five-second rule), as in the other class models; the Hunter models had it from the moment the fight ended. Ranged Hunters: Spirit counts for about 20% less at every level and Intellect for up to 40% more at levels 10-25. Melee Hunters: Spirit counts for up to 45% less at 30-50, and Mp5 and Intellect for more at 10-30.
+
+### ⚖️ Mage Weights (WoW Forever)
+- Arcane leveling follows the November 9 hotfix: Arcane Concentration now gives about one Clearcasting chance per Arcane Missiles cast, not one per bolt. Intellect counts for up to 50% more at levels 25-33, Spirit and Mp5 for up to 20% more. Frost and Fire are unchanged.
+
+### ⚖️ Druid Weights (WoW Forever)
+- Bleeds crit in WoW Forever: Rake, Rip, Lacerate and Pounce, with Natural Instinct's bonus, which the November 9 hotfix extended to Lacerate and Pounce. The Druid models now count those crits: Cat leveling Crit is worth 20-50% more and Agility 8-21% more. Bear is unchanged.
+- Restoration dungeon follows its new talent order: Intellect and Mp5 count for up to 47% more at levels 35-45.
+
+### ⚖️ Warlock Weights (WoW Forever)
+- Leveling weights follow the November 10 hotfixes: Wrack adds ticks to your damage over time effects while you channel it, Soul Siphon no longer counts your curse, the Imp's Firebolt hits harder and demons have about 15% more health.
+- Affliction leveling: Spirit and Mp5 count for up to 22% more at levels 10-15, Stamina up to 17% less at 15-20 and spell Hit up to 17% less at 45-50. Demonology, Destruction and dungeon weights move by under 10%.
+
+### ⚖️ Shaman Weights (WoW Forever)
+- Enhancement leveling weights follow the November 10 hotfixes: Stormstrike hits for 100% weapon damage on an 8-second cooldown, Mental Dexterity gives 33/66/100% and Maelstrom Weapon procs 6-10 times a minute by rank. Windfury Totem now counts beside Windfury Weapon when questing and in dungeons.
+- Enhancement solo: Crit and Agility count for up to 13% more at levels 35-50 and Stamina up to 63% less at 45-50. Enhancement dungeon: Crit up to 28% and Hit up to 22% more at 35-45, Intellect 14-29% less at most levels.
+- Elemental, Restoration and shield tank weights move by under 10%.
+
+### 🐛 Fixes
+- WoW Forever: after the latest update, Mutilate and Venom have new spell IDs, so Rogue builds with them could be read as the wrong build. Build detection now uses the new IDs.
+
 ## 🚀 v3.3.2
 
 ### 🐛 Fixes

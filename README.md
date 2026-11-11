@@ -10,32 +10,53 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ## 🔥 What's New
 
-> **WoW Forever players:** leveling PvP builds and weights are being worked on.
+> Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
+>
+> **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
-### 3.3.2
+### 3.3.3 (Roadmap 3.3.0, Talents 1.3.1)
+
+- **Roadmap:** with the free QuestieDB addon installed, the quest list shows which rewards need earlier quests or reputation first, and names the quest to start with.
+- **Talents, Hunter:** new talent orders after the November 10 hotfixes (mana costs, a stronger Hawk, pet health). Beast Mastery dungeon and PvP leveling now build around Summon Hawk, and Survival dungeon no longer takes Lone Wolf.
+- **Talents, Paladin:** Protection solo notes say how many mobs to pull with tank gear.
+- **Hunter weights:** leveling weights follow the new costs and talent orders. Spirit is worth about 20% less: its mana regen now starts 5 seconds after each fight.
+- **Talents, Mage:** small talent order changes for Arcane and Fire dungeon and Arcane PvP leveling after the November 9 Arcane Concentration change.
+- **Mage weights:** Arcane leveling values Intellect up to 50% more at levels 25-33.
+- **Talents, Druid:** new Cat dungeon and Restoration dungeon talent orders, and small changes to Feral solo and Feral PvP leveling.
+- **Druid weights:** Rake, Rip, Lacerate and Pounce can crit in WoW Forever and now count that way: Cat Crit is worth up to 50% more and Agility up to 20% more.
+- **Talents, Warlock:** new talent orders for Destruction solo and the two Drain Life solo builds after the November 10 hotfixes.
+- **Warlock weights:** Affliction leveling values Spirit and Mp5 up to 22% more at levels 10-15 and spell Hit up to 17% less at 45-50.
+- **Talents, Shaman:** new Enhancement solo, dungeon and PvP leveling talent orders after the November 10 hotfixes.
+- **Enhancement Shaman weights:** Windfury Totem now counts beside Windfury Weapon. Crit is worth up to 13% more at levels 35-50 solo and up to 28% more in dungeons, where Hit is worth up to 22% more and Intellect about 25% less.
+- **Fix:** some Rogue builds are recognized correctly again after the latest WoW Forever update.
+- **Talents, translations:** build steps show every talent name in your game's language (54 were still in English).
+- **License:** from 3.3.3 the stat weights are under CC BY 4.0, free to use in other addons with credit. The code stays MIT.
+
+### 3.3.2 (Roster 1.1.1)
 
 - **Fix:** Gear Judge's lines on auction house tooltips no longer blink on and off.
 - **Fix:** negative stats on items (for example -3 Stamina) are no longer ignored.
+- **Roster:** its upgrade lines on auction house tooltips no longer blink either.
 
-### 3.3.1
+### 3.3.1 (Roster 1.1.0)
 
 - **Fix (WoW Forever):** spell power shown as an Equip: line (for example on Heavy Woolen Gloves) no longer counts as nothing when the item is read before that line loads.
-- **Roster 1.1.0:** the Roster grid shows each character's gold, and the total across all your characters.
+- **Roster:** the Roster grid shows each character's gold, and the total across all your characters.
 
-### 3.3.0
+### 3.3.0 (Talents 1.3.0)
 
 - **Talents:** every leveling build in the build list shows its model number at your level (kills per hour, dungeon DPS, healing covered, tank pulls per hour or duel score).
 - **Minimap button:** reopens the window on the page you used last; right-click it to jump straight to any page.
-- **Warrior:** Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s.
-- **Warrior:** Builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster.
-- **Hunter:** Melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered.
-- **Shaman:** Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling.
-- **Mage:** Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arcane solo takes Incineration and Ignite in place of its late Frost talents.
-- **Warlock:** Builds no longer take talents for a pet they don't use, and Demonology PvP leveling is about 1% stronger in duels.
-- **Priest:** Discipline dungeon takes Holy Specialization earlier for about 0.6% more healing, and Discipline PvP leveling is about 0.8% stronger in duels.
-- **Druid:** Bear builds no longer take caster-only talents, and Restoration dungeon takes Improved Rejuvenation and Improved Regrowth earlier.
-- **Paladin:** Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling.
-- **Paladin:** Retribution solo leveling takes Champion of the Light and Unsealed Wrath earlier, for a slightly faster climb to 60.
+- **Talents, Warrior:** Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s.
+- **Talents, Warrior:** Builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster.
+- **Talents, Hunter:** Melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered.
+- **Talents, Shaman:** Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling.
+- **Talents, Mage:** Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arcane solo takes Incineration and Ignite in place of its late Frost talents.
+- **Talents, Warlock:** Builds no longer take talents for a pet they don't use, and Demonology PvP leveling is about 1% stronger in duels.
+- **Talents, Priest:** Discipline dungeon takes Holy Specialization earlier for about 0.6% more healing, and Discipline PvP leveling is about 0.8% stronger in duels.
+- **Talents, Druid:** Bear builds no longer take caster-only talents, and Restoration dungeon takes Improved Rejuvenation and Improved Regrowth earlier.
+- **Talents, Paladin:** Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling.
+- **Talents, Paladin:** Retribution solo leveling takes Champion of the Light and Unsealed Wrath earlier, for a slightly faster climb to 60.
 
 ### 3.2.14
 
@@ -342,10 +363,16 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 
 ---
 
+## 📜 License
+
+- **Code:** MIT License.
+- **Stat weights** (from 3.3.3): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). You can use them in your own addon, as long as you credit Sharpie's Gear Judge by Supersharpie and link back to it or to the [builds site](https://sharpiesgearjudge.web.app).
+- See [LICENSE](LICENSE) for which files that covers. Earlier versions stay MIT.
+
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.3.2 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.3.3 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
