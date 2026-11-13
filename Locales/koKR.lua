@@ -1734,3 +1734,15 @@ L["Accelerant"] = "Accelerant"
 L["Shockadin: Solo Leveling"] = "신성 충격 성기사: 솔로 레벨업"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0: Roster 표에 캐릭터별 골드와 모든 캐릭터의 골드 합계가 표시됩니다."
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "최고 업그레이드 착용"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r 가방에 업그레이드가 없습니다"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r %s 착용 중 (+%.1f%%)"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r %s 착용 중 (빈 칸)"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "최고 업그레이드 착용: 단축키(단축키 설정 > 애드온)와 /sgj equip으로 가방에서 가장 큰 업그레이드를 한 번에 하나씩 착용합니다. 컨트롤러에서 편리합니다."
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "수정: 퀘스트 완료 시 컨트롤러(게임패드) UI에서 발생하던 '애드온 금지' 오류."
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster: 착용 중인 아이템과 같은 가방 속 아이템에 누구에게 업그레이드인지 표시되고, 다시 만든 캐릭터가 두 번 표시되지 않습니다."
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "특성: 모든 직업의 솔로 레벨업 빌드 13개, 성기사 징벌·신성 레벨업 PvP, 마법사 비전 레벨업 PvP의 특성 순서가 더 빨라졌습니다."
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "성기사, 마법사, 주술사 능력치 가중치: 심판은 이제 회피나 무기 막기를 할 수 없고, 마법사는 1단계 얼음 회오리를 쓰며, 질풍의 토템은 마지막 발동 0.1초 뒤에 다시 발동할 수 있습니다."
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "모든 직업의 레벨업 가중치를 다시 계산했습니다: 정신력 재생은 주문을 5초 동안 시전하지 않은 뒤에만 계산하며, 던전·치유·방어 전담 가중치는 실제 던전 로그를 따릅니다."

@@ -2425,3 +2425,15 @@ L["Elemental: Dire Maul East Jump Run Farming"] = "Elemental: Farmeo del salto d
 L["Shockadin: Solo Leveling"] = "Shockadin: Subida de nivel en solitario"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0: la cuadrícula del Roster muestra el oro de cada personaje y el total de todos tus personajes."
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "Equipar la mejor mejora"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r no hay mejoras en tus bolsas"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r equipando %s (+%.1f%%)"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r equipando %s (espacio vacío)"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "Equipar la mejor mejora: un atajo (Asignación de teclas > Accesorios) y /sgj equip te ponen la mayor mejora de tus bolsas, un objeto por pulsación. Útil con mando."
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "Corregido: un error de «acción prohibida» de la interfaz de mando al entregar misiones."
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster: una copia en las bolsas de un objeto que llevas muestra a quién mejora, y un personaje vuelto a crear ya no aparece dos veces."
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "Talentos: órdenes de talentos más rápidos para 13 configuraciones en solitario de todas las clases, además del paladín Reprensión y Sagrado en JcJ y el mago Arcano en JcJ mientras subes de nivel."
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "Pesos de estadísticas de paladín, mago y chamán: la Sentencia ya no se puede esquivar ni parar, los magos usan Nova de Escarcha de rango 1 y Tótem Viento Furioso puede volver a activarse 0,1 s después de su última activación."
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "Pesos de subida de nivel recalculados para todas las clases: la regeneración de Espíritu solo cuenta tras 5 segundos sin lanzar hechizos, y los pesos de mazmorra, sanador y tanque siguen registros de mazmorras reales."

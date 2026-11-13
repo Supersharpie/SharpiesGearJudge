@@ -1724,3 +1724,15 @@ L["Accelerant"] = "Accelerant"
 L["Shockadin: Solo Leveling"] = "神聖震擊聖騎：單人練功"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0：Roster 表格會顯示每個角色的金幣，以及你所有角色的金幣總和。"
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "裝備最佳升級"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r 背包中沒有升級"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r 正在裝備 %s（+%.1f%%）"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r 正在裝備 %s（空欄位）"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "裝備最佳升級：按鍵設定（按鍵設定 > 插件）和 /sgj equip 會從背包中裝備提升最大的物品，每按一次裝備一件。適合使用控制器時。"
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "修正：交任務時控制器（手把）介面出現的「插件被禁止」錯誤。"
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster：背包中與已裝備物品相同的複本會列出它能提升誰，重建的角色也不再重複顯示。"
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "天賦：所有職業的13個單人練功配置有更快的天賦順序，另有聖騎士懲戒與神聖的練功PvP配置，以及法師秘法練功PvP配置。"
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "聖騎士、法師與薩滿的屬性權重：審判不再能被閃躲或招架，法師使用1級冰霜新星，風怒圖騰在上次觸發0.1秒後就能再次觸發。"
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "所有職業的練功權重已重新計算：精神回復只在5秒未施法後才計算，地城、治療與坦克權重依據實際地城紀錄。"

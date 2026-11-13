@@ -1,5 +1,30 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.0
+
+### ✨ Equip Best Upgrade
+- A new keybind (Key Bindings > AddOns > Sharpie's Gear Judge) and `/sgj equip` put on the biggest upgrade in your bags, one item per press. They pick from the items with a green bag arrow, judged for your active spec, and rings, trinkets and weapons go in the slot the tooltip compares against. Bind-on-Equip items show the game's bind confirmation first. Out of combat only. Works in a macro, so controller addons can use it.
+
+### 🐛 Fixes
+- Fixed an "addon forbidden" error (SetPreferredGamepadInteractTarget) with the controller UI when turning in quests. Gear Judge no longer replaces a Blizzard quest reward function.
+
+### ⚖️ Leveling Weights, All Classes (WoW Forever)
+- Every class's leveling weights are rebuilt with the Spirit regen fix: Spirit's regen counts only after 5 seconds without casting. Casters, Hunters, Enhancement Shaman and healers value Spirit about 30-50% less. Warriors and Rogues value it more (it's their health regen between fights), Rogues up to 2.5x at 59.
+- Dungeon weights use damage taken from live dungeon logs. Dungeons hit harder from level 35, so damage dealers and healers value Stamina and other survival stats up to twice as much at 55-60.
+- Healer dungeon weights follow the healing a pull really needs. Restoration Druids value Spirit and Mp5 up to 65% less at 50-59. Priests value Spirit up to 75% less below 40, and Mp5 more from 50.
+- Tanks get Spirit regen only between pulls. Shaman tank weights are rebuilt from the tank model: mana stats count several times more from 30.
+- Warlock dungeon: Spirit, Mp5 and Intellect barely matter (Life Tap covers the mana). Demonology and Destruction solo value Stamina, Mp5 and health regen about twice as much.
+- New talent orders change some rows too: Frost AoE values Intellect up to 4x at 20-25 (packs start earlier), Balance values Intellect 40% less at 59 (Moonkin Form now at 60).
+
+### ⚖️ Paladin Weights (WoW Forever)
+- Judgement is a ranged attack since the November 11 hotfix: it can't be dodged or parried, so it lands about 5% more often (10% from the front). Protection solo leveling: Intellect, Stamina and health regen count for up to 30% less at levels 30-40. Most other Paladin weights move by under 15%.
+
+### ⚖️ Mage Weights (WoW Forever)
+- The models cast Frost Nova at rank 1 at every level: the root is what counts, and rank 1 costs far less mana. Frost AoE: Intellect and Spirit count for up to 11% less at levels 35-40, Stamina for up to 12% more at 50. Most other Mage weights move by under 10%.
+
+### ⚖️ Shaman Weights (WoW Forever)
+- Windfury Totem can proc again 0.1 s after its last proc, as the logs show (was 1.5 s). Enhancement dungeon: Crit counts for up to 14% less and Hit for up to 10% less at levels 35-45. Solo weights move by under 6%.
+
 ## 🚀 v3.3.3
 
 ### 🗺️ Roadmap 3.3.0

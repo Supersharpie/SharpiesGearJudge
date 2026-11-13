@@ -2430,3 +2430,15 @@ L["Elemental: Dire Maul East Jump Run Farming"] = "Elementar: Farmen in Düsterb
 L["Shockadin: Solo Leveling"] = "Shockadin: Solo-Leveln"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0: Das Roster-Raster zeigt das Gold jedes Charakters und die Summe über alle deine Charaktere."
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "Bestes Upgrade anlegen"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r keine Upgrades in deinen Taschen"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r lege %s an (+%.1f%%)"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r lege %s an (leerer Platz)"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "Bestes Upgrade anlegen: Eine Tastenbelegung (Tastaturbelegung > AddOns) und /sgj equip legen das größte Upgrade aus deinen Taschen an, ein Gegenstand pro Druck. Praktisch mit Controller."
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "Behoben: ein „Aktion verboten“-Fehler der Controller-Oberfläche beim Abgeben von Quests."
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster: Eine Kopie eines angelegten Gegenstands in den Taschen zeigt, wem sie hilft, und ein neu erstellter Charakter erscheint nicht mehr doppelt."
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "Talente: schnellere Talentreihenfolgen für 13 Solo-Leveling-Builds aller Klassen, dazu Paladin-Vergeltung und -Heilig beim PvP-Leveln und Magier-Arkan-PvP-Leveln."
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "Wertegewichte für Paladin, Magier und Schamane: Richturteil kann nicht mehr pariert werden und Gegner können ihm nicht mehr ausweichen, Magier wirken Frostnova auf Rang 1, und Totem des Windzorns kann 0,1 s nach dem letzten Auslösen wieder auslösen."
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "Leveling-Gewichtungen für alle Klassen neu berechnet: Willenskraft-Regeneration zählt erst nach 5 Sekunden ohne Zauber, und Dungeon-, Heiler- und Tank-Gewichtungen folgen Live-Dungeon-Logs."

@@ -2420,3 +2420,15 @@ L["Elemental: Dire Maul East Jump Run Farming"] = "Стихии: Фарм с п�
 L["Shockadin: Solo Leveling"] = "Шокадин: Соло-прокачка"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0: таблица Roster показывает золото каждого персонажа и сумму по всем вашим персонажам."
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "Надеть лучшее улучшение"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r в сумках нет улучшений"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r надеваю %s (+%.1f%%)"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r надеваю %s (пустая ячейка)"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "Надеть лучшее улучшение: клавиша (Назначение клавиш > Модификации) и /sgj equip надевают самое большое улучшение из сумок, по одному предмету за нажатие. Удобно на геймпаде."
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "Исправлено: ошибка «действие запрещено» в интерфейсе геймпада при сдаче заданий."
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster: копия надетого предмета в сумках показывает, кому она полезна, а заново созданный персонаж больше не показывается дважды."
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "Таланты: более быстрый порядок талантов для 13 сборок одиночной прокачки всех классов, а также для паладина (Воздаяние и Свет, PvP при прокачке) и мага (Тайная магия, PvP при прокачке)."
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "Веса характеристик паладина, мага и шамана: от Правосудия больше нельзя уклониться или парировать его, маги используют Кольцо льда 1-го ранга, а Тотем неистовства ветра может сработать снова через 0,1 с после последнего срабатывания."
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "Веса прокачки пересчитаны для всех классов: восполнение от духа учитывается только через 5 секунд без заклинаний, а веса для подземелий, лекарей и танков основаны на реальных логах подземелий."

@@ -2425,3 +2425,15 @@ L["Elemental: Dire Maul East Jump Run Farming"] = "Elemental: Farm do salto em G
 L["Shockadin: Solo Leveling"] = "Shockadin: Evolução solo"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0: a grade do Roster mostra o ouro de cada personagem e o total de todos os seus personagens."
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "Equipar a melhor melhoria"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r nenhuma melhoria nas suas bolsas"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r equipando %s (+%.1f%%)"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r equipando %s (espaço vazio)"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "Equipar a melhor melhoria: um atalho (Teclas de Atalho > AddOns) e /sgj equip equipam a maior melhoria das suas bolsas, um item por toque. Prático no controle."
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "Corrigido: um erro de \"ação proibida\" na interface de controle ao entregar missões."
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster: uma cópia na bolsa de um item que você usa mostra quem ela melhora, e um personagem recriado não aparece mais duas vezes."
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "Talentos: ordens de talentos mais rápidas para 13 builds de evolução solo de todas as classes, além de Paladino Retribuição e Sagrado em JxJ e Mago Arcano em JxJ durante a evolução."
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "Pesos dos atributos de Paladino, Mago e Xamã: o Julgamento não pode mais ser esquivado nem aparado, os Magos usam Nova Congelante na classe 1, e o Totem de Fúria dos Ventos pode ativar de novo 0,1 s depois da última ativação."
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "Pesos de evolução recalculados para todas as classes: a regeneração de Espírito só conta após 5 segundos sem lançar feitiços, e os pesos de masmorra, curador e tanque seguem registros de masmorras reais."

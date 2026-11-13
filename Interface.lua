@@ -4272,42 +4272,10 @@ end
 -- The profession addons may already be loaded (e.g. after /reload).
 MSC.HookProfessionWindows()
 
--- =============================================================
--- BLIZZARD UI HOTFIX
--- PREVENTS 3RD PARTY ADDONS FROM CRASHING THE QUEST REWARD FRAME (MAINLY WEAKAURAS)
--- =============================================================
-if QuestInfo_ShowRewards then
-    local original_QuestInfo_ShowRewards = QuestInfo_ShowRewards
-    
-    QuestInfo_ShowRewards = function(...)
-        local rewardsFrame = QuestInfoFrame.rewardsFrame or QuestInfoRewardsFrame
-        
-        if rewardsFrame and rewardsFrame.RewardButtons then
-            -- 1. Prevent the "Button Height" crash by ensuring Button 1 always exists
-            if not rewardsFrame.RewardButtons[1] then
-                QuestInfo_GetRewardButton(rewardsFrame, 1)
-            end
-            
-            -- 2. Find if the mystery addon left any "holes" in the table
-            local maxIndex = 0
-            for k, v in pairs(rewardsFrame.RewardButtons) do
-                if type(k) == "number" and k > maxIndex then
-                    maxIndex = k
-                end
-            end
-            
-            -- 3. Fill the holes with real buttons so Blizzard's loop doesn't hit a nil value
-            for i = 1, maxIndex do
-                if not rewardsFrame.RewardButtons[i] then
-                    QuestInfo_GetRewardButton(rewardsFrame, i)
-                end
-            end
-        end
-        
-        -- Safely resume the original Blizzard function
-        return original_QuestInfo_ShowRewards(...)
-    end
-end
+-- 3.4.0: the old QuestInfo_ShowRewards replacement (a guard against other addons leaving holes in
+-- RewardButtons) is gone. Replacing a Blizzard global taints the quest frame, and with the controller
+-- UI that gave "ADDON FORBIDDEN: SetPreferredGamepadInteractTarget()" on quest turn-in. Never replace
+-- Blizzard functions here; use hooksecurefunc.
 
 local function DumpBadSettings()
     if not SGJ_Settings then return end

@@ -1,0 +1,5 @@
+<Bindings>
+    <Binding name="SGJ_EQUIP_BEST" header="SHARPIESGEARJUDGE" category="ADDONS">
+        SGJ_EquipBestUpgrade()
+    </Binding>
+</Bindings>

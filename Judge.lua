@@ -127,6 +127,9 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         if MSC.OpenSettingsTab then MSC.OpenSettingsTab() end
     elseif cmd == "import" then
         if MSC.ShowImportWindow then MSC.ShowImportWindow() end
+    elseif cmd == "equip" then
+        -- puts on the biggest upgrade in your bags, one item a press (EquipBest.lua; also a keybind)
+        if MSC.EquipBestUpgrade then MSC.EquipBestUpgrade() end
     elseif cmd == "toasttest" then
         -- shows the loot upgrade alert for an item you wear, to see how it looks (LootToast.lua)
         if MSC.TestLootToast then MSC.TestLootToast() end
@@ -874,6 +877,48 @@ local TWIN_SLOT = { [11] = 12, [12] = 11, [13] = 14, [14] = 13, [16] = 17, [17] 
 local GetBagNumSlots = C_Container and C_Container.GetContainerNumSlots or GetContainerNumSlots
 local GetBagItemLink = C_Container and C_Container.GetContainerItemLink or GetContainerItemLink
 
+-- A bag or bank slot button showing this link: Blizzard's (GetBagID) or one
+-- whose parent frame's ID is the bag (older and addon bag frames).
+local function OwnerIsBagSlot(owner, link)
+    if not (owner and owner.GetID and GetBagItemLink) then return false end
+    local ok, slot = pcall(owner.GetID, owner)
+    if not ok or type(slot) ~= "number" then return false end
+    local bag
+    if owner.GetBagID then
+        local okB, b = pcall(owner.GetBagID, owner)
+        if okB then bag = b end
+    end
+    if type(bag) ~= "number" then
+        local parent = owner.GetParent and owner:GetParent()
+        local okP, b = pcall(function() return parent and parent.GetID and parent:GetID() end)
+        if okP then bag = b end
+    end
+    if type(bag) ~= "number" then return false end
+    local okL, l = pcall(GetBagItemLink, bag, slot)
+    return okL and l == link
+end
+
+local function CharacterSheetOwner(tooltip)
+    local owner = tooltip.GetOwner and tooltip:GetOwner()
+    if owner and owner.GetName and owner.GetID then
+        local ok, name = pcall(owner.GetName, owner)
+        if ok and type(name) == "string" and not MSC_IsSecret(name) and string_find(name, "^Character%w+Slot$") then
+            return owner
+        end
+    end
+    return nil, owner
+end
+
+local function BagsHold(link)
+    if not (GetBagNumSlots and GetBagItemLink) then return false end
+    for bag = 0, 4 do
+        for bagSlot = 1, (GetBagNumSlots(bag) or 0) do
+            if GetBagItemLink(bag, bagSlot) == link then return true end
+        end
+    end
+    return false
+end
+
 local function GetWornSlot(tooltip, link, slotId)
     if GetInventoryItemLink("player", slotId) == link then return slotId end
     local twin = TWIN_SLOT[slotId]
@@ -881,24 +926,22 @@ local function GetWornSlot(tooltip, link, slotId)
 
     -- The same item is worn in the twin slot. Hovering a character-sheet slot
     -- (CharacterFinger0Slot etc.) settles it.
-    local owner = tooltip.GetOwner and tooltip:GetOwner()
-    if owner and owner.GetName and owner.GetID then
-        local ok, name = pcall(owner.GetName, owner)
-        if ok and type(name) == "string" and not MSC_IsSecret(name) and string_find(name, "^Character%w+Slot$") then
-            return (owner:GetID() == twin) and twin or nil
-        end
-    end
+    local sheet = CharacterSheetOwner(tooltip)
+    if sheet then return (sheet:GetID() == twin) and twin or nil end
 
     -- Otherwise (other character frames, chat links): it's the worn copy unless
     -- a copy with the same link sits in the bags.
-    if GetBagNumSlots and GetBagItemLink then
-        for bag = 0, 4 do
-            for bagSlot = 1, (GetBagNumSlots(bag) or 0) do
-                if GetBagItemLink(bag, bagSlot) == link then return nil end
-            end
-        end
-    end
+    if BagsHold(link) then return nil end
     return twin
+end
+
+-- Roster: is this tooltip a bag copy of an item you're also wearing (identical
+-- link)? The core still marks it EQUIPPED (same item); Roster lists alt upgrades
+-- for it, and "Better items waiting" only for the worn copy.
+function MSC.IsHoveredBagCopy(tooltip, link)
+    local sheet, owner = CharacterSheetOwner(tooltip)
+    if sheet then return false end
+    return OwnerIsBagSlot(owner, link) or BagsHold(link)
 end
 
 function MSC.EvaluateAndDrawTooltip(tooltip)

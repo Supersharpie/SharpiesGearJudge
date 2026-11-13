@@ -17,16 +17,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.3.3
-    { text = "Roadmap: with the free QuestieDB addon installed, the quest list shows which rewards need earlier quests or reputation first.", forever = true },
-    { text = "Hunter: talent orders and weights updated for the November 10 hotfixes: Arcane Shot and Summon Hawk mana costs, a stronger Hawk and pet health.", forever = true },
-    { text = "Rogue: some talent builds are recognized correctly again after the latest WoW Forever update.", forever = true },
-    { text = "Mage: Arcane weights and talent orders follow the November 9 Arcane Concentration change: Intellect counts for up to 50% more at levels 25-33.", forever = true },
-    { text = "Druid: Gear Judge now counts critical hits on bleeds, so Cat Crit is worth up to 50% more. New Cat and Restoration dungeon talent orders.", forever = true },
-    { text = "Warlock: weights and solo talent orders updated for the November 10 hotfixes to Wrack, Soul Siphon, the Imp's Firebolt and demon health.", forever = true },
-    { text = "Shaman: Enhancement weights and talent orders updated for the November 10 hotfixes to Stormstrike, Mental Dexterity and Maelstrom Weapon. Windfury Totem now counts beside Windfury Weapon.", forever = true },
-    { text = "Hunter: Spirit is worth about 20% less while leveling. Spirit's mana regen now starts 5 seconds after each fight, as in the game.", forever = true },
-    { text = "Talents: build steps now show every talent name in your game's language.", forever = true },
+    -- v3.4.0
+    { text = "Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller." },
+    { text = "Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests." },
+    { text = "Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice." },
+    { text = "Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling.", forever = true },
+    { text = "Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc.", forever = true },
+    { text = "Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

@@ -14,6 +14,17 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
+### 3.4.0 (Talents 1.3.2, Roster 1.1.2)
+
+- **Equip Best Upgrade:** a keybind (Key Bindings > AddOns) and `/sgj equip` put on the biggest upgrade in your bags, one item per press. Bind-on-Equip items ask first. Handy on a controller.
+- **Fix:** no more "addon forbidden" error with the controller UI when turning in quests.
+- **Roster:** a deleted and remade character no longer shows twice with "needs login", and a bag copy of an item you're wearing lists who it upgrades.
+- **Talents, Paladin:** Retribution and Holy PvP leveling get new talent orders after the November 11 hotfix (Judgement can't be dodged or parried). Holy PvP leveling now takes Protection from 44.
+- **Talents, Mage:** small changes to Frost AoE and Arcane PvP leveling.
+- **Talents, all classes:** every solo leveling build re-searched after the Spirit fix. 13 got faster, up to 1%: Beast Mastery takes Summon Hawk and Bestial Wrath, Fury two-hander takes Protection after 40, Frost AoE gets Improved Blizzard at 21. The "% slower" notes match the current models.
+- **Leveling weights, all classes:** Spirit's regen counts only after 5 seconds without casting, so casters, Hunters and healers value it 30-50% less, and Warriors and Rogues more. Dungeon weights follow live logs: survival stats count up to twice as much at 55-60, and healer and tank weights follow the healing and damage of real pulls.
+- **Paladin, Mage and Shaman weights:** Judgement lands more often, Mages cast Frost Nova at rank 1, and Windfury Totem can proc 0.1 s after its last proc. Paladin Protection solo values Intellect and Stamina up to 30% less at levels 30-40.
+
 ### 3.3.3 (Roadmap 3.3.0, Talents 1.3.1)
 
 - **Roadmap:** with the free QuestieDB addon installed, the quest list shows which rewards need earlier quests or reputation first, and names the quest to start with.
@@ -164,6 +175,7 @@ Turn the bag and loot arrows and the loot alerts on or off in **Protocol → Int
 - **Fast bag arrows** (on when bag arrows are enabled): quick single-slot scoring, with a full check for set pieces and weapons.
 - **Loot roll arrows** (**off** by default): highlights the best upgrade on group loot popups.
 - **Loot upgrade alerts** (**on** by default): when an item you loot or receive is an upgrade, a small alert shows it with the gain. Click it to equip (out of combat), right-click to close.
+- **Equip Best Upgrade:** a keybind (Key Bindings > AddOns > Sharpie's Gear Judge) or `/sgj equip` puts on the biggest upgrade in your bags, one item per press (out of combat). Bind-on-Equip items show the game's bind confirmation first. Works in a macro, so it can go on a controller button.
 - **Quest reward overlays:** marks the best choice among quest rewards, in the game's quest window and in **DaylightUI**'s NPC window (WoW Forever).
 - **Profession arrows** (always on): recipes that craft an upgrade for you get a green arrow, in Forever's professions window (**DaylightUI**'s too) and in the Classic profession and Enchanting windows (Era, TBC).
 
@@ -238,6 +250,7 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 | `/sgj simple`           | Toggle shortened stat names in tooltips                             |
 | `/sgj colors`           | Toggle stat colors in tooltips                                      |
 | `/sgj whatsnew`         | Show the What's New window again                                    |
+| `/sgj equip`            | Equip the biggest upgrade in your bags (one item per use)           |
 | `/sgj pvp`              | Toggle **Gear for PvP** (WoW Forever)                               |
 | `/sgj jc`               | Toggle Jewelcrafter gem evaluation (TBC)                            |
 | `/sgj hitcheck`         | Show your hit, where it comes from, and your targets (WoW Forever)  |
@@ -372,7 +385,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.3.3 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.4.0 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

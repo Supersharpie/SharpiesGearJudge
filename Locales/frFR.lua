@@ -2425,3 +2425,15 @@ L["Elemental: Dire Maul East Jump Run Farming"] = "Élémentaire : Farm du saut 
 L["Shockadin: Solo Leveling"] = "Shockadin : Montée en niveau en solo"
 -- 3.3.1: What's New
 L["Roster 1.1.0: the Roster grid shows each character's gold, and the total across all your characters."] = "Roster 1.1.0 : la grille du Roster affiche l'or de chaque personnage et le total de tous vos personnages."
+-- 3.4.0: Equip Best Upgrade
+L["Equip Best Upgrade"] = "Équiper la meilleure amélioration"
+L["|cff00ff00SGJ:|r no upgrades in your bags"] = "|cff00ff00SGJ:|r aucune amélioration dans vos sacs"
+L["|cff00ff00SGJ:|r equipping %s (+%.1f%%)"] = "|cff00ff00SGJ:|r équipement de %s (+%.1f%%)"
+L["|cff00ff00SGJ:|r equipping %s (empty slot)"] = "|cff00ff00SGJ:|r équipement de %s (emplacement vide)"
+L["Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller."] = "Équiper la meilleure amélioration : un raccourci (Raccourcis > AddOns) et /sgj equip équipent la plus grosse amélioration de vos sacs, un objet par appui. Pratique à la manette."
+L["Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests."] = "Corrigé : une erreur « action interdite » de l'interface manette en rendant des quêtes."
+L["Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice."] = "Roster : une copie dans les sacs d'un objet que vous portez indique qui elle améliore, et un personnage recréé n'apparaît plus en double."
+-- 3.4.0: 2026-11-12 fix pass
+L["Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling."] = "Talents : ordres de talents plus rapides pour 13 builds de montée en niveau en solo, toutes classes, plus le Paladin Vindicte et Sacré en JcJ et le Mage Arcanes en JcJ pendant la montée en niveau."
+L["Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc."] = "Poids des stats du Paladin, du Mage et du Chaman : le Jugement ne peut plus être esquivé ni paré, les Mages lancent Nova de givre au rang 1, et Totem Furie-des-vents peut se déclencher à nouveau 0,1 s après son dernier déclenchement."
+L["Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs."] = "Poids de montée en niveau recalculés pour toutes les classes : la régénération de l'Esprit ne compte qu'après 5 secondes sans lancer de sort, et les poids de donjon, de soigneur et de tank suivent des journaux de donjons réels."
