@@ -17,9 +17,15 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.1
-    { text = "Warrior, Rogue and Hunter: weights and solo talent orders now measured on real leveling gear (quest rewards and dungeon gear). Spirit counts for less.", forever = true },
-    { text = "Progress: solo builds done for 3 of 9 classes. The other six come next, then dungeon and PvP leveling builds. The full tracker is on the CurseForge page.", forever = true },
+    -- v3.4.2
+    { text = "Talents, Paladin: solo builds re-searched in quest-reward gear. Retribution to Protection at 40 is now the fastest Paladin solo build, and every build says which blessing to use.", forever = true },
+    { text = "Paladin weights: measured on real leveling gear, with each build's best blessing (solo Protection had none). Judgement of Command is a melee attack again.", forever = true },
+    { text = "Talents, Druid: solo builds re-searched in quest-reward gear. Feral stays the fastest Druid solo build; the notes add Mark of the Wild and Tiger's Fury.", forever = true },
+    { text = "Druid weights: measured on real leveling gear. Cat and Bear now hit with the weapon you hold, as they do in Forever.", forever = true },
+    { text = "Talents, Mage: solo builds re-checked in quest-reward gear. The talent orders stay, and Frost AoE stays the fastest Mage solo build.", forever = true },
+    { text = "Mage weights: measured on real leveling gear with Arcane Intellect up. Single-target Mages value Spirit and Mp5 much more, Frost AoE values Intellect less.", forever = true },
+    { text = "Progress: solo builds done for 6 of 9 classes. The other three come next, then dungeon and PvP leveling builds. The full tracker is on the CurseForge page.", forever = true },
+    { text = "Tooltip Gains and Losses now show weapon DPS. It was always part of the score, but specs that price Melee Weapon DPS (Feral Druids and others) left it off the list." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

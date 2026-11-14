@@ -1,5 +1,27 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.2
+
+### ⚖️ Paladin Weights (WoW Forever)
+- Leveling weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear), as for Warriors, Rogues and Hunters.
+- Each build now plays the blessing that suits it at each level (Might, Kings or Wisdom). Solo Protection had none, so its weights move the most: Intellect and Mp5 count for much less, health regen and Spirit more.
+- Judgement of Command is a melee attack again (Nov 13 hotfix): it can miss, be dodged and be parried.
+- Retribution values Intellect and spell power a little more at 20-30, Spirit and health regen less.
+
+### ⚖️ Druid Weights (WoW Forever)
+- Leveling weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear).
+- Cat and Bear now hit with the weapon you hold, as they do in Forever. They used a fixed paw damage by level before, so weak quest weapons were overrated.
+- Mark of the Wild and Tiger's Fury are part of the play now.
+- Feral values Stamina much less from 20 and hit and crit a little more. Balance, Restoration and healer rows value Spirit, Mp5 and health regen much more, since quest-reward gear runs short of mana.
+
+### ⚖️ Mage Weights (WoW Forever)
+- Leveling weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear), with Arcane Intellect up.
+- Frost, Fire and Arcane value Spirit and Mp5 much more (up to double at 20-30) and spell hit and crit about a third more; Stamina and health regen count for much less.
+- Frost AoE values Intellect about a third as much at 30-50, and Stamina and health regen more.
+
+### 🐛 Fixes
+- The tooltip's Gains and Losses now list weapon DPS for every spec. It was always in the score, but specs that price it as Melee Weapon DPS (Feral Druids and others) left it off the list. The Stat Logic hover for Melee Weapon DPS shows your main-hand DPS instead of 0.
+
 ## 🚀 v3.4.1
 
 ### ⚖️ Warrior Weights (WoW Forever)

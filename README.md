@@ -17,12 +17,12 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 | Warrior | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Rogue | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Hunter | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Paladin | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Mage | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Paladin | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Mage | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Warlock | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Priest | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Shaman | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Druid | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Druid | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
 
@@ -31,6 +31,16 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.4.2 (Talents 1.3.4)
+
+- **Talents, Paladin:** solo builds re-searched in quest-reward gear. Retribution to Protection at 40 is now the fastest Paladin solo build, and every build says which blessing to use.
+- **Paladin weights:** measured on real leveling gear, with each build's best blessing (solo Protection had none). Judgement of Command is a melee attack again.
+- **Talents, Druid:** solo builds re-searched in quest-reward gear. Feral stays the fastest; the notes add Mark of the Wild and Tiger's Fury.
+- **Druid weights:** measured on real leveling gear. Cat and Bear now hit with the weapon you hold, as they do in Forever.
+- **Talents, Mage:** solo builds re-checked in quest-reward gear; the talent orders stay and Frost AoE stays the fastest.
+- **Mage weights:** measured on real leveling gear with Arcane Intellect up. Single-target Mages value Spirit and Mp5 much more.
+- **Tooltip:** Gains and Losses now show weapon DPS for every spec (Feral Druids and others left it off the list; it was always in the score).
 
 ### 3.4.1 (Talents 1.3.3)
 
@@ -412,7 +422,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.4.0 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.4.2 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

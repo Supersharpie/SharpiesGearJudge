@@ -3014,7 +3014,14 @@ function MSC.UpdateLogic()
         local name = (MSC.GetCleanStatName and MSC.GetCleanStatName(s.k)) or s.k
         local reason = GetStatReason(tostring(s.k):upper(), class, detectedKey)
         local currentVal = stats[s.k] or 0
-        local realTotal = 0 
+        -- Melee / off-hand weapon DPS weights price the DPS of the weapon in that hand, which gear totals keep under
+        -- the plain DPS key (2026-11-14: the hover said 0 from gear)
+        if (s.k == "MSC_WEAPON_DPS_MELEE" or s.k == "MSC_WEAPON_DPS_OH") and MSC.GetRawItemStats then
+            local hand = GetInventoryItemLink("player", s.k == "MSC_WEAPON_DPS_OH" and 17 or 16)
+            local hs = hand and MSC.GetRawItemStats(hand)
+            currentVal = hs and (tonumber(hs.MSC_WEAPON_DPS) or tonumber(hs.ITEM_MOD_DAMAGE_PER_SECOND_SHORT)) or 0
+        end
+        local realTotal = 0
 
         bar.StatName = name; bar.Weight = s.v; bar.Reason = reason; bar.CurrentVal = currentVal
 

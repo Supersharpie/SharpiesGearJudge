@@ -1358,10 +1358,19 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             local totalOldExpanded = MSC.ExpandDerivedStats(oldStatsTotal or {}, nil, Scratch_Tooltip_Old)
             local totalDiffs = MSC.GetStatDifferences(totalNewExpanded, totalOldExpanded, Scratch_Tooltip_Diffs)
 
+            -- Weapon DPS is scored at the melee / off-hand weapon DPS weight in the hands (GetItemScore), and many rows
+            -- carry only that key: look it up the same way here, or the DPS line drops out of Gains / Losses (2026-11-14).
+            local function DiffWeight(key)
+                if (key == "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" or key == "MSC_WEAPON_DPS") and (slotId == 16 or slotId == 17) then
+                    if slotId == 17 and weights["MSC_WEAPON_DPS_OH"] then return weights["MSC_WEAPON_DPS_OH"] end
+                    if weights["MSC_WEAPON_DPS_MELEE"] then return weights["MSC_WEAPON_DPS_MELEE"] end
+                end
+                return weights[key] or 0
+            end
             local totalGains, totalLosses = {}, {}
             for _, d in ipairs(totalDiffs) do
                 if math_abs(d.val) > 0.1 then
-                    local w = weights[d.key] or 0
+                    local w = DiffWeight(d.key)
                     -- Bypass the weight check if the stat is Armor
                     if w > 0.02 or d.key == "ITEM_MOD_ARMOR_SHORT" then
                         if d.val > 0 then table_insert(totalGains, d) else table_insert(totalLosses, d) end 
@@ -1369,7 +1378,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
-            local function StableSort(a, b) local wA=(weights[a.key]or 0); local wB=(weights[b.key]or 0); if wA==wB then return a.key<b.key end; return wA>wB end
+            local function StableSort(a, b) local wA=DiffWeight(a.key); local wB=DiffWeight(b.key); if wA==wB then return a.key<b.key end; return wA>wB end
             table_sort(totalGains, StableSort); table_sort(totalLosses, StableSort)
 
             -- [[ HELPER: Check for duplicate lists ]]
@@ -1447,7 +1456,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 local itemGains, itemLosses = {}, {}
                 for _, d in ipairs(itemDiffs) do
                     if math_abs(d.val) > 0.1 then
-                        local w = weights[d.key] or 0
+                        local w = DiffWeight(d.key)
                         -- Bypass the weight check if the stat is Armor
                         if w > 0.02 or d.key == "ITEM_MOD_ARMOR_SHORT" then
                             if d.val > 0 then table_insert(itemGains, d) else table_insert(itemLosses, d) end 
