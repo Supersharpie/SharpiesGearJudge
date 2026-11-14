@@ -8,11 +8,38 @@ Unlike addons that give items static points (e.g. "Hit = 10 pts"), SGJ understan
 
 ---
 
+## 🗺️ WoW Forever Build Progress
+
+We're re-measuring every leveling build and its stat weights on **real leveling gear** (quest rewards and dungeon gear, picked from the current items) in place of an older gear estimate. One class at a time; each part ships as soon as it's done.
+
+| Class | Solo leveling | Dungeon leveling | PvP leveling | Raid (60) |
+|---|---|---|---|---|
+| Warrior | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Rogue | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Hunter | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Paladin | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Mage | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Warlock | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Priest | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Shaman | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Druid | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+
+✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
+
 ## 🔥 What's New
 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.4.1 (Talents 1.3.3)
+
+- **Talents, Warrior:** solo builds re-searched in quest-reward gear. Protection is now the fastest Warrior solo build; Arms takes Mortal Strike at 41.
+- **Warrior weights:** measured on real leveling gear (quest rewards, and quest plus dungeon gear). Arms values Spirit about half as much.
+- **Talents, Rogue:** solo builds re-searched in quest-reward gear. Subtlety with swords is now the fastest Rogue solo build, level with Combat maces.
+- **Rogue weights:** measured on real leveling gear. Spirit and health regen count for about half as much.
+- **Talents, Hunter:** solo builds re-searched in quest-reward gear. Marksmanship stays the fastest; Beast Mastery takes Summon Hawk at 33.
+- **Hunter weights:** measured on real leveling gear, melee Hunters on their own gear set. Spirit and Intellect count for less.
 
 ### 3.4.0 (Talents 1.3.2, Roster 1.1.2)
 

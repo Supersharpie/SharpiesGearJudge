@@ -1,5 +1,17 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.1
+
+### ⚖️ Warrior Weights (WoW Forever)
+- Leveling weights are now measured on real leveling gear: quest rewards for the lower row, quest plus dungeon gear for the upper row, picked from the current items. Before, they used an older gear estimate with weapons well above what levelers find.
+- Arms values Spirit about half as much (1.1-1.6 attack power, was 2-3.3), and Stamina and health regen less. Hit and crit barely move. Protection rows barely move.
+
+### ⚖️ Rogue Weights (WoW Forever)
+- Measured on real leveling gear the same way (sword / mace kits and dagger kits). Spirit is worth about half as much (0.6-2.0 attack power, was 1.9-3.7) and health regen a third to a half. Hit, crit and Agility barely move.
+
+### ⚖️ Hunter Weights (WoW Forever)
+- Measured on real leveling gear. Melee Hunters now have their own gear set (Hunter two-handers and mail from 40; they used to share the Feral Druid set). Spirit counts up to 45% less at 20-30, Intellect up to 30% less at 40-59 and Stamina up to half at 30-50. Agility barely moves.
+
 ## 🚀 v3.4.0
 
 ### ✨ Equip Best Upgrade

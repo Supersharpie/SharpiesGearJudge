@@ -17,13 +17,9 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.0
-    { text = "Equip Best Upgrade: a keybind (Key Bindings > AddOns) and /sgj equip put on the biggest upgrade in your bags, one item a press. Handy on a controller." },
-    { text = "Fixed an \"addon forbidden\" error with the controller (gamepad) UI when turning in quests." },
-    { text = "Roster: a bag copy of an item you wear lists who it upgrades, and a remade character no longer shows twice." },
-    { text = "Talents: faster talent orders for 13 solo leveling builds across all classes, plus Paladin Retribution and Holy PvP and Mage Arcane PvP leveling.", forever = true },
-    { text = "Paladin, Mage and Shaman weights: Judgement can no longer be dodged or parried, Mages cast Frost Nova at rank 1, and Windfury Totem can proc again 0.1 s after its last proc.", forever = true },
-    { text = "Leveling weights rebuilt for every class: Spirit's regen counts only after 5 seconds without casting, and dungeon, healer and tank weights follow live dungeon logs.", forever = true },
+    -- v3.4.1
+    { text = "Warrior, Rogue and Hunter: weights and solo talent orders now measured on real leveling gear (quest rewards and dungeon gear). Spirit counts for less.", forever = true },
+    { text = "Progress: solo builds done for 3 of 9 classes. The other six come next, then dungeon and PvP leveling builds. The full tracker is on the CurseForge page.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
