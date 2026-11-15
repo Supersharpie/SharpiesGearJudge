@@ -17,15 +17,15 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.2
-    { text = "Talents, Paladin: solo builds re-searched in quest-reward gear. Retribution to Protection at 40 is now the fastest Paladin solo build, and every build says which blessing to use.", forever = true },
-    { text = "Paladin weights: measured on real leveling gear, with each build's best blessing (solo Protection had none). Judgement of Command is a melee attack again.", forever = true },
-    { text = "Talents, Druid: solo builds re-searched in quest-reward gear. Feral stays the fastest Druid solo build; the notes add Mark of the Wild and Tiger's Fury.", forever = true },
-    { text = "Druid weights: measured on real leveling gear. Cat and Bear now hit with the weapon you hold, as they do in Forever.", forever = true },
-    { text = "Talents, Mage: solo builds re-checked in quest-reward gear. The talent orders stay, and Frost AoE stays the fastest Mage solo build.", forever = true },
-    { text = "Mage weights: measured on real leveling gear with Arcane Intellect up. Single-target Mages value Spirit and Mp5 much more, Frost AoE values Intellect less.", forever = true },
-    { text = "Progress: solo builds done for 6 of 9 classes. The other three come next, then dungeon and PvP leveling builds. The full tracker is on the CurseForge page.", forever = true },
-    { text = "Tooltip Gains and Losses now show weapon DPS. It was always part of the score, but specs that price Melee Weapon DPS (Feral Druids and others) left it off the list." },
+    -- v3.4.3
+    { text = "Talents, Shaman: solo builds re-searched in quest-reward gear. All three got a little faster, and Elemental and Restoration are now only 4% and 8% behind Enhancement.", forever = true },
+    { text = "Shaman weights: measured on real leveling gear, with Windfury Totem procs from Stormstrike. Casters value Spirit and Mp5 more, Enhancement values Intellect less.", forever = true },
+    { text = "Talents, Priest: solo builds re-searched in quest-reward gear with Fortitude and Divine Spirit. Shadow stays the fastest, Discipline and Holy got a little faster, and Shadow without Shadowform is much faster (25% behind Shadow, was 41%).", forever = true },
+    { text = "Priest weights: measured on real leveling gear with Fortitude and Divine Spirit. Spirit and Mp5 count for more, Stamina for less.", forever = true },
+    { text = "Talents, Warlock: solo builds re-searched in quest-reward gear. Demonology stays the fastest, Affliction and Destruction got a little faster, and every build says which weapon stone to use when.", forever = true },
+    { text = "Warlock weights: measured on real leveling gear with the best weapon stone at each level. Affliction values Spirit, Mp5 and health regen more.", forever = true },
+    { text = "Progress: solo builds done for all 9 classes. Dungeon and PvP leveling builds come next. The full tracker is on the CurseForge page.", forever = true },
+    { text = "XP Bar: the session (time, XP per hour, kills and quests) now carries on through a /reload." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

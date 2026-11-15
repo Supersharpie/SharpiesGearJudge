@@ -19,9 +19,9 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 | Hunter | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Paladin | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Mage | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Warlock | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Priest | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Shaman | ⏳ Planned | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Warlock | ✅ Done (3.4.3) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Priest | ✅ Done (3.4.3) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Shaman | ✅ Done (3.4.3) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 | Druid | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
@@ -31,6 +31,16 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.4.3 (Talents 1.3.5, XP 1.1.6)
+
+- **Talents, Shaman:** solo builds re-searched in quest-reward gear. All three got a little faster, and Elemental and Restoration are now only 4% and 8% behind Enhancement.
+- **Shaman weights:** measured on real leveling gear, with Windfury Totem procs from Stormstrike. Casters value Spirit and Mp5 more, Enhancement values Intellect less.
+- **Talents, Priest:** solo builds re-searched in quest-reward gear with Fortitude and Divine Spirit. Shadow stays the fastest, Discipline and Holy got a little faster, and Shadow without Shadowform is much faster (25% behind Shadow, was 41%).
+- **Priest weights:** measured on real leveling gear with Fortitude and Divine Spirit. Spirit and Mp5 count for more, Stamina for less.
+- **Talents, Warlock:** solo builds re-searched in quest-reward gear. Demonology stays the fastest, Affliction and Destruction got a little faster, and every build says which weapon stone to use when.
+- **Warlock weights:** measured on real leveling gear with the best weapon stone at each level. Affliction values Spirit, Mp5 and health regen more.
+- **XP Bar:** the session (time, XP per hour, kills and quests) now carries on through a `/reload`.
 
 ### 3.4.2 (Talents 1.3.4)
 
@@ -422,7 +432,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.4.2 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.4.3 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

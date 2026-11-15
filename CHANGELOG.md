@@ -1,5 +1,22 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.3
+
+### ⚖️ Shaman Weights (WoW Forever)
+- Leveling weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear). Windfury Totem now procs from Stormstrike too.
+- Enhancement values Intellect about 30% less from 40, and Agility and crit a little less.
+- Elemental and Restoration value Spirit and Mp5 more (about 20-50%) and Stamina less from 40. Healers value mana stats and spell crit more.
+
+### ⚖️ Priest Weights (WoW Forever)
+- Leveling weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear), with Power Word: Fortitude and Divine Spirit on.
+- Shadow and Smite builds value Spirit and Mp5 more (about 30-50%) and Stamina and health regen less (about 40%). Spell hit and crit count for more from 40, and wand damage for less.
+- Healers value mana stats much more up to 30, and a little less from 40.
+
+### ⚖️ Warlock Weights (WoW Forever)
+- Leveling weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear), with the best Firestone or Spellstone on the weapon at each level.
+- Affliction values Spirit and Mp5 more (about 40% more at 30-40) and health regen more.
+- Demonology and Destruction value Stamina less in the 20s and 30s, and spell hit and crit more near 50.
+
 ## 🚀 v3.4.2
 
 ### ⚖️ Paladin Weights (WoW Forever)
