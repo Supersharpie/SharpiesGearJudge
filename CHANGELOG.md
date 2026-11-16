@@ -1,5 +1,47 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.4
+
+### ⚖️ Separate Dungeon Weights (WoW Forever)
+- Solo, dungeon, PvP, farming and raid weights are now kept apart: a change for one never moves another.
+- Four dungeon builds that borrowed another row now have their own dungeon weights: Fury dual wield, the Rogue sword builds, Bear and the Shaman tank. Their solo, PvP and farming rows stay as they were.
+- The Shaman tank's dungeon weights end at 30 with its build and stay there: Stamina, dodge and block count for more, and Spirit and Mp5 about three times as much at 20.
+- Mana stats in the dungeon weights now come from the group models for Mage, Warlock, Shadow Priest, both Hunter rows and Cat (they were copied from solo or from older estimates).
+- Warlocks get a mana budget in groups for the first time (Life Tap between pulls, eaten or drunk back): Mp5 about doubles from 30 and Intellect counts for less. Mage Spirit and Mp5 rise in the 30s and 40s; Shadow Priest Intellect drops; Hunters value mana stats less early and more from 40.
+- The Bear dungeon weights now come from the Bear tank model: Stamina at the same tank value as Warrior and Shaman, and dodge, crit and hit about twice as much from 40.
+
+### 🛡️ Dungeon Tank Weights (WoW Forever)
+- Every dungeon tank is now measured in its own tank gear (with a shield for Warrior, Paladin and Shaman), with how often tanks die on a pull and how much group damage hits other mobs in a pack taken from real Forever logs.
+- Each tank's Stamina is now worked out by its own model, with a floor per class so tank gear stays ahead of caster gear.
+
+### ⚖️ Hunter Dungeon Weights (WoW Forever)
+- Dungeon weights for shooting and melee Hunters are measured on real leveling gear (quest rewards, and quest plus dungeon gear). Hit counts for a little less near 60 in dungeon gear; the rest barely moves.
+
+### ⚖️ Rogue Dungeon Weights (WoW Forever)
+- The dagger dungeon weights are measured on real leveling gear (quest rewards, and quest plus dungeon gear). They move very little.
+
+### ⚖️ Warrior Dungeon Weights (WoW Forever)
+- Dungeon weights for Arms, Fury and Protection are measured on real leveling gear, with Battle Shout on (the tank had none).
+- Protection tanks value block rating two to three times as much, dodge and Defense about half again as much from 40, and hit about half as much at 40-50. Arms and Fury barely move.
+
+### ⚖️ Priest Dungeon Weights (WoW Forever)
+- Dungeon weights for Shadow, Discipline and Holy are measured on real leveling gear, with Power Word: Fortitude and Divine Spirit on.
+- Healers value Spirit and Mp5 about 10% less (Divine Spirit covers some of the mana) and crit a little more. Shadow barely moves.
+
+### ⚖️ Shaman Dungeon Weights (WoW Forever)
+- Dungeon weights for Enhancement, Elemental and Restoration are measured on real leveling gear, with your own totems: Mana Spring, and Strength of Earth for Enhancement.
+- Enhancement values Mp5 and Spirit two to five times more in the 20s, since Improved Stormstrike now keeps mana coming while you cast.
+
+### ⚖️ Druid Dungeon Weights (WoW Forever)
+- Dungeon weights for Cat, Bear, Balance and Restoration are measured on real leveling gear, with Mark of the Wild on yourself and Tiger's Fury in Cat groups.
+- Restoration healers value Intellect, crit and Mp5 more around 40, and Spirit and Mp5 less from 50 in quest gear.
+- Cat, Bear and Balance weights barely move.
+
+### ⚖️ Paladin Dungeon Weights (WoW Forever)
+- Dungeon weights for Retribution, Protection and Holy are measured on real leveling gear (quest rewards, and quest plus dungeon gear), with your own blessing on.
+- Protection tanks value Stamina two to four times as much at 20-30, block and spell power more in the 20s (Consecration and Holy Shield are much of your threat), and Intellect, Spirit and Mp5 much less from 30: real tanks cast Consecration about half as often as the old model did, so your mana lasts.
+- Holy healers value Mp5 and crit a little less at high level in dungeon gear (Blessing of Wisdom covers more of the mana).
+
 ## 🚀 v3.4.3
 
 ### ⚖️ Shaman Weights (WoW Forever)

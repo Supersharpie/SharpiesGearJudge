@@ -17,15 +17,25 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.3
-    { text = "Talents, Shaman: solo builds re-searched in quest-reward gear. All three got a little faster, and Elemental and Restoration are now only 4% and 8% behind Enhancement.", forever = true },
-    { text = "Shaman weights: measured on real leveling gear, with Windfury Totem procs from Stormstrike. Casters value Spirit and Mp5 more, Enhancement values Intellect less.", forever = true },
-    { text = "Talents, Priest: solo builds re-searched in quest-reward gear with Fortitude and Divine Spirit. Shadow stays the fastest, Discipline and Holy got a little faster, and Shadow without Shadowform is much faster (25% behind Shadow, was 41%).", forever = true },
-    { text = "Priest weights: measured on real leveling gear with Fortitude and Divine Spirit. Spirit and Mp5 count for more, Stamina for less.", forever = true },
-    { text = "Talents, Warlock: solo builds re-searched in quest-reward gear. Demonology stays the fastest, Affliction and Destruction got a little faster, and every build says which weapon stone to use when.", forever = true },
-    { text = "Warlock weights: measured on real leveling gear with the best weapon stone at each level. Affliction values Spirit, Mp5 and health regen more.", forever = true },
-    { text = "Progress: solo builds done for all 9 classes. Dungeon and PvP leveling builds come next. The full tracker is on the CurseForge page.", forever = true },
-    { text = "XP Bar: the session (time, XP per hour, kills and quests) now carries on through a /reload." },
+    -- v3.4.4
+    { text = "Dungeon tanks: every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration.", forever = true },
+    { text = "Talents, Warlock dungeon builds: re-searched with a mana budget in groups (Life Tap between pulls, eaten back). Affliction and Destruction take Improved Life Tap and Cataclysm early for about 5% more damage.", forever = true },
+    { text = "Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat, and the Bear and Shaman tank weights, are now priced by the group models like the other classes'.", forever = true },
+    { text = "Talents, Mage dungeon builds: re-checked in real leveling gear. All three keep their orders.", forever = true },
+    { text = "Separate dungeon weights: Fury dual wield, the Rogue sword builds, Bear and the Shaman tank now have their own dungeon weights, so solo, PvP and farming weights stay as they were.", forever = true },
+    { text = "Talents, Hunter dungeon builds: re-searched in real leveling gear. Beast Mastery and Survival got slightly faster orders; Marksmanship keeps its own.", forever = true },
+    { text = "Talents, Rogue dungeon builds: re-searched in real leveling gear. Assassination and Combat with swords and Subtlety with daggers got slightly faster orders; the rest keep theirs.", forever = true },
+    { text = "Talents, Warrior dungeon builds: re-searched in real leveling gear. Protection takes 16 points in Arms and gets Shield Slam at 49, about 2.5% faster; Arms and Fury keep their orders. The notes add Battle Shout.", forever = true },
+    { text = "Warrior dungeon weights: measured on real leveling gear with Battle Shout. Protection tanks value block, dodge and Defense more from 40, and hit less.", forever = true },
+    { text = "Talents, Priest dungeon builds: re-searched in real leveling gear with Divine Spirit. Discipline heals about 3% more; Shadow and Holy keep their orders.", forever = true },
+    { text = "Priest dungeon weights: measured on real leveling gear with Fortitude and Divine Spirit. Healers value Spirit and Mp5 a little less.", forever = true },
+    { text = "Talents, Shaman dungeon builds: re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems.", forever = true },
+    { text = "Shaman dungeon weights: measured on real leveling gear with your own totems. Enhancement values Mp5 and Spirit more in the 20s.", forever = true },
+    { text = "Talents, Druid dungeon builds: re-searched in real leveling gear. Restoration takes Swiftmend at 40 (was 52) for about 1% more healing, and Bear got a slightly faster order; Cat and Balance keep theirs. The notes add Mark of the Wild, and Tiger's Fury for Cat.", forever = true },
+    { text = "Druid dungeon weights: measured on real leveling gear with Mark of the Wild. Restoration healers value Intellect, crit and Mp5 more around 40.", forever = true },
+    { text = "Talents, Paladin dungeon builds: re-searched in real leveling gear. Protection takes Retribution talents after 30 for about 3% more pulls per hour; Retribution and Holy keep their orders. Every note says which blessing to keep on yourself.", forever = true },
+    { text = "Paladin dungeon weights: measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30.", forever = true },
+    { text = "Progress: dungeon builds done for all 9 classes. PvP leveling builds come next. The full tracker is on the CurseForge page.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

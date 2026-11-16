@@ -63,6 +63,7 @@ Warrior.Weights["DEEP_PROT"] = Warrior.Weights["PROT_RAID"]
 --   Leveling              Arms: Solo Leveling (the default; two-hander)
 --   Leveling_ArmsDungeon  Arms: Dungeon Leveling
 --   Leveling_DW           Fury: Dual Wield Leveling (a weapon in the off-hand, or Fury's dual-wield talents)
+--   Leveling_DWDungeon    Fury: Dungeon Leveling (2026-11-15 split: was Leveling_DW)
 --   Leveling_Tank         Protection: Solo Leveling
 --   Leveling_TankDungeon  Protection: Dungeon Leveling
 Warrior.LevelingWeights = {}
@@ -90,6 +91,7 @@ local ROLE_NAMES = {
     { "Leveling",             "Arms: Solo Leveling" },
     { "Leveling_ArmsDungeon", "Arms: Dungeon Leveling" },
     { "Leveling_DW",          "Fury: Dual Wield Leveling" },
+    { "Leveling_DWDungeon",   "Fury: Dungeon Leveling" },
     { "Leveling_Tank",        "Protection: Solo Leveling" },
     { "Leveling_TankDungeon", "Protection: Dungeon Leveling" },
 }
@@ -153,6 +155,7 @@ Warrior.ValidWeapons = {
 Warrior.LowLevelRoles = {
     Leveling_Tank        = { "SHIELD_SPEC", "ANTICIPATION", "MASTER_OF_DEFENSE", "IMP_REVENGE", "DEFIANCE", "LAST_STAND", "SHIELD_SLAM" },
     Leveling_ArmsDungeon = {},
+    Leveling_DWDungeon   = {},   -- 2026-11-15 split: the Fury dungeon build's own row
     Leveling_TankDungeon = {},
 }
 
@@ -208,7 +211,7 @@ function Warrior:ApplyScalers(weights, currentSpec)
     -- Dungeon rows come from the group models with the build's talents in, so the
     -- hooks those models already cover are skipped for them.
     local tankModel = currentSpec:find("^Leveling_TankDungeon") ~= nil
-    local groupDPS = currentSpec:find("^Leveling_ArmsDungeon") ~= nil
+    local groupDPS = currentSpec:find("^Leveling_ArmsDungeon") ~= nil or currentSpec:find("^Leveling_DWDungeon") ~= nil
     local touched = {}
     local function Touch(k) if weights[k] then touched[k] = true end end
     local function Mul(k, m) if weights[k] then weights[k] = weights[k] * m; touched[k] = true end end

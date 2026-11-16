@@ -14,15 +14,15 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 
 | Class | Solo leveling | Dungeon leveling | PvP leveling | Raid (60) |
 |---|---|---|---|---|
-| Warrior | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Rogue | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Hunter | ✅ Done (3.4.1) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Paladin | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Mage | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Warlock | ✅ Done (3.4.3) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Priest | ✅ Done (3.4.3) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Shaman | ✅ Done (3.4.3) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
-| Druid | ✅ Done (3.4.2) | ⏳ Planned | ⏳ Planned | ⏸️ Waiting |
+| Warrior | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Hunter | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Paladin | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Mage | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Druid | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
 
@@ -31,6 +31,26 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.4.4 (Talents 1.3.6)
+
+- **Dungeon tanks:** every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration.
+- **Talents, Warlock dungeon builds:** re-searched with a mana budget in groups (Life Tap between pulls, eaten back). Affliction and Destruction take Improved Life Tap and Cataclysm early for about 5% more damage.
+- **Dungeon weights from the group models:** mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat, and the Bear and Shaman tank weights, are now priced by the group models like the other classes'.
+- **Talents, Mage dungeon builds:** re-checked in real leveling gear. All three keep their orders.
+- **Separate dungeon weights:** Fury dual wield, the Rogue sword builds, Bear and the Shaman tank now have their own dungeon weights, so solo, PvP and farming weights stay as they were.
+- **Talents, Hunter dungeon builds:** re-searched in real leveling gear. Beast Mastery and Survival got slightly faster orders; Marksmanship keeps its own.
+- **Talents, Rogue dungeon builds:** re-searched in real leveling gear. Assassination and Combat with swords and Subtlety with daggers got slightly faster orders; the rest keep theirs.
+- **Talents, Warrior dungeon builds:** re-searched in real leveling gear. Protection takes 16 points in Arms and gets Shield Slam at 49, about 2.5% faster; Arms and Fury keep their orders. The notes add Battle Shout.
+- **Warrior dungeon weights:** measured on real leveling gear with Battle Shout. Protection tanks value block, dodge and Defense more from 40, and hit less.
+- **Talents, Priest dungeon builds:** re-searched in real leveling gear with Divine Spirit. Discipline heals about 3% more; Shadow and Holy keep their orders.
+- **Priest dungeon weights:** measured on real leveling gear with Fortitude and Divine Spirit. Healers value Spirit and Mp5 a little less.
+- **Talents, Shaman dungeon builds:** re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems.
+- **Shaman dungeon weights:** measured on real leveling gear with your own totems. Enhancement values Mp5 and Spirit more in the 20s.
+- **Talents, Druid dungeon builds:** re-searched in real leveling gear. Restoration takes Swiftmend at 40 (was 52) for about 1% more healing, and Bear got a slightly faster order; Cat and Balance keep theirs. The notes add Mark of the Wild, and Tiger's Fury for Cat.
+- **Druid dungeon weights:** measured on real leveling gear with Mark of the Wild. Restoration healers value Intellect, crit and Mp5 more around 40.
+- **Talents, Paladin dungeon builds:** re-searched in real leveling gear. Protection takes Retribution talents after 30 for about 3% more pulls per hour; Retribution and Holy keep their orders. Every note says which blessing to keep on yourself.
+- **Paladin dungeon weights:** measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30.
 
 ### 3.4.3 (Talents 1.3.5, XP 1.1.6)
 
@@ -432,7 +452,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.4.3 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.4.4 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

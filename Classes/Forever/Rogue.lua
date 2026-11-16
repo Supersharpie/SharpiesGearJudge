@@ -44,6 +44,7 @@ Rogue.Weights["RAID_SEAL_FATE"] = Rogue.Weights["ASSN_MUTILATE"]
 -- blended by level in MSC:GetLevelingRow. Roles:
 --   Leveling                Combat: Solo Leveling (swords/maces, the default)
 --   Leveling_Dagger         Assassination: Solo Leveling (daggers, Mutilate)
+--   Leveling_SwordDungeon   Swords: Dungeon Leveling (2026-11-15 split: the sword dungeon builds, were on Leveling)
 --   Leveling_DaggerDungeon  Daggers: Dungeon Leveling (Backstab from behind; the Combat, Assassination and Subtlety dungeon builds)
 --   Leveling_Hemo           Subtlety: Solo Leveling (Hemorrhage / Ghostly Strike)
 Rogue.LevelingWeights = {}
@@ -71,6 +72,7 @@ local ROLE_NAMES = {
     { "Leveling",               "Combat: Solo Leveling" },
     { "Leveling_Dagger",        "Assassination: Solo Leveling" },
     { "Leveling_DaggerDungeon", "Daggers: Dungeon Leveling" },
+    { "Leveling_SwordDungeon",  "Swords: Dungeon Leveling" },
     { "Leveling_Hemo",          "Subtlety: Solo Leveling" },
 }
 for _, r in ipairs(ROLE_NAMES) do
@@ -142,6 +144,7 @@ Rogue.LowLevelRoles = {
     Leveling_Hemo   = { "CAMOUFLAGE", "MASTER_OF_DECEPTION", "SETUP", "ELUSIVENESS", "DIRTY_TRICKS", "INITIATIVE", "GHOSTLY_STRIKE" },
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
     Leveling_DaggerDungeon = {},
+    Leveling_SwordDungeon  = {},   -- 2026-11-15 split: the sword dungeon builds' own row (they used Leveling)
 }
 
 function Rogue:GetSpec()

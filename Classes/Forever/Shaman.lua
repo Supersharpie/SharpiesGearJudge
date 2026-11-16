@@ -71,7 +71,8 @@ Shaman.PvPCounterpart = { ELE_RAID = "ELE_PVP", ELE_PVE = "ELE_PVP", RESTO_RAID 
 --   Leveling_CasterDungeon  Elemental: Dungeon Leveling (2026-10-23)
 --   Leveling_Healer         Restoration: Leveling
 --   Leveling_HealerDungeon  Restoration: Dungeon Leveling
---   Leveling_Tank           Tank: Dungeon Leveling (one-hander and shield, Rockbiter with Spirit Weapons; also the farming build's leveling)
+--   Leveling_Tank           Tank: Leveling (one-hander and shield, Rockbiter with Spirit Weapons; the farming build's leveling)
+--   Leveling_TankDungeon    Tank: Dungeon Leveling (2026-11-15 split: was Leveling_Tank)
 Shaman.LevelingWeights = {}
 
 -- =============================================================
@@ -101,7 +102,8 @@ local ROLE_NAMES = {
     { "Leveling_CasterDungeon", "Elemental: Dungeon Leveling" },
     { "Leveling_Healer",        "Restoration: Leveling" },
     { "Leveling_HealerDungeon", "Restoration: Dungeon Leveling" },
-    { "Leveling_Tank",          "Tank: Dungeon Leveling" },
+    { "Leveling_Tank",          "Tank: Leveling" },
+    { "Leveling_TankDungeon",   "Tank: Dungeon Leveling" },   -- 2026-11-15 split
 }
 for _, r in ipairs(ROLE_NAMES) do
     for _, b in ipairs({ { 11, 20 }, { 21, 40 }, { 41, 51 }, { 52, 59 } }) do
@@ -163,6 +165,7 @@ Shaman.LowLevelRoles = {
     Leveling_Caster = { "CONVECTION", "CONCUSSION", "CALL_OF_FLAME", "REVERBERATION", "ELEMENTAL_FOCUS", "ELEMENTAL_ALACRITY", "ELEMENTAL_FURY",
         "LAVA_BURST", "TRIAL_BY_FIRE", "EYE_OF_STORM", "LIGHTNING_OVERLOAD", "ELEMENTAL_MASTERY" },
     Leveling_CasterDungeon = {},
+    Leveling_TankDungeon = {},   -- 2026-11-15 split: the tank dungeon build's own row (Leveling_Tank stays for the farming build)
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
     Leveling_Dungeon = {},
     Leveling_HealerDungeon = {},
@@ -217,6 +220,7 @@ function Shaman:GetSpec()
         elseif level >= 10 then role = MSC:GetLowLevelRole(Shaman.LowLevelRoles) or role
         end
         if role == "Leveling_Dungeon" then role = "Leveling" end
+        if role == "Leveling_TankDungeon" then role = "Leveling_Tank" end
         if role == "Leveling_HealerDungeon" then role = "Leveling_Healer" end
         if role == "Leveling_CasterDungeon" then role = "Leveling_Caster" end
         

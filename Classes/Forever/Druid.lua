@@ -74,7 +74,8 @@ Druid.PvPCounterpart = { CAT_RAID = "FERAL_PVP", FERAL_CAT_DPS = "FERAL_PVP", BA
 -- form to 9, Bear Form 10-19, Cat Form from 20. Roles:
 --   Leveling                Feral Cat: Solo Leveling (the default)
 --   Leveling_Dungeon        Cat: Dungeon Leveling
---   Leveling_Bear           Bear: Dungeon Leveling (also the Bear raid build's leveling)
+--   Leveling_Bear           Bear: Leveling (the Bear PvP and raid builds' leveling; Thick Hide marks it)
+--   Leveling_BearDungeon    Bear: Dungeon Leveling (2026-11-15 split: was Leveling_Bear)
 --   Leveling_Caster         Balance: Solo Leveling
 --   Leveling_CasterDungeon  Balance: Dungeon Leveling (2026-10-23)
 --   Leveling_Healer         Restoration: Solo Leveling
@@ -108,7 +109,8 @@ Druid.PrettyNames = {
 local ROLE_NAMES = {
     { "Leveling",               "Feral Cat: Solo Leveling" },
     { "Leveling_Dungeon",       "Cat: Dungeon Leveling" },
-    { "Leveling_Bear",          "Bear: Dungeon Leveling" },
+    { "Leveling_Bear",          "Bear: Leveling" },
+    { "Leveling_BearDungeon",   "Bear: Dungeon Leveling" },   -- 2026-11-15 split
     { "Leveling_Caster",        "Balance: Solo Leveling" },
     { "Leveling_CasterDungeon", "Balance: Dungeon Leveling" },
     { "Leveling_Healer",        "Restoration: Solo Leveling" },
@@ -172,6 +174,7 @@ Druid.LowLevelRoles = {
     Leveling_Caster = { "IMP_WRATH", "MOONGLOW", "IMP_MOONFIRE", "VENGEANCE", "MOONFURY" },
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
     Leveling_Dungeon = {},
+    Leveling_BearDungeon = {},   -- 2026-11-15 split: the Bear dungeon build's own row (Leveling_Bear stays for Bear PvP / raid)
     Leveling_CasterDungeon = {},
     Leveling_HealerDungeon = {},
 }
@@ -216,6 +219,7 @@ function Druid:GetSpec()
         elseif level >= 10 then role = MSC:GetLowLevelRole(Druid.LowLevelRoles) or role
         end
         if role == "Leveling_Dungeon" then role = "Leveling" end
+        if role == "Leveling_BearDungeon" then role = "Leveling_Bear" end
         if role == "Leveling_HealerDungeon" then role = "Leveling_Healer" end
         if role == "Leveling_CasterDungeon" then role = "Leveling_Caster" end
 
