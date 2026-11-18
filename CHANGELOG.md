@@ -1,5 +1,53 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.5
+
+### 🐛 Fixed: Stats Missed on Non-English Clients
+- French stat lines with an apostrophe, such as "Dégâts d’ombre" and "Puissance d’attaque", scored nothing. They count again.
+- Stat names containing some accented or Asian letters (French and Portuguese "à", many Korean and Chinese names) were broken while reading the tooltip and scored nothing. They count again.
+- WoW Forever: spell school damage (Shadow, Fire, Frost, Arcane, Nature, Holy) is also read from the item's own data, so it counts even when its tooltip line is missed.
+
+### 🐛 Fixed: Shockadin Spell Power (WoW Forever)
+- Shockadin counted the healing part of Spell Power twice, so Spell Power items scored half again too high. Each point now counts once for damage and once for healing.
+
+### 🐛 Fixed: Expertise (WoW Forever)
+- Expertise Rating was counted as Weapon Skill, which most profiles value at little or nothing, so expertise items scored close to nothing (Protection Warriors noticed first).
+- 10 Expertise Rating now means 1% fewer dodges and 1% fewer parries. Melee profiles value 1% of it like 1% hit; tanks twice that, because they attack from the front and lose parries too. Ranged attacks can't be dodged, so Hunters' bows and guns get nothing from it.
+- It has a cap like hit: about 50 rating against mobs your level, 65 against raid bosses. Tanks keep half its value past that until bosses can't parry either (140). Past the cap it stops counting, and gear that drops you below it shows a red cap tag.
+- Rogue Weapon Expertise counts toward the cap.
+
+### 🐛 Fixed: Parry Rating (WoW Forever)
+- Parry Rating was read at 20 per 1% parry; Forever's rate is 15. Parry items scored 25% too low for every tank.
+
+### 🐛 Fixed: Percent Hit and Crit Lines (WoW Forever)
+- Items still worded in percent ("Improves your chance to hit by 2%", "... critical strike by 1%") scored a tenth of their hit and crit. They now count as 10 Hit Rating / 14 Crit Rating per 1%, like the rest of Forever's gear.
+- "Critical strike with melee and ranged attacks" (Blackhand's Breadth) and Forever's "critical strike with melee attacks" (127 Classic items) were not read at all; they count as crit now.
+
+### 🐛 Fixed: Classic Items Forever Reworded (WoW Forever)
+- Forever rewrote "+30 Attack Power when fighting Undead" as "against Undead" on 29 items; those bonuses count again (at the share of mobs of that type, as before).
+- Weapon skill lines like "Increased Daggers +4", "Decreases the magical resistances of your spell targets", "Increases melee and ranged attack power", "+30 Attack Power, doubled against Mechanical units" and "Adds 2 fire damage to your melee attacks" now count.
+- Percent lines that aren't flat stats ("Fire damage taken increased by 10%", "Increases Spirit by 5%") no longer score as +10 fire damage or +5 Spirit.
+- Lines that only look like stats count nothing now: class ability bonuses (Judgement of the Crusader, totem mana cost, Healing Touch cast time), pet lines, "Spell Damage received is reduced" and death effects. They were scored as Spell Power, Holy damage, Healing or mana per 5.
+- Rune of Perfection's "Your spells pierce 3 Magical Resistances" counts as spell penetration.
+
+### 🐛 Fixed: "Equip:" Lines on Non-English Clients (WoW Forever)
+- On German, French, Spanish, Portuguese, Russian, Korean and Chinese clients, most Classic "Equip:" lines read nothing or the wrong stat: percent hit, crit, dodge, parry and block, mana per 5 (143 items in German alone), school spell damage, block value, defense, weapon skill and more.
+- French spell school damage ("…effets magiques de feu d’un maximum de 34") counted as Spell Power, so those items scored far too high.
+- The "Equip:" prefix is now recognised from the game's own text in every language (French "Équipé :", Portuguese "Equipado:", Russian and Chinese were missed before).
+- Every item a Forever character can wear was checked in all 8 languages against the English reading; what is left differs only on class-ability and proc lines.
+- Portuguese mana per 5 "Restaura 9 de pontos de mana por 5 s" (Royal Seal of Eldre'Thalas) was taken for a 5-second buff; it counts now.
+
+### ⚖️ Subtlety Rogue Weapon Speed (WoW Forever)
+- Subtlety's solo weights no longer value a slower dagger at level 50. Hemorrhage, Backstab and Ghostly Strike use normalized weapon speed, so speed at the same damage per second gains nothing; the value at 50 was left over from an older model.
+
+### ⚖️ Solo Leveling Weights (WoW Forever)
+- Melee solo weights (Warrior, Paladin, Rogue, Cat, Enhancement and melee Hunter) now get their Expertise value from the leveling models.
+- The leveling gear these weights are measured in was picked again with expertise, and the weights rebuilt on it. Most stats barely move; Cat Stamina counts up to about a quarter less at 20-30.
+- Retribution Paladin follows its new talents (Sanctified Judgement at 17): Intellect and MP5 count less at 19-30, crit a little more.
+- Protection Paladin solo weights now come from the current tank model: Stamina and Intellect count about a quarter less at 20-40, and the defensive stats 10-15% more at 59.
+- All nine classes' solo weights were rebuilt on leveling gear picked again with the latest Forever item changes (11-16 and 11-17 hotfixes). Gear with attack power or spell damage against one creature type (Beasts, Undead...) now counts for what it's worth while leveling, and parry at Forever's 15 per 1%.
+- Biggest moves: Mage AoE Intellect about a quarter less at 20-33, Priest healer MP5 20-35% more at 15-30, Priest wand damage 15-30% less at 10-35, Holy Paladin Spirit about a quarter less at 15-20. Most other stats move under 10%.
+
 ## 🚀 v3.4.4
 
 ### ⚖️ Separate Dungeon Weights (WoW Forever)

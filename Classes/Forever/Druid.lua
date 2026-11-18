@@ -53,9 +53,12 @@ Druid.Weights["FERAL_BEAR_TANK"] = Druid.Weights["BEAR_RAID"]
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
 -- Picked by the Talents plugin's PvP builds or by hand.
-Druid.Weights["FERAL_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["CAT_RAID"])
-Druid.Weights["BALANCE_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["BALANCE_RAID"])
-Druid.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom(Druid.Weights["RESTO_RAID"])
+-- FERAL_PVP: frozen 2026-11-17 at CAT_RAID's values (user: raid and PvP at 60 keep their own data)
+Druid.Weights["FERAL_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.03, ["ITEM_MOD_STRENGTH_SHORT"]=3.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.17, ["ITEM_MOD_SPIRIT_SHORT"]=0.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.25, ["ITEM_MOD_HIT_RATING_SHORT"]=29.6, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.0 })
+-- BALANCE_PVP: frozen 2026-11-17 at BALANCE_RAID's values (user: raid and PvP at 60 keep their own data)
+Druid.Weights["BALANCE_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=1.61, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=0.39, ["ITEM_MOD_INTELLECT_SHORT"]=0.25, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=15.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.1 })
+-- RESTO_PVP: frozen 2026-11-17 at RESTO_RAID's values (user: raid and PvP at 60 keep their own data)
+Druid.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=1.03, ["ITEM_MOD_SPIRIT_SHORT"]=4.72, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.14, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.3, ["ITEM_MOD_STAMINA_SHORT"]=0.5 })
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { BALANCE_FARM = true, CAT_RAID = true, BALANCE_RAID = true, RESTO_RAID = true, BEAR_RAID = true,
     BALANCE_BOOMKIN = true, FERAL_CAT_DPS = true, RESTO_DEEP = true, FERAL_BEAR_TANK = true, FERAL_PVP = true, BALANCE_PVP = true, RESTO_PVP = true,

@@ -149,6 +149,7 @@ MSC.Scanner.TermMap = {
     [MSC.L["expertise rating"]]    = "ITEM_MOD_EXPERTISE_RATING_SHORT",
     [MSC.L["dodged or parried"]] = "ITEM_MOD_EXPERTISE_RATING_SHORT",
     [MSC.L["ranged attack power"]] = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
+    [MSC.L["melee and ranged attack power"]] = "ITEM_MOD_ATTACK_POWER_SHORT",
 
     -- [[ 2. DEFENSIVE RATINGS ]]
     [MSC.L["defense rating"]]     = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT",
@@ -246,6 +247,7 @@ MSC.Scanner.TermMap = {
     [MSC.L["skill with staves"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     [MSC.L["skill with polearms"]]   = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     [MSC.L["skill with fist weapons"]] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    [MSC.L["fist weapons"]] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     -- Forever's short form: "Equip: +3 Daggers Skill".
     [MSC.L["swords skill"]]            = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
     [MSC.L["axes skill"]]              = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
@@ -392,12 +394,44 @@ local function AddSpellVsCreature(creature, val, _, outputStats)
     return AddVsCreature(MSC.IsForever and "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT" or "ITEM_MOD_SPELL_POWER_SHORT")(val, creature, nil, outputStats)
 end
 
+-- "+30 Attack Power, doubled against Mechanical units": the base all the time, once more against that type.
+local function AddDoubledVsCreature(val, creature, _, outputStats)
+    if not ScanNum(val) and ScanNum(creature) then val, creature = creature, val end
+    if not outputStats then return false end
+    local v = ScanNum(val) or 0
+    outputStats["ITEM_MOD_ATTACK_POWER_SHORT"] = (outputStats["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + v * (1 + (CreatureShare(creature) or 0))
+end
+
+-- Era wording "Increased Daggers +4" (Forever keeps it on Classic items): weapon skill. Anything else ("Increased Defense
+-- +6") is left to the later patterns.
+local function AddIncreasedSkill(name, val, _, outputStats)
+    if ScanNum(name) and not ScanNum(val) then name, val = val, name end
+    local key = MSC.Scanner.LookupTerm(name)
+    if key ~= "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return false end
+    if not outputStats then return false end
+    local v = ScanNum(val) or 0
+    if MSC.IsForever then
+        local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+        v = v * ((s and s[1]) or 2.5)
+    end
+    outputStats[key] = (outputStats[key] or 0) + v
+end
+
 MSC.Scanner.EquipPatterns = {
     -- ========================================================================
     -- [[ 0. BONUSES AGAINST ONE CREATURE TYPE (see CreatureShare above) ]]
     -- ========================================================================
     { p = MSC.L["^%+(%d+) attack power vs (.+)$"], func = AddVsCreature("ITEM_MOD_ATTACK_POWER_SHORT") },
     { p = MSC.L["^%+(%d+) attack power when fighting (.+)$"], func = AddVsCreature("ITEM_MOD_ATTACK_POWER_SHORT") },
+    -- 2026-11-17: Forever rewrote "when fighting Undead" as "+30 Attack Power against Undead." on 29 Classic items.
+    { p = MSC.L["^%+(%d+) attack power against (.+)$"], func = AddVsCreature("ITEM_MOD_ATTACK_POWER_SHORT") },
+    { p = MSC.L["^%+(%d+) attack power, doubled against (.+)$"], func = AddDoubledVsCreature },
+    -- "+14 Attack Power. This effect is tripled in Forest and Grassland areas.": the base value only.
+    { p = MSC.L["^%+(%d+) attack power%. "], valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    { p = MSC.L["^increased (.-) %+(%d+)"], func = AddIncreasedSkill },
+    { p = MSC.L["decreases the magical resistances of your spell targets by (%d+)"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    -- Rune of Perfection: "Your spells pierce 3 Magical Resistances. Gain an additional 7 ... in Forest and Grassland areas." (base only)
+    { p = MSC.L["^your spells pierce (%d+) magical resistances"], valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
     { p = MSC.L["^%+(%d+) spell damage vs (.+)$"], func = function(v, c, _, o) return AddVsCreature(MSC.IsForever and "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT" or "ITEM_MOD_SPELL_POWER_SHORT")(v, c, nil, o) end },
     { p = MSC.L["damage done to (.-) by magical spells and effects by up to (%d+)"], func = AddSpellVsCreature },
 
@@ -504,6 +538,18 @@ MSC.Scanner.EquipPatterns = {
     { p = MSC.L["^%+?%s*([%d%.]+)%%? (.*)$"], valIdx = 1, nameIdx = 2 },
     { p = MSC.L["^(.-) %+([%d%.]+)%%?$"], valIdx = 2, nameIdx = 1 },
 }
+
+-- Language-specific wordings (2026-11-17). A Locales file can add, inside its own GetLocale() block:
+--   MSC.LocaleTerms = { ["stat name as the tooltip writes it"] = "ITEM_MOD_..._SHORT" }
+--   MSC.LocaleEquipPatterns = { { p = "lua pattern", valIdx = 1, fixedStat = "ITEM_MOD_..._SHORT", isPercent = true }, ... }
+-- for client wordings one translated key can't cover. Patterns are tried before the shared ones; isPercent values are
+-- converted to Forever ratings like the shared percent patterns.
+if type(MSC.LocaleTerms) == "table" then
+    for k, v in pairs(MSC.LocaleTerms) do MSC.Scanner.TermMap[string_lower(k)] = v end
+end
+if type(MSC.LocaleEquipPatterns) == "table" then
+    for i = #MSC.LocaleEquipPatterns, 1, -1 do table_insert(MSC.Scanner.EquipPatterns, 1, MSC.LocaleEquipPatterns[i]) end
+end
 
 MSC.Scanner.ProcPatterns = {
     -- Buffs
@@ -621,7 +667,7 @@ function MSC.Scanner.ProcDamage(cleanText)
     end
     local direct
     local lo, hi = string_match(s, MSC.L["(%d+) to (%d+) [^%d]-damage"])
-    if lo then direct = (ScanNum(lo) + ScanNum(hi)) / 2
+    if lo and ScanNum(lo) and ScanNum(hi) then direct = (ScanNum(lo) + ScanNum(hi)) / 2
     else
         local a, b = string_match(s, MSC.L["(%d+) [^%d]- and (%d+) [^%d]-damage"])
         if a then direct = ScanNum(a) + ScanNum(b)
@@ -670,6 +716,14 @@ function MSC.Scanner.LookupTerm(name, allowFragments)
     for _, f in ipairs(termFragments) do
         if f[1] ~= "" and string_find(cleanName, f[1], 1, true) then return f[2] end
     end
+    -- "chance to get a critical strike with melee and ranged attacks" (Blackhand's Breadth) and "chance to hit with melee
+    -- and ranged attacks": plain crit / hit. School spell lines ("with holy spells") are left out.
+    if not string_find(cleanName, string_lower(MSC.L["spell"]), 1, true) then
+        for _, f in ipairs({ { "chance to get a critical strike", "ITEM_MOD_CRIT_RATING_SHORT" }, { "chance to hit", "ITEM_MOD_HIT_RATING_SHORT" } }) do
+            local frag = string_lower(MSC.L[f[1]])
+            if frag ~= "" and string_find(cleanName, frag, 1, true) == 1 then return f[2] end
+        end
+    end
     return nil
 end
 
@@ -685,6 +739,32 @@ local function IsUniqueEquippedLine(text)
     end
     return false
 end
+
+-- Curly apostrophes (2026-11-16, GitHub issue 23): the frFR client prints "Dégâts d’ombre" and "Puissance d’attaque" with
+-- U+2019, while the locale stat names use a plain "'", so those lines scored nothing. Turn ’ and ‘ into ' before matching.
+function MSC.Scanner.NormalizeQuotes(text)
+    if type(text) ~= "string" or not string_find(text, "\226\128", 1, true) then return text end
+    return (string_gsub(string_gsub(text, "\226\128\153", "'"), "\226\128\152", "'"))
+end
+
+-- The client's own "Equip:" prefix (2026-11-17, GitHub issue 23): frFR prints "Équipé :" with a capital É that
+-- string.lower can't lower and a no-break space before the colon, ptBR "Equipado:", ruRU "Если на персонаже:" and zhTW
+-- a full-width colon, so the translated L["equip"] keys missed them and the prefix stayed on the line.
+-- ITEM_SPELL_TRIGGER_ONEQUIP is that prefix in every language. Returns the line without it, or nil.
+local function StripEquipPrefix(text)
+    local pre = ITEM_SPELL_TRIGGER_ONEQUIP
+    if type(pre) ~= "string" or pre == "" or type(text) ~= "string" then return nil end
+    text = string_gsub(text, "^|c%x%x%x%x%x%x%x%x", "")
+    pre = string_gsub(pre, "[%s\194\160:]*$", "")
+    pre = string_gsub(pre, "\239\188\154$", "")
+    if pre == "" or string_find(text, pre, 1, true) ~= 1 then return nil end
+    local rest = string_gsub(string.sub(text, #pre + 1), "^[%s\194\160]*", "")
+    if string.sub(rest, 1, 1) == ":" then rest = string.sub(rest, 2)
+    elseif string.sub(rest, 1, 3) == "\239\188\154" then rest = string.sub(rest, 4)
+    else return nil end
+    return (string_gsub(rest, "^[%s\194\160]*", ""))
+end
+MSC.Scanner.StripEquipPrefix = StripEquipPrefix
 
 function MSC.Scanner.ClassifyLine(text)
     if not text or MSC_IsSecret(text) or text == "" then return "SKIP" end
@@ -703,6 +783,7 @@ function MSC.Scanner.ClassifyLine(text)
     -- (scored from the set tables), not a proc of this item.
     if string_find(lower, MSC.L["set:"]) then return "SET" end
 	if string_find(lower, MSC.L["chance on"]) then return "PROC" end
+    if StripEquipPrefix(text) then return "EQUIP" end
     if string_find(lower, MSC.L["equip"]) then return "EQUIP" end
     if string_find(lower, MSC.L["use:"]) then return "USE" end
     local cleanForSet = string_gsub(string_gsub(lower, "|c%x%x%x%x%x%x%x%x", ""), "|r", "")
@@ -747,7 +828,103 @@ local function ParseNegated(cleanText, parse, outputTable)
     return true
 end
 
+-- True when every place the captured number appears in the line is followed by "%" (so the line means a percent).
+local function OnlyAsPercent(line, num)
+    if type(num) ~= "string" or not string_find(num, "^[%d%.,]+$") then return false end
+    local seen = false
+    for n, pct in string.gmatch(line, "([%d%.,]*%d)(%s?%%?)") do
+        if n == num then
+            if not string_find(pct, "%%") then return false end
+            seen = true
+        end
+    end
+    return seen
+end
+
+local NOT_A_STAT = {
+    "damage received is reduced", "judgement of the crusader", "seal of the crusader", "to your imp",
+    "healing stream and mana spring", "casting time of your", "chance to remove", "dying inflicts",
+    "harmful spell casts have a chance", "torture the target",
+}
+
+-- One Equip pattern against one line; true when the line was used up (2026-11-17: shared by the language patterns
+-- tried first below and the main list).
+local function TryEquipPattern(pat, cleanText, text, outputStats, outputProcs)
+    local match1, match2, match3 = string_match(cleanText, pat.p)
+    -- A func returning false didn't recognize the line; try the next pattern.
+    if match1 and pat.func then
+        if pat.func(match1, match2, match3, outputStats) ~= false then return true end
+    elseif match1 and MSC.IsForever and not pat.isPercent and OnlyAsPercent(cleanText, (pat.valIdx == 2) and match2 or match1) then
+        -- A flat-stat pattern that caught a percent ("Fire damage taken increased by 10%", "Increases the effects
+        -- that healing and mana potions have ... by 20%"): not a flat stat, try the next pattern.
+    elseif match1 then
+        local val, name = MSC.Scanner.OrderCaptures(pat, match1, match2)
+        if not pat.nameIdx then name = nil end
+        if pat.upTo then
+            local upTo = ScanNum(string_match(cleanText, MSC.L["by up to (%d+)"]))
+            if upTo then val = upTo end
+        end
+
+        if val and pat.isPercent and MSC.IsTBC then
+            local mult = 15.8 
+            if name then
+                if string_find(name, MSC.L["spell"]) then 
+                    mult = (string_find(name, MSC.L["hit"]) and 12.6 or 22.1)
+                elseif string_find(name, MSC.L["crit"]) then 
+                    mult = 22.1
+                elseif string_find(name, MSC.L["speed"]) or string_find(name, MSC.L["haste"]) then 
+                    mult = 15.8
+                end
+            end
+            val = val * mult
+        end
+
+        if pat.fixedStat then
+            if val and pat.isPercent and MSC.IsForever then
+                local idx = MSC.RatingIndexMap and MSC.RatingIndexMap[pat.fixedStat]
+                local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+                if idx and s and s[idx] then val = val * s[idx] end
+            end
+            if val and pat.scale then val = val * pat.scale end -- language patterns: weapon skill points -> rating (x2.5)
+            outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + (val or 1)
+            return true
+        elseif val and name then
+            local key = MSC.Scanner.LookupTerm(name, true)
+            -- Forever prints weapon skill as points ("+3 Daggers Skill"), but its
+            -- stat is Weapon Skill Rating (2.5 per point, CombatRatingScalars[1]),
+            -- which the scorer converts back to points.
+            if key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" and MSC.IsForever
+                and not string_find(name, string_lower(MSC.L["rating"]), 1, true) then
+                local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+                val = val * ((s and s[1]) or 2.5)
+            end
+            -- Forever percent lines (2026-11-17, Discord report: Mask of the Unforgiven "Improves your chance to hit by
+            -- 2.0%" and Blackhand's Breadth "+1.0% crit"): the stat is a rating, which the scorer turns back into a
+            -- percent (10 Hit / 14 Crit per 1%), so "2%" was stored as 2 rating = 0.2% and scored a tenth of its value.
+            if key and pat.isPercent and MSC.IsForever then
+                local idx = MSC.RatingIndexMap and MSC.RatingIndexMap[key]
+                local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+                local per = idx and s and s[idx]
+                -- "Increases Spirit by 5%", "your pet's armor by 10%": a percent of something, not that many points.
+                if not per then
+                    if outputProcs then table_insert(outputProcs, { type = "Equip", desc = text }) end
+                    return true
+                end
+                val = val * per
+            end
+            if key then outputStats[key] = (outputStats[key] or 0) + val; return true end
+        end
+    end
+    return false
+end
+
 function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
+    text = StripEquipPrefix(text) or text
+    if type(text) == "string" then text = string_gsub(text, "\194\160", " ") end
+    -- "2,0 %" / "2 %" (comma decimals, a space before %) read like "2.0%", so every language's percent patterns match.
+    if type(text) == "string" and string_find(text, "%", 1, true) then
+        text = string_gsub(string_gsub(text, "(%d),(%d)", "%1.%2"), "(%d)%s+%%", "%1%%")
+    end
     local cleanText = string_gsub(string_gsub(string_gsub(string_gsub(string_lower(text), "|c%x%x%x%x%x%x%x%x", ""), "|r", ""), "\n", " "), MSC.L["^equip: "], "")
     cleanText = string_gsub(string_gsub(cleanText, "%s+", " "), MSC.L["^%s*equip:%s*"], "")
     if ParseNegated(cleanText, function(t, o) MSC.Scanner.ParseEquipLine(t, o, nil) end, outputStats) then return end
@@ -772,10 +949,41 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             break
         end
     end
-    
+    -- Portuguese writes mana per 5 as "... de mana por 5 s" (Royal Seal of Eldre'Thalas), which looks like a 5 s buff.
+    if isTemporary and string_find(cleanText, "por 5 s", 1, true) and (string_find(cleanText, "mana", 1, true) or string_find(cleanText, "vida", 1, true))
+        and not string_match((string_gsub(cleanText, "por 5 s", "")), " por %d+ s") then
+        isTemporary = false
+    end
+
+    -- English lines that only look like stats (2026-11-17 audit of every Forever item): a class ability's bonus, a pet,
+    -- damage taken, a death effect. They counted as Spell Power, Holy damage, Healing or Mp5; now they count nothing.
+    for _, phrase in ipairs(NOT_A_STAT) do
+        if string_find(cleanText, phrase, 1, true) then
+            if outputProcs then table_insert(outputProcs, { type = "Equip", desc = text }) end
+            return
+        end
+    end
+    -- The same lines in other languages (Locales files, generated from each client's own text).
+    if type(MSC.LocaleNotAStat) == "table" then
+        for _, pat in ipairs(MSC.LocaleNotAStat) do
+            if string_find(cleanText, pat) then
+                if outputProcs then table_insert(outputProcs, { type = "Equip", desc = text }) end
+                return
+            end
+        end
+    end
+
     if isTemporary then
         if outputProcs then table_insert(outputProcs, { type = "Equip Proc", desc = text }) end
         return
+    end
+
+    -- Language patterns first (2026-11-17): esMX translates "attacks deal" as plain "infligen", which also sits in its
+    -- school spell damage lines, so the swing-damage check below took them as procs before any pattern ran.
+    if type(MSC.LocaleEquipPatterns) == "table" then
+        for _, pat in ipairs(MSC.LocaleEquipPatterns) do
+            if TryEquipPattern(pat, cleanText, text, outputStats, outputProcs) then return end
+        end
     end
 
     -- [[ DAMAGE WHEN STRUCK / ON EVERY SWING ]]
@@ -795,6 +1003,12 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
             perMin = MSC.Scanner.ProcRate.swing
             -- It hurts you as much as the target: count half.
             if string_find(cleanText, string_lower(MSC.L["both you and"]), 1, true) then perMin = perMin / 2 end
+        elseif (string_find(cleanText, string_lower(MSC.L["damage to your melee attacks"]), 1, true)
+            or string_find(cleanText, string_lower(MSC.L["damage to your weapon attack"]), 1, true)
+            or string_find(cleanText, string_lower(MSC.L["melee attacks with this weapon deal"]), 1, true))
+            and not string_match(cleanText, MSC.L["(%d+)%% chance"]) then
+            -- "Adds 2 fire damage to your melee attacks." / "Melee attacks with this weapon deal 41 Frost damage." (2026-11-17)
+            perMin = MSC.Scanner.ProcRate.swing
         end
         local dmg = perMin and MSC.Scanner.ProcDamage(cleanText)
         if dmg then
@@ -804,48 +1018,7 @@ function MSC.Scanner.ParseEquipLine(text, outputStats, outputProcs)
     end
 
     for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
-        local match1, match2, match3 = string_match(cleanText, pat.p)
-        -- A func returning false didn't recognize the line; try the next pattern.
-        if match1 and pat.func then
-            if pat.func(match1, match2, match3, outputStats) ~= false then return end
-        elseif match1 then
-            local val, name = MSC.Scanner.OrderCaptures(pat, match1, match2)
-            if not pat.nameIdx then name = nil end
-            if pat.upTo then
-                local upTo = ScanNum(string_match(cleanText, MSC.L["by up to (%d+)"]))
-                if upTo then val = upTo end
-            end
-
-            if val and pat.isPercent and MSC.IsTBC then
-                local mult = 15.8 
-                if name then
-                    if string_find(name, MSC.L["spell"]) then 
-                        mult = (string_find(name, MSC.L["hit"]) and 12.6 or 22.1)
-                    elseif string_find(name, MSC.L["crit"]) then 
-                        mult = 22.1
-                    elseif string_find(name, MSC.L["speed"]) or string_find(name, MSC.L["haste"]) then 
-                        mult = 15.8
-                    end
-                end
-                val = val * mult
-            end
-
-            if pat.fixedStat then
-                outputStats[pat.fixedStat] = (outputStats[pat.fixedStat] or 0) + (val or 1)
-                return
-            elseif val and name then
-                local key = MSC.Scanner.LookupTerm(name, true)
-                -- Forever prints weapon skill as points ("+3 Daggers Skill"), but its
-                -- stat is Weapon Skill Rating (2.5 per point, CombatRatingScalars[1]),
-                -- which the scorer converts back to points.
-                if key == "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" and MSC.IsForever
-                    and not string_find(name, string_lower(MSC.L["rating"]), 1, true) then
-                    local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
-                    val = val * ((s and s[1]) or 2.5)
-                end
-                if key then outputStats[key] = (outputStats[key] or 0) + val; return end
-            end
-        end
+        if TryEquipPattern(pat, cleanText, text, outputStats, outputProcs) then return end
     end
     if outputProcs then table_insert(outputProcs, { type = "Equip", desc = text }) end
 end
@@ -940,7 +1113,9 @@ function MSC.Scanner.ParseStatLine(text, outputTable)
     
     cleanText = string_gsub(cleanText, "|t.-|t", "") 
     cleanText = string_gsub(cleanText, "\194\160", " ") 
-    cleanText = string_gsub(cleanText, "\160", " ") 
+    -- A lone \160 only (2026-11-16): it is also the second or third byte of UTF-8 letters such as "à" (frFR "résistance à
+    -- l'ombre", ptBR "resistência à sombra") and many Korean and Chinese characters, which the old blanket replace broke.
+    cleanText = string_gsub(cleanText, "([\128-\255]?)\160", function(lead) return lead ~= "" and (lead .. "\160") or " " end)
     cleanText = string_gsub(cleanText, "%s+", " ")
     cleanText = string_match(cleanText, "^%s*(.-)%s*$")
     
@@ -1098,6 +1273,7 @@ function MSC.Scanner.Scan(itemLink)
         if rightText and rightText ~= "" then
             fullText = fullText .. " " .. rightText
         end
+        fullText = MSC.Scanner.NormalizeQuotes(fullText)
 
         if fullText ~= "" then
             local type = MSC.Scanner.ClassifyLine(fullText)

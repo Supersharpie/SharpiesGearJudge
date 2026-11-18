@@ -17,25 +17,19 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.4
-    { text = "Dungeon tanks: every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration.", forever = true },
-    { text = "Talents, Warlock dungeon builds: re-searched with a mana budget in groups (Life Tap between pulls, eaten back). Affliction and Destruction take Improved Life Tap and Cataclysm early for about 5% more damage.", forever = true },
-    { text = "Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat, and the Bear and Shaman tank weights, are now priced by the group models like the other classes'.", forever = true },
-    { text = "Talents, Mage dungeon builds: re-checked in real leveling gear. All three keep their orders.", forever = true },
-    { text = "Separate dungeon weights: Fury dual wield, the Rogue sword builds, Bear and the Shaman tank now have their own dungeon weights, so solo, PvP and farming weights stay as they were.", forever = true },
-    { text = "Talents, Hunter dungeon builds: re-searched in real leveling gear. Beast Mastery and Survival got slightly faster orders; Marksmanship keeps its own.", forever = true },
-    { text = "Talents, Rogue dungeon builds: re-searched in real leveling gear. Assassination and Combat with swords and Subtlety with daggers got slightly faster orders; the rest keep theirs.", forever = true },
-    { text = "Talents, Warrior dungeon builds: re-searched in real leveling gear. Protection takes 16 points in Arms and gets Shield Slam at 49, about 2.5% faster; Arms and Fury keep their orders. The notes add Battle Shout.", forever = true },
-    { text = "Warrior dungeon weights: measured on real leveling gear with Battle Shout. Protection tanks value block, dodge and Defense more from 40, and hit less.", forever = true },
-    { text = "Talents, Priest dungeon builds: re-searched in real leveling gear with Divine Spirit. Discipline heals about 3% more; Shadow and Holy keep their orders.", forever = true },
-    { text = "Priest dungeon weights: measured on real leveling gear with Fortitude and Divine Spirit. Healers value Spirit and Mp5 a little less.", forever = true },
-    { text = "Talents, Shaman dungeon builds: re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems.", forever = true },
-    { text = "Shaman dungeon weights: measured on real leveling gear with your own totems. Enhancement values Mp5 and Spirit more in the 20s.", forever = true },
-    { text = "Talents, Druid dungeon builds: re-searched in real leveling gear. Restoration takes Swiftmend at 40 (was 52) for about 1% more healing, and Bear got a slightly faster order; Cat and Balance keep theirs. The notes add Mark of the Wild, and Tiger's Fury for Cat.", forever = true },
-    { text = "Druid dungeon weights: measured on real leveling gear with Mark of the Wild. Restoration healers value Intellect, crit and Mp5 more around 40.", forever = true },
-    { text = "Talents, Paladin dungeon builds: re-searched in real leveling gear. Protection takes Retribution talents after 30 for about 3% more pulls per hour; Retribution and Holy keep their orders. Every note says which blessing to keep on yourself.", forever = true },
-    { text = "Paladin dungeon weights: measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30.", forever = true },
-    { text = "Progress: dungeon builds done for all 9 classes. PvP leveling builds come next. The full tracker is on the CurseForge page.", forever = true },
+    -- v3.4.5
+    { text = "Roadmap plugin: loot for four of the new Forever dungeons and 243 new quest rewards, including Mount Hyjal.", forever = true },
+    { text = "Fixed: on French, Portuguese, Korean and Chinese clients some stats scored nothing, such as Shadow damage and Attack Power on French items." },
+    { text = "Fixed: the PvP Shockadin profile counted Spell Power's healing twice, so Spell Power items scored too high.", forever = true },
+    { text = "Talents, Paladin PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Retribution, Holy and Protection are 7-12% faster.", forever = true },
+    { text = "Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page.", forever = true },
+    { text = "Talents, solo leveling: the melee solo builds were re-checked with expertise. Warrior, Paladin, Rogue, Hunter, Druid and Shaman got slightly faster orders (up to 1%), and melee weights now price Expertise from the models.", forever = true },
+    { text = "Talents, solo leveling: all nine classes were re-checked on new leveling gear with the latest Forever item changes. Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination got slightly faster orders, and every class's solo weights were rebuilt.", forever = true },
+    { text = "Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap.", forever = true },
+    { text = "Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20).", forever = true },
+    { text = "Fixed: items worded \"Improves your chance to hit by 2%\" or \"... critical strike by 1%\" scored a tenth of their hit and crit.", forever = true },
+    { text = "Fixed: many Classic \"Equip:\" lines scored nothing or the wrong stat, such as Attack Power against Undead and weapon skill, and on non-English clients most percent, mana per 5 and spell school damage lines.", forever = true },
+    { text = "XP Bar: the stat weight warning no longer calls stats you already value \"now valued\", its numbers are rounded, and the level's gear score gain counts only item changes." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

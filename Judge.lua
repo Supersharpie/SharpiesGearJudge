@@ -153,7 +153,7 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         -- a leveling row: between its quest-gear and best-gear rows (MSC.LevelingGearBlend)
         local role, bandLo, bandHi = string.match(tostring(spec), "^(Leveling.-)_(%d+)_(%d+)$")
         local curves = role and cls and cls.LevelingCurves
-        local curveRole = curves and (curves[role] and role or (MSC.LevelingCurveAlias and MSC.LevelingCurveAlias[role]))
+        local curveRole = curves and MSC.LevelingCurveRole(cls, role)
         local gear = curveRole and cls.LevelingGear and cls.LevelingGear[curveRole]
         if not gp and gear and curves[curveRole] then
             local level = math.min(math.max(UnitLevel("player"), tonumber(bandLo)), tonumber(bandHi))
@@ -650,7 +650,12 @@ end
 local function HL_Rebuild(map, size)
     wipe(HL_Names)
     for localName, internalKey in pairs(map) do
-        HL_Names[#HL_Names + 1] = { lname = localName:lower(), localName = localName, key = internalKey }
+        local lname = localName:lower()
+        HL_Names[#HL_Names + 1] = { lname = lname, localName = localName, key = internalKey }
+        -- The frFR client prints these names with a curly apostrophe ("dégâts d’ombre"); match that spelling too.
+        if string_find(lname, "'", 1, true) then
+            HL_Names[#HL_Names + 1] = { lname = (lname:gsub("'", "\226\128\153")), localName = localName, key = internalKey }
+        end
     end
     table_sort(HL_Names, function(a, b)
         local la, lb = #a.lname, #b.lname
@@ -785,7 +790,7 @@ function MSC:BeautifyTooltip(tooltip)
 				-- [[ PHASE 1: COMPACT EQUIP ]]
                 if SGJ_Settings.CompactEquip and (lineType == "EQUIP") and not isRelic then
                     
-                    local cleanText = text:lower()
+                    local cleanText = MSC.Scanner.NormalizeQuotes(text:lower())
                         :gsub("|c%x%x%x%x%x%x%x%x", "")
                         :gsub("|r", "")
                         :gsub("[\n\t]", " ")

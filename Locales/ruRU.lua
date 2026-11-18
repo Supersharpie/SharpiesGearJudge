@@ -1718,7 +1718,7 @@ L["Mage: Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arc
 L["Shaman: Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling."] = "Шаман: Совершенствование в подземельях и соло берет Приливная концентрация раньше, чуть быстрее прокачка."
 L["Hunter: melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered."] = "Охотник: билды Повелителя зверей ближнего боя больше не берут таланты только для дальнего боя (ближний бой в подземельях примерно на 1,4% быстрее), а большинство билдов прокачки переупорядочены."
 L["Warrior: builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster."] = "Воин: билды без двух оружий больше не берут таланты для левой руки; Неистовство с двуручником соло и Оружие в подземельях качаются чуть быстрее."
-L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "Паладин: соло-прокачка Защиты берет в конце Божественную силу и таланты Света вместо Железной веры и Shieldsworn, примерно на 1% быстрее."
+L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "Паладин: соло-прокачка Защиты берет в конце Божественную силу и таланты Света вместо Железной веры и Клятвы щита, примерно на 1% быстрее."
 L["Warrior: Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s."] = "Воин: PvP-прокачка Неистовства берет Манию крови, Gore Drinker и Улучшенный перехват раньше, примерно на 4% сильнее в дуэлях с середины 40-х."
 L["The minimap button reopens the window on the page you used last, and right-clicking it lists every page (Roster, Talents and the rest) to jump straight to one."] = "Кнопка у миникарты открывает окно на последней открытой странице, а правый клик показывает все страницы (Roster, таланты и остальные), чтобы сразу перейти к нужной."
 L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."] = "С 50-го уровня меткость и защита танка оцениваются по рейдовым капам (9% меткости, 17% меткости заклинаний, 440 защиты, иммунитет к сокрушающим ударам), а не по нуждам прокачки. Отключите, если не собираетесь в рейды."
@@ -2471,3 +2471,157 @@ L["Talents, Druid dungeon builds: re-searched in real leveling gear. Restoration
 L["Paladin dungeon weights: measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30."] = "Веса паладина для подземелий: рассчитаны на реальной экипировке для прокачки с вашим собственным благословением. Танки Защиты ценят выносливость, блок и силу заклинаний выше, а характеристики маны с 30 уровня гораздо ниже."
 L["Talents, Shaman dungeon builds: re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems."] = "Таланты, билды шамана для подземелий: пересчитаны на реальной экипировке для прокачки. Совершенствование берёт Улучшенный удар бури на 30-м уровне — примерно на 4% больше урона, Исцеление лечит примерно на 2% больше, а Стихии сохраняют порядок. Билд танка теперь заканчивается на 30-м уровне. В описаниях указаны ваши тотемы."
 L["Dungeon tanks: every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration."] = "Танки в подземельях: каждый танк теперь рассчитывается в своей танковой экипировке, а смерти и урон по другим врагам в группе подогнаны под реальные логи Forever. В описании паладина-танка сказано, когда применять Освящение."
+L["Roadmap plugin: loot for four of the new Forever dungeons and 243 new quest rewards, including Mount Hyjal."] = "Плагин Roadmap: добыча из четырёх новых подземелий Forever и 243 новые награды за задания, включая Гору Хиджал."
+L["Fixed: the PvP Shockadin profile counted Spell Power's healing twice, so Spell Power items scored too high."] = "Исправлено: PvP-профиль Шокадин учитывал исцеление от силы заклинаний дважды, поэтому предметы с силой заклинаний оценивались слишком высоко."
+L["XP Bar: the stat weight warning no longer calls stats you already value \"now valued\", its numbers are rounded, and the level's gear score gain counts only item changes."] = "Полоса опыта: предупреждение о весах больше не помечает \"теперь учитывается\" характеристики, которые уже учитываются, числа округляются, а прирост оценки снаряжения за уровень учитывает только смену предметов."
+L["Talents, Paladin PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Retribution, Holy and Protection are 7-12% faster."] = "Таланты, паладин, PvP при прокачке: сборки теперь оцениваются по общему времени прокачки — задания плюс бои с игроками в открытом мире. Воздаяние, Свет и Защита стали быстрее на 7–12%."
+L["Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page."] = "Прогресс: PvP-сборки для прокачки готовы для 1 из 9 классов (паладин). Полная таблица — на странице CurseForge."
+L["Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap."] = "Исправлено: предметы с мастерством почти ничего не стоили. Теперь 10 рейтинга мастерства — это на 1% меньше уклонений и парирований, оценивается как меткость (для танков вдвое), со своим пределом."
+L["Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20)."] = "Исправлено: рейтинг парирования оценивался для танков на 25% ниже (в Forever это 15 за 1% парирования, а не 20)."
+L["Fixed: items worded \"Improves your chance to hit by 2%\" or \"... critical strike by 1%\" scored a tenth of their hit and crit."] = "Исправлено: предметы с текстом «Увеличивает вероятность попадания на 2%» или «... критического удара на 1%» учитывали лишь десятую часть меткости и крита."
+L["Fixed: many Classic \"Equip:\" lines scored nothing or the wrong stat, such as Attack Power against Undead and weapon skill, and on non-English clients most percent, mana per 5 and spell school damage lines."] = "Исправлено: многие классические строки «Если на персонаже:» не учитывались или учитывались как другая характеристика, например сила атаки против нежити и навык владения оружием, а в неанглийских клиентах — большинство строк с процентами, восполнением маны раз в 5 сек. и уроном от школы магии."
+L["Talents, solo leveling: the melee solo builds were re-checked with expertise. Warrior, Paladin, Rogue, Hunter, Druid and Shaman got slightly faster orders (up to 1%), and melee weights now price Expertise from the models."] = "Таланты, соло-прокачка: соло-билды ближнего боя перепроверены с учётом мастерства. Воин, паладин, разбойник, охотник, друид и шаман получили чуть более быстрый порядок (до 1%), а веса ближнего боя теперь берут мастерство из моделей."
+L["Talents, solo leveling: all nine classes were re-checked on new leveling gear with the latest Forever item changes. Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination got slightly faster orders, and every class's solo weights were rebuilt."] = "Таланты, соло-прокачка: все девять классов перепроверены на новой экипировке для прокачки с последними изменениями предметов в Forever. Маг, чернокнижник, жрец «Послушание», друид «Баланс», шаман «Стихии» и разбойник «Ликвидация» получили чуть более быстрый порядок, а соло-веса всех классов пересчитаны."
+L["Fixed: on French, Portuguese, Korean and Chinese clients some stats scored nothing, such as Shadow damage and Attack Power on French items."] = "Исправлено: в клиентах на французском, португальском, корейском и китайском некоторые характеристики не учитывались, например урон от тьмы и сила атаки на французских предметах."
+
+-- =============================================================
+-- EQUIP LINES (2026-11-17): Forever ruRU wordings the shared patterns miss.
+-- Patterns see the line lower-cased by string.lower (ASCII only), so a
+-- Cyrillic capital stays: "^.." stands for the 2-byte first letter.
+-- =============================================================
+do
+    local P = "([%d%.,]+)%s?\194?\160?%%"
+    local function Num(x) if type(x) == "string" then x = x:gsub(",", ".") end return tonumber(x) end
+    local function Add(o, k, v) o[k] = (o[k] or 0) + v end
+    -- Genitive creature names on these lines -> the L[] key the shared creature patterns know.
+    local CREATURE = { ["нежити"] = "undead", ["драконов"] = "dragonkin", ["механизмов"] = "mechanical",
+        ["демонов"] = "demon", ["животных"] = "beast", ["элементалей"] = "elemental",
+        ["гуманоидов"] = "humanoid", ["великанов"] = "giant" }
+    local function Creature(c)
+        c = string.gsub(c or "", "[%s%.,]+$", "")
+        local name = CREATURE[c] and MSC.L[CREATURE[c]]
+        if name and name ~= c then return name end -- same word: the shared pattern already reads it
+    end
+    -- Re-read as the ruRU line the shared "+N к силе атаки против X" pattern scores.
+    local function APvs(v, c, _, o)
+        if Num(c) and not Num(v) then v, c = c, v end
+        local name = Creature(c)
+        if not name or not o then return false end
+        MSC.Scanner.ParseEquipLine("+" .. v .. " к силе атаки против " .. name, o)
+    end
+    local function APdoubled(v, c, _, o)
+        local name = Creature(c)
+        if not name or not o then return false end
+        Add(o, "ITEM_MOD_ATTACK_POWER_SHORT", Num(v) or 0)
+        MSC.Scanner.ParseEquipLine("+" .. v .. " к силе атаки против " .. name, o)
+    end
+    local function SpellVs(v, c, _, o)
+        if Num(c) and not Num(v) then v, c = c, v end
+        local name = Creature(c)
+        if not name or not o then return false end
+        MSC.Scanner.ParseEquipLine("урон от заклинаний и магических эффектов против " .. name .. " максимум на " .. v, o)
+    end
+    local SCHOOL = { { "темн", "SHADOW" }, { "льд", "FROST" }, { "природ", "NATURE" }, { "тайн", "ARCANE" },
+        { "чар", "ARCANE" }, { "светл", "HOLY" }, { "огн", "FIRE" } }
+    local function School(name)
+        for _, s in ipairs(SCHOOL) do if string.find(name or "", s[1], 1, true) then return s[2] end end
+    end
+    local function SchoolDamage(name, v, _, o)
+        local s = School(name)
+        if not s or not o then return false end
+        Add(o, "ITEM_MOD_" .. s .. "_DAMAGE_SHORT", Num(v) or 0)
+    end
+    local function Resist(a, b, _, o)
+        local v, name = a, b
+        if Num(b) and not Num(a) then v, name = b, a end
+        local s = School(name)
+        if not s or not o or s == "HOLY" then return false end
+        Add(o, "ITEM_MOD_" .. s .. "_RESISTANCE_SHORT", Num(v) or 0)
+    end
+    -- Weapon skill points: Forever's stat is Weapon Skill Rating, 2.5 per point (as English "Increased Daggers +4").
+    local function Skill(name, v, _, o)
+        if string.find(name or "", "защит", 1, true) or not o then return false end
+        v = Num(v) or 0
+        if MSC.IsForever then
+            local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+            v = v * ((s and s[1]) or 2.5)
+        end
+        Add(o, "ITEM_MOD_WEAPON_SKILL_RATING_SHORT", v)
+    end
+
+    MSC.LocaleEquipPatterns = {
+        -- Attack power ("+30 к силе атаки. Бонус удваивается против механизмов.", "... против нежити.")
+        { p = "^%+(%d+) к силе атаки%. ..онус удваивается против (.-)%.?$", func = APdoubled },
+        { p = "^%+(%d+) к силе атаки%. ", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { p = "^%+(%d+) к силе атаки против (.-)%.?$", func = APvs },
+        { p = "^..овышает силу атаки против (.-) на (%d+)", func = APvs },
+        { p = "^..величивает силу атаки на (%d+) ед%. в облике кошки", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+        { p = "^..величивает силу атаки на (%d+)%.?$", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        { p = "^..величение силы атаки в дальнем бою на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
+        { p = "^..величение силы атаки ближнего и дальнего боя на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+        -- Spell damage and healing
+        { p = "^..величение урона и целительного действия магических заклинаний и эффектов не более чем на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "^..величивает урон от заклинаний и силу исцеления максимум на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "^..величивает урон и усиливает исцеление от магических эффектов и заклинаний максимум на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "^..величивает урон и силу исцеления магических эффектов и заклинаний максимум на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_POWER_SHORT" },
+        { p = "^..величение урона, наносимого заклинаниями и эффектами (.-), на (%d+)", func = SchoolDamage },
+        { p = "^..величение наносимого урона от заклинаний и эффектов (.-) не более чем на (%d+)", func = SchoolDamage },
+        { p = "^..овышение не более чем на (%d+) ед%. урона, наносимого (.-) заклинаниями и магическими эффектами", func = SpellVs },
+        { p = "^..величивает урон, который магические эффекты и заклинания наносят (.-), максимум на (%d+)", func = SpellVs },
+        { p = "^..нижает сопротивление магии целей ваших заклинаний на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+        -- Mana / health per 5
+        { p = "^..осполнение (%d+) ед%. маны раз в 5 сек%.?$", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { p = "^..осполняет (%d+) ед%. маны раз в 5 сек", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+        { p = "^..осполнение (%d+) ед%. здоровья раз в 5 сек%.?$", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+        { p = "^..осполняет (%d+) ед%. здоровья каждые 5 сек", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+        -- Percent lines (Forever rating)
+        { p = "^..овышает вероятность критического удара заклинаний на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", isPercent = true },
+        { p = "^..овышает вероятность критического удара атак в .-бою на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT", isPercent = true },
+        { p = "^..овышает вероятность критического удара на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT", isPercent = true },
+        { p = "^..овышает вероятность попадания заклинаниями на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT", isPercent = true },
+        { p = "^..овышает вероятность попадания в дальнем бою на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT", isPercent = true },
+        { p = "^..овышает вероятность попадания на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT", isPercent = true },
+        { p = "^..овышает вероятность блокирования атаки щитом на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT", isPercent = true },
+        { p = "^..величение рейтинга уклонения на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT", isPercent = true },
+        { p = "^..величение рейтинга парирования атак на " .. P, valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT", isPercent = true },
+        -- Defense, block value, weapon skill
+        { p = "^..величение рейтинга защиты на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+        { p = "^..величение показателя блока щитом на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+        { p = "^..овышение навыка использования (.-) на %+?(%d+)", func = Skill },
+        { p = "^..овышение навыка владения (.-) на %+?(%d+)", func = Skill },
+        { p = "^..лучшение владения (.-) на %+?(%d+)", func = Skill },
+        { p = "^..величение рейтинга навыка владения (.-) на %+?(%d+)", func = Skill },
+        { p = "^(..вуручн.-) %+(%d+)%.?$", func = Skill },
+        -- Resistances, Spirit, Armor
+        { p = "^..овышает все виды сопротивления на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ALL_RESISTANCE_SHORT" },
+        { p = "^[%[%]%+]*(%d+) к сопротивлению (.-)%.*$", func = Resist },
+        { p = "^..опротивление (.-) %+(%d+)%.?$", func = Resist },
+        { p = "^..овышает дух на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_SPIRIT_SHORT" },
+        { p = "^..роня %+(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
+    }
+end
+
+-- Fist weapon skill (2026-11-17, Devilsaur Claws): weapon skill points x2.5 like English.
+if type(MSC.LocaleEquipPatterns) == "table" then
+    table.insert(MSC.LocaleEquipPatterns, 1, { p = "^..овышение рейтинга навыка владения кистевым оружием на (%d+)", valIdx = 1, fixedStat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT", scale = 2.5 })
+end
+
+-- English-only parser patterns (2026-11-17): this language's wording for these lines is in MSC.LocaleEquipPatterns /
+-- MSC.LocaleTerms above, so the English pattern is kept as is (it simply never matches here).
+L["^%+(%d+) attack power against (.+)$"] = "^%+(%d+) attack power against (.+)$"
+L["^%+(%d+) attack power%. "] = "^%+(%d+) attack power%. "
+L["^%+(%d+) attack power, doubled against (.+)$"] = "^%+(%d+) attack power, doubled against (.+)$"
+L["^increased (.-) %+(%d+)"] = "^increased (.-) %+(%d+)"
+L["damage to your melee attacks"] = "damage to your melee attacks"
+L["damage to your weapon attack"] = "damage to your weapon attack"
+L["decreases the magical resistances of your spell targets by (%d+)"] = "decreases the magical resistances of your spell targets by (%d+)"
+L["fist weapons"] = "fist weapons"
+L["melee and ranged attack power"] = "melee and ranged attack power"
+L["melee attacks with this weapon deal"] = "melee attacks with this weapon deal"
+L["^your spells pierce (%d+) magical resistances"] = "^your spells pierce (%d+) magical resistances"
+
+-- Lines English reads as no stat (class-ability bonuses, pets, damage taken, death effects), generated 2026-11-17
+-- by SharpiesGearJudge-Research/locale_not_a_stat.py from this client's own text.
+MSC.LocaleNotAStat = {
+    "^Перед смертью нанос", -- Martyr's Chain
+}

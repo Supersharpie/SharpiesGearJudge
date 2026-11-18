@@ -404,7 +404,7 @@ L["Mage: Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arc
 L["Shaman: Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling."] = "薩滿：增強地城和單人配置更早點潮汐集中，練功稍快。"
 L["Hunter: melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered."] = "獵人：近戰野獸控制配置不再點純遠程天賦（近戰野獸控制地城約快1.4%），多數練功配置也重新排序。"
 L["Warrior: builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster."] = "戰士：不雙持的配置不再點副手天賦，雙手狂怒單人和武器地城練功稍快。"
-L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "聖騎士：防護單人練功後期改點神聖之力和神聖系天賦，取代鐵之教條和Shieldsworn，練功約快1%。"
+L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "聖騎士：防護單人練功後期改點神聖之力和神聖系天賦，取代鐵之教條和盾牌之誓，練功約快1%。"
 L["Warrior: Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s."] = "戰士：狂怒PvP練功更早點血之狂熱、Gore Drinker和強化攔截，40級中段起決鬥強度約提高4%。"
 L["The minimap button reopens the window on the page you used last, and right-clicking it lists every page (Roster, Talents and the rest) to jump straight to one."] = "小地圖按鈕會在上次使用的頁面開啟視窗，右鍵點擊則列出所有頁面（Roster、天賦等）可直接切換。"
 L["Force of Nature"] = "自然之力"
@@ -1778,3 +1778,96 @@ L["Talents, Druid dungeon builds: re-searched in real leveling gear. Restoration
 L["Paladin dungeon weights: measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30."] = "聖騎士地城權重：以實際練等裝備並套用你自己的祝福計算。防護坦克更重視耐力、格擋與法術能量，從 30 起大幅降低法力屬性的評價。"
 L["Talents, Shaman dungeon builds: re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems."] = "天賦，薩滿地城建構：以實際練等裝備重新計算。增強在 30 級點強化風暴打擊，傷害約多 4%；恢復治療量約多 2%；元素維持原本順序。坦克建構現在到 30 級結束。說明會寫出該放哪些圖騰。"
 L["Dungeon tanks: every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration."] = "地城坦克：現在每個坦克都以自己的坦克裝備計算，死亡次數與打到怪群中其他怪的傷害都依實際 Forever 紀錄校正。聖騎士坦克的說明會寫出何時施放奉獻。"
+L["Roadmap plugin: loot for four of the new Forever dungeons and 243 new quest rewards, including Mount Hyjal."] = "Roadmap 外掛：新增Forever四個新地城的掉落物，以及243件任務獎勵（包括海加爾山）。"
+L["Fixed: the PvP Shockadin profile counted Spell Power's healing twice, so Spell Power items scored too high."] = "已修正：PvP震擊聖騎設定檔將法術能量的治療重複計算，導致法術能量裝備評分過高。"
+L["XP Bar: the stat weight warning no longer calls stats you already value \"now valued\", its numbers are rounded, and the level's gear score gain counts only item changes."] = "經驗條：屬性權重警告不再把已計分的屬性標為「現在有價值」，數字會四捨五入，本級的裝備分數增加只計算物品更換。"
+L["Talents, Paladin PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Retribution, Holy and Protection are 7-12% faster."] = "天賦，聖騎士升級PvP：現在以總升級時間評估配置，即任務加上在野外遇到的PvP戰鬥。懲戒、神聖和防護快了7-12%。"
+L["Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page."] = "進度：升級PvP配置已完成9個職業中的1個（聖騎士）。完整進度表在CurseForge頁面上。"
+L["Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap."] = "已修正：熟練等級的物品幾乎不計分。現在10點熟練等級等於減少1%的閃躲和招架，價值與命中相同（坦克為兩倍），並有自己的上限。"
+L["Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20)."] = "已修正：坦克的招架等級計分低了25%（在Forever中每1%招架需要15點，而不是20點）。"
+L["Fixed: items worded \"Improves your chance to hit by 2%\" or \"... critical strike by 1%\" scored a tenth of their hit and crit."] = "已修正：寫著「使你的命中率提高2%」或「……致命一擊機率提高1%」的物品，其命中和致命一擊只算了十分之一。"
+L["Fixed: many Classic \"Equip:\" lines scored nothing or the wrong stat, such as Attack Power against Undead and weapon skill, and on non-English clients most percent, mana per 5 and spell school damage lines."] = "已修正：許多經典「裝備：」詞條不計分或被算成錯誤的屬性，例如對不死生物的攻擊強度和武器技能；在非英文用戶端上，大部分百分比、每5秒恢復法力和法術系別傷害的詞條也已修正。"
+L["Talents, solo leveling: the melee solo builds were re-checked with expertise. Warrior, Paladin, Rogue, Hunter, Druid and Shaman got slightly faster orders (up to 1%), and melee weights now price Expertise from the models."] = "天賦，單人升級：近戰單人配置已加入熟練重新檢查。戰士、聖騎士、盜賊、獵人、德魯伊和薩滿的點法順序稍快（最多1%），近戰權重現在依模型計算熟練。"
+L["Talents, solo leveling: all nine classes were re-checked on new leveling gear with the latest Forever item changes. Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination got slightly faster orders, and every class's solo weights were rebuilt."] = "天賦，單人升級：已用最新Forever物品改動後的新升級裝備重新檢查全部九個職業。法師、術士、戒律牧師、平衡德魯伊、元素薩滿和刺殺盜賊的點法順序稍快，所有職業的單人權重也已重新計算。"
+L["Fixed: on French, Portuguese, Korean and Chinese clients some stats scored nothing, such as Shadow damage and Attack Power on French items."] = "已修正：在法文、葡萄牙文、韓文和中文用戶端上，部分屬性沒有計分，例如法文物品上的暗影傷害和攻擊強度。"
+
+-- Equip-line wordings of the zhTW client that the translated shared patterns miss (2026-11-17, checked against every
+-- wearable item's equip spell). Chinese puts the number after the stat, so most are fixed-stat patterns.
+-- Bonuses against one creature type reuse the shared creature-share handlers (found by their pattern at parse time).
+local function SharedEquipFunc(key)
+    return function(a, b, c, out)
+        local want = MSC.L[key]
+        for _, pat in ipairs(MSC.Scanner.EquipPatterns) do
+            if pat.p == want and pat.func then return pat.func(a, b, c, out) end
+        end
+        return false
+    end
+end
+MSC.LocaleTerms = {
+    ["弓箭技能"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",       -- "弓箭技能提高4點" (Bows)
+    ["斧類武器傷害"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",   -- Zulian Hacker "斧類武器傷害提高2點" (English: Axes +2)
+}
+MSC.LocaleEquipPatterns = {
+    -- Attack power
+    { p = "^對(.-)的攻擊強度提高(%d+)點", func = SharedEquipFunc("^%+(%d+) attack power vs (.+)$") },
+    { p = "^%+(%d+)點攻擊強度，此效果對(.-)加倍", func = SharedEquipFunc("^%+(%d+) attack power, doubled against (.+)$") },
+    { p = "^%+(%d+)遠程攻擊強度", valIdx = 1, fixedStat = "ITEM_MOD_RANGED_ATTACK_POWER_SHORT" },
+    { p = "^%+(%d+)攻擊強度", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    { p = "^%+(%d+)點攻擊強度", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    { p = "^提高(%d+)點的近戰和遠程攻擊力", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    -- Percent lines (converted to Forever ratings)
+    { p = "^使你的近戰攻擊造成致命一擊的機率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT", isPercent = true },
+    { p = "^使你的近戰與遠程攻擊造成致命一擊的機率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT", isPercent = true },
+    { p = "^使你以法術造成致命一擊的機率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", isPercent = true },
+    { p = "^使你的命中機率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT", isPercent = true },
+    { p = "^使你的遠程武器擊中目標的機率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT", isPercent = true },
+    { p = "^使你的法術命中率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT", isPercent = true },
+    { p = "^使你閃躲攻擊的機率提高([%d%.,]+)%%", valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT", isPercent = true },
+    -- Resistances "+10 自然抗性"
+    { p = "^%+(%d+) ?自然抗性", valIdx = 1, fixedStat = "ITEM_MOD_NATURE_RESISTANCE_SHORT" },
+    { p = "^%+(%d+) ?秘法抗性", valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_RESISTANCE_SHORT" },
+    { p = "^%+(%d+) ?冰霜抗性", valIdx = 1, fixedStat = "ITEM_MOD_FROST_RESISTANCE_SHORT" },
+    { p = "^%+(%d+) ?火焰抗性", valIdx = 1, fixedStat = "ITEM_MOD_FIRE_RESISTANCE_SHORT" },
+    { p = "^%+(%d+) ?暗影抗性", valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_RESISTANCE_SHORT" },
+    -- Other flat stats
+    { p = "^每5秒恢復(%d+)點生命力", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+    { p = "^使你法術目標的魔法抗性降低(%d+)點", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    { p = "^%+(%d+)護甲值", valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
+    { p = "^在.-區域，精神提高(%d+)點", valIdx = 1, fixedStat = "ITEM_MOD_SPIRIT_SHORT" },
+}
+
+-- Fist weapon skill (2026-11-17, Devilsaur Claws): weapon skill points x2.5 like English.
+if type(MSC.LocaleEquipPatterns) == "table" then
+    table.insert(MSC.LocaleEquipPatterns, 1, { p = "^拳套武器技能提高(%d+)點", valIdx = 1, fixedStat = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT", scale = 2.5 })
+end
+
+-- English-only parser patterns (2026-11-17): this language's wording for these lines is in MSC.LocaleEquipPatterns /
+-- MSC.LocaleTerms above, so the English pattern is kept as is (it simply never matches here).
+L["^%+(%d+) attack power against (.+)$"] = "^%+(%d+) attack power against (.+)$"
+L["^%+(%d+) attack power%. "] = "^%+(%d+) attack power%. "
+L["^%+(%d+) attack power, doubled against (.+)$"] = "^%+(%d+) attack power, doubled against (.+)$"
+L["^increased (.-) %+(%d+)"] = "^increased (.-) %+(%d+)"
+L["damage to your melee attacks"] = "damage to your melee attacks"
+L["damage to your weapon attack"] = "damage to your weapon attack"
+L["decreases the magical resistances of your spell targets by (%d+)"] = "decreases the magical resistances of your spell targets by (%d+)"
+L["fist weapons"] = "fist weapons"
+L["melee and ranged attack power"] = "melee and ranged attack power"
+L["melee attacks with this weapon deal"] = "melee attacks with this weapon deal"
+L["^your spells pierce (%d+) magical resistances"] = "^your spells pierce (%d+) magical resistances"
+
+-- Lines English reads as no stat (class-ability bonuses, pets, damage taken, death effects), generated 2026-11-17
+-- by SharpiesGearJudge-Research/locale_not_a_stat.py from this client's own text.
+MSC.LocaleNotAStat = {
+    "^使你的十字軍審判所提供的", -- Knight-Lieutenant's Lamellar Gauntlets
+    "^使你的治療之泉和法力之泉", -- Unmarred Vision of Voodress
+    "^接收的法術傷害降低%d+[%.,]?%d*。", -- Obsidian Mail Tunic
+    "^使你的治療之觸的施法時間", -- Idol of Health
+    "^每次施放治療之觸後獲得最", -- Idol of Longevity
+    "^每次施放次級治療波後恢復", -- Totem of Flowing Water
+    "^使審判為附近所有隊伍成員", -- Libram of Divinity
+    "^當你施放迅癒時，目標身上", -- Idol of Synthesis
+    "^受到的法術傷害降低%d+[%.,]?%d*點。", -- Tortoise Armor
+    "^你的治療法術有", -- Cleansed Ritual Kris
+    "^施放有害法術時，有一定機", -- Kindling Stave
+    "^死亡時，為", -- The Hammer of Grace
+}

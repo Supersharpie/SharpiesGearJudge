@@ -43,7 +43,8 @@ Hunter.Weights["RAID_SURV_DEEP"] = Hunter.Weights["SV_RAID"]
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
 -- Survival Tank (melee, not modelled) keeps its own row; the model still adds the PvP part.
-Hunter.Weights["PVP_MM_UTIL"] = MSC.ForeverPvPFrom(Hunter.Weights["MM_RAID"])
+-- PVP_MM_UTIL: frozen 2026-11-17 at MM_RAID's values (user: raid and PvP at 60 keep their own data)
+Hunter.Weights["PVP_MM_UTIL"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_RANGED_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=4.46, ["ITEM_MOD_INTELLECT_SHORT"]=1.98, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.9, ["ITEM_MOD_HIT_RATING_SHORT"]=54.0, ["ITEM_MOD_CRIT_RATING_SHORT"]=54.6, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=12.7, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 })
 -- The sim-built profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { BM_RAID = true, MM_RAID = true, SV_RAID = true, RAID_MM_STANDARD = true, RAID_MM_STARTER = true, RAID_SURV_DEEP = true, PVP_MM_UTIL = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one

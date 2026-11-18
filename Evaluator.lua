@@ -184,9 +184,9 @@ function MSC:EvaluateUpgradeFast(newItemLink, targetSlotID, weights, specName)
             if compSlot == 16 or compSlot == 17 then
                 score = score + (MSC:GetWeaponSpecBonus(equipped, MSC.CurrentClass, specName, weights, compSlot, GetInventoryItemLink("player", compSlot == 16 and 17 or 16)) or 0)
             end
-            old = { score, MSC.HitRatingOf(stats), stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0 }
+            old = { score, MSC.HitRatingOf(stats), stats["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] or 0, MSC.ExpertiseRatingOf(stats) }
         else
-            old = { 0, 0, 0 }
+            old = { 0, 0, 0, 0 }
         end
         MSC.EquippedSlotScoreCache[eqKey] = old
     end
@@ -224,6 +224,12 @@ function MSC:EvaluateUpgradeFast(newItemLink, targetSlotID, weights, specName)
             cur = MSC.HitRatingOf(totals)
         end
         newScore = newScore + MSC.ForeverHitCapCorrection(weights, cur, cur - old[2] + newHit)
+    end
+    -- Forever expertise on its curve too (2026-11-17), from the worn gear's own total
+    local newExp = MSC.ExpertiseRatingOf(newStats)
+    if MSC.IsForever and MSC.ForeverExpertiseCorrection and newExp ~= (old[4] or 0) then
+        local cur = MSC.GetGearExpertiseRating and MSC.GetGearExpertiseRating() or (old[4] or 0)
+        newScore = newScore + MSC.ForeverExpertiseCorrection(weights, cur, cur - (old[4] or 0) + newExp, true)
     end
 
     return newScore, oldScore
@@ -718,6 +724,14 @@ function MSC:EvaluateUpgrade(newItemLink, targetSlotID, weights, specName, basel
         newScore = newScore + correction
         if droppedBy then
             contextMsg = (contextMsg or "") .. string_format(MSC.L[" |cffff0000(Cap %.1f %s)|r"], droppedBy, MSC.L["Hit"])
+        end
+    end
+    -- Forever expertise (2026-11-17): the same true curve against its dodge / parry caps
+    if MSC.IsForever and MSC.ForeverExpertiseCorrection then
+        local correction, droppedBy = MSC.ForeverExpertiseCorrection(weights, MSC.ExpertiseRatingOf(currentStatsTotal), MSC.ExpertiseRatingOf(newStatsTotal), baselineGear ~= nil)
+        newScore = newScore + correction
+        if droppedBy then
+            contextMsg = (contextMsg or "") .. string_format(MSC.L[" |cffff0000(Cap %.1f %s)|r"], droppedBy, MSC.L["Exp"])
         end
     end
 

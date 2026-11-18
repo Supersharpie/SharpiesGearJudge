@@ -30,9 +30,12 @@ Warlock.Weights = {
 -- Nightfall/Conflagrate mixes Shadow Bolt procs with Conflagrate, so Fire takes a bigger share than in the raid build;
 -- Deep Destruction is mostly Fire (Searing Pain, Conflagrate, Shadowburn). Soul Link moves part of the damage you take
 -- to the demon and Life Tap pays for spells in health, so its Stamina floor is the farming build's.
-Warlock.Weights["PVP_NF_CONFLAG"] = MSC.ForeverPvPFrom(Warlock.Weights["AFF_RAID"], { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.3, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.7 })
-Warlock.Weights["PVP_DEEP_DESTRO"] = MSC.ForeverPvPFrom(Warlock.Weights["DESTRO_RAID"], { ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.6, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.4 })
-Warlock.Weights["PVP_SOUL_LINK"] = MSC.ForeverPvPFrom(Warlock.Weights["DEMO_PACT_RAID"], { ["ITEM_MOD_STAMINA_SHORT"]=3.0 })
+-- PVP_NF_CONFLAG: frozen 2026-11-17 at AFF_RAID's values plus its PvP overrides (user: raid and PvP at 60 keep their own data)
+Warlock.Weights["PVP_NF_CONFLAG"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.3, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.7, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.7, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=23.1, ["ITEM_MOD_INTELLECT_SHORT"]=0.56, ["ITEM_MOD_SPIRIT_SHORT"]=0.12, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.2, ["ITEM_MOD_STAMINA_SHORT"]=0.3 })
+-- PVP_DEEP_DESTRO: frozen 2026-11-17 at DESTRO_RAID's values plus its PvP overrides (user: raid and PvP at 60 keep their own data)
+Warlock.Weights["PVP_DEEP_DESTRO"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=0.6, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.4, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=19.4, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.2, ["ITEM_MOD_INTELLECT_SHORT"]=0.49, ["ITEM_MOD_SPIRIT_SHORT"]=0.07, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.15, ["ITEM_MOD_STAMINA_SHORT"]=0.3 })
+-- PVP_SOUL_LINK: frozen 2026-11-17 at DEMO_PACT_RAID's values plus its PvP overrides (user: raid and PvP at 60 keep their own data)
+Warlock.Weights["PVP_SOUL_LINK"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=1.46, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.54, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=28.9, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=19.7, ["ITEM_MOD_INTELLECT_SHORT"]=0.58, ["ITEM_MOD_SPIRIT_SHORT"]=0.14, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.34, ["ITEM_MOD_STAMINA_SHORT"]=3.0 })
 -- Old names, kept so a saved profile choice still works.
 Warlock.Weights["PVE_MD_RUIN"] = Warlock.Weights["DEMO_PACT_RAID"]
 Warlock.Weights["RAID_SM_RUIN"] = Warlock.Weights["AFF_RAID"]

@@ -84,13 +84,9 @@ MSC.StatAliases = {
 
     ["ITEM_MOD_RESISTANCE_ALL_SHORT"] = "ITEM_MOD_ALL_RESISTANCE_SHORT",
 
-    -- Forever avoidance-reduction ("dodged or parried" / a possible native
-    -- Expertise Rating token) isn't confirmed to ever actually populate from
-    -- Forever gear -- Weapon Skill is the confirmed itemization -- but if it
-    -- ever does (via Parse.lua's "dodged or parried" tooltip pattern, or a
-    -- real API token), fold it into Weapon Skill so it isn't silently
-    -- dropped, instead of carrying a duplicate weight in every class profile.
-    ["ITEM_MOD_EXPERTISE_RATING_SHORT"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    -- (2026-11-17) Expertise Rating is no longer folded into Weapon Skill: Forever gear carries it (it replaced
+    -- Classic's weapon skill items) and it does something else (fewer dodges and parries, no miss or glancing
+    -- change). It has its own rate (10 per 1%) and value (MSC.ApplyForeverExpertise, Helpers.lua).
 }
 
 MSC.PrettyNames = {
@@ -799,13 +795,18 @@ end
 -- items). Spell Hit/Crit use the same 10/14 (Forever items carry one unified
 -- Hit/Crit Rating). Weapon Skill, Parry, Block, Haste and Resilience had no
 -- converted items to check against, so they keep the old level-60 values.
-local FOREVER_RATINGS = { 2.50, 1.00, 12.00, 20.00, 5.00, 10.00, 14.00, 10.00, 10.00, 14.00, 10.00, 25.00 }
+-- 2026-11-16: Parry 20 -> 15. The client's CombatRatings game table (as read
+-- by wowsims-forever) has Dodge 12, Parry 15, Block 5, Hit 10, Expertise 10
+-- at every level, and 7 Classic "+1% parry" items became +15 Parry Rating
+-- (Block 5 matched 12 items). At 20, Parry items scored 25% low.
+-- 2026-11-17: column 13 = Expertise, 10 rating per 1% fewer dodges and parries (same client table).
+local FOREVER_RATINGS = { 2.50, 1.00, 12.00, 15.00, 5.00, 10.00, 14.00, 10.00, 10.00, 14.00, 10.00, 25.00, 10.00 }
 MSC.CombatRatingScalars = {}
 for level = 1, 80 do MSC.CombatRatingScalars[level] = FOREVER_RATINGS end
 
 MSC.RatingIndexMap = {
     ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = 1,
-	["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 1,
+	["ITEM_MOD_EXPERTISE_RATING_SHORT"] = 13,
     ["ITEM_MOD_DEFENSE_SKILL_RATING_SHORT"] = 2,
     ["ITEM_MOD_DODGE_RATING_SHORT"] = 3,
     ["ITEM_MOD_PARRY_RATING_SHORT"] = 4,

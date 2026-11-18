@@ -106,6 +106,8 @@ function MSC:ApplyWeightPipeline(rawWeights, specKey)
         finalWeights, capText = w, t
         MSC.FadeLevelingHooks(finalWeights, rawWeights, specKey)
     end
+    -- Expertise (WoW Forever, 2026-11-17): own value from the profile's below-cap melee hit, with its dodge / parry caps
+    if MSC.IsForever and MSC.ApplyForeverExpertise then MSC.ApplyForeverExpertise(finalWeights, rawWeights, specKey) end
     if pvp then
         MSC.PvPPipelineSpec = nil
         local label = MSC.ApplyForeverPvP(finalWeights)
@@ -676,6 +678,18 @@ function MSC.EvaluateLevelingCurve(curve, level)
     return out
 end
 
+-- The curve a leveling role reads (module.LevelingCurves / LevelingGear key), or nil: the role itself, else its alias
+-- (Paladin Leveling_Ret -> Leveling). PvP leveling (2026-11-17 split, user: solo / dungeon / PvP never touch each other's
+-- data): while PvP weights are on, the row's PvP twin (<role>_PvP, own curve and quest-gear rows) when the class has one.
+-- The profile key, and so every class hook, stays the solo one; only the numbers come from the PvP copy.
+function MSC.LevelingCurveRole(module, role)
+    local curves = module and module.LevelingCurves
+    if not (curves and role) then return nil end
+    local cr = curves[role] and role or (MSC.LevelingCurveAlias and MSC.LevelingCurveAlias[role])
+    if cr and curves[cr .. "_PvP"] and MSC.IsPvPWeightsActive and MSC.IsPvPWeightsActive() then cr = cr .. "_PvP" end
+    return cr
+end
+
 function MSC:GetLevelingRow(module, key)
     local rows = module and module.LevelingWeights
     local row = rows and rows[key]
@@ -687,7 +701,7 @@ function MSC:GetLevelingRow(module, key)
     -- Per-spec curve: weights at the player's level, held inside the chosen
     -- band so previewing another band's profile shows that band's weights.
     local curves = module.LevelingCurves
-    local curveRole = (curves and curves[role]) and role or (MSC.LevelingCurveAlias and MSC.LevelingCurveAlias[role])
+    local curveRole = MSC.LevelingCurveRole(module, role)
     local curve = curves and curveRole and curves[curveRole]
     if curve then
         local level = UnitLevel("player")

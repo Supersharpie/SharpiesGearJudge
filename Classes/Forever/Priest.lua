@@ -38,8 +38,10 @@ Priest.Weights["HOLY_DEEP"] = Priest.Weights["HOLY_RAID"]
 Priest.Weights["DISC_PI_SUPPORT"] = Priest.Weights["DISC_RAID"]
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
-Priest.Weights["SHADOW_PVP"] = MSC.ForeverPvPFrom(Priest.Weights["SHADOW_RAID"])
-Priest.Weights["DISC_PVP"] = MSC.ForeverPvPFrom(Priest.Weights["DISC_RAID"])
+-- SHADOW_PVP: frozen 2026-11-17 at SHADOW_RAID's values (user: raid and PvP at 60 keep their own data)
+Priest.Weights["SHADOW_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_SHADOW_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=21.1, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=23.0, ["ITEM_MOD_INTELLECT_SHORT"]=0.46, ["ITEM_MOD_STAMINA_SHORT"]=0.1 })
+-- DISC_PVP: frozen 2026-11-17 at DISC_RAID's values (user: raid and PvP at 60 keep their own data)
+Priest.Weights["DISC_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.79, ["ITEM_MOD_SPIRIT_SHORT"]=2.4, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.49, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=14.7, ["ITEM_MOD_STAMINA_SHORT"]=0.5 })
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { SHADOW_FARM = true, SHADOW_RAID = true, HOLY_RAID = true, DISC_RAID = true, SHADOW_PVE = true, HOLY_DEEP = true, DISC_PI_SUPPORT = true, SHADOW_PVP = true, DISC_PVP = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one

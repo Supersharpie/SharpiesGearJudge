@@ -17,7 +17,7 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 | Warrior | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Hunter | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Paladin | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Paladin | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.4.5) | ⏸️ Waiting |
 | Mage | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
@@ -31,6 +31,23 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.4.5 (Talents 1.3.7, Roadmap 3.3.1, Roster 1.1.3, Laboratory 3.1.3, XP 1.1.7)
+
+- **Talents, Paladin PvP leveling:** builds are now judged by total leveling time, questing plus the world fights you run into. Retribution is about 10% faster, Holy (quests like Retribution, fights with Holy Shock) about 12% and Protection about 7%.
+- **Talents, solo leveling builds:** re-checked now that the models count expertise, then all nine classes again on new leveling gear (latest Forever item changes). Warrior, Paladin, Rogue, Hunter, Druid Feral and Shaman Enhancement builds got slightly faster orders (up to 1%), then Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination (0.1% or less); the rest keep theirs.
+- **Solo leveling weights:** melee specs now get their Expertise value from the leveling models. Protection Paladin values Stamina and Intellect less at 20-40, Retribution values Intellect and MP5 less at 19-30.
+- **Solo leveling weights, new leveling gear:** every class rebuilt on gear picked with the 11-16/11-17 item changes, counting attack power and spell damage against one creature type and parry at 15 per 1%. Mage AoE Intellect counts about a quarter less at 20-33, Priest healer MP5 20-35% more at 15-30, Priest wand damage 15-30% less early.
+- **Roadmap, new dungeons:** The Drowned City, Krol'dok Stronghold, Alcaz Prison and Blackmaw Hold are on the leaderboard, with the drops players have seen so far.
+- **Roadmap, quest rewards:** 243 new quest rewards, most at levels 30-60, including Mount Hyjal, Riverglades and the quests for the five new Forever dungeons.
+- **Fixed, non-English clients:** French stats with an apostrophe ("Dégâts d’ombre") and stat names with some accented, Korean or Chinese letters scored nothing; they count again.
+- **Fixed, Shockadin:** Spell Power items no longer score half again too high.
+- **Fixed, Expertise:** expertise items counted as Weapon Skill and scored close to nothing. Now 10 Expertise Rating is 1% fewer dodges and parries, valued like hit (tanks twice), with its own cap (about 50 rating, 65 vs raid bosses).
+- **Fixed, Parry Rating:** Forever's rate is 15 Parry Rating per 1% (it was read as 20), so Parry items scored 25% too low for tanks.
+- **Fixed, percent hit and crit:** items worded "Improves your chance to hit by 2%" or "... critical strike by 1%" scored a tenth of their hit and crit (Blackhand's Breadth's crit not at all). They now count in full, as do Classic lines Forever reworded ("Attack Power against Undead", "with melee attacks") and old weapon skill lines ("Increased Daggers +4").
+- **Fixed, non-English "Equip:" lines:** on German, French, Spanish, Portuguese, Russian, Korean and Chinese clients most Classic "Equip:" lines (percent stats, mana per 5, school spell damage, block value, weapon skill) read nothing or the wrong stat; French school damage counted as Spell Power. All 8 languages now read every stat line like English.
+- **Fixed, lines that only look like stats:** class ability bonuses, pet lines, "Spell Damage received is reduced" and death effects no longer count as Spell Power, Holy damage, Healing or mana per 5.
+- **Fixed, XP Bar:** the stat weight warning no longer calls stats you already value "now valued" on WoW Forever, its numbers are rounded, and the level's gear score gain counts only item changes.
 
 ### 3.4.4 (Talents 1.3.6)
 

@@ -627,8 +627,14 @@ end
 -- ratings per 1% at the flat Forever ratings, Spell Power also at the
 -- Healing weight, shield block value, weapon DPS from the main and off hand
 -- (Hunters: the ranged one; Warriors and Rogues: no ranged slot).
+-- Parry stays 20 here on purpose (2026-11-16): the real Forever rate is 15 (Database_Forever FOREVER_RATINGS),
+-- but gear power is only a yardstick for how geared a character is, and it must match the export's GP_RATING
+-- (curves.py, gearpoints.py) or the gear points shift. Both sides use 20, so nothing scores wrong. Change all three
+-- together at the raid pass (2026-11-17: gearpoints.py's raid inputs have moved since its last export, so it can't be
+-- re-exported before then).
 local GP_RATING = {
-    ITEM_MOD_DODGE_RATING_SHORT = 12, ITEM_MOD_PARRY_RATING_SHORT = 20, ITEM_MOD_BLOCK_RATING_SHORT = 5,
+    -- parry 15 per 1% (Forever's rate; 2026-11-17, was 20), as the exported gear points (SimStudio curves.py GP_RATING)
+    ITEM_MOD_DODGE_RATING_SHORT = 12, ITEM_MOD_PARRY_RATING_SHORT = 15, ITEM_MOD_BLOCK_RATING_SHORT = 5,
 }
 local GP_HIT = { ITEM_MOD_HIT_RATING_SHORT = true, ITEM_MOD_HIT_SPELL_RATING_SHORT = true,
     ITEM_MOD_HIT_MELEE_RATING_SHORT = true, ITEM_MOD_HIT_RANGED_RATING_SHORT = true }
@@ -1161,6 +1167,107 @@ function MSC.HitRatingOf(t)
     if not t then return 0 end
     return (t["ITEM_MOD_HIT_RATING_SHORT"] or 0) + (t["ITEM_MOD_HIT_SPELL_RATING_SHORT"] or 0)
         + (t["ITEM_MOD_HIT_MELEE_RATING_SHORT"] or 0) + (t["ITEM_MOD_HIT_RANGED_RATING_SHORT"] or 0)
+end
+
+-- =============================================================
+-- EXPERTISE (WoW Forever, 2026-11-17)
+-- =============================================================
+-- 10 Expertise Rating = 1% less chance for your melee attacks to be dodged
+-- and 1% less to be parried (client CombatRatings table; wowsims-forever
+-- DodgeParrySuppression). Ranged attacks are never dodged, so ranged Hunters
+-- get nothing from it. Targets dodge 5% at your level and 6.5% as raid
+-- bosses; they parry 5% at your level and 14% as raid bosses, but only
+-- attacks from the front, so parries count for tanks only.
+-- Until the class models price expertise themselves (the solo / dungeon
+-- re-checks, then each PvP pass), 1% expertise is worth what the profile's
+-- own 1% melee hit is worth below the hit cap: one more swing in a hundred
+-- lands either way. Tanks attack from the front and lose both dodges and
+-- parries, so 2x that until the dodge cap, then 1x until the parry cap.
+-- A profile that sets ITEM_MOD_EXPERTISE_RATING_SHORT itself keeps its
+-- value as the full (below-cap) weight.
+MSC.ForeverExpertiseCaps = { DODGE = { leveling = 5, raid = 6.5 }, PARRY = { leveling = 5, raid = 14 } }
+
+function MSC.ExpertiseRatingOf(t)
+    return t and (t["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0) or 0
+end
+
+-- Expertise % that isn't from gear: Rogue Weapon Expertise, 1% a rank.
+function MSC.GetForeverExpertiseBase()
+    local _, class = UnitClass("player")
+    if class == "ROGUE" then return (MSC:GetTalentRank("WEAP_EXPERTISE") or 0) * 1 end
+    return 0
+end
+
+-- Expertise Rating on the worn gear (nil while it isn't scanned yet).
+function MSC.GetGearExpertiseRating()
+    local t = MSC.GetGearStatTotals and MSC.GetGearStatTotals()
+    return t and MSC.ExpertiseRatingOf(t) or nil
+end
+
+-- Sets the expertise weight of a finished weights table (in place) and records
+-- its cap curve for the upgrade checks (MSC.ForeverExpertiseCorrection).
+-- raw: the profile's own weights before class hooks and caps (its below-cap
+-- hit value); spec: the profile key.
+function MSC.ApplyForeverExpertise(weights, raw, spec, activeCaps)
+    if not (MSC.IsForever and weights) then return end
+    local key = "ITEM_MOD_EXPERTISE_RATING_SHORT"
+    local _, class = UnitClass("player")
+    raw = raw or weights
+    local full = tonumber(raw[key])
+    if not full then
+        -- melee only: an attack-power row (as the PvP model reads it), never a ranged Hunter
+        local ap = math_max(tonumber(raw["ITEM_MOD_ATTACK_POWER_SHORT"]) or 0, tonumber(raw["ITEM_MOD_FERAL_ATTACK_POWER_SHORT"]) or 0)
+        if ap < 0.5 then weights[key] = nil; return end
+        if class == "HUNTER" and not tostring(spec or ""):find("Melee") then weights[key] = nil; return end
+        full = tonumber(raw["ITEM_MOD_HIT_RATING_SHORT"]) or tonumber(raw["ITEM_MOD_HIT_MELEE_RATING_SHORT"]) or 0
+        if full <= 0 then weights[key] = nil; return end
+    end
+    local tank = MSC.GetRingRole and MSC.GetRingRole(class, spec) == "tank"
+    local blend = MSC.GetRaidBlend()
+    local C = MSC.ForeverExpertiseCaps
+    local dodgeCap = C.DODGE.leveling + (C.DODGE.raid - C.DODGE.leveling) * blend
+    local knees
+    if tank then
+        local parryCap = C.PARRY.leveling + (C.PARRY.raid - C.PARRY.leveling) * blend
+        full = tonumber(raw[key]) or 2 * full
+        if parryCap > dodgeCap + 0.05 then
+            knees = { { cap = dodgeCap, mult = 0.5 }, { cap = parryCap, mult = 0 } }
+        else
+            knees = { { cap = math_max(dodgeCap, parryCap), mult = 0 } }
+        end
+    else
+        knees = { { cap = dodgeCap, mult = 0 } }
+    end
+    local base = MSC.GetForeverExpertiseBase()
+    local pct = base + (MSC.GetGearExpertiseRating() or 0) / 10
+    local mult = 1
+    for _, k in ipairs(knees) do if pct >= k.cap then mult = k.mult end end
+    weights[key] = full * mult
+    MSC.ForeverExpertiseState = MSC.ForeverExpertiseState or setmetatable({}, { __mode = "k" })
+    MSC.ForeverExpertiseState[weights] = { full = full, knees = knees, mult = mult, base = base }
+    if mult < 1 and activeCaps then table.insert(activeCaps, string_format("%s (%.1f%%)", MSC.L["Exp"], knees[1].cap)) end
+end
+
+-- Expertise curve of a weights table as plain data (same shape as
+-- MSC.ForeverHitCapSnapshot, so MSC.ForeverHitCapCorrectionFor prices it), or nil.
+function MSC.ForeverExpertiseSnapshot(weights)
+    local st = MSC.ForeverExpertiseState and weights and MSC.ForeverExpertiseState[weights]
+    if not st then return nil end
+    return { w = weights["ITEM_MOD_EXPERTISE_RATING_SHORT"] or 0, full = st.full, knees = st.knees, base = st.base }
+end
+
+-- Score correction for swapping from oldRating to newRating total Expertise
+-- Rating: expertise past a cap is discounted, expertise that drops back below
+-- one is charged in full (as MSC.ForeverHitCapCorrection does for hit). Also
+-- returns how far under a cap the swap leaves the character, or nil.
+-- fromBaseline: oldRating is a saved set's own total, not the worn gear's.
+function MSC.ForeverExpertiseCorrection(weights, oldRating, newRating, fromBaseline)
+    if oldRating == newRating then return 0 end
+    if not fromBaseline then
+        local real = MSC.GetGearExpertiseRating()
+        if real then oldRating, newRating = real, real + (newRating - oldRating) end
+    end
+    return MSC.ForeverHitCapCorrectionFor(MSC.ForeverExpertiseSnapshot(weights), oldRating, newRating)
 end
 
 -- Tank defense toward the raid target: past the target, Defense is worth
@@ -1868,6 +1975,10 @@ MSC.FOREVER_API_STATS = {
     "ITEM_MOD_SPELL_POWER_SHORT", "ITEM_MOD_SPELL_HEALING_DONE_SHORT", "ITEM_MOD_ATTACK_POWER_SHORT", "ITEM_MOD_RANGED_ATTACK_POWER_SHORT",
     "ITEM_MOD_MANA_REGENERATION_SHORT",
 }
+MSC.FOREVER_API_SCHOOL_DAMAGE = {}
+for _, school in ipairs({ "SHADOW", "FIRE", "FROST", "ARCANE", "NATURE", "HOLY" }) do
+    MSC.FOREVER_API_SCHOOL_DAMAGE["ITEM_MOD_" .. school .. "_DAMAGE_DONE_SHORT"] = "ITEM_MOD_" .. school .. "_DAMAGE_SHORT"
+end
 
 function MSC.GetRawItemStats(itemLink)
     if not itemLink then return {} end
@@ -1898,6 +2009,12 @@ function MSC.GetRawItemStats(itemLink)
         if ok and type(api) == "table" then
             for _, key in ipairs(MSC.FOREVER_API_STATS) do
                 local v = api[key]
+                if type(v) == "number" and not MSC_IsSecret(v) and v > (finalStats[key] or 0) then finalStats[key] = v end
+            end
+            -- School spell damage (2026-11-16, GitHub issue 23): GetItemStats names it ITEM_MOD_<SCHOOL>_DAMAGE_DONE_SHORT,
+            -- the scan ITEM_MOD_<SCHOOL>_DAMAGE_SHORT. Same max rule.
+            for school, key in pairs(MSC.FOREVER_API_SCHOOL_DAMAGE) do
+                local v = api[school]
                 if type(v) == "number" and not MSC_IsSecret(v) and v > (finalStats[key] or 0) then finalStats[key] = v end
             end
         end

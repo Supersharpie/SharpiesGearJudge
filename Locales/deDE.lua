@@ -1726,7 +1726,7 @@ L["Mage: Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arc
 L["Shaman: Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling."] = "Schamane: Verstärkung in Instanzen und solo nimmt Gezeitenfokus früher, für etwas schnelleres Leveln."
 L["Hunter: melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered."] = "Jäger: Tierherrschaft-Nahkampf-Builds verzichten auf reine Distanz-Talente (Tierherrschaft im Nahkampf in Instanzen etwa 1,4% schneller), und die meisten Leveling-Builds sind neu geordnet."
 L["Warrior: builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster."] = "Krieger: Builds ohne zwei Waffen nehmen keine Talente für die Nebenhand mehr; Furor mit Zweihänder solo und Waffen in Instanzen leveln etwas schneller."
-L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "Paladin: Schutz-Solo-Leveln nimmt spät Göttliche Stärke und Heilig-Talente statt Eiserner Glaube und Shieldsworn, für etwa 1% schnelleres Leveln."
+L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "Paladin: Schutz-Solo-Leveln nimmt spät Göttliche Stärke und Heilig-Talente statt Eiserner Glaube und Schildgeschworen, für etwa 1% schnelleres Leveln."
 L["Warrior: Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s."] = "Krieger: Furor-PvP beim Leveln nimmt Blutwahnsinn, Gore Drinker und Verbessertes Abfangen früher, für etwa 4% mehr Duellstärke ab Mitte 40."
 L["The minimap button reopens the window on the page you used last, and right-clicking it lists every page (Roster, Talents and the rest) to jump straight to one."] = "Der Minikarten-Knopf öffnet das Fenster auf der zuletzt genutzten Seite, und ein Rechtsklick listet alle Seiten (Roster, Talente und die übrigen) zum direkten Wechseln."
 L["From level 50, values hit and tank defense toward raid caps (9% hit, 17% spell hit, 440 defense, uncrushable) instead of what leveling needs. Turn off if you won't raid."] = "Ab Stufe 50 werden Trefferwertung und Tank-Verteidigung auf die Schlachtzug-Caps ausgerichtet (9% Treffer, 17% Zaubertreffer, 440 Verteidigung, schmetterimmun) statt auf das, was man beim Leveln braucht. Ausschalten, wenn du nicht raiden wirst."
@@ -2481,3 +2481,111 @@ L["Talents, Druid dungeon builds: re-searched in real leveling gear. Restoration
 L["Paladin dungeon weights: measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30."] = "Paladin-Dungeon-Gewichtungen: mit echter Leveling-Ausrüstung und deinem eigenen Segen berechnet. Schutz-Tanks bewerten Ausdauer, Blocken und Zaubermacht höher und Manawerte ab 30 deutlich niedriger."
 L["Talents, Shaman dungeon builds: re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems."] = "Talente, Schamanen-Dungeon-Builds: mit echter Leveling-Ausrüstung neu berechnet. Verstärkung nimmt Verbesserter Sturmschlag mit 30 für etwa 4% mehr Schaden, Wiederherstellung heilt etwa 2% mehr, und Elementar behält seine Reihenfolge. Der Tank-Build endet jetzt mit 30. Die Notizen nennen deine Totems."
 L["Dungeon tanks: every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration."] = "Dungeon-Tanks: jeder Tank wird jetzt in eigener Tank-Ausrüstung berechnet, wobei Tode und Schaden an anderen Gegnern einer Gruppe an echte Forever-Logs angepasst sind. Die Notiz des Paladin-Tanks sagt, wann du Weihe wirkst."
+L["Roadmap plugin: loot for four of the new Forever dungeons and 243 new quest rewards, including Mount Hyjal."] = "Roadmap-Plugin: Beute für vier der neuen Forever-Dungeons und 243 neue Questbelohnungen, darunter Hyjal."
+L["Fixed: the PvP Shockadin profile counted Spell Power's healing twice, so Spell Power items scored too high."] = "Behoben: Das PvP-Profil Schockadin zählte die Heilung von Zaubermacht doppelt, daher wurden Gegenstände mit Zaubermacht zu hoch bewertet."
+L["XP Bar: the stat weight warning no longer calls stats you already value \"now valued\", its numbers are rounded, and the level's gear score gain counts only item changes."] = "XP-Leiste: Die Warnung zu Wertegewichtungen nennt Werte, die schon gewertet werden, nicht mehr \"jetzt gewertet\", die Zahlen sind gerundet, und der Ausrüstungswert-Zuwachs der Stufe zählt nur Gegenstandswechsel."
+L["Talents, Paladin PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Retribution, Holy and Protection are 7-12% faster."] = "Talente, Paladin PvP-Leveln: Builds werden jetzt nach der gesamten Levelzeit bewertet, Questen plus die Kämpfe gegen Spieler in der offenen Welt. Vergeltung, Heilig und Schutz sind 7–12 % schneller."
+L["Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page."] = "Fortschritt: PvP-Leveling-Builds für 1 von 9 Klassen fertig (Paladin). Die vollständige Übersicht steht auf der CurseForge-Seite."
+L["Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap."] = "Behoben: Gegenstände mit Waffenkundewertung zählten fast nichts. 10 Waffenkundewertung bedeuten jetzt 1 % weniger Ausweichen und Parieren, gewertet wie Trefferchance (für Tanks doppelt), mit eigener Obergrenze."
+L["Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20)."] = "Behoben: Parierwertung wurde für Tanks 25 % zu niedrig gewertet (in Forever sind es 15 pro 1 % Parieren, nicht 20)."
+L["Fixed: items worded \"Improves your chance to hit by 2%\" or \"... critical strike by 1%\" scored a tenth of their hit and crit."] = "Behoben: Gegenstände mit „Erhöht Eure Trefferchance um 2 %“ oder „... kritische Trefferchance um 1 %“ zählten nur ein Zehntel ihres Treffer- und Kritwerts."
+L["Fixed: many Classic \"Equip:\" lines scored nothing or the wrong stat, such as Attack Power against Undead and weapon skill, and on non-English clients most percent, mana per 5 and spell school damage lines."] = "Behoben: Viele klassische „Anlegen:“-Zeilen zählten gar nicht oder als falscher Wert, etwa Angriffskraft gegen Untote und Waffenfertigkeit, und auf nicht-englischen Clients die meisten Prozent-, Mana-alle-5-Sek.- und Zauberschulschaden-Zeilen."
+L["Talents, solo leveling: the melee solo builds were re-checked with expertise. Warrior, Paladin, Rogue, Hunter, Druid and Shaman got slightly faster orders (up to 1%), and melee weights now price Expertise from the models."] = "Talente, Solo-Leveln: Die Solo-Builds der Nahkämpfer wurden mit Waffenkunde neu geprüft. Krieger, Paladin, Schurke, Jäger, Druide und Schamane bekamen etwas schnellere Reihenfolgen (bis zu 1 %), und die Nahkampf-Gewichtungen bewerten Waffenkunde jetzt nach den Modellen."
+L["Talents, solo leveling: all nine classes were re-checked on new leveling gear with the latest Forever item changes. Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination got slightly faster orders, and every class's solo weights were rebuilt."] = "Talente, Solo-Leveln: Alle neun Klassen wurden mit neuer Leveling-Ausrüstung und den neuesten Gegenstandsänderungen in Forever neu geprüft. Magier, Hexenmeister, Disziplin-Priester, Gleichgewichts-Druide, Elementar-Schamane und Meucheln-Schurke bekommen etwas schnellere Reihenfolgen, und die Solo-Gewichte aller Klassen wurden neu berechnet."
+L["Fixed: on French, Portuguese, Korean and Chinese clients some stats scored nothing, such as Shadow damage and Attack Power on French items."] = "Behoben: Auf französischen, portugiesischen, koreanischen und chinesischen Clients wurden manche Werte nicht gezählt, etwa Schattenschaden und Angriffskraft auf französischen Gegenständen."
+
+-- =============================================================
+-- EQUIP STAT LINES (2026-11-17): German wordings of Equip: stat lines that the shared English patterns miss.
+-- =============================================================
+local PCT = "([%d%.,]+)%s?\194?\160?%%"
+-- Some Lua builds lower-case the lead byte of ä/ö/ü (\195) to \227; accept both.
+local function U(s) return (string.gsub(s, "\195", "[\195\227]")) end
+MSC.LocaleTerms = {
+    ["Äxte"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Zweihandäxte"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Schwerter"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Zweihandschwerter"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Streitkolben"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Zweihandstreitkolben"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Dolche"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Bogen"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Armbrüste"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Schusswaffen"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Stäbe"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Stangenwaffen"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+    ["Faustwaffen"] = "ITEM_MOD_WEAPON_SKILL_RATING_SHORT",
+}
+MSC.LocaleEquipPatterns = {
+    -- "Stellt alle 5 Sek. 4 Punkt(e) Mana wieder her." (anchored: the Atiesh party aura goes on)
+    { p = "^stellt alle 5 sek%. (%d+) punkt%(e%) mana wieder her%.?$", valIdx = 1, fixedStat = "ITEM_MOD_MANA_REGENERATION_SHORT" },
+    { p = "^stellt alle 5 sek%. (%d+) punkt%(e%) gesundheit wieder her%.?$", valIdx = 1, fixedStat = "ITEM_MOD_HEALTH_REGENERATION_SHORT" },
+    -- Percent lines (Forever rating = percent x scalar)
+    { p = U("^erhöht eure kritische trefferchance mit zaubern um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", isPercent = true },
+    { p = U("^erhöht eure chance, einen kritischen treffer durch zauber zu erzielen, um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", isPercent = true },
+    { p = U("^erhöht eure kritische trefferchance mit nahkampf.-angriffen um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT", isPercent = true },
+    { p = U("^erhöht eure chance auf treffer mit zaubern um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT", isPercent = true },
+    { p = U("^erhöht eure chance, einem angriff auszuweichen, um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT", isPercent = true },
+    { p = U("^erhöht eure chance, einen angriff zu parieren, um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_PARRY_RATING_SHORT", isPercent = true },
+    { p = U("^erhöht eure chance, angriffe mit einem schild zu blocken, um ") .. PCT, valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT", isPercent = true },
+    -- Flat stats
+    { p = U("^erhöht den blockwert eures schilde?s um (%d+)"), valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_VALUE_SHORT" },
+    { p = U("^erhöht alle widerstände um (%d+)"), valIdx = 1, fixedStat = "ITEM_MOD_ALL_RESISTANCE_SHORT" },
+    { p = "^%+(%d+) angriffskraft in katzengestalt", valIdx = 1, fixedStat = "ITEM_MOD_FERAL_ATTACK_POWER_SHORT" },
+    { p = U("^reduziert die magiewiderstände der ziele eurer zauber um (%d+)"), valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    { p = U("^verringert die magiewiderstände der ziele eurer zauber um (%d+)"), valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    -- "+14 Angriffskraft. Dieser Effekt wird in Wäldern und Grünland verdreifacht.": the base value only.
+    { p = "^%+(%d+) angriffskraft%. ", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    { p = U("^erhöht die nahkampf%- und distanzangriffskraft um (%d+)"), valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    -- "+30 Angriffskraft, verdoppelt gegen mechanische Einheiten.": base all the time, once more against Mechanicals.
+    { p = "^%+(%d+) angriffskraft, verdoppelt gegen mechanische einheiten", func = function(val, _, _, out)
+        if not out then return false end
+        local share = (MSC.Scanner.CreatureShare and MSC.Scanner.CreatureShare.mechanical) or 0
+        out["ITEM_MOD_ATTACK_POWER_SHORT"] = (out["ITEM_MOD_ATTACK_POWER_SHORT"] or 0) + (tonumber(val) or 0) * (1 + share)
+    end },
+    -- "Erhöht Eure Willenskraft in Wäldern und Grünland um 16." / "Erhöht die Willenskraft in Höhlen oder im Untergrund um 16."
+    { p = U("^erhöht [de][iu][er]e? willenskraft in .- um (%d+)%.?$"), valIdx = 1, fixedStat = "ITEM_MOD_SPIRIT_SHORT" },
+    { p = U("^%+(%d+) rüstung%.?$"), valIdx = 1, fixedStat = "ITEM_MOD_ARMOR_SHORT" },
+    -- Weapon skill: "Äxte +7." (name looked up in LocaleTerms, x2.5 like English)
+    -- A func: the shared rating check skips the x2.5 because "schwerter" contains L["rating"] = "wert".
+    { p = "^([^%s%d%+]+) %+(%d+)%.?$", func = function(name, val, _, out)
+        if MSC.Scanner.LookupTerm(name) ~= "ITEM_MOD_WEAPON_SKILL_RATING_SHORT" then return false end
+        if not out then return false end
+        local v = tonumber(val) or 0
+        if MSC.IsForever then
+            local sc = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+            v = v * ((sc and sc[1]) or 2.5)
+        end
+        out["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = (out["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] or 0) + v
+    end },
+}
+
+-- English-only parser patterns (2026-11-17): this language's wording for these lines is in MSC.LocaleEquipPatterns /
+-- MSC.LocaleTerms above, so the English pattern is kept as is (it simply never matches here).
+L["^%+(%d+) attack power against (.+)$"] = "^%+(%d+) attack power against (.+)$"
+L["^%+(%d+) attack power%. "] = "^%+(%d+) attack power%. "
+L["^%+(%d+) attack power, doubled against (.+)$"] = "^%+(%d+) attack power, doubled against (.+)$"
+L["^increased (.-) %+(%d+)"] = "^increased (.-) %+(%d+)"
+L["damage to your melee attacks"] = "damage to your melee attacks"
+L["damage to your weapon attack"] = "damage to your weapon attack"
+L["decreases the magical resistances of your spell targets by (%d+)"] = "decreases the magical resistances of your spell targets by (%d+)"
+L["fist weapons"] = "fist weapons"
+L["melee and ranged attack power"] = "melee and ranged attack power"
+L["melee attacks with this weapon deal"] = "melee attacks with this weapon deal"
+L["^your spells pierce (%d+) magical resistances"] = "^your spells pierce (%d+) magical resistances"
+
+-- Lines English reads as no stat (class-ability bonuses, pets, damage taken, death effects), generated 2026-11-17
+-- by SharpiesGearJudge-Research/locale_not_a_stat.py from this client's own text.
+MSC.LocaleNotAStat = {
+    "^stellt für euren wichtel alle %d+[%.,]?%d* sek", -- Pimgib's Collar
+    "^erhöht den heiligschadensbonus eure", -- Knight-Lieutenant's Lamellar Gauntlets
+    "^der erlittene zauberschaden wird um ", -- Obsidian Mail Tunic
+    "^jedes mal, wenn ihr 'geringe welle d", -- Totem of Flowing Water
+    "^erhöht den bonus für nahkampfangri", -- Libram of Fervor
+    "^erhöht den von eurem zauber 'mondfe", -- Idol of the Moon
+    "^erhöht den durch eure zauber 'blitz", -- Totem of the Storm
+    "^für jeden auf dem ziel aktiven rege", -- Idol of Synthesis
+    "^lässt gruppenmitglieder innerhalb v", -- Baron's Scepter
+    "^erlittener zauberschaden um %d+[%.,]?%d* verrin", -- Tortoise Armor
+    "^beim wirken von schadenszaubern best", -- Kindling Stave
+    "^verringert die abklingzeit eures zau", -- Idol of Swiftness
+}

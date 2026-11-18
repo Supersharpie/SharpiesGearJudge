@@ -404,7 +404,7 @@ L["Mage: Arcane AoE takes Permafrost at 35 for about 3% faster leveling, and Arc
 L["Shaman: Enhancement dungeon and solo leveling take Tidal Focus earlier, for slightly faster leveling."] = "주술사: 고양 던전과 솔로 빌드가 해일의 집중을 더 일찍 찍어 조금 더 빨리 오릅니다."
 L["Hunter: melee Beast Mastery builds drop ranged-only talents (Beast Mastery melee dungeon about 1.4% faster), and most leveling builds are re-ordered."] = "사냥꾼: 근접 야수 지배 빌드가 원거리 전용 특성을 빼고(근접 야수 지배 던전 약 1.4% 빠름), 대부분의 레벨업 빌드 순서가 조정되었습니다."
 L["Warrior: builds that don't dual-wield no longer take off-hand talents; Fury two-hander solo and Arms dungeon level a little faster."] = "전사: 쌍수를 쓰지 않는 빌드가 더 이상 보조 무기 특성을 찍지 않아, 양손 분노 솔로와 무기 던전 빌드가 조금 더 빨리 오릅니다."
-L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "성기사: 방어 솔로 레벨업이 후반에 강철의 신념과 Shieldsworn 대신 천상의 힘과 신성 특성을 찍어 약 1% 더 빨리 오릅니다."
+L["Paladin: Protection solo leveling takes Divine Strength and Holy talents late in place of Iron Creed and Shieldsworn, for about 1% faster leveling."] = "성기사: 방어 솔로 레벨업이 후반에 강철의 신념과 방패서약자 대신 천상의 힘과 신성 특성을 찍어 약 1% 더 빨리 오릅니다."
 L["Warrior: Fury PvP leveling takes Blood Craze, Gore Drinker and Improved Intercept earlier, for about 4% more duel strength from the mid 40s."] = "전사: 분노 PvP 레벨업이 피의 광기, Gore Drinker, 봉쇄 연마를 더 일찍 찍어 40레벨 중반부터 결투 능력이 약 4% 높아집니다."
 L["The minimap button reopens the window on the page you used last, and right-clicking it lists every page (Roster, Talents and the rest) to jump straight to one."] = "미니맵 버튼이 마지막으로 쓴 페이지로 창을 열고, 오른쪽 클릭하면 모든 페이지(Roster, 특성 등)가 나와 바로 이동할 수 있습니다."
 L["Force of Nature"] = "자연의 군대"
@@ -1477,7 +1477,7 @@ L["Improved Health Funnel"] = "생명력 집중 연마"
 L["Improved Imp"] = "임프 연마"
 L["Improved Life Tap"] = "생명력 전환 연마"
 L["Improved Mind Blast"] = "정신 분열 연마"
-L["Improved Moonfire"] = "달빛 섬광 연마"
+L["Improved Moonfire"] = "달빛섬광 연마"
 L["Improved Power Word: Shield"] = "신의 권능: 보호막 연마"
 L["Improved Regrowth"] = "재생 연마"
 L["Improved Renew"] = "소생 연마"
@@ -1788,3 +1788,91 @@ L["Talents, Druid dungeon builds: re-searched in real leveling gear. Restoration
 L["Paladin dungeon weights: measured on real leveling gear with your own blessing. Protection tanks value Stamina, block and spell power more, and mana stats much less from 30."] = "성기사 던전 가중치: 실제 레벨업 장비와 자신의 축복으로 측정했습니다. 보호 탱커는 체력, 방패 막기, 주문력을 더 높게, 30부터 마나 능력치를 훨씬 낮게 평가합니다."
 L["Talents, Shaman dungeon builds: re-searched in real leveling gear. Enhancement takes Improved Stormstrike at 30 for about 4% more damage, Restoration heals about 2% more, and Elemental keeps its order. The tank build now ends at 30. The notes name your totems."] = "특성, 주술사 던전 빌드: 실제 레벨업 장비로 다시 계산했습니다. 고양은 30레벨에 폭풍의 일격 연마를 찍어 피해가 약 4% 늘었고, 복원은 치유량이 약 2% 늘었으며, 정기는 순서를 유지합니다. 탱커 빌드는 이제 30레벨에서 끝납니다. 설명에 사용할 토템이 적혀 있습니다."
 L["Dungeon tanks: every tank is now measured in its own tank gear, with deaths and damage on other mobs in a pack matched to real Forever logs. The Paladin tank note says when to cast Consecration."] = "던전 탱커: 이제 모든 탱커를 자기 탱커 장비로 측정하며, 죽는 빈도와 무리의 다른 몹에게 가는 피해를 실제 Forever 기록에 맞췄습니다. 성기사 탱커 설명에 신성화를 언제 쓸지 적혀 있습니다."
+L["Roadmap plugin: loot for four of the new Forever dungeons and 243 new quest rewards, including Mount Hyjal."] = "Roadmap 플러그인: Forever 신규 던전 4곳의 전리품과 하이잘 산을 포함한 퀘스트 보상 243개가 추가되었습니다."
+L["Fixed: the PvP Shockadin profile counted Spell Power's healing twice, so Spell Power items scored too high."] = "수정: PvP 신성 충격 성기사 프로필이 주문력의 치유를 두 번 계산해 주문력 아이템 점수가 너무 높게 나왔습니다."
+L["XP Bar: the stat weight warning no longer calls stats you already value \"now valued\", its numbers are rounded, and the level's gear score gain counts only item changes."] = "경험치 바: 능력치 가중치 경고가 이미 반영 중인 능력치를 \"이제 점수에 반영\"으로 표시하지 않고, 숫자는 반올림되며, 레벨별 장비 점수 증가는 아이템 교체만 계산합니다."
+L["Talents, Paladin PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Retribution, Holy and Protection are 7-12% faster."] = "특성, 성기사 레벨업 PvP: 이제 빌드를 전체 레벨업 시간(퀘스트와 필드에서 마주치는 PvP 전투)으로 평가합니다. 징벌, 신성, 보호가 7~12% 빨라졌습니다."
+L["Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page."] = "진행 상황: 레벨업 PvP 빌드가 9개 직업 중 1개(성기사) 완료되었습니다. 전체 현황은 CurseForge 페이지에 있습니다."
+L["Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap."] = "수정: 숙련 아이템이 거의 점수를 받지 못하던 문제. 이제 숙련도 10은 회피와 무기 막기를 1% 줄이며, 적중처럼 평가되고(방어 전담은 두 배) 자체 상한이 있습니다."
+L["Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20)."] = "수정: 방어 전담에게 무기 막기 등급이 25% 낮게 계산되던 문제 (Forever에서는 무기 막기 1%당 20이 아니라 15입니다)."
+L["Fixed: items worded \"Improves your chance to hit by 2%\" or \"... critical strike by 1%\" scored a tenth of their hit and crit."] = "수정: \"적중률이 2% 증가합니다\" 또는 \"... 치명타율이 1% 증가합니다\" 같은 아이템의 적중과 치명타가 10분의 1만 계산되던 문제."
+L["Fixed: many Classic \"Equip:\" lines scored nothing or the wrong stat, such as Attack Power against Undead and weapon skill, and on non-English clients most percent, mana per 5 and spell school damage lines."] = "수정: 언데드 대상 전투력, 무기 숙련도 등 많은 클래식 \"착용 효과:\" 줄이 계산되지 않거나 다른 능력치로 계산되던 문제. 영어가 아닌 클라이언트에서는 대부분의 % 줄, 5초당 마나 회복, 주문 계열 피해 줄도 수정되었습니다."
+L["Talents, solo leveling: the melee solo builds were re-checked with expertise. Warrior, Paladin, Rogue, Hunter, Druid and Shaman got slightly faster orders (up to 1%), and melee weights now price Expertise from the models."] = "특성, 솔로 레벨업: 근접 솔로 빌드를 숙련도를 반영해 다시 점검했습니다. 전사, 성기사, 도적, 사냥꾼, 드루이드, 주술사의 순서가 조금 더 빨라졌고(최대 1%), 근접 가중치는 이제 모델에서 숙련도 값을 가져옵니다."
+L["Talents, solo leveling: all nine classes were re-checked on new leveling gear with the latest Forever item changes. Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination got slightly faster orders, and every class's solo weights were rebuilt."] = "특성, 솔로 레벨업: 최신 Forever 아이템 변경을 반영한 새 레벨업 장비로 9개 직업을 모두 다시 점검했습니다. 마법사, 흑마법사, 수양 사제, 조화 드루이드, 정기 주술사, 암살 도적의 특성 순서가 조금 더 빨라졌고, 모든 직업의 솔로 가중치를 다시 계산했습니다."
+L["Fixed: on French, Portuguese, Korean and Chinese clients some stats scored nothing, such as Shadow damage and Attack Power on French items."] = "수정: 프랑스어, 포르투갈어, 한국어, 중국어 클라이언트에서 일부 능력치(예: 프랑스어 아이템의 암흑 피해와 전투력)가 점수에 반영되지 않던 문제를 고쳤습니다."
+
+-- Korean equip-line wordings (2026-11-17, items_equip_audit_locales.py): Korean puts the number after the stat
+-- ("... 1.0%만큼 증가합니다"), so these lines get their own patterns, tried before the shared ones.
+local KO_PCT = "([%d%.,]+)%s?\194?\160?%%"
+-- Calls the shared pattern whose p is MSC.L[key] (the creature-type helpers live in Parse.lua, loaded after this file).
+local function KoShared(key)
+    return function(a, b, c, o)
+        local p = MSC.L[key]
+        for _, pat in ipairs(MSC.Scanner and MSC.Scanner.EquipPatterns or {}) do
+            if pat.p == p and pat.func then return pat.func(a, b, c, o) end
+        end
+        return false
+    end
+end
+MSC.LocaleEquipPatterns = {
+    -- Defense before weapon skill: both end in "숙련도 +N".
+    { p = "^방어 숙련도 %+(%d+)", valIdx = 1, fixedStat = "ITEM_MOD_DEFENSE_SKILL_RATING_SHORT" },
+    -- "낚시 숙련도 +15": fishing, not a combat stat (English scores it nothing too).
+    { p = "^낚시 숙련도 %+(%d+)", func = function() end },
+    -- "단검류 숙련도 +6": weapon skill points, stored as rating (x2.5) like English "Increased Daggers +6".
+    { p = "^([^%d]-류) 숙련도 %+(%d+)$", func = function(_, val, _, o)
+        if not o then return false end
+        local s = MSC.CombatRatingScalars and MSC.CombatRatingScalars[60]
+        o["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] = (o["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"] or 0) + (tonumber(val) or 0) * ((MSC.IsForever and ((s and s[1]) or 2.5)) or 1)
+    end },
+    -- Percent lines.
+    { p = "^주문의 치명타 및 극대화율이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", isPercent = true },
+    { p = "^주문이 극대화 효과를 낼 확률이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_CRIT_RATING_SHORT", isPercent = true },
+    { p = "^근접[^%d]-공격의 치명타 및 극대화율이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_CRIT_RATING_SHORT", isPercent = true },
+    { p = "^주문의 적중률이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_HIT_SPELL_RATING_SHORT", isPercent = true },
+    { p = "^원거리 무기의 적중률이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_HIT_RATING_SHORT", isPercent = true },
+    { p = "^공격을 회피할 확률이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_DODGE_RATING_SHORT", isPercent = true },
+    { p = "^방패로 적의 공격을 방어할 확률이 " .. KO_PCT .. "만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_BLOCK_RATING_SHORT", isPercent = true },
+    -- "암흑 계열의 주문과 효과의 공격력이 최대 11만큼 증가합니다."
+    { p = "^암흑 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_SHADOW_DAMAGE_SHORT" },
+    { p = "^화염 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_FIRE_DAMAGE_SHORT" },
+    { p = "^냉기 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_FROST_DAMAGE_SHORT" },
+    { p = "^비전 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_ARCANE_DAMAGE_SHORT" },
+    { p = "^자연 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_NATURE_DAMAGE_SHORT" },
+    { p = "^신성 계열의 주문과 효과의 공격력이 최대 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_HOLY_DAMAGE_SHORT" },
+    -- Attack power: vs one creature type, doubled vs one type, melee and ranged.
+    { p = "^([^%d]-)에 대한 전투력이 (%d+)만큼 증가", func = KoShared("^%+(%d+) attack power vs (.+)$") },
+    { p = "^전투력이 (%d+) 증가합니다%. ([^%d]-) 유닛을 상대로는 효과가 2배", func = KoShared("^%+(%d+) attack power, doubled against (.+)$") },
+    { p = "^근접 및 원거리 전투력이 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_ATTACK_POWER_SHORT" },
+    -- Other plain stats.
+    { p = "^자신의 주문에 대한 대상의 마법 저항력을 (%d+)만큼 감소", valIdx = 1, fixedStat = "ITEM_MOD_SPELL_PENETRATION_SHORT" },
+    { p = "^모든 저항력이 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_ALL_RESISTANCE_SHORT" },
+    -- "숲과 초원 지역에서 정신력이 16만큼 증가합니다." (Royal Seal of Eldre'Thalas): the base value, like English.
+    { p = "^[^%d]-지역에서 정신력이 (%d+)만큼 증가", valIdx = 1, fixedStat = "ITEM_MOD_SPIRIT_SHORT" },
+}
+
+-- English-only parser patterns (2026-11-17): this language's wording for these lines is in MSC.LocaleEquipPatterns /
+-- MSC.LocaleTerms above, so the English pattern is kept as is (it simply never matches here).
+L["^%+(%d+) attack power against (.+)$"] = "^%+(%d+) attack power against (.+)$"
+L["^%+(%d+) attack power%. "] = "^%+(%d+) attack power%. "
+L["^%+(%d+) attack power, doubled against (.+)$"] = "^%+(%d+) attack power, doubled against (.+)$"
+L["^increased (.-) %+(%d+)"] = "^increased (.-) %+(%d+)"
+L["damage to your melee attacks"] = "damage to your melee attacks"
+L["damage to your weapon attack"] = "damage to your weapon attack"
+L["decreases the magical resistances of your spell targets by (%d+)"] = "decreases the magical resistances of your spell targets by (%d+)"
+L["fist weapons"] = "fist weapons"
+L["melee and ranged attack power"] = "melee and ranged attack power"
+L["melee attacks with this weapon deal"] = "melee attacks with this weapon deal"
+L["^your spells pierce (%d+) magical resistances"] = "^your spells pierce (%d+) magical resistances"
+
+-- Lines English reads as no stat (class-ability bonuses, pets, damage taken, death effects), generated 2026-11-17
+-- by SharpiesGearJudge-Research/locale_not_a_stat.py from this client's own text.
+MSC.LocaleNotAStat = {
+    "^치유의 토템과 마나샘 토템", -- Unmarred Vision of Voodress
+    "^치유의 손길의 시전 시간이", -- Idol of Health
+    "^치유의 손길 시전 시 최대 %d+[%.,]?%d*의", -- Idol of Longevity
+    "^하급 치유의 물결 시전 시 %d+[%.,]?%d*의", -- Totem of Flowing Water
+    "^신속한 치유 시전 시 대상에", -- Idol of Synthesis
+    "^치유 주문 사용 시 ", -- Cleansed Ritual Kris
+    "^신속한 치유의 재사용 대기", -- Idol of Swiftness
+}

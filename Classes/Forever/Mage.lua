@@ -26,9 +26,12 @@ Mage.Weights = {
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
 -- Elemental (Shatter) casts both schools, so each school key takes half.
-Mage.Weights["POM_PYRO"] = MSC.ForeverPvPFrom(Mage.Weights["FIRE_RAID"])
-Mage.Weights["ELEMENTAL"] = MSC.ForeverPvPFrom(Mage.Weights["FROST_RAID"], { ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0 })
-Mage.Weights["FROST_PVP"] = MSC.ForeverPvPFrom(Mage.Weights["FROST_RAID"])
+-- POM_PYRO: frozen 2026-11-17 at FIRE_RAID's values (user: raid and PvP at 60 keep their own data)
+Mage.Weights["POM_PYRO"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=2.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=24.6, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=18.9, ["ITEM_MOD_INTELLECT_SHORT"]=0.38, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.12 })
+-- ELEMENTAL: frozen 2026-11-17 at FROST_RAID's values plus its PvP overrides (user: raid and PvP at 60 keep their own data)
+Mage.Weights["ELEMENTAL"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=30.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.71, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.26, ["ITEM_MOD_SPIRIT_SHORT"]=0.42, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.85, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=1.0 })
+-- FROST_PVP: frozen 2026-11-17 at FROST_RAID's values (user: raid and PvP at 60 keep their own data)
+Mage.Weights["FROST_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_FROST_DAMAGE_SHORT"]=1.74, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=30.5, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=17.6, ["ITEM_MOD_INTELLECT_SHORT"]=0.71, ["ITEM_MOD_ARCANE_DAMAGE_SHORT"]=0.26, ["ITEM_MOD_SPIRIT_SHORT"]=0.42, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.85 })
 -- PvP builds whose key doesn't say PvP (MSC.IsPvPProfile).
 Mage.PvPProfiles = { POM_PYRO = true, ELEMENTAL = true }
 -- Old names, kept so a saved profile choice still works.

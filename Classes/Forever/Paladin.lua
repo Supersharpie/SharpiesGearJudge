@@ -52,11 +52,14 @@ Paladin.Weights = {
 -- Shockadin: Holy: Raid with Holy Shock's damage half counted (Spell Power and Holy damage as well as healing, Hit
 -- for the damage). Retribution and Reck-Bomb: Ret: Raid (Reck-Bomb for builds with Reckoning and Vengeance: Forever's
 -- Reckoning stores up to 4 extra attacks and releases them all on the next melee hit).
-Paladin.Weights["SHOCKADIN"] = MSC.ForeverPvPFrom(Paladin.Weights["HOLY_RAID"], {
-    ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.0,
-    ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.0 })
-Paladin.Weights["RECK_BOMB"] = MSC.ForeverPvPFrom(Paladin.Weights["RET_STANDARD"])
-Paladin.Weights["RET_PVP"] = MSC.ForeverPvPFrom(Paladin.Weights["RET_STANDARD"])
+-- SHOCKADIN: frozen 2026-11-17 at HOLY_RAID's values plus its PvP overrides (user: raid and PvP at 60 keep their own data)
+-- Spell Power is the damage half only (= Holy damage); MSC.GetItemScore adds its healing half at the Healing weight
+-- (2026-11-16: was 2.0, which scored each Spell Power point 3 instead of 2).
+Paladin.Weights["SHOCKADIN"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=20.0, ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=1.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=1.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.7, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=3.7, ["ITEM_MOD_SPIRIT_SHORT"]=1.5, ["ITEM_MOD_STAMINA_SHORT"]=0.5, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=1.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=12.0 })
+-- RECK_BOMB: frozen 2026-11-17 at RET_STANDARD's values (user: raid and PvP at 60 keep their own data)
+Paladin.Weights["RECK_BOMB"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_HIT_RATING_SHORT"]=52.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_STRENGTH_SHORT"]=3.51, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.42, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.7, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.93, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=2.93, ["ITEM_MOD_INTELLECT_SHORT"]=2.13, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.1, ["ITEM_MOD_SPIRIT_SHORT"]=0.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 })
+-- RET_PVP: frozen 2026-11-17 at RET_STANDARD's values (user: raid and PvP at 60 keep their own data)
+Paladin.Weights["RET_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_HIT_RATING_SHORT"]=52.4, ["ITEM_MOD_CRIT_RATING_SHORT"]=43.1, ["ITEM_MOD_STRENGTH_SHORT"]=3.51, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_AGILITY_SHORT"]=2.42, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=20.7, ["ITEM_MOD_SPELL_POWER_SHORT"]=2.93, ["ITEM_MOD_HOLY_DAMAGE_SHORT"]=2.93, ["ITEM_MOD_INTELLECT_SHORT"]=2.13, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=0.1, ["ITEM_MOD_SPIRIT_SHORT"]=0.0, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=4.3, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=2.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 })
 -- PvP builds whose key doesn't say PvP (MSC.IsPvPProfile).
 Paladin.PvPProfiles = { SHOCKADIN = true, RECK_BOMB = true }
 -- Old name for Holy: Raid, kept so a saved profile choice still works.

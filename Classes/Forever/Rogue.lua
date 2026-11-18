@@ -28,9 +28,12 @@ Rogue.Weights = {
 }
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
-Rogue.Weights["PVP_HEMO"] = MSC.ForeverPvPFrom(Rogue.Weights["COMBAT_RAID"])        -- Hemorrhage with a sword or mace
-Rogue.Weights["PVP_MACE"] = MSC.ForeverPvPFrom(Rogue.Weights["COMBAT_RAID"])        -- Mace Specialization stuns
-Rogue.Weights["PVP_CB_DAGGER"] = MSC.ForeverPvPFrom(Rogue.Weights["COMBAT_DAGGERS"]) -- Cold Blood / Ambush daggers
+-- PVP_HEMO: frozen 2026-11-17 at COMBAT_RAID's values (user: raid and PvP at 60 keep their own data)
+Rogue.Weights["PVP_HEMO"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_AGILITY_SHORT"]=2.83, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=30.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.4, ["MSC_WEAPON_DPS_OH"]=4.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 })        -- Hemorrhage with a sword or mace
+-- PVP_MACE: frozen 2026-11-17 at COMBAT_RAID's values (user: raid and PvP at 60 keep their own data)
+Rogue.Weights["PVP_MACE"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_AGILITY_SHORT"]=2.83, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=30.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=30.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=15.4, ["MSC_WEAPON_DPS_OH"]=4.6, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 })        -- Mace Specialization stuns
+-- PVP_CB_DAGGER: frozen 2026-11-17 at COMBAT_DAGGERS's values (user: raid and PvP at 60 keep their own data)
+Rogue.Weights["PVP_CB_DAGGER"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_AGILITY_SHORT"]=2.78, ["ITEM_MOD_STRENGTH_SHORT"]=1.65, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_HIT_RATING_SHORT"]=23.8, ["ITEM_MOD_CRIT_RATING_SHORT"]=29.3, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=14.4, ["MSC_WEAPON_DPS_OH"]=4.9, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 }) -- Cold Blood / Ambush daggers
 -- Old names, kept so a saved profile choice still works.
 Rogue.Weights["RAID_COMBAT_SWORDS"] = Rogue.Weights["COMBAT_RAID"]
 Rogue.Weights["RAID_COMBAT_DAGGERS"] = Rogue.Weights["COMBAT_DAGGERS"]

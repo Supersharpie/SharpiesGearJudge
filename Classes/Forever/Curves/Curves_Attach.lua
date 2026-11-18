@@ -27,10 +27,12 @@ for className, curves in pairs(MSC.ForeverLevelingCurves or {}) do
         module.LevelingWeights = module.LevelingWeights or {}
         module.PrettyNames = module.PrettyNames or {}
         for role, curve in pairs(curves) do
+            -- <role>_PvP twins (2026-11-17 split: the PvP leveling builds' own copy of a solo row) get no band rows or
+            -- picker names; MSC:GetLevelingRow reads them in place of <role> while PvP weights are on.
             local firstLevel = curve[1] and curve[1][1] or 1
             for _, b in ipairs(BANDS) do
                 local lo, hi = b[1], b[2]
-                if hi >= firstLevel and (role == "Leveling" or lo > 10) then
+                if not role:find("_PvP$") and hi >= firstLevel and (role == "Leveling" or lo > 10) then
                     local keyRole = role
                     if className == "PALADIN" and role == "Leveling" and lo == 52 then keyRole = "Leveling_Ret" end
                     local key = keyRole .. "_" .. lo .. "_" .. hi

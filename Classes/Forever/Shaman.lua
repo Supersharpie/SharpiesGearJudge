@@ -51,8 +51,10 @@ Shaman.Weights["ENH_STORMSTRIKE"] = Shaman.Weights["ENH_RAID"]
 Shaman.Weights["RESTO_DEEP"] = Shaman.Weights["RESTO_RAID"]
 -- PvP profiles: copies of the PvE profile each build plays like; the PvP model (Helpers 5.10) adds
 -- Stamina, armor and burst on top and keeps hit at the player-vs-player caps.
-Shaman.Weights["ELE_PVP"] = MSC.ForeverPvPFrom(Shaman.Weights["ELE_RAID"])
-Shaman.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom(Shaman.Weights["RESTO_RAID"])
+-- ELE_PVP: frozen 2026-11-17 at ELE_RAID's values (user: raid and PvP at 60 keep their own data)
+Shaman.Weights["ELE_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_POWER_SHORT"]=2.0, ["ITEM_MOD_NATURE_DAMAGE_SHORT"]=1.37, ["ITEM_MOD_FIRE_DAMAGE_SHORT"]=0.61, ["ITEM_MOD_INTELLECT_SHORT"]=1.12, ["ITEM_MOD_SPIRIT_SHORT"]=0.56, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=1.58, ["ITEM_MOD_STAMINA_SHORT"]=0.1, ["ITEM_MOD_HIT_SPELL_RATING_SHORT"]=17.2, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=12.4 })
+-- RESTO_PVP: frozen 2026-11-17 at RESTO_RAID's values (user: raid and PvP at 60 keep their own data)
+Shaman.Weights["RESTO_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_SPELL_HEALING_DONE_SHORT"]=2.0, ["ITEM_MOD_SPELL_POWER_SHORT"]=0.0, ["ITEM_MOD_INTELLECT_SHORT"]=2.4, ["ITEM_MOD_SPIRIT_SHORT"]=1.95, ["ITEM_MOD_MANA_REGENERATION_SHORT"]=2.83, ["ITEM_MOD_SPELL_CRIT_RATING_SHORT"]=13.6, ["ITEM_MOD_STAMINA_SHORT"]=0.5 })
 -- The study-built level-60 profiles (talents already in): ApplyScalers' talent hooks skip these.
 local SIM_PROFILES = { ELE_FARM = true, TANK_FARM = true, ENH_RAID = true, ELE_RAID = true, RESTO_RAID = true, ELE_PVE = true, ENH_STORMSTRIKE = true, RESTO_DEEP = true, ELE_PVP = true, RESTO_PVP = true }
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one

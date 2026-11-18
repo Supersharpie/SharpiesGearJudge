@@ -46,7 +46,8 @@ Warrior.Weights = {
 }
 -- PvP profile: a copy of Arms: Raid; the PvP model (Helpers 5.10) adds Stamina, armor and burst on top
 -- and keeps hit at the player-vs-player caps. Picked by the Talents plugin's PvP build or by hand.
-Warrior.Weights["ARMS_PVP"] = MSC.ForeverPvPFrom(Warrior.Weights["ARMS_RAID"])
+-- ARMS_PVP: frozen 2026-11-17 at ARMS_RAID's values (user: raid and PvP at 60 keep their own data)
+Warrior.Weights["ARMS_PVP"] = MSC.ForeverPvPFrom({ ["ITEM_MOD_STRENGTH_SHORT"]=3.3, ["ITEM_MOD_ATTACK_POWER_SHORT"]=1.5, ["ITEM_MOD_DAMAGE_PER_SECOND_SHORT"]=23.3, ["ITEM_MOD_AGILITY_SHORT"]=2.82, ["ITEM_MOD_HIT_RATING_SHORT"]=64.7, ["ITEM_MOD_CRIT_RATING_SHORT"]=50.4, ["ITEM_MOD_WEAPON_SKILL_RATING_SHORT"]=2.0 })
 -- With Gear for PvP on, auto-detect shows the PvP profile in place of the raid one
 -- (same weights plus the PvP model; MSC:ApplyDynamicAdjustments).
 Warrior.PvPCounterpart = { ARMS_RAID = "ARMS_PVP", ARMS_MS = "ARMS_PVP" }
