@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.6
+
+### 🔧 Dungeon Healer Weights (WoW Forever)
+- Druid and Shaman Restoration dungeon weights follow their new talent orders (Talents 1.3.8). Druid healers value spell crit up to a quarter less around 40 and Spirit and MP5 a little less at 40-45; Shaman healers value MP5, Spirit and Intellect 5-15% less at 20-30. Warlock dungeon weights moved under 2%.
+
+### 🐛 Fixes
+- The score breakdown window (click an item) showed weapon DPS at the profile's main Weapon DPS weight, so a Hunter's melee weapon got the ranged weight (13.88 instead of 2.08). Each line now comes from the scoring engine, as on the tooltip, which was already right.
+- French: Compact Equip Text turned "Équipé : ... dégâts d'Ombre ... 34" into "+34 Spell Power", because the no-break space before the colon kept the prefix on the line. It now uses the scanner's prefix strip and shows "+34 Ombre". Scoring was already right (3.4.5). Thanks DevForlaxos (issue 23).
+- With Shorten Stat Names off, school damage shows its full name ("+34 Shadow Damage") like the other stats.
+
 ## 🚀 v3.4.5
 
 ### 🐛 Fixed: Stats Missed on Non-English Clients

@@ -4224,13 +4224,18 @@ function MSC:ShowScoreBreakdown(itemLink, slotID)
     local sorted = {}
     local totalScore = 0
     
+    -- Each line is scored by the engine itself (GetItemScore on that one stat), so the slot rules apply here as on
+    -- the tooltip: melee / off-hand weapon DPS weights in the hands (a Hunter's staff was shown at the ranged
+    -- Weapon DPS weight), rating conversion, hit/crit unification, Spell Power's healing half (2026-11-18).
+    local one = {}
     for k, v in pairs(stats) do
-        if type(v) == "number" then
-            local w = weights[k] or 0
-            if w > 0 then
-                local subScore = v * w
+        if type(v) == "number" and v ~= 0 and k ~= "_MANUAL_SCORE" and k ~= "_AUTO_PROC" and k ~= "IS_PROJECTED"
+            and k ~= "GEMS_PROJECTED" and k ~= "BONUS_PROJECTED" then
+            wipe(one); one[k] = v
+            local subScore = MSC.GetItemScore(one, weights, specName, slotID) or 0
+            if subScore > 0 then
                 totalScore = totalScore + subScore
-                table_insert(sorted, { k=k, v=v, w=w, s=subScore })
+                table_insert(sorted, { k=k, v=v, w=subScore / v, s=subScore })
             end
         end
     end

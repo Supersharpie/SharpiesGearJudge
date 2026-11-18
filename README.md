@@ -32,6 +32,13 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
+### 3.4.6 (Talents 1.3.8)
+
+- **Talents, dungeon builds:** all 35 dungeon, tank and healer builds re-checked on the new leveling gear. Druid and Shaman Restoration heal a little more (Swiftmend at 29; Totemic Focus and Mana Tide earlier), and Hunter Survival shooting and Warlock Affliction got tiny reshuffles late; the rest keep theirs.
+- **Dungeon healer weights:** Druid and Shaman Restoration follow their new orders. Druid spell crit counts up to a quarter less around 40; Shaman MP5, Spirit and Intellect 5-15% less at 20-30.
+- **Fixed, score breakdown window:** weapon DPS was shown at the wrong weight (a Hunter's melee weapon at the ranged Weapon DPS weight). Each line now matches the tooltip, which was already right.
+- **Fixed, French Compact Equip Text:** school damage showed as Spell Power. With Shorten Stat Names off, school damage now shows its full name ("+34 Shadow Damage").
+
 ### 3.4.5 (Talents 1.3.7, Roadmap 3.3.1, Roster 1.1.3, Laboratory 3.1.3, XP 1.1.7)
 
 - **Talents, Paladin PvP leveling:** builds are now judged by total leveling time, questing plus the world fights you run into. Retribution is about 10% faster, Holy (quests like Retribution, fights with Holy Shock) about 12% and Protection about 7%.
@@ -469,7 +476,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.4.4 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.4.6 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

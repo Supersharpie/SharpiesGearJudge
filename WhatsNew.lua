@@ -17,19 +17,10 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.5
-    { text = "Roadmap plugin: loot for four of the new Forever dungeons and 243 new quest rewards, including Mount Hyjal.", forever = true },
-    { text = "Fixed: on French, Portuguese, Korean and Chinese clients some stats scored nothing, such as Shadow damage and Attack Power on French items." },
-    { text = "Fixed: the PvP Shockadin profile counted Spell Power's healing twice, so Spell Power items scored too high.", forever = true },
-    { text = "Talents, Paladin PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Retribution, Holy and Protection are 7-12% faster.", forever = true },
-    { text = "Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page.", forever = true },
-    { text = "Talents, solo leveling: the melee solo builds were re-checked with expertise. Warrior, Paladin, Rogue, Hunter, Druid and Shaman got slightly faster orders (up to 1%), and melee weights now price Expertise from the models.", forever = true },
-    { text = "Talents, solo leveling: all nine classes were re-checked on new leveling gear with the latest Forever item changes. Mage, Warlock, Priest Discipline, Druid Balance, Shaman Elemental and Rogue Assassination got slightly faster orders, and every class's solo weights were rebuilt.", forever = true },
-    { text = "Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap.", forever = true },
-    { text = "Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20).", forever = true },
-    { text = "Fixed: items worded \"Improves your chance to hit by 2%\" or \"... critical strike by 1%\" scored a tenth of their hit and crit.", forever = true },
-    { text = "Fixed: many Classic \"Equip:\" lines scored nothing or the wrong stat, such as Attack Power against Undead and weapon skill, and on non-English clients most percent, mana per 5 and spell school damage lines.", forever = true },
-    { text = "XP Bar: the stat weight warning no longer calls stats you already value \"now valued\", its numbers are rounded, and the level's gear score gain counts only item changes." },
+    -- v3.4.6
+    { text = "Talents: dungeon builds re-checked on the new leveling gear. Druid and Shaman Restoration heal a little more; Survival and Affliction got small late tweaks.", forever = true },
+    { text = "Fixed: the score breakdown window showed weapon DPS at the wrong weight (a Hunter's melee weapon at the ranged weight). Tooltip verdicts were already right." },
+    { text = "Fixed: in French, Compact Equip Text showed school damage as Spell Power. With Shorten Stat Names off, school damage now shows its full name." },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

@@ -576,6 +576,8 @@ local SHORT_TO_LONG = {
     [MSC.L["Block"]] = MSC.L["Block Rating"], [MSC.L["BlockVal"]] = MSC.L["Block Value"],
     [MSC.L["ArP"]] = MSC.L["Armor Penetration"], [MSC.L["Heal"]] = MSC.L["Healing"],
     [MSC.L["Spell Hit"]] = MSC.L["Spell Hit Rating"], [MSC.L["Spell Crit"]] = MSC.L["Spell Crit Rating"],
+    [MSC.L["Shadow"]] = MSC.L["Shadow Damage"], [MSC.L["Fire"]] = MSC.L["Fire Damage"], [MSC.L["Frost"]] = MSC.L["Frost Damage"],
+    [MSC.L["Arcane"]] = MSC.L["Arcane Damage"], [MSC.L["Nature"]] = MSC.L["Nature Damage"], [MSC.L["Holy"]] = MSC.L["Holy Damage"],
 }
 
 -- Map: Text -> Color Hex (Unified & Localized)
@@ -616,6 +618,14 @@ local VISUAL_COLORS = {
     [MSC.L["nature resistance"]] = "ff40ff40", ["Nature Resistance"] = "ff40ff40", ["Nature"] = "ff40ff40",
     [MSC.L["holy resistance"]]   = "ffffff80", ["Holy Resistance"] = "ffffff80",   ["Holy"] = "ffffff80",
     [MSC.L["all resistances"]]   = "ffffffff", ["All Resistances"] = "ffffffff",
+
+    -- [[ SCHOOL DAMAGE (Compact Equip Text, short and full names) ]]
+    [MSC.L["Shadow"]] = "ff800080", [MSC.L["Shadow Damage"]] = "ff800080",
+    [MSC.L["Fire"]]   = "ffff8000", [MSC.L["Fire Damage"]]   = "ffff8000",
+    [MSC.L["Frost"]]  = "ff80ccff", [MSC.L["Frost Damage"]]  = "ff80ccff",
+    [MSC.L["Arcane"]] = "ffcc99ff", [MSC.L["Arcane Damage"]] = "ffcc99ff",
+    [MSC.L["Nature"]] = "ff40ff40", [MSC.L["Nature Damage"]] = "ff40ff40",
+    [MSC.L["Holy"]]   = "ffffff80", [MSC.L["Holy Damage"]]   = "ffffff80",
 
     -- [[ WEAPON SKILLS ]]
     ["Swords"] = "ffffd100", [MSC.L["swords"]] = "ffffd100",
@@ -790,9 +800,13 @@ function MSC:BeautifyTooltip(tooltip)
 				-- [[ PHASE 1: COMPACT EQUIP ]]
                 if SGJ_Settings.CompactEquip and (lineType == "EQUIP") and not isRelic then
                     
-                    local cleanText = MSC.Scanner.NormalizeQuotes(text:lower())
+                    -- The scanner's prefix strip first: it reads the client's own "Equip:" string and handles the
+                    -- no-break space frFR puts before the colon ("Équipé : ..."), which the locale pattern misses.
+                    local rawText = (MSC.Scanner.StripEquipPrefix and MSC.Scanner.StripEquipPrefix(text)) or text
+                    local cleanText = MSC.Scanner.NormalizeQuotes(rawText:lower())
                         :gsub("|c%x%x%x%x%x%x%x%x", "")
                         :gsub("|r", "")
+                        :gsub("\194\160", " ")
                         :gsub("[\n\t]", " ")
                         :gsub("%s+", " ")
                         :gsub("^%s*(.-)%s*$", "%1")
