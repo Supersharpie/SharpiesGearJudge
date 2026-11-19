@@ -1,7 +1,7 @@
 -- =============================================================
 -- SPELL IMPACT (WoW Forever, 2026-11-19)
 -- =============================================================
--- An optional tooltip block (setting ShowSpellImpact, off by default):
+-- An optional tooltip block (setting ShowSpellImpact, on by default from 3.5.0):
 -- how the hovered item changes your main spells at the highest rank you
 -- know. Casters and healers get damage (or healing) per second and per
 -- mana; Warriors, Rogues and Hunters get damage per use (and per mana for

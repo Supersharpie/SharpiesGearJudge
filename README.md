@@ -34,7 +34,7 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 
 ### 3.5.0 (Talents 1.4.1)
 
-- **Spell Impact (new, WoW Forever, off by default):** turn on Show Spell Impact under Tooltip Visuals to see how an item changes your main spells at the highest rank you know. Casters see damage per second and per mana (healers: healing), for example "Frostbolt DPS 152 > 158, DPM 1.42 > 1.47"; melee sees auto-attack damage per second and damage per use of the main abilities (Retribution, Enhancement and Feral get their melee abilities instead of spells). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents.
+- **Spell Impact (new, WoW Forever, on by default):** item tooltips show how an item changes your main spells at the highest rank you know. Casters see damage per second and per mana (healers: healing), for example "Frostbolt DPS 152 > 158, DPM 1.42 > 1.47"; melee sees auto-attack damage per second and damage per use of the main abilities (Retribution, Enhancement and Feral get their melee abilities instead of spells). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents.
 
 - **Talents, fix:** Priest build notes show Dark Inspiration in your language instead of English.
 - **Talents, Druid PvP leveling:** judged by total leveling time, questing plus world fights. Feral now fights in Cat Form and is about 10% faster; Balance about 4% and Restoration about 9%, all close to their solo builds.

@@ -4141,6 +4141,7 @@ function MSC.ApplySettingsDefaults()
         GearForRaiding = true, -- Forever: hit/defense targets slide to raid caps from 50
         GearForPvP = false,    -- Forever: PvP model over every profile (MSC.ApplyForeverPvP); per spec in SpecSettings
         ShowOtherSpec = true,  -- Dual Specialization: tooltip line for the inactive spec
+        ShowSpellImpact = true, -- SpellImpact.lua (Forever): spells now > with the item (on by default from 3.5.0, user)
         ShieldTankNo2H = true, -- shield tanks never see a two-hander as an upgrade
         RaidBuffPreset = "off",
         WorldBuffPreset = "off",

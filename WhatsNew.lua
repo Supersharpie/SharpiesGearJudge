@@ -18,7 +18,7 @@ local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
     -- v3.5.0
-    { text = "New, Spell Impact (off by default, Tooltip Visuals): item tooltips can show how the item changes your main spells, e.g. Frostbolt DPS 152 > 158, DPM 1.42 > 1.47. Green is better, red worse.", forever = true },
+    { text = "New, Spell Impact (on by default, turn it off under Tooltip Visuals): item tooltips show how the item changes your main spells, e.g. Frostbolt DPS 152 > 158, DPM 1.42 > 1.47. Green is better, red worse.", forever = true },
     { text = "Talents, Druid PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Feral now fights in Cat Form; Feral, Balance and Restoration are 4-10% faster.", forever = true },
     { text = "Druid PvP weights: Feral uses Cat weights; the other Druid PvP weights follow the solo leveling weights again.", forever = true },
     { text = "Progress: PvP leveling builds done for 4 of 9 classes (Paladin, Warrior, Priest, Druid). The full tracker is on the CurseForge page.", forever = true },
