@@ -1248,6 +1248,11 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 end
             end
 
+            -- [[ 4b. SPELL IMPACT (optional, SpellImpact.lua) ]]
+            if MSC.AddSpellImpact then
+                MSC.AddSpellImpact(tooltip, link, slotId, itemNewStats, itemOldStats, weights, specName)
+            end
+
             -- [[ 5a. OFF-SPECS (this character's ticked profiles) ]]
             -- Scored with the talents last played in that profile, against the
             -- best gear you own for it (worn, bags, bank), so main-spec gear

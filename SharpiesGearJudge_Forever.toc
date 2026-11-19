@@ -2,7 +2,7 @@
 ## Title: |cff00ccffSharpie's Gear Judge|r (Forever Edition)
 ## Notes: The Final Verdict on your gear.
 ## Author: SuperSharpie
-## Version: 3.4.7-Forever
+## Version: 3.5.0-Forever
 ## SavedVariables: SGJ_Settings, SharpiesGearJudgeDB
 
 Libs\LibStub\LibStub.lua
@@ -28,6 +28,7 @@ ConflictManager.lua
 Data\Database_Forever.lua
 Data\BuildMatch_Forever.lua
 Data\TalentSpellIDs_Forever.lua
+Data\SpellImpact_Forever.lua
 Data\Sets\Data_Sets_Forever.lua
 Data\Enchants\Enchants_Forever.lua
 Data\Buffs\Buffs_Forever.lua
@@ -63,6 +64,7 @@ LootToast.lua
 EquipBest.lua
 WhatsNew.lua
 AddonPanel.lua
+SpellImpact.lua
 Judge.lua
 SGJ_API.lua
 

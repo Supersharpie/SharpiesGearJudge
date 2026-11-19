@@ -3239,7 +3239,11 @@ function MSC.InitSettingsView(parent)
     local hVisuals = CreateHeader(MSC.L["Tooltip Visuals"])
     local cbCompact = CreateCheck(MSC.L["Compact Equip Text"], "CompactEquip", MSC.L["Makes the text smaller and cleaner."], hVisuals, 0, -10)
     local cbSimple = CreateCheck(MSC.L["Shorten Stat Names"], "SimplifyStats", MSC.L["Changes 'Spell Power' to 'SP', etc."], cbCompact, 0, -5)
-    CreateCheck(MSC.L["Colorize Stats"], "ColorizeStats", MSC.L["Applies class/role colors to text."], cbSimple, 0, -5)
+    local cbColor = CreateCheck(MSC.L["Colorize Stats"], "ColorizeStats", MSC.L["Applies class/role colors to text."], cbSimple, 0, -5)
+    -- SpellImpact.lua (Forever only: the spell data is Forever's)
+    if MSC.IsForever then
+        CreateCheck(MSC.L["Show Spell Impact"], "ShowSpellImpact", MSC.L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."], cbColor, 0, -5)
+    end
 
     -- ==========================================
     -- SECTION 3: COMPARISON LOGIC (right column)

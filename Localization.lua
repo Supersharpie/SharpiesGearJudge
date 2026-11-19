@@ -1774,3 +1774,12 @@ L["Beast Mastery: Dire Maul North Tribute Farming"] = "Beast Mastery: Dire Maul 
 L["Elemental: Dire Maul East Jump Run Farming"] = "Elemental: Dire Maul East Jump Run Farming"
 L["Separate dungeon weights: Fury dual wield, the Rogue sword builds, Bear and the Shaman tank now have their own dungeon weights, so solo, PvP and farming weights stay as they were."] = "Separate dungeon weights: Fury dual wield, the Rogue sword builds, Bear and the Shaman tank now have their own dungeon weights, so solo, PvP and farming weights stay as they were."
 L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat, and the Bear and Shaman tank weights, are now priced by the group models like the other classes'."] = "Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat, and the Bear and Shaman tank weights, are now priced by the group models like the other classes'."
+-- Spell Impact (3.5.0)
+L["Show Spell Impact"] = "Show Spell Impact"
+L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."
+L["Spell Impact:"] = "Spell Impact:"
+L["now > with this item"] = "now > with this item"
+L["Damage"] = "Damage"
+L["DPM"] = "DPM"
+L["HPS"] = "HPS"
+L["HPM"] = "HPM"

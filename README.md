@@ -22,7 +22,7 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 | Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
 | Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Druid | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Druid | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.5.0) | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
 
@@ -31,6 +31,14 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.5.0 (Talents 1.4.1)
+
+- **Spell Impact (new, WoW Forever, off by default):** turn on Show Spell Impact under Tooltip Visuals to see how an item changes your main spells at the highest rank you know. Casters see damage per second and per mana (healers: healing), for example "Frostbolt DPS 152 > 158, DPM 1.42 > 1.47"; melee sees auto-attack damage per second and damage per use of the main abilities (Retribution, Enhancement and Feral get their melee abilities instead of spells). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents.
+
+- **Talents, fix:** Priest build notes show Dark Inspiration in your language instead of English.
+- **Talents, Druid PvP leveling:** judged by total leveling time, questing plus world fights. Feral now fights in Cat Form and is about 10% faster; Balance about 4% and Restoration about 9%, all close to their solo builds.
+- **Druid PvP weights:** Feral PvP uses Cat weights; the other Druid PvP weights follow the solo weights again.
 
 ### 3.4.7 (Talents 1.4.0, Roadmap 3.4.0)
 
@@ -485,7 +493,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.4.7 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.5.0 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

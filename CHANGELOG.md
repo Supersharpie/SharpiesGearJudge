@@ -1,5 +1,17 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.5.0
+
+### ✨ Spell Impact (WoW Forever)
+- New optional tooltip block (Show Spell Impact under Tooltip Visuals, off by default): your main spells at the highest rank you know, now vs. with the item.
+- Casters: damage per second and per mana; healer profiles: healing per second and per mana. Melee: auto-attack damage per second (Hunters: Auto Shot) and damage per use of the main abilities, including Holy Strike for Retribution and Protection, Stormstrike for Enhancement, and Claw, Rake and Ferocious Bite (Maul and Swipe in Bear Form) for Feral.
+- Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents; mana cost and cast time come from the game.
+- Spell values are read from the Forever client tables with the live hotfixes.
+
+### 🔧 Druid PvP Weights (WoW Forever)
+- With PvP weights on, Feral Druid PvP leveling uses Cat weights, as the build now fights in Cat Form (Talents 1.4.1): Agility counts about twice as much and Armor much less than the Bear weights it had.
+- Bear, Balance and Restoration PvP weights follow the solo weights again: Stamina and Spirit moved up to about 20%, the rest under 10%.
+
 ## 🚀 v3.4.7
 
 ### 🔧 Warrior PvP Weights (WoW Forever)
