@@ -14,13 +14,13 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 
 | Class | Solo leveling | Dungeon leveling | PvP leveling | Raid (60) |
 |---|---|---|---|---|
-| Warrior | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Warrior | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
 | Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Hunter | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Paladin | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.4.5) | ⏸️ Waiting |
 | Mage | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
 | Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Druid | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 
@@ -31,6 +31,15 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.4.7 (Talents 1.4.0, Roadmap 3.4.0)
+
+- **Talents, Learn Next:** a button in the build panel picks your build's next talents, one for each unspent point. Click Apply Changes in the talent window to keep them.
+- **Roadmap, Zone Quests:** a new small window (`/sgjq`, the Zone Quests button in Roadmap, or an optional minimap button) lists every quest you can pick up in the zone you're in, for your class, race and level. Done quests and ones that need earlier quests, reputation or a profession are left out; gray quests and ones opening within 2 levels are dimmed at the bottom. Hover for objectives, click to set a waypoint to the giver (TomTom, or the game's map pin that DaylightUI follows). Needs the free QuestieDB addon.
+- **Talents, Warrior PvP leveling:** builds are now judged by total leveling time, questing plus the world fights you run into. Arms is about 7% faster, Fury and Protection about 3%; all three are now close to their solo builds.
+- **Warrior PvP weights:** with PvP weights on, Warrior leveling weights follow the solo weights again, now with Expertise.
+- **Talents, Priest PvP leveling:** judged the same way. Shadow now takes the solo Shadow talents, and Discipline and Holy nearly theirs: 9-13% faster.
+- **Priest PvP weights:** with PvP weights on, Priest leveling weights follow the solo weights again.
 
 ### 3.4.6 (Talents 1.3.8)
 
@@ -476,7 +485,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.4.6 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.4.7 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

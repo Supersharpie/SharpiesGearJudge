@@ -1,5 +1,13 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.4.7
+
+### 🔧 Warrior PvP Weights (WoW Forever)
+- With PvP weights on, Warrior leveling weights follow the solo weights again, now with Expertise (Talents 1.4.0 PvP builds are close to the solo builds). They had been copies of the 11-17 solo rows: Stamina and Spirit in quest gear were up to half too high around 40-45, and Expertise counted for nothing.
+
+### 🔧 Priest PvP Weights (WoW Forever)
+- With PvP weights on, Priest leveling weights follow the solo weights again (Talents 1.4.0 PvP builds are close to the solo builds). Wand DPS counts about a quarter less; the other stats moved up to about 14%.
+
 ## 🚀 v3.4.6
 
 ### 🔧 Dungeon Healer Weights (WoW Forever)

@@ -17,10 +17,15 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.4.6
-    { text = "Talents: dungeon builds re-checked on the new leveling gear. Druid and Shaman Restoration heal a little more; Survival and Affliction got small late tweaks.", forever = true },
-    { text = "Fixed: the score breakdown window showed weapon DPS at the wrong weight (a Hunter's melee weapon at the ranged weight). Tooltip verdicts were already right." },
-    { text = "Fixed: in French, Compact Equip Text showed school damage as Spell Power. With Shorten Stat Names off, school damage now shows its full name." },
+    -- v3.4.7
+    { text = "Talents: new Learn Next button in the build panel picks your build's next talents, one for each unspent point. Click Apply Changes in the talent window to keep them.", forever = true },
+    { text = "Roadmap: new Zone Quests window (/sgjq) lists every quest you can pick up in the zone you're in, for your class, race and level. Needs the QuestieDB addon.", forever = true },
+    { text = "Talents, Warrior PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Arms, Fury and Protection are 3-7% faster.", forever = true },
+    { text = "Warrior PvP weights now follow the solo leveling weights again, with Expertise.", forever = true },
+    { text = "Talents, Priest PvP leveling: judged the same way. Shadow, Discipline and Holy are 9-13% faster and close to their solo builds.", forever = true },
+    { text = "Priest PvP weights now follow the solo leveling weights again.", forever = true },
+    { text = "Progress: PvP leveling builds done for 3 of 9 classes (Paladin, Warrior, Priest). The full tracker is on the CurseForge page.", forever = true },
+    { text = "Fixed: Paladin PvP leveling builds showed a duel score of about 130; they now show their real score (about 1-2).", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
