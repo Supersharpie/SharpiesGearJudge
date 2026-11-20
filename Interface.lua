@@ -3242,7 +3242,13 @@ function MSC.InitSettingsView(parent)
     local cbColor = CreateCheck(MSC.L["Colorize Stats"], "ColorizeStats", MSC.L["Applies class/role colors to text."], cbSimple, 0, -5)
     -- SpellImpact.lua (Forever only: the spell data is Forever's)
     if MSC.IsForever then
-        CreateCheck(MSC.L["Show Spell Impact"], "ShowSpellImpact", MSC.L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."], cbColor, 0, -5)
+        local cbSpell = CreateCheck(MSC.L["Show Spell Impact"], "ShowSpellImpact", MSC.L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."], cbColor, 0, -5)
+        -- the Spell Impact tab (SpellImpactView.lua) holds its options
+        local bSpell = CreateFrame("Button", nil, cVisuals, "UIPanelButtonTemplate")
+        bSpell:SetSize(190, 22); bSpell:SetPoint("TOPLEFT", cbSpell, "BOTTOMLEFT", 26, -4)
+        bSpell:SetText(MSC.L["Spell Impact Options"])
+        bSpell:SetScript("OnClick", function() if MSC.OpenSpellImpact then MSC.OpenSpellImpact() end end)
+        cVisuals.Last = bSpell
     end
 
     -- ==========================================

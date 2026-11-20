@@ -1,5 +1,20 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.6.0
+
+### ✨ Spell Impact Tab (WoW Forever)
+- Spell Impact has its own tab in the Gear Judge window: open it with `/sgj spells` or the Spell Impact Options button under Tooltip Visuals.
+- Live Spell Matrix: every main spell you know with your current gear, per cast, per second and per mana. Tick a spell to show it in tooltips.
+- Compare an item: drag one in, shift-click a link, or leave the box empty to follow the last item you hovered.
+- New options: which rows (from profile, spells, heals, melee), how many tooltip rows (1-6), target level (your level to boss), the most mana-efficient heal rank, extra targets for Chain Lightning, Chain Heal, Multi-Shot, Swipe and Holy Wrath, and spell rank on or off.
+
+### 🔧 Mage PvP Weights (WoW Forever)
+- With PvP weights on, Frost, Arcane and Fire PvP leveling weights follow the solo weights again: Stamina moved by up to about a quarter (up for Frost and Fire, down for Arcane), the rest under 5%.
+- The new Frost and Arcane AoE PvP builds (Talents 1.4.2) use the AoE leveling weights, which value Stamina, Intellect and Spirit much more.
+
+### 🔧 Warlock PvP Weights (WoW Forever)
+- With PvP weights on, Affliction PvP leveling weights follow the solo weights again: in the 40s Stamina is down and spell crit, hit and Mp5 are up, all under 10%. Demonology and Destruction did not change.
+
 ## 🚀 v3.5.0
 
 ### ✨ Spell Impact (WoW Forever)

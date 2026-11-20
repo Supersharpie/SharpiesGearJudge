@@ -18,8 +18,8 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 | Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Hunter | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Paladin | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.4.5) | ⏸️ Waiting |
-| Mage | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Mage | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
+| Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
 | Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
 | Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
 | Druid | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.5.0) | ⏸️ Waiting |
@@ -31,6 +31,15 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.6.0 (Talents 1.4.2)
+
+- **Spell Impact tab (new, WoW Forever):** Spell Impact has its own tab in the Gear Judge window (`/sgj spells`, or Spell Impact Options under Tooltip Visuals). It lists every main spell you know with your current gear (per cast, per second, per mana), compares any item you drag in, shift-click or hover, and holds the options: which rows to show, how many tooltip rows, target level (your level up to a boss), the most mana-efficient heal rank for downranking, extra targets for chain and area spells, and spell rank on or off.
+- **Talents, Mage PvP leveling:** judged by total leveling time, questing plus world fights. Frost, Arcane and Fire quest single target and are 5-8% faster; new Frost and Arcane AoE PvP builds for players who pull packs.
+- **Talents, Arcane: AoE Leveling:** a faster talent order (about 6%).
+- **Mage PvP weights:** follow the solo weights again; the AoE PvP builds use the AoE weights.
+- **Talents, Warlock PvP leveling:** judged by total leveling time, questing plus world fights. Affliction and Demonology take their solo talents and Destruction a new order: 8-12% faster.
+- **Warlock PvP weights:** Affliction follows the solo weights again (small changes).
 
 ### 3.5.0 (Talents 1.4.1)
 
@@ -238,7 +247,7 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 ### ⚔️ Built for WoW Forever
 
 - **Level-60 weights for every class**, worked out with each build's own talents: damage and tank profiles from the wowsims Forever simulator, healer profiles from a healing model in which healers downrank as they do in game.
-- **Profiles that match how you play:** Raid, Solo Leveling, Dungeon Leveling, AoE Farming and PvP, named after the builds in the Talents plugin (for example "Arms: Raid", "Holy: Dungeon Leveling").
+- **Profiles that match how you play:** Raid, Solo Leveling, Dungeon Leveling, PvP Leveling, AoE Farming and PvP, named after the builds in the Talents plugin (for example "Arms: Raid", "Holy: Dungeon Leveling").
 - **Leveling weights level by level** for every Forever spec, from 10 to 59, built from the talents, spells and gear stats each spec actually has at that level. Your actual talents adjust them, and so does your gear (`/sgj gearpoint`).
 - **Hit and defense targets follow your level.** While leveling that's 5% hit (4% spell hit) against same-level mobs. With **Gear for Raiding** on, the targets slide toward the raid caps (9% hit, 17% spell hit, 440 Defense, uncrushable) from level 50.
 - **Gear for PvP:** Stamina, armor and burst count for more, and hit stays at the player-vs-player caps. The first time a realm looks like a PvP realm, Gear Judge offers to turn it on.
@@ -270,6 +279,7 @@ Hover any item: world drops, vendor goods, quest rewards, dungeon loot or AH lis
 
 - **Judge's Score** for your active spec (and any tracked off-specs).
 - **Item Score:** the item's own score in its slot, and the score of what you wear there.
+- **Spell Impact (WoW Forever, on by default):** how the item changes your main spells at the highest rank you know, now vs. with the item. Casters see damage per second and per mana (healers: healing), melee sees auto-attack damage per second and damage per use of its main abilities. Turn it off under **Tooltip Visuals**.
 - **Upgrade / Downgrade verdict** with the score difference. One-handers for dual wielders are judged in the hand where they gain the most.
 - **Other spec (Dual Specialization):** an extra line when an item upgrades the spec you're not in.
 - **Context warnings:** cap breaks, set bonus loss, meta deactivation, missing enchants, off-hand requirements and more.
@@ -313,7 +323,8 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 
 *(Separate addon: **SharpiesGearJudge_Roadmap**)*
 
-- Ranks zones and dungeons by the upgrades they hold for your character.
+- Ranks dungeons and quest zones by the upgrades they hold for your character, with each dungeon's boss loot and quest rewards, and a quest list per zone showing each quest's best reward for you.
+- **Zone Quests (WoW Forever, needs QuestieDB):** `/sgjq` lists every quest you can pick up in the zone you're in, for your class, race and level. Click one for a waypoint to the quest giver.
 - **Content Phase** dropdown (TBC progression) sets which projected gems are available. Without Roadmap, the phase setting exists but has no in-core UI.
 
 ### 📋 The Roster Plugin
@@ -329,7 +340,9 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 *(Separate addon: **SharpiesGearJudge_Talents** — WoW: Forever only)*
 
 - Talent build guide from level 10 to 60: the next talent glows in the talent window, a side panel shows your progress, and off-build points are flagged.
-- Builds for every class, sorted by **Max Level**, **Leveling** (Solo / Dungeon) or **Farming** and by role.
+- Builds for every class, sorted by **Max Level**, **Leveling** (Solo / Dungeon), **Farming** or **PvP** and by role.
+- **Learn Next:** a button in the panel picks your build's next talents, one for each unspent point. Click **Apply Changes** in the talent window to keep them.
+- **Dual Specialization:** from level 40 each spec keeps its own build.
 - Gear Judge's weights follow the chosen build: its leveling profile while you level, its level-60 profile at 60.
 - **Browse every build online:** [Forever Class Builds](https://sharpiesgearjudge.web.app) lists each class's builds with their talent order by level and the leveling stat weights Gear Judge uses. It's updated as builds change, so it can be a little ahead of the latest release.
 

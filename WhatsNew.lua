@@ -17,12 +17,14 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.5.0
-    { text = "New, Spell Impact (on by default, turn it off under Tooltip Visuals): item tooltips show how the item changes your main spells, e.g. Frostbolt DPS 152 > 158, DPM 1.42 > 1.47. Green is better, red worse.", forever = true },
-    { text = "Talents, Druid PvP leveling: builds are now judged by total leveling time, questing plus the world fights you run into. Feral now fights in Cat Form; Feral, Balance and Restoration are 4-10% faster.", forever = true },
-    { text = "Druid PvP weights: Feral uses Cat weights; the other Druid PvP weights follow the solo leveling weights again.", forever = true },
-    { text = "Progress: PvP leveling builds done for 4 of 9 classes (Paladin, Warrior, Priest, Druid). The full tracker is on the CurseForge page.", forever = true },
-    { text = "Talents: Priest build notes now show Dark Inspiration in your language instead of English.", forever = true },
+    -- v3.6.0
+    { text = "New, Spell Impact tab (/sgj spells): your spells with your gear, an item compare box and options: rows, target level, most efficient heal rank and extra targets.", forever = true },
+    { text = "Talents, Mage PvP leveling: builds are now judged by total leveling time, questing plus world fights. Frost, Arcane and Fire are 5-8% faster, and new Frost and Arcane AoE PvP builds are for players who pull packs.", forever = true },
+    { text = "Talents: Arcane: AoE Leveling has a faster talent order (about 6%).", forever = true },
+    { text = "Mage PvP weights follow the solo leveling weights again; the AoE PvP builds use the AoE weights.", forever = true },
+    { text = "Talents, Warlock PvP leveling: builds are now judged by total leveling time, questing plus world fights. Affliction and Demonology take their solo talents and Destruction a new order: 8-12% faster.", forever = true },
+    { text = "Warlock PvP weights: Affliction follows the solo leveling weights again (small changes).", forever = true },
+    { text = "Progress: PvP leveling builds done for 6 of 9 classes (Paladin, Warrior, Priest, Druid, Mage, Warlock). The full tracker is on the CurseForge page.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

@@ -3,7 +3,7 @@
 -- Per rank: ids (any one known counts), l rank level, m level the base stops growing at, s school (GetSpellBonusDamage
 -- index), ct cast time (s), cost mana (pct % of base mana, pt power type), b base (middle of the roll), g per level,
 -- c coefficient, ppr per combo point, ap Attack Power coefficient, tb/tg/tc/tap periodic tick base/per level/coefficient/AP,
--- k ticks, du periodic duration (s), ch channel time (s), pc periodic can crit, w weapon damage (1 weapon, 2 normalized), wpct weapon %, heal/theal heal parts, r ranged.
+-- k ticks, du periodic duration (s), ch channel time (s), pc periodic can crit, jt/ja chain targets / each jump x, aoe area spell, w weapon damage (1 weapon, 2 normalized), wpct weapon %, heal/theal heal parts, r ranged.
 local _, MSC = ...
 if not MSC or not MSC.IsForever then return end
 MSC.SpellImpactData = {
@@ -91,11 +91,11 @@ MSC.SpellImpactData = {
                     { ids = { 9881 }, l = 58, s = 1, cost = 150, pt = 1, b = 128, w = 1 },
                 } } },
             { { name = "Swipe", ranks = {
-                    { ids = { 779 }, l = 16, s = 1, cost = 200, pt = 1, b = 18 },
-                    { ids = { 780 }, l = 24, s = 1, cost = 200, pt = 1, b = 25 },
-                    { ids = { 769 }, l = 34, s = 1, cost = 200, pt = 1, b = 36 },
-                    { ids = { 9754 }, l = 44, s = 1, cost = 200, pt = 1, b = 60 },
-                    { ids = { 9908 }, l = 54, s = 1, cost = 200, pt = 1, b = 83 },
+                    { ids = { 779 }, l = 16, s = 1, cost = 200, pt = 1, b = 18, jt = 3, ja = 1 },
+                    { ids = { 780 }, l = 24, s = 1, cost = 200, pt = 1, b = 25, jt = 3, ja = 1 },
+                    { ids = { 769 }, l = 34, s = 1, cost = 200, pt = 1, b = 36, jt = 3, ja = 1 },
+                    { ids = { 9754 }, l = 44, s = 1, cost = 200, pt = 1, b = 60, jt = 3, ja = 1 },
+                    { ids = { 9908 }, l = 54, s = 1, cost = 200, pt = 1, b = 83, jt = 3, ja = 1 },
                 } } },
         },
         melee = {
@@ -163,7 +163,7 @@ MSC.SpellImpactData = {
                     { ids = { 25295 }, l = 60, s = 4, cost = 250, tb = 135, tap = 0.05, k = 5, du = 15, pc = true, r = true },
                 } } },
             { { name = "Multi-Shot", ranks = {
-                    { ids = { 2643 }, l = 18, s = 1, pct = 13.9, w = 2 },
+                    { ids = { 2643 }, l = 18, s = 1, pct = 13.9, jt = 3, ja = 1, w = 2 },
                 } } },
             { { name = "Raptor Strike", ranks = {
                     { ids = { 409691 }, l = 1, s = 1, b = 2, w = 1 },
@@ -254,8 +254,8 @@ MSC.SpellImpactData = {
                     { ids = { 415073 }, l = 60, m = 65, s = 2, cost = 345, b = 534, g = 3.2, c = 0.429 },
                 } } },
             { { name = "Holy Wrath", ranks = {
-                    { ids = { 2812 }, l = 50, m = 54, s = 2, ct = 2, cost = 645, b = 395, g = 1.6, c = 0.19 },
-                    { ids = { 10318 }, l = 60, m = 64, s = 2, ct = 2, cost = 805, b = 533, g = 1.9, c = 0.19 },
+                    { ids = { 2812 }, l = 50, m = 54, s = 2, ct = 2, cost = 645, b = 395, g = 1.6, c = 0.19, aoe = true },
+                    { ids = { 10318 }, l = 60, m = 64, s = 2, ct = 2, cost = 805, b = 533, g = 1.9, c = 0.19, aoe = true },
                 } } },
         },
         heal = {
@@ -468,14 +468,14 @@ MSC.SpellImpactData = {
                     { ids = { 15208 }, l = 56, m = 61, s = 4, ct = 2.5, cost = 220, b = 353, g = 2.1, c = 0.714 },
                 } } },
             { { name = "Chain Lightning", ranks = {
-                    { ids = { 408479 }, l = 32, m = 37, s = 4, b = 107.5, g = 0.7, c = 0.357 },
-                    { ids = { 421 }, l = 32, m = 37, s = 4, ct = 2.5, cost = 245, b = 215, g = 1.4, c = 0.714 },
-                    { ids = { 408481 }, l = 40, m = 45, s = 4, b = 174, g = 1.1, c = 0.357 },
-                    { ids = { 930 }, l = 40, m = 45, s = 4, ct = 2.5, cost = 360, b = 348, g = 2.2, c = 0.714 },
-                    { ids = { 408482 }, l = 48, m = 53, s = 4, b = 214, g = 1.35, c = 0.357 },
-                    { ids = { 2860 }, l = 48, m = 53, s = 4, ct = 2.5, cost = 425, b = 428, g = 2.7, c = 0.714 },
-                    { ids = { 408484 }, l = 56, m = 61, s = 4, b = 255, g = 1.65, c = 0.357 },
-                    { ids = { 10605 }, l = 56, m = 61, s = 4, ct = 2.5, cost = 495, b = 510, g = 3.3, c = 0.714 },
+                    { ids = { 408479 }, l = 32, m = 37, s = 4, b = 107.5, g = 0.7, c = 0.357, jt = 3, ja = 0.7 },
+                    { ids = { 421 }, l = 32, m = 37, s = 4, ct = 2.5, cost = 245, b = 215, g = 1.4, c = 0.714, jt = 3, ja = 0.7 },
+                    { ids = { 408481 }, l = 40, m = 45, s = 4, b = 174, g = 1.1, c = 0.357, jt = 3, ja = 0.7 },
+                    { ids = { 930 }, l = 40, m = 45, s = 4, ct = 2.5, cost = 360, b = 348, g = 2.2, c = 0.714, jt = 3, ja = 0.7 },
+                    { ids = { 408482 }, l = 48, m = 53, s = 4, b = 214, g = 1.35, c = 0.357, jt = 3, ja = 0.7 },
+                    { ids = { 2860 }, l = 48, m = 53, s = 4, ct = 2.5, cost = 425, b = 428, g = 2.7, c = 0.714, jt = 3, ja = 0.7 },
+                    { ids = { 408484 }, l = 56, m = 61, s = 4, b = 255, g = 1.65, c = 0.357, jt = 3, ja = 0.7 },
+                    { ids = { 10605 }, l = 56, m = 61, s = 4, ct = 2.5, cost = 495, b = 510, g = 3.3, c = 0.714, jt = 3, ja = 0.7 },
                 } } },
             { { name = "Earth Shock", ranks = {
                     { ids = { 8042 }, l = 4, m = 9, s = 4, cost = 30, b = 20, g = 0.5, c = 0.386 },
@@ -509,9 +509,9 @@ MSC.SpellImpactData = {
                     { ids = { 10468 }, l = 60, m = 65, s = 4, ct = 1.5, cost = 380, b = 820, g = 4.2, c = 0.429, heal = true },
                 } } },
             { { name = "Chain Heal", ranks = {
-                    { ids = { 1064 }, l = 40, m = 45, s = 4, ct = 2.5, cost = 260, b = 251, g = 2.5, c = 0.714, heal = true },
-                    { ids = { 10622 }, l = 46, m = 51, s = 4, ct = 2.5, cost = 315, b = 335, g = 2.8, c = 0.714, heal = true },
-                    { ids = { 10623 }, l = 54, m = 59, s = 4, ct = 2.5, cost = 405, b = 490, g = 3.3, c = 0.714, heal = true },
+                    { ids = { 1064 }, l = 40, m = 45, s = 4, ct = 2.5, cost = 260, b = 251, g = 2.5, c = 0.714, jt = 3, ja = 0.5, heal = true },
+                    { ids = { 10622 }, l = 46, m = 51, s = 4, ct = 2.5, cost = 315, b = 335, g = 2.8, c = 0.714, jt = 3, ja = 0.5, heal = true },
+                    { ids = { 10623 }, l = 54, m = 59, s = 4, ct = 2.5, cost = 405, b = 490, g = 3.3, c = 0.714, jt = 3, ja = 0.5, heal = true },
                 } } },
         },
         melee = {

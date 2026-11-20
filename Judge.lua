@@ -208,6 +208,8 @@ SlashCmdList["SHARPIESGEARJUDGE"] = function(msg)
         print("   " .. string.format(MSC.L["profile: %s"], tostring(specKey)))
     elseif cmd == "whatsnew" or cmd == "news" then
         if MSC.ShowWhatsNew then MSC.ShowWhatsNew() end
+    elseif (cmd == "spells" or cmd == "spellimpact") and MSC.OpenSpellImpact then
+        MSC.OpenSpellImpact()
     elseif cmd == "pvp" and MSC.IsForever then
         MSC.SetGearForPvP(not MSC.IsGearingForPvP())
         print(MSC.L["|cff00ff00SGJ:|r Gear for PvP is now "] .. (MSC.IsGearingForPvP() and onText or offText))

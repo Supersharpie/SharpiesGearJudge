@@ -77,21 +77,61 @@ end
 function MSC.ResetSpellImpactCache() knownCache = nil end
 cacheFrame:SetScript("OnEvent", MSC.ResetSpellImpactCache)
 
--- The highest rank you know of one spell entry: rank row, the id you know
-local function HighestKnown(entry)
-    local best, bestId
-    for _, r in ipairs(entry.ranks) do
-        for _, id in ipairs(r.ids) do
-            if IsKnown(id) then
-                if not best or r.l >= best.l then best, bestId = r, id end
-                break
-            end
-        end
-    end
-    return best, bestId
+-- =============================================================
+-- OPTIONS (SGJ_Settings.SpellImpact; the Spell Impact tab, SpellImpactView.lua)
+-- =============================================================
+local DEFAULTS = { rows = "auto", maxRows = 3, target = 0, efficient = false, extraTargets = false, showRank = true }
+function MSC.SpellImpactOptions()
+    if not SGJ_Settings then return DEFAULTS end
+    local o = SGJ_Settings.SpellImpact
+    if type(o) ~= "table" then o = {}; SGJ_Settings.SpellImpact = o end
+    for k, v in pairs(DEFAULTS) do if o[k] == nil then o[k] = v end end
+    if type(o.hidden) ~= "table" then o.hidden = {} end
+    return o
+end
+function MSC.ResetSpellImpactOptions()
+    if SGJ_Settings then SGJ_Settings.SpellImpact = nil end
+    return MSC.SpellImpactOptions()
 end
 
--- Rows for a role ("dmg" / "heal"): { entry, rank, id }, at most 3
+-- Miss chance to cover by target level (0 = your level ... 3 = boss): spells 4 / 5 / 6 / 17%, melee and ranged
+-- 5 / 5.5 / 6 / 9% (MSC.ForeverCaps: the same-level and +3 ends)
+local SPELL_MISS = { [0] = 4, 5, 6, 17 }
+local MELEE_MISS = { [0] = 5, 5.5, 6, 9 }
+local function MissCap(kind)
+    local t = math_max(0, math_min(3, tonumber(MSC.SpellImpactOptions().target) or 0))
+    local caps = MSC.ForeverCaps and MSC.ForeverCaps[kind]
+    if kind == "SPELL" then
+        if t == 0 and caps then return caps.leveling end
+        if t == 3 and caps then return caps.raid end
+        return SPELL_MISS[t]
+    end
+    if t == 0 and caps then return caps.leveling end
+    if t == 3 and caps then return caps.raid end
+    return MELEE_MISS[t]
+end
+
+-- Every rank of one spell entry you know: { rank, id } by level
+local function KnownRanks(entry)
+    local out = {}
+    for _, r in ipairs(entry.ranks) do
+        for _, id in ipairs(r.ids) do
+            if IsKnown(id) then out[#out + 1] = { rank = r, id = id }; break end
+        end
+    end
+    table.sort(out, function(a, b) return a.rank.l < b.rank.l end)
+    return out
+end
+
+-- The highest rank you know of one spell entry: rank row, the id you know
+local function HighestKnown(entry)
+    local ranks = KnownRanks(entry)
+    local top = ranks[#ranks]
+    if top then return top.rank, top.id, ranks end
+    return nil
+end
+
+-- Rows for a role ("dmg" / "heal" / "melee" / "bear"): { entry, rank, id, ranks }, every row of the class list you know
 local function KnownRows(class, role)
     knownCache = knownCache or {}
     local key = class .. role
@@ -100,12 +140,21 @@ local function KnownRows(class, role)
     local data = MSC.SpellImpactData and MSC.SpellImpactData[class]
     for _, row in ipairs(data and data[role] or {}) do
         for _, entry in ipairs(row) do
-            local r, id = HighestKnown(entry)
-            if r then out[#out + 1] = { entry = entry, rank = r, id = id }; break end
+            local r, id, ranks = HighestKnown(entry)
+            if r then out[#out + 1] = { entry = entry, rank = r, id = id, ranks = ranks }; break end
         end
-        if #out >= 3 then break end
     end
     knownCache[key] = out
+    return out
+end
+
+-- The roles your class has rows for, in display order
+function MSC.SpellImpactRoles(class)
+    local data = MSC.SpellImpactData and MSC.SpellImpactData[class]
+    local out = {}
+    for _, role in ipairs({ "dmg", "heal", "melee", "bear" }) do
+        if data and data[role] and #data[role] > 0 then out[#out + 1] = role end
+    end
     return out
 end
 
@@ -279,13 +328,13 @@ local function Evaluate(row, side, isHeal)
         bonus = ap
         crit = ranged and (side.rangedCrit + side.rangedCritAdd) or (side.meleeCrit + side.meleeCritAdd)
         critMult = 2
-        local cap = MSC.ForeverCaps and MSC.ForeverCaps.MELEE and MSC.ForeverCaps.MELEE.leveling or 5
+        local cap = MissCap("MELEE")
         hitChance = 1 - math_max(0, cap - (ranged and side.rangedHit or side.meleeHit)) / 100
     else
         bonus = isHeal and side.heal or (side.sp[r.s] or 0)
         crit = side.spellCrit(r.s) + side.critAdd
         critMult = 1.5
-        local cap = MSC.ForeverCaps and MSC.ForeverCaps.SPELL and MSC.ForeverCaps.SPELL.leveling or 4
+        local cap = MissCap("SPELL")
         hitChance = isHeal and 1 or (1 - math_max(0, cap - side.spellHit) / 100)
     end
     crit = math_max(0, math_min(100, crit)) / 100
@@ -309,6 +358,17 @@ local function Evaluate(row, side, isHeal)
         end
     end
     direct = direct * (1 + crit * (critMult - 1))
+    -- extra targets (option): chain jumps at the client's scaling each jump (Chain Lightning x0.7, Chain Heal x0.5,
+    -- Multi-Shot and Swipe x1), area spells on 3 mobs
+    if MSC.SpellImpactOptions().extraTargets then
+        if r.jt and r.jt > 1 then
+            local sum, f = 0, 1
+            for _ = 1, r.jt do sum = sum + f; f = f * (r.ja or 1) end
+            direct = direct * sum
+        elseif r.aoe then
+            direct = direct * 3
+        end
+    end
 
     -- periodic part: ticks crit when the spell has the client's "Periodic Can Crit" flag (pc: Shadow Word: Pain,
     -- Corruption, Moonfire, Mind Flay, Rejuvenation...; Forever's own Renew and Serpent Sting ranks don't) and on
@@ -339,7 +399,7 @@ local function Evaluate(row, side, isHeal)
         cost = (r.pt or 0) == 0 and ((r.cost or 0) + (r.pct or 0) / 100 * (side.baseMana or 0)) or 0
     end
     local perMana = (cost and cost > 0) and total / cost or nil
-    return total, perSec, perMana, physical
+    return total, perSec, perMana, physical, math_max(cast, 0), cost
 end
 
 -- Auto-attack damage per second against a mob of your level (2026-11-19, user): each weapon's average hit plus
@@ -348,7 +408,7 @@ end
 -- hand at half damage; forms swing the real weapon in Forever. Ranged (Auto Shot): 5% miss less your hit, crits at 200%.
 local function WhiteDPS(side, ranged)
     local function swing(w, ap, mult) return (w.avg + ap / 14 * w.speed) / w.speed * mult end
-    local cap = MSC.ForeverCaps and MSC.ForeverCaps.MELEE and MSC.ForeverCaps.MELEE.leveling or 5
+    local cap = MissCap("MELEE")
     if ranged then
         local w = side.rw
         if not w then return nil end
@@ -395,52 +455,126 @@ local function Pair(label, a, b, small)
     return string_format("%s %s%s|r > %s%s|r", label, YELLOW, ta, col, tb)
 end
 
--- Adds the block to a tooltip (Judge.lua, items you don't wear)
-function MSC.AddSpellImpact(tooltip, link, slotId, itemNewStats, itemOldStats, weights, specName)
-    if not (SGJ_Settings and SGJ_Settings.ShowSpellImpact) then return end
-    if not MSC.SpellImpactData or not MSC.GetJudgingStats then return end
+-- The role shown: the option (Damage / Healing / Melee / Bear) when your class has rows for it, else your profile's
+function MSC.SpellImpactRole(class, specName)
+    local want = MSC.SpellImpactOptions().rows
+    if want and want ~= "auto" then
+        for _, r in ipairs(MSC.SpellImpactRoles(class)) do if r == want then return want end end
+    end
+    return ProfileRole(class, specName)
+end
+
+-- Every line for one item (link nil: your spells now, both sides the same). Each line:
+-- { key, spellId, name, rank, white, heal, physical, efficient, a = { total, perSec, perMana }, b = {...}, cast, cost }.
+-- Auto-attack lines first. hidden spells (option) are left out unless all is true.
+function MSC.SpellImpactLines(link, slotId, itemNewStats, itemOldStats, weights, specName, all)
+    if not MSC.SpellImpactData or not MSC.GetJudgingStats then return {}, nil end
+    local o = MSC.SpellImpactOptions()
     local _, class = UnitClass("player")
-    local role = ProfileRole(class, specName)
+    local role = MSC.SpellImpactRole(class, specName)
     local heal = role == "heal"
     local rows = KnownRows(class, role)
-    if #rows == 0 and role ~= "dmg" then heal = false; rows = KnownRows(class, "dmg") end
+    if #rows == 0 and role ~= "dmg" then heal = false; role = "dmg"; rows = KnownRows(class, "dmg") end
     local melee, autoShot = MeleeLine(class, role, specName), class == "HUNTER"
-    if #rows == 0 and not melee and not autoShot then return end
 
     local now, with = BuildSides(link, slotId, itemNewStats, itemOldStats, weights, specName)
     local lines = {}
     -- auto-attack first: the client's own names for Attack and Auto Shot
     local function white(ranged, spellId, fallback)
         local a, b = WhiteDPS(now, ranged), WhiteDPS(with, ranged)
-        local p = Pair(MSC.L["DPS"], a, b)
-        if p then lines[#lines + 1] = { SpellName(spellId) or fallback, p } end
+        if a and b then
+            local key = ranged and "Auto Shot" or "Attack"
+            if all or not o.hidden[key] then
+                lines[#lines + 1] = { key = key, spellId = spellId, name = SpellName(spellId) or fallback, white = true,
+                    physical = true, a = { a, a }, b = { b, b } }
+            end
+        end
     end
     if melee then white(false, 6603, "Attack") end
     if autoShot then white(true, 75, "Auto Shot") end
+
+    local function add(row, rankEntry, efficient)
+        local r = { entry = row.entry, rank = rankEntry.rank, id = rankEntry.id }
+        local aT, aS, aM, physical, cast, cost = Evaluate(r, now, heal)
+        local bT, bS, bM = Evaluate(r, with, heal)
+        if not (aT and bT) then return end
+        lines[#lines + 1] = { key = row.entry.name, spellId = r.id, name = SpellName(r.id) or row.entry.name,
+            rank = SpellRankText(r.id), heal = heal, physical = physical, efficient = efficient,
+            a = { aT, aS, aM }, b = { bT, bS, bM }, cast = cast, cost = cost }
+    end
     for _, row in ipairs(rows) do
-        local aT, aS, aM, physical = Evaluate(row, now, heal)
-        local bT, bS, bM = Evaluate(row, with, heal)
-        if aT and bT then
-            local parts
-            if physical then
-                parts = Pair(MSC.L["Damage"], aT, bT)
-                local m = Pair(MSC.L["DPM"], aM, bM, true)
-                if m then parts = parts .. "  " .. m end
-            else
-                parts = Pair(heal and MSC.L["HPS"] or MSC.L["DPS"], aS, bS)
-                local m = Pair(heal and MSC.L["HPM"] or MSC.L["DPM"], aM, bM, true)
-                if m then parts = parts .. "  " .. m end
+        if all or not o.hidden[row.entry.name] then
+            add(row, { rank = row.rank, id = row.id })
+            -- healers: the rank you know that heals most per mana (downranking), when it isn't the top one
+            if heal and o.efficient and row.ranks and #row.ranks > 1 then
+                local best, bestHPM
+                for _, k in ipairs(row.ranks) do
+                    local t, _, m = Evaluate({ entry = row.entry, rank = k.rank, id = k.id }, now, true)
+                    if t and m and (not bestHPM or m > bestHPM) then best, bestHPM = k, m end
+                end
+                if best and best.id ~= row.id then add(row, best, true) end
             end
-            local name = SpellName(row.id) or row.entry.name
-            local rank = SpellRankText(row.id)
-            if rank and rank ~= "" then name = name .. " |cff888888(" .. rank .. ")|r" end
-            lines[#lines + 1] = { name, parts }
         end
     end
+    return lines, role
+end
+
+-- One line's value text, "DPS a > b  DPM c > d" (physical rows: damage per use; auto-attack: DPS)
+function MSC.SpellImpactValueText(l)
+    if l.white then return Pair(MSC.L["DPS"], l.a[1], l.b[1]) end
+    local parts
+    if l.physical then
+        parts = Pair(MSC.L["Damage"], l.a[1], l.b[1])
+        local m = Pair(MSC.L["DPM"], l.a[3], l.b[3], true)
+        if m then parts = parts .. "  " .. m end
+    else
+        parts = Pair(l.heal and MSC.L["HPS"] or MSC.L["DPS"], l.a[2], l.b[2])
+        local m = Pair(l.heal and MSC.L["HPM"] or MSC.L["DPM"], l.a[3], l.b[3], true)
+        if m then parts = parts .. "  " .. m end
+    end
+    return parts
+end
+
+-- A number as the tooltip shows it (no decimals from 100, one under, per mana two under 10)
+function MSC.SpellImpactFormat(v, small)
+    if not v then return "-" end
+    return Fmt(v, Decimals(v, small))
+end
+
+-- A line's left text: the spell's name, its rank (option) and a mark for the most efficient rank
+function MSC.SpellImpactLabel(l)
+    local name = l.name or l.key
+    if l.efficient then
+        name = name .. " |cff888888(" .. (l.rank or "") .. ", " .. MSC.L["most efficient"] .. ")|r"
+    elseif MSC.SpellImpactOptions().showRank and l.rank and l.rank ~= "" then
+        name = name .. " |cff888888(" .. l.rank .. ")|r"
+    end
+    return name
+end
+
+-- The last item a tooltip judged (the Spell Impact tab compares it)
+MSC.SpellImpactLastLink = nil
+
+-- Adds the block to a tooltip (Judge.lua, items you don't wear)
+function MSC.AddSpellImpact(tooltip, link, slotId, itemNewStats, itemOldStats, weights, specName)
+    if link and MSC.SpellImpactLastLink ~= link then
+        MSC.SpellImpactLastLink = link
+        if MSC.OnSpellImpactHover then MSC.OnSpellImpactHover(link) end
+    end
+    if not (SGJ_Settings and SGJ_Settings.ShowSpellImpact) then return end
+    local lines = MSC.SpellImpactLines(link, slotId, itemNewStats, itemOldStats, weights, specName)
     if #lines == 0 then return end
+    -- auto-attack lines and the efficient-rank lines don't count against the row limit
+    local maxRows = math_max(1, math_min(6, tonumber(MSC.SpellImpactOptions().maxRows) or 3))
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine(MSC.L["Spell Impact:"], MSC.L["now > with this item"], 1, 0.82, 0, 0.6, 0.6, 0.6)
+    local shown = 0
     for _, l in ipairs(lines) do
-        tooltip:AddDoubleLine(l[1], l[2], 1, 1, 1, 1, 1, 1)
+        local counts = not l.white and not l.efficient
+        if counts then shown = shown + 1 end
+        if not counts or shown <= maxRows then
+            local text = MSC.SpellImpactValueText(l)
+            if text then tooltip:AddDoubleLine(MSC.SpellImpactLabel(l), text, 1, 1, 1, 1, 1, 1) end
+        end
     end
 end
