@@ -17,14 +17,9 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.6.0
-    { text = "New, Spell Impact tab (/sgj spells): your spells with your gear, an item compare box and options: rows, target level, most efficient heal rank and extra targets.", forever = true },
-    { text = "Talents, Mage PvP leveling: builds are now judged by total leveling time, questing plus world fights. Frost, Arcane and Fire are 5-8% faster, and new Frost and Arcane AoE PvP builds are for players who pull packs.", forever = true },
-    { text = "Talents: Arcane: AoE Leveling has a faster talent order (about 6%).", forever = true },
-    { text = "Mage PvP weights follow the solo leveling weights again; the AoE PvP builds use the AoE weights.", forever = true },
-    { text = "Talents, Warlock PvP leveling: builds are now judged by total leveling time, questing plus world fights. Affliction and Demonology take their solo talents and Destruction a new order: 8-12% faster.", forever = true },
-    { text = "Warlock PvP weights: Affliction follows the solo leveling weights again (small changes).", forever = true },
-    { text = "Progress: PvP leveling builds done for 6 of 9 classes (Paladin, Warrior, Priest, Druid, Mage, Warlock). The full tracker is on the CurseForge page.", forever = true },
+    -- v3.6.1
+    { text = "Talents: all five dungeon healer builds were searched again on a healer model checked against dungeon logs. Restoration Shaman about 4.5% faster, Holy Priest 4%, Restoration Druid 1.5%, Holy Paladin 1.4%, Discipline 0.9%.", forever = true },
+    { text = "Dungeon healer weights are rebuilt: Stamina and Armor follow how often healers really get hit (much lower), and damage stats never rate above Stamina.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

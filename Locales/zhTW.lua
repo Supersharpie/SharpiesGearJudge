@@ -1863,6 +1863,8 @@ L["Mage PvP weights follow the solo leveling weights again; the AoE PvP builds u
 L["Talents, Warlock PvP leveling: builds are now judged by total leveling time, questing plus world fights. Affliction and Demonology take their solo talents and Destruction a new order: 8-12% faster."] = "天賦，術士升級PvP：現在以總升級時間評估配置，即任務加上野外戰鬥。痛苦和惡魔學識採用單人天賦，毀滅採用新順序：快了8-12%。"
 L["Warlock PvP weights: Affliction follows the solo leveling weights again (small changes)."] = "術士PvP權重：痛苦再次跟隨單人升級權重（小幅變動）。"
 L["Progress: PvP leveling builds done for 6 of 9 classes (Paladin, Warrior, Priest, Druid, Mage, Warlock). The full tracker is on the CurseForge page."] = "進度：升級PvP配置已完成9個職業中的6個（聖騎士、戰士、牧師、德魯伊、法師、術士）。完整進度表在CurseForge頁面上。"
+L["Talents: all five dungeon healer builds were searched again on a healer model checked against dungeon logs. Restoration Shaman about 4.5% faster, Holy Priest 4%, Restoration Druid 1.5%, Holy Paladin 1.4%, Discipline 0.9%."] = "天賦：五套地城治療配置都以用地城紀錄檢驗過的治療模型重新搜尋。恢復薩滿約快4.5%，神聖牧師4%，恢復德魯伊1.5%，神聖聖騎士1.4%，戒律0.9%。"
+L["Dungeon healer weights are rebuilt: Stamina and Armor follow how often healers really get hit (much lower), and damage stats never rate above Stamina."] = "地城治療權重重新計算：耐力和護甲依治療者實際被打的頻率（低得多），傷害屬性的評價不會高於耐力。"
 L["Progress: PvP leveling builds done for 1 of 9 classes (Paladin). The full tracker is on the CurseForge page."] = "進度：升級PvP配置已完成9個職業中的1個（聖騎士）。完整進度表在CurseForge頁面上。"
 L["Fixed: Expertise items scored close to nothing. 10 Expertise Rating is now 1% fewer dodges and parries, valued like hit (twice for tanks), with its own cap."] = "已修正：熟練等級的物品幾乎不計分。現在10點熟練等級等於減少1%的閃躲和招架，價值與命中相同（坦克為兩倍），並有自己的上限。"
 L["Fixed: Parry Rating scored 25% too low for tanks (Forever's rate is 15 per 1% parry, not 20)."] = "已修正：坦克的招架等級計分低了25%（在Forever中每1%招架需要15點，而不是20點）。"

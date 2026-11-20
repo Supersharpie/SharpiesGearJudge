@@ -1,5 +1,12 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.6.1
+
+### 🔧 Dungeon Healer Weights (WoW Forever)
+- Holy Paladin, Priest, Restoration Druid and Restoration Shaman dungeon healer weights are rebuilt on the new healer model, measured on gear a dungeon healer would wear (they used to share the solo healer's gear).
+- Stamina and Armor now come from how often dungeon healers really take damage (rarely, in the logs), so they count for much less; dodge, parry, Agility and damage stats never rate above Stamina.
+- From level 48 the weights follow the model instead of holding level 48's (spell crit counts for more at 59).
+
 ## 🚀 v3.6.0
 
 ### ✨ Spell Impact Tab (WoW Forever)
