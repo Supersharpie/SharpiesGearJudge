@@ -277,7 +277,7 @@ pvpRealmCheck:RegisterEvent("PLAYER_ENTERING_WORLD")
 pvpRealmCheck:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 pvpRealmCheck:SetScript("OnEvent", function(self)
     if not MSC.IsForever or not SGJ_Settings then return end
-    local realm = GetRealmName and GetRealmName() or "?"
+    local realm = MSC.GetRealm and MSC.GetRealm() or "?"
     SGJ_Settings.PvPRealmAsked = SGJ_Settings.PvPRealmAsked or {}
     if SGJ_Settings.PvPRealmAsked[realm] then self:UnregisterAllEvents(); return end
     -- Flag state settles a moment after a zone change.

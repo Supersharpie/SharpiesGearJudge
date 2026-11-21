@@ -2482,6 +2482,15 @@ L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat
 L["Show Spell Impact"] = "Mostrar impacto nos feitiços"
 L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Mostra como um item muda seus principais feitiços na maior patente que você conhece: dano ou cura por segundo e por mana (corpo a corpo: dano por segundo dos ataques automáticos e dano por uso). Atual em amarelo; com o item, em verde (melhor) ou vermelho (pior). Contra um inimigo do seu nível, sem talentos."
 L["Spell Impact:"] = "Impacto nos feitiços:"
+-- Spell Impact Add Spell (3.7.0)
+L["Add Spell"] = "Adicionar feitiço"
+L["Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."] = "Adicione à lista e à dica qualquer outro feitiço de dano ou cura que você conheça. Feitiços adicionados não contam no limite de linhas da dica."
+L["No other damage or healing spells known yet."] = "Nenhum outro feitiço de dano ou cura conhecido ainda."
+L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."] = "Os saltos de Cadeia de Raios e Cura em Cadeia, Tiro Múltiplo e Golpe Amplo contam 3 alvos com a redução do jogo; Cólera Sagrada e feitiços de solo como Nevasca, Consagração e Chuva de Fogo contam 3 inimigos."
+L["Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character."] = "Impacto nos feitiços: adicione seus próprios feitiços (Adicionar feitiço em /sgj spells), como Nevasca, Impacto de Fogo, Dilacerar ou Prece de Cura. A escolha de linhas agora é salva por personagem."
+L["Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping)."] = "Configurações por personagem, equipamento do banco, escolhas do Talents e do XP, conjuntos do Laboratory e alts do Roster não parecem mais zerados quando o jogo não informa o nome do reino ao entrar (uma mudança recente contra troca de camadas)."
+L["Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30."] = "Talents: as quatro builds de tanque de masmorra foram buscadas de novo com um modelo de tanque conferido em registros de masmorra, cada uma um pouco mais rápida (Paladino Proteção cerca de 0,7%). A build de tanque do Xamã continua terminando no 30."
+L["Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more."] = "Pesos de tanque de masmorra recalculados para essas builds: o valor de bloqueio conta menos; a esquiva e a defesa do Urso contam mais."
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "Impacto nos feitiços"
 L["Show in tooltips"] = "Mostrar nas dicas"
@@ -2495,7 +2504,6 @@ L["The mob your hit chance is worked out against: spells miss 4% of your level, 
 L["Most efficient heal rank"] = "Patente de cura mais eficiente"
 L["Healers: also shows the rank you know that heals the most per mana, for downranking."] = "Curadores: mostra também a patente que você conhece que mais cura por mana, para usar patentes menores."
 L["Count extra targets"] = "Contar alvos extras"
-L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."] = "Os saltos de Cadeia de Raios e Cura em Cadeia, Tiro Múltiplo e Golpe Amplo contam 3 alvos com a redução do jogo; Cólera Sagrada conta 3 inimigos."
 L["Show spell rank"] = "Mostrar patente do feitiço"
 L["Shows each spell's rank next to its name."] = "Mostra a patente de cada feitiço ao lado do nome."
 L["Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."] = "Sem talentos: eles mudam os dois números igualmente, então melhor ou pior continua certo. O custo de mana e o tempo de conjuração vêm do jogo, com sua patente e seus talentos."

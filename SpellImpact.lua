@@ -80,7 +80,7 @@ cacheFrame:SetScript("OnEvent", MSC.ResetSpellImpactCache)
 -- =============================================================
 -- OPTIONS (SGJ_Settings.SpellImpact; the Spell Impact tab, SpellImpactView.lua)
 -- =============================================================
-local DEFAULTS = { rows = "auto", maxRows = 3, target = 0, efficient = false, extraTargets = false, showRank = true }
+local DEFAULTS = { maxRows = 3, target = 0, efficient = false, extraTargets = false, showRank = true }
 function MSC.SpellImpactOptions()
     if not SGJ_Settings then return DEFAULTS end
     local o = SGJ_Settings.SpellImpact
@@ -90,8 +90,29 @@ function MSC.SpellImpactOptions()
     return o
 end
 function MSC.ResetSpellImpactOptions()
+    -- keeps the spells each character added (the Add Spell list has its own buttons)
+    local added = {}
+    local old = SGJ_Settings and SGJ_Settings.SpellImpact
+    if type(old) == "table" and type(old.chars) == "table" then
+        for guid, c in pairs(old.chars) do if type(c) == "table" and c.added then added[guid] = { added = c.added } end end
+    end
     if SGJ_Settings then SGJ_Settings.SpellImpact = nil end
-    return MSC.SpellImpactOptions()
+    local o = MSC.SpellImpactOptions()
+    o.chars = added
+    return o
+end
+
+-- This character's own options: rows (which list to show) and the spells it added. Saved per character (2026-11-20:
+-- an account-wide "Rows: Melee" set on a Paladin showed on a Mage), keyed by GUID like the other per-character data.
+function MSC.SpellImpactCharOptions()
+    local o = MSC.SpellImpactOptions()
+    if type(o.chars) ~= "table" then o.chars = {} end
+    local guid = UnitGUID and UnitGUID("player") or "?"
+    local c = o.chars[guid]
+    if type(c) ~= "table" then c = {}; o.chars[guid] = c end
+    if c.rows == nil then c.rows = "auto" end
+    if type(c.added) ~= "table" then c.added = {} end
+    return c
 end
 
 -- Miss chance to cover by target level (0 = your level ... 3 = boss): spells 4 / 5 / 6 / 17%, melee and ranged
@@ -379,6 +400,8 @@ local function Evaluate(row, side, isHeal)
         if physical then tick = tick + (r.tap or 0) * bonus else tick = tick + (r.tc or 0) * bonus * share end
         periodic = tick * r.k
         if r.pc or r.ch then periodic = periodic * (1 + crit * ((r.s ~= 1) and 0.5 or (critMult - 1))) end
+        -- ground area spells (Blizzard, Consecration, Rain of Fire...) tick on every mob in them
+        if r.aoe and MSC.SpellImpactOptions().extraTargets then periodic = periodic * 3 end
     end
 
     direct, periodic = direct * hitChance, periodic * hitChance
@@ -457,7 +480,7 @@ end
 
 -- The role shown: the option (Damage / Healing / Melee / Bear) when your class has rows for it, else your profile's
 function MSC.SpellImpactRole(class, specName)
-    local want = MSC.SpellImpactOptions().rows
+    local want = MSC.SpellImpactCharOptions().rows
     if want and want ~= "auto" then
         for _, r in ipairs(MSC.SpellImpactRoles(class)) do if r == want then return want end end
     end
@@ -493,14 +516,26 @@ function MSC.SpellImpactLines(link, slotId, itemNewStats, itemOldStats, weights,
     if melee then white(false, 6603, "Attack") end
     if autoShot then white(true, 75, "Auto Shot") end
 
-    local function add(row, rankEntry, efficient)
+    local function add(row, rankEntry, efficient, isHeal, addedKey)
+        if isHeal == nil then isHeal = heal end
         local r = { entry = row.entry, rank = rankEntry.rank, id = rankEntry.id }
-        local aT, aS, aM, physical, cast, cost = Evaluate(r, now, heal)
-        local bT, bS, bM = Evaluate(r, with, heal)
+        local aT, aS, aM, physical, cast, cost = Evaluate(r, now, isHeal)
+        local bT, bS, bM = Evaluate(r, with, isHeal)
         if not (aT and bT) then return end
-        lines[#lines + 1] = { key = row.entry.name, spellId = r.id, name = SpellName(r.id) or row.entry.name,
-            rank = SpellRankText(r.id), heal = heal, physical = physical, efficient = efficient,
+        lines[#lines + 1] = { key = addedKey or row.entry.name, spellId = r.id, name = SpellName(r.id) or row.entry.name,
+            rank = SpellRankText(r.id), heal = isHeal, physical = physical, efficient = efficient, added = addedKey and true or nil,
             a = { aT, aS, aM }, b = { bT, bS, bM }, cast = cast, cost = cost }
+    end
+    -- spells this character added in the Spell Impact tab (any damage or heal spell of the class you know)
+    local added = MSC.SpellImpactCharOptions().added
+    local addedRows = {}
+    for _, xrole in ipairs({ "xdmg", "xheal" }) do
+        for _, row in ipairs(KnownRows(class, xrole)) do
+            local key = xrole .. ":" .. row.entry.name
+            if added[key] and (all or not o.hidden[key]) then
+                addedRows[#addedRows + 1] = { row = row, heal = xrole == "xheal", key = key }
+            end
+        end
     end
     for _, row in ipairs(rows) do
         if all or not o.hidden[row.entry.name] then
@@ -516,7 +551,33 @@ function MSC.SpellImpactLines(link, slotId, itemNewStats, itemOldStats, weights,
             end
         end
     end
+    for _, a in ipairs(addedRows) do
+        add(a.row, { rank = a.row.rank, id = a.row.id }, nil, a.heal, a.key)
+    end
     return lines, role
+end
+
+-- The spells this character can add (known, not in the class lists): { key, name, spellId, heal, added }, by name
+function MSC.SpellImpactAddable()
+    local _, class = UnitClass("player")
+    local added = MSC.SpellImpactCharOptions().added
+    local out = {}
+    for _, xrole in ipairs({ "xdmg", "xheal" }) do
+        for _, row in ipairs(KnownRows(class, xrole)) do
+            local key = xrole .. ":" .. row.entry.name
+            out[#out + 1] = { key = key, name = SpellName(row.id) or row.entry.name, spellId = row.id,
+                heal = xrole == "xheal", added = added[key] and true or false }
+        end
+    end
+    table.sort(out, function(a, b)
+        if a.name ~= b.name then return a.name < b.name end
+        return (a.heal and 1 or 0) < (b.heal and 1 or 0)
+    end)
+    return out
+end
+
+function MSC.SetSpellImpactAdded(key, on)
+    MSC.SpellImpactCharOptions().added[key] = on and true or nil
 end
 
 -- One line's value text, "DPS a > b  DPM c > d" (physical rows: damage per use; auto-attack: DPS)
@@ -564,13 +625,13 @@ function MSC.AddSpellImpact(tooltip, link, slotId, itemNewStats, itemOldStats, w
     if not (SGJ_Settings and SGJ_Settings.ShowSpellImpact) then return end
     local lines = MSC.SpellImpactLines(link, slotId, itemNewStats, itemOldStats, weights, specName)
     if #lines == 0 then return end
-    -- auto-attack lines and the efficient-rank lines don't count against the row limit
+    -- auto-attack lines, the efficient-rank lines and spells you added yourself don't count against the row limit
     local maxRows = math_max(1, math_min(6, tonumber(MSC.SpellImpactOptions().maxRows) or 3))
     tooltip:AddLine(" ")
     tooltip:AddDoubleLine(MSC.L["Spell Impact:"], MSC.L["now > with this item"], 1, 0.82, 0, 0.6, 0.6, 0.6)
     local shown = 0
     for _, l in ipairs(lines) do
-        local counts = not l.white and not l.efficient
+        local counts = not l.white and not l.efficient and not l.added
         if counts then shown = shown + 1 end
         if not counts or shown <= maxRows then
             local text = MSC.SpellImpactValueText(l)

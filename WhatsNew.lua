@@ -17,9 +17,11 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.6.1
-    { text = "Talents: all five dungeon healer builds were searched again on a healer model checked against dungeon logs. Restoration Shaman about 4.5% faster, Holy Priest 4%, Restoration Druid 1.5%, Holy Paladin 1.4%, Discipline 0.9%.", forever = true },
-    { text = "Dungeon healer weights are rebuilt: Stamina and Armor follow how often healers really get hit (much lower), and damage stats never rate above Stamina.", forever = true },
+    -- v3.7.0
+    { text = "Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character.", forever = true },
+    { text = "Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping).", forever = true },
+    { text = "Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30.", forever = true },
+    { text = "Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

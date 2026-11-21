@@ -116,7 +116,8 @@ local function InitView(parent)
         b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         b.Sync = function()
             local list, cur = choices(), get()
-            local label = cur
+            -- a saved value this character can't use shows as the first choice (From profile)
+            local label = list[1] and list[1].text or tostring(cur)
             for _, c in ipairs(list) do if c.value == cur then label = c.text end end
             b:SetText(string_format(fmt, label))
         end
@@ -142,7 +143,7 @@ local function InitView(parent)
             local list = { { value = "auto", text = T(ROLE_NAMES.auto) } }
             for _, r in ipairs(MSC.SpellImpactRoles(class)) do list[#list + 1] = { value = r, text = T(ROLE_NAMES[r]) } end
             return list
-        end, function() return O().rows end, function(v) O().rows = v end)
+        end, function() return MSC.SpellImpactCharOptions().rows end, function(v) MSC.SpellImpactCharOptions().rows = v end)
     local bMax = Cycle(T("Tooltip rows: %s"), T("How many spells the tooltip lists (auto-attack and the most efficient rank don't count)."),
         bRows, -6, function()
             local list = {}
@@ -157,7 +158,7 @@ local function InitView(parent)
         end, function() return O().target end, function(v) O().target = v end)
     local cbEff = Check(T("Most efficient heal rank"), T("Healers: also shows the rank you know that heals the most per mana, for downranking."),
         bTarget, -10, function() return O().efficient end, function(v) O().efficient = v end)
-    local cbExtra = Check(T("Count extra targets"), T("Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."),
+    local cbExtra = Check(T("Count extra targets"), T("Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."),
         cbEff, -2, function() return O().extraTargets end, function(v) O().extraTargets = v end)
     local cbRank = Check(T("Show spell rank"), T("Shows each spell's rank next to its name."),
         cbExtra, -2, function() return O().showRank end, function(v) O().showRank = v end)
@@ -185,6 +186,66 @@ local function InitView(parent)
     local bRecalc = CreateFrame("Button", nil, Cc, "UIPanelButtonTemplate")
     bRecalc:SetSize(110, 22); bRecalc:SetPoint("TOPRIGHT", -14, -46); bRecalc:SetText(T("Recalculate"))
     bRecalc:SetScript("OnClick", function() if MSC.ResetSpellImpactCache then MSC.ResetSpellImpactCache() end; f.Refresh() end)
+
+    -- ADD SPELL: any other damage or heal spell of your class you know, ticked on or off (saved per character)
+    local bAdd = CreateFrame("Button", nil, Cc, "UIPanelButtonTemplate")
+    bAdd:SetSize(110, 22); bAdd:SetPoint("RIGHT", bRecalc, "LEFT", -6, 0); bAdd:SetText(T("Add Spell"))
+    Tip(bAdd, T("Add Spell"), T("Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."))
+
+    local pick = CreateFrame("Frame", nil, f, "BackdropTemplate")
+    pick:SetSize(250, 330); pick:SetPoint("TOPRIGHT", bAdd, "BOTTOMRIGHT", 0, -4)
+    pick:SetFrameStrata("DIALOG"); pick:EnableMouse(true); pick:Hide()
+    if MSC.ApplyPanelSkin then MSC.ApplyPanelSkin(pick) end
+    local pickBg = pick:CreateTexture(nil, "BACKGROUND", nil, -2); pickBg:SetAllPoints(); pickBg:SetColorTexture(0.06, 0.06, 0.08, 0.97)
+    local pickTitle = pick:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    pickTitle:SetPoint("TOPLEFT", 12, -10); pickTitle:SetText(T("Add Spell")); MSC.StyleHeading(pickTitle, "Blue", 226)
+    local pickClose = CreateFrame("Button", nil, pick, "UIPanelCloseButton"); pickClose:SetPoint("TOPRIGHT", 2, 2)
+    local pickEmpty = pick:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    pickEmpty:SetPoint("TOPLEFT", 12, -36); pickEmpty:SetWidth(226); pickEmpty:SetJustifyH("LEFT"); pickEmpty:SetTextColor(0.7, 0.7, 0.7)
+    pickEmpty:SetText(T("No other damage or healing spells known yet."))
+    local psf = CreateFrame("ScrollFrame", nil, pick, "UIPanelScrollFrameTemplate")
+    psf:SetPoint("TOPLEFT", 8, -32); psf:SetPoint("BOTTOMRIGHT", -28, 10)
+    local pchild = CreateFrame("Frame", nil, psf); pchild:SetSize(210, 10); psf:SetScrollChild(pchild)
+    local pickRows = {}
+    local function DrawPicker()
+        local list = MSC.SpellImpactAddable()
+        -- a name that is in the list twice (Penance, Holy Nova: damage and heal) gets "(heal)" on its heal entry
+        local count = {}
+        for _, a in ipairs(list) do count[a.name] = (count[a.name] or 0) + 1 end
+        for i, a in ipairs(list) do
+            local r = pickRows[i]
+            if not r then
+                r = CreateFrame("CheckButton", nil, pchild, "UICheckButtonTemplate"); r:SetSize(22, 22)
+                r:SetPoint("TOPLEFT", 0, -(i - 1) * 22)
+                r.Icon = r:CreateTexture(nil, "ARTWORK"); r.Icon:SetSize(16, 16); r.Icon:SetPoint("LEFT", r, "RIGHT", 2, 0)
+                r.Label = r:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"); r.Label:SetPoint("LEFT", r.Icon, "RIGHT", 4, 0)
+                r.Label:SetWidth(160); r.Label:SetJustifyH("LEFT"); r.Label:SetWordWrap(false)
+                r:SetScript("OnClick", function(self)
+                    MSC.SetSpellImpactAdded(self.key, self:GetChecked())
+                    f.Refresh()
+                end)
+                r:SetScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    if self.spellId and GameTooltip.SetSpellByID then GameTooltip:SetSpellByID(self.spellId) end
+                    GameTooltip:Show()
+                end)
+                r:SetScript("OnLeave", GameTooltip_Hide)
+                pickRows[i] = r
+            end
+            r.key, r.spellId = a.key, a.spellId
+            r:SetChecked(a.added)
+            r.Icon:SetTexture(SpellIcon(a.spellId))
+            r.Label:SetText(a.name .. ((a.heal and count[a.name] > 1) and (" |cff888888(" .. T("heal") .. ")|r") or ""))
+            r:Show()
+        end
+        for i = #list + 1, #pickRows do pickRows[i]:Hide() end
+        pchild:SetHeight(math_max(10, #list * 22))
+        pickEmpty:SetShown(#list == 0)
+    end
+    bAdd:SetScript("OnClick", function()
+        if pick:IsShown() then pick:Hide() else DrawPicker(); pick:Show() end
+    end)
+    f:HookScript("OnHide", function() pick:Hide() end)
 
     -- column headers
     local COLS = { { key = "Per cast", x = -128 }, { key = "Per sec", x = -70 }, { key = "Per mana", x = -14 } }

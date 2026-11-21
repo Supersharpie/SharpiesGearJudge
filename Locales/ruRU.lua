@@ -2477,6 +2477,15 @@ L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat
 L["Show Spell Impact"] = "Показывать влияние на заклинания"
 L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Показывает, как предмет меняет ваши основные заклинания высшего известного вам ранга: урон или исцеление в секунду и на единицу маны (ближний бой: урон в секунду от автоатаки и урон за применение). Сейчас — жёлтым, с предметом — зелёным (лучше) или красным (хуже). Против противника вашего уровня, без талантов."
 L["Spell Impact:"] = "Влияние на заклинания:"
+-- Spell Impact Add Spell (3.7.0)
+L["Add Spell"] = "Добавить заклинание"
+L["Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."] = "Добавьте в список и подсказку любое другое известное вам заклинание урона или исцеления. Добавленные заклинания не учитываются в ограничении строк подсказки."
+L["No other damage or healing spells known yet."] = "Других заклинаний урона или исцеления пока нет."
+L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."] = "Отскоки Цепной молнии и Цепного исцеления, Залп и Размах лапой считают 3 цели с ослаблением, как в игре; Гнев небес и наземные заклинания вроде Снежной бури, Освящения и Огненного ливня считают 3 противников."
+L["Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character."] = "Влияние на заклинания: добавляйте свои заклинания («Добавить заклинание» в /sgj spells), например Снежную бурю, Огненный взрыв, Кровопускание или Молитву исцеления. Выбор строк теперь сохраняется для каждого персонажа."
+L["Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping)."] = "Настройки персонажа, снаряжение в банке, выбор в Talents и XP, наборы Laboratory и альты Roster больше не выглядят сброшенными, когда игра при входе не сообщает имя игрового мира (недавнее изменение против прыжков между слоями)."
+L["Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30."] = "Talents: четыре билда танка для подземелий заново подобраны на модели танка, сверенной с логами подземелий, каждый немного быстрее (паладин «Защита» примерно на 0,7%). Билд танка-шамана по-прежнему заканчивается на 30."
+L["Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more."] = "Веса танков для подземелий пересчитаны под эти билды: показатель блока ценится меньше, уклонение и защита у медведя — больше."
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "Влияние на заклинания"
 L["Show in tooltips"] = "Показывать в подсказках"
@@ -2490,7 +2499,6 @@ L["The mob your hit chance is worked out against: spells miss 4% of your level, 
 L["Most efficient heal rank"] = "Самый эффективный ранг исцеления"
 L["Healers: also shows the rank you know that heals the most per mana, for downranking."] = "Лекари: также показывает известный вам ранг, который исцеляет больше всего на единицу маны (для понижения ранга)."
 L["Count extra targets"] = "Учитывать дополнительные цели"
-L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."] = "Отскоки Цепной молнии и Цепного исцеления, Залп и Размах лапой считают 3 цели с ослаблением, как в игре; Гнев небес считает 3 противников."
 L["Show spell rank"] = "Показывать ранг заклинания"
 L["Shows each spell's rank next to its name."] = "Показывает ранг каждого заклинания рядом с его названием."
 L["Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."] = "Без талантов: они меняют оба числа одинаково, поэтому «лучше» или «хуже» остаётся верным. Стоимость маны и время произнесения берутся из игры, с вашим рангом и талантами."

@@ -2487,6 +2487,15 @@ L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat
 L["Show Spell Impact"] = "Zauberwirkung anzeigen"
 L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Zeigt, wie ein Gegenstand deine wichtigsten Zauber im höchsten Rang, den du kennst, verändert: Schaden oder Heilung pro Sekunde und pro Mana (Nahkampf: Schaden pro Sekunde der automatischen Angriffe und Schaden pro Einsatz). Jetzt in Gelb, mit dem Gegenstand in Grün (besser) oder Rot (schlechter). Gegen einen Gegner deiner Stufe, ohne Talente."
 L["Spell Impact:"] = "Zauberwirkung:"
+-- Spell Impact Add Spell (3.7.0)
+L["Add Spell"] = "Zauber hinzufügen"
+L["Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."] = "Füge der Liste und dem Tooltip jeden anderen Schadens- oder Heilzauber hinzu, den du kennst. Hinzugefügte Zauber zählen nicht zur Zeilengrenze des Tooltips."
+L["No other damage or healing spells known yet."] = "Noch keine weiteren Schadens- oder Heilzauber bekannt."
+L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."] = "Sprünge von Kettenblitzschlag und Kettenheilung, Mehrfachschuss und Prankenhieb zählen 3 Ziele mit der Skalierung des Spiels; Heiliger Zorn und Bodenzauber wie Blizzard, Weihe und Feuerregen zählen 3 Gegner."
+L["Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character."] = "Zauberwirkung: Füge eigene Zauber hinzu (Zauber hinzufügen in /sgj spells), z. B. Blizzard, Feuerschlag, Verwunden oder Gebet der Heilung. Die Zeilen-Auswahl wird jetzt pro Charakter gespeichert."
+L["Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping)."] = "Charakterbezogene Einstellungen, Bankausrüstung, Talents- und XP-Auswahl, Laboratory-Sets und Roster-Twinks wirken nicht mehr zurückgesetzt, wenn das Spiel beim Einloggen keinen Realmnamen liefert (eine neue Änderung gegen Layer-Hopping)."
+L["Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30."] = "Talents: Die vier Dungeon-Tank-Builds wurden mit einem Tank-Modell, das an Dungeon-Logs geprüft ist, neu gesucht, jeder etwas schneller (Schutz-Paladin etwa 0,7 %). Der Schamanen-Tank-Build endet weiter bei 30."
+L["Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more."] = "Dungeon-Tank-Gewichtungen für diese Builds neu berechnet: Blockwert zählt weniger, Ausweichen und Verteidigung zählen beim Bären mehr."
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "Zauberwirkung"
 L["Show in tooltips"] = "In Tooltips zeigen"
@@ -2500,7 +2509,6 @@ L["The mob your hit chance is worked out against: spells miss 4% of your level, 
 L["Most efficient heal rank"] = "Effizientester Heilrang"
 L["Healers: also shows the rank you know that heals the most per mana, for downranking."] = "Heiler: zeigt auch den Rang, den du kennst, der pro Mana am meisten heilt (zum Herabstufen)."
 L["Count extra targets"] = "Zusätzliche Ziele zählen"
-L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."] = "Sprünge von Kettenblitzschlag und Kettenheilung, Mehrfachschuss und Prankenhieb zählen 3 Ziele mit der Skalierung des Spiels; Heiliger Zorn zählt 3 Gegner."
 L["Show spell rank"] = "Zauberrang zeigen"
 L["Shows each spell's rank next to its name."] = "Zeigt den Rang jedes Zaubers neben seinem Namen."
 L["Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."] = "Ohne Talente: Sie verändern beide Zahlen gleich, also bleibt besser oder schlechter richtig. Manakosten und Zauberzeit kommen aus dem Spiel, mit deinem Rang und deinen Talenten."

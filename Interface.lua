@@ -4071,7 +4071,7 @@ function MSC.ShowHistory()
     local f = MSC.CreatePopupFrame(MSC.L["Export Data (Discord Ready)"])
     local unit = "player"
     local name = UnitName(unit)
-    local realm = GetRealmName()
+    local realm = MSC.GetRealm()
     local lvl = UnitLevel(unit)
     local _, class = UnitClass(unit)
     

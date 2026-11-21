@@ -32,6 +32,14 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
+### 3.7.0 (Talents 1.4.4)
+
+- **Talents, dungeon tank builds:** all four searched again on a tank model checked against dungeon logs, each a little faster: Protection Paladin about 0.7%, Protection Warrior 0.15%, Shaman tank 0.1%, Bear 0.05%. The Shaman tank build still ends at 30.
+- **Dungeon tank weights:** rebuilt for these builds. Block value counts for less, Bear Dodge and Defense for more, and Shaman tanks rate Intellect above Stamina at 30.
+- **Spell Impact, add your own spells:** the Add Spell button in the Spell Impact tab (`/sgj spells`) adds any other damage or healing spell you know, such as Blizzard, Cone of Cold, Fire Blast, Rend or Prayer of Healing, to the spell list and the tooltip. Ground spells like Blizzard, Consecration and Rain of Fire are included and count 3 mobs with Count extra targets on.
+- **Fixed:** Spell Impact's Rows choice is saved per character (a Paladin's "melee" showed on a Mage).
+- **Fixed:** per-character settings and the plugins' saved data no longer look reset on logins where the game gives no realm name (a recent change against layer hopping).
+
 ### 3.6.1 (Talents 1.4.3)
 
 - **Talents, dungeon healer builds:** all five searched again on a healer model checked against dungeon logs. Restoration Shaman about 4.5% faster, Holy Priest 4%, Restoration Druid 1.5%, Holy Paladin 1.4%, Discipline 0.9%.
@@ -318,7 +326,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.6.1 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.7.0 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

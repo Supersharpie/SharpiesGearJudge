@@ -963,14 +963,62 @@ function MSC.GetCharacterName()
     return UnitName("player") or "Unknown"
 end
 
+-- The realm name, steady for the whole session. Since Nov 2026 the game can hand
+-- back an empty realm name for a whole login (a change against layer hopping);
+-- keyed on that, every character would look new and its saved settings gone.
+-- The last realm seen for this character (by GUID) stands in, else the one its
+-- full name was saved under before (own saved data, then the Roster's).
+local realmCache
+local function SavedRealmFor(name, guid)
+    local byGuid = type(SGJ_Settings) == "table" and type(SGJ_Settings.RealmByGUID) == "table" and SGJ_Settings.RealmByGUID
+    if guid and byGuid and type(byGuid[guid]) == "string" and byGuid[guid] ~= "" then return byGuid[guid] end
+    local roster = type(SGJ_RosterDB) == "table" and type(SGJ_RosterDB.chars) == "table" and SGJ_RosterDB.chars
+    local alt = guid and roster and roster[guid]
+    if type(alt) == "table" and type(alt.realm) == "string" and alt.realm ~= "" then return alt.realm end
+    if not name or name == "" then return nil end
+    local found, n = {}, 0
+    local prefix = name .. "-"
+    if type(SGJ_Settings) == "table" then
+        for _, t in pairs(SGJ_Settings) do
+            if type(t) == "table" then
+                for k in pairs(t) do
+                    if type(k) == "string" and k:sub(1, #prefix) == prefix then
+                        local r = k:sub(#prefix + 1)
+                        if r ~= "" and r ~= "Local" and not found[r] then found[r] = true; n = n + 1 end
+                    end
+                end
+            end
+        end
+    end
+    if n == 1 then return (next(found)) end
+    return nil
+end
+
+function MSC.GetRealm()
+    local r = GetRealmName and GetRealmName()
+    local guid = UnitGUID and UnitGUID("player")
+    if type(r) == "string" and r ~= "" then
+        realmCache = r
+        if guid and type(SGJ_Settings) == "table" then
+            SGJ_Settings.RealmByGUID = SGJ_Settings.RealmByGUID or {}
+            SGJ_Settings.RealmByGUID[guid] = r
+        end
+        return r
+    end
+    if realmCache then return realmCache end
+    local saved = SavedRealmFor(MSC.GetCharacterName and MSC.GetCharacterName(), guid)
+    if saved then realmCache = saved; return saved end
+    return "Local"
+end
+
 -- The key from before the full-name fix (first name only), for one-time copies.
 function MSC.GetLegacyPlayerKey()
-    return (UnitName("player") or "Unknown") .. "-" .. (GetRealmName() or "Local")
+    return (UnitName("player") or "Unknown") .. "-" .. MSC.GetRealm()
 end
 
 -- Generates a unique key for the current character
 function MSC:GetPlayerKey()
-    return MSC.GetCharacterName() .. "-" .. (GetRealmName() or "Local")
+    return MSC.GetCharacterName() .. "-" .. MSC.GetRealm()
 end
 
 -- Copies per-character data saved under the old first-name key to the full-name

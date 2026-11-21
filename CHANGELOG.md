@@ -1,5 +1,21 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.7.0
+
+### ✨ Spell Impact: Add Your Own Spells (WoW Forever)
+- New Add Spell button in the Spell Impact tab (`/sgj spells`): pick any other damage or healing spell you know, such as Blizzard, Cone of Cold, Fire Blast, Rend or Prayer of Healing. Added spells show in the spell list and in tooltips, and don't count against the tooltip row limit.
+- Ground spells (Blizzard, Consecration, Hurricane, Rain of Fire, Volley) and Tranquility are worked out too; with Count extra targets on, ground spells count 3 mobs.
+
+### 🔧 Dungeon Tank Weights (WoW Forever)
+- Protection Warrior, Protection Paladin, Bear and Shaman tank dungeon weights are rebuilt for the new tank builds (Talents 1.4.4), on the tank model checked against dungeon logs.
+- Block value counts for less (about half for Warrior and Paladin). Bear Dodge and Defense count for more.
+- Paladin: Stamina is lower at 20-30 and higher from about 50; Intellect is lower.
+- Shaman: Intellect now rates above Stamina at 30. The weights still hold level 30's after 30.
+
+### 🐛 Fixes
+- Spell Impact's Rows choice is saved per character. It was shared by the whole account, so a Paladin's "melee" showed on a Mage as an untranslated "Rows: melee".
+- WoW Forever: the game can now give no realm name for a whole login (a change against layer hopping). Per-character settings, saved bank gear and tracked specs would have looked reset. Each character now keeps the realm it was last seen on.
+
 ## 🚀 v3.6.1
 
 ### 🔧 Dungeon Healer Weights (WoW Forever)

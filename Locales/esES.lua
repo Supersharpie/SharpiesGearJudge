@@ -2482,6 +2482,15 @@ L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat
 L["Show Spell Impact"] = "Mostrar impacto en hechizos"
 L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Muestra cómo cambia un objeto tus hechizos principales en el rango más alto que conoces: daño o sanación por segundo y por maná (cuerpo a cuerpo: daño por segundo de los ataques automáticos y daño por uso). Actual en amarillo; con el objeto, en verde (mejor) o rojo (peor). Contra un enemigo de tu nivel, sin talentos."
 L["Spell Impact:"] = "Impacto en hechizos:"
+-- Spell Impact Add Spell (3.7.0)
+L["Add Spell"] = "Añadir hechizo"
+L["Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."] = "Añade a la lista y a la descripción cualquier otro hechizo de daño o sanación que conozcas. Los hechizos añadidos no cuentan para el límite de filas de la descripción."
+L["No other damage or healing spells known yet."] = "Aún no conoces otros hechizos de daño o sanación."
+L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."] = "Los saltos de Cadena de relámpagos y Sanación en cadena, Disparo múltiple y Flagelo cuentan 3 objetivos con la reducción del juego; Cólera Sagrada y los hechizos de suelo como Ventisca, Consagración y Lluvia de fuego cuentan 3 enemigos."
+L["Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character."] = "Impacto en hechizos: añade tus propios hechizos (Añadir hechizo en /sgj spells), como Ventisca, Explosión de fuego, Desgarrar u Oración de sanación. La elección de filas ahora se guarda por personaje."
+L["Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping)."] = "Los ajustes por personaje, el equipo del banco, las elecciones de Talents y XP, los conjuntos de Laboratory y los alters de Roster ya no parecen reiniciados cuando el juego no da el nombre del reino al conectar (un cambio reciente contra el salto de capas)."
+L["Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30."] = "Talents: las cuatro builds de tanque de mazmorra se han buscado de nuevo con un modelo de tanque comprobado con registros de mazmorra, cada una algo más rápida (Paladín Protección un 0,7 %). La build de tanque de Chamán sigue terminando en 30."
+L["Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more."] = "Pesos de tanque de mazmorra recalculados para estas builds: el valor de bloqueo cuenta menos; la esquiva y la defensa del Oso cuentan más."
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "Impacto en hechizos"
 L["Show in tooltips"] = "Mostrar en las descripciones"
@@ -2495,7 +2504,6 @@ L["The mob your hit chance is worked out against: spells miss 4% of your level, 
 L["Most efficient heal rank"] = "Rango de sanación más eficiente"
 L["Healers: also shows the rank you know that heals the most per mana, for downranking."] = "Sanadores: muestra también el rango que conoces que más sana por maná, para usar rangos bajos."
 L["Count extra targets"] = "Contar objetivos adicionales"
-L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."] = "Los saltos de Cadena de relámpagos y Sanación en cadena, Disparo múltiple y Flagelo cuentan 3 objetivos con la reducción del juego; Cólera Sagrada cuenta 3 enemigos."
 L["Show spell rank"] = "Mostrar rango del hechizo"
 L["Shows each spell's rank next to its name."] = "Muestra el rango de cada hechizo junto a su nombre."
 L["Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."] = "Sin talentos: cambian ambos números por igual, así que mejor o peor sigue siendo correcto. El coste de maná y el tiempo de lanzamiento vienen del juego, con tu rango y tus talentos."

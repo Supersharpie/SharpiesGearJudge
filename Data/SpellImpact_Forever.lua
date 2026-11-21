@@ -121,6 +121,97 @@ MSC.SpellImpactData = {
                     { ids = { 31018 }, l = 60, s = 1, cost = 35, pt = 3, b = 102, ppr = 181 },
                 } } },
         },
+        xdmg = {
+            { { name = "Entangling Roots", ranks = {
+                    { ids = { 339 }, l = 8, s = 4, ct = 1.5, cost = 50, tb = 5, tc = 0.06, k = 4, du = 12, pc = true },
+                    { ids = { 1062 }, l = 18, s = 4, ct = 1.5, cost = 65, tb = 9, tc = 0.06, k = 5, du = 15, pc = true },
+                    { ids = { 5195 }, l = 28, s = 4, ct = 1.5, cost = 80, tb = 12, tc = 0.06, k = 6, du = 18, pc = true },
+                    { ids = { 5196 }, l = 38, s = 4, ct = 1.5, cost = 95, tb = 16, tc = 0.06, k = 7, du = 21, pc = true },
+                    { ids = { 9852 }, l = 48, s = 4, ct = 1.5, cost = 110, tb = 21, tc = 0.06, k = 8, du = 24, pc = true },
+                    { ids = { 9853 }, l = 58, s = 4, ct = 1.5, cost = 125, tb = 26, tc = 0.06, k = 9, du = 27, pc = true },
+                } } },
+            { { name = "Hurricane", ranks = {
+                    { ids = { 16914 }, l = 40, m = 46, s = 4, cost = 880, tb = 68, tg = 0.2, tc = 0.03, k = 10, du = 10, ch = 10, aoe = true },
+                    { ids = { 17401 }, l = 50, m = 56, s = 4, cost = 1180, tb = 98, tg = 0.2, tc = 0.03, k = 10, du = 10, ch = 10, aoe = true },
+                    { ids = { 17402 }, l = 60, m = 66, s = 4, cost = 1495, tb = 132, tg = 0.3, tc = 0.03, k = 10, du = 10, ch = 10, aoe = true },
+                } } },
+            { { name = "Insect Swarm", ranks = {
+                    { ids = { 5570 }, l = 20, s = 4, cost = 45, tb = 8, tc = 0.158, k = 6, du = 12, pc = true },
+                    { ids = { 24974 }, l = 30, s = 4, cost = 85, tb = 15, tc = 0.158, k = 6, du = 12, pc = true },
+                    { ids = { 24975 }, l = 40, s = 4, cost = 100, tb = 20, tc = 0.158, k = 6, du = 12, pc = true },
+                    { ids = { 24976 }, l = 50, s = 4, cost = 140, tb = 25, tc = 0.158, k = 6, du = 12, pc = true },
+                    { ids = { 24977 }, l = 60, s = 4, cost = 160, tb = 31, tc = 0.158, k = 6, du = 12, pc = true },
+                } } },
+            { { name = "Lacerate", ranks = {
+                    { ids = { 1328617 }, l = 25, s = 1, cost = 150, pt = 1, tb = 4, k = 5, du = 15, pc = true },
+                    { ids = { 1328616 }, l = 34, s = 1, cost = 150, pt = 1, tb = 6, k = 5, du = 15, pc = true },
+                    { ids = { 414644 }, l = 42, s = 1, cost = 150, pt = 1, tb = 10, k = 5, du = 15, pc = true },
+                    { ids = { 1235826 }, l = 50, s = 1, cost = 150, pt = 1, tb = 12, k = 5, du = 15, pc = true },
+                    { ids = { 1235827 }, l = 58, s = 1, cost = 150, pt = 1, tb = 15, k = 5, du = 15, pc = true },
+                } } },
+            { { name = "Primal Bite", ranks = {
+                    { ids = { 407995 }, l = 40, s = 1, cost = 200, pt = 1, b = 42, w = 1, wpct = 1 },
+                    { ids = { 1238069 }, l = 50, s = 1, cost = 200, pt = 1, b = 62, w = 1, wpct = 1 },
+                    { ids = { 1238070 }, l = 60, s = 1, cost = 200, pt = 1, b = 77, w = 1, wpct = 1 },
+                } } },
+            { { name = "Ravage", ranks = {
+                    { ids = { 6785 }, l = 32, s = 1, cost = 60, pt = 3, b = 42, w = 1, wpct = 4.35 },
+                    { ids = { 6787 }, l = 42, s = 1, cost = 60, pt = 3, b = 62, w = 1, wpct = 4.35 },
+                    { ids = { 9866 }, l = 50, s = 1, cost = 60, pt = 3, b = 78, w = 1, wpct = 4.35 },
+                    { ids = { 9867 }, l = 58, s = 1, cost = 60, pt = 3, b = 98, w = 1, wpct = 4.35 },
+                } } },
+            { { name = "Rip", ranks = {
+                    { ids = { 1079 }, l = 20, s = 1, cost = 30, pt = 3, tb = 4, k = 6, du = 12, pc = true },
+                    { ids = { 9492 }, l = 28, s = 1, cost = 30, pt = 3, tb = 5, k = 6, du = 12, pc = true },
+                    { ids = { 9493 }, l = 36, s = 1, cost = 30, pt = 3, tb = 8, k = 6, du = 12, pc = true },
+                    { ids = { 9752 }, l = 44, s = 1, cost = 30, pt = 3, tb = 10, k = 6, du = 12, pc = true },
+                    { ids = { 9894 }, l = 52, s = 1, cost = 30, pt = 3, tb = 14, k = 6, du = 12, pc = true },
+                    { ids = { 9896 }, l = 60, s = 1, cost = 30, pt = 3, tb = 19, k = 6, du = 12, pc = true },
+                } } },
+            { { name = "Shred", ranks = {
+                    { ids = { 5221 }, l = 20, s = 1, cost = 60, pt = 3, b = 22, w = 1, wpct = 2 },
+                    { ids = { 6800 }, l = 30, s = 1, cost = 60, pt = 3, b = 32, w = 1, wpct = 2 },
+                    { ids = { 8992 }, l = 38, s = 1, cost = 60, pt = 3, b = 44, w = 1, wpct = 2 },
+                    { ids = { 9829 }, l = 46, s = 1, cost = 60, pt = 3, b = 64, w = 1, wpct = 2 },
+                    { ids = { 9830 }, l = 54, s = 1, cost = 60, pt = 3, b = 80, w = 1, wpct = 2 },
+                } } },
+            { { name = "Starfall", ranks = {
+                    { ids = { 439748, 439753 }, l = 1, s = 7, pct = 39, b = 50, c = 0.3 },
+                } } },
+            { { name = "Starsurge", ranks = {
+                    { ids = { 417157 }, l = 1, m = 1, s = 7, b = 276, c = 0.429 },
+                } } },
+            { { name = "Sunfire", ranks = {
+                    { ids = { 414684 }, l = 1, s = 4, pct = 21, b = 141, c = 0.15, tb = 65, tc = 0.13, k = 4, du = 12 },
+                    { ids = { 414687, 414689 }, l = 1, s = 4, cost = 200, pt = 1, b = 141, tb = 65, k = 4, du = 12 },
+                } } },
+        },
+        xheal = {
+            { { name = "Efflorescence", ranks = {
+                    { ids = { 417148 }, l = 1, s = 4, b = 16, c = 0.06, aoe = true, heal = true },
+                } } },
+            { { name = "Lifebloom", ranks = {
+                    { ids = { 408124 }, l = 1, s = 4, pct = 14, tb = 4, k = 7, du = 7, theal = true },
+                    { ids = { 408245 }, l = 1, s = 4, b = 44, heal = true },
+                } } },
+            { { name = "Nourish", ranks = {
+                    { ids = { 408247 }, l = 1, s = 4, ct = 2, pct = 26, b = 175, c = 0.357, heal = true },
+                } } },
+            { { name = "Swiftmend", ranks = {
+                    { ids = { 18562 }, l = 1, s = 4, pct = 20, b = 1, heal = true },
+                } } },
+            { { name = "Tranquility", ranks = {
+                    { ids = { 740 }, l = 30, m = 36, s = 4, cost = 375, tb = 87, tg = 0.6, tc = 0.067, k = 5, du = 10, ch = 10, pc = true, theal = true },
+                    { ids = { 8918 }, l = 40, m = 46, s = 4, cost = 505, tb = 129, tg = 0.7, tc = 0.067, k = 5, du = 10, ch = 10, pc = true, theal = true },
+                    { ids = { 9862 }, l = 50, m = 56, s = 4, cost = 695, tb = 196, tg = 0.9, tc = 0.067, k = 5, du = 10, ch = 10, pc = true, theal = true },
+                    { ids = { 9863 }, l = 60, m = 66, s = 4, cost = 925, tb = 285, tg = 1, tc = 0.067, k = 5, du = 10, ch = 10, pc = true, theal = true },
+                } } },
+            { { name = "Wild Growth", ranks = {
+                    { ids = { 408120 }, l = 40, m = 48, s = 4, ct = 3, cost = 550, tb = 40, tg = 1, tc = 0.066, k = 7, du = 7, pc = true, theal = true },
+                    { ids = { 1238214 }, l = 50, m = 58, s = 4, ct = 3, cost = 755, tb = 60, tg = 1.3, tc = 0.066, k = 7, du = 7, pc = true, theal = true },
+                    { ids = { 1238215 }, l = 60, m = 68, s = 4, ct = 3, cost = 1050, tb = 97, tg = 1.6, tc = 0.066, k = 7, du = 7, pc = true, theal = true },
+                } } },
+        },
     },
     HUNTER = {
         dmg = {
@@ -188,6 +279,86 @@ MSC.SpellImpactData = {
         },
         heal = {
         },
+        xdmg = {
+            { { name = "Black Arrow", ranks = {
+                    { ids = { 3674 }, l = 50, s = 6, tb = 10, tc = 0.1, k = 15, du = 30 },
+                    { ids = { 14296 }, l = 60, s = 6, tb = 10, tc = 0.1, k = 15, du = 30 },
+                } } },
+            { { name = "Carve", ranks = {
+                    { ids = { 425711 }, l = 1, s = 1, pct = 4, jt = 1000, ja = 1, w = 2, wpct = 0.65 },
+                } } },
+            { { name = "Chimera Shot", ranks = {
+                    { ids = { 409433 }, l = 1, s = 4, pct = 6, w = 2, wpct = 1.35 },
+                } } },
+            { { name = "Counterattack", ranks = {
+                    { ids = { 19306 }, l = 30, s = 1, cost = 30, b = 26, w = 2, wpct = 0.5 },
+                    { ids = { 1242634 }, l = 30, s = 1, cost = 45, b = 40, w = 2, wpct = 0.5 },
+                    { ids = { 20909 }, l = 42, s = 1, cost = 65, b = 70, w = 2, wpct = 0.5 },
+                    { ids = { 20910 }, l = 54, s = 1, cost = 85, b = 110, w = 2, wpct = 0.5 },
+                } } },
+            { { name = "Explosive Trap", ranks = {
+                    { ids = { 13812, 13813 }, l = 34, m = 40, s = 3, cost = 275, b = 115, g = 0.8, aoe = true },
+                    { ids = { 14314, 14316 }, l = 44, m = 50, s = 3, cost = 395, b = 163, g = 1, aoe = true },
+                    { ids = { 14315, 14317 }, l = 54, m = 60, s = 3, cost = 520, b = 229, g = 1.2, aoe = true },
+                } } },
+            { { name = "Flanking Strike", ranks = {
+                    { ids = { 415320 }, l = 1, s = 1, pct = 1.5, w = 2, wpct = 1 },
+                } } },
+            { { name = "Immolation Trap", ranks = {
+                    { ids = { 13795, 13797 }, l = 16, m = 22, s = 3, cost = 50, tb = 21, k = 5, du = 15, pc = true },
+                    { ids = { 14298, 14302 }, l = 26, m = 32, s = 3, cost = 90, tb = 43, k = 5, du = 15, pc = true },
+                    { ids = { 14299, 14303 }, l = 36, m = 42, s = 3, cost = 135, tb = 68, k = 5, du = 15, pc = true },
+                    { ids = { 14300, 14304 }, l = 46, m = 52, s = 3, cost = 190, tb = 102, k = 5, du = 15, pc = true },
+                    { ids = { 14301, 14305 }, l = 56, m = 62, s = 3, cost = 245, tb = 138, k = 5, du = 15, pc = true },
+                } } },
+            { { name = "Lacerate", ranks = {
+                    { ids = { 24118 }, l = 30, m = 38, s = 1, cost = 40, tb = 17, tg = 0.5, k = 7, du = 21, pc = true },
+                    { ids = { 24119 }, l = 40, m = 48, s = 1, cost = 65, tb = 28, tg = 0.6, k = 7, du = 21, pc = true },
+                    { ids = { 24120 }, l = 50, m = 58, s = 1, cost = 80, tb = 40, tg = 0.7, k = 7, du = 21, pc = true },
+                    { ids = { 1299332 }, l = 60, m = 68, s = 1, cost = 95, tb = 58, tg = 0.8, k = 7, du = 21, pc = true },
+                } } },
+            { { name = "Mongoose Bite", ranks = {
+                    { ids = { 1495 }, l = 16, s = 1, cost = 30, b = 15, w = 2 },
+                    { ids = { 14269 }, l = 30, s = 1, cost = 40, b = 22, w = 2 },
+                    { ids = { 14270 }, l = 44, s = 1, cost = 50, b = 37, w = 2 },
+                    { ids = { 14271 }, l = 58, s = 1, cost = 65, b = 57, w = 2 },
+                } } },
+            { { name = "Sniper Shot", ranks = {
+                    { ids = { 1310687 }, l = 40, s = 1, ct = 4, cost = 365, b = 320, w = 2 },
+                    { ids = { 1310785 }, l = 48, s = 1, ct = 4, cost = 365, b = 450, w = 2 },
+                    { ids = { 1310786 }, l = 58, s = 1, ct = 4, cost = 365, b = 590, w = 2 },
+                } } },
+            { { name = "Strider Kick", ranks = {
+                    { ids = { 1317257 }, l = 30, s = 1, pct = 5.81, w = 2, wpct = 1 },
+                } } },
+            { { name = "Summon Hawk", ranks = {
+                    { ids = { 1293241 }, l = 25, s = 1, pct = 11, b = 32 },
+                    { ids = { 1293525 }, l = 36, s = 1, pct = 11, b = 47 },
+                    { ids = { 1293526 }, l = 48, s = 1, pct = 11, b = 85 },
+                    { ids = { 1293527 }, l = 60, s = 1, pct = 11, b = 108 },
+                } } },
+            { { name = "Volley", ranks = {
+                    { ids = { 1510 }, l = 40, s = 7, cost = 350, tb = 70, k = 6, du = 6, ch = 6, aoe = true },
+                    { ids = { 14294 }, l = 50, s = 7, cost = 420, tb = 91, k = 6, du = 6, ch = 6, aoe = true },
+                    { ids = { 14295 }, l = 58, s = 7, cost = 490, tb = 112, k = 6, du = 6, ch = 6, aoe = true },
+                } } },
+            { { name = "Wing Clip", ranks = {
+                    { ids = { 2974 }, l = 12, s = 1, cost = 40, b = 5 },
+                    { ids = { 14267 }, l = 38, s = 1, cost = 60, b = 25 },
+                    { ids = { 14268 }, l = 60, s = 1, cost = 80, b = 50 },
+                } } },
+        },
+        xheal = {
+            { { name = "Mend Pet", ranks = {
+                    { ids = { 136 }, l = 12, s = 4, cost = 50, tb = 20, tc = 0.14, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                    { ids = { 3111 }, l = 20, s = 4, cost = 90, tb = 38, tc = 0.2, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                    { ids = { 3661 }, l = 28, s = 4, cost = 155, tb = 68, tc = 0.2, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                    { ids = { 3662 }, l = 36, s = 4, cost = 225, tb = 103, tc = 0.2, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                    { ids = { 13542 }, l = 44, s = 4, cost = 300, tb = 142, tc = 0.2, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                    { ids = { 13543 }, l = 52, s = 4, cost = 385, tb = 189, tc = 0.2, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                    { ids = { 13544 }, l = 60, s = 4, cost = 480, tb = 245, tc = 0.2, k = 5, du = 5, ch = 5, pc = true, theal = true },
+                } } },
+        },
     },
     MAGE = {
         dmg = {
@@ -230,6 +401,140 @@ MSC.SpellImpactData = {
                 } } },
         },
         heal = {
+        },
+        xdmg = {
+            { { name = "Arcane Barrage", ranks = {
+                    { ids = { 400610 }, l = 1, s = 7, pct = 8, b = 398, c = 0.429 },
+                } } },
+            { { name = "Arcane Blast", ranks = {
+                    { ids = { 400574 }, l = 20, m = 28, s = 7, ct = 1.5, pct = 15, b = 32, g = 0.5, c = 0.429 },
+                    { ids = { 1239696 }, l = 30, m = 38, s = 7, ct = 1.5, pct = 15, b = 78, g = 0.8, c = 0.429 },
+                    { ids = { 1239697 }, l = 40, m = 48, s = 7, ct = 1.5, pct = 15, b = 101, g = 1, c = 0.429 },
+                    { ids = { 1239699 }, l = 50, m = 58, s = 7, ct = 1.5, pct = 15, b = 168, g = 1.3, c = 0.429 },
+                    { ids = { 1239700 }, l = 60, m = 68, s = 7, ct = 1.5, pct = 15, b = 236, g = 1.6, c = 0.429 },
+                } } },
+            { { name = "Arcane Explosion", ranks = {
+                    { ids = { 1449 }, l = 14, m = 19, s = 7, cost = 75, b = 32, g = 0.4, c = 0.143, aoe = true },
+                    { ids = { 8437 }, l = 22, m = 27, s = 7, cost = 120, b = 55, g = 0.6, c = 0.143, aoe = true },
+                    { ids = { 8438 }, l = 30, m = 35, s = 7, cost = 185, b = 94, g = 0.9, c = 0.143, aoe = true },
+                    { ids = { 8439 }, l = 38, m = 43, s = 7, cost = 250, b = 135, g = 0.9, c = 0.143, aoe = true },
+                    { ids = { 10201 }, l = 46, m = 51, s = 7, cost = 315, b = 183, g = 1.1, c = 0.143, aoe = true },
+                    { ids = { 10202 }, l = 54, m = 59, s = 7, cost = 390, b = 242, g = 1.3, c = 0.143, aoe = true },
+                } } },
+            { { name = "Arcane Surge", ranks = {
+                    { ids = { 425124 }, l = 1, s = 7, b = 245, c = 0.429 },
+                } } },
+            { { name = "Arcane Wrath", ranks = {
+                    { ids = { 1326079 }, l = 25, m = 35, s = 7, ct = 3.5, cost = 140, b = 120, g = 1.4, c = 1 },
+                    { ids = { 1326080 }, l = 36, m = 47, s = 7, ct = 3.5, cost = 220, b = 187, g = 2.3, c = 1 },
+                    { ids = { 1326081 }, l = 48, m = 59, s = 7, ct = 3.5, cost = 305, b = 300, g = 2.4, c = 1 },
+                    { ids = { 1326082 }, l = 60, m = 71, s = 7, ct = 3.5, cost = 395, b = 451, g = 3, c = 1 },
+                } } },
+            { { name = "Balefire Bolt", ranks = {
+                    { ids = { 428878 }, l = 1, s = 1, ct = 2.5, pct = 20, b = 350 },
+                } } },
+            { { name = "Blast Wave", ranks = {
+                    { ids = { 11113 }, l = 30, m = 36, s = 3, cost = 215, b = 163, g = 1, c = 0.129, aoe = true },
+                    { ids = { 13018 }, l = 36, m = 42, s = 3, cost = 270, b = 212, g = 1.2, c = 0.129, aoe = true },
+                    { ids = { 13019 }, l = 44, m = 50, s = 3, cost = 355, b = 293, g = 1.4, c = 0.129, aoe = true },
+                    { ids = { 13020 }, l = 52, m = 58, s = 3, cost = 450, b = 389, g = 1.6, c = 0.129, aoe = true },
+                    { ids = { 13021 }, l = 60, m = 66, s = 3, cost = 545, b = 493, g = 1.9, c = 0.129, aoe = true },
+                } } },
+            { { name = "Blizzard", ranks = {
+                    { ids = { 10 }, l = 20, m = 25, s = 5, cost = 320, tb = 24, tg = 0.1, tc = 0.042, k = 8, du = 8, ch = 8, aoe = true },
+                    { ids = { 6141 }, l = 28, m = 33, s = 5, cost = 520, tb = 42, tg = 0.2, tc = 0.042, k = 8, du = 8, ch = 8, aoe = true },
+                    { ids = { 8427 }, l = 36, m = 41, s = 5, cost = 720, tb = 62, tg = 0.2, tc = 0.042, k = 8, du = 8, ch = 8, aoe = true },
+                    { ids = { 10185 }, l = 44, m = 49, s = 5, cost = 935, tb = 87, tg = 0.3, tc = 0.042, k = 8, du = 8, ch = 8, aoe = true },
+                    { ids = { 10186 }, l = 52, m = 57, s = 5, cost = 1160, tb = 114, tg = 0.3, tc = 0.042, k = 8, du = 8, ch = 8, aoe = true },
+                    { ids = { 10187 }, l = 60, m = 65, s = 5, cost = 1400, tb = 146, tg = 0.4, tc = 0.042, k = 8, du = 8, ch = 8, aoe = true },
+                } } },
+            { { name = "Cone of Cold", ranks = {
+                    { ids = { 120 }, l = 26, m = 31, s = 5, cost = 210, b = 97, g = 0.8, c = 0.129, aoe = true },
+                    { ids = { 8492 }, l = 34, m = 39, s = 5, cost = 290, b = 144, g = 1, c = 0.129, aoe = true },
+                    { ids = { 10159 }, l = 42, m = 47, s = 5, cost = 380, b = 204, g = 1.2, c = 0.129, aoe = true },
+                    { ids = { 10160 }, l = 50, m = 55, s = 5, cost = 465, b = 267, g = 1.3, c = 0.129, aoe = true },
+                    { ids = { 10161 }, l = 58, m = 63, s = 5, cost = 555, b = 340, g = 1.5, c = 0.129, aoe = true },
+                } } },
+            { { name = "Felfire", ranks = {
+                    { ids = { 24530 }, l = 60, m = 60, s = 3, cost = 100, b = 500, c = 1 },
+                } } },
+            { { name = "Fire Blast", ranks = {
+                    { ids = { 2136 }, l = 6, m = 11, s = 3, cost = 40, b = 28, g = 0.6, c = 0.429 },
+                    { ids = { 400618 }, l = 6, m = 11, s = 3, cost = 40, b = 28, g = 0.6, c = 0.204 },
+                    { ids = { 2137 }, l = 14, m = 19, s = 3, cost = 75, b = 58, g = 1, c = 0.429 },
+                    { ids = { 400619 }, l = 14, m = 19, s = 3, cost = 75, b = 64, g = 1, c = 0.332 },
+                    { ids = { 2138 }, l = 22, m = 27, s = 3, cost = 115, b = 100, g = 1.4, c = 0.429 },
+                    { ids = { 400616 }, l = 22, m = 27, s = 3, cost = 115, b = 115, g = 1.4, c = 0.429 },
+                    { ids = { 8412 }, l = 30, m = 35, s = 3, cost = 165, b = 163, g = 1.8, c = 0.429 },
+                    { ids = { 400620 }, l = 30, m = 35, s = 3, cost = 165, b = 185, g = 1.8, c = 0.429 },
+                    { ids = { 8413 }, l = 38, m = 43, s = 3, cost = 220, b = 236, g = 2.2, c = 0.429 },
+                    { ids = { 400621 }, l = 38, m = 43, s = 3, cost = 220, b = 266, g = 2.2, c = 0.429 },
+                    { ids = { 10197 }, l = 46, m = 51, s = 3, cost = 280, b = 331, g = 2.6, c = 0.429 },
+                    { ids = { 400622 }, l = 46, m = 51, s = 3, cost = 280, b = 363, g = 2.6, c = 0.429 },
+                    { ids = { 10199 }, l = 54, m = 59, s = 3, cost = 340, b = 438, g = 3, c = 0.429 },
+                    { ids = { 400623 }, l = 54, m = 59, s = 3, cost = 340, b = 470, g = 3, c = 0.429 },
+                } } },
+            { { name = "Flamestrike", ranks = {
+                    { ids = { 2120 }, l = 16, m = 21, s = 3, ct = 3, cost = 195, b = 60, g = 0.6, c = 0.157, tb = 60, tg = 0.6, tc = 0.157, k = 4, du = 8, aoe = true },
+                    { ids = { 2121 }, l = 24, m = 29, s = 3, ct = 3, cost = 330, b = 109, g = 0.8, c = 0.157, tb = 109, tg = 0.8, tc = 0.157, k = 4, du = 8, aoe = true },
+                    { ids = { 8422 }, l = 32, m = 37, s = 3, ct = 3, cost = 490, b = 173, g = 1, c = 0.157, tb = 173, tg = 1, tc = 0.157, k = 4, du = 8, aoe = true },
+                    { ids = { 8423 }, l = 40, m = 45, s = 3, ct = 3, cost = 650, b = 246, g = 1.3, c = 0.157, tb = 246, tg = 1.3, tc = 0.157, k = 4, du = 8, aoe = true },
+                    { ids = { 10215 }, l = 48, m = 53, s = 3, ct = 3, cost = 815, b = 325, g = 1.5, c = 0.157, tb = 325, tg = 1.5, tc = 0.157, k = 4, du = 8, aoe = true },
+                    { ids = { 10216 }, l = 56, m = 61, s = 3, ct = 3, cost = 990, b = 417, g = 1.7, c = 0.157, tb = 417, tg = 1.7, tc = 0.157, k = 4, du = 8, aoe = true },
+                } } },
+            { { name = "Frost Nova", ranks = {
+                    { ids = { 122 }, l = 10, m = 15, s = 5, cost = 55, b = 20, g = 0.5, c = 0.029, aoe = true },
+                    { ids = { 865 }, l = 26, m = 31, s = 5, cost = 85, b = 34, g = 0.5, c = 0.029, aoe = true },
+                    { ids = { 6131 }, l = 40, m = 45, s = 5, cost = 115, b = 53, g = 0.5, c = 0.029, aoe = true },
+                    { ids = { 10230 }, l = 54, m = 59, s = 5, cost = 145, b = 73, g = 0.5, c = 0.029, aoe = true },
+                } } },
+            { { name = "Frostfire Bolt", ranks = {
+                    { ids = { 401502 }, l = 40, m = 48, s = 1, ct = 3, cost = 205, b = 100, g = 1.3, tb = 9, k = 3, du = 9, pc = true },
+                    { ids = { 1237312 }, l = 50, m = 58, s = 1, ct = 3, cost = 285, b = 182, g = 1.7, tb = 13, k = 3, du = 9, pc = true },
+                    { ids = { 1237313 }, l = 60, m = 68, s = 1, ct = 3, cost = 370, b = 292, g = 2.1, tb = 19, k = 3, du = 9, pc = true },
+                } } },
+            { { name = "Frozen Orb", ranks = {
+                    { ids = { 440802, 440809 }, l = 1, s = 5, pct = 11, b = 90, c = 0.129, aoe = true },
+                } } },
+            { { name = "Ice Lance", ranks = {
+                    { ids = { 1312002 }, l = 20, m = 26, s = 5, cost = 45, b = 28, g = 0.35 },
+                    { ids = { 400640 }, l = 28, m = 32, s = 5, cost = 55, b = 36, g = 0.4 },
+                    { ids = { 1240044 }, l = 34, m = 40, s = 5, cost = 70, b = 45, g = 0.5 },
+                    { ids = { 1240045 }, l = 42, m = 48, s = 5, cost = 105, b = 79, g = 0.7 },
+                    { ids = { 1240046 }, l = 48, m = 56, s = 5, cost = 120, b = 98, g = 0.7 },
+                    { ids = { 1240047 }, l = 56, m = 64, s = 5, cost = 160, b = 145, g = 0.9 },
+                } } },
+            { { name = "Living Bomb", ranks = {
+                    { ids = { 400613 }, l = 1, s = 3, pct = 22, tb = 85, tc = 0.2, k = 4, du = 12 },
+                    { ids = { 400614 }, l = 1, s = 3, b = 171, c = 0.4, aoe = true },
+                } } },
+            { { name = "Pyroblast", ranks = {
+                    { ids = { 11366 }, l = 20, m = 24, s = 3, ct = 6, cost = 125, b = 110, g = 1.5, c = 1, tb = 11, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 12505 }, l = 24, m = 30, s = 3, ct = 6, cost = 150, b = 134, g = 1.7, c = 1, tb = 14, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 12522 }, l = 30, m = 36, s = 3, ct = 6, cost = 195, b = 191, g = 2.1, c = 1, tb = 19, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 12523 }, l = 36, m = 42, s = 3, ct = 6, cost = 240, b = 245, g = 2.4, c = 1, tb = 25, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 12524 }, l = 42, m = 48, s = 3, ct = 6, cost = 285, b = 311, g = 2.7, c = 1, tb = 31, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 12525 }, l = 48, m = 54, s = 3, ct = 6, cost = 335, b = 394, g = 3, c = 1, tb = 38, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 12526 }, l = 54, m = 60, s = 3, ct = 6, cost = 385, b = 481, g = 3.4, c = 1, tb = 46, tc = 0.15, k = 4, du = 12, pc = true },
+                    { ids = { 18809 }, l = 60, m = 66, s = 3, ct = 6, cost = 440, b = 583, g = 4.6, c = 1, tb = 53, tc = 0.15, k = 4, du = 12, pc = true },
+                } } },
+            { { name = "Scorch", ranks = {
+                    { ids = { 2948 }, l = 22, m = 26, s = 3, ct = 1.5, cost = 50, b = 39, g = 0.8, c = 0.429 },
+                    { ids = { 8444 }, l = 28, m = 32, s = 3, ct = 1.5, cost = 65, b = 55, g = 1, c = 0.429 },
+                    { ids = { 8445 }, l = 34, m = 38, s = 3, ct = 1.5, cost = 80, b = 69, g = 1, c = 0.429 },
+                    { ids = { 8446 }, l = 40, m = 44, s = 3, ct = 1.5, cost = 100, b = 93, g = 1.2, c = 0.429 },
+                    { ids = { 10205 }, l = 46, m = 50, s = 3, ct = 1.5, cost = 115, b = 116, g = 1.4, c = 0.429 },
+                    { ids = { 10206 }, l = 52, m = 56, s = 3, ct = 1.5, cost = 135, b = 150, g = 1.5, c = 0.429 },
+                    { ids = { 10207 }, l = 58, m = 62, s = 3, ct = 1.5, cost = 150, b = 178, g = 1.7, c = 0.429 },
+                } } },
+            { { name = "Spellfrost Bolt", ranks = {
+                    { ids = { 412532 }, l = 1, s = 1, ct = 2.5, pct = 12, b = 330 },
+                } } },
+        },
+        xheal = {
+            { { name = "Mass Regeneration", ranks = {
+                    { ids = { 412510 }, l = 1, s = 7, pct = 45, tb = 42, tc = 0.198, k = 3, du = 3, ch = 3, theal = true },
+                } } },
         },
     },
     PALADIN = {
@@ -310,6 +615,64 @@ MSC.SpellImpactData = {
                     { ids = { 5569 }, l = 44, m = 49, s = 2, cost = 17, b = 53, w = 2, wpct = 0.43 },
                     { ids = { 10332 }, l = 52, m = 57, s = 2, cost = 19, b = 68, w = 2, wpct = 0.46 },
                     { ids = { 10333 }, l = 60, m = 65, s = 2, cost = 20, b = 93, w = 2, wpct = 0.5 },
+                } } },
+        },
+        xdmg = {
+            { { name = "Consecration", ranks = {
+                    { ids = { 26573 }, l = 20, s = 2, cost = 135, tb = 6, tc = 0.042, k = 8, du = 8, aoe = true },
+                    { ids = { 20116 }, l = 30, s = 2, cost = 235, tb = 10, tc = 0.042, k = 8, du = 8, aoe = true },
+                    { ids = { 20922 }, l = 40, s = 2, cost = 320, tb = 17, tc = 0.042, k = 8, du = 8, aoe = true },
+                    { ids = { 20923 }, l = 50, s = 2, cost = 435, tb = 28, tc = 0.042, k = 8, du = 8, aoe = true },
+                    { ids = { 20924 }, l = 60, s = 2, cost = 565, tb = 39, tc = 0.042, k = 8, du = 8, aoe = true },
+                } } },
+            { { name = "Eye for an Eye", ranks = {
+                    { ids = { 25997 }, l = 1, s = 2, b = 1 },
+                } } },
+            { { name = "Hammer of Wrath", ranks = {
+                    { ids = { 24275 }, l = 44, m = 49, s = 2, ct = 1, cost = 295, b = 288, g = 2.4, c = 0.429 },
+                    { ids = { 24274 }, l = 52, m = 57, s = 2, ct = 1, cost = 360, b = 388, g = 2.7, c = 0.429 },
+                    { ids = { 24239 }, l = 60, m = 65, s = 2, ct = 1, cost = 425, b = 498, g = 3.1, c = 0.429 },
+                } } },
+            { { name = "Hammer of the Righteous", ranks = {
+                    { ids = { 407632 }, l = 40, s = 2, pct = 6, b = 1, jt = 4, ja = 1 },
+                } } },
+            { { name = "Judgement of Command", ranks = {
+                    { ids = { 20425, 20467 }, l = 20, m = 28, s = 2, b = 97, g = 5.6, c = 0.429 },
+                    { ids = { 20962, 20963 }, l = 30, m = 38, s = 2, b = 153, g = 6.1, c = 0.429 },
+                    { ids = { 20961, 20964 }, l = 40, m = 48, s = 2, b = 214, g = 5.6, c = 0.429 },
+                    { ids = { 20965, 20967 }, l = 50, m = 58, s = 2, b = 274, g = 6.1, c = 0.429 },
+                    { ids = { 20966, 20968 }, l = 60, m = 68, s = 2, b = 356, g = 6.1, c = 0.429 },
+                } } },
+            { { name = "Judgement of Fury", ranks = {
+                    { ids = { 20183 }, l = 25, m = 31, s = 2, b = 54, g = 2.52, c = 0.429 },
+                    { ids = { 20411 }, l = 34, m = 40, s = 2, b = 74, g = 2.79, c = 0.429 },
+                    { ids = { 20412 }, l = 42, m = 48, s = 2, b = 96, g = 3.42, c = 0.429 },
+                    { ids = { 20413 }, l = 50, m = 56, s = 2, b = 123, g = 3.69, c = 0.429 },
+                    { ids = { 20414 }, l = 58, m = 64, s = 2, b = 153, g = 3.69, c = 0.429 },
+                } } },
+            { { name = "Judgement of Righteousness", ranks = {
+                    { ids = { 20187 }, l = 1, m = 7, s = 2, b = 15, g = 1.8, c = 0.429 },
+                    { ids = { 20280 }, l = 10, m = 16, s = 2, b = 26, g = 1.9, c = 0.429 },
+                    { ids = { 20281 }, l = 18, m = 24, s = 2, b = 41, g = 2.4, c = 0.429 },
+                    { ids = { 20282 }, l = 26, m = 32, s = 2, b = 60, g = 2.8, c = 0.429 },
+                    { ids = { 20283 }, l = 34, m = 40, s = 2, b = 82, g = 3.1, c = 0.429 },
+                    { ids = { 20284 }, l = 42, m = 48, s = 2, b = 107, g = 3.8, c = 0.429 },
+                    { ids = { 20285 }, l = 50, m = 56, s = 2, b = 137, g = 4.1, c = 0.429 },
+                    { ids = { 20286 }, l = 58, m = 64, s = 2, b = 170, g = 4.1, c = 0.429 },
+                } } },
+            { { name = "Righteous Judgement", ranks = {
+                    { ids = { 440677 }, l = 1, s = 2 },
+                } } },
+            { { name = "Shield of Righteousness", ranks = {
+                    { ids = { 440658 }, l = 1, s = 2, pct = 6, b = 179 },
+                } } },
+        },
+        xheal = {
+            { { name = "Divine Light", ranks = {
+                    { ids = { 458856 }, l = 1, s = 2, ct = 2.5, pct = 61, b = 374, c = 1, heal = true },
+                } } },
+            { { name = "Divine Storm", ranks = {
+                    { ids = { 407778, 407784 }, l = 1, s = 2, pct = 12, b = 1, heal = true },
                 } } },
         },
     },
@@ -404,6 +767,121 @@ MSC.SpellImpactData = {
                     { ids = { 425277 }, l = 60, m = 65, s = 2, cost = 410, tb = 194, tc = 0.23, k = 5, du = 15, theal = true },
                 } } },
         },
+        xdmg = {
+            { { name = "Chastise", ranks = {
+                    { ids = { 1277331 }, l = 20, m = 29, s = 2, cost = 50, b = 46, c = 0.143 },
+                    { ids = { 1277332 }, l = 30, m = 39, s = 2, cost = 100, b = 93, c = 0.143 },
+                    { ids = { 1277333 }, l = 40, m = 49, s = 2, cost = 135, b = 140, c = 0.143 },
+                    { ids = { 1277334 }, l = 50, m = 59, s = 2, cost = 180, b = 214, c = 0.143 },
+                    { ids = { 1277335 }, l = 60, m = 69, s = 2, cost = 225, b = 289, c = 0.143 },
+                } } },
+            { { name = "Holy Fire", ranks = {
+                    { ids = { 14914 }, l = 20, m = 24, s = 2, ct = 3.5, cost = 85, b = 54, g = 1.3, c = 0.75, tb = 4, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15262 }, l = 24, m = 30, s = 2, ct = 3.5, cost = 95, b = 63, g = 1.4, c = 0.75, tb = 5, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15263 }, l = 30, m = 36, s = 2, ct = 3.5, cost = 125, b = 80, g = 1.5, c = 0.75, tb = 6, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15264 }, l = 36, m = 42, s = 2, ct = 3.5, cost = 145, b = 92, g = 1.5, c = 0.75, tb = 7, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15265 }, l = 42, m = 48, s = 2, ct = 3.5, cost = 170, b = 106, g = 1.5, c = 0.75, tb = 9, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15266 }, l = 48, m = 54, s = 2, ct = 3.5, cost = 200, b = 139, g = 1.7, c = 0.75, tb = 10, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15267 }, l = 54, m = 60, s = 2, ct = 3.5, cost = 230, b = 173, g = 1.9, c = 0.75, tb = 13, tc = 0.05, k = 5, du = 10, pc = true },
+                    { ids = { 15261 }, l = 60, m = 66, s = 2, ct = 3.5, cost = 255, b = 208, g = 2, c = 0.75, tb = 15, tc = 0.05, k = 5, du = 10, pc = true },
+                } } },
+            { { name = "Holy Nova", ranks = {
+                    { ids = { 15237 }, l = 20, m = 26, s = 2, cost = 185, b = 27, g = 0.2, c = 0.107, aoe = true },
+                    { ids = { 15430 }, l = 28, m = 34, s = 2, cost = 290, b = 49, g = 0.4, c = 0.107, aoe = true },
+                    { ids = { 15431 }, l = 36, m = 42, s = 2, cost = 400, b = 75, g = 0.6, c = 0.107, aoe = true },
+                    { ids = { 27799 }, l = 44, m = 50, s = 2, cost = 520, b = 106, g = 0.8, c = 0.107, aoe = true },
+                    { ids = { 27800 }, l = 52, m = 58, s = 2, cost = 635, b = 143, g = 1, c = 0.107, aoe = true },
+                    { ids = { 27801 }, l = 60, m = 66, s = 2, cost = 750, b = 187, g = 1.2, c = 0.107, aoe = true },
+                } } },
+            { { name = "Mind Sear", ranks = {
+                    { ids = { 413259 }, l = 1, s = 6, pct = 28, tb = 74, tc = 0.286, k = 6, du = 6, ch = 6 },
+                } } },
+            { { name = "Mind Spike", ranks = {
+                    { ids = { 431655 }, l = 1, s = 1, ct = 1.5, pct = 6, b = 132 },
+                } } },
+            { { name = "Penance", ranks = {
+                    { ids = { 402174, 402284 }, l = 30, m = 39, s = 2, cost = 150, b = 42, g = 0.29, c = 0.19 },
+                    { ids = { 1240720, 1240727 }, l = 40, m = 49, s = 2, cost = 220, b = 50, g = 0.33, c = 0.19 },
+                    { ids = { 1240721, 1240730 }, l = 50, m = 59, s = 2, cost = 270, b = 68, g = 0.43, c = 0.19 },
+                    { ids = { 1316993, 1316995 }, l = 60, s = 2, cost = 385, b = 92, c = 0.19 },
+                } } },
+            { { name = "Shadow Word: Death", ranks = {
+                    { ids = { 401955 }, l = 1, s = 6, pct = 12, b = 346, c = 0.429 },
+                    { ids = { 1309595 }, l = 32, m = 37, s = 6, cost = 175, b = 295, g = 1.5, c = 0.429 },
+                    { ids = { 1309633 }, l = 40, m = 45, s = 6, cost = 205, b = 370, g = 1.9, c = 0.429 },
+                    { ids = { 1309635 }, l = 48, m = 53, s = 6, cost = 250, b = 403, g = 2.2, c = 0.429 },
+                    { ids = { 1309636 }, l = 56, m = 61, s = 6, cost = 340, b = 448, g = 2.5, c = 0.429 },
+                } } },
+            { { name = "Shadowguard", ranks = {
+                    { ids = { 18137, 28377 }, l = 20, s = 6, cost = 50, b = 13, c = 0.267 },
+                    { ids = { 19308, 28378 }, l = 28, s = 6, cost = 85, b = 22, c = 0.267 },
+                    { ids = { 19309, 28379 }, l = 36, s = 6, cost = 120, b = 33, c = 0.267 },
+                    { ids = { 19310, 28380 }, l = 44, s = 6, cost = 160, b = 50, c = 0.267 },
+                    { ids = { 19311, 28381 }, l = 52, s = 6, cost = 200, b = 70, c = 0.267 },
+                    { ids = { 19312, 28382 }, l = 60, s = 6, cost = 250, b = 96, c = 0.267 },
+                } } },
+            { { name = "Starshards", ranks = {
+                    { ids = { 10797 }, l = 10, m = 16, s = 7, cost = 50, tb = 27, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                    { ids = { 19296 }, l = 18, m = 24, s = 7, cost = 85, tb = 50, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                    { ids = { 19299 }, l = 26, m = 32, s = 7, cost = 140, tb = 88, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                    { ids = { 19302 }, l = 34, m = 40, s = 7, cost = 190, tb = 127, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                    { ids = { 19303 }, l = 42, m = 48, s = 7, cost = 245, tb = 178, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                    { ids = { 19304 }, l = 50, m = 56, s = 7, cost = 300, tb = 240, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                    { ids = { 19305 }, l = 58, m = 64, s = 7, cost = 350, tb = 300, tc = 0.167, k = 6, du = 6, ch = 6, pc = true },
+                } } },
+            { { name = "Touch of Weakness", ranks = {
+                    { ids = { 2652, 2943 }, l = 10, s = 6, cost = 25, b = 8, c = 0.107 },
+                    { ids = { 19249, 19261 }, l = 20, s = 6, cost = 45, b = 12, c = 0.107 },
+                    { ids = { 19251, 19262 }, l = 30, s = 6, cost = 75, b = 18, c = 0.107 },
+                    { ids = { 19252, 19264 }, l = 40, s = 6, cost = 105, b = 28, c = 0.107 },
+                    { ids = { 19253, 19265 }, l = 50, s = 6, cost = 145, b = 40, c = 0.107 },
+                    { ids = { 19254, 19266 }, l = 60, s = 6, cost = 195, b = 56, c = 0.107 },
+                } } },
+            { { name = "Vampiric Touch", ranks = {
+                    { ids = { 402668 }, l = 1, s = 6, ct = 1.5, pct = 16, tb = 65, tc = 0.167, k = 5, du = 15 },
+                } } },
+            { { name = "Void Plague", ranks = {
+                    { ids = { 425204 }, l = 1, s = 6, pct = 13, tb = 129, tc = 0.166, k = 6, du = 18 },
+                } } },
+        },
+        xheal = {
+            { { name = "Circle of Healing", ranks = {
+                    { ids = { 401946 }, l = 1, s = 2, pct = 56, b = 137, c = 0.214, aoe = true, heal = true },
+                } } },
+            { { name = "Desperate Prayer", ranks = {
+                    { ids = { 13908 }, l = 10, m = 16, s = 2, b = 149, g = 2.4, c = 0.429, heal = true },
+                    { ids = { 19236 }, l = 18, m = 24, s = 2, b = 276, g = 3.4, c = 0.429, heal = true },
+                    { ids = { 19238 }, l = 26, m = 32, s = 2, b = 458, g = 4.5, c = 0.429, heal = true },
+                    { ids = { 19240 }, l = 34, m = 40, s = 2, b = 595, g = 5.3, c = 0.429, heal = true },
+                    { ids = { 19241 }, l = 42, m = 48, s = 2, b = 856, g = 6.4, c = 0.429, heal = true },
+                    { ids = { 19242 }, l = 50, m = 56, s = 2, b = 1143, g = 7.4, c = 0.429, heal = true },
+                    { ids = { 19243 }, l = 58, m = 64, s = 2, b = 1383, g = 8.2, c = 0.429, heal = true },
+                } } },
+            { { name = "Holy Nova", ranks = {
+                    { ids = { 23455 }, l = 20, m = 26, s = 2, b = 51, g = 0.4, c = 0.107, aoe = true, heal = true },
+                    { ids = { 23458 }, l = 28, m = 34, s = 2, b = 82, g = 0.5, c = 0.107, aoe = true, heal = true },
+                    { ids = { 23459 }, l = 36, m = 42, s = 2, b = 116, g = 0.6, c = 0.107, aoe = true, heal = true },
+                    { ids = { 27803 }, l = 44, m = 50, s = 2, b = 159, g = 0.7, c = 0.107, aoe = true, heal = true },
+                    { ids = { 27804 }, l = 52, m = 58, s = 2, b = 238, g = 0.8, c = 0.107, aoe = true, heal = true },
+                    { ids = { 27805 }, l = 60, m = 66, s = 2, b = 311, g = 0.9, c = 0.107, aoe = true, heal = true },
+                } } },
+            { { name = "Penance", ranks = {
+                    { ids = { 402174, 402289 }, l = 30, m = 39, s = 2, cost = 150, b = 126, g = 0.87, c = 0.19, heal = true },
+                    { ids = { 1240720, 1240723 }, l = 40, m = 49, s = 2, cost = 220, b = 200, g = 0.98, c = 0.19, heal = true },
+                    { ids = { 1240721, 1240724 }, l = 50, m = 59, s = 2, cost = 270, b = 268, g = 1.27, c = 0.19, heal = true },
+                    { ids = { 1316991, 1316995 }, l = 60, m = 60, s = 2, cost = 385, b = 425, c = 0.19, heal = true },
+                } } },
+            { { name = "Prayer of Healing", ranks = {
+                    { ids = { 596 }, l = 30, m = 39, s = 2, ct = 3, cost = 410, b = 178, g = 0.8, c = 0.286, aoe = true, heal = true },
+                    { ids = { 996 }, l = 40, m = 49, s = 2, ct = 3, cost = 560, b = 265, g = 1, c = 0.286, aoe = true, heal = true },
+                    { ids = { 10960 }, l = 50, m = 59, s = 2, ct = 3, cost = 770, b = 401, g = 1.3, c = 0.286, aoe = true, heal = true },
+                    { ids = { 10961 }, l = 60, m = 69, s = 2, ct = 3, cost = 1030, b = 583, g = 1.5, c = 0.286, aoe = true, heal = true },
+                    { ids = { 25316 }, l = 60, m = 69, s = 2, ct = 3, cost = 1070, b = 649, g = 1.6, c = 0.286, aoe = true, heal = true },
+                } } },
+            { { name = "Prayer of Mending", ranks = {
+                    { ids = { 401859, 401863 }, l = 40, m = 48, s = 2, cost = 210, b = 1, heal = true },
+                } } },
+        },
     },
     ROGUE = {
         dmg = {
@@ -441,6 +919,88 @@ MSC.SpellImpactData = {
                 } } },
         },
         heal = {
+        },
+        xdmg = {
+            { { name = "Ambush", ranks = {
+                    { ids = { 8676 }, l = 18, s = 1, cost = 60, pt = 3, b = 28, w = 2, wpct = 2.5 },
+                    { ids = { 8724 }, l = 26, s = 1, cost = 60, pt = 3, b = 40, w = 2, wpct = 2.5 },
+                    { ids = { 8725 }, l = 34, s = 1, cost = 60, pt = 3, b = 50, w = 2, wpct = 2.5 },
+                    { ids = { 11267 }, l = 42, s = 1, cost = 60, pt = 3, b = 74, w = 2, wpct = 2.5 },
+                    { ids = { 11268 }, l = 50, s = 1, cost = 60, pt = 3, b = 92, w = 2, wpct = 2.5 },
+                    { ids = { 11269 }, l = 58, s = 1, cost = 60, pt = 3, b = 116, w = 2, wpct = 2.5 },
+                } } },
+            { { name = "Between the Eyes", ranks = {
+                    { ids = { 400009 }, l = 1, s = 1, cost = 35, pt = 3, b = 67 },
+                } } },
+            { { name = "Death Mark", ranks = {
+                    { ids = { 1316709 }, l = 40, s = 1, cost = 25, pt = 3, k = 1, du = 6 },
+                    { ids = { 1325756 }, l = 48, s = 1, cost = 25, pt = 3, k = 1, du = 6 },
+                    { ids = { 1325757 }, l = 56, s = 1, cost = 25, pt = 3, k = 1, du = 6 },
+                    { ids = { 1325758 }, l = 60, s = 1, cost = 25, pt = 3, k = 1, du = 6 },
+                } } },
+            { { name = "Garrote", ranks = {
+                    { ids = { 703 }, l = 14, s = 1, cost = 50, pt = 3, tb = 24, k = 6, du = 18, pc = true },
+                    { ids = { 8631 }, l = 22, s = 1, cost = 50, pt = 3, tb = 34, k = 6, du = 18, pc = true },
+                    { ids = { 8632 }, l = 30, s = 1, cost = 50, pt = 3, tb = 47, k = 6, du = 18, pc = true },
+                    { ids = { 8633 }, l = 38, s = 1, cost = 50, pt = 3, tb = 59, k = 6, du = 18, pc = true },
+                    { ids = { 11289 }, l = 46, s = 1, cost = 50, pt = 3, tb = 74, k = 6, du = 18, pc = true },
+                    { ids = { 11290 }, l = 54, s = 1, cost = 50, pt = 3, tb = 92, k = 6, du = 18, pc = true },
+                } } },
+            { { name = "Gouge", ranks = {
+                    { ids = { 1776 }, l = 6, s = 1, cost = 45, pt = 3, b = 10 },
+                    { ids = { 1777 }, l = 18, s = 1, cost = 45, pt = 3, b = 20 },
+                    { ids = { 8629 }, l = 32, s = 1, cost = 45, pt = 3, b = 32 },
+                    { ids = { 11285 }, l = 46, s = 1, cost = 45, pt = 3, b = 55 },
+                    { ids = { 11286 }, l = 60, s = 1, cost = 45, pt = 3, b = 75 },
+                } } },
+            { { name = "Hemorrhage", ranks = {
+                    { ids = { 16511 }, l = 30, s = 1, cost = 35, pt = 3, w = 2, wpct = 1 },
+                } } },
+            { { name = "Kick", ranks = {
+                    { ids = { 1766 }, l = 12, s = 1, cost = 25, pt = 3, b = 15 },
+                    { ids = { 1767 }, l = 26, s = 1, cost = 25, pt = 3, b = 30 },
+                    { ids = { 1768 }, l = 42, s = 1, cost = 25, pt = 3, b = 45 },
+                    { ids = { 1769 }, l = 58, s = 1, cost = 25, pt = 3, b = 80 },
+                } } },
+            { { name = "Mutilate", ranks = {
+                    { ids = { 399956 }, l = 40, s = 1, cost = 60, pt = 3, b = 44, w = 2, wpct = 0.9 },
+                    { ids = { 1241582 }, l = 50, s = 1, cost = 60, pt = 3, b = 63, w = 2, wpct = 0.9 },
+                    { ids = { 1241584 }, l = 60, s = 1, cost = 60, pt = 3, b = 88, w = 2, wpct = 0.9 },
+                } } },
+            { { name = "Poisoned Knife", ranks = {
+                    { ids = { 425012, 425013 }, l = 1, s = 1, cost = 25, w = 2 },
+                } } },
+            { { name = "Quick Draw", ranks = {
+                    { ids = { 398196 }, l = 1, s = 1, cost = 25, pt = 3, w = 2 },
+                } } },
+            { { name = "Rupture", ranks = {
+                    { ids = { 1943 }, l = 20, s = 1, cost = 25, pt = 3, tb = 5, k = 3, du = 6, pc = true },
+                    { ids = { 8639 }, l = 28, s = 1, cost = 25, pt = 3, tb = 7, k = 3, du = 6, pc = true },
+                    { ids = { 8640 }, l = 36, s = 1, cost = 25, pt = 3, tb = 11, k = 3, du = 6, pc = true },
+                    { ids = { 11273 }, l = 44, s = 1, cost = 25, pt = 3, tb = 16, k = 3, du = 6, pc = true },
+                    { ids = { 11274 }, l = 52, s = 1, cost = 25, pt = 3, tb = 22, k = 3, du = 6, pc = true },
+                    { ids = { 11275 }, l = 60, s = 1, cost = 25, pt = 3, tb = 35, k = 3, du = 6, pc = true },
+                } } },
+            { { name = "Saber Slash", ranks = {
+                    { ids = { 424785 }, l = 1, s = 1, cost = 45, pt = 3, tb = 5, k = 6, du = 12, w = 2, wpct = 1 },
+                } } },
+            { { name = "Shadowstrike", ranks = {
+                    { ids = { 399985 }, l = 1, s = 1, cost = 20, pt = 3, w = 2, wpct = 1.5 },
+                } } },
+            { { name = "Shoot Bow", ranks = {
+                    { ids = { 2480 }, l = 1, s = 1, ct = 1, w = 1 },
+                } } },
+            { { name = "Shoot Crossbow", ranks = {
+                    { ids = { 7919 }, l = 1, s = 1, ct = 1, w = 1 },
+                } } },
+            { { name = "Shoot Gun", ranks = {
+                    { ids = { 7918 }, l = 1, s = 1, ct = 1, w = 1 },
+                } } },
+            { { name = "Shuriken Toss", ranks = {
+                    { ids = { 399986 }, l = 1, s = 1, cost = 30, pt = 3, b = 50, jt = 5, ja = 1 },
+                } } },
+        },
+        xheal = {
         },
     },
     SHAMAN = {
@@ -519,6 +1079,50 @@ MSC.SpellImpactData = {
                     { ids = { 17364 }, l = 40, s = 1, pct = 8, w = 2, wpct = 1 },
                 } } },
         },
+        xdmg = {
+            { { name = "Flame Shock", ranks = {
+                    { ids = { 8050 }, l = 10, m = 15, s = 3, cost = 55, b = 25, g = 0.8, c = 0.214, tb = 7, tc = 0.1, k = 4, du = 12, pc = true },
+                    { ids = { 8052 }, l = 18, m = 23, s = 3, cost = 95, b = 51, g = 1, c = 0.214, tb = 12, tc = 0.1, k = 4, du = 12, pc = true },
+                    { ids = { 8053 }, l = 28, m = 33, s = 3, cost = 160, b = 95, g = 1.2, c = 0.214, tb = 24, tc = 0.1, k = 4, du = 12, pc = true },
+                    { ids = { 10447 }, l = 40, m = 45, s = 3, cost = 250, b = 164, g = 1.4, c = 0.214, tb = 42, tc = 0.1, k = 4, du = 12, pc = true },
+                    { ids = { 10448 }, l = 52, m = 57, s = 3, cost = 345, b = 245, g = 1.7, c = 0.214, tb = 64, tc = 0.1, k = 4, du = 12, pc = true },
+                    { ids = { 29228 }, l = 60, m = 67, s = 3, cost = 410, b = 292, g = 3.8, c = 0.214, tb = 80, tc = 0.1, k = 4, du = 12, pc = true },
+                } } },
+            { { name = "Frost Shock", ranks = {
+                    { ids = { 8056 }, l = 20, m = 25, s = 5, cost = 115, b = 98, g = 0.9, c = 0.386 },
+                    { ids = { 8058 }, l = 34, m = 39, s = 5, cost = 225, b = 222, g = 1.3, c = 0.386 },
+                    { ids = { 10472 }, l = 46, m = 51, s = 5, cost = 325, b = 355, g = 1.5, c = 0.386 },
+                    { ids = { 10473 }, l = 58, m = 63, s = 5, cost = 430, b = 506, g = 1.8, c = 0.386 },
+                } } },
+            { { name = "Lightning Shield", ranks = {
+                    { ids = { 324, 26364 }, l = 8, s = 4, cost = 45, b = 13, c = 0.267 },
+                    { ids = { 325, 26365 }, l = 16, s = 4, cost = 80, b = 24, c = 0.267 },
+                    { ids = { 905, 26366 }, l = 24, s = 4, cost = 125, b = 40, c = 0.267 },
+                    { ids = { 945, 26367 }, l = 32, s = 4, cost = 180, b = 64, c = 0.267 },
+                    { ids = { 8134, 26369 }, l = 40, s = 4, cost = 240, b = 96, c = 0.267 },
+                    { ids = { 10431, 26370 }, l = 48, s = 4, cost = 305, b = 134, c = 0.267 },
+                    { ids = { 10432, 26363 }, l = 56, s = 4, cost = 370, b = 178, c = 0.267 },
+                } } },
+            { { name = "Molten Blast", ranks = {
+                    { ids = { 425339 }, l = 1, s = 3, pct = 18, b = 90, c = 0.143, aoe = true },
+                } } },
+        },
+        xheal = {
+            { { name = "Ancestral Guidance", ranks = {
+                    { ids = { 409324, 409333, 409337 }, l = 1, s = 4, b = 54, aoe = true, heal = true },
+                } } },
+            { { name = "Earth Shield", ranks = {
+                    { ids = { 408514, 408519 }, l = 1, s = 4, pct = 5, b = 1, heal = true },
+                } } },
+            { { name = "Healing Rain", ranks = {
+                    { ids = { 415242 }, l = 1, s = 4, b = 15, c = 0.063, aoe = true, heal = true },
+                } } },
+            { { name = "Riptide", ranks = {
+                    { ids = { 408521 }, l = 40, m = 48, s = 4, cost = 150, tb = 89, tc = 0.1, k = 5, du = 15, pc = true, theal = true },
+                    { ids = { 1239242 }, l = 50, m = 58, s = 4, cost = 180, tb = 115, tc = 0.1, k = 5, du = 15, pc = true, theal = true },
+                    { ids = { 1239243 }, l = 60, m = 68, s = 4, cost = 230, tb = 161, tg = 3.7, tc = 0.1, k = 5, du = 15, pc = true, theal = true },
+                } } },
+        },
     },
     WARLOCK = {
         dmg = {
@@ -556,6 +1160,106 @@ MSC.SpellImpactData = {
         },
         heal = {
         },
+        xdmg = {
+            { { name = "Bane of Agony", ranks = {
+                    { ids = { 980 }, l = 8, s = 6, cost = 25, tb = 6, tc = 0.133, k = 12, du = 24, pc = true },
+                    { ids = { 1014 }, l = 18, s = 6, cost = 50, tb = 10, tc = 0.133, k = 12, du = 24, pc = true },
+                    { ids = { 6217 }, l = 28, s = 6, cost = 90, tb = 14, tc = 0.133, k = 12, du = 24, pc = true },
+                    { ids = { 11711 }, l = 38, s = 6, cost = 130, tb = 21, tc = 0.133, k = 12, du = 24, pc = true },
+                    { ids = { 11712 }, l = 48, s = 6, cost = 170, tb = 33, tc = 0.133, k = 12, du = 24, pc = true },
+                    { ids = { 11713 }, l = 58, s = 6, cost = 215, tb = 46, tc = 0.133, k = 12, du = 24, pc = true },
+                } } },
+            { { name = "Bane of Doom", ranks = {
+                    { ids = { 603 }, l = 60, s = 6, cost = 300, tb = 1742, tc = 4, k = 1, du = 60, pc = true },
+                } } },
+            { { name = "Chaos Bolt", ranks = {
+                    { ids = { 403629 }, l = 1, s = 1, ct = 2.5, pct = 7, b = 592 },
+                } } },
+            { { name = "Conflagrate", ranks = {
+                    { ids = { 1293817 }, l = 25, m = 30, s = 3, cost = 100, b = 95, g = 0.9, c = 0.429 },
+                    { ids = { 1293818 }, l = 32, m = 38, s = 3, cost = 130, b = 122, g = 0.9, c = 0.429 },
+                    { ids = { 17962 }, l = 40, m = 46, s = 3, cost = 165, b = 146, g = 1, c = 0.429 },
+                    { ids = { 18930 }, l = 48, m = 54, s = 3, cost = 200, b = 194, g = 1.1, c = 0.429 },
+                    { ids = { 18931 }, l = 54, m = 60, s = 3, cost = 230, b = 239, g = 1.2, c = 0.429 },
+                    { ids = { 18932 }, l = 60, m = 66, s = 3, cost = 255, b = 282, g = 1.3, c = 0.429 },
+                } } },
+            { { name = "Drain Soul", ranks = {
+                    { ids = { 1120 }, l = 10, s = 6, cost = 55, tb = 17, tc = 0.1, k = 5, du = 15, ch = 15, pc = true },
+                    { ids = { 8288 }, l = 24, s = 6, cost = 125, tb = 34, tc = 0.1, k = 5, du = 15, ch = 15, pc = true },
+                    { ids = { 8289 }, l = 38, s = 6, cost = 210, tb = 54, tc = 0.1, k = 5, du = 15, ch = 15, pc = true },
+                    { ids = { 11675 }, l = 52, s = 6, cost = 290, tb = 84, tc = 0.1, k = 5, du = 15, ch = 15, pc = true },
+                } } },
+            { { name = "Hellfire", ranks = {
+                    { ids = { 1949 }, l = 30, m = 40, s = 3, cost = 645, tb = 82, tg = 0.4, tc = 0.022, k = 15, du = 15, ch = 15, pc = true },
+                    { ids = { 11683 }, l = 42, m = 52, s = 3, cost = 975, tb = 137, tg = 0.5, tc = 0.022, k = 15, du = 15, ch = 15, pc = true },
+                    { ids = { 11684 }, l = 54, m = 64, s = 3, cost = 1300, tb = 206, tg = 0.7, tc = 0.022, k = 15, du = 15, ch = 15, pc = true },
+                } } },
+            { { name = "Incinerate", ranks = {
+                    { ids = { 412758 }, l = 40, m = 49, s = 3, ct = 2.5, cost = 205, b = 97, g = 1.1, c = 0.714 },
+                    { ids = { 1293812 }, l = 50, m = 59, s = 3, ct = 2.5, cost = 265, b = 145, g = 1.3, c = 0.714 },
+                    { ids = { 1293813 }, l = 60, m = 69, s = 3, ct = 2.5, cost = 325, b = 217, g = 1.4, c = 0.714 },
+                } } },
+            { { name = "Invocation", ranks = {
+                    { ids = { 426241, 426245, 426246, 426247 }, l = 1, s = 6 },
+                    { ids = { 426331 }, l = 1, s = 1 },
+                } } },
+            { { name = "Rain of Fire", ranks = {
+                    { ids = { 5740 }, l = 20, m = 25, s = 3, cost = 295, tb = 40, tg = 0.3, tc = 0.083, k = 4, du = 8, ch = 8, aoe = true },
+                    { ids = { 6219 }, l = 34, m = 39, s = 3, cost = 605, tb = 91, tg = 0.4, tc = 0.083, k = 4, du = 8, ch = 8, aoe = true },
+                    { ids = { 11677 }, l = 46, m = 51, s = 3, cost = 885, tb = 149, tg = 0.5, tc = 0.083, k = 4, du = 8, ch = 8, aoe = true },
+                    { ids = { 11678 }, l = 58, m = 63, s = 3, cost = 1185, tb = 220, tg = 0.6, tc = 0.083, k = 4, du = 8, ch = 8, aoe = true },
+                } } },
+            { { name = "Searing Pain", ranks = {
+                    { ids = { 5676 }, l = 18, m = 24, s = 3, ct = 1.5, cost = 45, b = 23, g = 0.6, c = 0.429 },
+                    { ids = { 17919 }, l = 26, m = 32, s = 3, ct = 1.5, cost = 68, b = 33, g = 0.7, c = 0.429 },
+                    { ids = { 17920 }, l = 34, m = 40, s = 3, ct = 1.5, cost = 91, b = 44, g = 0.8, c = 0.429 },
+                    { ids = { 17921 }, l = 42, m = 48, s = 3, ct = 1.5, cost = 118, b = 62, g = 0.9, c = 0.429 },
+                    { ids = { 17922 }, l = 50, m = 56, s = 3, ct = 1.5, cost = 141, b = 85, g = 1, c = 0.429 },
+                    { ids = { 17923 }, l = 58, m = 64, s = 3, ct = 1.5, cost = 168, b = 114, g = 1.2, c = 0.429 },
+                } } },
+            { { name = "Shadow Cleave", ranks = {
+                    { ids = { 403835 }, l = 1, m = 5, s = 6, cost = 12, b = 4, g = 0.13, c = 0.047, jt = 10, ja = 1 },
+                    { ids = { 403839 }, l = 6, m = 11, s = 6, cost = 20, b = 8, g = 0.2, c = 0.1, jt = 10, ja = 1 },
+                    { ids = { 403840 }, l = 12, m = 17, s = 6, cost = 35, b = 17, g = 0.3, c = 0.187, jt = 10, ja = 1 },
+                    { ids = { 403841 }, l = 20, m = 25, s = 6, cost = 55, b = 30, g = 0.4, c = 0.286, jt = 10, ja = 1 },
+                    { ids = { 403842 }, l = 28, m = 33, s = 6, cost = 80, b = 50, g = 0.53, c = 0.286, jt = 10, ja = 1 },
+                    { ids = { 403843 }, l = 36, m = 41, s = 6, cost = 105, b = 72, g = 0.63, c = 0.286, jt = 10, ja = 1 },
+                    { ids = { 403844 }, l = 44, m = 49, s = 6, cost = 132, b = 99, g = 0.77, c = 0.286, jt = 10, ja = 1 },
+                    { ids = { 403848 }, l = 52, m = 57, s = 6, cost = 157, b = 127, g = 0.87, c = 0.286, jt = 10, ja = 1 },
+                    { ids = { 403851 }, l = 60, m = 65, s = 6, cost = 185, b = 160, g = 1, c = 0.286, jt = 10, ja = 1 },
+                    { ids = { 403852 }, l = 60, m = 65, s = 6, cost = 190, b = 170, g = 1.03, c = 0.286, jt = 10, ja = 1 },
+                } } },
+            { { name = "Shadowburn", ranks = {
+                    { ids = { 17877 }, l = 20, m = 24, s = 6, cost = 105, b = 66, g = 0.9, c = 0.429 },
+                    { ids = { 18867 }, l = 24, m = 30, s = 6, cost = 130, b = 80, g = 1, c = 0.429 },
+                    { ids = { 18868 }, l = 32, m = 38, s = 6, cost = 190, b = 118, g = 1.3, c = 0.429 },
+                    { ids = { 18869 }, l = 40, m = 46, s = 6, cost = 245, b = 148, g = 1.3, c = 0.429 },
+                    { ids = { 18870 }, l = 48, m = 54, s = 6, cost = 305, b = 203, g = 1.6, c = 0.429 },
+                    { ids = { 18871 }, l = 56, m = 62, s = 6, cost = 365, b = 266, g = 1.8, c = 0.429 },
+                } } },
+            { { name = "Shadowflame", ranks = {
+                    { ids = { 426325 }, l = 1, s = 3, tb = 61, tc = 0.107, k = 4, du = 8 },
+                    { ids = { 426320 }, l = 1, s = 1, ct = 2, pct = 27, b = 173, tb = 64, k = 5, du = 15 },
+                } } },
+            { { name = "Soul Fire", ranks = {
+                    { ids = { 6353 }, l = 48, m = 54, s = 3, ct = 6, cost = 305, b = 377, g = 1.7, c = 1 },
+                    { ids = { 17924 }, l = 56, m = 62, s = 3, ct = 6, cost = 335, b = 431, g = 1.9, c = 1 },
+                } } },
+            { { name = "Wrack", ranks = {
+                    { ids = { 1316697 }, l = 40, m = 60, s = 6, cost = 200, tb = 25.2, tg = 1.75, tc = 0.2002, k = 6, du = 6, ch = 6, pc = true },
+                } } },
+        },
+        xheal = {
+            { { name = "Health Funnel", ranks = {
+                    { ids = { 755 }, l = 12, s = 6, cost = 11, pt = -2, tb = 12, k = 10, du = 10, ch = 10, theal = true },
+                    { ids = { 3698 }, l = 20, s = 6, cost = 15, pt = -2, tb = 24, k = 10, du = 10, ch = 10, theal = true },
+                    { ids = { 3699 }, l = 28, s = 6, cost = 24, pt = -2, tb = 43, k = 10, du = 10, ch = 10, theal = true },
+                    { ids = { 3700 }, l = 36, s = 6, cost = 39, pt = -2, tb = 64, k = 10, du = 10, ch = 10, theal = true },
+                    { ids = { 11693 }, l = 44, s = 6, cost = 45, pt = -2, tb = 89, k = 10, du = 10, ch = 10, theal = true },
+                    { ids = { 11694 }, l = 52, s = 6, cost = 62, pt = -2, tb = 119, k = 10, du = 10, ch = 10, theal = true },
+                    { ids = { 11695 }, l = 60, s = 6, cost = 79, pt = -2, tb = 153, k = 10, du = 10, ch = 10, theal = true },
+                } } },
+        },
     },
     WARRIOR = {
         dmg = {
@@ -591,6 +1295,116 @@ MSC.SpellImpactData = {
                 } } },
         },
         heal = {
+        },
+        xdmg = {
+            { { name = "Cleave", ranks = {
+                    { ids = { 845 }, l = 20, s = 1, cost = 200, pt = 1, b = 5, jt = 2, ja = 1, w = 1 },
+                    { ids = { 7369 }, l = 30, s = 1, cost = 200, pt = 1, b = 10, jt = 2, ja = 1, w = 1 },
+                    { ids = { 11608 }, l = 40, s = 1, cost = 200, pt = 1, b = 18, jt = 2, ja = 1, w = 1 },
+                    { ids = { 11609 }, l = 50, s = 1, cost = 200, pt = 1, b = 32, jt = 2, ja = 1, w = 1 },
+                    { ids = { 20569 }, l = 60, s = 1, cost = 200, pt = 1, b = 50, jt = 2, ja = 1, w = 1 },
+                } } },
+            { { name = "Devastate", ranks = {
+                    { ids = { 403196 }, l = 1, s = 1, b = 150 },
+                } } },
+            { { name = "Execute", ranks = {
+                    { ids = { 20647 }, l = 1, s = 1, cost = 1, pt = 1, b = 1 },
+                } } },
+            { { name = "Hamstring", ranks = {
+                    { ids = { 1715 }, l = 8, s = 1, cost = 100, pt = 1, b = 5 },
+                    { ids = { 7372 }, l = 32, s = 1, cost = 100, pt = 1, b = 18 },
+                    { ids = { 7373 }, l = 54, s = 1, cost = 100, pt = 1, b = 45 },
+                } } },
+            { { name = "Intercept", ranks = {
+                    { ids = { 20252 }, l = 30, s = 1, cost = 100, pt = 1, b = 25 },
+                    { ids = { 20616 }, l = 42, s = 1, cost = 100, pt = 1, b = 45 },
+                    { ids = { 20617 }, l = 52, s = 1, cost = 100, pt = 1, b = 65 },
+                } } },
+            { { name = "Mocking Blow", ranks = {
+                    { ids = { 694 }, l = 16, s = 1, cost = 100, pt = 1, b = 22 },
+                    { ids = { 7400 }, l = 26, s = 1, cost = 100, pt = 1, b = 31 },
+                    { ids = { 7402 }, l = 36, s = 1, cost = 100, pt = 1, b = 46 },
+                    { ids = { 20559 }, l = 46, s = 1, cost = 100, pt = 1, b = 71 },
+                    { ids = { 20560 }, l = 56, s = 1, cost = 100, pt = 1, b = 93 },
+                } } },
+            { { name = "Overpower", ranks = {
+                    { ids = { 7384 }, l = 12, s = 1, cost = 50, pt = 1, b = 5, w = 2 },
+                    { ids = { 7887 }, l = 28, s = 1, cost = 50, pt = 1, b = 15, w = 2 },
+                    { ids = { 11584 }, l = 44, s = 1, cost = 50, pt = 1, b = 25, w = 2 },
+                    { ids = { 11585 }, l = 60, s = 1, cost = 50, pt = 1, b = 35, w = 2 },
+                } } },
+            { { name = "Pummel", ranks = {
+                    { ids = { 6552 }, l = 38, s = 1, cost = 100, pt = 1, b = 20 },
+                    { ids = { 6554 }, l = 58, s = 1, cost = 100, pt = 1, b = 50 },
+                } } },
+            { { name = "Quick Strike", ranks = {
+                    { ids = { 429765 }, l = 1, s = 1, cost = 200, pt = 1, b = 35 },
+                } } },
+            { { name = "Raging Blow", ranks = {
+                    { ids = { 402911 }, l = 1, s = 1, w = 2, wpct = 1.15 },
+                } } },
+            { { name = "Rend", ranks = {
+                    { ids = { 772 }, l = 4, s = 1, cost = 100, pt = 1, tb = 5, k = 3, du = 9, pc = true },
+                    { ids = { 6546 }, l = 10, s = 1, cost = 100, pt = 1, tb = 7, k = 4, du = 12, pc = true },
+                    { ids = { 6547 }, l = 20, s = 1, cost = 100, pt = 1, tb = 9, k = 5, du = 15, pc = true },
+                    { ids = { 6548 }, l = 30, s = 1, cost = 100, pt = 1, tb = 11, k = 6, du = 18, pc = true },
+                    { ids = { 11572 }, l = 40, s = 1, cost = 100, pt = 1, tb = 14, k = 7, du = 21, pc = true },
+                    { ids = { 11573 }, l = 50, s = 1, cost = 100, pt = 1, tb = 18, k = 7, du = 21, pc = true },
+                    { ids = { 11574 }, l = 60, s = 1, cost = 100, pt = 1, tb = 21, k = 7, du = 21, pc = true },
+                } } },
+            { { name = "Revenge", ranks = {
+                    { ids = { 6572 }, l = 14, s = 1, cost = 50, pt = 1, b = 22 },
+                    { ids = { 6574 }, l = 24, s = 1, cost = 50, pt = 1, b = 34 },
+                    { ids = { 7379 }, l = 34, s = 1, cost = 50, pt = 1, b = 48 },
+                    { ids = { 11600 }, l = 44, s = 1, cost = 50, pt = 1, b = 82 },
+                    { ids = { 11601 }, l = 54, s = 1, cost = 50, pt = 1, b = 121 },
+                    { ids = { 25288 }, l = 60, s = 1, cost = 50, pt = 1, b = 153 },
+                } } },
+            { { name = "Shield Bash", ranks = {
+                    { ids = { 72 }, l = 12, s = 1, cost = 100, pt = 1, b = 6 },
+                    { ids = { 1671 }, l = 32, s = 1, cost = 100, pt = 1, b = 18 },
+                    { ids = { 1672 }, l = 52, s = 1, cost = 100, pt = 1, b = 45 },
+                } } },
+            { { name = "Shield Slam", ranks = {
+                    { ids = { 23922 }, l = 40, s = 1, cost = 200, pt = 1, b = 430 },
+                    { ids = { 23923 }, l = 48, s = 1, cost = 200, pt = 1, b = 505 },
+                    { ids = { 23924 }, l = 54, s = 1, cost = 200, pt = 1, b = 580 },
+                    { ids = { 23925 }, l = 60, s = 1, cost = 200, pt = 1, b = 655 },
+                } } },
+            { { name = "Shockwave", ranks = {
+                    { ids = { 440488 }, l = 1, s = 1, cost = 150, pt = 1, b = 1, aoe = true },
+                } } },
+            { { name = "Shoot Bow", ranks = {
+                    { ids = { 2480 }, l = 1, s = 1, ct = 1, w = 1 },
+                } } },
+            { { name = "Shoot Crossbow", ranks = {
+                    { ids = { 7919 }, l = 1, s = 1, ct = 1, w = 1 },
+                } } },
+            { { name = "Shoot Gun", ranks = {
+                    { ids = { 7918 }, l = 1, s = 1, ct = 1, w = 1 },
+                } } },
+            { { name = "Spearing Strike", ranks = {
+                    { ids = { 1310222 }, l = 1, s = 1, cost = 150, pt = 1, w = 2, wpct = 0.75 },
+                } } },
+            { { name = "Sweeping Strikes", ranks = {
+                    { ids = { 12723 }, l = 1, s = 1, b = 1 },
+                } } },
+            { { name = "Thunder Clap", ranks = {
+                    { ids = { 6343 }, l = 6, s = 1, cost = 200, pt = 1, b = 10, aoe = true },
+                    { ids = { 8198 }, l = 18, s = 1, cost = 200, pt = 1, b = 23, aoe = true },
+                    { ids = { 8204 }, l = 28, s = 1, cost = 200, pt = 1, b = 37, aoe = true },
+                    { ids = { 8205 }, l = 38, s = 1, cost = 200, pt = 1, b = 55, aoe = true },
+                    { ids = { 11580 }, l = 48, s = 1, cost = 200, pt = 1, b = 82, aoe = true },
+                    { ids = { 11581 }, l = 58, s = 1, cost = 200, pt = 1, b = 103, aoe = true },
+                } } },
+            { { name = "Victory Rush", ranks = {
+                    { ids = { 402927 }, l = 20, s = 1, b = 1 },
+                } } },
+            { { name = "Whirlwind", ranks = {
+                    { ids = { 1680 }, l = 36, s = 1, cost = 250, pt = 1, aoe = true, w = 2 },
+                } } },
+        },
+        xheal = {
         },
     },
 }

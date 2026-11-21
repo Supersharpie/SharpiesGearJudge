@@ -1780,6 +1780,12 @@ L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat
 L["Show Spell Impact"] = "Show Spell Impact"
 L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."
 L["Spell Impact:"] = "Spell Impact:"
+-- Spell Impact Add Spell (3.7.0)
+L["Add Spell"] = "Add Spell"
+L["Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."] = "Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."
+L["No other damage or healing spells known yet."] = "No other damage or healing spells known yet."
+L["heal"] = "heal"
+L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."] = "Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "Spell Impact"
 L["Show in tooltips"] = "Show in tooltips"
@@ -1793,7 +1799,6 @@ L["The mob your hit chance is worked out against: spells miss 4% of your level, 
 L["Most efficient heal rank"] = "Most efficient heal rank"
 L["Healers: also shows the rank you know that heals the most per mana, for downranking."] = "Healers: also shows the rank you know that heals the most per mana, for downranking."
 L["Count extra targets"] = "Count extra targets"
-L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."] = "Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."
 L["Show spell rank"] = "Show spell rank"
 L["Shows each spell's rank next to its name."] = "Shows each spell's rank next to its name."
 L["Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."] = "Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."

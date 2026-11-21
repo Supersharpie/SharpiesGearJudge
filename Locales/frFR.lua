@@ -2482,6 +2482,15 @@ L["Dungeon weights: mana stats for Mage, Warlock, Shadow Priest, Hunters and Cat
 L["Show Spell Impact"] = "Afficher l'impact sur les sorts"
 L["Shows how an item changes your main spells at the highest rank you know: damage or healing per second and per mana (melee: auto-attack damage per second and damage per use). Now in yellow, with the item in green (better) or red (worse). Against a mob of your level, before talents."] = "Montre comment un objet change vos principaux sorts au rang le plus élevé que vous connaissez : dégâts ou soins par seconde et par point de mana (mêlée : dégâts par seconde des attaques automatiques et dégâts par utilisation). Actuel en jaune, avec l'objet en vert (mieux) ou en rouge (moins bien). Contre un monstre de votre niveau, hors talents."
 L["Spell Impact:"] = "Impact sur les sorts :"
+-- Spell Impact Add Spell (3.7.0)
+L["Add Spell"] = "Ajouter un sort"
+L["Add any other damage or healing spell you know to the list and the tooltip. Spells you add don't count against the tooltip row limit."] = "Ajoutez à la liste et à l'info-bulle tout autre sort de dégâts ou de soins que vous connaissez. Les sorts ajoutés ne comptent pas dans la limite de lignes de l'info-bulle."
+L["No other damage or healing spells known yet."] = "Aucun autre sort de dégâts ou de soins connu pour l'instant."
+L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath and ground spells such as Blizzard, Consecration and Rain of Fire count 3 mobs."] = "Les rebonds de Chaîne d'éclairs et Salve de guérison, Flèches multiples et Balayage comptent 3 cibles avec la réduction du jeu ; Colère divine et les sorts au sol comme Blizzard, Consécration et Pluie de feu comptent 3 monstres."
+L["Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character."] = "Impact sur les sorts : ajoutez vos propres sorts (Ajouter un sort dans /sgj spells), comme Blizzard, Trait de feu, Pourfendre ou Prière de soins. Le choix des lignes est maintenant enregistré par personnage."
+L["Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping)."] = "Les réglages par personnage, l'équipement en banque, les choix de Talents et XP, les ensembles du Laboratory et les rerolls du Roster ne semblent plus réinitialisés quand le jeu ne donne pas le nom du royaume à la connexion (un changement récent contre le saut de couches)."
+L["Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30."] = "Talents : les quatre builds de tank en donjon ont été recherchés de nouveau avec un modèle de tank vérifié sur des journaux de donjon, chacun un peu plus rapide (Paladin Protection environ 0,7 %). Le build tank du Chaman s'arrête toujours à 30."
+L["Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more."] = "Poids de tank en donjon recalculés pour ces builds : la valeur de blocage compte moins, l'esquive et la défense de l'Ours comptent plus."
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "Impact sur les sorts"
 L["Show in tooltips"] = "Afficher dans les info-bulles"
@@ -2495,7 +2504,6 @@ L["The mob your hit chance is worked out against: spells miss 4% of your level, 
 L["Most efficient heal rank"] = "Rang de soin le plus efficace"
 L["Healers: also shows the rank you know that heals the most per mana, for downranking."] = "Soigneurs : affiche aussi le rang que vous connaissez qui soigne le plus par point de mana, pour utiliser des rangs inférieurs."
 L["Count extra targets"] = "Compter les cibles supplémentaires"
-L["Chain Lightning and Chain Heal jumps, Multi-Shot and Swipe count 3 targets at the game's own scaling; Holy Wrath counts 3 mobs."] = "Les rebonds de Chaîne d'éclairs et Salve de guérison, Flèches multiples et Balayage comptent 3 cibles avec la réduction du jeu ; Colère divine compte 3 monstres."
 L["Show spell rank"] = "Afficher le rang du sort"
 L["Shows each spell's rank next to its name."] = "Affiche le rang de chaque sort à côté de son nom."
 L["Before talents: they move both numbers the same, so better or worse stays right. Mana cost and cast time come from the game, with your rank and talents."] = "Hors talents : ils changent les deux nombres de la même façon, donc mieux ou moins bien reste juste. Le coût en mana et le temps d'incantation viennent du jeu, avec votre rang et vos talents."
