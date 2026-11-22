@@ -627,15 +627,29 @@ function MSC.AddSpellImpact(tooltip, link, slotId, itemNewStats, itemOldStats, w
     if #lines == 0 then return end
     -- auto-attack lines, the efficient-rank lines and spells you added yourself don't count against the row limit
     local maxRows = math_max(1, math_min(6, tonumber(MSC.SpellImpactOptions().maxRows) or 3))
-    tooltip:AddLine(" ")
-    tooltip:AddDoubleLine(MSC.L["Spell Impact:"], MSC.L["now > with this item"], 1, 0.82, 0, 0.6, 0.6, 0.6)
+    -- Daylight UI's Rich card (TooltipManager.lua MSC.Rich): a section, and each spell's name on a line of its own
+    -- with its numbers under it (beside the numbers the card cut the names to "Lightnin...")
+    local rich = MSC.Rich and MSC.Rich.On(tooltip)
+    if rich then
+        MSC.Rich.Gap(tooltip)
+        MSC.Rich.Section(tooltip, MSC.Rich.Label(MSC.L["Spell Impact:"]))
+        MSC.Rich.Hint(tooltip, MSC.L["now > with this item"])
+    else
+        tooltip:AddLine(" ")
+        tooltip:AddDoubleLine(MSC.L["Spell Impact:"], MSC.L["now > with this item"], 1, 0.82, 0, 0.6, 0.6, 0.6)
+    end
     local shown = 0
     for _, l in ipairs(lines) do
         local counts = not l.white and not l.efficient and not l.added
         if counts then shown = shown + 1 end
         if not counts or shown <= maxRows then
             local text = MSC.SpellImpactValueText(l)
-            if text then tooltip:AddDoubleLine(MSC.SpellImpactLabel(l), text, 1, 1, 1, 1, 1, 1) end
+            if text and rich then
+                MSC.Rich.Text(tooltip, MSC.SpellImpactLabel(l))
+                MSC.Rich.Row(tooltip, " ", text)
+            elseif text then
+                tooltip:AddDoubleLine(MSC.SpellImpactLabel(l), text, 1, 1, 1, 1, 1, 1)
+            end
         end
     end
 end

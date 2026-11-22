@@ -32,6 +32,19 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
+### 3.8.0 (Talents 1.4.5, Roster 1.2.0)
+
+- **Talents, Retribution dungeon build:** searched again on a model checked against logged Ret Paladins (two-hander, mana over a run of pulls, Seal of Command at 7 procs a minute): about 1.9% faster. The note says Blessing of Wisdom and when to use Consecration.
+- **Retribution dungeon weights:** rebuilt for it. Mp5 and Spirit count for more, Spell Power a little more.
+- **Talents, dungeon DPS builds:** Affliction, Demonology, Destruction, Shadow Priest, Balance and Enhancement searched again on dungeon models checked against logs (Rain of Fire and Hellfire on packs, Shadow Word: Pain on every pack mob, Hurricane): Affliction about 4% faster, Shadow 2-3%, Balance 1.5-3.5%, the others 0.3-0.6%.
+- **Their dungeon weights:** rebuilt. Warlock Spirit counts for less, Shadow Spirit for nothing from 45, Balance spell crit for about twice as much from 40, Enhancement hit for about twice as much from 50.
+- **Talents, Hunter dungeon builds:** searched again after fixing the Hunter dungeon model from logged Hunters (Multi-Shot and Explosive Trap hit about 2.6 mobs, Volley stops Auto Shot): Beast Mastery about 3% faster, Survival about 2.5%, Marksmanship about 1%. **Hunter dungeon weights** rebuilt: crit a little lower from 40, Intellect higher.
+- **Talents, Cat dungeon build:** searched again after fixing the Cat dungeon model from logged Feral Druids (Rip and Rake stop ticking when a trash mob dies): about 0.5% faster; Rip bosses, Ferocious Bite on trash from 32. **Cat dungeon weights** rebuilt: hit and weapon DPS higher.
+
+- **Daylight UI Rich tooltips:** Gear Judge's lines draw as the card's own rows. The Upgrade / Downgrade verdict is a colored tag in the card's header, Spell Impact gets a section with each spell's full name and its numbers under it, and Roster upgrades show each alt's name, gain, spec and when without being cut short. The game's tooltip and Daylight UI's Simple look are unchanged.
+- **Fixed:** with a Talents build picked, the profile name shows that build (a Marksmanship build said "Beast Mastery: Solo Leveling").
+- **Fixed:** Talents' "Panel beside the talent window" no longer unticks itself. The panel's X now hides it until you open the talent window again; untick the box to turn it off.
+
 ### 3.7.0 (Talents 1.4.4)
 
 - **Talents, dungeon tank builds:** all four searched again on a tank model checked against dungeon logs, each a little faster: Protection Paladin about 0.7%, Protection Warrior 0.15%, Shaman tank 0.1%, Bear 0.05%. The Shaman tank build still ends at 30.

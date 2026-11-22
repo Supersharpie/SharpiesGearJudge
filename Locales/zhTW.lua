@@ -1792,6 +1792,13 @@ L["Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzar
 L["Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping)."] = "登入時遊戲沒有給出伺服器名稱時，角色設定、銀行裝備、Talents 與 XP 的選擇、Laboratory 套裝和 Roster 分身不再看起來像被重置（近期防止切換分層的改動）。"
 L["Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30."] = "Talents：四個地城坦克天賦配置已用經地城戰鬥紀錄驗證的坦克模型重新搜尋，每個都快了一點（防護聖騎士約 0.7%）。薩滿坦克配置仍在 30 級結束。"
 L["Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more."] = "已為這些配置重新計算地城坦克權重：格擋值的權重降低，熊的閃躲與防禦提高。"
+L["Daylight UI Rich tooltips: Gear Judge's verdict is a tag in the card's header, and Spell Impact and Roster upgrades get their own sections with full names."] = "Daylight UI 豐富提示：Gear Judge 的判定顯示為卡片標頭中的標籤，法術影響與 Roster 升級則有各自的區段並顯示完整名稱。"
+L["Talents: the Retribution dungeon build is searched again (two-hander, mana over a run of pulls), about 1.9% faster, with new Retribution dungeon weights."] = "Talents：重新搜尋了地城懲戒配置（雙手武器、以連續多波怪計算法力），約快1.9%，並更新了地城懲戒權重。"
+L["Talents: six dungeon builds are searched again (Affliction, Demonology, Destruction, Shadow, Balance, Enhancement), up to 4% faster, with new dungeon weights for them."] = "Talents：重新搜尋了六個地城配置（痛苦、惡魔學識、毀滅、暗影、平衡、增強），最多快4%，並更新了它們的地城權重。"
+L["Talents: the Hunter dungeon builds are searched again on a model checked against logged Hunters (Multi-Shot, Explosive Trap, Volley), up to 3% faster, with new Hunter dungeon weights."] = "Talents：以獵人紀錄檢驗過的模型重新搜尋了地城獵人配置（多重射擊、爆炸陷阱、亂射），最多快3%，並更新了地城獵人權重。"
+L["Talents: the Cat dungeon build is searched again after a model fix from logged Feral Druids (Rip and Rake stop when a trash mob dies), about 0.5% faster, with new Cat dungeon weights."] = "Talents：依野性德魯伊紀錄修正模型後（小怪死亡時撕扯與掃擊停止）重新搜尋了地城獵豹配置，約快0.5%，並更新了地城獵豹權重。"
+L["Fixed: with a Talents build picked, the profile name shows that build (a Marksmanship build said \"Beast Mastery: Solo Leveling\")."] = "修正：選擇Talents配置後，設定檔名稱會顯示該配置（射擊配置先前顯示「野獸控制：單人練功」）。"
+L["Fixed: Talents' \"Panel beside the talent window\" no longer unticks itself; the panel's X hides it until you open the talent window again."] = "修正：Talents的「天賦視窗旁的面板」不會再自己取消勾選；面板的X只會隱藏它，直到你再次打開天賦視窗。"
 -- Spell Impact tab (3.6.0)
 L["Spell Impact"] = "法術影響"
 L["Show in tooltips"] = "在浮動提示中顯示"

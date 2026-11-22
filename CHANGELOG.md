@@ -1,5 +1,25 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.8.0
+
+### ✨ Daylight UI Rich Tooltips
+- With Daylight UI's Rich tooltips, Gear Judge's lines draw as the card's own rows: the Upgrade / Downgrade verdict is a colored tag in the card's header, and what the score is worn with gets a line of its own.
+- Spell Impact gets its own section on the card, each spell's full name on a line with its numbers under it (they were cut to "Lightnin...").
+- The game's tooltip and Daylight UI's Simple look show the lines as before.
+
+### 🔧 Retribution Dungeon Weights (WoW Forever)
+- Retribution dungeon weights are rebuilt for the new Retribution dungeon build (Talents 1.4.5): Mp5 and Spirit count for more now that mana matters over a run of pulls, and Spell Power for about a fifth more; crit and hit a little less.
+- Warlock, Shadow Priest, Balance and Enhancement dungeon weights are rebuilt for the new dungeon builds (Talents 1.4.5):
+  - Warlock: Spirit counts for about a third less from 25, Intellect a little less.
+  - Shadow: Spirit counts for more at 20-30, and for nothing from 45 (mana stops running out once you have Shadowform).
+  - Balance: spell crit about doubles from 40, Spirit counts for more in the 20s and 30s and less from 39.
+  - Enhancement: hit counts for about twice as much from 50.
+- Hunter dungeon weights are rebuilt for the new Hunter dungeon builds: crit counts for 10-20% less from 40, Intellect for about twice as much at 40-50, and Spirit for more in the 20s and 30s and less in the 40s.
+- Feral Cat dungeon weights are rebuilt for the new Cat dungeon build: hit counts for 20-70% more and weapon DPS for about a fifth more, now that Rip and Rake stop ticking when a trash mob dies.
+
+### 🐛 Fixed
+- With a Talents build picked, the profile name shows that build (a Marksmanship build said "Beast Mastery: Solo Leveling", whose leveling weights it shares).
+
 ## 🚀 v3.7.0
 
 ### ✨ Spell Impact: Add Your Own Spells (WoW Forever)

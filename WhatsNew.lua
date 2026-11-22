@@ -17,11 +17,14 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.7.0
-    { text = "Spell Impact: add your own spells (Add Spell in /sgj spells), such as Blizzard, Fire Blast, Rend or Prayer of Healing. The Rows choice is now saved per character.", forever = true },
-    { text = "Per-character settings, bank gear, Talents and XP choices, Laboratory sets and Roster alts no longer look reset on logins where the game gives no realm name (a recent change against layer hopping).", forever = true },
-    { text = "Talents: the four dungeon tank builds were searched again on a tank model checked against dungeon logs, each a little faster (Protection Paladin about 0.7%). The Shaman tank build still ends at 30.", forever = true },
-    { text = "Dungeon tank weights are rebuilt for these builds: block value counts for less, Bear Dodge and Defense count for more.", forever = true },
+    -- v3.8.0
+    { text = "Daylight UI Rich tooltips: Gear Judge's verdict is a tag in the card's header, and Spell Impact and Roster upgrades get their own sections with full names.", forever = true },
+    { text = "Talents: the Retribution dungeon build is searched again (two-hander, mana over a run of pulls), about 1.9% faster, with new Retribution dungeon weights.", forever = true },
+    { text = "Talents: six dungeon builds are searched again (Affliction, Demonology, Destruction, Shadow, Balance, Enhancement), up to 4% faster, with new dungeon weights for them.", forever = true },
+    { text = "Talents: the Hunter dungeon builds are searched again on a model checked against logged Hunters (Multi-Shot, Explosive Trap, Volley), up to 3% faster, with new Hunter dungeon weights.", forever = true },
+    { text = "Talents: the Cat dungeon build is searched again after a model fix from logged Feral Druids (Rip and Rake stop when a trash mob dies), about 0.5% faster, with new Cat dungeon weights.", forever = true },
+    { text = "Fixed: with a Talents build picked, the profile name shows that build (a Marksmanship build said \"Beast Mastery: Solo Leveling\").", forever = true },
+    { text = "Fixed: Talents' \"Panel beside the talent window\" no longer unticks itself; the panel's X hides it until you open the talent window again.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

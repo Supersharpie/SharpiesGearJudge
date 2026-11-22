@@ -1058,9 +1058,17 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
         
         -- [[ THE HEADER ]]
         tooltip:AddLine(" ")
-        local scoreLabel = MSC.L["Judge's Score:"]
-        if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end
-        tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
+        -- Daylight UI's Rich card (TooltipManager.lua MSC.Rich): the score as a row and what it's
+        -- worn with on a line of its own (beside the score it cut the item's name short)
+        local rich = MSC.Rich and MSC.Rich.On(tooltip)
+        if rich then
+            MSC.Rich.Row(tooltip, MSC.Rich.Label(MSC.L["Judge's Score:"]), string_format("|cffffffff%.1f|r", newScore), nil, nil, MSC.L["Judge's Score:"])
+            if contextMsg then MSC.Rich.Hint(tooltip, MSC.Rich.Plain(contextMsg)) end
+        else
+            local scoreLabel = MSC.L["Judge's Score:"]
+            if contextMsg then scoreLabel = scoreLabel .. " " .. contextMsg end
+            tooltip:AddDoubleLine(scoreLabel, string_format("|cffffffff%.1f|r", newScore), 1, 0.82, 0)
+        end
 
         -- The item's own score in that slot (its stats with any projected
         -- enchant and gems, plus weapon bonuses); Judge's Score above is the
@@ -1081,15 +1089,21 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 local o = SlotScore(itemOldStats, wornLink)
                 if o then txt = txt .. string_format(MSC.L[" |cff999999(worn: %.1f)|r"], o) end
             end
-            tooltip:AddDoubleLine(MSC.L["Item Score:"], txt, 1, 0.82, 0)
+            if rich then MSC.Rich.Row(tooltip, MSC.Rich.Label(MSC.L["Item Score:"]), txt, nil, nil, MSC.L["Item Score:"])
+            else tooltip:AddDoubleLine(MSC.L["Item Score:"], txt, 1, 0.82, 0) end
         end
         
         local displayName = specName or "?"
-        if MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[specName] then displayName = MSC.CurrentClass.PrettyNames[specName] end
+        displayName = MSC.ProfileName(specName) or displayName
         
         local _, _, capInfo = MSC.GetCurrentWeights()
         if capInfo then displayName = displayName .. " |cff00ff00(" .. capInfo .. " " .. MSC.L["Capped"] .. ")|r" end
-        tooltip:AddDoubleLine(MSC.L["Verdict Profile:"], "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0)
+        -- a long profile name squeezed the row's label to "Verd..." on the Daylight card: then one wrapping line instead
+        local vLabel = MSC.Rich.Label(MSC.L["Verdict Profile:"])
+        if rich and (#vLabel + #MSC.Rich.Plain(displayName)) > 30 then
+            MSC.Rich.Text(tooltip, MSC.L["Verdict Profile:"] .. " |cff00ccff" .. displayName .. "|r")
+        elseif rich then MSC.Rich.Row(tooltip, vLabel, "|cff00ccff" .. displayName .. "|r", nil, nil, MSC.L["Verdict Profile:"])
+        else tooltip:AddDoubleLine(MSC.L["Verdict Profile:"], "|cff00ccff" .. displayName .. "|r", 1, 0.82, 0) end
         -- Uncrushable only counts with Holy Shield / Shield Block up (Helpers ApplyForeverUncrushable)
         if type(MSC.UncrushableNeedsActive) == "string" then
             tooltip:AddLine(string_format(MSC.L["Uncrushable only while %s is up: keep it up on bosses."], MSC.UncrushableNeedsActive), 0.6, 0.6, 0.6, true)
@@ -1194,22 +1208,26 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
             end
 
             -- [[ 4. UPGRADE/DOWNGRADE MATH ]]
+            -- On Daylight UI's Rich card the verdict is a tag in the card's header (its color says which)
+            local function Verdict(text, r, g, b)
+                if rich then MSC.Rich.Tag(tooltip, MSC.Rich.Plain(text), { r, g, b }) else tooltip:AddLine(text) end
+            end
             if delta > 0.01 then 
                 if oldScore > 0 then
                     local percentDiff = ((newScore - oldScore) / oldScore) * 100
-                    tooltip:AddLine(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r"], TEX_UP, delta, percentDiff))
+                    Verdict(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / +%.1f%%)|r"], TEX_UP, delta, percentDiff), 0, 1, 0)
                 else
-                    tooltip:AddLine(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / New)|r"], TEX_UP, delta))
+                    Verdict(string_format(MSC.L["|cff00ff00%s Upgrade (+%.1f / New)|r"], TEX_UP, delta), 0, 1, 0)
                 end
             elseif delta < -0.01 then 
                 if oldScore > 0 then
                     local percentDiff = ((newScore - oldScore) / oldScore) * 100
-                    tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f / %.1f%%)|r"], TEX_DOWN, delta, percentDiff))
+                    Verdict(string_format(MSC.L["|cffff0000%s Downgrade (%.1f / %.1f%%)|r"], TEX_DOWN, delta, percentDiff), 1, 0.25, 0.25)
                 else
-                    tooltip:AddLine(string_format(MSC.L["|cffff0000%s Downgrade (%.1f)|r"], TEX_DOWN, delta))
+                    Verdict(string_format(MSC.L["|cffff0000%s Downgrade (%.1f)|r"], TEX_DOWN, delta), 1, 0.25, 0.25)
                 end
             else 
-                tooltip:AddLine(MSC.L["|cff888888= Sidegrade (0.0)|r"]) 
+                Verdict(MSC.L["|cff888888= Sidegrade (0.0)|r"], 0.6, 0.6, 0.6)
             end
 
             -- A one-hander for a dual-wielder can go in either hand: the

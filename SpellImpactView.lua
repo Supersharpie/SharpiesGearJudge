@@ -31,7 +31,7 @@ end
 local function ProfileName()
     local _, specName = MSC.GetCurrentWeights()
     local cc = MSC.CurrentClass
-    return (cc and cc.PrettyNames and cc.PrettyNames[specName]) or specName or "?", specName
+    return (MSC.ProfileName and MSC.ProfileName(specName)) or (cc and cc.PrettyNames and cc.PrettyNames[specName]) or specName or "?", specName
 end
 
 -- ==========================================

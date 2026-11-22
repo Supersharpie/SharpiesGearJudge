@@ -160,3 +160,85 @@ GameTooltip:HookScript("OnTooltipCleared", function()
     MSC.PendingTooltipLink = nil
     MSC.PendingTooltip = nil
 end)
+
+-- ============================================================================
+-- DAYLIGHT UI RICH CARDS (3.8.0)
+-- Daylight UI's "Rich" tooltip look draws its own card over the game tooltip. Its
+-- plugin pieces (API 1.12: rows, sections, tags) are tooltip lines marked for the
+-- card, so they draw as real rows; other lines get a plain repaint whose rows cut
+-- a long label to fit the value. MSC.Rich adds a line and marks it when the card
+-- is on, else just adds the line. The plugins (Roster) use it too.
+-- Off: SGJ_Settings.DaylightRich = false. Every Daylight call is guarded, so a
+-- change on their side falls back to plain lines.
+-- ============================================================================
+local Rich = {}
+MSC.Rich = Rich
+
+local function DuiTooltipNs()
+    local D = _G.DaylightUI
+    if type(D) ~= "table" or type(D.GetModule) ~= "function" then return nil end
+    local ok, mod = pcall(D.GetModule, D, "Tooltip")
+    local ns = ok and type(mod) == "table" and mod.ns or nil
+    if type(ns) == "table" and type(ns.Rich) == "table" and type(ns.Rich.On) == "function"
+        and type(ns.Rich.Piece) == "function" then return ns end
+    return nil
+end
+
+-- Whether Daylight UI draws this tooltip as a Rich card.
+function Rich.On(tip)
+    if SGJ_Settings and SGJ_Settings.DaylightRich == false then return false end
+    local ns = DuiTooltipNs()
+    if not ns then return false end
+    local ok, on = pcall(ns.Rich.On, tip)
+    return ok and on == true
+end
+
+local function Mark(tip, piece)
+    local ns = DuiTooltipNs()
+    if ns then pcall(ns.Rich.Piece, tip, piece) end
+end
+
+-- A label without its color codes and the colon at its end (the card's row labels have none).
+function Rich.Label(t)
+    t = tostring(t or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    return (t:gsub("^%s+", ""):gsub("%s*:%s*$", ""))
+end
+-- Plain words: no color codes, no inline textures.
+function Rich.Plain(t)
+    t = tostring(t or ""):gsub("|T.-|t", ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    return (t:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
+-- label left, value right (value may carry its own color codes); colors { r, g, b } or nil. plainLeft: the
+-- game line's own left words when they must stay as they were (Judge.lua finds its "Judge's Score:" line by them)
+function Rich.Row(tip, label, value, valueColor, labelColor, plainLeft)
+    tip:AddDoubleLine(plainLeft or label, value or " ", 1, 1, 1, 1, 1, 1)
+    Mark(tip, { kind = "row", label = label, value = value, color = valueColor, labelColor = labelColor })
+end
+function Rich.Text(tip, text, color)
+    local c = color or { 1, 1, 1 }
+    tip:AddLine(text, c[1], c[2], c[3], true)
+    Mark(tip, { kind = "text", text = text, color = color })
+end
+-- small, in the card's accent
+function Rich.Hint(tip, text)
+    tip:AddLine(text, 0.6, 0.6, 0.6, true)
+    Mark(tip, { kind = "hint", text = text })
+end
+function Rich.Section(tip, title)
+    tip:AddLine(title, 1, 0.82, 0)
+    Mark(tip, { kind = "section", text = title })
+end
+-- Daylight UI draws a plugin gap 4 px tall (DaylightUI_Tooltip Rich/Foreign.lua GAP): two make the room before a section
+function Rich.Gap(tip)
+    tip:AddLine(" ")
+    Mark(tip, { kind = "gap" })
+    tip:AddLine(" ")
+    Mark(tip, { kind = "gap" })
+end
+-- a tag in the card's header, beside its item level and slot tags
+function Rich.Tag(tip, text, color)
+    local c = color or { 1, 1, 1 }
+    tip:AddLine(text, c[1], c[2], c[3])
+    Mark(tip, { kind = "tag", text = text, color = color })
+end

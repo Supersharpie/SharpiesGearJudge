@@ -509,16 +509,32 @@ end
 -- "Leveling_Tank") or "Leveling" for the class's default chain; endgame is a
 -- Weights key used at 60. pvp (optional) marks a PvP build: its weights get
 -- the PvP model at every level, as with Gear for PvP. nil, nil clears it.
-function MSC.SetTalentBuildRole(leveling, endgame, pvp)
+-- name (optional): the build's display name, shown for its leveling weights (MSC.ProfileName).
+function MSC.SetTalentBuildRole(leveling, endgame, pvp, name)
     local cur = MSC.TalentBuildRole
     pvp = pvp and true or nil
-    if (cur and cur.leveling) == leveling and (cur and cur.endgame) == endgame and (cur and cur.pvp) == pvp then return end
-    MSC.TalentBuildRole = (leveling or endgame) and { leveling = leveling, endgame = endgame, pvp = pvp } or nil
+    if cur and cur.leveling == leveling and cur.endgame == endgame and cur.pvp == pvp then cur.name = name; return end
+    if not cur and not (leveling or endgame) then return end
+    MSC.TalentBuildRole = (leveling or endgame) and { leveling = leveling, endgame = endgame, pvp = pvp, name = name } or nil
     MSC.CachedWeights = nil
     if MSC.CachedWeightsBySpec then wipe(MSC.CachedWeightsBySpec) end
     -- A PvP build can share its profile key with the PvE one, so a PvP change
     -- wouldn't clear the cached item scores by itself: drop them all.
     if (cur and cur.pvp) ~= pvp and MSC.BumpScoringRevision then MSC:BumpScoringRevision() end
+end
+
+-- The name shown for a weights profile key. A leveling row is shared by builds of several talent trees
+-- (a Hunter's ranged row serves Beast Mastery, Marksmanship and Survival, with your own talents added live),
+-- but its name is one tree's: with a Talents-plugin build linked, its level bands show that build's name.
+function MSC.ProfileName(key)
+    if not key then return nil end
+    local tb = MSC.TalentBuildRole
+    if tb and tb.name and tb.leveling then
+        local lo, hi = key:match("^" .. tb.leveling:gsub("%p", "%%%0") .. "_(%d+)_(%d+)$")
+        if lo and tonumber(lo) > 10 then return tb.name .. " (" .. lo .. "-" .. hi .. ")" end
+    end
+    local cc = MSC.CurrentClass
+    return (cc and cc.PrettyNames and cc.PrettyNames[key]) or (MSC.PrettyNames and MSC.PrettyNames[key]) or nil
 end
 
 -- =========================================================================

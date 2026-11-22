@@ -621,7 +621,7 @@ function MSC.UpdateLabCalc()
 
     -- [[ PROFILE AND RANKING (side columns) ]]
     local view = MSC.ViewLab
-    if view.Profile then view.Profile:SetText((MSC.PrettyNames and MSC.PrettyNames[profileName]) or profileName or "") end
+    if view.Profile then view.Profile:SetText(MSC.ProfileName(profileName) or profileName or "") end
     if view.RankRows then
         local ranked = {}
         for id, block in pairs(MSC.LabBlocks) do
@@ -875,7 +875,7 @@ function MSC.UpdateReceipt()
     if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then specName, weights = next(MSC.CurrentClass.Weights) end
     if not weights then return end
 
-    local displayName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName
+    local displayName = MSC.ProfileName(specName) or specName
     MSC.ViewReceipt.Info:SetText(displayName)
     
     local gearTable = {}
@@ -2862,7 +2862,7 @@ function MSC.UpdateLogic()
     if not weights then return end
 
     local uncertainNote
-    local profileLabel = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[detectedKey]) or detectedKey or ""
+    local profileLabel = MSC.ProfileName(detectedKey) or detectedKey or ""
     if SGJ_Settings and MSC.ManualSpec == "AUTO" and specConfidence and specConfidence ~= "high" then
         uncertainNote = MSC.L[" (uncertain — pick profile manually if wrong)"]:gsub("^%s*%((.-)%)%s*$", "%1")
     end
@@ -4079,7 +4079,7 @@ function MSC.ShowHistory()
     if not weights and MSC.CurrentClass and MSC.CurrentClass.Weights then 
         specName, weights = next(MSC.CurrentClass.Weights) 
     end
-    local profileName = (MSC.PrettyNames and MSC.PrettyNames[specName]) or specName or MSC.L["Unknown"]
+    local profileName = MSC.ProfileName(specName) or specName or MSC.L["Unknown"]
 
     local gearTable = {}
     for i=1, 18 do gearTable[i] = GetInventoryItemLink(unit, i) end
