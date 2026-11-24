@@ -14,15 +14,15 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 
 | Class | Solo leveling | Dungeon leveling | PvP leveling | Raid (60) |
 |---|---|---|---|---|
-| Warrior | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
+| Warrior | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
 | Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Hunter | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Paladin | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.4.5) | ⏸️ Waiting |
-| Mage | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
-| Warlock | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
-| Priest | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
+| Hunter | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
+| Paladin | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.4.5) | ⏸️ Waiting |
+| Mage | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
+| Warlock | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
+| Priest | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
 | Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Druid | ✅ Done (3.4.2) | ✅ Done (3.4.4) | ✅ Done (3.5.0) | ⏸️ Waiting |
+| Druid | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.5.0) | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
 
@@ -31,6 +31,13 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.8.1 (Talents 1.4.6, Roadmap 3.4.1)
+
+- **Talents, solo leveling builds:** 22 builds searched again after model fixes (Mage AoE pulls with Blink and a check on how likely a pull kills you, Nightfall, Insect Swarm, Heart of the Wild). Fury two-hander about 4% faster (deep Fury, Bloodthirst at 40), Arcane AoE 3.5-4%, Protection Warrior, Demonology and Beast Mastery shooting about 2%, the others 0.1-1.5%. Notes rewritten; Retribution is now the fastest Paladin solo build in quest gear.
+- **Solo leveling weights:** rebuilt for Warrior, Hunter, Mage, Warlock, Priest, Paladin and Druid. Frost AoE Mage Intellect, Spirit and Mp5 count for much more (Stamina no more than Intellect), Hunter ranged weapon DPS for about half, Affliction Spirit for about a quarter more.
+- **Fixed:** Korean and Traditional Chinese Spell Impact shows its own word for DPS again (Talents' role filter replaced it).
+- **Fixed:** Roadmap's "...and N more" in Russian and Traditional Chinese no longer clashes with XP Bar and Roster.
 
 ### 3.8.0 (Talents 1.4.5, Roster 1.2.0)
 

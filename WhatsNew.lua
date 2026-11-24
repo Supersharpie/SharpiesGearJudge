@@ -17,14 +17,12 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.8.0
-    { text = "Daylight UI Rich tooltips: Gear Judge's verdict is a tag in the card's header, and Spell Impact and Roster upgrades get their own sections with full names.", forever = true },
-    { text = "Talents: the Retribution dungeon build is searched again (two-hander, mana over a run of pulls), about 1.9% faster, with new Retribution dungeon weights.", forever = true },
-    { text = "Talents: six dungeon builds are searched again (Affliction, Demonology, Destruction, Shadow, Balance, Enhancement), up to 4% faster, with new dungeon weights for them.", forever = true },
-    { text = "Talents: the Hunter dungeon builds are searched again on a model checked against logged Hunters (Multi-Shot, Explosive Trap, Volley), up to 3% faster, with new Hunter dungeon weights.", forever = true },
-    { text = "Talents: the Cat dungeon build is searched again after a model fix from logged Feral Druids (Rip and Rake stop when a trash mob dies), about 0.5% faster, with new Cat dungeon weights.", forever = true },
-    { text = "Fixed: with a Talents build picked, the profile name shows that build (a Marksmanship build said \"Beast Mastery: Solo Leveling\").", forever = true },
-    { text = "Fixed: Talents' \"Panel beside the talent window\" no longer unticks itself; the panel's X hides it until you open the talent window again.", forever = true },
+    -- v3.8.1
+    { text = "Talents: 22 solo leveling builds are searched again after model fixes (Mage AoE pulls, Nightfall, Insect Swarm, Heart of the Wild), up to 4% faster, with new notes.", forever = true },
+    { text = "Solo leveling weights are rebuilt for Warrior, Hunter, Mage, Warlock, Priest, Paladin and Druid for the new builds.", forever = true },
+    { text = "Frost AoE Mage weights: Intellect, Spirit and Mp5 count for much more, and Stamina for no more than Intellect.", forever = true },
+    { text = "Fixed: Korean and Traditional Chinese Spell Impact shows its own word for DPS again.", forever = true },
+    { text = "Fixed: Roadmap's line for more items in Russian and Traditional Chinese no longer clashes with XP Bar and Roster.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

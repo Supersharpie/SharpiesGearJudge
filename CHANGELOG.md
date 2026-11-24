@@ -1,5 +1,15 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.8.1
+
+### 🔧 Solo Leveling Weights (WoW Forever)
+- Solo leveling weights are rebuilt for Warrior, Hunter, Mage, Warlock, Priest, Paladin and Druid, for the new solo builds (Talents 1.4.6) and the model fixes behind them:
+  - Frost AoE Mage: Intellect, Spirit and Mp5 count for much more and Hp5 for almost nothing, now that pulls are sized to what you survive; Stamina counts for no more than Intellect.
+  - Hunter: ranged weapon DPS is measured on the leveling model and counts for about half what it did.
+  - Two-hander Warrior: weapon speed counts for less from 40.
+  - Affliction Warlock: Spirit counts for about a quarter more.
+  - Balance and Restoration Druid: Intellect and spell crit count for about a tenth more.
+
 ## 🚀 v3.8.0
 
 ### ✨ Daylight UI Rich Tooltips
