@@ -14,23 +14,32 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 
 | Class | Solo leveling | Dungeon leveling | PvP leveling | Raid (60) |
 |---|---|---|---|---|
-| Warrior | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
-| Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Hunter | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Paladin | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.4.5) | ⏸️ Waiting |
-| Mage | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
-| Warlock | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.6.0) | ⏸️ Waiting |
-| Priest | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.4.7) | ⏸️ Waiting |
-| Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ⏳ Planned | ⏸️ Waiting |
-| Druid | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.5.0) | ⏸️ Waiting |
+| Warrior | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Hunter | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Paladin | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Mage | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Warlock | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Priest | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Druid | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
+
+**PvP leveling pass (in progress):** every class's PvP leveling build is being searched again, now judged on the world fights you run into while questing. Druid, Mage, Hunter, Rogue and Warrior are searched; Shaman is finishing, then Priest, Paladin and Warlock. The PvP leveling builds released so far don't use this judging yet, so every class is back to in progress; the current builds stay in use until each class ships.
 
 ## 🔥 What's New
 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.9.0 (Talents 1.4.7, Roster 1.2.1)
+
+- **Enchanters:** Enchanting recipe tooltips show what the enchant is worth on your gear, off-specs and alts, and the best recipe for each slot gets a green arrow in Daylight UI's profession window. Projected Enchant says whether you know the recipe (with an option to project only enchants you can make), and gear that is no upgrade for anyone gets a disenchant mark in your bags.
+- **Enchant and set data:** read again from the current game client. Minor Stats (chest) is +1 to every stat (was counted as +2), new Lesser Spirit (+4) and Lesser Intellect (+3) suggestions, and the 9 Tier 1 sets now count their set bonuses.
+- **Fixed:** Talents' level-up reminder no longer prints the next talent twice.
+- **Fixed (French client):** bonus armor, Defense and weapon skill (+3), critical strike, spell critical strike, dodge, parry and block chance, and Mana and Health per 5 sec. on gear are counted.
 
 ### 3.8.1 (Talents 1.4.6, Roadmap 3.4.1)
 
@@ -346,7 +355,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.7.0 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.9.0 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

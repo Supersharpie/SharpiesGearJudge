@@ -291,6 +291,13 @@ if MSC.IsForever then
     MSC.Scanner.TermMap[MSC.L["spell damage"]] = "ITEM_MOD_SPELL_DAMAGE_DONE_SHORT"
 end
 
+-- Bonus armor on the French client (2026-11-25, GitHub issue 24): "+100 d'armure" names the stat with the elided "d'",
+-- so it missed the plain "armure" key and the extra armor scored nothing.
+if GetLocale and GetLocale() == "frFR" then
+    MSC.Scanner.BaseStatMap["d'" .. MSC.L["armor"]] = "ITEM_MOD_ARMOR_SHORT"
+    MSC.Scanner.BaseStatMap["d\226\128\153" .. MSC.L["armor"]] = "ITEM_MOD_ARMOR_SHORT"
+end
+
 -- =============================================================
 -- 2. PATTERN DATABASE (Merged)
 -- =============================================================
@@ -751,10 +758,10 @@ end
 -- string.lower can't lower and a no-break space before the colon, ptBR "Equipado:", ruRU "Если на персонаже:" and zhTW
 -- a full-width colon, so the translated L["equip"] keys missed them and the prefix stayed on the line.
 -- ITEM_SPELL_TRIGGER_ONEQUIP is that prefix in every language. Returns the line without it, or nil.
-local function StripEquipPrefix(text)
-    local pre = ITEM_SPELL_TRIGGER_ONEQUIP
-    if type(pre) ~= "string" or pre == "" or type(text) ~= "string" then return nil end
-    text = string_gsub(text, "^|c%x%x%x%x%x%x%x%x", "")
+-- MSC.EquipPrefixExtra (2026-11-25, GitHub issue 25): a locale's other spellings of the prefix. The frFR Forever client
+-- prints both "Équipé :" and "Équiper :", and only the first is ITEM_SPELL_TRIGGER_ONEQUIP.
+local function StripOnePrefix(text, pre)
+    if type(pre) ~= "string" or pre == "" then return nil end
     pre = string_gsub(pre, "[%s\194\160:]*$", "")
     pre = string_gsub(pre, "\239\188\154$", "")
     if pre == "" or string_find(text, pre, 1, true) ~= 1 then return nil end
@@ -763,6 +770,20 @@ local function StripEquipPrefix(text)
     elseif string.sub(rest, 1, 3) == "\239\188\154" then rest = string.sub(rest, 4)
     else return nil end
     return (string_gsub(rest, "^[%s\194\160]*", ""))
+end
+
+local function StripEquipPrefix(text)
+    if type(text) ~= "string" then return nil end
+    text = string_gsub(text, "^|c%x%x%x%x%x%x%x%x", "")
+    local rest = StripOnePrefix(text, ITEM_SPELL_TRIGGER_ONEQUIP)
+    if rest then return rest end
+    if type(MSC.EquipPrefixExtra) == "table" then
+        for _, pre in ipairs(MSC.EquipPrefixExtra) do
+            rest = StripOnePrefix(text, pre)
+            if rest then return rest end
+        end
+    end
+    return nil
 end
 MSC.Scanner.StripEquipPrefix = StripEquipPrefix
 

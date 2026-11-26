@@ -1448,7 +1448,7 @@ end
 -- bag arrow shows for every item the tooltip calls an upgrade (2026-11-04: the bags used 0.1, so small upgrades had none).
 MSC.VERDICT_EPS = 0.01
 
-function MSC.GetBagArrowVerdict(link, weights, specName)
+local function BaseBagVerdict(link, weights, specName)
     if not link or not weights then return nil end
     local itemName, _, _, _, _, _, _, _, equipLoc = GetItemInfo(link)
     if not itemName or not equipLoc or equipLoc == "" or equipLoc == "INVTYPE_NON_EQUIP" then return nil end
@@ -1469,6 +1469,20 @@ function MSC.GetBagArrowVerdict(link, weights, specName)
     if newScore > (oldScore + MSC.VERDICT_EPS) then return "UP"
     elseif oldScore > (newScore + MSC.VERDICT_EPS) then return "DOWN" end
     return nil
+end
+
+-- 3.9.0: "DE" marks gear that is safe to disenchant (no upgrade for you, your off-specs or your alts;
+-- Enchanting.lua). It takes the place of the red arrow; an upgrade arrow always wins.
+function MSC.GetBagArrowVerdict(link, weights, specName)
+    local v = BaseBagVerdict(link, weights, specName)
+    if v ~= "UP" and link and MSC.Enchanting and MSC.Enchanting.SafeToDisenchant(link) then return "DE" end
+    return v
+end
+
+-- The texture for a bag verdict ("UP", "DOWN" or "DE").
+function MSC.VerdictTexture(verdict)
+    if verdict == "DE" then return "Interface\\Icons\\INV_Enchant_Disenchant" end
+    return "Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (verdict == "UP" and "Upgrade.png" or "Downgrade.png")
 end
 
 -- Draws (or hides, when overlayType is nil) the arrow on a bag button. The
@@ -1497,7 +1511,11 @@ function MSC.SetBagArrow(button, overlayType, place)
     end
 
     button.SGJ_OverlayFrame:SetFrameLevel(button:GetFrameLevel() + 10)
-    button.SGJ_Overlay:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (overlayType == "UP" and "Upgrade.png" or "Downgrade.png"))
+    button.SGJ_Overlay:SetTexture(MSC.VerdictTexture(overlayType))
+    -- the disenchant mark is a full square icon: a little smaller than the arrows
+    button.SGJ_OverlaySize = button.SGJ_OverlaySize or button.SGJ_Overlay:GetWidth()
+    local sz = (overlayType == "DE") and math.floor(button.SGJ_OverlaySize * 0.75 + 0.5) or button.SGJ_OverlaySize
+    button.SGJ_Overlay:SetSize(sz, sz)
     button.SGJ_Overlay:Show()
     button.SGJ_OverlayFrame:Show()
 end
@@ -1847,7 +1865,7 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                 local verdict = GetVerdict(details.itemLink)
                 if verdict == nil then return nil end
                 if not verdict then return false end
-                arrow:SetTexture("Interface\\AddOns\\SharpiesGearJudge\\Textures\\" .. (verdict == "UP" and "Upgrade.png" or "Downgrade.png"))
+                arrow:SetTexture(MSC.VerdictTexture(verdict))
                 return true
             end, function(itemButton)
                 local arrow = itemButton:CreateTexture(nil, "OVERLAY")
@@ -2180,10 +2198,23 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
             if pool then for i = 1, #pool do if pool[i] then SetRowArrow(pool[i], false) end end end
             local weights, specName = MSC.GetCurrentWeights()
             if not weights then return end
+            -- 3.9.0: Enchanting recipes have no item link; the arrow marks the best recipe in the list for each
+            -- of your slots instead (MSC.Enchanting.BestRecipes: the biggest gain over what's on it now).
+            local enchantBest
+            if MSC.Enchanting then
+                local ids = {}
+                for id, b in pairs(craftList.lines or {}) do
+                    local r = b.lineSpec and b.lineSpec.recipe
+                    if r and MSC.Enchanting.EnchantForSpell(r.id) then ids[#ids + 1] = r.id end
+                end
+                if #ids > 0 then enchantBest = MSC.Enchanting.BestRecipes(ids, weights) end
+            end
             for _, b in pairs(craftList.lines or {}) do
                 local r = b.lineSpec and b.lineSpec.recipe
                 local link = r and RecipeLink(r)
-                if link then
+                if enchantBest and r and MSC.Enchanting.EnchantForSpell(r.id) then
+                    SetRowArrow(b, enchantBest[r.id] == true)
+                elseif link then
                     local v = verdicts[link]
                     if v == nil then
                         v = MSC.IsCraftUpgrade(link, weights, specName) or false
@@ -3266,6 +3297,20 @@ function MSC.InitSettingsView(parent)
     end
     local cbTank2H = CreateCheck(MSC.L["Shield Tanks: No Two-Handers"], "ShieldTankNo2H", MSC.L["With a Protection Warrior or Paladin profile, or a Shaman tank profile, two-handers are never shown as upgrades, even while you hold one, and the Roadmap builds a one-hander and shield set. Turn off to compare two-handers normally while you aren't using a shield."], cLogic.Last, 0, -5)
     cbTank2H:HookScript("OnClick", MSC.OnScoringSettingsChanged)
+    -- 3.9.0 enchanter options (Enchanting.lua; Forever's profession window)
+    if MSC.Enchanting then
+        local function Refresh()
+            MSC.Enchanting.ClearDisenchantCache()
+            MSC.OnScoringSettingsChanged()
+        end
+        local cbTips = CreateCheck(MSC.L["Enchant Recipe Values"], "EnchantRecipeTips", MSC.L["Enchanting recipe tooltips show what the enchant is worth on the item you wear in that slot, for your off-specs and for your alts, against the enchant on it now. The best recipe for each slot gets a green arrow in Daylight UI's profession window."], cbTank2H, 0, -5)
+        local cbKnown = CreateCheck(MSC.L["Enchanters: Only Enchants I Can Make"], "EnchantOnlyKnown", MSC.L["With Enchant Mode set to Project Best, an enchanter's projected enchants use only the recipes this character has learned (open your Enchanting window once so Gear Judge can read them). Enchant items such as armor kits still count."], cbTips, 0, -5)
+        cbKnown:HookScript("OnClick", Refresh)
+        local cbDE = CreateCheck(MSC.L["Enchanters: Mark Gear Safe to Disenchant"], "MarkDisenchant", MSC.L["In your bags, gear that is no upgrade for you, your off-specs or your alts gets a disenchant mark instead of the red arrow. Only for characters with Enchanting."], cbKnown, 0, -5)
+        cbDE:HookScript("OnClick", Refresh)
+        local cbBoE = CreateCheck(MSC.L["Include Bind on Equip Gear"], "DisenchantBoE", MSC.L["Mark Bind on Equip gear too. Off by default, because it can often be sold for more than its materials."], cbDE, 20, -5)
+        cbBoE:HookScript("OnClick", Refresh)
+    end
 
     -- ==========================================
     -- SECTION 4: BUFF ASSUMPTIONS (right column)
@@ -4125,6 +4170,7 @@ function MSC.ApplySettingsDefaults()
     -- DEFINE DEFAULTS (These only apply if the setting doesn't exist yet)
     local defaults = {
         EnchantMode = 1,       -- Off
+        EnchantRecipeTips = true, EnchantOnlyKnown = false, MarkDisenchant = true, DisenchantBoE = false,   -- 3.9.0 enchanters
         GemMode = 1,           -- Skeptic
         GemQuality = 3,        -- NEW: Rare (Blue) Default
         Mode = "AUTO",         -- Auto-Detect

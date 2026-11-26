@@ -2216,12 +2216,29 @@ function MSC.GetEnchantScore(enchantID, weights, slotId)
     return MSC.GetItemScore(stats, weights, nil, slotId)
 end
 
+-- Whether an enchant fits the item in a slot (enchantType from MSC:GetValidEnchantType): two-hander
+-- enchants, shield enchants and scopes only go on their own item kinds.
+function MSC.EnchantFitsSlot(data, slotId, enchantType)
+    if not data then return false end
+    if data.requires2H and enchantType ~= "2H" then return false end
+    if slotId == 17 then
+        if enchantType == "Shield" and not data.isShield then return false end
+        if enchantType ~= "Shield" and data.isShield then return false end
+        if enchantType ~= "Weapon" and not data.isShield and not data.isScope then return false end
+    end
+    if slotId == 18 and ((enchantType == "Bow" and not data.isScope) or (enchantType == "Relic")) then return false end
+    return true
+end
+
 function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights)
     local candidates = MSC.EnchantCandidates and MSC.EnchantCandidates[slotId]
     if not candidates then return nil end
 
     local _, _, classID = UnitClass("player")
     local classBit = classID and 2 ^ (classID - 1)
+    -- 3.9.0: "Enchanters: suggest only enchants I can make" skips Enchanting recipes this character hasn't
+    -- learned (enchant items such as armor kits stay). Only for a character with Enchanting (Enchanting.lua).
+    local onlyKnown = SGJ_Settings and SGJ_Settings.EnchantOnlyKnown and MSC.Enchanting and MSC.Enchanting.IsEnchanter()
 
     local bestID, bestScore = nil, -1
     for _, id in ipairs(candidates) do
@@ -2229,15 +2246,9 @@ function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights
         -- lvl: the level an enchant becomes a sensible suggestion; classMask: class-only
         -- enchant items such as the Zul'Gurub idols (Enchants_<Edition>.lua).
         if data and (not data.lvl or not level or data.lvl <= level)
-            and (not data.classMask or not classBit or bit.band(data.classMask, classBit) ~= 0) then
-            local allowed = true
-            if data.requires2H and enchantType ~= "2H" then allowed = false end
-            if slotId == 17 then
-                if enchantType == "Shield" and not data.isShield then allowed = false end
-                if enchantType ~= "Shield" and data.isShield then allowed = false end
-                if enchantType ~= "Weapon" and not data.isShield and not data.isScope then allowed = false end
-            end
-            if slotId == 18 and ((enchantType == "Bow" and not data.isScope) or (enchantType == "Relic")) then allowed = false end
+            and (not data.classMask or not classBit or bit.band(data.classMask, classBit) ~= 0)
+            and not (onlyKnown and data.spell and not MSC.Enchanting.Knows(data.spell)) then
+            local allowed = MSC.EnchantFitsSlot(data, slotId, enchantType)
             if allowed then
                 local score = MSC.GetEnchantScore(id, weights, slotId)
                 if score > bestScore then bestScore = score; bestID = id end
@@ -2583,6 +2594,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                     end
                     finalStats.IS_PROJECTED = true
                     finalStats.ENCHANT_TEXT = MSC.GetEnchantName(bestData)
+                    finalStats.ENCHANT_ID = bestID
                 end
             end
         end

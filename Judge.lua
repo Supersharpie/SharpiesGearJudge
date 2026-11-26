@@ -54,6 +54,8 @@ EventFrame:SetScript("OnEvent", function(self, event, arg1)
         if MSC.BuildDatabase then MSC:BuildDatabase() end
 		if not SGJ_Settings then SGJ_Settings = { Mode = "AUTO", MinimapPos = 45, TrackedSpecs = {} } end
         if SGJ_Settings.EnchantMode == nil then SGJ_Settings.EnchantMode = 1 end
+        if SGJ_Settings.EnchantRecipeTips == nil then SGJ_Settings.EnchantRecipeTips = true end   -- 3.9.0 enchanters
+        if SGJ_Settings.MarkDisenchant == nil then SGJ_Settings.MarkDisenchant = true end
         if SGJ_Settings.GemMode == nil then SGJ_Settings.GemMode = 1 end
         if SGJ_Settings.GemQuality == nil then SGJ_Settings.GemQuality = 3 end
         if not SGJ_Settings.TrackedSpecs then SGJ_Settings.TrackedSpecs = {} end
@@ -1121,6 +1123,8 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 local current = eid > 0 and MSC.EnchantDB and MSC.EnchantDB[eid]
                 if current and MSC.GetEnchantName(current) == itemNewStats.ENCHANT_TEXT then
                     name = name .. " " .. MSC.L["|cff00ff00(already on it)|r"]
+                elseif MSC.Enchanting then
+                    name = name .. MSC.Enchanting.KnownSuffix(itemNewStats.ENCHANT_ID)
                 end
                 tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], name, 0, 1, 1, 1, 1, 1)
             end
@@ -1372,6 +1376,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 
                 if itemNewStats.ENCHANT_TEXT then 
                     local cleanEnchant = CleanText(itemNewStats.ENCHANT_TEXT)
+                    if MSC.Enchanting then cleanEnchant = cleanEnchant .. MSC.Enchanting.KnownSuffix(itemNewStats.ENCHANT_ID) end
                     tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], cleanEnchant, 0, 1, 1, 1, 1, 1)
                 elseif itemNewStats.IS_PROJECTED then 
                     tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], MSC.L["Best Available"], 0, 1, 1, 1, 1, 1) 

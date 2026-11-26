@@ -2496,6 +2496,33 @@ L["Solo leveling weights are rebuilt for Warrior, Hunter, Mage, Warlock, Priest,
 L["Frost AoE Mage weights: Intellect, Spirit and Mp5 count for much more, and Stamina for no more than Intellect."] = "Poids du Mage Givre AdE : Intelligence, Esprit et Mp5 comptent beaucoup plus, et l'Endurance pas plus que l'Intelligence."
 L["Fixed: Korean and Traditional Chinese Spell Impact shows its own word for DPS again."] = "Corrigé : Impact sur les sorts en coréen et en chinois traditionnel affiche de nouveau son propre mot pour DPS."
 L["Fixed: Roadmap's line for more items in Russian and Traditional Chinese no longer clashes with XP Bar and Roster."] = "Corrigé : la ligne de Roadmap pour plus d'objets en russe et en chinois traditionnel n'entre plus en conflit avec Barre d'XP et Roster."
+L["Enchant suggestions follow the current game client: Minor Stats on a chest gives +1 to every stat (it was counted as +2), and the new Spirit (+4) and Intellect (+3) enchants are suggested."] = "Les suggestions d'enchantement suivent le client actuel du jeu : Caractéristiques mineures sur le torse donne +1 à chaque caractéristique (compté comme +2 auparavant), et les nouveaux enchantements d'Esprit (+4) et d'Intelligence (+3) sont proposés."
+L["The 9 Tier 1 sets (Arcanist, Felheart, Prophecy and the rest) now count their set bonuses, and set bonus estimates for the item level 65 sets are updated."] = "Les 9 ensembles de palier 1 (Arcaniste, Cœur-de-démon, Prophétie et les autres) comptent désormais leurs bonus d'ensemble, et les bonus estimés des ensembles de niveau d'objet 65 sont mis à jour."
+L["Talents: the level-up reminder no longer prints the next talent twice."] = "Talents : le rappel de montée de niveau n'affiche plus le talent suivant deux fois."
+L["French client: bonus armor, Defense and weapon skill (+3), critical strike, spell critical strike, dodge, parry and block chance, and Mana and Health per 5 sec. on gear are now counted."] = "Client français : l'armure bonus, la Défense et la compétence d'arme (+3), les chances de coup critique et de coup critique des sorts, d'esquive, de parade et de blocage, ainsi que le mana et la vie toutes les 5 s de l'équipement sont désormais comptés."
+L["|cff00ff00(you know this)|r"] = "|cff00ff00(vous la connaissez)|r"
+L["|cff888888(not learned)|r"] = "|cff888888(non apprise)|r"
+L["no gain"] = "aucun gain"
+L["Gear Judge"] = "Gear Judge"
+L["Your %s"] = "%s (porté)"
+L["Already on it: %s"] = "Déjà dessus : %s"
+L["The enchant on it now isn't in Gear Judge's list; the gain may be smaller."] = "L'enchantement actuel n'est pas dans la liste de Gear Judge ; le gain peut être plus faible."
+L["nothing it fits"] = "rien qui convienne"
+L["Scored for %s, against the enchant on it now."] = "Évalué pour %s, face à l'enchantement actuel."
+L["%s (off-spec)"] = "%s (spé secondaire)"
+L["...and %d more alts"] = "...et %d autres personnages"
+L["Safe to disenchant: no upgrade for you, your off-specs or your alts."] = "Sans risque à désenchanter : aucune amélioration pour vous, vos spés secondaires ou vos autres personnages."
+L["Enchant Recipe Values"] = "Valeur des recettes d'enchantement"
+L["Enchanting recipe tooltips show what the enchant is worth on the item you wear in that slot, for your off-specs and for your alts, against the enchant on it now. The best recipe for each slot gets a green arrow in Daylight UI's profession window."] = "Les infobulles des recettes d'enchantement montrent ce que vaut l'enchantement sur l'objet porté dans cet emplacement, pour vos spés secondaires et vos autres personnages, face à l'enchantement actuel. La meilleure recette de chaque emplacement reçoit une flèche verte dans la fenêtre de métier de Daylight UI."
+L["Enchanters: Only Enchants I Can Make"] = "Enchanteurs : seulement les enchantements que je peux faire"
+L["With Enchant Mode set to Project Best, an enchanter's projected enchants use only the recipes this character has learned (open your Enchanting window once so Gear Judge can read them). Enchant items such as armor kits still count."] = "Avec le mode d'enchantement sur « Projeter le meilleur », les enchantements projetés d'un enchanteur n'utilisent que les recettes apprises par ce personnage (ouvrez une fois votre fenêtre d'Enchantement pour que Gear Judge les lise). Les objets d'enchantement, comme les kits d'armure, comptent toujours."
+L["Enchanters: Mark Gear Safe to Disenchant"] = "Enchanteurs : marquer l'équipement à désenchanter"
+L["In your bags, gear that is no upgrade for you, your off-specs or your alts gets a disenchant mark instead of the red arrow. Only for characters with Enchanting."] = "Dans vos sacs, l'équipement qui n'est une amélioration ni pour vous, ni pour vos spés secondaires, ni pour vos autres personnages reçoit une marque de désenchantement à la place de la flèche rouge. Seulement pour les personnages avec Enchantement."
+L["Include Bind on Equip Gear"] = "Inclure l'équipement lié quand équipé"
+L["Mark Bind on Equip gear too. Off by default, because it can often be sold for more than its materials."] = "Marquer aussi l'équipement lié quand équipé. Désactivé par défaut, car il se vend souvent plus cher que ses composants."
+L["Enchanters: Enchanting recipe tooltips show what the enchant is worth on your gear, your off-specs and your alts, and the best recipe for each slot gets a green arrow."] = "Enchanteurs : les infobulles des recettes d'enchantement montrent ce que vaut l'enchantement sur votre équipement, pour vos spés secondaires et vos autres personnages, et la meilleure recette de chaque emplacement reçoit une flèche verte."
+L["Enchanters: Projected Enchant says whether you know the recipe, with an option to suggest only enchants you can make."] = "Enchanteurs : l'enchantement projeté indique si vous connaissez la recette, avec une option pour ne proposer que les enchantements que vous pouvez faire."
+L["Enchanters: gear that is no upgrade for you, your off-specs or your alts gets a disenchant mark in your bags."] = "Enchanteurs : l'équipement qui n'est une amélioration ni pour vous, ni pour vos spés secondaires, ni pour vos autres personnages reçoit une marque de désenchantement dans vos sacs."
 L["Daylight UI Rich tooltips: Gear Judge's verdict is a tag in the card's header, and Spell Impact and Roster upgrades get their own sections with full names."] = "Infobulles Rich de Daylight UI : le verdict de Gear Judge est une étiquette dans l'en-tête de la carte, et Impact sur les sorts et les améliorations de Roster ont leurs propres sections avec les noms complets."
 L["Talents: the Retribution dungeon build is searched again (two-hander, mana over a run of pulls), about 1.9% faster, with new Retribution dungeon weights."] = "Talents : le build Vindicte en donjon a été recherché de nouveau (arme à deux mains, mana sur une série de packs), environ 1,9 % plus rapide, avec de nouveaux poids Vindicte en donjon."
 L["Talents: six dungeon builds are searched again (Affliction, Demonology, Destruction, Shadow, Balance, Enhancement), up to 4% faster, with new dungeon weights for them."] = "Talents : six builds de donjon ont été recherchés de nouveau (Affliction, Démonologie, Destruction, Ombre, Équilibre, Amélioration), jusqu'à 4 % plus rapides, avec de nouveaux poids de donjon."
@@ -2635,6 +2662,8 @@ do
     end
 
     MSC.LocaleTerms = {}
+    -- The client prints both "Équipé :" and "Équiper :" (GitHub issue 25); Parse.lua strips either
+    MSC.EquipPrefixExtra = { "\195\137quiper", "équiper", "\195\137quipé", "équipé" }
     MSC.LocaleEquipPatterns = {
         { p = "^[%s]*équipé%s?:%s*(.+)$", func = StripPrefix },
         { p = "^\195\137quipé%s?:%s*(.+)$", func = StripPrefix },
@@ -2665,10 +2694,12 @@ do
 
         -- Mana / health per 5 ("Rend 3 points de mana toutes les 5 s")
         { p = "^rend (%d+) [^%d]-de mana toutes les 5 s", valIdx = 1, fixedStat = S("MANA_REGENERATION") },
+        { p = "^%+(%d+) [^%d]-régénération de mana toutes les 5 s", valIdx = 1, fixedStat = S("MANA_REGENERATION") },
+        { p = "^%+(%d+) [^%d]-régénération d[^%d]-vie toutes les 5 s", valIdx = 1, fixedStat = S("HEALTH_REGENERATION") },
         { p = "^rend (%d+) [^%d]-de vie toutes les 5 s", valIdx = 1, fixedStat = S("HEALTH_REGENERATION") },
 
         -- Tank stats
-        { p = "^défense augmentée de (%d+)", valIdx = 1, fixedStat = S("DEFENSE_SKILL_RATING") },
+        { p = "^défense augmentée de %+?(%d+)", valIdx = 1, fixedStat = S("DEFENSE_SKILL_RATING") },
         { p = "^augmente le score de blocage de votre bouclier de (%d+)", valIdx = 1, fixedStat = S("BLOCK_VALUE") },
         { p = "^%+(%d+) à l" .. Q .. "armure%.?$", valIdx = 1, fixedStat = S("ARMOR") },
 
@@ -2684,9 +2715,10 @@ do
         { p = "^augmente l" .. Q .. "esprit de (%d+)", valIdx = 1, fixedStat = S("SPIRIT") },
 
         -- Weapon skill
-        { p = "^(.-) augmentée?s? de (%d+)%.?$", func = WeaponSkill },
+        { p = "^(.-) augmentée?s? de %+?(%d+)%.?$", func = WeaponSkill },
 
         -- Percent lines: spell versions before the melee ones
+        { p = "^%S+ vos chances de coup critique avec %S+ sorts de " .. N, valIdx = 1, fixedStat = S("SPELL_CRIT_RATING"), isPercent = true },
         { p = "^%S+ vos chances d" .. Q .. "infliger un coup critique avec %S+ sorts de " .. N, valIdx = 1, fixedStat = S("SPELL_CRIT_RATING"), isPercent = true },
         { p = "^%S+ de " .. N .. " vos chances d" .. Q .. "infliger un coup critique avec %S+ sorts%.?$", valIdx = 1, fixedStat = S("SPELL_CRIT_RATING"), isPercent = true },
         { p = "^%S+ vos chances de toucher avec %S+ sorts de " .. N, valIdx = 1, fixedStat = S("HIT_SPELL_RATING"), isPercent = true },
@@ -2694,6 +2726,14 @@ do
         { p = "^%S+ de " .. N .. " vos chances d" .. Q .. "infliger un coup critique avec vos attaques", valIdx = 1, fixedStat = S("CRIT_RATING"), isPercent = true },
         { p = "^%S+ de " .. N .. " vos chances d" .. Q .. "infliger un coup critique%.?$", valIdx = 1, fixedStat = S("CRIT_RATING"), isPercent = true },
         { p = "^%S+ vos chances d" .. Q .. "infliger un coup critique de " .. N, valIdx = 1, fixedStat = S("CRIT_RATING"), isPercent = true },
+        { p = "^%S+ vos chances de coup critique de " .. N, valIdx = 1, fixedStat = S("CRIT_RATING"), isPercent = true },
+        -- Avoidance in both word orders ("Augmente de 3% vos chances de parer." read nothing before)
+        { p = "^%S+ vos chances d" .. Q .. "esquiver[^%d]- de " .. N, valIdx = 1, fixedStat = S("DODGE_RATING"), isPercent = true },
+        { p = "^%S+ de " .. N .. " vos chances d" .. Q .. "esquiver", valIdx = 1, fixedStat = S("DODGE_RATING"), isPercent = true },
+        { p = "^%S+ vos chances de parer[^%d]- de " .. N, valIdx = 1, fixedStat = S("PARRY_RATING"), isPercent = true },
+        { p = "^%S+ de " .. N .. " vos chances de parer", valIdx = 1, fixedStat = S("PARRY_RATING"), isPercent = true },
+        { p = "^%S+ vos chances de bloquer[^%d]- de " .. N, valIdx = 1, fixedStat = S("BLOCK_RATING"), isPercent = true },
+        { p = "^%S+ de " .. N .. " vos chances de bloquer", valIdx = 1, fixedStat = S("BLOCK_RATING"), isPercent = true },
         { p = "^%S+ vos chances de toucher de " .. N, valIdx = 1, fixedStat = S("HIT_RATING"), isPercent = true },
         { p = "^%S+ de " .. N .. " vos chances de toucher avec les armes à distance", valIdx = 1, fixedStat = S("HIT_RATING"), isPercent = true },
         { p = "^%S+ de " .. N .. " vos chances de toucher avec vos attaques", valIdx = 1, fixedStat = S("HIT_RATING"), isPercent = true },

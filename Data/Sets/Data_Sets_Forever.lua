@@ -3,7 +3,7 @@ local _, MSC = ...
 -- ============================================================================
 -- WoW FOREVER ITEM SETS, SET BONUSES AND PROCS
 -- ============================================================================
--- Generated from the client's own tables (wago.tools, build 1.60.1.70425:
+-- Generated from the client's own tables (wago.tools, build 1.60.1.70862:
 -- ItemSet, ItemSetSpell, SpellEffect, Spell) by
 -- SharpiesGearJudge-Research/sets/gen_sets.py. Rerun it after a client
 -- update instead of editing the set tables by hand.
@@ -534,21 +534,21 @@ MSC.SetDefinitions = {
     [2095] = { {273337,273336,273342,273340,273343,273341} }, -- Warlord's Thunderfist (ilvl 65)
     [2096] = { {274193,274176,274195,274179,274197,274178} }, -- Lieutenant Commander's Thunderfist (ilvl 60)
     [2097] = { {274199,274198,274204,274202,274205,274203} }, -- Field Marshal's Thunderfist (ilvl 65)
-    [2098] = { {280455,280454,280450,280451,280453,280452} }, -- Manaflare Regalia (ilvl ?)
-    [2099] = { {280877,280876,280879,280875,280872,280878} }, -- Grimstitch Armor (ilvl ?)
-    [2100] = { {280887,280882,280883,280888,280886,280889} }, -- Demonheart Raiment (ilvl ?)
-    [2101] = { {280898,280897,280896,280893,280895,280894} }, -- Wildstalker Armor (ilvl ?)
-    [2102] = { {280904,280903,280902,280899,280901,280900} }, -- Battlegear of Glory (ilvl ?)
-    [2103] = { {280910,280909,280908,280905,280907,280906} }, -- Battleplate of Glory (ilvl ?)
-    [2104] = { {280918,280917,280912,280913,280915,280914} }, -- Vestments of Conviction (ilvl ?)
-    [2105] = { {280924,280923,280919,280920,280922,280921} }, -- Raiments of Conviction (ilvl ?)
-    [2106] = { {280930,280929,280928,280925,280927,280926} }, -- Justice Battlegear (ilvl ?)
-    [2107] = { {280936,280935,280934,280931,280933,280932} }, -- Justice Armor (ilvl ?)
-    [2108] = { {280937,280942,280941,280938,280940,280939} }, -- Justice Battleplate (ilvl ?)
-    [2109] = { {280951,280944,280950,280949,280947,280945} }, -- The Spiritcaller (ilvl ?)
-    [2110] = { {280957,280956,280955,280952,280954,280953} }, -- The Spiritcaller's Rage (ilvl ?)
-    [2111] = { {280963,280962,280961,280958,280960,280959} }, -- The Spiritcaller's Storm (ilvl ?)
-    [2112] = { {280977,280976,280974,280965,280971,280967} }, -- Grovekeeper Raiment (ilvl ?)
+    [2098] = { {280455,280454,280450,280451,280453,280452} }, -- Manaflare Regalia (ilvl 65)
+    [2099] = { {280877,280876,280879,280875,280872,280878} }, -- Grimstitch Armor (ilvl 65)
+    [2100] = { {280887,280882,280883,280888,280886,280889} }, -- Demonheart Raiment (ilvl 65)
+    [2101] = { {280898,280897,280896,280893,280895,280894} }, -- Wildstalker Armor (ilvl 65)
+    [2102] = { {280904,280903,280902,280899,280901,280900} }, -- Battlegear of Glory (ilvl 65)
+    [2103] = { {280910,280909,280908,280905,280907,280906} }, -- Battleplate of Glory (ilvl 65)
+    [2104] = { {280918,280917,280912,280913,280915,280914} }, -- Vestments of Conviction (ilvl 65)
+    [2105] = { {280924,280923,280919,280920,280922,280921} }, -- Raiments of Conviction (ilvl 65)
+    [2106] = { {280930,280929,280928,280925,280927,280926} }, -- Justice Battlegear (ilvl 65)
+    [2107] = { {280936,280935,280934,280931,280933,280932} }, -- Justice Armor (ilvl 65)
+    [2108] = { {280937,280942,280941,280938,280940,280939} }, -- Justice Battleplate (ilvl 65)
+    [2109] = { {280951,280944,280950,280949,280947,280945} }, -- The Spiritcaller (ilvl 65)
+    [2110] = { {280957,280956,280955,280952,280954,280953} }, -- The Spiritcaller's Rage (ilvl 65)
+    [2111] = { {280963,280962,280961,280958,280960,280959} }, -- The Spiritcaller's Storm (ilvl 65)
+    [2112] = { {280977,280976,280974,280965,280971,280967} }, -- Grovekeeper Raiment (ilvl 65)
     [2113] = { {280986,280987,280988,280991,280989,280990} }, -- Grovekeeper Rage (ilvl ?)
     [2114] = { {280998,280999,281000,281003,281001,281002} }, -- Grovekeeper Eclipse (ilvl ?)
     [2115] = { {280992,280993,280994,280997,280995,280996} }, -- Grovekeeper Ferocity (ilvl ?)
@@ -557,8 +557,17 @@ MSC.SetDefinitions = {
     [2132] = { {285331,285330,285329} }, -- Blessing of Kalimdor (ilvl 23)
     [2133] = { {286978,286980,271207,271214,286979} }, -- Rotmender's Raiment (ilvl 23)
     [2134] = { {273051,286988,286987,286989,273044} }, -- Violet Sorcerer's Vestments (ilvl 33)
-    [2135] = { {275006,287014,275005,287013,287012} }, -- Krol'dok Battlegear (ilvl ?)
-    [2136] = { {287019,276741,287020,276746,287021} }, -- Defias Enforcer's Garb (ilvl ?)
+    [2135] = { {275006,287014,275005,287013,287012} }, -- Krol'dok Battlegear (ilvl 46)
+    [2136] = { {287019,276741,287020,276746,287021} }, -- Defias Enforcer's Garb (ilvl 54)
+    [2138] = { {288823,288824,288825,288826,288827,288828,288829,288830} }, -- Arcanist Regalia (ilvl ?)
+    [2139] = { {288831,288832,288833,288834,288835,288836,288837,288838} }, -- Felheart Raiment (ilvl ?)
+    [2140] = { {288839,288840,288841,288842,288843,288844,288845,288846} }, -- Vestments of Prophecy (ilvl ?)
+    [2141] = { {288847,288848,288849,288850,288851,288852,288853,288854} }, -- Nightslayer Armor (ilvl ?)
+    [2142] = { {288855,288856,288857,288858,288859,288860,288861,288862} }, -- Cenarion Raiment (ilvl ?)
+    [2143] = { {288863,288864,288865,288866,288867,288868,288869,288870} }, -- The Earthfury (ilvl ?)
+    [2144] = { {288871,288872,288873,288874,288875,288876,288877,288878} }, -- Giantstalker Armor (ilvl ?)
+    [2145] = { {288879,288880,288881,288882,288883,288884,288885,288886} }, -- Lawbringer Armor (ilvl ?)
+    [2146] = { {288887,288888,288889,288890,288891,288892,288893,288894} }, -- Battlegear of Might (ilvl ?)
 }
 
 MSC.SetBonusScores = {
@@ -608,7 +617,7 @@ MSC.SetBonusScores = {
     [141] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}} },
     -- Stormshroud Armor
         -- (2) 10% chance of dealing X Nature damage on a successful melee attack.
-        -- (3) 4% chance on melee attack of restoring X energy.
+        -- (3) X% chance on melee attack of restoring X energy.
         -- (4) +14 Attack Power.
     [142] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [4]={stats={ITEM_MOD_ATTACK_POWER_SHORT=14}} },
     -- Devilsaur Armor
@@ -2927,91 +2936,91 @@ MSC.SetBonusScores = {
         -- (3) Reduces the cooldown of your Counterspell by 5 sec.
         -- (4) Increases damage done by your spells and effects by up to 21 when fighting Elementals.
         -- (5) Your Frostfire Bolt spell has a 10% increased chance to trigger Missile Barrage, gains 10% increased critical strike chance while your Combustion spell is active, and has a 10% increased chance to trigger Fingers of Frost.
-    [2098] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
+    [2098] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=28, ITEM_MOD_SPELL_POWER_SHORT=14}} },
     -- Grimstitch Armor
         -- (2) Improves your chance to hit by 1%.
         -- (3) Reduces the cooldown of your Kidney Shot ability by 3 sec.
         -- (4) +36 Attack Power against Humanoids.
-        -- (5) Reduces the cost of your Envenom and Eviscerate abilities by 5 Energy.
-    [2099] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+        -- (5) Reduces the cost of your Eviscerate and Death Mark abilities by 5 Energy.
+    [2099] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Demonheart Raiment
         -- (2) Improves your chance to hit by 1%.
         -- (3) Reduces the cast time of your Banish spell by 1.5.1 sec.
         -- (4) Increases damage done by your spells and effects by up to 21 when fighting Demons.
         -- (5) Your Life Tap generates 20% more Mana at no additional Health cost.
-    [2100] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
+    [2100] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=28, ITEM_MOD_SPELL_POWER_SHORT=14}} },
     -- Wildstalker Armor
         -- (2) Increases your attack speed and casting speed by 1%.
         -- (3) Reduces the cooldown of your Frost Trap and Freezing Trap abilities by 3 sec.
         -- (4) +36 Attack Power against Beasts.
         -- (5) Reduces the cooldown of your Aimed Shot and Multi-Shot abilities by 1 sec.
-    [2101] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2101] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Battlegear of Glory
         -- (2) Increases your attack speed and casting speed by 1%.
         -- (3) Reduces the cooldown of your Intimidating Shout ability by 30 sec.
         -- (4) +36 Attack Power against Humanoids.
         -- (5) Reduces the cooldown of your Recklessness ability by 30 sec.
-    [2102] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2102] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Battleplate of Glory
         -- (2) Increased Defense +7
         -- (3) Reduces the cooldown of your Intervene ability by 10 sec.
         -- (4) Reduces the chance for your melee attacks to be Dodged or Parried by X.1%.
         -- (5) Reduces the cooldown of your Shield Wall ability by 30 sec.
-    [2103] = { [2]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=7}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={stats={ITEM_MOD_EXPERTISE_RATING_SHORT=12}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2103] = { [2]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=7}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={stats={ITEM_MOD_EXPERTISE_RATING_SHORT=12}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Vestments of Conviction
         -- (2) Increased Spirit +10
         -- (3) Reduces the cooldown of your Fear Ward spell by 60 sec.
         -- (4) Increases healing done by up to 26 and damage done by up to 9 for all magical spells and effects.
         -- (5) Reduces the cooldown of your Penance and Prayer of Mending spells by 1 sec.
-    [2104] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2104] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Raiments of Conviction
         -- (2) Improves your chance to hit by 1%.
         -- (3) Increases the duration of your Shackle Undead spell by 10 sec.
         -- (4) Increases damage done by your spells and effects by up to 21 when fighting Undead.
         -- (5) Reduces the cooldown of your Devouring Plague spell by 60 sec.
-    [2105] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2105] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Justice Battlegear
         -- (2) Increases your attack speed and casting speed by 1%.
         -- (3) Reduces the cooldown of your Hammer of Justice spell by 5 sec.
         -- (4) +36 Attack Power against Undead.
         -- (5) Reduces the cooldown of your Judgement spell by 0.5.1 sec.
-    [2106] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2106] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Justice Armor
         -- (2) Increased Spirit +10
         -- (3) Reduces the cooldown of your Blessing of Protection spell by 30 sec.
         -- (4) Increases healing done by up to 26 and damage done by up to 9 for all magical spells and effects.
         -- (5) Reduces the cooldown of your Holy Shock spell by 1 sec.
-    [2107] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2107] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Justice Battleplate
         -- (2) Increased Defense +7
         -- (3) Reduces the cast time on your Turn Undead spell by 1.5.1 sec.
         -- (4) Reduces the chance for your melee attacks to be Dodged or Parried by X.1%.
         -- (5) Reduces the duration of Forbearance any time you gain it by 10.1 sec.
-    [2108] = { [2]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=7}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [4]={stats={ITEM_MOD_EXPERTISE_RATING_SHORT=12}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2108] = { [2]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=7}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [4]={stats={ITEM_MOD_EXPERTISE_RATING_SHORT=12}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- The Spiritcaller
         -- (2) Increased Spirit +10
         -- (3) Increases the radius of effect of your beneficial Fire and Water totems by 10 yds.
         -- (4) Increases healing done by up to 26 and damage done by up to 9 for all magical spells and effects.
         -- (5) Reduces the cooldown of your Riptide spell by 1 sec.
-    [2109] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2109] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- The Spiritcaller's Rage
         -- (2) Increases your attack speed and casting speed by 1%.
         -- (3) Increases the radius of effect of your beneficial Air and Earth totems by 10 yds.
         -- (4) +36 Attack Power against Elementals.
         -- (5) Reduces the cooldown of your Stormstrike ability by 0.5.1 sec.
-    [2110] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2110] = { [2]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- The Spiritcaller's Storm
         -- (2) Improves your chance to hit by 1%.
         -- (3) Reduces the cooldown of your Earthbind Totem spell by 2 sec.
         -- (4) Increases damage done by your spells and effects by up to 21 when fighting Elementals.
         -- (5) Reduces the cooldown of your Lava Burst spell by 1 sec.
-    [2111] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2111] = { [2]={stats={ITEM_MOD_HIT_RATING_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Grovekeeper Raiment
         -- (2) Increased Spirit +10
         -- (3) Reduces the cooldown of your Barkskin spell by 10 sec.
         -- (4) Increases healing done by up to 26 and damage done by up to 9 for all magical spells and effects.
         -- (5) Reduces the cooldown of your Swiftmend spell by 3.1 sec.
-    [2112] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
+    [2112] = { [2]={stats={ITEM_MOD_SPIRIT_SHORT=10}}, [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=10, ITEM_MOD_SPELL_POWER_SHORT=5}}, [4]={stats={ITEM_MOD_SPELL_DAMAGE_DONE_SHORT=9, ITEM_MOD_SPELL_HEALING_DONE_SHORT=26}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}} },
     -- Grovekeeper Rage
         -- (2) Increased Defense +7
         -- (3) Your Rebirth spell is now castable in Bear Form and Dire Bear Form and its cast time is reduced by 2.1 sec while you are in Bear Form or Dire Bear Form.
@@ -3056,13 +3065,58 @@ MSC.SetBonusScores = {
         -- (3) Increased Defense +5.
         -- (4) Chance on block to heal for X. Healing is doubled in Strongholds and Cities.
         -- (5) Taking damage has a high chance to increase your Stamina by X for X, stacking up to 20 times.
-    [2135] = { [2]={stats={ITEM_MOD_ARMOR_SHORT=100}}, [3]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
+    [2135] = { [2]={stats={ITEM_MOD_ARMOR_SHORT=100}}, [3]={stats={ITEM_MOD_DEFENSE_SKILL_RATING_SHORT=5}}, [4]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=20, ITEM_MOD_SPELL_POWER_SHORT=10}} },
     -- Defias Enforcer's Garb
         -- (2) +10 Fire Resistance.
         -- (3) +15 Stamina.
         -- (4) Increased Swords +1.
         -- (5) Melee attacks have a chance to increase your Critical Strike chance by X% for X. This effect is doubled in swamps.
-    [2136] = { [3]={stats={ITEM_MOD_STAMINA_SHORT=15}}, [4]={stats={ITEM_MOD_WEAPON_SKILL_RATING_SHORT=2.5}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
+    [2136] = { [3]={stats={ITEM_MOD_STAMINA_SHORT=15}}, [4]={stats={ITEM_MOD_WEAPON_SKILL_RATING_SHORT=2.5}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=24, ITEM_MOD_SPELL_POWER_SHORT=12}} },
+    -- Arcanist Regalia
+        -- (3) Increases damage and healing done by magical spells and effects by up to 18.
+        -- (5) Decreases the magical resistances of your spell targets by 10.
+        -- (8) Decreases the threat generated by your spells by 15%.
+    [2138] = { [3]={stats={ITEM_MOD_SPELL_POWER_SHORT=18}} },
+    -- Felheart Raiment
+        -- (3) Health or Mana gained from Drain Life and Drain Mana increased by 15%.
+        -- (5) Your pet gains X stamina and X spell resistance against all schools of magic.
+        -- (8) Mana cost of Shadow spells reduced by 15%.
+    [2139] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}} },
+    -- Vestments of Prophecy
+        -- (3) -0.1 sec to the casting time of your Flash Heal spell.
+        -- (5) Improves your chance to get a critical strike with spells by 2%.
+        -- (8) Increases your chance of a critical hit with Prayer of Healing by 25%.
+    [2140] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [5]={stats={ITEM_MOD_SPELL_CRIT_RATING_SHORT=28}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=36, ITEM_MOD_SPELL_POWER_SHORT=18}} },
+    -- Nightslayer Armor
+        -- (3) Reduces the cooldown of your Vanish ability by 30 sec.
+        -- (5) Increases your maximum Energy by 10.
+        -- (8) Heals the rogue for X when Vanish is performed.
+    [2141] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=36, ITEM_MOD_SPELL_POWER_SHORT=18}} },
+    -- Cenarion Raiment
+        -- (3) Damage dealt by Thorns increased by 4 and duration increased by 50%.
+        -- (5) Improves your chance to get a critical strike with spells by 2%.
+        -- (8) Reduces the cooldown of your Tranquility and Hurricane spells by 50%.
+    [2142] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [5]={stats={ITEM_MOD_SPELL_CRIT_RATING_SHORT=28}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}} },
+    -- The Earthfury
+        -- (3) The radius of your totems that affect friendly targets is increased to 30 yd.
+        -- (5) After casting your Healing Wave or Lesser Healing Wave spell, gives you a 25% chance to gain Mana equal to 35% of the base cost of the spell.
+        -- (8) Your Healing Wave will now jump to additional nearby targets. Each jump reduces the effectiveness of the heal by 80%, and the spell will jump to up to two additional targets.
+    [2143] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=14, ITEM_MOD_SPELL_POWER_SHORT=7}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=36, ITEM_MOD_SPELL_POWER_SHORT=18}} },
+    -- Giantstalker Armor
+        -- (3) Increases the range of your Mend Pet spell by 50% and the effect by 10%. Also reduces the cost by 30%.
+        -- (5) Increases your pet's stamina by X and all spell resistances by X.
+        -- (8) Increases the damage of Multi-shot and Volley by 15%.
+    [2144] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=8, ITEM_MOD_SPELL_POWER_SHORT=4}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=36, ITEM_MOD_SPELL_POWER_SHORT=18}} },
+    -- Lawbringer Armor
+        -- (3) Increases the chance of triggering a Judgement of Light heal by 10%.
+        -- (5) Improves your chance to get a critical strike with spells by 1%. / Improves your chance to get a critical strike with melee attacks by 1%.
+        -- (8) Gives the Paladin a chance on every melee hit to heal your party for X.
+    [2145] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [5]={stats={ITEM_MOD_CRIT_RATING_SHORT=14, ITEM_MOD_SPELL_CRIT_RATING_SHORT=14}}, [8]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=36, ITEM_MOD_SPELL_POWER_SHORT=18}} },
+    -- Battlegear of Might
+        -- (3) Increases the block value of your shield by 30.
+        -- (5) Gives you a X% chance to generate an additional Rage point whenever damage is dealt to you.
+        -- (8) Increases the threat generated by Sunder Armor by 15%.
+    [2146] = { [3]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=18, ITEM_MOD_SPELL_POWER_SHORT=9}}, [5]={equiv={ITEM_MOD_ATTACK_POWER_SHORT=26, ITEM_MOD_SPELL_POWER_SHORT=13}} },
 }
 
 -- =============================================================

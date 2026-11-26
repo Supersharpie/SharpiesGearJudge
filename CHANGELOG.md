@@ -1,5 +1,28 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.9.0
+
+### ✨ Enchanters (WoW Forever)
+- Enchanting recipe tooltips show what the enchant is worth on the item you wear in that slot, against the enchant on it now, plus your off-specs and your alts (with Roster). Option: Enchant Recipe Values.
+- In Daylight UI's profession window, the best Enchanting recipe for each of your slots gets the green arrow.
+- Projected Enchant says "(you know this)" or "(not learned)" for enchanters. New option, Enchanters: Only Enchants I Can Make, projects only recipes this character has learned (read when you open the Enchanting window).
+- Safe to disenchant: in your bags, gear that is no upgrade for you, your off-specs or your alts gets a disenchant mark instead of the red arrow, and a line in its tooltip. Only for characters with Enchanting; Bind on Equip gear is left out unless you turn it on.
+
+
+### 🔧 Enchant and Set Data (WoW Forever)
+- Enchants and set bonuses are read again from the current game client (build 1.60.1.71091).
+- Minor Stats (chest) gives +1 to every stat; it was counted as +2.
+- New enchant suggestions: Lesser Spirit (+4, bracers and boots) and Lesser Intellect (+3, bracers).
+- Enchants that share a name show their stats, e.g. Lesser Spirit (+5 Spirit).
+- The 9 Tier 1 sets (Arcanist, Felheart, Prophecy, Nightslayer, Cenarion, Earthfury, Giantstalker, Lawbringer, Might) count their set bonuses.
+- Set bonus estimates for the item level 65 sets are updated now that their item level is known.
+
+### 🐛 Fixed (French client)
+- Bonus armor ("+100 d'armure") is counted; it scored nothing (GitHub issue 24, thanks guisrno-fr).
+- "Équiper :" lines are read as well as "Équipé :", and Defense with a plus sign ("Défense augmentée de +3") is counted (issue 25).
+- "Augmente vos chances de coup critique de 1%", the spell version, and "+5 régénération de mana toutes les 5 s" are counted (issue 26).
+- Weapon skill with a plus sign ("Dagues augmentées de +4"), "+X régénération de vie toutes les 5 s", and dodge, parry and block chance written the other way round ("Augmente de 1% vos chances de parer") are counted.
+
 ## 🚀 v3.8.1
 
 ### 🔧 Solo Leveling Weights (WoW Forever)

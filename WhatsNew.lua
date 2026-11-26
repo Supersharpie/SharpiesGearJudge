@@ -17,12 +17,14 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.8.1
-    { text = "Talents: 22 solo leveling builds are searched again after model fixes (Mage AoE pulls, Nightfall, Insect Swarm, Heart of the Wild), up to 4% faster, with new notes.", forever = true },
-    { text = "Solo leveling weights are rebuilt for Warrior, Hunter, Mage, Warlock, Priest, Paladin and Druid for the new builds.", forever = true },
-    { text = "Frost AoE Mage weights: Intellect, Spirit and Mp5 count for much more, and Stamina for no more than Intellect.", forever = true },
-    { text = "Fixed: Korean and Traditional Chinese Spell Impact shows its own word for DPS again.", forever = true },
-    { text = "Fixed: Roadmap's line for more items in Russian and Traditional Chinese no longer clashes with XP Bar and Roster.", forever = true },
+    -- v3.9.0
+    { text = "Enchanters: Enchanting recipe tooltips show what the enchant is worth on your gear, your off-specs and your alts, and the best recipe for each slot gets a green arrow.", forever = true },
+    { text = "Enchanters: Projected Enchant says whether you know the recipe, with an option to suggest only enchants you can make.", forever = true },
+    { text = "Enchanters: gear that is no upgrade for you, your off-specs or your alts gets a disenchant mark in your bags.", forever = true },
+    { text = "Enchant suggestions follow the current game client: Minor Stats on a chest gives +1 to every stat (it was counted as +2), and the new Spirit (+4) and Intellect (+3) enchants are suggested.", forever = true },
+    { text = "The 9 Tier 1 sets (Arcanist, Felheart, Prophecy and the rest) now count their set bonuses, and set bonus estimates for the item level 65 sets are updated.", forever = true },
+    { text = "French client: bonus armor, Defense and weapon skill (+3), critical strike, spell critical strike, dodge, parry and block chance, and Mana and Health per 5 sec. on gear are now counted.", forever = true },
+    { text = "Talents: the level-up reminder no longer prints the next talent twice.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.
