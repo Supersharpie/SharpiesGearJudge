@@ -17,15 +17,13 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.9.1
-    { text = "Daylight UI Rich tooltips: Spell Impact and Roster section titles are boxed like the card's tags.", forever = true },
-    { text = "Enchanters: soulbound gear an alt could use now gets the disenchant mark too, since it can't be sent to that alt.", forever = true },
-    { text = "Gear for PvP no longer changes the weights of your PvE off-specs: an off-spec is scored for PvP only when it is a PvP profile itself.", forever = true },
-    { text = "The Protocol tab is now called Settings." },
-    { text = "RestedXP: the offer to turn off its Item Upgrade tips works again; it missed characters whose realm name the game reported empty." },
-    { text = "Talents: the Frost AoE Leveling note now says how to play it: one or two mobs at a time until 24, then the Blizzard pull.", forever = true },
-    { text = "Talents, PvP leveling: every PvP leveling build searched again on total leveling time, questing plus world fights. 24 builds are faster (Shaman 16-18%, Hunter 7-10%); Restoration Shaman PvP is removed.", forever = true },
-    { text = "PvP leveling weights are measured again from the new PvP builds and keep your talents' full effect up to 59.", forever = true },
+    -- v3.9.2
+    { text = "Talents, Druid: Balance and Restoration builds searched again for the November 25 Balance changes (Starlight Wrath, Moon and Stars, Improved Starfire at 2 points, Dreamstate). The old ones reset your talents.", forever = true },
+    { text = "Druid Balance and Restoration weights follow the new talents.", forever = true },
+    { text = "Talents, Hunter: Summon Hawk's +5% crit from the November 25 hotfix is in. Marksmanship: Melee Dungeon and Beast Mastery: Dungeon Leveling take their points in a better order, and the Hunter dungeon weights follow it.", forever = true },
+    { text = "Hunter: with Summon Hawk, Crit and Hit count less on the shooting leveling weights (the hawks don't use them).", forever = true },
+    { text = "Enchants: Projected Enchant names the bracer or boots recipe on those slots (it showed the chest one), and \"Safe to disenchant\" no longer shows on what you wear." },
+    { text = "Roadmap: full loot for Krol'dok Stronghold, The Drowned City, Alcaz Prison and Blackmaw Hold, and The Shaper's Terrace is added.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

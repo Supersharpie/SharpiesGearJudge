@@ -1,5 +1,22 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.9.2
+
+### 🔧 Druid Weights (WoW Forever, November 25 hotfix)
+- Balance and Restoration leveling weights (solo, dungeon and PvP) are measured again with the new talents: Starlight Wrath, Moon and Stars, Improved Starfire's stun, Eclipse's Wrath crit and Moonkin Form's +10% Arcane and Nature damage. Hurricane gains from Genesis.
+- Gear Judge reads the renamed talents (same spells) and no longer counts Moonfury.
+
+### 🔧 Hunter Weights (WoW Forever, November 25 hotfix)
+- Dungeon leveling weights (shooting and melee) are measured again with Summon Hawk's +5% crit and the reordered Beast Mastery: Dungeon Leveling build.
+- Shooting leveling weights (solo and PvP) with Summon Hawk: Crit and Hit count less (x0.84-0.93 and x0.70-0.88 by level), since the hawks' damage doesn't use them. The model now uses the Hawk at most levels (it used to keep Arcane Shot in that cooldown); the dungeon weights already include it.
+
+### 🐛 Fixed (Enchants)
+- Projected Enchant names the recipe for the item's own slot. One enchant can come from several recipes (+4 Stamina: Enchant Chest - Stamina, Enchant Bracer - Lesser Stamina, Enchant Boots - Lesser Stamina), and bracers and boots showed the chest recipe, with "learned" checked against it.
+- The level a suggested enchant needs and the "suggest only enchants I can make" option use the slot's own recipe too.
+- Recipe tooltips show only the slots that recipe enchants, and the Bracer and Boots versions of a shared enchant now show their values.
+- Enchants the list was missing are back (boots: Minor Stamina, Minor Agility, Lesser Agility, +5 Agility; chest: Minor Intellect; off-hand: Greater Spirit, Lesser Strength).
+- "Safe to disenchant" no longer shows on items you're wearing.
+
 ## 🚀 v3.9.1
 
 ### 🔧 PvP Leveling Weights (WoW Forever)

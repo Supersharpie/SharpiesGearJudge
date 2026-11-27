@@ -26,20 +26,27 @@ local ENCHANTING_SPELL = 7411   -- "Enchanting" (its name is the skill line's na
 -- ---------------------------------------------------------------
 -- Recipe spell -> enchant, and the slots an enchant goes on
 -- ---------------------------------------------------------------
-local bySpell, slotsOf
+-- spellSlots (2026-11-27): the slots a recipe itself enchants. An enchant made by several recipes, one per slot (Enchant
+-- Chest - Stamina, Enchant Bracer - Lesser Stamina, Enchant Boots - Lesser Stamina all give +4 Stamina), lists each slot's
+-- own recipe in Enchants_*.lua (spells); a recipe's tooltip shows only its own slots.
+local bySpell, slotsOf, spellSlots
 local function BuildMaps()
-    bySpell, slotsOf = {}, {}
+    bySpell, slotsOf, spellSlots = {}, {}, {}
     for id, d in pairs(MSC.EnchantDB or {}) do
         if d.spell then bySpell[d.spell] = id end
+        if d.spells then for _, sp in pairs(d.spells) do bySpell[sp] = id end end
     end
     for slot, ids in pairs(MSC.EnchantCandidates or {}) do
         for _, id in ipairs(ids) do
             local t = slotsOf[id] or {}
             t[#t + 1] = slot
             slotsOf[id] = t
+            local sp = MSC.EnchantSpellFor(MSC.EnchantDB[id], slot)
+            if sp then local u = spellSlots[sp] or {}; u[#u + 1] = slot; spellSlots[sp] = u end
         end
     end
     for _, t in pairs(slotsOf) do table.sort(t) end
+    for _, t in pairs(spellSlots) do table.sort(t) end
 end
 
 function E.EnchantForSpell(spell)
@@ -51,6 +58,12 @@ end
 function E.SlotsOf(enchantID)
     if not slotsOf then BuildMaps() end
     return slotsOf[enchantID] or {}
+end
+
+-- The slots this recipe enchants (its enchant's slots whose own recipe it is)
+function E.SlotsOfSpell(spell)
+    if not spellSlots then BuildMaps() end
+    return spellSlots[spell] or {}
 end
 
 -- ---------------------------------------------------------------
@@ -126,10 +139,11 @@ function E.Knows(spell)
 end
 
 -- " (you know this)" / " (not learned)" after a Projected Enchant name; "" for non-enchanters and enchant items.
-function E.KnownSuffix(enchantID)
+function E.KnownSuffix(enchantID, slotId)
     local data = enchantID and MSC.EnchantDB and MSC.EnchantDB[enchantID]
-    if not data or not data.spell or not E.IsEnchanter() then return "" end
-    if E.Knows(data.spell) then return " " .. L["|cff00ff00(you know this)|r"] end
+    local spell = MSC.EnchantSpellFor(data, slotId)
+    if not spell or not E.IsEnchanter() then return "" end
+    if E.Knows(spell) then return " " .. L["|cff00ff00(you know this)|r"] end
     return " " .. L["|cff888888(not learned)|r"]
 end
 
@@ -189,9 +203,9 @@ function E.Gain(enchantID, weights, slot, link)
 end
 
 -- Best gain over the enchant's slots for one set of gear links (slot -> link).
-local function BestGain(enchantID, weights, links)
+local function BestGain(enchantID, weights, links, slots)
     local best, bestSlot, cur, unknownCur
-    for _, slot in ipairs(E.SlotsOf(enchantID)) do
+    for _, slot in ipairs(slots or E.SlotsOf(enchantID)) do
         local g, c, u = E.Gain(enchantID, weights, slot, links[slot])
         if g and (not best or g > best) then best, bestSlot, cur, unknownCur = g, slot, c, u end
     end
@@ -210,7 +224,8 @@ function E.BestRecipes(recipeIDs, weights)
     for _, id in ipairs(recipeIDs) do
         local eid = E.EnchantForSpell(id)
         if eid then
-            for _, slot in ipairs(E.SlotsOf(eid)) do
+            local own = E.SlotsOfSpell(id)
+            for _, slot in ipairs(#own > 0 and own or E.SlotsOf(eid)) do
                 local g = E.Gain(eid, weights, slot, links[slot])
                 if g and g > 0.05 and (not bestBySlot[slot] or g > bestBySlot[slot].g) then bestBySlot[slot] = { g = g, id = id } end
             end
@@ -254,7 +269,8 @@ function E.DrawRecipeTooltip(tip, spell)
 
     -- you
     local links, anyItem = WornLinks(), false
-    local slots = E.SlotsOf(eid)
+    local slots = E.SlotsOfSpell(spell)
+    if #slots == 0 then slots = E.SlotsOf(eid) end
     for _, slot in ipairs(slots) do
         local link = links[slot]
         local g, cur, unknownCur = E.Gain(eid, weights, slot, link)
@@ -262,7 +278,7 @@ function E.DrawRecipeTooltip(tip, spell)
             anyItem = true
             AddRow(tip, rich, string.format(L["Your %s"], E.SlotName(slot)), GainText(g))
             if g <= 0.05 and cur > 0 and MSC.EnchantDB[cur] then
-                AddHint(tip, rich, string.format(L["Already on it: %s"], MSC.GetEnchantName(MSC.EnchantDB[cur])))
+                AddHint(tip, rich, string.format(L["Already on it: %s"], MSC.GetEnchantName(MSC.EnchantDB[cur], slot)))
             elseif unknownCur then
                 AddHint(tip, rich, L["The enchant on it now isn't in Gear Judge's list; the gain may be smaller."])
             end
@@ -286,7 +302,7 @@ function E.DrawRecipeTooltip(tip, spell)
                 if saved then MSC.TalentCache = saved end
                 local ok, tW = pcall(MSC.GetWeightsByName, tSpec)
                 local g, slot
-                if ok and tW then g, slot = BestGain(eid, tW, links) end
+                if ok and tW then g, slot = BestGain(eid, tW, links, slots) end
                 MSC.TalentCache = original
                 if g and g > 0.05 then
                     local pretty = (MSC.CurrentClass and MSC.CurrentClass.PrettyNames and MSC.CurrentClass.PrettyNames[tSpec]) or tSpec
@@ -298,7 +314,7 @@ function E.DrawRecipeTooltip(tip, spell)
 
     -- alts (Roster)
     if MSC.RosterEnchantGains then
-        local ok, rows = pcall(MSC.RosterEnchantGains, eid)
+        local ok, rows = pcall(MSC.RosterEnchantGains, eid, slots)
         if ok and type(rows) == "table" then
             for i = 1, math.min(3, #rows) do
                 AddRow(tip, rich, rows[i].label, GainText(rows[i].gain))
@@ -400,9 +416,19 @@ local function HasLine(tip, text)
     return false
 end
 
+-- Worn right now? (2026-11-27, in game: a worn bracer said "Safe to disenchant": Forever has C_Item.IsEquippedItem and no
+-- global IsEquippedItem, so the old check never ran.) The worn slots' links are compared too.
+local function IsWorn(link)
+    local f = (C_Item and C_Item.IsEquippedItem) or IsEquippedItem
+    if f then local ok, worn = pcall(f, link); if ok and worn then return true end end
+    for slot = 1, 19 do if GetInventoryItemLink("player", slot) == link then return true end end
+    return false
+end
+E.IsWorn = IsWorn
+
 function E.AddDisenchantLine(tip, link)
     if not tip or not link or not E.ShowDisenchant() then return false end
-    if IsEquippedItem and IsEquippedItem(link) then return false end
+    if IsWorn(link) then return false end
     if not E.SafeToDisenchant(link) then return false end
     local text = L["Safe to disenchant: no upgrade for you, your off-specs or your alts."]
     if HasLine(tip, text) then return false end

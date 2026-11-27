@@ -2191,12 +2191,25 @@ end
 -- Enchanting recipe (spell) or enchant item (item), falling back to the English
 -- name in Enchants_<Edition>.lua. showStats adds "+8 Str"-style stats for items
 -- that share a name (the Voracity arcanums).
-function MSC.GetEnchantName(data)
+-- One enchant can come from a different recipe per slot (+4 Stamina: Enchant Chest - Stamina, Enchant Bracer - Lesser
+-- Stamina, Enchant Boots - Lesser Stamina): Enchants_*.lua lists those as spells / lvls by slot (2026-11-27, in game: a worn
+-- bracer showed "Enchant Chest - Stamina"). The slot's own recipe and level, else the enchant's.
+function MSC.EnchantSpellFor(data, slotId)
+    if not data then return nil end
+    return (slotId and data.spells and data.spells[slotId]) or data.spell
+end
+function MSC.EnchantLevelFor(data, slotId)
+    if not data then return nil end
+    return (slotId and data.lvls and data.lvls[slotId]) or data.lvl
+end
+
+function MSC.GetEnchantName(data, slotId)
     if not data then return "" end
     local name
-    if data.spell then
-        if C_Spell and C_Spell.GetSpellName then name = C_Spell.GetSpellName(data.spell)
-        elseif GetSpellInfo then name = GetSpellInfo(data.spell) end
+    local spell = MSC.EnchantSpellFor(data, slotId)
+    if spell then
+        if C_Spell and C_Spell.GetSpellName then name = C_Spell.GetSpellName(spell)
+        elseif GetSpellInfo then name = GetSpellInfo(spell) end
     elseif data.item then
         name = GetItemInfo(data.item)
     end
@@ -2252,9 +2265,10 @@ function MSC.GetBestEnchantForSlot(slotId, level, specName, enchantType, weights
         local data = MSC.EnchantDB[id]
         -- lvl: the level an enchant becomes a sensible suggestion; classMask: class-only
         -- enchant items such as the Zul'Gurub idols (Enchants_<Edition>.lua).
-        if data and (not data.lvl or not level or data.lvl <= level)
+        local lvl, spell = MSC.EnchantLevelFor(data, slotId), MSC.EnchantSpellFor(data, slotId)
+        if data and (not lvl or not level or lvl <= level)
             and (not data.classMask or not classBit or bit.band(data.classMask, classBit) ~= 0)
-            and not (onlyKnown and data.spell and not MSC.Enchanting.Knows(data.spell)) then
+            and not (onlyKnown and spell and not MSC.Enchanting.Knows(spell)) then
             local allowed = MSC.EnchantFitsSlot(data, slotId, enchantType)
             if allowed then
                 local score = MSC.GetEnchantScore(id, weights, slotId)
@@ -2576,7 +2590,7 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                         end
                     end
                     finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = MSC.GetEnchantName(eqData) .. " " .. MSC.L["(Equipped)"]
+                    finalStats.ENCHANT_TEXT = MSC.GetEnchantName(eqData, derivedSlotId) .. " " .. MSC.L["(Equipped)"]
                 end
             end
             
@@ -2600,8 +2614,9 @@ function MSC.SafeGetItemStats(itemLink, slotId, weights, specName, globalUniques
                         end
                     end
                     finalStats.IS_PROJECTED = true
-                    finalStats.ENCHANT_TEXT = MSC.GetEnchantName(bestData)
+                    finalStats.ENCHANT_TEXT = MSC.GetEnchantName(bestData, derivedSlotId)
                     finalStats.ENCHANT_ID = bestID
+                    finalStats.ENCHANT_SLOT = derivedSlotId
                 end
             end
         end

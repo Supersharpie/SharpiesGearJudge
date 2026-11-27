@@ -532,7 +532,7 @@ Shaman.Relics = {
     [249443] = function() return {} end,
     -- Tidal Totem: Healing Wave mana cost -5%
     [272431] = function(role) return (role == "healer") and { ITEM_MOD_MANA_REGENERATION_SHORT = 8 } or {} end,
-    -- Totem of the Storm: Lightning Bolt can trigger Maelstrom Weapon (50% chance)
+    -- Totem of the Maelstrom (was Totem of the Storm until the 2026-11-25 hotfix): Lightning Bolt can trigger Maelstrom Weapon (50% chance)
     [272432] = function(role)
         if role == "caster" then return { ITEM_MOD_SPELL_POWER_SHORT = 8 } end
         if role == "melee" then return { ITEM_MOD_ATTACK_POWER_SHORT = 8 } end

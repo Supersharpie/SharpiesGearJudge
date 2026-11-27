@@ -16,7 +16,8 @@ local _, MSC = ...
 -- suggested a little early); suggestions skip enchants above the player's level.
 -- Ring enchants are left out (Enchanters only). classMask (bit = 2^(classID-1))
 -- marks class-only enchant items such as the Zul'Gurub idols. spell / item is the
--- recipe or enchant item; MSC.GetEnchantName asks the game for its name in the
+-- recipe or enchant item; spells / lvls: the recipe and level for the slots whose own recipe differs (one
+-- enchant from several recipes: Chest - Stamina, Bracer - Lesser Stamina...). MSC.GetEnchantName asks the game for its name in the
 -- player's language (name is the English fallback). showStats adds the stats to
 -- the name for items that share one (the Voracity arcanums).
 -- ============================================================================
@@ -74,7 +75,7 @@ MSC.EnchantDB = {
     [1144] = { name = "Major Spirit (+15 Spirit)", lvl = 53, spell = 33990, showStats = true, stats = { ITEM_MOD_SPIRIT_SHORT = 15 } }, -- +15 Spirit (Enchanting)
     [2503] = { name = "Core Armor Kit", lvl = 50, item = 18251, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 5 } }, -- +5 Defense Rating (item)
     [2792] = { name = "Knothide Armor Kit", lvl = 50, item = 25650, stats = { ITEM_MOD_STAMINA_SHORT = 8 } }, -- +8 Stamina (item)
-    [1891] = { name = "Greater Stats", lvl = 48, spell = 20025, stats = { ITEM_MOD_AGILITY_SHORT = 4, ITEM_MOD_INTELLECT_SHORT = 4, ITEM_MOD_SPIRIT_SHORT = 4, ITEM_MOD_STAMINA_SHORT = 4, ITEM_MOD_STRENGTH_SHORT = 4 } }, -- +4 All Stats (Enchanting)
+    [1891] = { name = "Greater Stats", lvl = 48, spell = 20025, spells = { [9] = 27905 }, lvls = { [9] = 52 }, stats = { ITEM_MOD_AGILITY_SHORT = 4, ITEM_MOD_INTELLECT_SHORT = 4, ITEM_MOD_SPIRIT_SHORT = 4, ITEM_MOD_STAMINA_SHORT = 4, ITEM_MOD_STRENGTH_SHORT = 4 } }, -- +4 All Stats (Enchanting)
     [3150] = { name = "Restore Mana Prime", lvl = 48, spell = 33991, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- +6 mana every 5 sec. (Enchanting)
     [1843] = { name = "Rugged Armor Kit", lvl = 40, item = 15564, stats = { ITEM_MOD_ARMOR_SHORT = 40 } }, -- Reinforced (+40 Armor) (item)
     [928] = { name = "Stats", lvl = 39, spell = 13941, stats = { ITEM_MOD_AGILITY_SHORT = 3, ITEM_MOD_INTELLECT_SHORT = 3, ITEM_MOD_SPIRIT_SHORT = 3, ITEM_MOD_STAMINA_SHORT = 3, ITEM_MOD_STRENGTH_SHORT = 3 } }, -- +3 All Stats (Enchanting)
@@ -96,40 +97,41 @@ MSC.EnchantDB = {
     [2939] = { name = "Cat's Swiftness", lvl = 58, spell = 34007, stats = { ITEM_MOD_AGILITY_SHORT = 6 } }, -- Minor Speed and +6 Agility (Enchanting)
     [2940] = { name = "Boar's Speed", lvl = 58, spell = 34008, stats = { ITEM_MOD_STAMINA_SHORT = 9 } }, -- Minor Speed and +9 Stamina (Enchanting)
     [2657] = { name = "Dexterity", lvl = 55, spell = 27951, stats = { ITEM_MOD_AGILITY_SHORT = 12 } }, -- +12 Agility (Enchanting)
-    [2649] = { name = "Fortitude", lvl = 53, spell = 27950, stats = { ITEM_MOD_STAMINA_SHORT = 12 } }, -- +12 Stamina (Enchanting)
+    [2649] = { name = "Fortitude", lvl = 53, spell = 27950, spells = { [9] = 27914 }, lvls = { [9] = 57 }, stats = { ITEM_MOD_STAMINA_SHORT = 12 } }, -- +12 Stamina (Enchanting)
     [2656] = { name = "Vitality", lvl = 49, spell = 27948, stats = { ITEM_MOD_HEALTH_REGENERATION_SHORT = 4, ITEM_MOD_MANA_REGENERATION_SHORT = 4 } }, -- Vitality (Enchanting)
-    [1887] = { name = "Greater Agility (+7 Agility)", lvl = 44, spell = 20012, showStats = true, stats = { ITEM_MOD_AGILITY_SHORT = 7 } }, -- +7 Agility (Enchanting)
-    [929] = { name = "Greater Stamina", lvl = 39, spell = 13945, stats = { ITEM_MOD_STAMINA_SHORT = 7 } }, -- +7 Stamina (Enchanting)
-    [852] = { name = "Stamina", lvl = 24, spell = 13648, stats = { ITEM_MOD_STAMINA_SHORT = 5 } }, -- +5 Stamina (Enchanting)
-    [851] = { name = "Spirit", lvl = 23, spell = 13642, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } }, -- +5 Spirit (Enchanting)
-    [849] = { name = "Lesser Agility", lvl = 22, spell = 13637, stats = { ITEM_MOD_AGILITY_SHORT = 3 } }, -- +3 Agility (Enchanting)
-    [724] = { name = "Lesser Stamina", lvl = 17, spell = 13501, stats = { ITEM_MOD_STAMINA_SHORT = 3 } }, -- +3 Stamina (Enchanting)
-    [255] = { name = "Lesser Spirit", lvl = 13, requires2H = true, spell = 13380, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } }, -- +3 Spirit (Enchanting)
+    [1887] = { name = "Greater Agility (+7 Agility)", lvl = 44, spell = 20012, showStats = true, spells = { [8] = 20023 }, lvls = { [8] = 48 }, stats = { ITEM_MOD_AGILITY_SHORT = 7 } }, -- +7 Agility (Enchanting)
+    [929] = { name = "Greater Stamina", lvl = 39, spell = 13945, spells = { [8] = 20020, [17] = 20017 }, lvls = { [8] = 42, [17] = 43 }, stats = { ITEM_MOD_STAMINA_SHORT = 7 } }, -- +7 Stamina (Enchanting)
+    [904] = { name = "Agility (+5 Agility)", lvl = 32, spell = 13815, showStats = true, spells = { [8] = 13935 }, lvls = { [8] = 37 }, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, -- +5 Agility (Enchanting)
+    [852] = { name = "Stamina", lvl = 24, spell = 13648, spells = { [8] = 13836, [17] = 13817 }, lvls = { [8] = 33, [17] = 32 }, stats = { ITEM_MOD_STAMINA_SHORT = 5 } }, -- +5 Stamina (Enchanting)
+    [851] = { name = "Spirit", lvl = 23, spell = 13642, spells = { [8] = 20024, [17] = 13659 }, lvls = { [8] = 45, [17] = 26 }, stats = { ITEM_MOD_SPIRIT_SHORT = 5 } }, -- +5 Spirit (Enchanting)
+    [849] = { name = "Lesser Agility", lvl = 22, spell = 13637, spells = { [15] = 13882 }, lvls = { [15] = 35 }, stats = { ITEM_MOD_AGILITY_SHORT = 3 } }, -- +3 Agility (Enchanting)
+    [724] = { name = "Lesser Stamina", lvl = 17, spell = 13501, spells = { [8] = 13644, [17] = 13631 }, lvls = { [8] = 24, [17] = 21 }, stats = { ITEM_MOD_STAMINA_SHORT = 3 } }, -- +3 Stamina (Enchanting)
+    [255] = { name = "Lesser Spirit", lvl = 13, requires2H = true, spell = 13380, spells = { [8] = 13687, [9] = 7859, [17] = 13485 }, lvls = { [8] = 28, [9] = 15, [17] = 17 }, stats = { ITEM_MOD_SPIRIT_SHORT = 3 } }, -- +3 Spirit (Enchanting)
+    [247] = { name = "Minor Agility", lvl = 9, spell = 7779, spells = { [8] = 7867, [15] = 13419 }, lvls = { [8] = 16, [15] = 13 }, stats = { ITEM_MOD_AGILITY_SHORT = 1 } }, -- +1 Agility (Enchanting)
+    [66] = { name = "Minor Stamina", lvl = 6, spell = 7457, spells = { [8] = 7863, [17] = 13378 }, lvls = { [8] = 16, [17] = 12 }, stats = { ITEM_MOD_STAMINA_SHORT = 1 } }, -- +1 Stamina (Enchanting)
     [2650] = { name = "Spellpower", lvl = 58, spell = 27917, stats = { ITEM_MOD_SPELL_POWER_SHORT = 15 } }, -- +15 Spell Damage (Enchanting)
     [2679] = { name = "Restore Mana Prime", lvl = 55, spell = 27913, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 6 } }, -- 6 Mana per 5 Sec. (Enchanting)
-    [2648] = { name = "Major Defense", lvl = 53, spell = 27906, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } }, -- +12 Defense Rating (Enchanting)
+    [2648] = { name = "Major Defense", lvl = 53, spell = 27906, spells = { [15] = 47051 }, lvls = { [15] = 59 }, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 12 } }, -- +12 Defense Rating (Enchanting)
     [369] = { name = "Major Intellect (+12 Intellect)", lvl = 49, spell = 34001, showStats = true, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } }, -- +12 Intellect (Enchanting)
     [2647] = { name = "Brawn", lvl = 49, spell = 27899, stats = { ITEM_MOD_STRENGTH_SHORT = 12 } }, -- +12 Strength (Enchanting)
     [1593] = { name = "Assault (+24 Attack Power)", lvl = 48, spell = 34002, showStats = true, stats = { ITEM_MOD_ATTACK_POWER_SHORT = 24 } }, -- +24 Attack Power (Enchanting)
     [1885] = { name = "Superior Strength", lvl = 48, spell = 20010, stats = { ITEM_MOD_STRENGTH_SHORT = 9 } }, -- +9 Strength (Enchanting)
     [1886] = { name = "Superior Stamina", lvl = 48, spell = 20011, stats = { ITEM_MOD_STAMINA_SHORT = 9 } }, -- +9 Stamina (Enchanting)
     [2566] = { name = "Healing Power (+24 Healing, +8 Spell Power)", lvl = 48, spell = 23802, showStats = true, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 24, ITEM_MOD_SPELL_POWER_SHORT = 8 } }, -- +24 Healing and +8 Spell Damage (Enchanting)
-    [2617] = { name = "Healing Power (+30 Healing, +10 Spell Power)", lvl = 48, spell = 25079, showStats = true, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30, ITEM_MOD_SPELL_POWER_SHORT = 10 } }, -- +30 Healing and +10 Spell Damage (Enchanting)
+    [2617] = { name = "Healing Power (+30 Healing, +10 Spell Power)", lvl = 48, spell = 25079, showStats = true, spells = { [9] = 27911 }, lvls = { [9] = 53 }, stats = { ITEM_MOD_SPELL_HEALING_DONE_SHORT = 30, ITEM_MOD_SPELL_POWER_SHORT = 10 } }, -- +30 Healing and +10 Spell Damage (Enchanting)
     [2565] = { name = "Mana Regeneration", lvl = 47, spell = 23801, stats = { ITEM_MOD_MANA_REGENERATION_SHORT = 4 } }, -- Mana Regen 4 per 5 sec. (Enchanting)
     [1884] = { name = "Superior Spirit", lvl = 44, spell = 20009, stats = { ITEM_MOD_SPIRIT_SHORT = 9 } }, -- +9 Spirit (Enchanting)
     [1883] = { name = "Greater Intellect", lvl = 41, spell = 20008, stats = { ITEM_MOD_INTELLECT_SHORT = 7 } }, -- +7 Intellect (Enchanting)
-    [927] = { name = "Greater Strength", lvl = 38, spell = 13939, stats = { ITEM_MOD_STRENGTH_SHORT = 7 } }, -- +7 Strength (Enchanting)
+    [927] = { name = "Greater Strength", lvl = 38, spell = 13939, spells = { [10] = 20013 }, lvls = { [10] = 48 }, stats = { ITEM_MOD_STRENGTH_SHORT = 7 } }, -- +7 Strength (Enchanting)
     [923] = { name = "Deflection", lvl = 37, spell = 13931, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 5 } }, -- +5 Defense Rating (Enchanting)
-    [907] = { name = "Greater Spirit", lvl = 34, spell = 13846, stats = { ITEM_MOD_SPIRIT_SHORT = 7 } }, -- +7 Spirit (Enchanting)
+    [907] = { name = "Greater Spirit", lvl = 34, spell = 13846, spells = { [17] = 13905 }, lvls = { [17] = 36 }, stats = { ITEM_MOD_SPIRIT_SHORT = 7 } }, -- +7 Spirit (Enchanting)
     [905] = { name = "Intellect (+5 Intellect)", lvl = 32, spell = 13822, showStats = true, stats = { ITEM_MOD_INTELLECT_SHORT = 5 } }, -- +5 Intellect (Enchanting)
-    [856] = { name = "Strength (+5 Strength)", lvl = 26, spell = 13661, showStats = true, stats = { ITEM_MOD_STRENGTH_SHORT = 5 } }, -- +5 Strength (Enchanting)
+    [856] = { name = "Strength (+5 Strength)", lvl = 26, spell = 13661, showStats = true, spells = { [10] = 13887 }, lvls = { [10] = 35 }, stats = { ITEM_MOD_STRENGTH_SHORT = 5 } }, -- +5 Strength (Enchanting)
     [925] = { name = "Lesser Deflection", lvl = 24, spell = 13646, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 3 } }, -- +3 Defense Rating (Enchanting)
     [823] = { name = "Lesser Strength", lvl = 19, spell = 13536, stats = { ITEM_MOD_STRENGTH_SHORT = 3 } }, -- +3 Strength (Enchanting)
-    [723] = { name = "Lesser Intellect", lvl = 12, requires2H = true, spell = 7793, stats = { ITEM_MOD_INTELLECT_SHORT = 3 } }, -- +3 Intellect (Enchanting)
-    [247] = { name = "Minor Agility", lvl = 9, spell = 7779, stats = { ITEM_MOD_AGILITY_SHORT = 1 } }, -- +1 Agility (Enchanting)
+    [723] = { name = "Lesser Intellect", lvl = 12, requires2H = true, spell = 7793, spells = { [9] = 13622 }, lvls = { [9] = 21 }, stats = { ITEM_MOD_INTELLECT_SHORT = 3 } }, -- +3 Intellect (Enchanting)
     [248] = { name = "Minor Strength", lvl = 9, spell = 7782, stats = { ITEM_MOD_STRENGTH_SHORT = 1 } }, -- +1 Strength (Enchanting)
     [243] = { name = "Minor Spirit", lvl = 7, spell = 7766, stats = { ITEM_MOD_SPIRIT_SHORT = 1 } }, -- +1 Spirit (Enchanting)
-    [66] = { name = "Minor Stamina", lvl = 6, spell = 7457, stats = { ITEM_MOD_STAMINA_SHORT = 1 } }, -- +1 Stamina (Enchanting)
     [924] = { name = "Minor Deflection", lvl = 2, spell = 7428, stats = { ITEM_MOD_DEFENSE_SKILL_RATING_SHORT = 2 } }, -- +2 Defense Rating (Enchanting)
     [3260] = { name = "Glove Reinforcements", lvl = 60, item = 34207, stats = { ITEM_MOD_ARMOR_SHORT = 240 } }, -- +240 Armor (item)
     [2935] = { name = "Spell Strike", lvl = 58, spell = 33994, stats = { ITEM_MOD_HIT_SPELL_RATING_SHORT = 15 } }, -- +15 Spell Hit Rating (Enchanting)
@@ -141,15 +143,15 @@ MSC.EnchantDB = {
     [2614] = { name = "Shadow Power", lvl = 48, spell = 25073, stats = { ITEM_MOD_SHADOW_DAMAGE_SHORT = 20 } }, -- +20 Shadow Spell Damage (Enchanting)
     [2615] = { name = "Frost Power", lvl = 48, spell = 25074, stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 20 } }, -- +20 Frost Spell Damage (Enchanting)
     [2616] = { name = "Fire Power", lvl = 48, spell = 25078, stats = { ITEM_MOD_FIRE_DAMAGE_SHORT = 20 } }, -- +20 Fire Spell Damage (Enchanting)
-    [2564] = { name = "Agility (+15 Agility)", lvl = 47, spell = 23800, showStats = true, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, -- +15 Agility (Enchanting)
+    [2564] = { name = "Agility (+15 Agility)", lvl = 47, spell = 23800, showStats = true, spells = { [10] = 25080 }, lvls = { [10] = 48 }, stats = { ITEM_MOD_AGILITY_SHORT = 15 } }, -- +15 Agility (Enchanting)
     [931] = { name = "Minor Haste", lvl = 40, spell = 13948, stats = { ITEM_MOD_HASTE_RATING_SHORT = 10 } }, -- +10 Haste Rating (Enchanting)
-    [904] = { name = "Agility (+5 Agility)", lvl = 32, spell = 13815, showStats = true, stats = { ITEM_MOD_AGILITY_SHORT = 5 } }, -- +5 Agility (Enchanting)
     [368] = { name = "Greater Agility (+12 Agility)", lvl = 50, spell = 34004, showStats = true, stats = { ITEM_MOD_AGILITY_SHORT = 12 } }, -- +12 Agility (Enchanting)
     [2662] = { name = "Major Armor", lvl = 50, spell = 27961, stats = { ITEM_MOD_ARMOR_SHORT = 120 } }, -- +120 Armor (Enchanting)
     [2622] = { name = "Dodge", lvl = 48, spell = 25086, stats = { ITEM_MOD_DODGE_RATING_SHORT = 12 } }, -- +12 Dodge Rating (Enchanting)
     [1889] = { name = "Superior Defense", lvl = 46, spell = 20015, stats = { ITEM_MOD_ARMOR_SHORT = 70 } }, -- +70 Armor (Enchanting)
     [884] = { name = "Greater Defense", lvl = 31, spell = 13746, stats = { ITEM_MOD_ARMOR_SHORT = 50 } }, -- +50 Armor (Enchanting)
     [744] = { name = "Lesser Protection (+20 Armor)", lvl = 14, spell = 13421, showStats = true, stats = { ITEM_MOD_ARMOR_SHORT = 20 } }, -- +20 Armor (Enchanting)
+    [848] = { name = "Lesser Protection (+30 Armor)", lvl = 14, isShield = true, spell = 13464, showStats = true, spells = { [15] = 13635 }, lvls = { [15] = 21 }, stats = { ITEM_MOD_ARMOR_SHORT = 30 } }, -- +30 Armor (Enchanting)
     [783] = { name = "Minor Protection", lvl = 8, spell = 7771, stats = { ITEM_MOD_ARMOR_SHORT = 10 } }, -- +10 Armor (Enchanting)
     [2671] = { name = "Sunfire", lvl = 60, spell = 27981, stats = { ITEM_MOD_ARCANE_DAMAGE_SHORT = 50, ITEM_MOD_FIRE_DAMAGE_SHORT = 50 } }, -- Sunfire (Enchanting)
     [2672] = { name = "Soulfrost", lvl = 60, spell = 27982, stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 54, ITEM_MOD_SHADOW_DAMAGE_SHORT = 54 } }, -- Soulfrost (Enchanting)
@@ -180,12 +182,12 @@ MSC.EnchantDB = {
     [1894] = { name = "Icy Chill", lvl = 46, spell = 20029, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1 } }, -- Icy Weapon (Enchanting)
     [803] = { name = "Fiery Weapon", lvl = 43, spell = 13898, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 3 } }, -- Fiery Weapon (Enchanting)
     [805] = { name = "Greater Striking", lvl = 39, spell = 13943, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.6 } }, -- +4 Weapon Damage (Enchanting)
-    [963] = { name = "Greater Impact", lvl = 38, requires2H = true, spell = 13937, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2.8 } }, -- +7 Weapon Damage (Enchanting)
+    [963] = { name = "Greater Impact", lvl = 38, requires2H = true, spell = 13937, spells = { [17] = 27967 }, lvls = { [17] = 55 }, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2.8 } }, -- +7 Weapon Damage (Enchanting)
     [34] = { name = "Iron Counterweight", lvl = 33, requires2H = true, item = 6043, stats = { ITEM_MOD_HASTE_RATING_SHORT = 20 } }, -- Counterweight (+20 Haste Rating) (item)
-    [1897] = { name = "Impact", lvl = 30, requires2H = true, spell = 13695, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, -- +5 Weapon Damage (Enchanting)
+    [1897] = { name = "Impact", lvl = 30, requires2H = true, spell = 13695, spells = { [17] = 20031 }, lvls = { [17] = 48 }, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 2 } }, -- +5 Weapon Damage (Enchanting)
     [2443] = { name = "Winter's Might", lvl = 28, spell = 21931, stats = { ITEM_MOD_FROST_DAMAGE_SHORT = 7 } }, -- +7 Frost Spell Damage (Enchanting)
-    [943] = { name = "Lesser Impact", lvl = 20, requires2H = true, spell = 13529, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.2 } }, -- +3 Weapon Damage (Enchanting)
-    [241] = { name = "Minor Impact", lvl = 12, requires2H = true, spell = 7745, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.8 } }, -- +2 Weapon Damage (Enchanting)
+    [943] = { name = "Lesser Impact", lvl = 20, requires2H = true, spell = 13529, spells = { [17] = 13693 }, lvls = { [17] = 29 }, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 1.2 } }, -- +3 Weapon Damage (Enchanting)
+    [241] = { name = "Minor Impact", lvl = 12, requires2H = true, spell = 7745, spells = { [17] = 13503 }, lvls = { [17] = 19 }, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.8 } }, -- +2 Weapon Damage (Enchanting)
     [250] = { name = "Minor Striking", lvl = 10, spell = 7788, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 0.4 } }, -- +1  Weapon Damage (Enchanting)
     [2655] = { name = "Shield Block", lvl = 55, isShield = true, spell = 27946, stats = { ITEM_MOD_BLOCK_RATING_SHORT = 15 } }, -- +15 Shield Block Rating (Enchanting)
     [3229] = { name = "Resilience", lvl = 54, isShield = true, spell = 44383, stats = { ITEM_MOD_RESILIENCE_RATING_SHORT = 12 } }, -- +12 Resilience Rating (Enchanting)
@@ -193,7 +195,6 @@ MSC.EnchantDB = {
     [2654] = { name = "Intellect (+12 Intellect)", lvl = 53, isShield = true, spell = 27945, showStats = true, stats = { ITEM_MOD_INTELLECT_SHORT = 12 } }, -- +12 Intellect (Enchanting)
     [1890] = { name = "Superior Spirit", lvl = 46, isShield = true, spell = 20016, stats = { ITEM_MOD_SPIRIT_SHORT = 9 } }, -- +9 Spirit (Enchanting)
     [863] = { name = "Lesser Block", lvl = 29, isShield = true, spell = 13689, stats = { ITEM_MOD_BLOCK_RATING_SHORT = 10 } }, -- +10 Shield Block Rating (Enchanting)
-    [848] = { name = "Lesser Protection (+30 Armor)", lvl = 14, isShield = true, spell = 13464, showStats = true, stats = { ITEM_MOD_ARMOR_SHORT = 30 } }, -- +30 Armor (Enchanting)
     [2724] = { name = "Stabilized Eternium Scope", lvl = 60, isScope = true, item = 23766, stats = { ITEM_MOD_CRIT_RATING_SHORT = 28 } }, -- Scope (+28 Critical Strike Rating) (item)
     [2722] = { name = "Adamantite Scope", lvl = 55, isScope = true, item = 23764, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 4 } }, -- Scope (+10 Damage) (item)
     [2723] = { name = "Khorium Scope", lvl = 55, isScope = true, item = 23765, stats = { ITEM_MOD_DAMAGE_PER_SECOND_SHORT = 4.8 } }, -- Scope (+12 Damage) (item)
@@ -216,17 +217,17 @@ MSC.EnchantCandidates = {
     -- [[ LEGS ]]
     [7] = { 2583, 2584, 2585, 2586, 2587, 2588, 2589, 2590, 2591, 2745, 2746, 2747, 2748, 2841, 3010, 3011, 3012, 3013, 2793, 2794, 1504, 1506, 1507, 1508, 1509, 1510, 2503, 2792, 1843, 18, 17, 16, 15 },
     -- [[ FEET ]]
-    [8] = { 2841, 2658, 2939, 2940, 2657, 2793, 2794, 2649, 2503, 2792, 2656, 1887, 1843, 929, 18, 852, 851, 849, 17, 724, 255, 16, 15 },
+    [8] = { 2841, 2658, 2939, 2940, 2657, 2793, 2794, 2649, 2503, 2792, 2656, 1887, 1843, 929, 904, 18, 852, 851, 849, 17, 724, 255, 247, 66, 16, 15 },
     -- [[ WRIST ]]
-    [9] = { 2650, 2679, 2648, 2649, 369, 2647, 1593, 1885, 1886, 1891, 2566, 2617, 2565, 1884, 1883, 929, 927, 923, 907, 905, 856, 852, 925, 851, 823, 724, 723, 247, 248, 243, 66, 924 },
+    [9] = { 2650, 2679, 2648, 2649, 369, 2647, 1593, 1885, 1886, 1891, 2566, 2617, 2565, 1884, 1883, 929, 927, 923, 907, 905, 856, 852, 925, 851, 823, 724, 255, 723, 247, 248, 243, 66, 924 },
     -- [[ HANDS ]]
-    [10] = { 2841, 3260, 2935, 2937, 2322, 684, 2793, 2794, 1594, 2503, 2792, 2934, 2614, 2615, 2616, 2617, 2564, 1887, 931, 1843, 927, 904, 18, 17, 16, 15 },
+    [10] = { 2841, 3260, 2935, 2937, 2322, 684, 2793, 2794, 1594, 2503, 2792, 2934, 2614, 2615, 2616, 2617, 2564, 1887, 931, 1843, 927, 904, 18, 856, 17, 16, 15 },
     -- [[ BACK ]]
-    [15] = { 2648, 368, 2662, 2622, 1889, 884, 849, 744, 247, 783 },
+    [15] = { 2648, 368, 2662, 2622, 1889, 884, 849, 744, 848, 247, 783 },
     -- [[ WEAPON (MAIN HAND / 2H) ]]
     [16] = { 2671, 2672, 2673, 3223, 3225, 2670, 2674, 2343, 2667, 2668, 2669, 3222, 2666, 3273, 1896, 1898, 1899, 1900, 1903, 1904, 2504, 2505, 2567, 2568, 2563, 2564, 2646, 1894, 803, 805, 963, 34, 1897, 2443, 943, 255, 241, 723, 250 },
     -- [[ OFF HAND (WEAPON OR SHIELD) ]]
-    [17] = { 2671, 2672, 2673, 3223, 3225, 2670, 2674, 2343, 2667, 2668, 2669, 3222, 2655, 2666, 3273, 3229, 1071, 2654, 1898, 1899, 1900, 2504, 2505, 2567, 2568, 2563, 2564, 1890, 1894, 803, 805, 929, 963, 1897, 863, 2443, 852, 851, 943, 848, 255, 241, 250, 66 },
+    [17] = { 2671, 2672, 2673, 3223, 3225, 2670, 2674, 2343, 2667, 2668, 2669, 3222, 2655, 2666, 3273, 3229, 1071, 2654, 1898, 1899, 1900, 2504, 2505, 2567, 2568, 2563, 2564, 1890, 1894, 803, 805, 929, 963, 907, 1897, 863, 2443, 852, 851, 943, 724, 848, 255, 241, 250, 66 },
     -- [[ RANGED (SCOPES) ]]
     [18] = { 2724, 2722, 2723, 2523, 664, 663, 33, 32, 30 },
 }

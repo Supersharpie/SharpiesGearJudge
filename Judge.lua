@@ -1126,10 +1126,10 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 local name = CleanText(itemNewStats.ENCHANT_TEXT)
                 local eid = tonumber(string_match(link, "item:%-?%d+:(%-?%d+)")) or 0
                 local current = eid > 0 and MSC.EnchantDB and MSC.EnchantDB[eid]
-                if current and MSC.GetEnchantName(current) == itemNewStats.ENCHANT_TEXT then
+                if current and MSC.GetEnchantName(current, itemNewStats.ENCHANT_SLOT) == itemNewStats.ENCHANT_TEXT then
                     name = name .. " " .. MSC.L["|cff00ff00(already on it)|r"]
                 elseif MSC.Enchanting then
-                    name = name .. MSC.Enchanting.KnownSuffix(itemNewStats.ENCHANT_ID)
+                    name = name .. MSC.Enchanting.KnownSuffix(itemNewStats.ENCHANT_ID, itemNewStats.ENCHANT_SLOT)
                 end
                 tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], name, 0, 1, 1, 1, 1, 1)
             end
@@ -1381,7 +1381,7 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
                 
                 if itemNewStats.ENCHANT_TEXT then 
                     local cleanEnchant = CleanText(itemNewStats.ENCHANT_TEXT)
-                    if MSC.Enchanting then cleanEnchant = cleanEnchant .. MSC.Enchanting.KnownSuffix(itemNewStats.ENCHANT_ID) end
+                    if MSC.Enchanting then cleanEnchant = cleanEnchant .. MSC.Enchanting.KnownSuffix(itemNewStats.ENCHANT_ID, itemNewStats.ENCHANT_SLOT) end
                     tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], cleanEnchant, 0, 1, 1, 1, 1, 1)
                 elseif itemNewStats.IS_PROJECTED then 
                     tooltip:AddDoubleLine(MSC.L["Projected Enchant:"], MSC.L["Best Available"], 0, 1, 1, 1, 1, 1) 

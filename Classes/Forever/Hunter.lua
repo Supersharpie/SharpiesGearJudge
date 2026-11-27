@@ -243,11 +243,21 @@ function Hunter:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- Summon Hawk (BM, level 25) on the ranged rows: no hook. Summon Hawk shares
-    -- Arcane Shot's cooldown, and SimStudio hmodel (2026-11-08, hawk swings from
-    -- launch logs) keeps Arcane Shot in that slot at every level, also with the
-    -- hawks mixed in, so a shooting Hunter's Crit and Hit are the same with or
-    -- without the talent (was x0.82 at 30-40 and x0.77 from 45, 2026-10-14).
+    -- Summon Hawk (BM, level 25) on the ranged solo and PvP rows (built untalented): the hawks' damage doesn't scale
+    -- with ranged Crit and Hit, so both are worth less with the talent. SimStudio hmodel (2026-11-27, with the 11-25
+    -- hotfix's +5% hawk crit) has the Hawk and Arcane Shot near a tie for their shared cooldown, flipping level by
+    -- level, so this is the average over the shipped Beast Mastery solo and PvP builds by 5-level band, Hawk on vs
+    -- off (ratios capped at 1): Crit x0.84-0.93, Hit x0.70-0.88. The dungeon rows are built from the talented Beast
+    -- Mastery dungeon build, Hawk included: no hook there. (Was no hook since 2026-11-08, when the model kept Arcane
+    -- Shot in that slot; x0.82 at 30-40 and x0.77 from 45 before that, 2026-10-14.)
+    if hooks and not isMeleeRow and Rank("SUMMON_HAWK") > 0 and level >= 25 and specU:find("^LEVELING") and not specU:find("DUNGEON") then
+        local hawkCrit = MSC.ForeverLevelLerp({ { 25, 0.88 }, { 30, 0.84 }, { 35, 0.85 }, { 40, 0.87 }, { 45, 0.93 }, { 50, 0.87 }, { 56, 0.92 }, { 60, 0.92 } }, level)
+        local hawkHit = MSC.ForeverLevelLerp({ { 25, 0.72 }, { 30, 0.70 }, { 35, 0.75 }, { 40, 0.78 }, { 45, 0.88 }, { 50, 0.76 }, { 56, 0.85 }, { 60, 0.85 } }, level)
+        MSC.ScaleForeverMeleeCrit(weights, hawkCrit, level)
+        if weights["ITEM_MOD_HIT_RATING_SHORT"] then
+            weights["ITEM_MOD_HIT_RATING_SHORT"] = weights["ITEM_MOD_HIT_RATING_SHORT"] * hawkHit
+        end
+    end
     if hit0 and weights["ITEM_MOD_HIT_RATING_SHORT"] and specU:find("^LEVELING") then
         local h = weights["ITEM_MOD_HIT_RATING_SHORT"]
         weights["ITEM_MOD_HIT_RATING_SHORT"] = hit0 + MSC.LevelingHookShare(level) * (h - hit0)

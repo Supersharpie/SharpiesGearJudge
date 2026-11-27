@@ -144,7 +144,6 @@ Druid.Talents = {
     ["LIVING_SPIRIT"]   = MSC.L["Living Spirit"],
     ["NATURES_REACH"]   = MSC.L["Nature's Reach"],
     ["VENGEANCE"]       = MSC.L["Vengeance"], -- Balance t4, 5 ranks, +20%/rank crit damage bonus on Arcane/Nature spells
-    ["MOONFURY"]        = MSC.L["Moonfury"], -- Balance t6, 5 ranks, +2%/rank Arcane/Nature spell damage
     ["GENESIS"]         = MSC.L["Genesis"], -- New in Forever, Balance t1, 5 ranks, +2%/rank periodic damage AND healing (2026-10-30 hotfix; was 1%)
     ["GIFT_OF_NATURE"]  = MSC.L["Gift of Nature"], -- Restoration t3, 5 ranks, +2%/rank universal healing (Same as Classic)
     ["NATURAL_INSTINCT"] = MSC.L["Natural Instinct"], -- Feral t5, 2 ranks (Predatory Instincts until client 70291): +10%/rank melee crit damage bonus, spell healing +12.5%/rank of Intellect
@@ -153,8 +152,10 @@ Druid.Talents = {
     ["NATURES_FOCUS"]   = MSC.L["Nature's Focus"], -- Restoration t1, 5 ranks, pushback protection on Nature/Arcane casts
     ["SUBTLETY"]        = MSC.L["Subtlety"], -- Restoration t2, 3 ranks, Nature/Arcane threat reduction
     ["BLOOM"]           = MSC.L["Bloom"], -- Restoration t3, 1 rank (2026-10-30 hotfix, where Gift of the Earthmother was)
-    ["IMP_WRATH"]       = MSC.L["Improved Wrath"], -- Balance t1, 5 ranks
-    ["IMP_MOONFIRE"]    = MSC.L["Improved Moonfire"], -- Balance t2, 2 ranks
+    -- 2026-11-25 hotfix: Improved Wrath -> Starlight Wrath (same spell 16814, now also Starfire cast time), Improved Moonfire
+    -- -> Moon and Stars (same spell 16821, plus Starfire pushback protection); Moonfury removed (Dreamstate in its slot)
+    ["STARLIGHT_WRATH"] = MSC.L["Starlight Wrath"], -- Balance t1, 5 ranks
+    ["MOON_AND_STARS"]  = MSC.L["Moon and Stars"], -- Balance t2, 2 ranks
     ["NATURAL_SHAPESHIFTER"] = MSC.L["Natural Shapeshifter"], -- Restoration t2, 3 ranks, -10%/rank shapeshift mana cost
     ["SHIFTING_POWER"]  = MSC.L["Shifting Power"], -- Feral t7, 1 rank: 55% base mana -> 40 Energy, 8 s cd (2026-10-30 hotfix; was t4, 16 s)
     ["LACERATE"]        = MSC.L["Lacerate"], -- Feral t4, 1 rank (2026-10-30 hotfix: a Bear-only talent, was trained at 42)
@@ -174,7 +175,7 @@ Druid.LowLevelRoles = {
     Leveling_Bear   = { "THICK_HIDE", "LACERATE" },
     Leveling_Healer = { "NATURES_FOCUS", "SUBTLETY", "REFLECTION", "GIFT_OF_NATURE", "BLOOM" },
     -- (Nature's Reach is hit for every form, so Feral builds take it too: not a Balance marker)
-    Leveling_Caster = { "IMP_WRATH", "MOONGLOW", "IMP_MOONFIRE", "VENGEANCE", "MOONFURY" },
+    Leveling_Caster = { "STARLIGHT_WRATH", "MOONGLOW", "MOON_AND_STARS", "VENGEANCE" },
     -- No markers (talents can't tell solo from group play): applies only when chosen, e.g. by a Talents plugin build.
     Leveling_Dungeon = {},
     Leveling_BearDungeon = {},   -- 2026-11-15 split: the Bear dungeon build's own row (Leveling_Bear stays for Bear PvP / raid)
@@ -354,7 +355,6 @@ function Druid:ApplyScalers(weights, currentSpec)
         end
     end
 
-    -- Moonfury (Balance t6, 5 ranks): +2%/rank Arcane/Nature spell damage.
     -- Genesis (New in Forever, Balance t1, 5 ranks): +2%/rank periodic damage
     -- AND healing. Naturalist (Restoration t2, 5 ranks): +2%/rank all damage
     -- (both doubled by the 2026-10-30 hotfix).
@@ -363,13 +363,12 @@ function Druid:ApplyScalers(weights, currentSpec)
     -- equally, so the caster/healer leveling rows take it by dividing the
     -- safety stats (Agility included) instead of scaling Spell Power or
     -- Healing; endgame specs keep the plain scaling.
-    local rMoonfury = Rank("MOONFURY")
     local rGenesis = Rank("GENESIS")
     local rGoN = Rank("GIFT_OF_NATURE")
     local rNaturalist = Rank("NATURALIST")
     if isCasterRow then
         -- Genesis at 0.3 of nominal: DoTs are ~25-35% of modelled damage.
-        local m = (1 + 0.02 * rMoonfury) * (1 + 0.02 * rNaturalist) * (1 + 0.006 * rGenesis)
+        local m = (1 + 0.02 * rNaturalist) * (1 + 0.006 * rGenesis)   -- (Moonfury removed 2026-11-25; Moonkin Form's +10% is in the curves)
         MSC.ApplyForeverDamageMult(weights, m, { "ITEM_MOD_AGILITY_SHORT" })
         Touch(MSC.ForeverSafetyKeys)
         Touch({ "ITEM_MOD_AGILITY_SHORT" })
@@ -380,9 +379,6 @@ function Druid:ApplyScalers(weights, currentSpec)
         Touch(MSC.ForeverSafetyKeys)
         Touch({ "ITEM_MOD_AGILITY_SHORT" })
     elseif hooks then
-        if rMoonfury > 0 and weights["ITEM_MOD_SPELL_POWER_SHORT"] then
-            weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rMoonfury * 0.02))
-        end
         if rGenesis > 0 then
             if weights["ITEM_MOD_SPELL_POWER_SHORT"] then
                 weights["ITEM_MOD_SPELL_POWER_SHORT"] = weights["ITEM_MOD_SPELL_POWER_SHORT"] * (1 + (rGenesis * 0.02))

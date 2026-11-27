@@ -34,6 +34,14 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
+### 3.9.2 (Talents 1.4.9, Roadmap 3.4.2, Roster 1.2.2)
+
+- **Talents, Druid:** Balance and Restoration builds searched again for the November 25 Balance changes (Starlight Wrath, Moon and Stars, Improved Starfire at 2 points, Dreamstate); the old ones reset your talents. Balance: Raid and Hurricane Farming are hidden for now.
+- **Druid weights:** Balance and Restoration weights follow the new talents.
+- **Talents, Hunter:** Summon Hawk's +5% crit (November 25 hotfix) is in. Marksmanship: Melee Dungeon and Beast Mastery: Dungeon Leveling take their points in a better order, and the Hunter dungeon weights follow it. With Summon Hawk, Crit and Hit count less on the shooting leveling weights.
+- **Fixed (enchants):** Projected Enchant names the recipe for the item's own slot (bracers and boots showed the chest one), recipe tooltips list only their own slots, and boots get the enchants that were missing. "Safe to disenchant" no longer shows on what you wear.
+- **Roadmap:** full loot for Krol'dok Stronghold, The Drowned City, Alcaz Prison and Blackmaw Hold, plus The Shaper's Terrace (58-60).
+
 ### 3.9.1 (Talents 1.4.8)
 
 - **Talents, PvP leveling:** every PvP leveling build searched again on total leveling time, questing plus world fights. 24 builds are faster: Shaman 16-18%, Hunter 7-10%, Rogue 2-6%, the others up to 5%. Restoration Shaman PvP is removed.
@@ -366,7 +374,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.9.1 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.9.2 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!
