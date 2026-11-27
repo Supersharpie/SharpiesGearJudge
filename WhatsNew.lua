@@ -17,14 +17,15 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.9.0
-    { text = "Enchanters: Enchanting recipe tooltips show what the enchant is worth on your gear, your off-specs and your alts, and the best recipe for each slot gets a green arrow.", forever = true },
-    { text = "Enchanters: Projected Enchant says whether you know the recipe, with an option to suggest only enchants you can make.", forever = true },
-    { text = "Enchanters: gear that is no upgrade for you, your off-specs or your alts gets a disenchant mark in your bags.", forever = true },
-    { text = "Enchant suggestions follow the current game client: Minor Stats on a chest gives +1 to every stat (it was counted as +2), and the new Spirit (+4) and Intellect (+3) enchants are suggested.", forever = true },
-    { text = "The 9 Tier 1 sets (Arcanist, Felheart, Prophecy and the rest) now count their set bonuses, and set bonus estimates for the item level 65 sets are updated.", forever = true },
-    { text = "French client: bonus armor, Defense and weapon skill (+3), critical strike, spell critical strike, dodge, parry and block chance, and Mana and Health per 5 sec. on gear are now counted.", forever = true },
-    { text = "Talents: the level-up reminder no longer prints the next talent twice.", forever = true },
+    -- v3.9.1
+    { text = "Daylight UI Rich tooltips: Spell Impact and Roster section titles are boxed like the card's tags.", forever = true },
+    { text = "Enchanters: soulbound gear an alt could use now gets the disenchant mark too, since it can't be sent to that alt.", forever = true },
+    { text = "Gear for PvP no longer changes the weights of your PvE off-specs: an off-spec is scored for PvP only when it is a PvP profile itself.", forever = true },
+    { text = "The Protocol tab is now called Settings." },
+    { text = "RestedXP: the offer to turn off its Item Upgrade tips works again; it missed characters whose realm name the game reported empty." },
+    { text = "Talents: the Frost AoE Leveling note now says how to play it: one or two mobs at a time until 24, then the Blizzard pull.", forever = true },
+    { text = "Talents, PvP leveling: every PvP leveling build searched again on total leveling time, questing plus world fights. 24 builds are faster (Shaman 16-18%, Hunter 7-10%); Restoration Shaman PvP is removed.", forever = true },
+    { text = "PvP leveling weights are measured again from the new PvP builds and keep your talents' full effect up to 59.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

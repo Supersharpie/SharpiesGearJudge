@@ -8,7 +8,7 @@ What changed from the February posts:
 - Forever weights come from **sims and leveling models**, level by level from 10 to 59, not "community theorycrafting"
   and not "brackets 1-69".
 - New: Talents plugin, Roster, Spell Impact, Gear for PvP / Raiding, enchanter help, Pawn/Zygor answer kept.
-- UI: the window now has **Weapon Thunderdome, Receipt, Stat Logic, Spell Impact (Forever), Protocol**; the
+- UI: the window now has **Weapon Thunderdome, Receipt, Stat Logic, Spell Impact (Forever), Settings**; the
   Laboratory is its own plugin (the old guide mixed it up with the Thunderdome). The Receipt is 3 columns now.
 - Laboratory no longer claims SeventyUpgrades/SimC import (the core imports Pawn strings and Sixty Upgrades).
 
@@ -40,7 +40,7 @@ A: Yes. The tooltip warns when a swap drops a set bonus and shows when an item c
 A: Yes, one item at a time. Bind **Equip Best Upgrade** (Key Bindings → AddOns → Sharpie's Gear Judge) or type `/sgj equip`. Each press puts on the biggest upgrade in your bags (out of combat). Bind-on-Equip items ask first. It works in a macro, so it can go on a controller button.
 
 **Q: Can it track gear for my off-spec or my alts?**
-A: Yes. Tick off-specs in **Protocol → Off-Specs** and tooltips add an upgrade line for each. With dual spec, each spec keeps its own profile. The **Roster** plugin shows which of your alts an item upgrades.
+A: Yes. Tick off-specs in **Settings → Off-Specs** and tooltips add an upgrade line for each. With dual spec, each spec keeps its own profile. The **Roster** plugin shows which of your alts an item upgrades.
 ```
 
 ### Message 2
@@ -61,7 +61,7 @@ A: No. Era has no sockets, so gems and Meta Gems are TBC only. Everything else w
 A: From simulations, not guesswork. Level-60 damage and tank weights come from the wowsims Forever simulator, healers from a healing model with downranking. Leveling weights (10-59) come from leveling models for every spec: they ask "how much faster does this stat make me level?" with the talents, spells and quest/dungeon gear each spec really has at that level. Models are checked against Warcraft Logs.
 
 **Q: Which profile does it use?**
-A: Auto-Detect picks from your talents: Solo Leveling, Dungeon Leveling, PvP Leveling, AoE Farming, PvP or Raid. With the **Talents** plugin, the weights follow the build you picked. You can always pick one by hand in **Protocol → Character Profile**.
+A: Auto-Detect picks from your talents: Solo Leveling, Dungeon Leveling, PvP Leveling, AoE Farming, PvP or Raid. With the **Talents** plugin, the weights follow the build you picked. You can always pick one by hand in **Settings → Character Profile**.
 
 **Q: What is Spell Impact?**
 A: A tooltip block showing how an item changes your main spells now vs. with the item: damage or healing per second and per mana for casters, auto-attack and ability damage for melee. `/sgj spells` opens its tab, where you can add your own spells.
@@ -91,7 +91,7 @@ A: The **Cap Guardian** watches your gear. Hit and defense count for less as you
 A: Not live in game. The weights come from simulations and models run outside the game; in game SGJ scores your gear with them and adjusts for caps, talents and level.
 
 **Q: Can I use my own weights?**
-A: Yes. `/sgj import` takes a Pawn string (from SimC or WowSims) or a Sixty Upgrades export and makes a profile you can pick in Protocol.
+A: Yes. `/sgj import` takes a Pawn string (from SimC or WowSims) or a Sixty Upgrades export and makes a profile you can pick in Settings.
 ```
 
 ### Message 4
@@ -138,7 +138,7 @@ Your main spells with your current gear: per cast, per second and per mana. Drag
 ### Message 2
 
 ```
-## ⚙️ Protocol (Settings)
+## ⚙️ Settings
 • **Interface:** minimap button, tooltip on/off or Shift-only, bag upgrade arrows (on by default), loot roll arrows, loot upgrade alerts.
 • **Tooltip Visuals:** compact text, short stat names, stat colors, Spell Impact options.
 • **Comparison Logic:** Enchant Mode (raw stats / current enchants / project best), gems on TBC, and shield tanks ignoring two-handers.

@@ -69,7 +69,11 @@ end
 -- D5): from 50 each weight keeps only the leveling share of what the hooks changed, 1 at 50 down to 0 at 60. The cap
 -- keys (hit, defense, expertise) keep the hooked value: the caps belong to the player's stats, not to the talents.
 -- A class hook that scales hit as a talent multiplier (not a cap) fades it itself with MSC.LevelingHookShare.
+-- PvP leveling (2026-11-27): the <role>_PvP twin rows are pure PvP-build weights through 59 (no blend toward the 60
+-- profile), so while one is scored (MSC.LevelingHookFull, set around the class hooks in ApplyWeightPipeline) the hooks
+-- keep their full share.
 function MSC.LevelingHookShare(level)
+    if MSC.LevelingHookFull then return 1 end
     level = level or UnitLevel("player") or 1
     if level <= 50 then return 1 end
     return math.max(0, (60 - level) / 10)
@@ -98,13 +102,16 @@ function MSC:ApplyWeightPipeline(rawWeights, specKey)
     local capText = nil
     -- PvP (the option, or a PvP profile): caps use the player-vs-player
     -- targets while the class hooks run, then the PvP model goes on top.
-    local pvp = MSC.IsForever and (MSC.IsGearingForPvP() or MSC.IsPvPTalentBuild() or MSC.IsPvPProfile(specKey))
+    local pvp = MSC.IsForever and (MSC.IsGearingForPvP() or MSC.IsPvPTalentBuild() or MSC.IsPvPProfile(specKey)
+        or (MSC.OffSpecKey ~= nil and MSC.IsPvPProfile(MSC.OffSpecKey)))
     if pvp then MSC.PvPPipelineSpec = specKey or true end
     if MSC.CurrentClass and MSC.CurrentClass.ApplyScalers then
+        MSC.LevelingHookFull = MSC.UsesPvPTwin and MSC.UsesPvPTwin(specKey) or false
         local ok, w, t = pcall(MSC.CurrentClass.ApplyScalers, MSC.CurrentClass, finalWeights, specKey)
-        if not ok then MSC.PvPPipelineSpec = nil; error(w, 0) end
+        if not ok then MSC.PvPPipelineSpec = nil; MSC.LevelingHookFull = false; error(w, 0) end
         finalWeights, capText = w, t
         MSC.FadeLevelingHooks(finalWeights, rawWeights, specKey)
+        MSC.LevelingHookFull = false
     end
     -- Expertise (WoW Forever, 2026-11-17): own value from the profile's below-cap melee hit, with its dodge / parry caps
     if MSC.IsForever and MSC.ApplyForeverExpertise then MSC.ApplyForeverExpertise(finalWeights, rawWeights, specKey) end
@@ -166,10 +173,19 @@ function MSC:GetProfileWeights(profileName)
         return MSC.CachedWeightsBySpec[profileName]
     end
 
-    local rawWeights, specKey, mathSpec = MSC:LookupRawWeights(profileName)
+    -- Off-specs (2026-11-26): Gear for PvP and a Talents PvP build belong to the main profile, so while this one is built
+    -- the PvP checks look only at whether this profile is a PvP profile itself (MSC.OffSpecKey, Helpers.lua).
+    local savedOff = MSC.OffSpecKey
+    MSC.OffSpecKey = profileName
+    local rawWeights, specKey, mathSpec, finalWeights
+    local ok, err = pcall(function()
+        rawWeights, specKey, mathSpec = MSC:LookupRawWeights(profileName)
+        if rawWeights then finalWeights = (MSC:ApplyWeightPipeline(rawWeights, mathSpec or specKey)) end
+    end)
+    MSC.OffSpecKey = savedOff
+    if not ok then error(err, 0) end
     if not rawWeights then return nil end
 
-    local finalWeights = select(1, MSC:ApplyWeightPipeline(rawWeights, mathSpec or specKey))
     MSC.CachedWeightsBySpec[profileName] = finalWeights
     return finalWeights, specKey
 end
@@ -401,11 +417,13 @@ function MSC.WithSpecGroup(group, fn, ...)
     MSC.TalentCache, MSC.TraitTalentData, MSC.TalentCacheLoaded = cache, data, true
     MSC.EvalSpecGroup = group
     MSC.ManualSpec = MSC.GetManualSpec(group)
+    -- the other spec's hand-picked profile, for MSC.IsPvPWeightsActive (2026-11-26: it was never set)
+    MSC.EvalSpecKey = (MSC.ManualSpec and MSC.ManualSpec ~= "AUTO") and MSC.ManualSpec or nil
     MSC.TalentBuildRole = MSC.GetTalentBuildRoleForGroup and MSC.GetTalentBuildRoleForGroup(group) or nil
     local res = { pcall(fn, ...) }
     MSC.TalentCache, MSC.TraitTalentData, MSC.TalentCacheLoaded = saved.TalentCache, saved.TraitTalentData, saved.TalentCacheLoaded
     MSC.ManualSpec, MSC.TalentBuildRole, MSC.CachedSpecConfidence = saved.ManualSpec, saved.TalentBuildRole, saved.CachedSpecConfidence
-    MSC.EvalSpecGroup = nil
+    MSC.EvalSpecGroup, MSC.EvalSpecKey = nil, nil
     if not res[1] then
         if MSC.Debug then print("|cff00ccffSGJ|r other-spec error:", res[2]) end
         return nil
@@ -662,6 +680,15 @@ end
 local function ParseLevelingBand(key)
     local role, lo, hi = string.match(key, "^(Leveling.-)_(%d+)_(%d+)$")
     return role, tonumber(lo), tonumber(hi)
+end
+
+-- True when a leveling profile key is scored on its <role>_PvP twin row (PvP weights on and the class has the twin);
+-- MSC.LevelingHookShare keeps the full talent hooks then (2026-11-27).
+function MSC.UsesPvPTwin(specKey)
+    if not (MSC.IsForever and type(specKey) == "string") then return false end
+    local role = ParseLevelingBand(specKey) or (specKey:find("^Leveling") and specKey) or nil
+    local cr = role and MSC.LevelingCurveRole(MSC.CurrentClass, role)
+    return (cr and cr:find("_PvP$")) and true or false
 end
 
 -- Forever per-spec curves (Classes/Forever/Curves/<Class>_Curves.lua): an ordered

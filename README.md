@@ -14,25 +14,36 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 
 | Class | Solo leveling | Dungeon leveling | PvP leveling | Raid (60) |
 |---|---|---|---|---|
-| Warrior | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Hunter | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Paladin | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Mage | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Warlock | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Priest | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
-| Druid | ✅ Done (3.8.1) | ✅ Done (3.4.4) | 🔄 In progress | ⏸️ Waiting |
+| Warrior | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Rogue | ✅ Done (3.4.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Hunter | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Paladin | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Mage | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Warlock | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Priest | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Shaman | ✅ Done (3.4.3) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
+| Druid | ✅ Done (3.8.1) | ✅ Done (3.4.4) | ✅ Done (3.9.1) | ⏸️ Waiting |
 
 ✅ done on real leveling gear · 🔄 in progress · ⏳ planned · ⏸️ waiting for level-60 gear and raid data. Builds not done yet still work: they use the earlier gear estimate.
 
-**PvP leveling pass (in progress):** every class's PvP leveling build is being searched again, now judged on the world fights you run into while questing. Druid, Mage, Hunter, Rogue and Warrior are searched; Shaman is finishing, then Priest, Paladin and Warlock. The PvP leveling builds released so far don't use this judging yet, so every class is back to in progress; the current builds stay in use until each class ships.
+**PvP leveling pass (done, 3.9.1):** every class's PvP leveling build was searched again, judged on total leveling time: questing plus the world fights you run into, against opponents in the same leveling gear.
 
 ## 🔥 What's New
 
 > Covers Gear Judge and its plugins (Talents, Roster, Roadmap, Laboratory, XP). Plugin changes start with the plugin's name, and each heading lists the plugin versions released with it.
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
+
+### 3.9.1 (Talents 1.4.8)
+
+- **Talents, PvP leveling:** every PvP leveling build searched again on total leveling time, questing plus world fights. 24 builds are faster: Shaman 16-18%, Hunter 7-10%, Rogue 2-6%, the others up to 5%. Restoration Shaman PvP is removed.
+- **PvP leveling weights:** measured again from each new PvP build; they stay PvP weights up to 59, and your talents keep their full effect on them.
+- **Talents, Frost AoE Leveling note:** says how to play it: one or two mobs at a time until 24 (Arcane Missiles or Frostbolt), then the Blizzard pull once Improved Blizzard has all 3 points (was 22). Talent order unchanged.
+- **Daylight UI Rich tooltips:** Spell Impact and Roster section titles are boxed like the card's tags.
+- **Fixed (enchanters):** soulbound gear an alt could use now gets the disenchant mark too, since it can't be sent to that alt.
+- **Changed:** the Protocol tab is now called **Settings**.
+- **Fixed (RestedXP):** the offer to turn off its Item Upgrade tips works again; it missed characters whose realm name the game reported empty.
+- **Fixed:** Gear for PvP no longer changes the weights of your PvE off-specs; an off-spec is scored for PvP only when it is a PvP profile itself. Low-Attack-Power tank profiles now get the PvP adjustments.
 
 ### 3.9.0 (Talents 1.4.7, Roster 1.2.1)
 
@@ -136,7 +147,7 @@ Hover any item: world drops, vendor goods, quest rewards, dungeon loot or AH lis
 
 ### 🎒 Bag, Loot, Quest & Profession Overlays
 
-Turn the bag and loot arrows and the loot alerts on or off in **Protocol → Interface Options**.
+Turn the bag and loot arrows and the loot alerts on or off in **Settings → Interface Options**.
 
 - **Bag upgrade arrows** (**on** by default): green and red arrows on bag items. Works with Blizzard bags, **Bagnon**, **ElvUI**, **GudaBags**, **DaylightUI** (bags and bank, WoW Forever) and **XLoot**. Baganator: the arrow is a **Sharpie's Gear Judge** widget in Baganator's *Icons* tab, and SGJ can also be picked under *Upgrade detection* for the `upgrade` search.
 - **Fast bag arrows** (on when bag arrows are enabled): quick single-slot scoring, with a full check for set pieces and weapons.
@@ -203,7 +214,7 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 
 ### 👥 Off-Specs & Dual Specialization
 
-- **Off-specs:** tick the profiles a character also plays in **Protocol → Off-Specs** (saved per character), and tooltips show an *(off-spec)* upgrade line for each.
+- **Off-specs:** tick the profiles a character also plays in **Settings → Off-Specs** (saved per character), and tooltips show an *(off-spec)* upgrade line for each.
 - Off-spec upgrades are judged against the **best gear you own** for that profile: what you wear, your bags, and your bank as seen on your last visit. A Feral Druid sees whether a healing drop beats the healing set in the bank, not the cat gear it's wearing.
 - Leveling profiles follow your level, and each profile is scored with the talents you last played it with.
 - **Dual Specialization (WoW Forever, Season of Discovery, TBC Anniversary):** each spec keeps its own scoring profile (and Gear for PvP on Forever).
@@ -215,7 +226,7 @@ Your active profile, your cap rings (hit, defense and the like, picked for your 
 | Command                 | Action                                                              |
 | ----------------------- | ------------------------------------------------------------------- |
 | `/sgj` or `/judge`      | Open or close the Gear Judge window                                 |
-| `/sgj config`           | Open the settings (**Protocol**). `/sgj options` works too.         |
+| `/sgj config`           | Open **Settings**. `/sgj options` works too.                        |
 | `/sgj import`           | Import weights (Pawn strings, Sixty Upgrades)                       |
 | `/sgj simple`           | Toggle shortened stat names in tooltips                             |
 | `/sgj colors`           | Toggle stat colors in tooltips                                      |
@@ -235,9 +246,9 @@ Gear Judge also has a page under **Game Menu → Options → AddOns** to open th
 
 ---
 
-## ⚙️ Settings Guide (Protocol)
+## ⚙️ Settings Guide
 
-Open **Protocol** from the Gear Judge window or with `/sgj config`.
+Open **Settings** from the Gear Judge window or with `/sgj config`.
 
 ### Interface Options
 
@@ -291,8 +302,8 @@ Your own racials are always applied.
 Import **Pawn strings** (from SimC or WowSims) or **Sixty Upgrades** exports:
 
 1. Copy your Pawn string or Sixty Upgrades export.
-2. Type `/sgj import` in game (or use **Import Pawn String** in Protocol).
-3. Paste and confirm. SGJ creates a custom profile you can select in Protocol.
+2. Type `/sgj import` in game (or use **Import Pawn String** in Settings).
+3. Paste and confirm. SGJ creates a custom profile you can select in Settings.
 
 ---
 
@@ -355,7 +366,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.9.0 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.9.1 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

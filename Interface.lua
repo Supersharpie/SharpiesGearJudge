@@ -158,7 +158,7 @@ local function RequestUpdate()
     end
 end
 
--- A Protocol option that changes scores (profile, enchant/gem modes, buff
+-- A Settings option that changes scores (profile, enchant/gem modes, buff
 -- assumptions, shield-tank 2H rule, Gear for Raiding) was changed: drop the
 -- cached scores and redraw every bag arrow, Baganator's included. Only called
 -- from those settings handlers, never from the per-BAG_UPDATE path.
@@ -242,7 +242,7 @@ MSC.RegisteredTabs = {
     { id=1, icon="Interface\\Icons\\INV_Sword_04", name=MSC.L["Weapon Thunderdome"], funcName="InitLabView", view="ViewLab", update="UpdateLabCalc" },
     { id=2, icon="Interface\\Icons\\INV_Misc_Note_02", name=MSC.L["Receipt"], funcName="InitReceiptView", view="ViewReceipt", update="UpdateReceipt" },
     { id=3, icon="Interface\\Icons\\Spell_Holy_MindVision", name=MSC.L["Stat Logic"], funcName="InitLogicView", view="ViewLogic", update="UpdateLogic" },
-    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name=MSC.L["Protocol"], funcName="InitSettingsView", view="ViewSettings" }
+    { id=4, icon="Interface\\Icons\\INV_Gizmo_02", name=MSC.L["Settings"], funcName="InitSettingsView", view="ViewSettings" }
 }
 
 if not MSC.GetInspectSpec then function MSC.GetInspectSpec(unit) return "Default" end end
@@ -1512,10 +1512,21 @@ function MSC.SetBagArrow(button, overlayType, place)
 
     button.SGJ_OverlayFrame:SetFrameLevel(button:GetFrameLevel() + 10)
     button.SGJ_Overlay:SetTexture(MSC.VerdictTexture(overlayType))
-    -- the disenchant mark is a full square icon: a little smaller than the arrows
+    -- The disenchant mark is a square spell icon: the arrows' size, its own dark icon border cropped off, and a black
+    -- frame behind it so it stands out on the item's icon (2026-11-26, in game: at 0.75 size it was hard to see).
     button.SGJ_OverlaySize = button.SGJ_OverlaySize or button.SGJ_Overlay:GetWidth()
-    local sz = (overlayType == "DE") and math.floor(button.SGJ_OverlaySize * 0.75 + 0.5) or button.SGJ_OverlaySize
+    local de = overlayType == "DE"
+    local sz = button.SGJ_OverlaySize
     button.SGJ_Overlay:SetSize(sz, sz)
+    if de then button.SGJ_Overlay:SetTexCoord(0.08, 0.92, 0.08, 0.92) else button.SGJ_Overlay:SetTexCoord(0, 1, 0, 1) end
+    if de and not button.SGJ_OverlayBG then
+        local bg = button.SGJ_OverlayFrame:CreateTexture(nil, "OVERLAY", nil, 6)
+        bg:SetColorTexture(0, 0, 0, 1)
+        bg:SetPoint("TOPLEFT", button.SGJ_Overlay, "TOPLEFT", -1, 1)
+        bg:SetPoint("BOTTOMRIGHT", button.SGJ_Overlay, "BOTTOMRIGHT", 1, -1)
+        button.SGJ_OverlayBG = bg
+    end
+    if button.SGJ_OverlayBG then button.SGJ_OverlayBG:SetShown(de) end
     button.SGJ_Overlay:Show()
     button.SGJ_OverlayFrame:Show()
 end
@@ -1866,6 +1877,7 @@ BagHookFrame:SetScript("OnEvent", function(self, event)
                 if verdict == nil then return nil end
                 if not verdict then return false end
                 arrow:SetTexture(MSC.VerdictTexture(verdict))
+                if verdict == "DE" then arrow:SetTexCoord(0.08, 0.92, 0.08, 0.92) else arrow:SetTexCoord(0, 1, 0, 1) end
                 return true
             end, function(itemButton)
                 local arrow = itemButton:CreateTexture(nil, "OVERLAY")
@@ -3106,7 +3118,7 @@ function MSC.InitSettingsView(parent)
     navLine:SetPoint("TOPRIGHT"); navLine:SetPoint("BOTTOMRIGHT")
 
     local navTitle = nav:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    navTitle:SetPoint("TOPLEFT", 14, -12); navTitle:SetText(MSC.L["Protocol"]); MSC.StyleHeading(navTitle, "Gold", SETTINGS_NAV_W - 28)
+    navTitle:SetPoint("TOPLEFT", 14, -12); navTitle:SetText(MSC.L["Settings"]); MSC.StyleHeading(navTitle, "Gold", SETTINGS_NAV_W - 28)
     local navSub = nav:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     navSub:SetPoint("TOPLEFT", navTitle, "BOTTOMLEFT", 0, -9); navSub:SetText(MSC.L["Jump to a section"]); navSub:SetTextColor(0.6, 0.6, 0.6)
 
@@ -3389,7 +3401,7 @@ function MSC.InitSettingsView(parent)
         end)
         -- PvP model over every profile (MSC.ApplyForeverPvP); also on the
         -- main window and offered on PvP realms.
-        local cbPvP = CreateCheck(MSC.L["Gear for PvP"], "GearForPvP", MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."], cbRaidPrep, 0, -5,
+        local cbPvP = CreateCheck(MSC.L["Gear for PvP"], "GearForPvP", MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 4% spell). PvP profiles always use this."], cbRaidPrep, 0, -5,
             function() return MSC.IsGearingForPvP(MSC.GetActiveSpecGroup()) end)
         cbPvP:HookScript("OnClick", function(self)
             MSC.SetGearForPvP(self:GetChecked())
@@ -3397,7 +3409,7 @@ function MSC.InitSettingsView(parent)
         end)
         cbPvP:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."], nil, nil, nil, nil, true)
+            GameTooltip:SetText(MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 4% spell). PvP profiles always use this."], nil, nil, nil, nil, true)
             if MSC.HasDualSpec() then
                 GameTooltip:AddLine(string.format(MSC.L["Saved for each spec; this sets it for your %s spec."], MSC.SpecGroupName(MSC.GetActiveSpecGroup())), 0.6, 0.8, 1, true)
             end
@@ -3735,7 +3747,7 @@ function MSC.ToggleMainMenu()
         pvp:SetScript("OnClick", function(self) MSC.SetGearForPvP(self:GetChecked()) end)
         pvp:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_BOTTOM"); GameTooltip:SetText(MSC.L["Gear for PvP"], 1, 1, 1)
-            GameTooltip:AddLine(MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 3% spell). PvP profiles always use this."], nil, nil, nil, true)
+            GameTooltip:AddLine(MSC.L["Scores gear for fighting other players at every level: Stamina, armor and burst count for more, hit stays at the player-vs-player caps (5% melee, 4% spell). PvP profiles always use this."], nil, nil, nil, true)
             if MSC.HasDualSpec() then
                 GameTooltip:AddLine(string.format(MSC.L["Saved for each spec; this sets it for your %s spec."], MSC.SpecGroupName(MSC.GetActiveSpecGroup())), 0.6, 0.8, 1, true)
             end

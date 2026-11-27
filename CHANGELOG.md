@@ -1,5 +1,31 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.9.1
+
+### 🔧 PvP Leveling Weights (WoW Forever)
+- Every class's PvP leveling weights are measured again from its new PvP leveling build, on quest gear and on best gear, and stay pure PvP weights up to 59 (they no longer slide toward the level-60 profile from 50).
+- With PvP weights on, your talents keep their full effect on the weights at 51-59 (before, it faded out from 50 toward the level-60 profile).
+
+### ✨ Daylight UI Rich tooltips
+- Spell Impact and Roster section titles are drawn boxed, like the card's tags. If a Daylight UI update changes what this uses, they fall back to plain titles.
+
+### 🐛 Fixed (Enchanters)
+- Soulbound gear an alt could use is marked safe to disenchant: alts only count for items that can still be sent to them (a soulbound Tear of Grief stayed unmarked).
+- The disenchant mark in your bags is as big as the arrows, with a black frame, so it's easier to see on the item's icon.
+- Tooltips of items marked safe to disenchant no longer flash with Daylight UI's Rich tooltips: the line is drawn with Gear Judge's own lines, in one pass.
+
+### 🔧 Changed
+- The Protocol tab is now called Settings, in every language.
+
+### 🐛 Fixed (RestedXP)
+- The offer to turn off RestedXP's Item Upgrade tips shows again. It looked the character up by name and realm, and missed it when the game reported an empty realm name (WoW Forever) or the RestedXP profile had no saved changes.
+
+### 🐛 Fixed (Gear for PvP, WoW Forever)
+- Gear for PvP, or a PvP build picked in Talents, no longer puts PvP weights on your PvE off-specs (dungeon, raid, solo leveling). An off-spec gets them only when it is a PvP profile itself.
+- Tank profiles with little Attack Power and no spell power now get the PvP adjustments; they were skipped.
+- Your other spec's hand-picked PvP profile now also uses the PvP hit targets.
+- The Gear for PvP tooltip says 4% spell hit, the target it uses (it said 3%).
+
 ## 🚀 v3.9.0
 
 ### ✨ Enchanters (WoW Forever)

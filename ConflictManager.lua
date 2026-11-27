@@ -1,17 +1,44 @@
 local _, MSC = ...
 
+-- RestedXP keeps its settings in an AceDB (RXPSettings). AceDB keys the character as "Name - Realm" with the realm read
+-- when AceDB loaded; on Forever GetRealmName() can be "" then and filled later (or the reverse), so match on the name
+-- part too. A missing profile entry means AceDB's "Default" profile; a missing value means RXP's default (on).
+local function RXPProfile()
+    local sv = RXPSettings
+    if type(sv) ~= "table" or type(sv.profileKeys) ~= "table" then return nil end
+    local name = UnitName("player")
+    local realm = GetRealmName() or ""
+    local key = sv.profileKeys[name .. " - " .. realm]
+    if not key then
+        local prefix = name .. " - "
+        for k, v in pairs(sv.profileKeys) do
+            if k:sub(1, #prefix) == prefix and (realm == "" or k == prefix or k:sub(#prefix + 1) == realm) then key = v; break end
+        end
+        if not key then
+            for k, v in pairs(sv.profileKeys) do if k:sub(1, #prefix) == prefix then key = v; break end end
+        end
+    end
+    key = key or "Default"
+    sv.profiles = sv.profiles or {}
+    return sv.profiles[key], key
+end
+
+local function RXPItemUpgradesOn()
+    local p = RXPProfile()
+    if not p then return true end -- no saved changes: RXP defaults have Tips and Item Upgrade on
+    return p.enableItemUpgrades ~= false and p.enableTips ~= false
+end
+
 StaticPopupDialogs["SGJ_DISABLE_RXP_GEAR"] = {
     text = MSC.L["|cff00FF00Sharpie's Gear Judge|r\n\nI see RestedXP is active.\n\nIt is currently showing its own gear tips.\n\nDo you want me to disable their **Item Upgrade** setting?"],
-    button1 = MSC.L["Yes, Disable & Reload"], 
+    button1 = MSC.L["Yes, Disable & Reload"],
     button2 = MSC.L["No, Keep Both"],
-    
+
     OnAccept = function()
-        local myKey = UnitName("player") .. " - " .. GetRealmName()
-        if RXPSettings and RXPSettings.profileKeys then
-            local profileName = RXPSettings.profileKeys[myKey]
-            if profileName and RXPSettings.profiles and RXPSettings.profiles[profileName] then
-                RXPSettings.profiles[profileName].enableItemUpgrades = false; ReloadUI()
-            end
+        local p, key = RXPProfile()
+        if key then
+            if not p then p = {}; RXPSettings.profiles[key] = p end
+            p.enableItemUpgrades = false; ReloadUI()
         end
     end, timeout = 0, whileDead = true, hideOnEscape = false, preferredIndex = 3,
 }
@@ -47,12 +74,8 @@ local function CheckForConflicts()
     if SGJ_Settings and SGJ_Settings.DisableConflictCheck then return end
 
     if C_AddOns.IsAddOnLoaded("RestedXP") or C_AddOns.IsAddOnLoaded("RXPGuides") then
-        if RXPSettings and RXPSettings.profileKeys then
-            local myKey = UnitName("player") .. " - " .. GetRealmName()
-            local profileName = RXPSettings.profileKeys[myKey]
-            if profileName and RXPSettings.profiles and RXPSettings.profiles[profileName] and RXPSettings.profiles[profileName].enableItemUpgrades ~= false then
-                StaticPopup_Show("SGJ_DISABLE_RXP_GEAR"); return
-            end
+        if type(RXPSettings) == "table" and type(RXPSettings.profileKeys) == "table" then
+            if RXPItemUpgradesOn() then StaticPopup_Show("SGJ_DISABLE_RXP_GEAR"); return end
         end
     end
     local Zygor = ZGV or ZygorGuidesViewer

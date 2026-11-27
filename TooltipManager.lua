@@ -225,9 +225,36 @@ function Rich.Hint(tip, text)
     tip:AddLine(text, 0.6, 0.6, 0.6, true)
     Mark(tip, { kind = "hint", text = text })
 end
+-- Boxed section titles (2026-11-26, user): Daylight UI has no body-tag piece in its plugin API and didn't answer a
+-- request for one, so its card is taught one private piece kind, drawn with its own chip row (Panel.Tags, what compare
+-- cards use for their change chips). Every internal it touches is checked first; when any is missing (a Daylight
+-- update), titles stay the plain "section" piece. Turned off with SGJ_Settings.DaylightBoxedTitles = false.
+local BOX_KIND = "sgj_boxtitle"
+local boxReady -- nil: not tried yet, false: not possible, true: installed
+local function InstallBoxedTitles()
+    if boxReady ~= nil then return boxReady end
+    boxReady = false
+    local ns = DuiTooltipNs()
+    local F, Pn, It = ns and ns.RichForeign, ns and ns.RichPanel, ns and ns.RichItems
+    if type(F) ~= "table" or type(F.Piece) ~= "function" or type(Pn) ~= "table" or type(Pn.Tags) ~= "function"
+        or type(It) ~= "table" or type(It.Tag) ~= "function" then return false end
+    local orig = F.Piece
+    F.Piece = function(p, piece)
+        if type(piece) == "table" and piece.kind == BOX_KIND then
+            local ok = pcall(Pn.Tags, p, { It.Tag(piece.text, piece.color or { 1, 0.82, 0 }) })
+            if ok then return end
+            return orig(p, { kind = "section", text = piece.text })
+        end
+        return orig(p, piece)
+    end
+    boxReady = true
+    return true
+end
+
 function Rich.Section(tip, title)
     tip:AddLine(title, 1, 0.82, 0)
-    Mark(tip, { kind = "section", text = title })
+    local boxed = not (SGJ_Settings and SGJ_Settings.DaylightBoxedTitles == false) and InstallBoxedTitles()
+    Mark(tip, { kind = boxed and BOX_KIND or "section", text = title })
 end
 -- Daylight UI draws a plugin gap 4 px tall (DaylightUI_Tooltip Rich/Foreign.lua GAP): two make the room before a section
 function Rich.Gap(tip)

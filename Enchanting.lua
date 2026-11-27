@@ -314,7 +314,7 @@ end
 -- ---------------------------------------------------------------
 -- Gear you could disenchant without losing anything: uncommon or better armor or
 -- weapons, soulbound (BoE items can sell, unless the option says otherwise), not an
--- upgrade for your active spec, your ticked off-specs or any alt Roster knows.
+-- upgrade for your active spec, your ticked off-specs or (if it can still be sent) any alt Roster knows.
 local deCache = {}
 function E.ClearDisenchantCache() wipe(deCache) end
 
@@ -357,7 +357,9 @@ function E.SafeToDisenchant(link)
                 end
             end
         end
-        if v and MSC.RosterUpgradesFor then
+        -- Alts only count when the item can still reach them (Roster's rule): not Bind on Pickup (1) or a quest item (4),
+        -- which are bound to you (2026-11-26, in game: a soulbound Tear of Grief stayed unmarked because an alt could use it).
+        if v and MSC.RosterUpgradesFor and bindType ~= 1 and bindType ~= 4 then
             local ok, ups = pcall(MSC.RosterUpgradesFor, link)
             if ok and type(ups) == "table" and #ups > 0 then v = false end
         end
@@ -382,21 +384,39 @@ end
 
 -- Item tooltips: one line when the item is safe to disenchant (runs after Gear Judge's own lines, which are
 -- registered first in TooltipManager.lua).
-local function OnItemTooltip(tip)
-    if not tip.GetItem or not E.ShowDisenchant() then return end
-    local ok, _, link = pcall(tip.GetItem, tip)
-    if not ok or not link or drawnFor[tip] == link then return end
-    if IsEquippedItem and IsEquippedItem(link) then return end
-    if not E.SafeToDisenchant(link) then return end
-    drawnFor[tip] = link
-    local text = L["Safe to disenchant: no upgrade for you, your off-specs or your alts."]
-    if MSC.Rich and MSC.Rich.On(tip) then MSC.Rich.Hint(tip, text) else tip:AddLine(text, 0.6, 0.8, 1, true) end
-    if tip:IsVisible() then tip:Show() end   -- post-calls run before the game shows the tooltip (never force it)
+-- Adds the line once per tooltip; true when it was added now. Gear Judge's own tooltip pass calls this before its
+-- final resize (Judge.lua), so the tooltip is laid out once (2026-11-26, in game: a second tip:Show() from this
+-- file's own post-call made tooltips of marked items flash while the bag refreshed them).
+-- Already on the tooltip? Read from its lines, not remembered: Daylight UI refills an item's tooltip every 0.2 s and
+-- rebuilds its card whenever the lines differ from the last fill, so every fill must end with exactly one copy.
+local function HasLine(tip, text)
+    local name = tip.GetName and tip:GetName()
+    if not name or not tip.NumLines then return false end
+    for i = 2, tip:NumLines() or 0 do
+        local fs = _G[name .. "TextLeft" .. i]
+        local t = fs and fs:GetText()
+        if t and not (MSC_IsSecret and MSC_IsSecret(t)) and t == text then return true end
+    end
+    return false
 end
+
+function E.AddDisenchantLine(tip, link)
+    if not tip or not link or not E.ShowDisenchant() then return false end
+    if IsEquippedItem and IsEquippedItem(link) then return false end
+    if not E.SafeToDisenchant(link) then return false end
+    local text = L["Safe to disenchant: no upgrade for you, your off-specs or your alts."]
+    if HasLine(tip, text) then return false end
+    if MSC.Rich and MSC.Rich.On(tip) then MSC.Rich.Hint(tip, text) else tip:AddLine(text, 0.6, 0.8, 1, true) end
+    return true
+end
+
 
 local function OnTooltip(tip, data)
     if tip ~= GameTooltip and tip ~= ItemRefTooltip then return end
-    pcall(OnItemTooltip, tip)
+    -- Item tooltips: no line from here. This post-call is registered at load, before Gear Judge's own (PLAYER_LOGIN),
+    -- so it ran first: its line and tip:Show() made Daylight UI's Rich card build before Gear Judge's lines were there
+    -- and build again after, on every 0.2 s refill (2026-11-26, in game: marked items' tooltips flashed). Judge.lua
+    -- adds the line in its own pass (E.AddDisenchantLine), also for gear it doesn't score.
     if SGJ_Settings and SGJ_Settings.EnchantRecipeTips == false then return end
     local spell = SpellOf(tip, data)
     if not spell or drawnFor[tip] == spell or not E.EnchantForSpell(spell) then return end

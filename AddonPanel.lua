@@ -7,7 +7,7 @@ local L = MSC.L
 -- A small launcher page in the game's own Options > AddOns list, for players
 -- who don't know the slash commands or have hidden the minimap button.
 
-local SETTINGS_TAB = 4 -- "Protocol" in the main window's tab list
+local SETTINGS_TAB = 4 -- "Settings" in the main window's tab list
 
 local function CloseBlizzardOptions()
     if SettingsPanel and SettingsPanel:IsShown() then HideUIPanel(SettingsPanel) end

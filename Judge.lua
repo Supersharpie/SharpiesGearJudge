@@ -995,6 +995,11 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
 
     -- [[ 4. VALIDATE ITEM (synchronous -- no item data needed) ]]
     if not link or not IsEquippableItem(link) or not MSC.IsItemUsable(link) then
+        -- gear this character can't wear can still be safe to disenchant (enchanters)
+        if link and (tooltip == GameTooltip or tooltip == ItemRefTooltip) and MSC.Enchanting and MSC.Enchanting.AddDisenchantLine then
+            local ok, added = pcall(MSC.Enchanting.AddDisenchantLine, tooltip, link)
+            if ok and added and tooltip:IsVisible() then tooltip:Show() end
+        end
         return
     end
 
@@ -1539,7 +1544,12 @@ function MSC.EvaluateAndDrawTooltip(tooltip)
 
     MSC.IsCalculating = false
     if not status then geterrorhandler()(err) end
-    
+
+    -- Enchanters: the "safe to disenchant" line goes in before the resize below, so the tooltip is laid out once
+    if (tooltip == GameTooltip or tooltip == ItemRefTooltip) and MSC.Enchanting and MSC.Enchanting.AddDisenchantLine then
+        pcall(MSC.Enchanting.AddDisenchantLine, tooltip, link)
+    end
+
     -- [[ 8. THE MAGIC SNAP ]]
     if tooltip:IsVisible() then
         tooltip:Show()

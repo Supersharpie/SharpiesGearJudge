@@ -529,7 +529,7 @@ end
 -- leveling, and what raiding at 60 needs (level-63 bosses). From level 50 the
 -- target slides linearly toward the raid one, so players gearing for raids
 -- keep valuing hit and defense past the leveling target. "Gear for raiding"
--- (Protocol, on by default) can turn the slide off for pure levelers.
+-- (Settings, on by default) can turn the slide off for pure levelers.
 MSC.ForeverCaps = {
     RAID_BLEND_START = 50,
     MELEE = { leveling = 5, raid = 9 },   -- yellow/2H miss vs same level / vs +3 boss
@@ -1661,7 +1661,10 @@ function MSC.IsPvPProfile(specKey)
 end
 
 -- Per spec (MSC.GetSpecSetting): group defaults to the spec being scored.
+-- While an off-spec is scored (MSC.OffSpecKey, MSC:GetProfileWeights) the option belongs to the main profile:
+-- an off-spec is PvP only when it is a PvP profile itself (2026-11-26).
 function MSC.IsGearingForPvP(group)
+    if group == nil and MSC.OffSpecKey then return false end
     return MSC.IsForever and SGJ_Settings and MSC.GetSpecSetting("GearForPvP", group) == true or false
 end
 
@@ -1687,13 +1690,16 @@ end
 -- PvP profile in use (or being built by the weight pipeline).
 function MSC.IsPvPWeightsActive()
     if not MSC.IsForever then return false end
+    -- An off-spec being scored is judged by its own profile only.
+    if MSC.OffSpecKey then return MSC.PvPPipelineSpec ~= nil or MSC.IsPvPProfile(MSC.OffSpecKey) end
     if MSC.IsGearingForPvP() or MSC.PvPPipelineSpec or MSC.IsPvPTalentBuild() then return true end
     -- The other spec (MSC.WithSpecGroup) is judged by its own profile.
     return MSC.IsPvPProfile(MSC.EvalSpecGroup and MSC.EvalSpecKey or MSC.CachedSpecKey)
 end
 
--- A PvP build picked in the Talents plugin (MSC.SetTalentBuildRole).
+-- A PvP build picked in the Talents plugin (MSC.SetTalentBuildRole). It belongs to the main profile, not an off-spec.
 function MSC.IsPvPTalentBuild()
+    if MSC.OffSpecKey then return false end
     return (MSC.TalentBuildRole and MSC.TalentBuildRole.pvp) and true or false
 end
 
@@ -1738,7 +1744,8 @@ function MSC.ApplyForeverPvP(weights, level, class)
     local physical = apW * PvPLevelValue(P.AP_EQ, level) / 100
     local spell = MaxWeight(weights, PVP_SPELL_KEYS) * PvPLevelValue(P.SP_EQ, level) / 100
     local healing = (weights["ITEM_MOD_SPELL_HEALING_DONE_SHORT"] or 0) * PvPLevelValue(P.HEAL_EQ, level) / 100
-    local family, perPct = "damage", (apW >= 0.5) and physical or spell
+    -- Physical rows (AP worth 0.5+), or a row with no spell power at all (a low-AP tank), price output from AP
+    local family, perPct = "damage", (apW >= 0.5 or spell <= 0) and physical or spell
     if healing > math_max(physical, spell) then family, perPct = "healing", healing end
     if perPct <= 0 then return end
 
