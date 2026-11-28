@@ -34,6 +34,11 @@ We're re-measuring every leveling build and its stat weights on **real leveling 
 >
 > **WoW Forever players:** Blizzard is still changing classes with hotfixes and patches, so builds, talent orders and weights change often too. Each update brings them in line with the latest changes, and some can be a step behind for a few days after a patch.
 
+### 3.9.3 (Talents 1.4.10)
+
+- **Talents, Mage:** the AoE model is reworked (Permafrost, Frost Nova cycles, Ice Barrier, Cone of Cold, Ice Block). Frost: AoE Leveling and Frost: AoE PvP Leveling take their points in a better order, 6-10% faster; Arcane: AoE Leveling and Arcane: AoE PvP Leveling are retired (about 47% slower).
+- **Mage weights:** AoE leveling weights follow the new model and talent orders.
+
 ### 3.9.2 (Talents 1.4.9, Roadmap 3.4.2, Roster 1.2.2)
 
 - **Talents, Druid:** Balance and Restoration builds searched again for the November 25 Balance changes (Starlight Wrath, Moon and Stars, Improved Starfire at 2 points, Dreamstate); the old ones reset your talents. Balance: Raid and Hurricane Farming are hidden for now.
@@ -374,7 +379,7 @@ Set bonuses, meta requirements, weapon specialization, and raid-buff-adjusted ca
 ## Credits
 
 - **Author:** SuperSharpie
-- **Version:** 3.9.2 (Classic Era, TBC Anniversary & WoW Forever)
+- **Version:** 3.9.3 (Classic Era, TBC Anniversary & WoW Forever)
 - **GitHub:** [Supersharpie/SharpiesGearJudge](https://github.com/Supersharpie/SharpiesGearJudge)
 - **Discord:** [Join the Theorycrafting Hub](https://discord.gg/aYmhmtGxYs)
 - **Feedback:** Found a weight that feels off? Drop by the Discord or open an issue on GitHub!

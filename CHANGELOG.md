@@ -1,5 +1,11 @@
 # Sharpie's Gear Judge - Version History
 
+## 🚀 v3.9.3
+
+### 🔧 Mage Weights (WoW Forever)
+- AoE leveling weights (solo and PvP) are measured again on the reworked Frost AoE model and the new Frost: AoE talent orders: Permafrost's slow by rank, Frost Nova and Blink timed per cooldown, Ice Barrier in full, Cone of Cold as a choice with its mana, Ice Block against deaths, and lower-level mobs while that levels faster.
+- Hp5 on those weights is capped at Spell Power's value and never above Stamina (it reached 70 at level 34, from eating back between the pre-40 pulls).
+
 ## 🚀 v3.9.2
 
 ### 🔧 Druid Weights (WoW Forever, November 25 hotfix)

@@ -17,13 +17,9 @@ local L = MSC.L
 local DISCORD_URL = "https://discord.gg/aYmhmtGxYs"
 
 local WHATS_NEW = {
-    -- v3.9.2
-    { text = "Talents, Druid: Balance and Restoration builds searched again for the November 25 Balance changes (Starlight Wrath, Moon and Stars, Improved Starfire at 2 points, Dreamstate). The old ones reset your talents.", forever = true },
-    { text = "Druid Balance and Restoration weights follow the new talents.", forever = true },
-    { text = "Talents, Hunter: Summon Hawk's +5% crit from the November 25 hotfix is in. Marksmanship: Melee Dungeon and Beast Mastery: Dungeon Leveling take their points in a better order, and the Hunter dungeon weights follow it.", forever = true },
-    { text = "Hunter: with Summon Hawk, Crit and Hit count less on the shooting leveling weights (the hawks don't use them).", forever = true },
-    { text = "Enchants: Projected Enchant names the bracer or boots recipe on those slots (it showed the chest one), and \"Safe to disenchant\" no longer shows on what you wear." },
-    { text = "Roadmap: full loot for Krol'dok Stronghold, The Drowned City, Alcaz Prison and Blackmaw Hold, and The Shaper's Terrace is added.", forever = true },
+    -- v3.9.3
+    { text = "Talents, Mage: the AoE model is reworked (Permafrost, Frost Nova cycles, Ice Barrier, Cone of Cold, Ice Block). Frost: AoE Leveling and Frost: AoE PvP Leveling take their points in a better order, 6-10% faster; the two Arcane AoE builds are retired.", forever = true },
+    { text = "Mage AoE leveling weights follow the new model and talent orders.", forever = true },
 }
 
 -- "3.1.0-Forever" -> "3.1.0", so every edition shares one "last seen" value.

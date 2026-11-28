@@ -2011,6 +2011,8 @@ L["Talents, Druid: Balance and Restoration builds searched again for the Novembe
 L["Druid Balance and Restoration weights follow the new talents."] = "德魯伊平衡與恢復的權重已依新天賦更新。"
 L["Talents, Hunter: Summon Hawk's +5% crit from the November 25 hotfix is in. Marksmanship: Melee Dungeon and Beast Mastery: Dungeon Leveling take their points in a better order, and the Hunter dungeon weights follow it."] = "天賦，獵人：已納入 11 月 25 日熱修正的召喚獵鷹 +5% 致命一擊。射擊：近戰地城與野獸控制：地城練功的點法順序更好，獵人的地城權重也隨之更新。"
 L["Hunter: with Summon Hawk, Crit and Hit count less on the shooting leveling weights (the hawks don't use them)."] = "獵人：點了召喚獵鷹後，遠程練功權重中的致命一擊與命中比重降低（獵鷹不會用到它們）。"
+L["Talents, Mage: the AoE model is reworked (Permafrost, Frost Nova cycles, Ice Barrier, Cone of Cold, Ice Block). Frost: AoE Leveling and Frost: AoE PvP Leveling take their points in a better order, 6-10% faster; the two Arcane AoE builds are retired."] = "天賦，法師：範圍模型已重做（極寒冰霜、冰霜新星循環、寒冰護體、冰錐術、寒冰屏障）。冰霜：範圍練功與冰霜：範圍PvP練功的點法順序更好，快6-10%；兩個秘法範圍配置已移除。"
+L["Mage AoE leveling weights follow the new model and talent orders."] = "法師的範圍練功權重隨新模型與新天賦順序更新。"
 L["Enchants: Projected Enchant names the bracer or boots recipe on those slots (it showed the chest one), and \"Safe to disenchant\" no longer shows on what you wear."] = "附魔：推算附魔在護腕與靴子欄位會顯示該部位的配方（先前顯示胸甲配方），且穿戴中的裝備不再顯示「可以分解」。"
 L["Roadmap: full loot for Krol'dok Stronghold, The Drowned City, Alcaz Prison and Blackmaw Hold, and The Shaper's Terrace is added."] = "Roadmap：Krol'dok Stronghold、The Drowned City、Alcaz Prison 與 Blackmaw Hold 的完整戰利品，並新增 The Shaper's Terrace。"
 L["RestedXP: the offer to turn off its Item Upgrade tips works again; it missed characters whose realm name the game reported empty."] = "RestedXP：關閉其物品升級提示的提議恢復正常；先前會漏掉遊戲回報伺服器名稱為空白的角色。"
